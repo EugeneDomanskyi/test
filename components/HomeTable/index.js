@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import Image from 'next/image'
 import { Container, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel } from '@mui/material'
+import numeral from 'numeral'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
+import { getPools } from '@/libs/query.lib'
 
 import $modal from '@/store/modal'
 
@@ -18,6 +20,8 @@ const HomeTable = () => {
   const dispatch = useDispatch()
 
   const [tokens, setTokens] = useState([])
+  // const [prices, setPrices] = useState({})
+  const [pools, setPools] = useState({})
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('collection')
 
@@ -47,6 +51,12 @@ const HomeTable = () => {
             })
           }
         }
+        // getTokensPrice(json.map(el => el['NFT20 Contract'])).then(res => {
+        //   setPrices(res)
+        // })
+        getPools(json.map(el => [el.PoolId, el['NFT20 Contract']])).then(res => {
+          setPools(res)
+        })
       }
       setTokens(temp)
     })()
@@ -189,7 +199,7 @@ const HomeTable = () => {
                       classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
                       onClick={handleSort('volume')}
                     >
-                      24H Volume
+                      TVL
                     </TableSortLabel>
                   </TableCell>
 
@@ -215,6 +225,7 @@ const HomeTable = () => {
 
               <TableBody>
                 {sortedTokens().map((item, index) => {
+                  const pool = pools[item.nft20]
                   return (
                     <TableRow key={index}  sx={{ '& th, & td': { borderColor: 'rgba(255, 255, 255, 0.08)' } }}>
                       <TableCell>
@@ -230,7 +241,7 @@ const HomeTable = () => {
                       </TableCell>
 
                       <TableCell align="center">
-                        <AppText center>$161.52</AppText>
+                        <AppText center>{pool?.token1Price ? numeral(pool.token1Price).format('$0.[0000]') : '-' }</AppText>
                       </TableCell>
 
                       <TableCell align="center">
@@ -238,7 +249,7 @@ const HomeTable = () => {
                       </TableCell>
 
                       <TableCell align="center">
-                        <AppText center>$164k</AppText>
+                        <AppText center>{ pool?.totalValueLockedUSD ? numeral(pool.totalValueLockedUSD).format('$0.[0000]') : '-'}</AppText>
                       </TableCell>
 
                       <TableCell align="center">

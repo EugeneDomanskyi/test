@@ -130,7 +130,6 @@ export const getPools = async (tokens) => {
             token1Price
             totalValueLockedUSD
             totalValueLockedUSDUntracked
-            poolHourData
           }
         }
       `}).then(res => {
@@ -145,7 +144,7 @@ export const getPools = async (tokens) => {
     return res.reduce((acc, pool) => {
       return {
         ...acc,
-        [pool.address]: pool.pool,
+        [pool.address.toLowerCase()]: pool.pool,
       }
     }, {})
   })

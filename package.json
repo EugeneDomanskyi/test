@@ -23,6 +23,7 @@
     "gsap": "^3.12.1",
     "lodash.merge": "^4.6.2",
     "next": "13.4.5",
+    "numeral": "^2.0.6",
     "react": "18.2.0",
     "react-custom-scrollbars-2": "^4.5.0",
     "react-dom": "18.2.0",
