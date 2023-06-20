@@ -9,7 +9,6 @@ import $modal from '@/store/modal'
 
 import AppText from '@/components/AppText'
 import AppButton from '@/components/AppButton'
-import TradeModal from '@/components/TradeModal'
 
 import styles from './styles.module.scss'
 
@@ -20,7 +19,7 @@ const HomeTable = () => {
 
   const [tokens, setTokens] = useState([])
   const [order, setOrder] = useState('asc')
-  const [orderBy, setOrderBy] = useState('name')
+  const [orderBy, setOrderBy] = useState('collection')
 
   const tokensUrl = 'https://tegro-imagekit.s3.eu-central-1.amazonaws.com/nft20Tokens.json'
 
@@ -31,20 +30,22 @@ const HomeTable = () => {
       if (result && result.status == 200) {
         const json = await result.json()
         for (const item of json) {
-          temp.push({
-            code: item['Code'],
-            collection: item['Collection Name'],
-            game: item['Game Name'],
-            chain: item['Chain'].toLowerCase(),
-            type: ('erc' + item['1155/721']),
-            nft20: item['NFT20 Contract'],
-            ognft: item['OG NFT Contract'],
-            tokenId: item['Token ID'],
-            decimals: item['Decimals'],
-            mintFee: item['Minting Fee'],
-            redeemFee: item['Redemption Fee'],
-            image: `https://tegro-imagekit.s3.eu-central-1.amazonaws.com/NFT-20/${item['Code'].toUpperCase()}_256.png`,
-          })
+          if (item['NFT20 Contract'] && item['OG NFT Contract']) {
+            temp.push({
+              code: item['Code'],
+              collection: item['Collection Name'],
+              game: item['Game Name'],
+              chain: item['Chain'].toLowerCase(),
+              type: ('erc' + item['1155/721']),
+              nft20: item['NFT20 Contract'].toLowerCase(),
+              ognft: item['OG NFT Contract'].toLowerCase(),
+              tokenId: item['Token ID'],
+              decimals: item['Decimals'],
+              mintFee: item['Minting Fee'],
+              redeemFee: item['Redemption Fee'],
+              image: `https://tegro-imagekit.s3.eu-central-1.amazonaws.com/NFT-20/${item['Code'].toUpperCase()}_256.png`,
+            })
+          }
         }
       }
       setTokens(temp)
@@ -55,6 +56,41 @@ const HomeTable = () => {
     const isAsc = orderBy === field && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(field)
+  }
+
+  const sortedTokens = () => {
+    return stableSort(tokens, getComparator(order, orderBy))
+  }
+
+  const stableSort = (array, comparator) => {
+    const stabilizedThis = array.map((el, index) => [el, index])
+    stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0])
+      if (order !== 0) {
+        return order
+      }
+
+      return a[1] - b[1]
+    })
+
+    return stabilizedThis.map((el) => el[0])
+  }
+  
+
+  const getComparator = (order, orderBy) => {
+    return order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
+  }
+
+  const descendingComparator = (a, b, orderBy) => {
+    if (b[orderBy] < a[orderBy]) {
+      return -1
+    }
+
+    if (b[orderBy] > a[orderBy]) {
+      return 1
+    }
+
+    return 0
   }
 
   const handleTrade = (token) => async () => {
@@ -111,13 +147,13 @@ const HomeTable = () => {
                 <TableRow sx={{ '& th, & td': { borderColor: 'rgba(255, 255, 255, 0.08)' },  background: 'linear-gradient(0deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.06)), #09051D' }}>
                   <TableCell
                     align='left'
-                    sortDirection={orderBy === 'name' ? order : false}
+                    sortDirection={orderBy === 'collection' ? order : false}
                   >
                     <TableSortLabel
-                      active={orderBy === 'name'}
-                      direction={orderBy === 'name' ? order : 'asc'}
+                      active={orderBy === 'collection'}
+                      direction={orderBy === 'collection' ? order : 'asc'}
                       classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
-                      onClick={handleSort('name')}
+                      onClick={handleSort('collection')}
                     >
                       Name
                     </TableSortLabel>
@@ -178,7 +214,7 @@ const HomeTable = () => {
               </TableHead>
 
               <TableBody>
-                {tokens.map((item, index) => {
+                {sortedTokens().map((item, index) => {
                   return (
                     <TableRow key={index}  sx={{ '& th, & td': { borderColor: 'rgba(255, 255, 255, 0.08)' } }}>
                       <TableCell>

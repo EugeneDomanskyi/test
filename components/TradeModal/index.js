@@ -26,6 +26,12 @@ const TradeModal = ({ token, tokens }) => {
     interactive: '#1D1937',
   }
 
+  const USDT = {
+    polygon: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+    ethereum: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    bnb: '0x55d398326f99059fF775485246999027B3197955',
+  }
+
   const handleCloseModal = () => {
     dispatch($modal.set.close())
   }
@@ -59,7 +65,7 @@ const TradeModal = ({ token, tokens }) => {
       </div>
 
       <div className={styles.content}>
-        <SwapWidget theme={theme} defaultChainId={chainId} defaultOutputTokenAddress={token.nft20} tokenList={getTokenList()} brandedFooter={false} hideConnectionUI={true} />
+        <SwapWidget theme={theme} defaultChainId={chainId} defaultInputTokenAddress={token.nft20} defaultOutputTokenAddress={USDT[token.chain.toLowerCase()]} tokenList={getTokenList()} brandedFooter={false} hideConnectionUI={true} />
       </div>
     </div>
   )

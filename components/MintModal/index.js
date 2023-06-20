@@ -143,6 +143,15 @@ const MintModal = ({ token }) => {
         }
 
         setTransactionHash(txHash)
+        const result = await contracts.waitForTransaction(txHash)
+        if (result.error) {
+          setDepositStep(0)
+          setShowStep(false)
+          nextStep = 1
+          setDepositLoading(false)
+          toast.error("Mint NFTs failed", { pauseOnFocusLoss: false })
+          return 
+        }
       } else {
         let txHash = null
         if (selectedNfts.length > 1) {
@@ -156,7 +165,7 @@ const MintModal = ({ token }) => {
           const nft = selectedNfts[0]
           txHash = await contracts.depositNFT(nft.id, token.nft20)
         }
-        console.log(txHash)
+
         if (txHash.error) {
           setDepositStep(0)
           setShowStep(false)
@@ -167,6 +176,15 @@ const MintModal = ({ token }) => {
         }
 
         setTransactionHash(txHash)
+        const result = await contracts.waitForTransaction(txHash)
+        if (result.error) {
+          setDepositStep(0)
+          setShowStep(false)
+          nextStep = 1
+          setDepositLoading(false)
+          toast.error("Mint NFTs failed", { pauseOnFocusLoss: false })
+          return 
+        }
       }
       
       if (nextStep == 3) {

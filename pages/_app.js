@@ -16,6 +16,7 @@ import '@rainbow-me/rainbowkit/styles.css'
 import 'react-toastify/dist/ReactToastify.css'
 import '@uniswap/widgets/fonts.css'
 import '@/styles/globals.css'
+import Head from 'next/head'
 
 //const initialChain = process.env.NEXT_PUBLIC_APP_ENV == 'production' ? [mainnet, polygon] : [goerli, polygonMumbai]
 const initialChain = [polygon, mainnet, bsc]
@@ -61,6 +62,10 @@ function MyApp({ Component, pageProps }) {
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
         <Provider store={store}>
+          <Head>
+            <title>NFT20 | NFT Trading Platform</title>
+          </Head>
+
           <AppLayout>
             <Component {...pageProps} />
           </AppLayout>
