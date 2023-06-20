@@ -162,20 +162,6 @@ const HomeTable = ({ tokens }) => {
                     </TableSortLabel>
                   </TableCell>
 
-                  <TableCell
-                    align='center'
-                    sortDirection={orderBy === 'price' ? order : false}
-                  >
-                    <TableSortLabel
-                      active={orderBy === 'cap'}
-                      direction={orderBy === 'cap' ? order : 'asc'}
-                      classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
-                      onClick={handleSort('cap')}
-                    >
-                      Market Cap
-                    </TableSortLabel>
-                  </TableCell>
-
                   <TableCell sx={{ width: '10px' }}></TableCell>
                   <TableCell sx={{ width: '10px' }}></TableCell>
                   <TableCell sx={{ width: '10px' }}></TableCell>
@@ -207,11 +193,7 @@ const HomeTable = ({ tokens }) => {
                       </TableCell>
 
                       <TableCell align="center">
-                        <AppText center>{item.pool?.id ? numeral(item.tvl).format('$0.[0000]') : '-'}</AppText>
-                      </TableCell>
-
-                      <TableCell align="center">
-                        <AppText center>$164k</AppText>
+                        <AppText center>{item.pool?.id ? numeral(item.tvl).format('$0.[00]') : '-'}</AppText>
                       </TableCell>
 
                       <TableCell align="center">

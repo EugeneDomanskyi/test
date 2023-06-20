@@ -32,30 +32,6 @@ const HomeTop = ({ tokens }) => {
                 </AppText>
               </Stack>
             </AppFrame>
-
-            <AppFrame radius={12} gradient="linear-gradient(101.9deg, #631DFF 0%, #A91DFF 100%)" background="#0E0B23">
-              <Stack sx={{ width: 173 }} >
-                <AppText center weight={400} color="#B9B8C5">
-                  Market Cap
-                </AppText>
-
-                <AppText center size={32} weight={700}>
-                  $272M
-                </AppText>
-              </Stack>
-            </AppFrame>
-
-            <AppFrame radius={12} gradient="linear-gradient(101.9deg, #631DFF 0%, #A91DFF 100%)" background="#0E0B23">
-              <Stack sx={{ width: 173 }} >
-                <AppText center weight={400} color="#B9B8C5">
-                  Trading Volume
-                </AppText>
-
-                <AppText center size={32} weight={700}>
-                  $773M
-                </AppText>
-              </Stack>
-            </AppFrame>
           </Stack>
         </Stack>
       </Container>
