@@ -52,27 +52,6 @@ export const query = gql`
     }
   }
 `
-const poolsQuery = `
-  query pools {
-    pools(
-      where: {
-        id: "{poolId}"
-      }
-    ) {
-      id
-      token0 {
-        id
-        symbol
-      }
-      token0Price
-      token1 {
-        id
-        symbol
-      }
-      token1Price
-    }
-  }
-`
 
 export const getTokensPrice = (addresses) => {
   const paramsString = `[${addresses.map(el => `"${el.toLowerCase()}"`)}]`
@@ -131,6 +110,8 @@ export const getPools = async (tokens) => {
             token1Price
             totalValueLockedUSD
             totalValueLockedUSDUntracked
+            volumeToken0
+            volumeToken1
           }
         }
       `}).then(res => {
