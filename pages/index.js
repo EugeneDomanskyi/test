@@ -21,7 +21,6 @@ export default function Home() {
         const json = await result.json()
 
         const pools = await getPools(json.map(el => [el.PoolId, el['NFT20 Contract'].toLowerCase()]))
-        console.log(pools)
         for (const item of json) {
           if (item['NFT20 Contract'] && item['OG NFT Contract'] && item['Code'] != 'UNIOC') {
             const pool = pools.hasOwnProperty(item['NFT20 Contract'].toLowerCase()) ? pools[item['NFT20 Contract'].toLowerCase()] : {}
