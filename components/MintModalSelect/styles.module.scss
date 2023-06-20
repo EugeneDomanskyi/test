@@ -1,0 +1,72 @@
+.infoRow {
+  padding: 16px 26px;
+  background-color: #08051C;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  .infoLeft {
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+    color: #fff;
+  }
+
+  .infoRight {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 27px;
+
+    .selectedCount {
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 17px;
+      color: #fff;
+    }
+  }
+}
+
+.content {
+  background-color: #08051C;
+  
+  .nfts {
+    padding: 0 26px;
+    min-height: 300px;
+  }
+}
+
+.buttonsBox {
+  background-color: #120F25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 24px;
+  padding: 26px;
+
+  .backLink {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 19px;
+    color: #AAA3CF;
+    cursor: pointer;
+    transition: all .3s ease 0s;
+
+    &:hover {
+      opacity: .5;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .infoRow {
+    .infoRight {
+      .selectedCount {
+        display: none;
+      }
+    }
+  }
+}

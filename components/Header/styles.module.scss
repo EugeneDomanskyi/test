@@ -1,0 +1,11 @@
+.container {
+  width: 100%;
+  height: 64px;
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  background: rgba(9, 5, 29, 0.6);
+  border-bottom: 0.5px solid #311B92;
+  backdrop-filter: blur(6px);
+}

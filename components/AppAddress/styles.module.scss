@@ -1,0 +1,37 @@
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+
+  &.right {
+    justify-content: flex-end;
+  }
+
+  .text {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 19px;
+    font-family: 'Gilroy', Arial, sans-serif;
+    color: #fff;
+
+    &.muted {
+      color: #9996B1;
+    }
+
+    &.small {
+      font-size: 14px;
+      line-height: 17px;
+    }
+
+    &.url {
+      text-decoration: underline;
+    }
+  }
+
+  .copy {
+    cursor: pointer;
+    line-height: 0;
+  }
+}

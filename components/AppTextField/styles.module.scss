@@ -1,0 +1,117 @@
+$color: #AAA3CF;
+$colorFocused: #AAA3CF;
+$colorDisabled: #AAA3CF;
+$colorError: #FF1D61;
+
+$colorPlacehoder: #9996B1;
+$colorText: #fff;
+$colorBorder: #2E2C4F;
+
+$borderRadius: 12px;
+
+.textField {
+  .label {
+    color: $color;
+    font-weight: 500;
+    font-family: 'Gilroy';
+    font-size: 16px;
+
+    &.label_focused {
+      color: $colorFocused;
+    }
+
+    &.label_disabled {
+      color: $colorDisabled;
+    }
+
+    &.label_error {
+      color: $colorError;
+    }
+  }
+
+  .helper {
+    font-family: 'Gilroy';
+
+    &.helper_error {
+      color: $colorError;
+    }
+  }
+
+  .input {
+    .input_input {
+      font-weight: 500;
+      font-family: 'Gilroy';
+      font-size: 16px;
+      color: $colorText;
+
+      &::placeholder {
+        color: $colorPlacehoder;
+        font-weight: 500;
+        font-family: 'Gilroy';
+        font-size: 16px;
+        text-overflow: ellipsis !important;
+      }
+
+      &[type=number] {
+        appearance: textfield;
+        -moz-appearance: textfield;
+      }
+
+      &[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      &[type=number]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+
+    .input_fieldset {
+      border-color: $colorBorder;
+      border-radius: $borderRadius;
+    }
+
+    &:hover,
+    &.input_focused,
+    &.input_disabled {
+      .input_input {
+        -webkit-text-fill-color: initial;
+      }
+
+      .input_fieldset {
+        border-color: $colorBorder;
+      }
+    }
+
+    &.input_error {
+      .input_fieldset {
+        border-color: $colorError;
+      }
+    }
+  }
+
+  /* variant: search */
+  &.search {
+    .input {
+      background-color: #1C192F;
+
+      .input_fieldset {
+        border-radius: 3px;
+      }
+    }
+
+    &.notEmpty {
+      .input {
+        &:hover,
+        &.input_focused,
+        &.input_disabled {
+          .input_fieldset {
+            border-color: #311B92;
+          }
+        }
+      }
+    }
+  }
+}

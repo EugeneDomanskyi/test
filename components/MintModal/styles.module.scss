@@ -1,0 +1,181 @@
+.walletModal {
+  background-color: #120F25;
+  border-radius: 20px;
+  width: 600px;
+  max-width: 100%;
+
+  .header {
+    position: relative;
+    .titleRow {
+      padding: 26px;
+
+      .wallet {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%), rgba(48, 31, 138, 0.2);
+        border: 1px solid #252236;
+        border-radius: 12px;
+        padding: 5px 10px;
+        width: 400px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 4px;
+        gap: 12px;
+
+        a {
+          font-weight: 500;
+          font-size: 16px;
+          line-height: 19px;
+          color: #4C69FF;
+          transition: all .1s ease 0s;
+
+          &:hover {
+            text-decoration: underline;
+            color: #334fdd;
+          }
+        }
+      }
+    }
+
+    .collectionHeader {
+      height: 80px;
+      position: relative;
+
+      .collectionIcon {
+        width: 120px;
+        height: 120px;
+        position: absolute;
+        z-index: 0;
+        left: 50%;
+        bottom: 0;
+        margin-left: -60px;
+      }
+    }
+  }
+
+  .title {
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 24px;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .subtitle {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 19px;
+    text-align: center;
+    color: #9996B1;
+    margin-bottom: 16px;
+  }
+
+  .footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 24px;
+    padding: 26px;
+
+    .backLink {
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 19px;
+      color: #AAA3CF;
+      cursor: pointer;
+      transition: all .3s ease 0s;
+
+      &:hover {
+        opacity: .5;
+      }
+    }
+  }
+
+  .closeButton {
+    position: absolute;
+    z-index: 3;
+    width: 34px;
+    height: 34px;
+    right: 20px;
+    top: 20px;
+    background: #120A37;
+    border: 1px solid #2E2C4F;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .3s ease 0s;
+
+    &:hover {
+      background: #231757;
+    }
+  }
+
+  .nftsDeposit {
+    padding: 26px;
+  }
+
+  .emptyText {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 19px;
+    color: #AAA3CF;
+    text-align: center;
+    padding: 32px 0;
+  }
+
+  .openSea {
+    background-color: rgba(46, 28, 140, 0.2);
+    padding: 26px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    border-radius: 0 0 20px 20px;
+    border-top: 1px solid #2E1C8C;
+
+    .openSeaSubTitle {
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 19px;
+      color: #AAA3CF;
+      text-align: center;
+
+      a {
+        color: #4C69FF;
+        transition: all .1s ease 0s;
+
+        &:hover {
+          color: #324bc7;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+.infoModalBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .walletModal {
+    width: calc(100vw - 16px);
+
+    .header {
+      .titleRow {
+        .wallet {
+          width: auto;
+          flex-direction: column;
+          gap: 2px;
+        }
+      }
+    }
+  }
+}
