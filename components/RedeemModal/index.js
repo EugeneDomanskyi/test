@@ -102,7 +102,8 @@ const RedeemModal = ({ token }) => {
         </div>
 
         <div className={styles.titleRow}>
-          <div className={styles.title}>Redeem {token.collection} NFT</div>
+          <div className={styles.title}>Redeem</div>
+          <div className={styles.subtitle}>Convert {token.code} NFT20 into {token.collection} NFTs</div>
         </div>
       </div>
 
@@ -111,7 +112,7 @@ const RedeemModal = ({ token }) => {
           <AppTextField
             type="number"
             value={amount}
-            label="Amount"
+            label="Enter the amount you would like to withdraw"
             labelFixed
             error={error}
             int
@@ -121,8 +122,8 @@ const RedeemModal = ({ token }) => {
           />
 
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <AppText>Balance:</AppText>
-            {balanceLoading ? <AppLoader size={14} /> : <AppText>{balance}</AppText>}
+            <AppText>Current balance:</AppText>
+            {balanceLoading ? <AppLoader size={14} /> : <AppText>{balance} {token.code}</AppText>}
           </Stack>
 
           <AppButton primary large fullWidth onClick={handleRedeem} disabled={amount * 1 <= 0 || loading} loading={loading}>Redeem</AppButton>
