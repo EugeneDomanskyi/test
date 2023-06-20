@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
+import cn from 'classnames'
 
 import Contracts from '@/libs/contracts.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -8,16 +9,14 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import $modal from '@/store/modal'
 
 import AppIcon from '@/components/AppIcon'
-import AppTextField from '@/components/AppTextField'
-import AppButton from '@/components/AppButton'
+import AppText from '@/components/AppText'
+import AppFlex from '@/components/AppFlex'
+import RedeemModalInput from '@/components/RedeemModalInput'
 
 import styles from './styles.module.scss'
-import { Stack } from '@mui/material'
-import AppText from '../AppText'
-import AppLoader from '../AppLoader'
 
 const RedeemModal = ({ token }) => {
-  const { wallet, network } = useWalletConnect()
+  const { wallet, network, scanUrl } = useWalletConnect()
 
   const dispatch = useDispatch()
 
@@ -25,8 +24,7 @@ const RedeemModal = ({ token }) => {
   const [balance, setBalance] = useState(0)
   const [balanceLoading, setBalanceLoading] = useState(true)
   const [error, setError] = useState('')
-  const [depositLoading, setDepositLoading] = useState(false)
-  const [transactionHash, setTransactionHash] = useState()
+  const [step, setStep] = useState(0)
 
   const contracts = new Contracts(network(token?.chain)?.gasLimit)
 
@@ -44,7 +42,7 @@ const RedeemModal = ({ token }) => {
     dispatch($modal.set.close())
   }
 
-  const handleRedeem = async () => {
+  const handleApprove = async () => {
     setDepositLoading(true)
 
     if (amount > balance) {
@@ -80,9 +78,30 @@ const RedeemModal = ({ token }) => {
     setDepositLoading(false)
   }
 
+  const handleRedeem = () => {
+    
+  }
+
+  const handleBack = () => {
+
+  }
+
+  const handleComplete = () => {
+
+  }
+
   const handleAmountSet = (val) => {
     setError('')
     setAmount(val)
+  }
+
+  const contentComponent = () => {
+    switch (step) {
+      case 0: return <RedeemModalInput token={token} onRedeem={handleRedeem} />
+      // case 1: return <RedeemModalApprove token={token} amount={amount} onBack={handleBack} onApprove={handleApprove} />
+      // case 2: return <RedeemModalConfirm token={token} amount={amount} />
+      // case 3: return <RedeemModalComplete token={token} amount={amount} onComplete={handleComplete} />
+    }
   }
 
   return (
@@ -93,29 +112,31 @@ const RedeemModal = ({ token }) => {
         </div>
 
         <div className={styles.titleRow}>
-          <div className={styles.title}>Redeem {token.collection} NFT</div>
+          <div className={styles.title}>Redeem</div>
+
+          <AppFlex row gap={8}>
+            <AppFlex column flex={1} gap={2}>
+              <AppText size={10} center color="#53F19C">Redeem NFT20</AppText>
+              <div className={cn(styles.progress, styles.active)} />
+            </AppFlex>
+
+            <AppFlex column flex={1} gap={2}>
+              <AppText size={10} center color={step == 3 ? '#53F19C' : '#605884'}>Successful</AppText>
+              <div className={cn(styles.progress, {[styles.active]: step == 3})} />
+            </AppFlex>
+          </AppFlex>
         </div>
       </div>
 
       <div className={styles.content}>
-        <Stack spacing={2}>
-          <AppTextField
-            type="number"
-            value={amount}
-            label="Amount"
-            labelFixed
-            error={error}
-            placeholder="0"
-            onChange={handleAmountSet}
-          />
+        {contentComponent()}
+      </div>
 
-          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <AppText>Balance:</AppText>
-            {balanceLoading ? <AppLoader size={14} /> : <AppText>{balance}</AppText>}
-          </Stack>
-
-          <AppButton primary large fullWidth onClick={handleRedeem} disabled={amount * 1 <= 0}>Redeem</AppButton>
-        </Stack>
+      <div className={styles.footer}>
+        <AppFlex row gap={8} center>
+          <AppIcon icon="check-circle-fill" width={14} height={14} />
+          <AppText center color="#B9B8C5">Our contracts are verified and you can view them <a href={scanUrl(token.nft20, 'address', token.chain)} target="_blank" rel="noreferrer" className={styles.link}>here</a></AppText>
+        </AppFlex>
       </div>
     </div>
   )

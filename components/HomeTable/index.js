@@ -254,7 +254,7 @@ const HomeTable = () => {
                       </TableCell>
 
                       <TableCell align="center">
-                        <AppButton variant="danger" onClick={handleRedeem(item)}>Redeem</AppButton>
+                        <AppButton variant="danger" onClick={handleRedeem(item)} disabled>Redeem</AppButton>
                       </TableCell>
                     </TableRow>
                   )
