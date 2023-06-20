@@ -2,8 +2,7 @@ import { Provider } from 'react-redux'
 import dynamic from 'next/dynamic'
 import { getDefaultWallets, RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
 import { configureChains, createClient, WagmiConfig } from 'wagmi'
-import { polygon, polygonMumbai } from 'wagmi/chains'
-import { mainnet, goerli } from '@wagmi/core'
+import { polygon, mainnet, bsc } from 'wagmi/chains'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 import merge from 'lodash.merge'
@@ -17,9 +16,10 @@ import '@rainbow-me/rainbowkit/styles.css'
 import 'react-toastify/dist/ReactToastify.css'
 import '@uniswap/widgets/fonts.css'
 import '@/styles/globals.css'
+import Head from 'next/head'
 
 //const initialChain = process.env.NEXT_PUBLIC_APP_ENV == 'production' ? [mainnet, polygon] : [goerli, polygonMumbai]
-const initialChain = [mainnet, polygon]
+const initialChain = [polygon, mainnet, bsc]
 const { chains, provider } = configureChains(
   initialChain, [
     alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }),
@@ -62,6 +62,10 @@ function MyApp({ Component, pageProps }) {
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
         <Provider store={store}>
+          <Head>
+            <title>NFT20 | NFT Trading Platform</title>
+          </Head>
+
           <AppLayout>
             <Component {...pageProps} />
           </AppLayout>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 
@@ -13,6 +13,8 @@ import AppButton from '@/components/AppButton'
 
 import styles from './styles.module.scss'
 import { Stack } from '@mui/material'
+import AppText from '../AppText'
+import AppLoader from '../AppLoader'
 
 const RedeemModal = ({ token }) => {
   const { wallet, network } = useWalletConnect()
@@ -20,10 +22,23 @@ const RedeemModal = ({ token }) => {
   const dispatch = useDispatch()
 
   const [amount, setAmount] = useState('')
+  const [balance, setBalance] = useState(0)
+  const [balanceLoading, setBalanceLoading] = useState(true)
+  const [error, setError] = useState('')
   const [depositLoading, setDepositLoading] = useState(false)
   const [transactionHash, setTransactionHash] = useState()
 
   const contracts = new Contracts(network(token?.chain)?.gasLimit)
+
+  useEffect(() => {
+    if (wallet && token && token?.nft20) {
+      (async () => {
+        const result = await contracts.balanceOf(wallet, token.nft20)
+        setBalance(result)
+        setBalanceLoading(false)
+      })()
+    }
+  }, [wallet, token])
 
   const handleCloseModal = () => {
     dispatch($modal.set.close())
@@ -31,6 +46,11 @@ const RedeemModal = ({ token }) => {
 
   const handleRedeem = async () => {
     setDepositLoading(true)
+
+    if (amount > balance) {
+      setError('Transfer amount exceeds balance')
+      return
+    }
 
     const isApproved = await contracts.isApprovedForAll(token.ognft, wallet, token.nft20)
     if ( ! isApproved) {
@@ -52,7 +72,7 @@ const RedeemModal = ({ token }) => {
     const txHash = await contracts.withdrawNFTs(amount, token.nft20)
     if (txHash.error) {
       setDepositLoading(false)
-      toast.error("Mint NFTs failed", { pauseOnFocusLoss: false })
+      toast.error("Redeem NFTs failed", { pauseOnFocusLoss: false })
       return
     }
 
@@ -61,6 +81,7 @@ const RedeemModal = ({ token }) => {
   }
 
   const handleAmountSet = (val) => {
+    setError('')
     setAmount(val)
   }
 
@@ -83,9 +104,16 @@ const RedeemModal = ({ token }) => {
             value={amount}
             label="Amount"
             labelFixed
-            placeholder={0}
+            error={error}
+            placeholder="0"
             onChange={handleAmountSet}
           />
+
+          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+            <AppText>Balance:</AppText>
+            {balanceLoading ? <AppLoader size={14} /> : <AppText>{balance}</AppText>}
+          </Stack>
+
           <AppButton primary large fullWidth onClick={handleRedeem} disabled={amount * 1 <= 0}>Redeem</AppButton>
         </Stack>
       </div>

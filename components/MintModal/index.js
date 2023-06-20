@@ -22,6 +22,7 @@ const MintModal = ({ token }) => {
   const dispatch = useDispatch()
 
   const [nfts, setNfts] = useState([])
+  const [loading, setLoading] = useState(true)
   const [depositLoading, setDepositLoading] = useState(false)
   const [showStep, setShowStep] = useState(false)
   const [depositStep, setDepositStep] = useState(0)
@@ -47,6 +48,7 @@ const MintModal = ({ token }) => {
   }, [wallet])
 
   const getNfts = async () => {
+    setLoading(true)
     const nfts = await alchemy.getNftsForOwner(wallet, token.type)
     nfts.sort((a, b) => {
       if (a.collectionAddress == token.ognft && b.collectionAddress != token.ognft) {
@@ -60,6 +62,7 @@ const MintModal = ({ token }) => {
       return 0
     })
     setNfts(nfts)
+    setLoading(false)
   }
 
   const handleCloseModal = () => {
@@ -68,7 +71,7 @@ const MintModal = ({ token }) => {
 
   const componentStep = () => {
     switch (depositStep) {
-      case 0: return <MintModalSelect nfts={nfts} token={token} buttonLoading={depositLoading} onSubmit={handleSubmit} />
+      case 0: return <MintModalSelect nfts={nfts} token={token} loading={loading} buttonLoading={depositLoading} onSubmit={handleSubmit} />
       case 1: return <MintModalConfirm step={depositStep} token={token} txid={transactionHash} showStep={showStep} nfts={preparedNfts} onCancel={handleCancel} />
       case 2: return <MintModalConfirm step={depositStep} token={token} showStep={showStep} nfts={preparedNfts} onCancel={handleCancel} />
       case 3: return <MintModalComplete nfts={preparedNfts} token={token} txid={transactionHash} onComplete={handleComplete} />
@@ -140,6 +143,15 @@ const MintModal = ({ token }) => {
         }
 
         setTransactionHash(txHash)
+        const result = await contracts.waitForTransaction(txHash)
+        if (result.error) {
+          setDepositStep(0)
+          setShowStep(false)
+          nextStep = 1
+          setDepositLoading(false)
+          toast.error("Mint NFTs failed", { pauseOnFocusLoss: false })
+          return 
+        }
       } else {
         let txHash = null
         if (selectedNfts.length > 1) {
@@ -153,7 +165,7 @@ const MintModal = ({ token }) => {
           const nft = selectedNfts[0]
           txHash = await contracts.depositNFT(nft.id, token.nft20)
         }
-        console.log(txHash)
+
         if (txHash.error) {
           setDepositStep(0)
           setShowStep(false)
@@ -164,6 +176,15 @@ const MintModal = ({ token }) => {
         }
 
         setTransactionHash(txHash)
+        const result = await contracts.waitForTransaction(txHash)
+        if (result.error) {
+          setDepositStep(0)
+          setShowStep(false)
+          nextStep = 1
+          setDepositLoading(false)
+          toast.error("Mint NFTs failed", { pauseOnFocusLoss: false })
+          return 
+        }
       }
       
       if (nextStep == 3) {
@@ -202,7 +223,7 @@ const MintModal = ({ token }) => {
         ) : (
           <div className={styles.collectionHeader}>
             <div className={styles.collectionIcon}>
-              <TokenIcon currency={token.code} fit />
+              <TokenIcon icon={token.image} fit />
             </div>
           </div>
         )}

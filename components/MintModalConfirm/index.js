@@ -26,7 +26,7 @@ const MintModalConfirm = ({ step, showStep, nfts, txid, token, onCancel }) => {
     <>
       <div className={styles.infoRow}>
         <div className={styles.infoCollection}>
-          <TokenIcon currency={token.code} />
+          <TokenIcon icon={token.image} />
 
           <div className={styles.infoCollectionRight}>
             <div className={styles.infoCollectionName}>{token.collection}</div>

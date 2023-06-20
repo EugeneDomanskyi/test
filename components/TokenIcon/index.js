@@ -3,7 +3,7 @@ import cn from 'classnames'
 
 import styles from './styles.module.scss'
 
-const TokenIcon = ({ currency, small, fit, square }) => {
+const TokenIcon = ({ icon, currency, small, fit, square }) => {
   const [visible, setVisible] = useState(false)
 
   const classes = () => {
@@ -16,9 +16,13 @@ const TokenIcon = ({ currency, small, fit, square }) => {
     )
   }
 
+  const getIcon = () => {
+    return icon ? icon : `https://tegro-imagekit.s3.eu-central-1.amazonaws.com/TegroWeb/${currency.toUpperCase()}_256.png`
+  }
+
   return (
     <div className={classes()}>
-      <img src={`https://tegro-imagekit.s3.eu-central-1.amazonaws.com/TegroWeb/${currency.toUpperCase()}_256.png`} onLoad={() => setVisible(true)} onError={() => setVisible(false)} />
+      <img src={getIcon()} onLoad={() => setVisible(true)} onError={() => setVisible(false)} />
     </div>
   )
 }

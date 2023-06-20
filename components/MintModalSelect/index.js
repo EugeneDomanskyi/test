@@ -9,6 +9,7 @@ import AppLoader from '@/components/AppLoader'
 import MintModalSelectItem from '@/components/MintModalSelectItem'
 
 import styles from './styles.module.scss'
+import AppBlockLoader from '../AppBlockLoader'
 
 const MintModalSelect = ({ nfts, token, loading, buttonLoading, onSubmit }) => {
   const [availableNftCount, setAvailableNftCount] = useState(0)
@@ -163,7 +164,7 @@ const MintModalSelect = ({ nfts, token, loading, buttonLoading, onSubmit }) => {
           renderThumbHorizontal={props => <div {...props} className="scrollThumb" />}
         >
           {loading ? (
-            <AppLoader size={20} />
+            <AppBlockLoader height={scrollMaxHeightFunc()} />
           ) : (
             <div className={styles.nfts}>
               {nfts.length > 0 ? (
