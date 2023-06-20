@@ -5,7 +5,7 @@ import AppFrame from '@/components/AppFrame'
 
 import styles from './styles.module.scss'
 
-const HomeTop = () => {
+const HomeTop = ({ tokens }) => {
   return (
     <div className={styles.container}>
       <Container maxWidth="xl" className={styles.content}>
@@ -28,7 +28,7 @@ const HomeTop = () => {
                 </AppText>
 
                 <AppText center size={32} weight={700}>
-                  8
+                  {tokens.length}
                 </AppText>
               </Stack>
             </AppFrame>

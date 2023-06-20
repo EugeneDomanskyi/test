@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import Image from 'next/image'
 import { Container, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel } from '@mui/material'
 import numeral from 'numeral'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
-import { getPools } from '@/libs/query.lib'
 
 import $modal from '@/store/modal'
 
@@ -14,53 +13,13 @@ import AppButton from '@/components/AppButton'
 
 import styles from './styles.module.scss'
 
-const HomeTable = () => {
-  const { wallet, connect, changeNetwork } = useWalletConnect()
+const HomeTable = ({ tokens }) => {
+  const { connect, changeNetwork } = useWalletConnect()
 
   const dispatch = useDispatch()
 
-  const [tokens, setTokens] = useState([])
-  // const [prices, setPrices] = useState({})
-  const [pools, setPools] = useState({})
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('collection')
-
-  const tokensUrl = 'https://tegro-imagekit.s3.eu-central-1.amazonaws.com/nft20Tokens.json'
-
-  useEffect(() => {
-    (async () => {
-      const temp = []
-      const result = await fetch(tokensUrl)
-      if (result && result.status == 200) {
-        const json = await result.json()
-        for (const item of json) {
-          if (item['NFT20 Contract'] && item['OG NFT Contract']) {
-            temp.push({
-              code: item['Code'],
-              collection: item['Collection Name'],
-              game: item['Game Name'],
-              chain: item['Chain'].toLowerCase(),
-              type: ('erc' + item['1155/721']),
-              nft20: item['NFT20 Contract'].toLowerCase(),
-              ognft: item['OG NFT Contract'].toLowerCase(),
-              tokenId: item['Token ID'],
-              decimals: item['Decimals'],
-              mintFee: item['Minting Fee'],
-              redeemFee: item['Redemption Fee'],
-              image: `https://tegro-imagekit.s3.eu-central-1.amazonaws.com/NFT-20/${item['Code'].toUpperCase()}_256.png`,
-            })
-          }
-        }
-        // getTokensPrice(json.map(el => el['NFT20 Contract'])).then(res => {
-        //   setPrices(res)
-        // })
-        getPools(json.map(el => [el.PoolId, el['NFT20 Contract']])).then(res => {
-          setPools(res)
-        })
-      }
-      setTokens(temp)
-    })()
-  }, [])
 
   const handleSort = (field) => () => {
     const isAsc = orderBy === field && order === 'asc'
@@ -191,13 +150,13 @@ const HomeTable = () => {
 
                   <TableCell
                     align='center'
-                    sortDirection={orderBy === 'volume' ? order : false}
+                    sortDirection={orderBy === 'tvl' ? order : false}
                   >
                     <TableSortLabel
-                      active={orderBy === 'volume'}
-                      direction={orderBy === 'volume' ? order : 'asc'}
+                      active={orderBy === 'tvl'}
+                      direction={orderBy === 'tvl' ? order : 'asc'}
                       classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
-                      onClick={handleSort('volume')}
+                      onClick={handleSort('tvl')}
                     >
                       TVL
                     </TableSortLabel>
@@ -225,7 +184,6 @@ const HomeTable = () => {
 
               <TableBody>
                 {sortedTokens().map((item, index) => {
-                  const pool = pools[item.nft20]
                   return (
                     <TableRow key={index}  sx={{ '& th, & td': { borderColor: 'rgba(255, 255, 255, 0.08)' } }}>
                       <TableCell>
@@ -241,7 +199,7 @@ const HomeTable = () => {
                       </TableCell>
 
                       <TableCell align="center">
-                        <AppText center>{pool?.token1Price ? numeral(pool.token1Price).format('$0.[0000]') : '-' }</AppText>
+                        <AppText center>{item.pool?.id ? numeral(item.price).format('$0.[0000]') : '-' }</AppText>
                       </TableCell>
 
                       <TableCell align="center">
@@ -249,7 +207,7 @@ const HomeTable = () => {
                       </TableCell>
 
                       <TableCell align="center">
-                        <AppText center>{ pool?.totalValueLockedUSD ? numeral(pool.totalValueLockedUSD).format('$0.[0000]') : '-'}</AppText>
+                        <AppText center>{item.pool?.id ? numeral(item.tvl).format('$0.[0000]') : '-'}</AppText>
                       </TableCell>
 
                       <TableCell align="center">
