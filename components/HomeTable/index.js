@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { Container, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel } from '@mui/material'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
+import { getTokensPrice } from '@/libs/query.lib'
 
 import $modal from '@/store/modal'
 
@@ -19,6 +20,7 @@ const HomeTable = () => {
   const dispatch = useDispatch()
 
   const [tokens, setTokens] = useState([])
+  const [prices, setPrices] = useState({})
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('name')
 
@@ -37,7 +39,7 @@ const HomeTable = () => {
             game: item['Game Name'],
             chain: item['Chain'].toLowerCase(),
             type: ('erc' + item['1155/721']),
-            nft20: item['NFT20 Contract'],
+            nft20: item['NFT20 Contract'].toLowerCase(),
             ognft: item['OG NFT Contract'],
             tokenId: item['Token ID'],
             decimals: item['Decimals'],
@@ -46,6 +48,9 @@ const HomeTable = () => {
             image: `https://tegro-imagekit.s3.eu-central-1.amazonaws.com/NFT-20/${item['Code'].toUpperCase()}_256.png`,
           })
         }
+        getTokensPrice(json.map(el => el['NFT20 Contract'])).then(res => {
+          setPrices(res)
+        })
       }
       setTokens(temp)
     })()
