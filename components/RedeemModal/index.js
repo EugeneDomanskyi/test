@@ -103,7 +103,6 @@ const RedeemModal = ({ token }) => {
 
         <div className={styles.titleRow}>
           <div className={styles.title}>Redeem</div>
-          <div className={styles.subtitle}>Convert {token.code} NFT20 into {token.collection} NFTs</div>
         </div>
       </div>
 
