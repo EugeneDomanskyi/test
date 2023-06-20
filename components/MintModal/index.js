@@ -143,9 +143,9 @@ const MintModal = ({ token }) => {
       } else {
         let txHash = null
         if (selectedNfts.length > 1) {
-          const items = []
+          const ids = []
           for (const nft of selectedNfts) {
-            items.push([2, token.ognft, nft.id, 1])
+            ids.push(nft.id)
           }
 
           txHash = await contracts.depositNFTs(ids, token.nft20)
