@@ -25,7 +25,7 @@ const RedeemModal = ({ token }) => {
   const [balance, setBalance] = useState(0)
   const [balanceLoading, setBalanceLoading] = useState(true)
   const [error, setError] = useState('')
-  const [depositLoading, setDepositLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [transactionHash, setTransactionHash] = useState()
 
   const contracts = new Contracts(network(token?.chain)?.gasLimit)
@@ -34,7 +34,7 @@ const RedeemModal = ({ token }) => {
     if (wallet && token && token?.nft20) {
       (async () => {
         const result = await contracts.balanceOf(wallet, token.nft20)
-        setBalance(result)
+        setBalance(Math.floor(result))
         setBalanceLoading(false)
       })()
     }
@@ -45,7 +45,7 @@ const RedeemModal = ({ token }) => {
   }
 
   const handleRedeem = async () => {
-    setDepositLoading(true)
+    setLoading(true)
 
     if (amount > balance) {
       setError('Transfer amount exceeds balance')
@@ -56,14 +56,14 @@ const RedeemModal = ({ token }) => {
     if ( ! isApproved) {
       let hash = await contracts.setApprovalForAll(token.ognft, token.nft20)
       if (hash.error) {
-        setDepositLoading(false)
+        setLoading(false)
         toast.error("Approve collection failed", { pauseOnFocusLoss: false })
         return
       }
 
       const approve = await contracts.waitForTransaction(hash)
       if (approve.error) {
-        setDepositLoading(false)
+        setLoading(false)
         toast.error("Approve collection failed", { pauseOnFocusLoss: false })
         return 
       }
@@ -71,13 +71,22 @@ const RedeemModal = ({ token }) => {
 
     const txHash = await contracts.withdrawNFTs(amount, token.nft20)
     if (txHash.error) {
-      setDepositLoading(false)
+      setLoading(false)
       toast.error("Redeem NFTs failed", { pauseOnFocusLoss: false })
       return
     }
 
     setTransactionHash(txHash)
-    setDepositLoading(false)
+    const result = await contracts.waitForTransaction(txHash)
+    if (result.error) {
+      setLoading(false)
+      toast.error("Redeem NFTs failed", { pauseOnFocusLoss: false })
+      return 
+    }
+
+    toast.success("Your Redemption Was Successful!", { pauseOnFocusLoss: false })
+    setLoading(false)
+    handleCloseModal()
   }
 
   const handleAmountSet = (val) => {
@@ -105,8 +114,10 @@ const RedeemModal = ({ token }) => {
             label="Amount"
             labelFixed
             error={error}
+            int
             placeholder="0"
             onChange={handleAmountSet}
+            onSubmit={handleRedeem}
           />
 
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
@@ -114,7 +125,7 @@ const RedeemModal = ({ token }) => {
             {balanceLoading ? <AppLoader size={14} /> : <AppText>{balance}</AppText>}
           </Stack>
 
-          <AppButton primary large fullWidth onClick={handleRedeem} disabled={amount * 1 <= 0}>Redeem</AppButton>
+          <AppButton primary large fullWidth onClick={handleRedeem} disabled={amount * 1 <= 0 || loading} loading={loading}>Redeem</AppButton>
         </Stack>
       </div>
     </div>
