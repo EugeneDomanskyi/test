@@ -203,6 +203,26 @@ export default function Contracts(defaultGasLimit = null) {
       return result
     },
 
+    balanceOf: async (wallet, contract) => {
+      const result = await methods.readContract({
+        address: contract,
+        abi: abi.erc721.balanceOf,
+        functionName: 'balanceOf',
+        args: [
+          wallet,
+        ],
+      })
+
+      const decimals = await methods.readContract({
+        address: contract,
+        abi: abi.erc721.decimals,
+        functionName: 'decimals',
+        args: [],
+      })
+
+      return parseFloat(result) / Math.pow(10, decimals)
+    },
+
     depositNFT: async (id, contract) => {
       const config = await methods.prepareWriteContract({
         address: contract,

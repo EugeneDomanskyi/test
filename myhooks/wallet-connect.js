@@ -45,9 +45,11 @@ const useWalletConnect = () => {
         callback.success(address.toLowerCase())
       }
     }
-
-    setWallet(isConnected ? address.toLowerCase() : null)
   }, [modalOpen, isConnected])
+
+  useEffect(() => {
+    setWallet(isConnected ? address.toLowerCase() : null)
+  }, [address, isConnected])
 
   const network = (currentChain) => {
     switch (currentChain) {
@@ -96,11 +98,11 @@ const useWalletConnect = () => {
         chainId: 137,
       }
       case 'bnb': return {
-        name: 'BNB',
-        server: 'bnb',
-        connect: 'bnb',
-        alchemy: 'BNB',
-        currency: 'BNB',
+        name: 'BSC',
+        server: 'bsc',
+        connect: 'bsc',
+        alchemy: 'BSC',
+        currency: 'BSC',
         gasLimit: 250000,
         scanDomain: 'https://bscscan.com/',
         color: '#FBDA3C',
