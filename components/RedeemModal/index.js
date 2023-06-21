@@ -13,6 +13,8 @@ import AppText from '@/components/AppText'
 import AppFlex from '@/components/AppFlex'
 import RedeemModalInput from '@/components/RedeemModalInput'
 import RedeemModalApprove from '@/components/RedeemModalApprove'
+import RedeemModalConfirm from '@/components/RedeemModalConfirm'
+import RedeemModalComplete from '@/components/RedeemModalComplete'
 
 import styles from './styles.module.scss'
 
@@ -23,6 +25,8 @@ const RedeemModal = ({ token }) => {
 
   const [amount, setAmount] = useState('')
   const [step, setStep] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [hash, setHash] = useState()
 
   const contracts = new Contracts(network(token?.chain)?.gasLimit)
 
@@ -31,16 +35,14 @@ const RedeemModal = ({ token }) => {
   }
 
   const handleApprove = async () => {
-    setDepositLoading(true)
+    setLoading(true)
+    setStep(2)
 
-    if (amount > balance) {
-      return
-    }
-
-    const isApproved = await contracts.isApprovedForAll(token.ognft, wallet, token.nft20)
+    /* const isApproved = await contracts.isApprovedForAll(token.ognft, wallet, token.nft20)
     if ( ! isApproved) {
       let hash = await contracts.setApprovalForAll(token.ognft, token.nft20)
       if (hash.error) {
+        setStep(0)
         setLoading(false)
         toast.error("Approve collection failed", { pauseOnFocusLoss: false })
         return
@@ -48,22 +50,25 @@ const RedeemModal = ({ token }) => {
 
       const approve = await contracts.waitForTransaction(hash)
       if (approve.error) {
+        setStep(0)
         setLoading(false)
         toast.error("Approve collection failed", { pauseOnFocusLoss: false })
         return 
       }
-    }
+    } */
 
     const txHash = await contracts.withdrawNFTs(amount, token.nft20)
     if (txHash.error) {
+      setStep(0)
       setLoading(false)
       toast.error("Redeem NFTs failed", { pauseOnFocusLoss: false })
       return
     }
 
-    setTransactionHash(txHash)
+    setHash(txHash)
     const result = await contracts.waitForTransaction(txHash)
     if (result.error) {
+      setStep(0)
       setLoading(false)
       toast.error("Redeem NFTs failed", { pauseOnFocusLoss: false })
       return 
@@ -71,7 +76,7 @@ const RedeemModal = ({ token }) => {
 
     toast.success("Your Redemption Was Successful!", { pauseOnFocusLoss: false })
     setLoading(false)
-    handleCloseModal()
+    setStep(3)
   }
 
   const handleRedeem = () => {
@@ -82,10 +87,6 @@ const RedeemModal = ({ token }) => {
     setStep(0)
   }
 
-  const handleComplete = () => {
-
-  }
-
   const handleAmountChange = (val) => {
     setAmount(val)
   }
@@ -94,8 +95,8 @@ const RedeemModal = ({ token }) => {
     switch (step) {
       case 0: return <RedeemModalInput token={token} amount={amount} onAmountChange={handleAmountChange} onRedeem={handleRedeem} />
       case 1: return <RedeemModalApprove token={token} amount={amount} onBack={handleBack} onApprove={handleApprove} />
-      // case 2: return <RedeemModalConfirm token={token} amount={amount} />
-      // case 3: return <RedeemModalComplete token={token} amount={amount} onComplete={handleComplete} />
+      case 2: return <RedeemModalConfirm token={token} amount={amount} />
+      case 3: return <RedeemModalComplete token={token} amount={amount} onComplete={handleCloseModal} />
     }
   }
 
