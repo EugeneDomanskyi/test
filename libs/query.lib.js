@@ -86,50 +86,44 @@ export const getTokensPrice = (addresses) => {
     })
 }
 
-export const getPools = async (tokens) => {
-  const promises = tokens.filter(([poolId]) => Boolean(poolId)).map(([poolId, address]) => {
-    return client.query({
-      query: gql`
-        query pools {
-          pools(
-            first:1
-            where: {
-              id: "${poolId}"
-            }
-          ) {
+export const getPool = async (poolId) => {
+  return client.query({
+    query: gql`
+      query pool($poolAddress: String!) {
+        pool(id: $poolAddress) {
+          tick
+          token0 {
+            symbol
             id
-            token0 {
-              id
-              symbol
-            }
-            token0Price
-            token1 {
-              id
-              symbol
-            }
-            token1Price
-            totalValueLockedUSD
-            totalValueLockedUSDUntracked
-            volumeToken0
-            volumeToken1
+            decimals
+            __typename
           }
+          token1 {
+            symbol
+            id
+            decimals
+            __typename
+          }
+          feeTier
+          sqrtPrice
+          liquidity
+          token0Price
+          token1Price
+          volumeToken0
+          volumeToken1
+          totalValueLockedToken0
+          totalValueLockedToken1
+          totalValueLockedUSD
+          liquidity
+          __typename
         }
-      `}).then(res => {
-        const [pool] = res.data.pools
-        return {
-          address: address,
-          pool: pool
-        }
-      })
-  })
-  return await Promise.all(promises).then(res => {
-    return res.reduce((acc, pool) => {
-      return {
-        ...acc,
-        [pool.address.toLowerCase()]: pool.pool,
       }
-    }, {})
-  })
+    `,
+    variables: {
+      "poolAddress": poolId
+    }}).then(res => {
+      return res.data.pool
+    })
 }
 
 export const getPoolsAll = async (addresses) => {
@@ -217,5 +211,7 @@ export const getPoolDayData = async (poolId) => {
       "startTime": 1619170975,
       "skip": 0
     }
+  }).then(res => {
+    return res.data.poolDayDatas.map(el => ({...el, id: el.date}))
   })
 }

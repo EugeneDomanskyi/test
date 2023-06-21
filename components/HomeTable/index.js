@@ -162,6 +162,20 @@ const HomeTable = ({ tokens }) => {
                     </TableSortLabel>
                   </TableCell>
 
+                  <TableCell
+                    align='center'
+                    sortDirection={orderBy === 'volumeToken1' ? order : false}
+                  >
+                    <TableSortLabel
+                      active={orderBy === 'volumeToken1'}
+                      direction={orderBy === 'volumeToken1' ? order : 'asc'}
+                      classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
+                      onClick={handleSort('volumeToken1')}
+                    >
+                      Trade Volume
+                    </TableSortLabel>
+                  </TableCell>
+
                   <TableCell sx={{ width: '10px' }}></TableCell>
                   <TableCell sx={{ width: '10px' }}></TableCell>
                   <TableCell sx={{ width: '10px' }}></TableCell>
@@ -194,6 +208,10 @@ const HomeTable = ({ tokens }) => {
 
                       <TableCell align="center">
                         <AppText center>{item.pool?.id ? numeral(item.tvl).format('$0.[00]') : '-'}</AppText>
+                      </TableCell>
+
+                      <TableCell align="center">
+                        <AppText center>{item.pool?.id ? numeral(item.pool?.volumeToken1).format('$0.[00]') : '-'}</AppText>
                       </TableCell>
 
                       <TableCell align="center">
