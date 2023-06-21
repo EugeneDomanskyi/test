@@ -20,8 +20,8 @@ const PoolPage = () => {
   
   return (
     <div>
-      <BarChart width={730} height={250} data={poolData}>
-        <Bar dataKey="volumeUSD" fill="#8884d8" />
+      <BarChart width={804} height={308} data={poolData}>
+        <Bar dataKey="volumeUSD" fill="#2172E5" />
       </BarChart>
     </div>
   )
