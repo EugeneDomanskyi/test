@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { useSigner } from 'wagmi'
 import { SwapWidget } from '@uniswap/widgets'
 
 import $modal from '@/store/modal'
@@ -10,7 +12,10 @@ import styles from './styles.module.scss'
 
 const TradeModal = ({ token, tokens }) => {
   const { network } = useWalletConnect()
+  const { data } = useSigner()
   const dispatch = useDispatch()
+
+  const [provider, setProvider] = useState()
 
   const chainId = network(token.chain)?.chainId
 
@@ -31,6 +36,20 @@ const TradeModal = ({ token, tokens }) => {
     ethereum: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     bnb: '0x55d398326f99059fF775485246999027B3197955',
   }
+
+  const jsonRpcUrlMap = {
+    1: [`https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`],
+    56: [`https://bsc-dataseed1.binance.org/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`],
+    137: [`https://polygon-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`],
+  }
+
+  const jsonRpcUrl = 'https://cloudflare-eth.com'
+
+  useEffect(() => {
+    if (data?.provider) {
+      setProvider(data.provider)
+    }
+  }, [data])
 
   const handleCloseModal = () => {
     dispatch($modal.set.close())
@@ -56,6 +75,10 @@ const TradeModal = ({ token, tokens }) => {
     return result
   }
 
+  const handleError = (error) => {
+    console.log(error)
+  }
+
   return (
     <div className={styles.walletModal}>
       <div className={styles.header}>
@@ -65,7 +88,9 @@ const TradeModal = ({ token, tokens }) => {
       </div>
 
       <div className={styles.content}>
-        <SwapWidget theme={theme} defaultChainId={chainId} defaultInputTokenAddress={token.nft20} defaultOutputTokenAddress={USDT[token.chain.toLowerCase()]} tokenList={getTokenList()} brandedFooter={false} hideConnectionUI={true} />
+        {provider ? (
+          <SwapWidget theme={theme} provider={provider} onError={handleError} jsonRpcEndpoint={jsonRpcUrl} defaultChainId={chainId} defaultInputTokenAddress={token.nft20} defaultOutputTokenAddress={USDT[token.chain.toLowerCase()]} tokenList={getTokenList()} hideConnectionUI={true} brandedFooter={false} />
+        ) : null}
       </div>
     </div>
   )

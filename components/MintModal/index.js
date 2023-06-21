@@ -214,7 +214,8 @@ const MintModal = ({ token }) => {
 
         {depositStep < 3 ? (
           <div className={styles.titleRow}>
-            <div className={styles.title}>Mint {token.collection} NFT</div>
+            <div className={styles.title}>Mint {token.code} NFT20</div>
+            <div className={styles.subtitle}>Convert {token.collection} NFT to {token.code} NFT20</div>
             <div className={styles.wallet}>
               <AppAddress short={8} muted noCopy address={token.ognft} />
               <a href={scanUrl(token.ognft, 'address', token.chain)} target="_blank" rel="noreferrer">(Check contract details)</a>
