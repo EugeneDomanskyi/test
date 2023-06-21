@@ -4,7 +4,7 @@ import AppLoader from '@/components/AppLoader'
 
 import styles from './styles.module.scss'
 
-const AppButton = ({children, primary, secondary, variant, outlined, rounded, small, large, fullWidth, onClick, loading, href, ...props}) => {
+const AppButton = ({children, primary, secondary, variant, outlined, rounded, small, large, fullWidth, onClick, loading, href, sx, ...props}) => {
   const classes = () => {
     return cn(
       styles.button,
@@ -26,12 +26,12 @@ const AppButton = ({children, primary, secondary, variant, outlined, rounded, sm
   }
 
   return href ? (
-    <a href={href} target="_blank" rel="noreferrer" className={classes()} {...props}>
+    <a href={href} target="_blank" rel="noreferrer" className={classes()} style={sx} {...props}>
       {loading ? (<AppLoader size={20} />) : null}
       {children}
     </a>
   ) : (
-    <button onClick={handleClick} className={classes()} {...props}>
+    <button onClick={handleClick} className={classes()} style={sx} {...props}>
       {loading ? (<AppLoader size={20} />) : null}
       {children}
     </button>
