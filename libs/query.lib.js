@@ -187,3 +187,35 @@ export const getPoolsAll = async (addresses) => {
     return res.data.pools.reduce((acc, pool) => ({...acc, [pool.token0.id]: pool}), {})
   })
 }
+
+export const getPoolDayData = async (poolId) => {
+  return client.query({
+    query: gql`
+      query poolDayDatas($startTime: Int!, $skip: Int!, $address: Bytes!) {
+        poolDayDatas(
+          first: 1000
+          skip: $skip
+          where: {pool: $address, date_gt: $startTime}
+          orderBy: date
+          orderDirection: asc
+          subgraphError: allow
+        ) {
+          date
+          volumeUSD
+          tvlUSD
+          feesUSD
+          pool {
+            feeTier
+            __typename
+          }
+          __typename
+        }
+      }
+    `,
+    variables: {
+      "address": poolId,
+      "startTime": 1619170975,
+      "skip": 0
+    }
+  })
+}

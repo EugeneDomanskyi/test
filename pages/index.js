@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Stack } from '@mui/material'
 
-import { getPools, getPoolsAll } from '@/libs/query.lib'
+import { getPools, getPoolsAll, getPoolDayData } from '@/libs/query.lib'
 
 import HomeTop from '@/components/HomeTop'
 import HomeTable from '@/components/HomeTable'
