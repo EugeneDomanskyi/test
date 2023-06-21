@@ -1,7 +1,7 @@
 .walletModal {
   background-color: #120F25;
   border-radius: 16px;
-  width: 600px;
+  width: 520px;
   max-width: 100%;
 
   .header {
@@ -64,9 +64,9 @@
   }
 
   .footer {
-    background: linear-gradient(0deg, rgba(76, 105, 255, 0.2), rgba(76, 105, 255, 0.2)), #0E0B23;
-    border-top: 1px solid #4C69FF;
-    padding: 16px 0px;
+    background: #06382F;
+    border-top: 1px solid #1D1937;
+    padding: 16px 26px;
     border-radius: 0 0 16px 16px;
 
     .link {

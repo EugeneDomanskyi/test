@@ -205,7 +205,7 @@ const HomeTable = ({ tokens }) => {
                       </TableCell>
 
                       <TableCell align="center">
-                        <AppButton variant="danger" onClick={handleRedeem(item)} disabled>Redeem</AppButton>
+                        <AppButton variant="danger" onClick={handleRedeem(item)}>Redeem</AppButton>
                       </TableCell>
                     </TableRow>
                   )

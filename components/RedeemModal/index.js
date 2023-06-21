@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import cn from 'classnames'
@@ -21,22 +21,9 @@ const RedeemModal = ({ token }) => {
   const dispatch = useDispatch()
 
   const [amount, setAmount] = useState('')
-  const [balance, setBalance] = useState(0)
-  const [balanceLoading, setBalanceLoading] = useState(true)
-  const [error, setError] = useState('')
   const [step, setStep] = useState(0)
 
   const contracts = new Contracts(network(token?.chain)?.gasLimit)
-
-  useEffect(() => {
-    if (wallet && token && token?.nft20) {
-      (async () => {
-        const result = await contracts.balanceOf(wallet, token.nft20)
-        setBalance(Math.floor(result))
-        setBalanceLoading(false)
-      })()
-    }
-  }, [wallet, token])
 
   const handleCloseModal = () => {
     dispatch($modal.set.close())
@@ -46,7 +33,6 @@ const RedeemModal = ({ token }) => {
     setDepositLoading(true)
 
     if (amount > balance) {
-      setError('Transfer amount exceeds balance')
       return
     }
 
@@ -99,14 +85,13 @@ const RedeemModal = ({ token }) => {
 
   }
 
-  const handleAmountSet = (val) => {
-    setError('')
+  const handleAmountChange = (val) => {
     setAmount(val)
   }
 
   const contentComponent = () => {
     switch (step) {
-      case 0: return <RedeemModalInput token={token} onRedeem={handleRedeem} />
+      case 0: return <RedeemModalInput token={token} amount={amount} onAmountChange={handleAmountChange} onRedeem={handleRedeem} />
       // case 1: return <RedeemModalApprove token={token} amount={amount} onBack={handleBack} onApprove={handleApprove} />
       // case 2: return <RedeemModalConfirm token={token} amount={amount} />
       // case 3: return <RedeemModalComplete token={token} amount={amount} onComplete={handleComplete} />
@@ -122,6 +107,7 @@ const RedeemModal = ({ token }) => {
 
         <div className={styles.titleRow}>
           <div className={styles.title}>Redeem</div>
+          <div className={styles.subtitle}>Convert {token.code} NFT20 into {token.collection} NFTs</div>
 
           <AppFlex row gap={8}>
             <AppFlex column flex={1} gap={2}>
@@ -142,9 +128,13 @@ const RedeemModal = ({ token }) => {
       </div>
 
       <div className={styles.footer}>
-        <AppFlex row gap={8} center>
-          <AppIcon icon="check-circle-fill" width={14} height={14} />
-          <AppText center color="#B9B8C5">Our contracts are verified and you can view them <a href={scanUrl(token.nft20, 'address', token.chain)} target="_blank" rel="noreferrer" className={styles.link}>here</a></AppText>
+        <AppFlex row gap={8} align="center">
+          <AppIcon icon="lock-star-fill" />
+          <AppFlex column >
+            <AppText>1 NFT = 1 NFT20</AppText>
+            <AppText>ALL NFT20 tokens are backed 1:1 by NFTs</AppText>
+            <AppText>Check our verified contracts <a href={scanUrl(token.nft20, 'address', token.chain)} target="_blank" rel="noreferrer" className={styles.link}>here</a></AppText>
+          </AppFlex>
         </AppFlex>
       </div>
     </div>
