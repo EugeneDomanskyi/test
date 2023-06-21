@@ -131,3 +131,59 @@ export const getPools = async (tokens) => {
     }, {})
   })
 }
+
+export const getPoolsAll = async (addresses) => {
+  const paramsString = `[${addresses.map(el => `"${el.toLowerCase()}"`)}]`
+  return client.query({
+    query: gql`
+      query pools {
+        pools(
+          where: {
+            id_in: ${paramsString}
+          }
+          orderBy: totalValueLockedUSD
+          orderDirection: desc
+          subgraphError: allow
+        ) {
+          id
+          feeTier
+          liquidity
+          sqrtPrice
+          tick
+          token0 {
+            id
+            symbol
+            name
+            decimals
+            derivedETH
+            __typename
+          }
+          token1 {
+            id
+            symbol
+            name
+            decimals
+            derivedETH
+            __typename
+          }
+          token0Price
+          token1Price
+          volumeUSD
+          volumeToken0
+          volumeToken1
+          txCount
+          totalValueLockedToken0
+          totalValueLockedToken1
+          totalValueLockedUSD
+          __typename
+        }
+        bundles(where: { id: "1" }) {
+          ethPriceUSD
+          __typename
+        }
+      }
+    `
+  }).then(res => {
+    return res.data.pools.reduce((acc, pool) => ({...acc, [pool.token0.id]: pool}), {})
+  })
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Stack } from '@mui/material'
 
-import { getPools } from '@/libs/query.lib'
+import { getPools, getPoolsAll } from '@/libs/query.lib'
 
 import HomeTop from '@/components/HomeTop'
 import HomeTable from '@/components/HomeTable'
@@ -19,8 +19,7 @@ export default function Home() {
       const result = await fetch(tokensUrl)
       if (result && result.status == 200) {
         const json = await result.json()
-
-        const pools = await getPools(json.map(el => [el.PoolId, el['NFT20 Contract'].toLowerCase()]))
+        const pools = await getPoolsAll(json.map(el => el.PoolId.toLowerCase()))
         for (const item of json) {
           if (item['NFT20 Contract'] && item['OG NFT Contract'] && item['Code'] != 'UNIOC') {
             const pool = pools.hasOwnProperty(item['NFT20 Contract'].toLowerCase()) ? pools[item['NFT20 Contract'].toLowerCase()] : {}
