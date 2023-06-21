@@ -32,7 +32,7 @@ const RedeemModal = ({ token }) => {
     if (wallet && token && token?.nft20) {
       (async () => {
         const result = await contracts.balanceOf(wallet, token.nft20)
-        setBalance(result)
+        setBalance(Math.floor(result))
         setBalanceLoading(false)
       })()
     }
@@ -54,14 +54,14 @@ const RedeemModal = ({ token }) => {
     if ( ! isApproved) {
       let hash = await contracts.setApprovalForAll(token.ognft, token.nft20)
       if (hash.error) {
-        setDepositLoading(false)
+        setLoading(false)
         toast.error("Approve collection failed", { pauseOnFocusLoss: false })
         return
       }
 
       const approve = await contracts.waitForTransaction(hash)
       if (approve.error) {
-        setDepositLoading(false)
+        setLoading(false)
         toast.error("Approve collection failed", { pauseOnFocusLoss: false })
         return 
       }
@@ -69,13 +69,22 @@ const RedeemModal = ({ token }) => {
 
     const txHash = await contracts.withdrawNFTs(amount, token.nft20)
     if (txHash.error) {
-      setDepositLoading(false)
+      setLoading(false)
       toast.error("Redeem NFTs failed", { pauseOnFocusLoss: false })
       return
     }
 
     setTransactionHash(txHash)
-    setDepositLoading(false)
+    const result = await contracts.waitForTransaction(txHash)
+    if (result.error) {
+      setLoading(false)
+      toast.error("Redeem NFTs failed", { pauseOnFocusLoss: false })
+      return 
+    }
+
+    toast.success("Your Redemption Was Successful!", { pauseOnFocusLoss: false })
+    setLoading(false)
+    handleCloseModal()
   }
 
   const handleRedeem = () => {

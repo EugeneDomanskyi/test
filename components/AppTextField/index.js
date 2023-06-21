@@ -7,7 +7,7 @@ import AppIcon from '@/components/AppIcon'
 
 import styles from './styles.module.scss'
 
-const AppTextField = ({value, label, type, onChange, onSubmit, error, variant, variantNotEmpty, autocompleteOff = false, strictNumber, labelFixed, start, end, withClear, ...props}) => {
+const AppTextField = ({value, label, type, int, onChange, onSubmit, error, variant, variantNotEmpty, autocompleteOff = false, strictNumber, labelFixed, start, end, withClear, ...props}) => {
   const [showPassword, setShowPassword] = useState(false)
 
   const handleChange = ({target: {value}}) => {
@@ -16,19 +16,21 @@ const AppTextField = ({value, label, type, onChange, onSubmit, error, variant, v
     }
   }
 
-  const handleSubmit = (event) => {
-    if (event.charCode == 13 && onSubmit) {
-      onSubmit()
-    }
-  }
-
   const handleKeyDown = (event) => {
     if (strictNumber && (event.key === '-' || event.key === '+' || event.key === 'e')) {
       event.preventDefault()
     }
 
+    if (int && ((event.key === '0' && event.target.value.length == 0) || event.key === '-' || event.key === '+' || event.key === 'e' || event.key === '.' || event.key === ',')) {
+      event.preventDefault()
+    }
+
     if (type == 'number' && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
       event.preventDefault()
+    }
+
+    if (event.key == 'Enter' && onSubmit) {
+      onSubmit()
     }
   }
 
@@ -135,8 +137,10 @@ const AppTextField = ({value, label, type, onChange, onSubmit, error, variant, v
           notchedOutline: styles.input_fieldset,
         },
       }}
+      inputProps={{
+        step: int ? 1 : null,
+      }}
       onChange={handleChange}
-      onKeyPress={handleSubmit}
       onKeyDown={handleKeyDown}
       onWheel={handleWheel}
       {...props}
