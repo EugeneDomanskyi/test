@@ -1,11 +1,11 @@
 .walletModal {
   background-color: #120F25;
-  border-radius: 20px;
+  border-radius: 1em;
   max-width: 100%;
   position: relative;
   border: 1px solid #1D1937;
-  width: 360px;
-  height: 394px;
+  width: 362px;
+  min-height: 362px;
 
   .header {
     position: relative;
@@ -41,13 +41,18 @@
     }
   }
 
-  [class*="TokenOptions__OnHover"] {
+  [class*="TokenOptions__OnHover"],
+  [class*="BrandedFooter"] {
     display: none !important;
   }
 
-  [class*="TokenButton__StyledTokenButton"],
+  [class*="TokenButton__TokenButtonRow"],
   [class*="ReverseButton__StyledReverseButton"] {
     color: #fff !important;
+
+    svg {
+      stroke: #fff !important;
+    }
   }
 }
 
