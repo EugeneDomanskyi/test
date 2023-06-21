@@ -64,7 +64,7 @@ const HomeTable = ({ tokens }) => {
 
   const handleTrade = (token) => async () => {
     if (token.nft20) {
-      /* const address = await connect()
+      const address = await connect()
       if ( ! address) {
         return
       }
@@ -72,7 +72,7 @@ const HomeTable = ({ tokens }) => {
       const result = await changeNetwork(token.chain)
       if ( ! result) {
         return
-      } */
+      }
 
       dispatch($modal.set.show({modal: 'TradeModal', props: { token: token, tokens: tokens }}))
     }
