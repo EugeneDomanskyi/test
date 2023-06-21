@@ -41,6 +41,31 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
         </svg>
       )
     }
+
+    if (icon == 'arrow-right') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.5" d="M14.43 5.93L20.5 12l-6.07 6.07M3.5 12h16.83" />
+        </svg>
+      )
+    }
+
+    if (icon == 'chevron-left') {
+      return (
+        <svg width={width ?? 16} height={height ?? 16} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path stroke={color ?? '#B9B8C5'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.5" d="M10 13.279L5.654 8.932a1.324 1.324 0 010-1.867L10 2.72" />
+        </svg>
+      )
+    }
+
+    if (icon == 'check-circle-fill') {
+      return (
+        <svg width={width ?? 48} height={height ?? 49} viewBox="0 0 48 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="48" height="48" y="0.996" fill="#fff" rx="24"></rect>
+          <path fill={color ?? '#53F19C'} d="M0 24.996c0-13.256 10.744-24 24-24s24 10.744 24 24-10.744 24-24 24-24-10.744-24-24zm34.856-4.144a2.631 2.631 0 000-3.712 2.631 2.631 0 00-3.712 0L21 27.284l-4.144-4.144a2.631 2.631 0 00-3.712 0 2.631 2.631 0 000 3.712l6 6a2.631 2.631 0 003.712 0l12-12z" />
+        </svg>
+      )
+    }
   }
 
   return getIcon()
