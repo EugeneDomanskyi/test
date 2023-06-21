@@ -12,6 +12,7 @@ import AppIcon from '@/components/AppIcon'
 import AppText from '@/components/AppText'
 import AppFlex from '@/components/AppFlex'
 import RedeemModalInput from '@/components/RedeemModalInput'
+import RedeemModalApprove from '@/components/RedeemModalApprove'
 
 import styles from './styles.module.scss'
 
@@ -74,11 +75,11 @@ const RedeemModal = ({ token }) => {
   }
 
   const handleRedeem = () => {
-    
+    setStep(1)
   }
 
   const handleBack = () => {
-
+    setStep(0)
   }
 
   const handleComplete = () => {
@@ -92,7 +93,7 @@ const RedeemModal = ({ token }) => {
   const contentComponent = () => {
     switch (step) {
       case 0: return <RedeemModalInput token={token} amount={amount} onAmountChange={handleAmountChange} onRedeem={handleRedeem} />
-      // case 1: return <RedeemModalApprove token={token} amount={amount} onBack={handleBack} onApprove={handleApprove} />
+      case 1: return <RedeemModalApprove token={token} amount={amount} onBack={handleBack} onApprove={handleApprove} />
       // case 2: return <RedeemModalConfirm token={token} amount={amount} />
       // case 3: return <RedeemModalComplete token={token} amount={amount} onComplete={handleComplete} />
     }

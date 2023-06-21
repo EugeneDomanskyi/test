@@ -41,6 +41,22 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
         </svg>
       )
     }
+
+    if (icon == 'arrow-right') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.5" d="M14.43 5.93L20.5 12l-6.07 6.07M3.5 12h16.83" />
+        </svg>
+      )
+    }
+
+    if (icon == 'chevron-left') {
+      return (
+        <svg width={width ?? 16} height={height ?? 16} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path stroke={color ?? '#B9B8C5'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.5" d="M10 13.279L5.654 8.932a1.324 1.324 0 010-1.867L10 2.72" />
+        </svg>
+      )
+    }
   }
 
   return getIcon()
