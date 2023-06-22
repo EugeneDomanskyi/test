@@ -1,31 +1,10 @@
-.infoRow {
+.box {
   padding: 16px 26px;
-  background-color: #08051C;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  border-bottom: solid #1D1937 1px;
 
-  .infoLeft {
-    font-weight: 700;
-    font-size: 18px;
-    line-height: 22px;
-    color: #fff;
-  }
-
-  .infoRight {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 27px;
-
-    .selectedCount {
-      font-weight: 700;
-      font-size: 14px;
-      line-height: 17px;
-      color: #fff;
-    }
+  &.borderTop {
+    border-top: solid #1D1937 1px;
+    border-bottom: 0;
   }
 }
 
@@ -33,7 +12,7 @@
   background-color: #08051C;
   
   .nfts {
-    padding: 0 26px;
+    padding: 26px;
     min-height: 300px;
   }
 }

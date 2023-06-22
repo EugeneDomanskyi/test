@@ -3,15 +3,21 @@ import cn from 'classnames'
 
 import AppFlex from '@/components/AppFlex'
 import AppText from '@/components/AppText'
-import AppButton from '@/components//AppButton'
 import AppIcon from '@/components/AppIcon'
+import AppButton from '@/components/AppButton'
 
 import styles from './styles.module.scss'
 
-const MintModalConfirm = ({ nfts, token, onMint }) => {
-  const handleMint = () => {
-    if (onMint) {
-      onMint()
+const MintModalApprove = ({ nfts, token, onBack, onApprove }) => {
+  const handleApprove = () => {
+    if (onApprove) {
+      onApprove()
+    }
+  }
+
+  const handleBack = () => {
+    if (onBack) {
+      onBack()
     }
   }
 
@@ -19,8 +25,8 @@ const MintModalConfirm = ({ nfts, token, onMint }) => {
     <AppFlex column>
       <AppFlex column gap={32} align="center" className={styles.content}>
         <AppFlex column gap={4}>
-          <AppText center size={20} weight={600}>Mint NFT20 Tokens</AppText>
-          <AppText center color="#B9B8C5">Your NFTs are being converted into NFT20 tokens</AppText>
+          <AppText center size={20} weight={600}>Grant Approval</AppText>
+          <AppText center color="#B9B8C5">First, you need to grant approval to our contract</AppText>
         </AppFlex>
 
         <AppFlex row center gap={8}>
@@ -41,10 +47,15 @@ const MintModalConfirm = ({ nfts, token, onMint }) => {
       </AppFlex>
 
       <AppFlex column center gap={32} className={cn(styles.box, styles.borderTop)}>
-        <AppButton primary large onClick={handleMint} sx={{ width: 200 }}>Mint</AppButton>
+        <AppButton primary large onClick={handleApprove} sx={{ width: 200 }}>Approve</AppButton>
+
+        <AppFlex row gap={8} onClick={handleBack} className={styles.link}>
+          <AppIcon icon="chevron-left" />
+          <AppText color="#B9B8C5">Go Back</AppText>
+        </AppFlex>
       </AppFlex>
     </AppFlex>
   )
 }
 
-export default MintModalConfirm
+export default MintModalApprove

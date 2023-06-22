@@ -1,47 +1,42 @@
-import { useSelector } from 'react-redux'
+import Image from 'next/image'
+import cn from 'classnames'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
-
+import AppFlex from '@/components/AppFlex'
+import AppIcon from '@/components/AppIcon'
+import AppText from '@/components/AppText'
 import AppButton from '@/components/AppButton'
 
 import styles from './styles.module.scss'
 
-const MintModalComplete = ({ nfts, token, txid, onComplete }) => {
-  const { scanUrl } = useWalletConnect()
-
+const MintModalComplete = ({ nfts, token, onComplete }) => {
   const handleComplete = () => {
-    onComplete()
-  }
-
-  const selectedNftsCount = () => {
-    let count = 0
-    for (const nft of nfts) {
-      count += nft.amount * 1
+    if (onComplete) {
+      onComplete()
     }
-
-    return count
   }
 
   return (
-    <div className={styles.content}>
-      <div className={styles.title}>
-        Congrats!
-      </div>
+    <AppFlex column>
+      <AppFlex column gap={8} align="center" className={styles.content}>
+        <AppFlex center className={styles.success}>
+          <AppIcon icon="check-circle-fill" />
+        </AppFlex>
 
-      <div className={styles.text}>
-        <div className={styles.topText}>
-          {selectedNftsCount()} NFT{selectedNftsCount() > 1 ? 's' : ''} was succesfully minted!
-        </div>
+        <AppText center size={20} weight={600}>NFT20 Mint Successful!</AppText>
 
-        <AppButton href={scanUrl(txid, 'tx', token.chain)}>
-          Check transaction details
-        </AppButton>
-      </div>
+        <AppFlex row center gap={8} className={styles.container}>
+          <div className={styles.imgRound}>
+            <Image src={token.image} width={64} height={64} alt="" />
+          </div>
 
-      <AppButton primary onClick={handleComplete} style={{width: '50%'}}>
-        Nice!
-      </AppButton>
-    </div>
+          <AppText color="#B9B8C5">You have minted {nfts.length} {token.code} NFT20 tokens</AppText>
+        </AppFlex>
+      </AppFlex>
+
+      <AppFlex center className={cn(styles.box, styles.borderTop)}>
+        <AppButton primary large onClick={handleComplete} sx={{ width: 200 }}>Got It</AppButton>
+      </AppFlex>
+    </AppFlex>
   )
 }
 

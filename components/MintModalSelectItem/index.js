@@ -1,119 +1,34 @@
-import { useEffect, useState } from 'react'
 import { Grid } from '@mui/material'
+import cn from 'classnames'
 
-import AppCheckbox from '@/components/AppCheckbox'
-import AppButton from '@/components/AppButton'
-import AppTextField from '@/components/AppTextField'
+import AppFlex from '@/components/AppFlex'
+import AppText from '@/components/AppText'
 
 import styles from './styles.module.scss'
 
-const MintModalSelectItem = ({ nft, status, isEnabled, isChecked, onCheck, amount, onAmount }) => {
-  const [localAmount, setLocalAmount] = useState(amount)
-
-  useEffect(() => {
-    setLocalAmount(amount)
-  }, [amount])
-
-  const classes = () => {
-    const result = [styles.nftItem]
-    if (! isEnabled) {
-      result.push(styles.disabled)
-    }
-    if (isChecked) {
-      result.push(styles.checked)
-    }
-    return result.join(' ')
-  }
-
+const MintModalSelectItem = ({ nft, isEnabled, isChecked, onCheck }) => {
   const handleCheck = () => {
-    if (isEnabled) {
+    if (isEnabled && onCheck) {
       onCheck()
-      onAmount(localAmount)
     }
-  }
-
-  const componentStatus = () => {
-    return (
-      <>
-        <span className={styles.nftSelectText}>Select </span>
-        <AppCheckbox checked={isChecked} onChange={() => {}} />
-      </>
-    )
-  }
-
-  const handleAmountMinus = (e) => {
-    if (localAmount > 1) {
-      onAmount(localAmount * 1 - 1)
-      setLocalAmount(localAmount * 1 - 1)
-    }
-
-  }
-
-  const handleAmountPlus = () => {
-    if (localAmount < nft.balance * 1) {
-      onAmount(localAmount * 1 + 1)
-      setLocalAmount(localAmount * 1 + 1)
-    }
-  }
-
-  const handleLocalAmountSet = (value) => {
-    setLocalAmount(value)
-  }
-
-  const handleAmountBlur = () => {
-    if (localAmount > nft.balance) {
-      onAmount(nft.balance)
-      setLocalAmount(nft.balance)
-      return
-    }
-
-    if (localAmount < 1) {
-      onAmount(1)
-      setLocalAmount(1)
-      return
-    }
-
-    onAmount(localAmount)
   }
 
   return (
-    <Grid item xs={6}>
-      <div className={classes()} onClick={handleCheck}>
-        <div className={styles.nftRow}>
-          <div className={styles.nftPreview} style={{backgroundImage: `url('${nft.preview}')`}} />
+    <Grid item sm={4} xs={6}>
+      <AppFlex column gap={12} className={cn(styles.item, {[styles.selected]: isChecked}, {[styles.disabled]: ! isEnabled})} onClick={handleCheck}>
+        <div className={styles.preview} style={{backgroundImage: `url('${nft.preview}')`}} />
 
-          <div className={styles.nftInfo}>
-            <div className={styles.nftTop}>
-              <div className={styles.nftSelect}>
-                {isEnabled ? componentStatus() : null}
-              </div>
+        <AppFlex column sx={{ padding: '0 8px' }}>
+          <AppText>{nft.title}</AppText>
+          <AppText nowrap size={10} color="#605884">ID: {nft.id}</AppText>
+        </AppFlex>
 
-              <div className={styles.nftTitle} title={nft.title}>{nft.title}</div>
-            </div>
-
-            <div className={styles.nftId} title={nft.id}>ID: {nft.id}</div>
-
-            {nft.type.toLowerCase() == 'erc1155' ? (
-              <div className={styles.nftId} title={nft.id}>Balance: {nft.balance}</div>
-            ) : null}
-          </div>
-        </div>
-        
-        {nft.type.toLowerCase() == 'erc1155' && isChecked ? (
-          <div className={styles.nftAmount} onClick={(e) => e.stopPropagation()}>
-            <AppButton onClick={handleAmountMinus} disabled={amount <= 1} style={{width: 33}}>-</AppButton>
-            <AppTextField
-              type="number"
-              value={localAmount}
-              variant="nft-amount"
-              sx={{width: '100px', textAlign: 'center'}}
-              onChange={handleLocalAmountSet}
-              onBlur={handleAmountBlur}
-            />
-            <AppButton onClick={handleAmountPlus} disabled={amount >= nft.balance * 1} style={{width: 33}}>+</AppButton>
-          </div>
-        ) : null}
-      </div>
+        <AppFlex center className={cn(styles.label, {[styles.supported]: isEnabled})}>
+          <AppText size={12}>
+            {isEnabled ? (isChecked ? 'Unselect' : 'Select') : 'NFT Not Supported'}
+          </AppText>
+        </AppFlex>
+      </AppFlex>
     </Grid>
   )
 }

@@ -1,21 +1,20 @@
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { Grid } from '@mui/material'
 import Scrollbars from 'react-custom-scrollbars-2'
+import cn from 'classnames'
 
 import AppCheckbox from '@/components/AppCheckbox'
 import AppButton from '@/components/AppButton'
-import AppLoader from '@/components/AppLoader'
 import MintModalSelectItem from '@/components/MintModalSelectItem'
 
 import styles from './styles.module.scss'
 import AppBlockLoader from '../AppBlockLoader'
+import AppFlex from '../AppFlex'
+import AppText from '../AppText'
 
-const MintModalSelect = ({ nfts, token, loading, buttonLoading, onSubmit }) => {
+const MintModalSelect = ({ nfts, token, loading, buttonLoading, onContinue }) => {
   const [availableNftCount, setAvailableNftCount] = useState(0)
   const [selectedIds, setSelectedIds] = useState([])
-  const [nftAmount, setNftAmount] = useState({})
-  const [confirm, setConfirm] = useState(false)
 
   useEffect(() => {
     setAvailableNftCount(nfts.filter(item => isEnabled(item)).length)
@@ -61,33 +60,20 @@ const MintModalSelect = ({ nfts, token, loading, buttonLoading, onSubmit }) => {
     setSelectedIds(result)
   }
 
-  const handleNftAmount = (id) => (amount) => {
-    setNftAmount(state => ({
-      ...state,
-      [id]: amount,
-    }))
-  }
+  const handleContinue = () => {
+    if (onContinue && ! buttonLoading) {
+      if (selectedIds.length) {
+        const result = []
+        for (const id of selectedIds) {
+          result.push({
+            id: id,
+            amount: 1,
+          })
+        }
 
-  const handleConfirmCheck = (checked) => {
-    setConfirm(checked)
-  }
-
-  const handleSubmit = () => {
-    if (selectedIds.length && confirm && ! buttonLoading) {
-      const result = []
-      for (const id of selectedIds) {
-        result.push({
-          id: id,
-          amount: (nftAmount[id] || 1)
-        })
+        onContinue(result)
       }
-
-      onSubmit(result)
     }
-  }
-
-  const getMaxAmount = (id) => {
-    return nfts.find(item => item.id == id)?.balance ?? 1
   }
 
   const isEnabled = (nft) => {
@@ -113,46 +99,24 @@ const MintModalSelect = ({ nfts, token, loading, buttonLoading, onSubmit }) => {
     }
   }
 
-  const getNftAmount = (id) => {
-    if (nftAmount[id]) {
-      return nftAmount[id]
-    }
-
-    const amount = getMaxAmount(id)
-    setNftAmount(state => ({
-      ...state,
-      [id]: amount,
-    }))
-
-    return amount
-  }
-
   const selectedNftsCount = () => {
     let count = 0
     for (const id of selectedIds) {
-      count += (nftAmount[id] || 1) * 1
+      count += 1
     }
 
     return count
   }
 
   return (
-    <>
-      <div className={styles.infoRow}>
-        <div className={styles.infoLeft}>
-          {availableNftCount} NFT{availableNftCount > 1 ? 's' : ''} Available
-        </div>
+    <AppFlex column>
+      <AppFlex row justify="space-between" align="center" className={styles.box}>
+        <AppText size={20} weight={600}>{availableNftCount} NFT{availableNftCount > 1 ? 's' : ''} Available</AppText>
 
-        <div className={styles.infoRight}>
-          {selectedIds.length > 0 ? (
-            <div className={styles.selectedCount}>{selectedNftsCount()} Selected</div>
-          ) : null}
-
-          {availableNftCount > 0 ? (
-            <AppCheckbox checked={checkedAll()} onChange={handleCheckAll} label="Select All" />
-          ) : null}
-        </div>
-      </div>
+        {availableNftCount > 0 ? (
+          <AppCheckbox checked={checkedAll()} onChange={handleCheckAll} label="Select All" />
+        ) : null}
+      </AppFlex>
       
       <div className={styles.content}>
         <Scrollbars
@@ -168,16 +132,14 @@ const MintModalSelect = ({ nfts, token, loading, buttonLoading, onSubmit }) => {
           ) : (
             <div className={styles.nfts}>
               {nfts.length > 0 ? (
-                <Grid container spacing={2}>
+                <Grid container spacing={3}>
                   {nfts.map((item, index) => (
                     <MintModalSelectItem
                       key={index}
                       nft={item}
+                      isEnabled={isEnabled(item)}
                       isChecked={selectedIds.includes(item.id)}
                       onCheck={handleNftCheck(item.id)}
-                      amount={getNftAmount(item.id)}
-                      onAmount={handleNftAmount(item.id)}
-                      isEnabled={isEnabled(item)}
                     />
                   ))}
                 </Grid>
@@ -191,20 +153,12 @@ const MintModalSelect = ({ nfts, token, loading, buttonLoading, onSubmit }) => {
         </Scrollbars>
       </div>
 
-      <div className={styles.buttonsBox}>
-        <AppCheckbox checked={confirm} onChange={handleConfirmCheck} label="You understand that you will be trading these NFTs at a collection level and will most probably not receive the same NFT if you choose to withdraw." />
-        
-        {availableNftCount > 0 ? (
-          <AppButton primary large fullWidth onClick={handleSubmit} loading={buttonLoading} disabled={selectedIds.length == 0 || ! confirm || buttonLoading}>
-            Approve {selectedNftsCount()} {token.collection} NFT{selectedNftsCount() > 1 ? 's' : null} Mint
-          </AppButton>
-        ) : (
-          <AppButton primary large fullWidth disabled={selectedIds.length == 0 || ! confirm}>
-            No {token.collection} found in wallet
-          </AppButton>
-        )}
-      </div>
-    </>
+      <AppFlex center className={cn(styles.box, styles.borderTop)}>
+        <AppButton primary large onClick={handleContinue} loading={buttonLoading} disabled={selectedIds.length == 0 || buttonLoading} sx={{ width: 200 }}>
+          Mint {selectedNftsCount()} {token.code} NFT20
+        </AppButton>
+      </AppFlex>
+    </AppFlex>
   )
 }
 
