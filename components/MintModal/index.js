@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
+import cn from 'classnames'
 
 import AlchemyLibrary from '@/libs/alchemy.lib'
-import Contracts, { defaultOperator, defaultContract } from '@/libs/contracts.lib'
+import Contracts from '@/libs/contracts.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import $modal from '@/store/modal'
 
 import AppIcon from '@/components/AppIcon'
-import AppAddress from '@/components/AppAddress'
-import TokenIcon from '@/components/TokenIcon'
+import AppFlex from '@/components/AppFlex'
+import AppText from '@/components/AppText'
 import MintModalSelect from '@/components/MintModalSelect'
+import MintModalApprove from '@/components/MintModalApprove'
+import MintModalWait from '@/components/MintModalWait'
 import MintModalConfirm from '@/components/MintModalConfirm'
 import MintModalComplete from '@/components/MintModalComplete'
 
@@ -22,16 +25,14 @@ const MintModal = ({ token }) => {
   const dispatch = useDispatch()
 
   const [nfts, setNfts] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [depositLoading, setDepositLoading] = useState(false)
-  const [showStep, setShowStep] = useState(false)
-  const [depositStep, setDepositStep] = useState(0)
-  const [transactionHash, setTransactionHash] = useState()
+  const [nftsLoading, setNftsLoading] = useState(true)
+  const [approveLoading, setApproveLoading] = useState(false)
+  const [step, setStep] = useState(0)
+  const [hash, setHash] = useState()
   const [preparedNfts, setPreparedNfts] = useState([])
 
   const alchemy = new AlchemyLibrary(network(token?.chain)?.alchemy)
   const contracts = new Contracts(network(token?.chain)?.gasLimit)
-  let nextStep = 1
 
   useEffect(() => {
     if (wallet) {
@@ -48,7 +49,7 @@ const MintModal = ({ token }) => {
   }, [wallet])
 
   const getNfts = async () => {
-    setLoading(true)
+    setNftsLoading(true)
     const nfts = await alchemy.getNftsForOwner(wallet, token.type)
     nfts.sort((a, b) => {
       if (a.collectionAddress == token.ognft && b.collectionAddress != token.ognft) {
@@ -62,7 +63,7 @@ const MintModal = ({ token }) => {
       return 0
     })
     setNfts(nfts)
-    setLoading(false)
+    setNftsLoading(false)
   }
 
   const handleCloseModal = () => {
@@ -70,135 +71,87 @@ const MintModal = ({ token }) => {
   }
 
   const componentStep = () => {
-    switch (depositStep) {
-      case 0: return <MintModalSelect nfts={nfts} token={token} loading={loading} buttonLoading={depositLoading} onSubmit={handleSubmit} />
-      case 1: return <MintModalConfirm step={depositStep} token={token} txid={transactionHash} showStep={showStep} nfts={preparedNfts} onCancel={handleCancel} />
-      case 2: return <MintModalConfirm step={depositStep} token={token} showStep={showStep} nfts={preparedNfts} onCancel={handleCancel} />
-      case 3: return <MintModalComplete nfts={preparedNfts} token={token} txid={transactionHash} onComplete={handleComplete} />
+    switch (step) {
+      case 0: return <MintModalSelect nfts={nfts} token={token} loading={nftsLoading} buttonLoading={approveLoading} onContinue={handleContinue} />
+      case 1: return <MintModalApprove nfts={preparedNfts} token={token} onBack={handleBack} onApprove={handleApprove} />
+      case 2: return <MintModalWait type="approve" nfts={preparedNfts} token={token} />
+      case 3: return <MintModalConfirm nfts={preparedNfts} token={token} onMint={handleMint} />
+      case 4: return <MintModalWait type="confirm" nfts={preparedNfts} token={token} />
+      case 5: return <MintModalWait type="wait" nfts={preparedNfts} token={token} />
+      case 6: return <MintModalComplete nfts={preparedNfts} token={token} onComplete={handleComplete} />
     }
   }
 
-  const handleSubmit = async (selectedNfts = preparedNfts) => {
+  const handleContinue = async (selectedNfts) => {
     setPreparedNfts(selectedNfts)
-    setDepositLoading(true)
 
+    setApproveLoading(true)
     const isApproved = await contracts.isApprovedForAll(token.ognft, wallet, token.nft20)
     if ( ! isApproved) {
-      setDepositStep(1)
-      setShowStep(true)
-      nextStep = 2
-
-      let hash = await contracts.setApprovalForAll(token.ognft, token.nft20)
-      if (hash.error) {
-        setDepositStep(0)
-        setShowStep(false)
-        nextStep = 1
-        setDepositLoading(false)
-        toast.error("Approve collection failed", { pauseOnFocusLoss: false })
-        return
-      }
-
-      setTransactionHash(hash)
-      const approve = await contracts.waitForTransaction(hash)
-      if (approve.error) {
-        setDepositStep(0)
-        setShowStep(false)
-        nextStep = 1
-        setDepositLoading(false)
-        toast.error("Approve collection failed", { pauseOnFocusLoss: false })
-        return 
-      }
+      setStep(1)
     } else {
-      nextStep = 2
+      setStep(3)
     }
-    
-    if (nextStep == 2) {
-      setDepositStep(2)
-      nextStep = 3
-
-      if (token.type == 'erc1155') {
-        let txHash = null
-        if (selectedNfts.length > 1) {
-          const ids = []
-          const amounts = []
-
-          for (const nft of selectedNfts) {
-            ids.push(nft.id)
-            amounts.push(nft.amount)
-          }
-
-          txHash = await contracts.depositNFTs(ids, token.nft20)
-        } else {
-          const nft = selectedNfts[0]
-          txHash = await contracts.depositNFT(nft.id, token.nft20)
-        }
-
-        if (txHash.error) {
-          setDepositStep(0)
-          setShowStep(false)
-          nextStep = 1
-          setDepositLoading(false)
-          toast.error("Mint NFTs failed", { pauseOnFocusLoss: false })
-          return
-        }
-
-        setTransactionHash(txHash)
-        const result = await contracts.waitForTransaction(txHash)
-        if (result.error) {
-          setDepositStep(0)
-          setShowStep(false)
-          nextStep = 1
-          setDepositLoading(false)
-          toast.error("Mint NFTs failed", { pauseOnFocusLoss: false })
-          return 
-        }
-      } else {
-        let txHash = null
-        if (selectedNfts.length > 1) {
-          const ids = []
-          for (const nft of selectedNfts) {
-            ids.push(nft.id)
-          }
-
-          txHash = await contracts.depositNFTs(ids, token.nft20)
-        } else {
-          const nft = selectedNfts[0]
-          txHash = await contracts.depositNFT(nft.id, token.nft20)
-        }
-
-        if (txHash.error) {
-          setDepositStep(0)
-          setShowStep(false)
-          nextStep = 1
-          setDepositLoading(false)
-          toast.error("Mint NFTs failed", { pauseOnFocusLoss: false })
-          return
-        }
-
-        setTransactionHash(txHash)
-        const result = await contracts.waitForTransaction(txHash)
-        if (result.error) {
-          setDepositStep(0)
-          setShowStep(false)
-          nextStep = 1
-          setDepositLoading(false)
-          toast.error("Mint NFTs failed", { pauseOnFocusLoss: false })
-          return 
-        }
-      }
-      
-      if (nextStep == 3) {
-        setDepositStep(3)
-      }
-    }
-
-    setDepositLoading(false)
+    setApproveLoading(false)
   }
 
-  const handleCancel = () => {
-    setDepositStep(0)
-    setShowStep(false)
-    nextStep = 1
+  const handleBack = () => {
+    setStep(0)
+  }
+
+  const handleApprove = async () => {
+    setStep(2)
+
+    let txHash = await contracts.setApprovalForAll(token.ognft, token.nft20)
+    if (txHash.error) {
+      setStep(0)
+      toast.error("Approve collection failed", { pauseOnFocusLoss: false })
+      return
+    }
+
+    setHash(txHash)
+    const approve = await contracts.waitForTransaction(txHash)
+    if (approve.error) {
+      setStep(0)
+      toast.error("Approve collection failed", { pauseOnFocusLoss: false })
+      return 
+    }
+
+    setStep(3)
+  }
+
+  const handleMint = async () => {
+    setStep(4)
+
+    let txHash = null
+    if (preparedNfts.length > 1) {
+      const ids = []
+      for (const nft of preparedNfts) {
+        ids.push(nft.id)
+      }
+
+      txHash = await contracts.depositNFTs(ids, token.nft20)
+    } else {
+      const nft = preparedNfts[0]
+      txHash = await contracts.depositNFT(nft.id, token.nft20)
+    }
+
+    if (txHash.error) {
+      setStep(0)
+      toast.error("Mint NFTs failed", { pauseOnFocusLoss: false })
+      return
+    }
+
+    setStep(5)
+    setHash(txHash)
+    const result = await contracts.waitForTransaction(txHash)
+    if (result.error) {
+      setStep(0)
+      toast.error("Mint NFTs failed", { pauseOnFocusLoss: false })
+      return 
+    }
+
+    setStep(6)
   }
 
   const handleComplete = () => {
@@ -212,35 +165,43 @@ const MintModal = ({ token }) => {
           <AppIcon icon="cross" color="#fff" />
         </div>
 
-        {depositStep < 3 ? (
-          <div className={styles.titleRow}>
-            <div className={styles.title}>Mint {token.code} NFT20</div>
-            <div className={styles.subtitle}>Convert {token.collection} NFT to {token.code} NFT20</div>
-            <div className={styles.wallet}>
-              <AppAddress short={8} muted noCopy address={token.ognft} />
-              <a href={scanUrl(token.ognft, 'address', token.chain)} target="_blank" rel="noreferrer">(Check contract details)</a>
-            </div>
-          </div>
-        ) : (
-          <div className={styles.collectionHeader}>
-            <div className={styles.collectionIcon}>
-              <TokenIcon icon={token.image} fit />
-            </div>
-          </div>
-        )}
+        <div className={styles.titleRow}>
+          <div className={styles.title}>Mint {token.code} NFT20</div>
+          <div className={styles.subtitle}>Convert {token.collection} NFT to {token.code} NFT20</div>
+
+          <AppFlex row gap={8}>
+            <AppFlex column flex={1} gap={2}>
+              <AppText size={10} center color="#53F19C">Pick NFTs</AppText>
+              <div className={cn(styles.progress, styles.active)} />
+            </AppFlex>
+
+            <AppFlex column flex={1} gap={2}>
+              <AppText size={10} center color={step >= 2 ? '#53F19C' : '#605884'}>Approve Transfer</AppText>
+              <div className={cn(styles.progress, {[styles.active]: step >= 2})} />
+            </AppFlex>
+
+            <AppFlex column flex={1} gap={2}>
+              <AppText size={10} center color={step == 6 ? '#53F19C' : '#605884'}>Mint NFT20</AppText>
+              <div className={cn(styles.progress, {[styles.active]: step == 6})} />
+            </AppFlex>
+          </AppFlex>
+        </div>
       </div>
 
       <div className={styles.content}>
         {componentStep()}
       </div>
       
-      {depositStep < 3 ? (
-        <div className={styles.openSea}>
-          <div className={styles.openSeaSubTitle}>
-            Our contracts are verified and you can view them <a href={scanUrl(defaultContract, 'address', token.chain)} target="_blank" rel="noreferrer">here</a>.
-          </div>
-        </div>
-      ) : null}
+      <div className={styles.footer}>
+        <AppFlex row gap={8} align="center">
+          <AppIcon icon="lock-star-fill" />
+          <AppFlex column >
+            <AppText>1 NFT = 1 NFT20</AppText>
+            <AppText>ALL NFT20 tokens are backed 1:1 by NFTs</AppText>
+            <AppText>Check our verified contracts <a href={scanUrl(token.nft20, 'address', token.chain)} target="_blank" rel="noreferrer" className={styles.link}>here</a></AppText>
+          </AppFlex>
+        </AppFlex>
+      </div>
     </div>
   )
 }
