@@ -6,7 +6,7 @@ import { SwapWidget } from '@uniswap/widgets'
 import $modal from '@/store/modal'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
-import AppIcon from '@/components/AppIcon'
+import AppIcon from '@/components/App/AppIcon'
 
 import styles from './styles.module.scss'
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
-import { signMessage, disconnect, getNetwork, getAccount, switchNetwork } from '@wagmi/core'
+import { signMessage, disconnect as wagmiDisconnect, getNetwork, getAccount, switchNetwork } from '@wagmi/core'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 
 const useWalletConnect = () => {
@@ -50,6 +50,10 @@ const useWalletConnect = () => {
   useEffect(() => {
     setWallet(isConnected ? address.toLowerCase() : null)
   }, [address, isConnected])
+
+  const disconnect = () => {
+    wagmiDisconnect()
+  }
 
   const network = (currentChain) => {
     switch (currentChain) {
@@ -176,7 +180,7 @@ const useWalletConnect = () => {
     }
   }
 
-  return { wallet, connect, network, changeNetwork, scanUrl }
+  return { wallet, connect, disconnect, network, changeNetwork, scanUrl }
 }
 
 export default useWalletConnect

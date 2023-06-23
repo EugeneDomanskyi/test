@@ -1,0 +1,23 @@
+.container {
+  width: 100%;
+  margin-left: auto;
+  box-sizing: border-box;
+  margin-right: auto;
+  display: block;
+  padding-left: 16px;
+  padding-right: 16px;
+  height: 100%;
+
+  @media (min-width: 16px) {
+    & {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+  }
+
+  @media (min-width: 1536px) {
+    & {
+      max-width: 1536px;
+    }
+  }
+}
