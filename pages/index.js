@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Stack } from '@mui/material'
 
 import { getPools } from '@/libs/query.lib'
 
+import App from '@/components/App'
 import HomeTop from '@/components/HomeTop'
 import HomeTable from '@/components/HomeTable'
-import AppBlockLoader from '@/components/AppBlockLoader'
 
 export default function Home() {
   const [loading, setLoading] = useState(true)
@@ -50,15 +49,15 @@ export default function Home() {
   }, [])
 
   return (
-    <Stack sx={{ width: '100%', pb: 2 }}>
+    <App.Flex column>
       {loading ? (
-        <AppBlockLoader height={600} />
+        <App.LoaderBlock height={600} />
       ) : (
         <>
           <HomeTop tokens={tokens} />
           <HomeTable tokens={tokens} />
         </>
       )}
-    </Stack>
+    </App.Flex>
   )
 }

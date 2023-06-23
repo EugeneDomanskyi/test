@@ -1,40 +1,39 @@
-import { Container, Stack } from '@mui/material'
+import { Container } from '@mui/material'
 
-import AppText from '@/components/AppText'
-import AppFrame from '@/components/AppFrame'
+import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const HomeTop = ({ tokens }) => {
   return (
     <div className={styles.container}>
-      <Container maxWidth="xl" className={styles.content}>
+      <App.Container className={styles.content}>
         <div className={styles.rectangle} />
 
-        <Stack spacing={2} sx={{ position: 'relative', zIndex: 1, alignItems: 'center', padding: '32px 0 16px' }}>
-          <AppText center uppercase size={40} weight={700}>
+        <App.Flex column gap={16} align="center" sx={{ position: 'relative', zIndex: 1, padding: '32px 0 16px' }}>
+          <App.Text center uppercase size={40} weight={700}>
             Trade, Mint & Redeem your nft-20 tokens
-          </AppText>
+          </App.Text>
 
-          <AppText center size={16} color="rgba(255, 255, 255, 0.8)">
+          <App.Text center size={16} color="rgba(255, 255, 255, 0.8)">
             The Future of NFT Trading is here
-          </AppText>
+          </App.Text>
 
-          <Stack direction="row" spacing={2}>
-            <AppFrame radius={12} gradient="linear-gradient(101.9deg, #631DFF 0%, #A91DFF 100%)" background="#0E0B23">
-              <Stack sx={{ width: 173 }} >
-                <AppText center weight={400} color="#B9B8C5">
+          <App.Flex gap={16}>
+            <App.Frame radius={12} gradient="linear-gradient(101.9deg, #631DFF 0%, #A91DFF 100%)" background="#0E0B23">
+              <App.Flex column width={173}>
+                <App.Text center weight={400} color="#B9B8C5">
                   Total Tokens
-                </AppText>
+                </App.Text>
 
-                <AppText center size={32} weight={700}>
+                <App.Text center size={32} weight={700}>
                   {tokens.length}
-                </AppText>
-              </Stack>
-            </AppFrame>
-          </Stack>
-        </Stack>
-      </Container>
+                </App.Text>
+              </App.Flex>
+            </App.Frame>
+          </App.Flex>
+        </App.Flex>
+      </App.Container>
     </div>
   )
 }

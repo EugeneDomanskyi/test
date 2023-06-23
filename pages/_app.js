@@ -1,22 +1,22 @@
 import { Provider } from 'react-redux'
-import dynamic from 'next/dynamic'
+import Head from 'next/head'
+import { ToastContainer } from 'react-toastify'
+
 import { getDefaultWallets, RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
 import { configureChains, createClient, WagmiConfig } from 'wagmi'
 import { polygon, mainnet, bsc } from 'wagmi/chains'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 import merge from 'lodash.merge'
-import { ToastContainer, toast } from 'react-toastify'
 
 import store from '@/store'
 
-import AppLayout from '@/components/AppLayout'
+import App from '@/components/App'
 
-import '@rainbow-me/rainbowkit/styles.css'
 import 'react-toastify/dist/ReactToastify.css'
+import '@rainbow-me/rainbowkit/styles.css'
 import '@uniswap/widgets/fonts.css'
 import '@/styles/globals.css'
-import Head from 'next/head'
 
 //const initialChain = process.env.NEXT_PUBLIC_APP_ENV == 'production' ? [mainnet, polygon] : [goerli, polygonMumbai]
 const initialChain = [polygon, mainnet, bsc]
@@ -55,8 +55,6 @@ const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
   },
 })
 
-const Modal = dynamic(() => import('@/components/Modal'), {ssr: false})
-
 function MyApp({ Component, pageProps }) { 
   return (
     <WagmiConfig client={wagmiClient}>
@@ -66,11 +64,11 @@ function MyApp({ Component, pageProps }) {
             <title>NFT20 | NFT Trading Platform</title>
           </Head>
 
-          <AppLayout>
+          <App.Layout>
             <Component {...pageProps} />
-          </AppLayout>
+          </App.Layout>
 
-          <Modal />
+          <App.Modal />
           <ToastContainer autoClose={3000} />
         </Provider>
       </RainbowKitProvider>

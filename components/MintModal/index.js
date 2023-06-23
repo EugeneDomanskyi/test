@@ -6,16 +6,15 @@ import cn from 'classnames'
 import AlchemyLibrary from '@/libs/alchemy.lib'
 import Contracts from '@/libs/contracts.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
+
 import $modal from '@/store/modal'
 
-import AppIcon from '@/components/AppIcon'
-import AppFlex from '@/components/AppFlex'
-import AppText from '@/components/AppText'
-import MintModalSelect from '@/components/MintModalSelect'
-import MintModalApprove from '@/components/MintModalApprove'
-import MintModalWait from '@/components/MintModalWait'
-import MintModalConfirm from '@/components/MintModalConfirm'
-import MintModalComplete from '@/components/MintModalComplete'
+import App from '@/components/App'
+import MintModalSelect from '@/components/MintModal/MintModalSelect'
+import MintModalApprove from '@/components/MintModal/MintModalApprove'
+import MintModalWait from '@/components/MintModal/MintModalWait'
+import MintModalConfirm from '@/components/MintModal/MintModalConfirm'
+import MintModalComplete from '@/components/MintModal/MintModalComplete'
 
 import styles from './styles.module.scss'
 
@@ -162,29 +161,29 @@ const MintModal = ({ token }) => {
     <div className={styles.walletModal}>
       <div className={styles.header}>
         <div className={styles.closeButton} onClick={handleCloseModal}>
-          <AppIcon icon="cross" color="#fff" />
+          <App.Icon icon="cross" color="#fff" />
         </div>
 
         <div className={styles.titleRow}>
           <div className={styles.title}>Mint {token.code} NFT20</div>
           <div className={styles.subtitle}>Convert {token.collection} NFT to {token.code} NFT20</div>
 
-          <AppFlex row gap={8}>
-            <AppFlex column flex={1} gap={2}>
-              <AppText size={10} center color="#53F19C">Pick NFTs</AppText>
+          <App.Flex row gap={8}>
+            <App.Flex column flex={1} gap={2}>
+              <App.Text size={10} center color="#53F19C">Pick NFTs</App.Text>
               <div className={cn(styles.progress, styles.active)} />
-            </AppFlex>
+            </App.Flex>
 
-            <AppFlex column flex={1} gap={2}>
-              <AppText size={10} center color={step >= 2 ? '#53F19C' : '#605884'}>Approve Transfer</AppText>
+            <App.Flex column flex={1} gap={2}>
+              <App.Text size={10} center color={step >= 2 ? '#53F19C' : '#605884'}>Approve Transfer</App.Text>
               <div className={cn(styles.progress, {[styles.active]: step >= 2})} />
-            </AppFlex>
+            </App.Flex>
 
-            <AppFlex column flex={1} gap={2}>
-              <AppText size={10} center color={step == 6 ? '#53F19C' : '#605884'}>Mint NFT20</AppText>
+            <App.Flex column flex={1} gap={2}>
+              <App.Text size={10} center color={step == 6 ? '#53F19C' : '#605884'}>Mint NFT20</App.Text>
               <div className={cn(styles.progress, {[styles.active]: step == 6})} />
-            </AppFlex>
-          </AppFlex>
+            </App.Flex>
+          </App.Flex>
         </div>
       </div>
 
@@ -193,14 +192,14 @@ const MintModal = ({ token }) => {
       </div>
       
       <div className={styles.footer}>
-        <AppFlex row gap={8} align="center">
-          <AppIcon icon="lock-star-fill" />
-          <AppFlex column >
-            <AppText>1 NFT = 1 NFT20</AppText>
-            <AppText>ALL NFT20 tokens are backed 1:1 by NFTs</AppText>
-            <AppText>Check our verified contracts <a href={scanUrl(token.nft20, 'address', token.chain)} target="_blank" rel="noreferrer" className={styles.link}>here</a></AppText>
-          </AppFlex>
-        </AppFlex>
+        <App.Flex row gap={8} align="center">
+          <App.Icon icon="lock-star-fill" />
+          <App.Flex column >
+            <App.Text>1 NFT = 1 NFT20</App.Text>
+            <App.Text>ALL NFT20 tokens are backed 1:1 by NFTs</App.Text>
+            <App.Text>Check our verified contracts <a href={scanUrl(token.nft20, 'address', token.chain)} target="_blank" rel="noreferrer" className={styles.link}>here</a></App.Text>
+          </App.Flex>
+        </App.Flex>
       </div>
     </div>
   )

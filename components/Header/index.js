@@ -1,17 +1,30 @@
-import { Box, Container, Stack } from '@mui/material'
-import dynamic from 'next/dynamic'
+import { useEffect, useState } from 'react'
+import cn from 'classnames'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
-//const useWalletConnect = dynamic(() => import('@/myhooks/wallet-connect'), {ssr: false})
 
-import AppIcon from '@/components/AppIcon'
-import AppText from '@/components/AppText'
-import AppButton from '@/components/AppButton'
+import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const Header = () => {
-  const { wallet, connect } = useWalletConnect()
+  const { wallet, connect, disconnect } = useWalletConnect()
+
+  const [menuShow, setMenuShow] = useState(false)
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside, false)
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside, false)
+    }
+  }, [])
+
+  const handleClickOutside = (event) => {
+    if (! event.target.closest('#wallet')) {
+      setMenuShow(false)
+    }
+  }
 
   const handleConnectWallet = async () => {
     if ( ! wallet) {
@@ -23,32 +36,49 @@ const Header = () => {
     return wallet ? (wallet.slice(0, 6) + '...' + wallet.slice(wallet.length - 6)) : ''
   }
 
+  const handleMenuToggle = () => {
+    setMenuShow( ! menuShow)
+  }
+
+  const handleDisconnect = () => {
+    disconnect()
+    setMenuShow(false)
+  }
+
   return (
     <div className={styles.container}>
-      <Container maxWidth="xl" sx={{ height: '100%' }}>
-        <Stack direction="row" sx={{ height: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Stack sx={{ width: 32, height: 32, borderRadius: '50%', background: '#C8FD7C', alignItems: 'center', justifyContent: 'center' }}>
-              <AppIcon icon="logo" />
-            </Stack>
+      <App.Container height="100%">
+        <App.Flex row height="100%" align="center" justify="space-between">
+          <App.Flex row gap={8} align="center">
+            <App.Flex center width={32} height={32} sx={{ borderRadius: '50%', background: '#C8FD7C' }}>
+              <App.Icon icon="logo" />
+            </App.Flex>
 
-            <AppText size={16} weight={700}>nft-20.org</AppText>
-          </Stack>
+            <App.Text size={16} weight={700}>nft-20.org</App.Text>
+          </App.Flex>
 
           {wallet ? (
-            <AppButton primary large outlined rounded>
-              <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-                <Box sx={{ width: 28, height: 28, borderRadius: '50%', background: 'linear-gradient(91.77deg, #E792E4 2.92%, #B545BE 36.09%, #7931CB 70.47%, #4D42C9 100%)' }} />
-                <span>{shorterAddress()}</span>
-              </Stack>
-            </AppButton>
+            <App.Flex sx={{ position: 'relative' }} id="wallet">
+              <App.Button primary large outlined rounded onClick={handleMenuToggle}>
+                <App.Flex row gap={8} align="center">
+                  <App.Flex width={28} height={28} sx={{ borderRadius: '50%', background: 'linear-gradient(91.77deg, #E792E4 2.92%, #B545BE 36.09%, #7931CB 70.47%, #4D42C9 100%)' }} />
+                  <span>{shorterAddress()}</span>
+                </App.Flex>
+              </App.Button>
+
+              <div className={cn(styles.menu, {[styles.active]: menuShow})}>
+                <App.Button primary fullWidth onClick={handleDisconnect}>
+                <App.Icon icon="logout" /> Disconnect
+                </App.Button>
+              </div>
+            </App.Flex>
           ) : (
-            <AppButton primary large onClick={handleConnectWallet}>
+            <App.Button primary large onClick={handleConnectWallet}>
               Connect Wallet
-            </AppButton>
+            </App.Button>
           )}
-        </Stack>
-      </Container>
+        </App.Flex>
+      </App.Container>
     </div>
   )
 }
