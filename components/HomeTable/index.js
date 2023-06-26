@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux'
 import Image from 'next/image'
 import { Container, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel } from '@mui/material'
 import numeral from 'numeral'
+import { useRouter } from 'next/router'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 
@@ -17,6 +18,7 @@ const HomeTable = ({ tokens }) => {
   const { connect, changeNetwork } = useWalletConnect()
 
   const dispatch = useDispatch()
+  const router = useRouter()
 
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('collection')
@@ -62,7 +64,8 @@ const HomeTable = ({ tokens }) => {
     return 0
   }
 
-  const handleTrade = (token) => async () => {
+  const handleTrade = (token) => async (e) => {
+    e.stopPropagation()
     if (token.nft20) {
       const address = await connect()
       if ( ! address) {
@@ -78,7 +81,8 @@ const HomeTable = ({ tokens }) => {
     }
   }
 
-  const handleMint = (token) => async () => {
+  const handleMint = (token) => async (e) => {
+    e.stopPropagation()
     const address = await connect()
     if ( ! address) {
       return
@@ -92,7 +96,8 @@ const HomeTable = ({ tokens }) => {
     dispatch($modal.set.show({modal: 'MintModal', props: { token: token }}))
   }
 
-  const handleRedeem = (token) => async () => {
+  const handleRedeem = (token) => async (e) => {
+    e.stopPropagation()
     const address = await connect()
     if ( ! address) {
       return
@@ -104,6 +109,10 @@ const HomeTable = ({ tokens }) => {
     }
 
     dispatch($modal.set.show({modal: 'RedeemModal', props: { token: token }}))
+  }
+
+  const onPressToken = (token) => () => {
+    router.push(`pool/${token.poolId}`)
   }
 
   return (
@@ -185,7 +194,10 @@ const HomeTable = ({ tokens }) => {
               <TableBody>
                 {sortedTokens().map((item, index) => {
                   return (
-                    <TableRow key={index}  sx={{ '& th, & td': { borderColor: 'rgba(255, 255, 255, 0.08)' } }}>
+                    <TableRow
+                      key={index}
+                      onClick={onPressToken(item)}
+                      sx={{ '& th, & td': { borderColor: 'rgba(255, 255, 255, 0.08)' }, '&:hover': {backgroundColor: 'rgba(255,255,255,0.1)', cursor: 'pointer'} }}>
                       <TableCell>
                         <Stack spacing={2} direction="row" sx={{ alignItems: 'center' }}>
                           <Image src={item.image} width={32} height={32} alt="" />

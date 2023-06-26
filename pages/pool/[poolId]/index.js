@@ -21,6 +21,8 @@ const CHART_OPTIONS = [
 ]
 
 const USDTImage = 'https://raw.githubusercontent.com/Uniswap/assets/master/blockchains/polygon/assets/0xc2132D05D31c914a87C6611C10748AEb04B58e8F/logo.png'
+const CHART_SECTION_HEIGHT = 450
+const CHART_HEIGHT = 400
 
 const Chart = dynamic(() => import('@/components/Chart'), {
   ssr: false
@@ -35,7 +37,7 @@ const PoolPage = () => {
 
   const [poolData, setPoolData] = useState({})
   const [chartData, setChartData] = useState([])
-  const [chartView, setChartView] = useState(CHART_OPTIONS[1].key)
+  const [chartView, setChartView] = useState(CHART_OPTIONS[0].key)
   const [isShowTooltip, setIsShowTooltip] = useState(false)
 
   useEffect(() => {
@@ -68,7 +70,7 @@ const PoolPage = () => {
               <AppText size={16}>1 { poolData.token1?.symbol } = { numeral(poolData.token0Price).format('0.[0000]') } { poolData.token0?.symbol }</AppText>
             </AppFlex>
           </AppCard>
-          <AppFlex gap={16}>
+          <AppFlex gap={16} sx={{height: CHART_SECTION_HEIGHT}}>
             <AppCard style={{flex: 1}}>
               <AppText sx={{marginBottom: 10}}>Total Tokens Locked</AppText>
               <AppFlex align="center" sx={{marginBottom: 10}}>
@@ -76,22 +78,32 @@ const PoolPage = () => {
                 <AppText size={16}>{ poolData.token0?.symbol }</AppText>
                 <AppText size={16} sx={{marginLeft: 'auto'}}>{ numeral(poolData.totalValueLockedToken0).format('$0.00a') }</AppText>
               </AppFlex>
-              <AppFlex align="center">
+              <AppFlex align="center" sx={{marginBottom: 16}}>
                 <Image src={USDTImage} width={30} height={30} alt="" style={{borderRadius: '50%', marginRight: 10}} />
                 <AppText size={16}>{ poolData.token1?.symbol }</AppText>
                 <AppText size={16} sx={{marginLeft: 'auto'}}>{ numeral(poolData.totalValueLockedToken1).format('$0.00a') }</AppText>
               </AppFlex>
+              <AppText size={16} color="rgb(195, 197, 203)">TVL</AppText>
+              <AppText size={24}>{numeral(poolData.totalValueLockedToken1).format('$0.00a')}</AppText>
+              <AppText size={16} sx={{marginBottom: 16}}></AppText>
+              <AppText size={16} color="rgb(195, 197, 203)">Volume 24h</AppText>
+              <AppText size={24}>{numeral(poolData.totalValueLockedToken1).format('$0.00a')}</AppText>
+              <AppText size={16} sx={{marginBottom: 16}}></AppText>
+              <AppText size={16} color="rgb(195, 197, 203)">24h Fees</AppText>
+              <AppText size={24}>{numeral(poolData.totalValueLockedToken1).format('$0.00a')}</AppText>
+              <AppText size={16} sx={{marginBottom: 16}}></AppText>
             </AppCard>
             <AppCard>
               <AppFlex justify={'flex-end'} sx={{marginBottom: 16}}>
                 <AppTabs
                   width={250}
-                  height={24}
                   options={CHART_OPTIONS}
                   onChange={handleChangeTab}
                   active={chartView} />
               </AppFlex>
               <Chart
+                width={1000}
+                height={CHART_HEIGHT}
                 data={chartData}
                 dataKey={CHART_OPTIONS.find(o => o.key === chartView).field}
                 onShowTooltip={() => setIsShowTooltip(true)}

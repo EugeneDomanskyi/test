@@ -19,9 +19,9 @@ const AppButton = ({children, primary, secondary, variant, outlined, rounded, sm
     )
   }
 
-  const handleClick = () => {
+  const handleClick = (e) => {
     if (onClick) {
-      onClick()
+      onClick(e)
     }
   }
 
