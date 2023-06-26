@@ -195,8 +195,11 @@ const HomeTable = ({ tokens }) => {
                   return (
                     <TableRow
                       key={index}
-                      onClick={onPressToken(item)}
-                      sx={{ '& th, & td': { borderColor: 'rgba(255, 255, 255, 0.08)' }, '&:hover': {backgroundColor: 'rgba(255,255,255,0.1)', cursor: 'pointer'} }}>
+                      // onClick={onPressToken(item)}
+                      sx={{
+                        '& th, & td': { borderColor: 'rgba(255, 255, 255, 0.08)' },
+                        // '&:hover': {backgroundColor: 'rgba(255,255,255,0.1)', cursor: 'pointer'},
+                      }}>
                       <TableCell>
                         <App.Flex gap={16} align="center">
                           <Image src={item.image} width={32} height={32} alt="" />
