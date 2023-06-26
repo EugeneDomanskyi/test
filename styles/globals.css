@@ -67,3 +67,9 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.scrollThumb {
+  background-color: #AAA3CF;
+  border-radius: 3px;
+  z-index: 3;
+}

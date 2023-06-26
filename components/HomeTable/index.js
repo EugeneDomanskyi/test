@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import Image from 'next/image'
-import { Container, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel } from '@mui/material'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel } from '@mui/material'
 import numeral from 'numeral'
 import { useRouter } from 'next/router'
 
@@ -9,8 +9,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 
 import $modal from '@/store/modal'
 
-import AppText from '@/components/AppText'
-import AppButton from '@/components/AppButton'
+import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
@@ -117,8 +116,8 @@ const HomeTable = ({ tokens }) => {
 
   return (
     <div className={styles.container}>
-      <Container maxWidth="xl" className={styles.content}>
-        <Paper sx={{ width: '100%', border: '1px solid rgba(255, 255, 255, 0.08)', background: 'linear-gradient(0deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.04)), #09051D' }}>
+      <App.Container maxWidth="xl" className={styles.content}>
+        <App.Flex width="100%" sx={{border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: 4, background: 'linear-gradient(0deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.04)), #09051D' }}>
           <TableContainer>
             <Table>
               <TableHead>
@@ -154,7 +153,7 @@ const HomeTable = ({ tokens }) => {
                   <TableCell
                     align='center'
                   >
-                    <AppText center weight={600} color="rgba(185, 184, 197, 0.8)">Blockchain</AppText>
+                    <App.Text center weight={600} color="rgba(185, 184, 197, 0.8)">Blockchain</App.Text>
                   </TableCell>
 
                   <TableCell
@@ -199,19 +198,19 @@ const HomeTable = ({ tokens }) => {
                       onClick={onPressToken(item)}
                       sx={{ '& th, & td': { borderColor: 'rgba(255, 255, 255, 0.08)' }, '&:hover': {backgroundColor: 'rgba(255,255,255,0.1)', cursor: 'pointer'} }}>
                       <TableCell>
-                        <Stack spacing={2} direction="row" sx={{ alignItems: 'center' }}>
+                        <App.Flex gap={16} align="center">
                           <Image src={item.image} width={32} height={32} alt="" />
 
-                          <Stack>
-                            <AppText weight={700}>{item.collection}</AppText>
-                            <AppText size={12} weight={400} color="#B9B8C5">{item.game}</AppText>
-                            <AppText size={12} weight={400} color="#B9B8C5">{item.code}</AppText>
-                          </Stack>
-                        </Stack>
+                          <App.Flex column>
+                            <App.Text weight={700}>{item.collection}</App.Text>
+                            <App.Text size={12} weight={400} color="#B9B8C5">{item.game}</App.Text>
+                            <App.Text size={12} weight={400} color="#B9B8C5">{item.code}</App.Text>
+                          </App.Flex>
+                        </App.Flex>
                       </TableCell>
 
                       <TableCell align="center">
-                        <AppText center>{item.pool?.id ? numeral(item.price).format('$0.[0000]') : '-' }</AppText>
+                        <App.Text center>{item.pool?.id ? numeral(item.price).format('$0.[0000]') : '-' }</App.Text>
                       </TableCell>
 
                       <TableCell align="center">
@@ -219,7 +218,7 @@ const HomeTable = ({ tokens }) => {
                       </TableCell>
 
                       <TableCell align="center">
-                        <AppText center>{item.pool?.id ? numeral(item.tvl).format('$0.[00]') : '-'}</AppText>
+                        <App.Text center>{item.pool?.id ? numeral(item.tvl).format('$0.[00]') : '-'}</App.Text>
                       </TableCell>
 
                       <TableCell align="center">
@@ -231,11 +230,11 @@ const HomeTable = ({ tokens }) => {
                       </TableCell>
 
                       <TableCell align="center">
-                        <AppButton variant="success" onClick={handleMint(item)}>Mint</AppButton>
+                        <App.Button variant="success" onClick={handleMint(item)}>Mint</App.Button>
                       </TableCell>
 
                       <TableCell align="center">
-                        <AppButton variant="danger" onClick={handleRedeem(item)}>Redeem</AppButton>
+                        <App.Button variant="danger" onClick={handleRedeem(item)}>Redeem</App.Button>
                       </TableCell>
                     </TableRow>
                   )
@@ -253,8 +252,8 @@ const HomeTable = ({ tokens }) => {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           /> */}
-        </Paper>
-      </Container>
+        </App.Flex>
+      </App.Container>
     </div>
   )
 }

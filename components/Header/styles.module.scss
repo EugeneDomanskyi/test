@@ -8,4 +8,23 @@
   background: rgba(9, 5, 29, 0.6);
   border-bottom: 0.5px solid #311B92;
   backdrop-filter: blur(6px);
+
+  .menu {
+    position: absolute;
+    background-color: rgba(9, 5, 29, 0.8);
+    border: solid #7204FF 1px;
+    border-radius: 12px;
+    right: 0;
+    top: 120%;
+    padding: 8px;
+    visibility: hidden;
+    opacity: 0;
+    min-width: 100%;
+    transition: all .2s ease 0s;
+
+    &.active {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
 }

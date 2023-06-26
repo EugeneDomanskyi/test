@@ -8,13 +8,11 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 
 import $modal from '@/store/modal'
 
-import AppIcon from '@/components/AppIcon'
-import AppText from '@/components/AppText'
-import AppFlex from '@/components/AppFlex'
-import RedeemModalInput from '@/components/RedeemModalInput'
-import RedeemModalApprove from '@/components/RedeemModalApprove'
-import RedeemModalConfirm from '@/components/RedeemModalConfirm'
-import RedeemModalComplete from '@/components/RedeemModalComplete'
+import App from '@/components/App'
+import RedeemModalInput from '@/components/RedeemModal/RedeemModalInput'
+import RedeemModalApprove from '@/components/RedeemModal/RedeemModalApprove'
+import RedeemModalConfirm from '@/components/RedeemModal/RedeemModalConfirm'
+import RedeemModalComplete from '@/components/RedeemModal/RedeemModalComplete'
 
 import styles from './styles.module.scss'
 
@@ -25,7 +23,6 @@ const RedeemModal = ({ token }) => {
 
   const [amount, setAmount] = useState('')
   const [step, setStep] = useState(0)
-  const [loading, setLoading] = useState(false)
   const [hash, setHash] = useState()
 
   const contracts = new Contracts(network(token?.chain)?.gasLimit)
@@ -35,7 +32,6 @@ const RedeemModal = ({ token }) => {
   }
 
   const handleApprove = async () => {
-    setLoading(true)
     setStep(2)
 
     /* const isApproved = await contracts.isApprovedForAll(token.ognft, wallet, token.nft20)
@@ -60,7 +56,6 @@ const RedeemModal = ({ token }) => {
     const txHash = await contracts.withdrawNFTs(amount, token.nft20)
     if (txHash.error) {
       setStep(0)
-      setLoading(false)
       toast.error("Redeem NFTs failed", { pauseOnFocusLoss: false })
       return
     }
@@ -69,13 +64,11 @@ const RedeemModal = ({ token }) => {
     const result = await contracts.waitForTransaction(txHash)
     if (result.error) {
       setStep(0)
-      setLoading(false)
       toast.error("Redeem NFTs failed", { pauseOnFocusLoss: false })
       return 
     }
 
     toast.success("Your Redemption Was Successful!", { pauseOnFocusLoss: false })
-    setLoading(false)
     setStep(3)
   }
 
@@ -104,24 +97,24 @@ const RedeemModal = ({ token }) => {
     <div className={styles.walletModal}>
       <div className={styles.header}>
         <div className={styles.closeButton} onClick={handleCloseModal}>
-          <AppIcon icon="cross" color="#fff" />
+          <App.Icon icon="cross" color="#fff" />
         </div>
 
         <div className={styles.titleRow}>
           <div className={styles.title}>Redeem</div>
           <div className={styles.subtitle}>Convert {token.code} NFT20 into {token.collection} NFTs</div>
 
-          <AppFlex row gap={8}>
-            <AppFlex column flex={1} gap={2}>
-              <AppText size={10} center color="#53F19C">Redeem NFT20</AppText>
+          <App.Flex row gap={8}>
+            <App.Flex column flex={1} gap={2}>
+              <App.Text size={10} center color="#53F19C">Redeem NFT20</App.Text>
               <div className={cn(styles.progress, styles.active)} />
-            </AppFlex>
+            </App.Flex>
 
-            <AppFlex column flex={1} gap={2}>
-              <AppText size={10} center color={step == 3 ? '#53F19C' : '#605884'}>Successful</AppText>
+            <App.Flex column flex={1} gap={2}>
+              <App.Text size={10} center color={step == 3 ? '#53F19C' : '#605884'}>Successful</App.Text>
               <div className={cn(styles.progress, {[styles.active]: step == 3})} />
-            </AppFlex>
-          </AppFlex>
+            </App.Flex>
+          </App.Flex>
         </div>
       </div>
 
@@ -130,14 +123,14 @@ const RedeemModal = ({ token }) => {
       </div>
 
       <div className={styles.footer}>
-        <AppFlex row gap={8} align="center">
-          <AppIcon icon="lock-star-fill" />
-          <AppFlex column >
-            <AppText>1 NFT = 1 NFT20</AppText>
-            <AppText>ALL NFT20 tokens are backed 1:1 by NFTs</AppText>
-            <AppText>Check our verified contracts <a href={scanUrl(token.nft20, 'address', token.chain)} target="_blank" rel="noreferrer" className={styles.link}>here</a></AppText>
-          </AppFlex>
-        </AppFlex>
+        <App.Flex row gap={8} align="center">
+          <App.Icon icon="lock-star-fill" />
+          <App.Flex column >
+            <App.Text>1 NFT = 1 NFT20</App.Text>
+            <App.Text>ALL NFT20 tokens are backed 1:1 by NFTs</App.Text>
+            <App.Text>Check our verified contracts <a href={scanUrl(token.nft20, 'address', token.chain)} target="_blank" rel="noreferrer" className={styles.link}>here</a></App.Text>
+          </App.Flex>
+        </App.Flex>
       </div>
     </div>
   )

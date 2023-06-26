@@ -6,7 +6,7 @@ import { SwapWidget } from '@uniswap/widgets'
 import $modal from '@/store/modal'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
-import AppIcon from '@/components/AppIcon'
+import AppIcon from '@/components/App/AppIcon'
 
 import styles from './styles.module.scss'
 
@@ -38,12 +38,12 @@ const TradeModal = ({ token, tokens }) => {
   }
 
   const jsonRpcUrlMap = {
-    1: [`https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`],
+    1: [`https://mainnet.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_ID}`, `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`],
     56: [`https://bsc-dataseed1.binance.org/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`],
-    137: [`https://polygon-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`],
+    137: [`https://polygon-mainnet.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_ID}`, `https://polygon-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`],
   }
 
-  const jsonRpcUrl = 'https://cloudflare-eth.com'
+  const jsonRpcEndpoint = 'https://cloudflare-eth.com'
 
   useEffect(() => {
     if (data?.provider) {
@@ -89,7 +89,7 @@ const TradeModal = ({ token, tokens }) => {
 
       <div className={styles.content}>
         {provider ? (
-          <SwapWidget theme={theme} provider={provider} onError={handleError} jsonRpcEndpoint={jsonRpcUrl} defaultChainId={chainId} defaultInputTokenAddress={token.nft20} defaultOutputTokenAddress={USDT[token.chain.toLowerCase()]} tokenList={getTokenList()} hideConnectionUI={true} brandedFooter={false} />
+          <SwapWidget theme={theme} provider={provider} onError={handleError} defaultChainId={chainId} defaultInputTokenAddress={token.nft20} defaultOutputTokenAddress={USDT[token.chain.toLowerCase()]} tokenList={getTokenList()} hideConnectionUI={true} brandedFooter={false} />
         ) : null}
       </div>
     </div>
