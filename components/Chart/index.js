@@ -2,7 +2,7 @@ import { BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar, Responsive
 import numeral from 'numeral'
 import moment from 'moment'
 
-import AppText from '@/components/AppText'
+import AppText from '@/components/App/AppText'
 
 const Chart = ({data, dataKey, width, height, onShowTooltip, onHideTooltip}) => {
 

@@ -1,6 +1,6 @@
 import styles from './styles.module.scss'
 
-import AppText from '@/components/AppText'
+import AppText from '@/components/App/AppText'
 
 const AppTabs = ({width = '100%', height = '100%', options, active, onChange}) => {
   const activeIndex = options.findIndex(o => o.key === active)

@@ -222,11 +222,11 @@ const HomeTable = ({ tokens }) => {
                       </TableCell>
 
                       <TableCell align="center">
-                        <AppText center>{item.pool?.id ? numeral(item.pool?.volumeToken1).format('$0.[00]') : '-'}</AppText>
+                        <App.Text center>{item.pool?.id ? numeral(item.pool?.volumeToken1).format('$0.[00]') : '-'}</App.Text>
                       </TableCell>
 
                       <TableCell align="center">
-                        <AppButton primary onClick={handleTrade(item)}>Trade</AppButton>
+                        <App.Button primary onClick={handleTrade(item)}>Trade</App.Button>
                       </TableCell>
 
                       <TableCell align="center">

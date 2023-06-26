@@ -9,8 +9,8 @@ import Image from 'next/image'
 import { getPoolDayData, getPool } from '@/libs/query.lib'
 import $app from '@/store/app'
 
-import AppFlex from '@/components/AppFlex'
-import AppText from '@/components/AppText'
+import AppFlex from '@/components/App/AppFlex'
+import AppText from '@/components/App/AppText'
 import AppCard from '@/components/AppCard'
 import AppTabs from '@/components/AppTabs'
 
