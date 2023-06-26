@@ -86,48 +86,132 @@ export const getTokensPrice = (addresses) => {
     })
 }
 
-export const getPools = async (tokens) => {
-  const promises = tokens.filter(([poolId]) => Boolean(poolId)).map(([poolId, address]) => {
-    return client.query({
-      query: gql`
-        query pools {
-          pools(
-            first:1
-            where: {
-              id: "${poolId}"
-            }
-          ) {
+export const getPool = async (poolId) => {
+  return client.query({
+    query: gql`
+      query pool($poolAddress: String!) {
+        pool(id: $poolAddress) {
+          tick
+          token0 {
+            symbol
             id
-            token0 {
-              id
-              symbol
-            }
-            token0Price
-            token1 {
-              id
-              symbol
-            }
-            token1Price
-            totalValueLockedUSD
-            totalValueLockedUSDUntracked
-            volumeToken0
-            volumeToken1
+            decimals
+            __typename
           }
+          token1 {
+            symbol
+            id
+            decimals
+            __typename
+          }
+          feeTier
+          sqrtPrice
+          liquidity
+          token0Price
+          token1Price
+          volumeToken0
+          volumeToken1
+          totalValueLockedToken0
+          totalValueLockedToken1
+          totalValueLockedUSD
+          liquidity
+          __typename
         }
-      `}).then(res => {
-        const [pool] = res.data.pools
-        return {
-          address: address,
-          pool: pool
-        }
-      })
-  })
-  return await Promise.all(promises).then(res => {
-    return res.reduce((acc, pool) => {
-      return {
-        ...acc,
-        [pool.address.toLowerCase()]: pool.pool,
       }
-    }, {})
+    `,
+    variables: {
+      "poolAddress": poolId
+    }}).then(res => {
+      return res.data.pool
+    })
+}
+
+export const getPoolsAll = async (addresses) => {
+  const paramsString = `[${addresses.map(el => `"${el.toLowerCase()}"`)}]`
+  return client.query({
+    query: gql`
+      query pools {
+        pools(
+          where: {
+            id_in: ${paramsString}
+          }
+          orderBy: totalValueLockedUSD
+          orderDirection: desc
+          subgraphError: allow
+        ) {
+          id
+          feeTier
+          liquidity
+          sqrtPrice
+          tick
+          token0 {
+            id
+            symbol
+            name
+            decimals
+            derivedETH
+            __typename
+          }
+          token1 {
+            id
+            symbol
+            name
+            decimals
+            derivedETH
+            __typename
+          }
+          token0Price
+          token1Price
+          volumeUSD
+          volumeToken0
+          volumeToken1
+          txCount
+          totalValueLockedToken0
+          totalValueLockedToken1
+          totalValueLockedUSD
+          __typename
+        }
+        bundles(where: { id: "1" }) {
+          ethPriceUSD
+          __typename
+        }
+      }
+    `
+  }).then(res => {
+    return res.data.pools.reduce((acc, pool) => ({...acc, [pool.token0.id]: pool}), {})
+  })
+}
+
+export const getPoolDayData = async (poolId) => {
+  return client.query({
+    query: gql`
+      query poolDayDatas($startTime: Int!, $skip: Int!, $address: Bytes!) {
+        poolDayDatas(
+          first: 1000
+          skip: $skip
+          where: {pool: $address, date_gt: $startTime}
+          orderBy: date
+          orderDirection: asc
+          subgraphError: allow
+        ) {
+          date
+          volumeUSD
+          tvlUSD
+          feesUSD
+          pool {
+            feeTier
+            __typename
+          }
+          __typename
+        }
+      }
+    `,
+    variables: {
+      "address": poolId,
+      "startTime": 1619170975,
+      "skip": 0
+    }
+  }).then(res => {
+    return res.data.poolDayDatas.map(el => ({...el, id: el.date}))
   })
 }
