@@ -57,26 +57,32 @@ const Header = () => {
             <App.Text size={16} weight={700}>nft-20.org</App.Text>
           </App.Flex>
 
-          {wallet ? (
-            <App.Flex sx={{ position: 'relative' }} id="wallet">
-              <App.Button primary large outlined rounded onClick={handleMenuToggle}>
-                <App.Flex row gap={8} align="center">
-                  <App.Flex width={28} height={28} sx={{ borderRadius: '50%', background: 'linear-gradient(91.77deg, #E792E4 2.92%, #B545BE 36.09%, #7931CB 70.47%, #4D42C9 100%)' }} />
-                  <span>{shorterAddress()}</span>
-                </App.Flex>
-              </App.Button>
+          <App.Flex row gap={24} align="center">
+            <a href="https://nft20-1.gitbook.io/nft-20.org/" target="_blank" rel="noreferrer" className={styles.link}><App.Text inline size={16}>How to use?</App.Text></a>
 
-              <div className={cn(styles.menu, {[styles.active]: menuShow})}>
-                <App.Button primary fullWidth onClick={handleDisconnect}>
-                <App.Icon icon="logout" /> Disconnect
+            <a href="https://twitter.com/nft20_dex" target="_blank" rel="noreferrer" className={styles.link}><App.Icon icon="twitter-circle-fill" color="#fff" /></a>
+
+            {wallet ? (
+              <App.Flex sx={{ position: 'relative' }} id="wallet">
+                <App.Button primary large outlined rounded onClick={handleMenuToggle}>
+                  <App.Flex row gap={8} align="center">
+                    <App.Flex width={28} height={28} sx={{ borderRadius: '50%', background: 'linear-gradient(91.77deg, #E792E4 2.92%, #B545BE 36.09%, #7931CB 70.47%, #4D42C9 100%)' }} />
+                    <span>{shorterAddress()}</span>
+                  </App.Flex>
                 </App.Button>
-              </div>
-            </App.Flex>
-          ) : (
-            <App.Button primary large onClick={handleConnectWallet}>
-              Connect Wallet
-            </App.Button>
-          )}
+
+                <div className={cn(styles.menu, {[styles.active]: menuShow})}>
+                  <App.Button primary fullWidth onClick={handleDisconnect}>
+                  <App.Icon icon="logout" /> Disconnect
+                  </App.Button>
+                </div>
+              </App.Flex>
+            ) : (
+              <App.Button primary large onClick={handleConnectWallet}>
+                Connect Wallet
+              </App.Button>
+            )}
+          </App.Flex>
         </App.Flex>
       </App.Container>
     </div>

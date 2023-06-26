@@ -56,6 +56,9 @@ export default function Home() {
         <>
           <HomeTop tokens={tokens} />
           <HomeTable tokens={tokens} />
+          <App.Flex center sx={{ padding: 24 }}>
+            <App.Text>Proudly powered by <a href="https://tegro.com" target="_blank" rel="noreferrer" style={{textDecoration: 'underline'}}>Tegro</a></App.Text>
+          </App.Flex>
         </>
       )}
     </App.Flex>

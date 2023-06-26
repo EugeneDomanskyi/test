@@ -9,6 +9,14 @@
   border-bottom: 0.5px solid #311B92;
   backdrop-filter: blur(6px);
 
+  .link {
+    transition: all .2s ease 0s;
+    
+    &:hover {
+      opacity: .6;
+    }
+  }
+
   .menu {
     position: absolute;
     background-color: rgba(9, 5, 29, 0.8);
