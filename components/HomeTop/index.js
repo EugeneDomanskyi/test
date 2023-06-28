@@ -23,7 +23,7 @@ const HomeTop = ({ tokens }) => {
             <App.Frame radius={12} gradient="linear-gradient(101.9deg, #631DFF 0%, #A91DFF 100%)" background="#0E0B23">
               <App.Flex column width={173}>
                 <App.Text center weight={400} color="#B9B8C5">
-                  Total Tokens
+                  Total Markets
                 </App.Text>
 
                 <App.Text center size={32} weight={700}>
