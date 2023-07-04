@@ -1,9 +1,11 @@
-import Header from '@/components/Header'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
-import $app from '@/store/app'
 import { getPoolsAll } from '@/libs/query.lib'
+import $app from '@/store/app'
+
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 const tokensUrl = 'https://tegro-imagekit.s3.eu-central-1.amazonaws.com/nft20Tokens.json'
 
@@ -53,6 +55,7 @@ const AppLayout = ({ children }) => {
     <>
       <Header />
       {children}
+      <Footer />
     </>
   )
 }

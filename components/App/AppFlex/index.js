@@ -12,7 +12,7 @@ const AppFlex = ({ children, row, column, direction, center, align, justify, gap
       styles.flex,
       {[styles.row]: row && ! direction},
       {[styles.column]: column && ! direction},
-      {[styles.center]: center && ! align && ! justify},
+      {[styles.center]: propValue(center) && ! align && ! justify},
       className
     )
   }

@@ -58,10 +58,6 @@ const Header = () => {
           </App.Flex>
 
           <App.Flex row gap={24} align="center">
-            <a href="https://nft20-1.gitbook.io/nft-20.org/" target="_blank" rel="noreferrer" className={styles.link}><App.Text inline size={16}>How to use?</App.Text></a>
-
-            <a href="https://twitter.com/nft20_dex" target="_blank" rel="noreferrer" className={styles.link}><App.Icon icon="twitter-circle-fill" color="#fff" /></a>
-
             {wallet ? (
               <App.Flex sx={{ position: 'relative' }} id="wallet">
                 <App.Button primary large outlined rounded onClick={handleMenuToggle}>

@@ -62,7 +62,7 @@ export default function AlchemyLibrary(network = null) {
           }
         }
 
-        if (standard && standard.toLowerCase() == temp.type.toLowerCase()) {
+        if (standard && standard.toLowerCase() == temp.type.toLowerCase() || ! standard) {
           processedNfts.push(temp)
         }
       }

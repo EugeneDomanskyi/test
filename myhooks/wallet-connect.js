@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useAccount } from 'wagmi'
-import { signMessage, disconnect as wagmiDisconnect, getNetwork, getAccount, switchNetwork } from '@wagmi/core'
+import { useAccount, useNetwork } from 'wagmi'
+import { signMessage, disconnect as wagmiDisconnect, getNetwork, getAccount, switchNetwork, fetchBalance } from '@wagmi/core'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 
 const useWalletConnect = () => {
@@ -8,9 +8,11 @@ const useWalletConnect = () => {
 
   const { openConnectModal, connectModalOpen } = useConnectModal()
   const { address, isConnected } = useAccount()
+  const { chain } = useNetwork()
 
   const [modalOpen, setModalOpen] = useState(false)
   const [wallet, setWallet] = useState(null)
+  const [blockchain, setBlockchain] = useState(null)
   const [callback, setCallback] = useState({ success: null, failed: null })
 
   const connect = () => {
@@ -51,6 +53,10 @@ const useWalletConnect = () => {
     setWallet(isConnected ? address.toLowerCase() : null)
   }, [address, isConnected])
 
+  useEffect(() => {
+    setBlockchain(isConnected ? chain.name : null)
+  }, [chain, isConnected])
+
   const disconnect = () => {
     wagmiDisconnect()
   }
@@ -62,6 +68,7 @@ const useWalletConnect = () => {
         server: 'eth-goerli',
         connect: 'goerli',
         alchemy: 'ETH_GOERLI',
+        coingecko: 'ethereum',
         currency: 'ETH',
         gasLimit: 60000,
         scanDomain: 'https://goerli.etherscan.io/',
@@ -73,6 +80,7 @@ const useWalletConnect = () => {
         server: 'eth-mainet',
         connect: 'homestead',
         alchemy: 'ETH_MAINNET',
+        coingecko: 'ethereum',
         currency: 'ETH',
         gasLimit: 60000,
         scanDomain: 'https://etherscan.io/',
@@ -84,6 +92,7 @@ const useWalletConnect = () => {
         server: 'polygon-testnet',
         connect: 'maticmum',
         alchemy: 'MATIC_MUMBAI',
+        coingecko: 'matic-network',
         currency: 'MATIC',
         gasLimit: 250000,
         scanDomain: 'https://mumbai.polygonscan.com/',
@@ -95,6 +104,7 @@ const useWalletConnect = () => {
         server: 'matic-mainet',
         connect: 'matic',
         alchemy: 'MATIC_MAINNET',
+        coingecko: 'matic-network',
         currency: 'MATIC',
         gasLimit: 250000,
         scanDomain: 'https://polygonscan.com/',
@@ -106,6 +116,7 @@ const useWalletConnect = () => {
         server: 'bsc',
         connect: 'bsc',
         alchemy: 'BSC',
+        coingecko: 'binancecoin',
         currency: 'BSC',
         gasLimit: 250000,
         scanDomain: 'https://bscscan.com/',
@@ -114,6 +125,34 @@ const useWalletConnect = () => {
       }
       default: return null
     }
+  }
+
+  const getBalance = async (token) => {
+    const wallet = await connect()
+    if (wallet) {
+      try {
+        const balance = await fetchBalance({
+          address: wallet,
+          token,
+        })
+
+        return balance.formatted
+      } catch (error) {
+        return 0
+      }
+    }
+
+    return 0
+  }
+
+  const getPrice = async (from, to) => {
+    const result = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${from}&vs_currencies=${to}`)
+    if (result && result.status == 200) {
+      const json = await result.json()
+      return json[from][to]
+    }
+
+    return 0
   }
 
   const scanUrl = (address, type = 'tx', chain) => {
@@ -180,7 +219,7 @@ const useWalletConnect = () => {
     }
   }
 
-  return { wallet, connect, disconnect, network, changeNetwork, scanUrl }
+  return { wallet, blockchain, connect, disconnect, network, changeNetwork, getBalance, getPrice, scanUrl }
 }
 
 export default useWalletConnect

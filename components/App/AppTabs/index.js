@@ -1,23 +1,57 @@
+import { useEffect, useMemo, useRef, useState } from 'react'
+import cn from 'classnames'
+
+import { usePropsHelper } from '@/myhooks/props-helper'
+
+import App from '@/components/App'
+
 import styles from './styles.module.scss'
 
-import AppText from '@/components/App/AppText'
+const AppTabs = ({width = '100%', height = '100%', options, active, end, variant = 'standard', onChange}) => {
+  const { propValue } = usePropsHelper()
 
-const AppTabs = ({width = '100%', height = '100%', options, active, onChange}) => {
-  const activeIndex = options.findIndex(o => o.key === active)
+  const EndComponent = useMemo(() => {
+    return propValue(end)
+  }, [])
+
+  const parentRef = useRef(null)
+  const optionRefs = useRef([])
+  const [badgeWidth, setBadgeWidth] = useState(0)
+  const [badgeLeft, setBadgeLeft] = useState(0)
+
+  const activeIndex = options.findIndex(item => item.key === active)
+
+  useEffect(() => {
+    if (active && optionRefs.current.length == options.length && optionRefs.current[activeIndex]) {
+      const optionRect = optionRefs.current[activeIndex].getBoundingClientRect()
+      const parentRect = parentRef.current.getBoundingClientRect()
+
+      setBadgeWidth(optionRect.width)
+      setBadgeLeft(optionRect.left - parentRect.left)
+    }
+  }, [active, optionRefs.current])
+
   return (
-    <div className={styles.container} style={{width: width, height: height}}>
-      <div className={styles.badge} style={{transform: `translateX(${activeIndex*100}%)`}} />
-      {
-        options.map((option, i) => {
+    <App.Flex row width={width} height={height} align="center" justify="space-between" className={cn(styles.container, styles[variant])}>
+      <div ref={parentRef} className={cn(styles.options, styles[variant])}>
+        {variant == 'standard' ? (
+          <div className={styles.badge} style={{width: `${badgeWidth}px`, left: `${badgeLeft}px`}} />
+        ) : null}
+
+        {options.map((option, index) => {
           const isActive = option.key === active
           return (
-            <div key={i} className={styles.option} onClick={() => onChange(option)}>
-              <AppText center color={isActive ? '#fff' : 'rgb(195, 197, 203)'} size={12}>{ option.title }</AppText>
+            <div key={index} ref={(element) => optionRefs.current[index] = element} className={cn(styles.option, styles[variant], styles[option?.variant], {[styles.active]: isActive})} onClick={() => onChange(option.key)}>
+              <div className={styles.optionInner}>
+                <App.Text center size={variant == 'classic' ? 20 : 16} weight={variant == 'classic' ? 700 : 500} className={cn(styles.optionText, {[styles.active]: isActive})}>{ option.title }</App.Text>
+              </div>
             </div>
           )
-        })
-      }
-    </div>
+        })}
+      </div>
+      
+      {EndComponent}
+    </App.Flex>
   )
 }
 

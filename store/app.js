@@ -5,7 +5,7 @@ export const appSlice = createSlice({
 
   initialState: {
     tokens: [],
-    loadingTokens: false,
+    loadingTokens: true,
   },
 
   reducers: {

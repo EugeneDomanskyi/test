@@ -4,7 +4,7 @@ import AppLoader from '@/components/App/AppLoader'
 
 import styles from './styles.module.scss'
 
-const AppButton = ({children, primary, secondary, variant, outlined, rounded, small, large, fullWidth, onClick, loading, href, sx, ...props}) => {
+const AppButton = ({children, primary, secondary, variant, outlined, group, rounded, small, large, fullWidth, onClick, loading, href, sx, ...props}) => {
   const classes = () => {
     return cn(
       styles.button,
@@ -12,6 +12,7 @@ const AppButton = ({children, primary, secondary, variant, outlined, rounded, sm
       {[styles.secondary]: secondary},
       {[styles[variant]]: variant},
       {[styles.outlined]: outlined},
+      {[styles.group]: group},
       {[styles.rounded]: rounded},
       {[styles.small]: small},
       {[styles.large]: large},

@@ -1,36 +1,69 @@
-import { Container } from '@mui/material'
+import { useEffect, useRef, useState } from 'react'
+import cn from 'classnames'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const HomeTop = ({ tokens }) => {
+const HomeTop = () => {
+  const [wordsIndex, setWordsIndex] = useState(0)
+
+  const intervalRef = useRef(null)
+
+  const words = [
+    'Like ERC-20 Tokens',
+    'At Scale',
+    'In A Click',
+    'In Fractions',
+    'In High Volume',
+    'For Just $0.01',
+    'Like A Pro',
+  ]
+
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      setWordsIndex(state => {
+        const next = state + 1 >= (words.length - 1) ? 0 : (state + 1)
+        return next
+      })
+    }, 3000)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      clearInterval(intervalRef.current)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [])
+
+  const handleVisibilityChange = () => {
+    if (document.hidden) {
+      clearInterval(intervalRef.current)
+    } else {
+      intervalRef.current = setInterval(() => {
+        setWordsIndex(state => {
+          const next = state + 1 >= (words.length - 1) ? 0 : (state + 1)
+          return next
+        })
+      }, 3000)
+    }
+  };
+
   return (
     <div className={styles.container}>
       <App.Container className={styles.content}>
         <div className={styles.rectangle} />
 
-        <App.Flex column gap={16} align="center" sx={{ position: 'relative', zIndex: 1, padding: '32px 0 16px' }}>
-          <App.Text center uppercase size={40} weight={700}>
-            Trade, Mint & Redeem your nft-20 tokens
+        <App.Flex column gap={[24, 16]} align="center" sx={{ position: 'relative', zIndex: 1 }}>
+          <App.Text center size={[64, 48]} weight={700} height={1}>
+            Trade NFTs
           </App.Text>
 
-          <App.Text center size={16} color="rgba(255, 255, 255, 0.8)">
-            The Future of NFT Trading is here
-          </App.Text>
-
-          <App.Flex gap={16}>
-            <App.Frame radius={12} gradient="linear-gradient(101.9deg, #631DFF 0%, #A91DFF 100%)" background="#0E0B23">
-              <App.Flex column width={173}>
-                <App.Text center weight={400} color="#B9B8C5">
-                  Total Markets
-                </App.Text>
-
-                <App.Text center size={32} weight={700}>
-                  {tokens.length}
-                </App.Text>
-              </App.Flex>
-            </App.Frame>
+          <App.Flex center align="center" width="100%" height={[64, 48]} sx={{ position: 'relative', zIndex: 0 }}>
+            {words.map((item, index) => (
+              <App.Text key={index} center size={[64, 48]} weight={700} height={1} gradient="linear-gradient(90deg, #E792E4, #B545BE, #7931CB, #4D42C9)" className={cn(styles.text, {[styles.active]: index == wordsIndex})}>
+                {item}
+              </App.Text>
+            ))}
           </App.Flex>
         </App.Flex>
       </App.Container>

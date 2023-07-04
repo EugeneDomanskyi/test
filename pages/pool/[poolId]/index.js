@@ -48,7 +48,7 @@ const PoolPage = () => {
   }, [poolId])
 
   const handleChangeTab = tab => {
-    setChartView(tab.key)
+    setChartView(tab)
   }
 
   return (
