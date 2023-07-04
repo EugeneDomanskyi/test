@@ -49,7 +49,7 @@ const AppLayout = ({ children }) => {
       // setTokens(temp)
       // setLoading(false)
     })()
-  }, [])
+  })
 
   return (
     <>

@@ -155,7 +155,7 @@ const HomeTable = ({ tokens }) => {
         <App.Flex column>
           {isMobile ? <div style={{paddingBottom: 16}}><HomeBalance justify="space-between" /></div> : null}
           
-          <App.Tabs options={tabs} active={tab} variant="classic" end={[<TabsEnd />, null]} onChange={handleTabChange} />
+          <App.Tabs options={tabs} active={tab} variant="classic" end={ ! isMobile ? <TabsEnd /> : null} onChange={handleTabChange} />
 
           <App.Flex width="100%" className={cn(styles.paper, {[styles.glow]: tab == 'earn'})}>
             <TableContainer>
