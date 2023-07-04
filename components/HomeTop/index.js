@@ -26,7 +26,7 @@ const HomeTop = () => {
         const next = state + 1 >= (words.length - 1) ? 0 : (state + 1)
         return next
       })
-    }, 3000)
+    }, 3500)
     document.addEventListener('visibilitychange', handleVisibilityChange)
 
     return () => {
@@ -44,9 +44,9 @@ const HomeTop = () => {
           const next = state + 1 >= (words.length - 1) ? 0 : (state + 1)
           return next
         })
-      }, 3000)
+      }, 3500)
     }
-  };
+  }
 
   return (
     <div className={styles.container}>
@@ -58,9 +58,9 @@ const HomeTop = () => {
             Trade NFTs
           </App.Text>
 
-          <App.Flex center align="center" width="100%" height={[64, 48]} sx={{ position: 'relative', zIndex: 0 }}>
+          <App.Flex center align="center" width="100%" height={[70, 52]} sx={{ position: 'relative', zIndex: 0 }}>
             {words.map((item, index) => (
-              <App.Text key={index} center size={[64, 48]} weight={700} height={1} gradient="linear-gradient(90deg, #E792E4, #B545BE, #7931CB, #4D42C9)" className={cn(styles.text, {[styles.active]: index == wordsIndex})}>
+              <App.Text key={index} center size={[64, 48]} weight={700} height={1.2} gradient="linear-gradient(90deg, #E792E4, #B545BE, #7931CB, #4D42C9)" className={cn(styles.text, {[styles.active]: index == wordsIndex})}>
                 {item}
               </App.Text>
             ))}

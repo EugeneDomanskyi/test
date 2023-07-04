@@ -17,6 +17,7 @@
   white-space: nowrap;
   backdrop-filter: blur(6px);
   transition: all .2s ease 0s;
+  cursor: pointer;
 
   &[disabled] {
     opacity: 0.4;
