@@ -11,8 +11,8 @@ const AppTabs = ({width = '100%', height = '100%', options, active, end, variant
   const { propValue } = usePropsHelper()
 
   const EndComponent = useMemo(() => {
-    return propValue(end)
-  }, [])
+    return end
+  }, [end])
 
   const parentRef = useRef(null)
   const optionRefs = useRef([])

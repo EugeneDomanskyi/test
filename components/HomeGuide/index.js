@@ -1,13 +1,17 @@
 import { useState } from 'react'
+import Image from 'next/image'
+import Scrollbars from 'react-custom-scrollbars-2'
 import cn from 'classnames'
+
+import { usePropsHelper } from '@/myhooks/props-helper'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
-import Image from 'next/image'
-import Scrollbars from 'react-custom-scrollbars-2'
 
 const HomeGuide = () => {
+  const { isMobile } = usePropsHelper()
+
   const [active, setActive] = useState('trade')
   const [step, setStep] = useState(1)
 
@@ -40,7 +44,7 @@ const HomeGuide = () => {
         </App.Flex>
 
         <App.Flex column gap={16} width="100%">
-          <div>
+          {isMobile ? (
             <Scrollbars
               autoHide
               autoHeight
@@ -56,7 +60,15 @@ const HomeGuide = () => {
                 ))}
               </App.Flex>
             </Scrollbars>
-          </div>
+          ) : (
+            <App.Flex row center={[true, false]} gap={16}>
+              {tabs.map(item => (
+                <App.Flex key={item.key} center className={cn(styles.badge, {[styles.active]: active == item.key})} onClick={handleActiveChange(item.key)}>
+                  <App.Text size={20} weight={700} height={1}>{item.text}</App.Text>
+                </App.Flex>
+              ))}
+            </App.Flex>
+          )}
 
           {active == 'trade' ? (
             <App.Flex column center gap={16} className={styles.content}>
