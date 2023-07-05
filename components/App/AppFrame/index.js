@@ -50,7 +50,7 @@ const AppFrame = ({ children, border, radius, padding = 16, background, blur, wi
     if (border) {
       result.inset = propValue(border)
 
-      const backgroundRadius = (radius ?? 12) - border
+      const backgroundRadius = (propValue(radius, true) ?? 12) - propValue(border, true)
       result.borderRadius = propValue(backgroundRadius)
     }
 
@@ -59,7 +59,7 @@ const AppFrame = ({ children, border, radius, padding = 16, background, blur, wi
     }
 
     if (radius) {
-      const backgroundRadius = radius - (border ?? 1) + 1
+      const backgroundRadius = propValue(radius, true) - (propValue(border, true) ?? 1) + 1
       result.borderRadius = propValue(backgroundRadius)
     }
 
@@ -69,13 +69,21 @@ const AppFrame = ({ children, border, radius, padding = 16, background, blur, wi
   const styleContent = () => {
     const result = {}
     if (radius) {
-      const contentRadius = radius - (border ?? 1)
+      const contentRadius = propValue(radius, true) - (propValue(border, true) ?? 1)
       result.borderRadius = propValue(contentRadius)
     }
 
     if (overflow) {
       result.overflow = propValue(overflow)
       result.height = overflow == 'hidden' ? '100%' : height
+    }
+
+    if (width) {
+      result.width = propValue(width)
+    }
+
+    if (height) {
+      result.height = propValue(height)
     }
 
     return result

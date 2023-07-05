@@ -2,8 +2,7 @@
   .content {
     position: relative;
     z-index: 0;
-    padding-top: 64px;
-    height: 300px;
+    padding-top: 112px;
 
     .rectangle {
       position: absolute;
@@ -26,7 +25,7 @@
       width: 271.5px;
       height: 290.92px;
       left: 0;
-      bottom: 0px;
+      bottom: -60px;
       background: url('/images/background-left.png') center no-repeat;
       background-size: contain;
     }
@@ -39,9 +38,39 @@
       width: 271.5px;
       height: 290.92px;
       right: 0;
-      bottom: 0px;
+      bottom: -60px;
       background: url('/images/background-right.png') center no-repeat;
       background-size: contain;
+    }
+
+    @media (max-width: 768px) {
+      &:before {
+        width: 190.05px;
+        height: 203.644px;
+        left: -60px;
+        bottom: -30px;
+      }
+  
+      &:after {
+        width: 190.05px;
+        height: 203.644px;
+        right: -60px;
+        bottom: -30px;
+      }
+    }
+  }
+
+  .text {
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    transition: all .3s ease 0s;
+
+    &.active {
+      opacity: 1;
     }
   }
 }

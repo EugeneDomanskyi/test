@@ -1,5 +1,10 @@
 .container {
-  padding: 32px 0;
+  .badge {
+    padding: 6px 8px;
+    border-radius: 100px;
+    background-color: #0E0B23;
+    border: solid #1D1937 1px;
+  }
 
   .th {
     color: rgba(185, 184, 197, 0.8);
@@ -26,6 +31,35 @@
     .icon {
       color: rgba(185, 184, 197, 0.8);
       opacity: 0.2;
+    }
+  }
+
+  .paper {
+    position: relative;
+    border: 1px solid #4c6aff48;
+    border-radius: 8px;
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.04)), #09051D;
+    overflow: hidden;
+
+    &.glow {
+      border-color: #FFA008;
+    }
+
+    @media (max-width: 768px) {
+      & {
+        border-radius: 0 0 8px 8px;
+      }
+    }
+
+    .earn {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.20);
+      backdrop-filter: blur(6px);
     }
   }
 }
