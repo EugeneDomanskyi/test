@@ -15,6 +15,11 @@ const useWalletConnect = () => {
   const [blockchain, setBlockchain] = useState(null)
   const [callback, setCallback] = useState({ success: null, failed: null })
 
+  const usdt = {
+    polygon: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+    ethereum: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+  }
+
   const connect = () => {
     return new Promise((resolve, reject) => {
       const account = getAccount()
@@ -219,7 +224,7 @@ const useWalletConnect = () => {
     }
   }
 
-  return { wallet, blockchain, connect, disconnect, network, changeNetwork, getBalance, getPrice, scanUrl }
+  return { wallet, blockchain, connect, disconnect, network, changeNetwork, getBalance, getPrice, scanUrl, usdt }
 }
 
 export default useWalletConnect

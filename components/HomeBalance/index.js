@@ -2,16 +2,19 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
+import Contracts from '@/libs/contracts.lib'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const HomeBalance = ({ justify = 'center' }) => {
-  const { wallet, blockchain, network, getBalance, getPrice } = useWalletConnect()
+  const { wallet, blockchain, network, usdt } = useWalletConnect()
 
   const [loading, setLoading] = useState(true)
   const [balance, setBalance] = useState(0)
+
+  const contracts = new Contracts()
 
   useEffect(() => {
     if (wallet) {
@@ -21,15 +24,10 @@ const HomeBalance = ({ justify = 'center' }) => {
 
   const fetchBalance = async () => {
     setLoading(true)
-    let amount = 0
-    const result = await getBalance()
+    const result = await contracts.balanceOf(wallet, usdt[blockchain.toLowerCase()])
     if (result) {
-      const price = await getPrice(network(blockchain.toLowerCase())?.coingecko, 'usd')
-      if (price) {
-        amount = (result * price).toFixed(4)
-      }
+      setBalance(result)
     }
-    setBalance(amount)
     setLoading(false)
   }
 
@@ -45,7 +43,7 @@ const HomeBalance = ({ justify = 'center' }) => {
         {loading ? (
           <App.Loader size={20} />
         ) : (
-          <App.Text size={20} weight={700} height={1}>${balance}</App.Text>
+          <App.Text size={20} weight={700} height={1}>{balance} USDT</App.Text>
         )}
       </App.Flex>
     </App.Flex>

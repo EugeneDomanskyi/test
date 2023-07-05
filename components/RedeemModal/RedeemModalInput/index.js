@@ -25,10 +25,18 @@ const RedeemModalInput = ({ token, amount, onAmountChange, onRedeem }) => {
     if (wallet && token && token?.nft20) {
       (async () => {
         const result = await contracts.balanceOf(wallet, token.nft20)
-        setBalance(Math.floor(result))
+        if (result && typeof result === 'number' && !isNaN(result)) {
+          setBalance(Math.floor(result))
+        } else {
+          setBalance(0)
+        }
 
         const resultNFT = await getNftsCount()
-        setCount(resultNFT)
+        if (resultNFT && typeof resultNFT === 'number' && !isNaN(resultNFT)) {
+          setCount(resultNFT)
+        } else {
+          setCount(0)
+        }
         setBalanceLoading(false)
       })()
     }
