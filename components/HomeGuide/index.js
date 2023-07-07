@@ -35,6 +35,10 @@ const HomeGuide = () => {
     }
   }
 
+  const handleGuideClick = () => {
+    window.open('https://nft20-1.gitbook.io/nft-20.org/', '_blank')
+  }
+
   return (
     <App.Container id="guide">
       <App.Flex column align="center" gap={64}>
@@ -86,12 +90,7 @@ const HomeGuide = () => {
 
                 <App.Flex column gap={8} flex={1} className={cn(styles.step, {[styles.active]: step == 2})} onClick={handleStepChange(2)}>
                   <App.Text size={[20, 16]} weight={700} height={1}>Step 2</App.Text>
-                  <App.Text size={[24, 20]} weight={700} height={1}>Enter amount</App.Text>
-                </App.Flex>
-
-                <App.Flex column gap={8} flex={1} className={cn(styles.step, {[styles.active]: step == 3})} onClick={handleStepChange(3)}>
-                  <App.Text size={[20, 16]} weight={700} height={1}>Step 3</App.Text>
-                  <App.Text size={[24, 20]} weight={700} height={1}>Confirm order</App.Text>
+                  <App.Text size={[24, 20]} weight={700} height={1}>Enter & confirm amount</App.Text>
                 </App.Flex>
               </App.Flex>
             </App.Flex>
@@ -115,11 +114,6 @@ const HomeGuide = () => {
                   <App.Text size={[20, 16]} weight={700} height={1}>Step 2</App.Text>
                   <App.Text size={[24, 20]} weight={700} height={1}>Convert to NFT20 token</App.Text>
                 </App.Flex>
-
-                <App.Flex column gap={8} flex={1} className={cn(styles.step, {[styles.active]: step == 3})} onClick={handleStepChange(3)}>
-                  <App.Text size={[20, 16]} weight={700} height={1}>Step 3</App.Text>
-                  <App.Text size={[24, 20]} weight={700} height={1}>Start trading</App.Text>
-                </App.Flex>
               </App.Flex>
             </App.Flex>
           ) : null}
@@ -142,18 +136,13 @@ const HomeGuide = () => {
                   <App.Text size={[20, 16]} weight={700} height={1}>Step 2</App.Text>
                   <App.Text size={[24, 20]} weight={700} height={1}>Convert to NFT asset</App.Text>
                 </App.Flex>
-
-                <App.Flex column gap={8} flex={1} className={cn(styles.step, {[styles.active]: step == 3})} onClick={handleStepChange(3)}>
-                  <App.Text size={[20, 16]} weight={700} height={1}>Step 3</App.Text>
-                  <App.Text size={[24, 20]} weight={700} height={1}>Withdraw to wallet</App.Text>
-                </App.Flex>
               </App.Flex>
             </App.Flex>
           ) : null}
 
           {active == 'pool' ? (
             <App.Flex column center gap={16} className={styles.content}>
-              <App.Text center size={[24, 16]} weight={700}>Swap NFT20 assets for other coins or tokens in just a click.</App.Text>
+              <App.Text center size={[24, 16]} weight={700}>Add Liquidity to pools and start earning fees.</App.Text>
 
               <App.Flex center sx={{ position: 'relative', width: '100%', height: '0', paddingBottom: '56.25%' }}>
                 <Image src="/images/trade-1.png" fill alt="" />
@@ -162,30 +151,23 @@ const HomeGuide = () => {
               <App.Flex direction={['row', 'column']} gap={16} width="100%">
                 <App.Flex column gap={8} flex={1} className={cn(styles.step, {[styles.active]: step == 1})} onClick={handleStepChange(1)}>
                   <App.Text size={[20, 16]} weight={700} height={1}>Step 1</App.Text>
-                  <App.Text size={[24, 20]} weight={700} height={1}>Create Liquidity Position</App.Text>
+                  <App.Text size={[24, 20]} weight={700} height={1}>Deposit Token Pair</App.Text>
                 </App.Flex>
 
                 <App.Flex column gap={8} flex={1} className={cn(styles.step, {[styles.active]: step == 2})} onClick={handleStepChange(2)}>
                   <App.Text size={[20, 16]} weight={700} height={1}>Step 2</App.Text>
-                  <App.Text size={[24, 20]} weight={700} height={1}>Deposit Token Pair</App.Text>
-                </App.Flex>
-
-                <App.Flex column gap={8} flex={1} className={cn(styles.step, {[styles.active]: step == 3})} onClick={handleStepChange(3)}>
-                  <App.Text size={[20, 16]} weight={700} height={1}>Step 3</App.Text>
-                  <App.Text size={[24, 20]} weight={700} height={1}>Earn Fees</App.Text>
+                  <App.Text size={[24, 20]} weight={700} height={1}>Create Liquidity Position</App.Text>
                 </App.Flex>
               </App.Flex>
             </App.Flex>
           ) : null}
         </App.Flex>
 
-        <a href="https://nft20-1.gitbook.io/nft-20.org/" target="_blank" rel="noreferrer">
-          <App.Flex row center gap={8}>
-            <App.Text inline size={16} weight={700}>Have more questions?</App.Text>
-            <App.Text inline size={16} color="#B9B8C5">We have a guide</App.Text>
-            <App.Icon icon="arrow-right" />
-          </App.Flex>
-        </a>
+        <App.Flex row center gap={8} onClick={handleGuideClick} sx={{ cursor: 'pointer' }}>
+          <App.Text inline size={16} weight={700}>Have more questions?</App.Text>
+          <App.Text inline size={16} color="#B9B8C5">We have a guide</App.Text>
+          <App.Icon icon="arrow-right" />
+        </App.Flex>
       </App.Flex>
     </App.Container>
   )

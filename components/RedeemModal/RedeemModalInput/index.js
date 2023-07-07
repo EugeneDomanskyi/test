@@ -5,12 +5,14 @@ import cn from 'classnames'
 import AlchemyLibrary from '@/libs/alchemy.lib'
 import Contracts from '@/libs/contracts.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
+import { usePropsHelper } from '@/myhooks/props-helper'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const RedeemModalInput = ({ token, amount, onAmountChange, onRedeem }) => {
+  const { isMobile } = usePropsHelper()
   const { wallet, network } = useWalletConnect()
 
   const [balance, setBalance] = useState(0)
@@ -92,7 +94,7 @@ const RedeemModalInput = ({ token, amount, onAmountChange, onRedeem }) => {
   return (
     <App.Flex column>
       <div className={styles.box}>
-        <App.Text size={20} weight={600}>Enter the amount you would like to redeem</App.Text>
+        <App.Text size={[20, 16]} weight={[600, 700]}>Enter the amount you would like to redeem</App.Text>
       </div>
 
       <App.Flex column gap={6} className={styles.content}>
@@ -147,20 +149,20 @@ const RedeemModalInput = ({ token, amount, onAmountChange, onRedeem }) => {
             <Image src={token.image} width={25} height={25} alt="" />
           </div>
 
-          <App.Text right size={16} color="#B9B8C5">1 {token.code} NFT20</App.Text>
+          <App.Text right size={[16, 14]} color="#B9B8C5">1 {token.code} NFT20</App.Text>
 
-          <App.Text right size={16} color="#B9B8C5">=</App.Text>
+          <App.Text right size={[16, 14]} color="#B9B8C5">=</App.Text>
 
           <div className={styles.imgSquare}>
             <Image src={token.image} width={25} height={25} alt="" />
           </div>
 
-          <App.Text right size={16} color="#B9B8C5">1 {token.collection} NFT</App.Text>
+          <App.Text right size={[16, 14]} color="#B9B8C5">1 {token.collection} NFT</App.Text>
         </App.Flex>
       </App.Flex>
 
       <App.Flex center className={cn(styles.box, styles.borderTop)}>
-        <App.Button primary large disabled={error || amount * 1 <= 0} onClick={handleRedeem} sx={{ width: 200 }}>Redeem</App.Button>
+        <App.Button primary large disabled={error || amount * 1 <= 0} onClick={handleRedeem} sx={{ width: isMobile ? '100%' : 200 }}>Redeem</App.Button>
       </App.Flex>
     </App.Flex>
   )

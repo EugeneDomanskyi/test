@@ -1,19 +1,16 @@
 import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { useSigner } from 'wagmi'
 import { SwapWidget } from '@uniswap/widgets'
 
-import $modal from '@/store/modal'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
-import AppIcon from '@/components/App/AppIcon'
+import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const TradeModal = ({ token, tokens }) => {
+const TradeModal = ({ token }) => {
   const { network } = useWalletConnect()
   const { data } = useSigner()
-  const dispatch = useDispatch()
 
   const [provider, setProvider] = useState()
 
@@ -37,63 +34,35 @@ const TradeModal = ({ token, tokens }) => {
     bnb: '0x55d398326f99059fF775485246999027B3197955',
   }
 
-  const jsonRpcUrlMap = {
-    1: [`https://mainnet.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_ID}`, `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`],
-    56: [`https://bsc-dataseed1.binance.org/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`],
-    137: [`https://polygon-mainnet.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_ID}`, `https://polygon-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`],
-  }
-
-  const jsonRpcEndpoint = 'https://cloudflare-eth.com'
-
   useEffect(() => {
     if (data?.provider) {
       setProvider(data.provider)
     }
   }, [data])
 
-  const handleCloseModal = () => {
-    dispatch($modal.set.close())
-  }
-
   const getTokenList = () => {
     return 'https://tegro-imagekit.s3.eu-central-1.amazonaws.com/tokenlist.json'
-
-    const result = []
-    for (const t of tokens) {
-      if (t.nft20) {
-        result.push({
-          "name": t.collection,
-          "address": t.nft20,
-          "symbol": t.code,
-          "decimals": t.decimals,
-          "chainId": network(t.chain)?.chainId,
-          "logoURI": t.image
-        })
-      }
-    }
-
-    return result
   }
 
   const handleError = (error) => {
     console.log(error)
   }
 
-  return (
-    <div className={styles.walletModal}>
-      <div className={styles.header}>
-        <div className={styles.closeButton} onClick={handleCloseModal}>
-          <AppIcon icon="cross" color="#fff" />
-        </div>
-      </div>
-
-      <div className={styles.content}>
-        {provider ? (
-          <SwapWidget theme={theme} provider={provider} onError={handleError} defaultChainId={chainId} defaultInputTokenAddress={token.nft20} defaultOutputTokenAddress={USDT[token.chain.toLowerCase()]} tokenList={getTokenList()} hideConnectionUI={true} brandedFooter={false} />
-        ) : null}
-      </div>
-    </div>
-  )
+  return provider ? (
+    <App.Flex center className={styles.content}>
+      <SwapWidget
+        theme={theme}
+        provider={provider}
+        onError={handleError}
+        defaultChainId={chainId}
+        defaultInputTokenAddress={token.nft20}
+        defaultOutputTokenAddress={USDT[token.chain.toLowerCase()]}
+        tokenList={getTokenList()}
+        hideConnectionUI={true}
+        brandedFooter={false}
+      />
+    </App.Flex>
+  ) : null
 }
 
 export default TradeModal

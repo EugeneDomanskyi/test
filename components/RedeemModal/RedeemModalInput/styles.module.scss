@@ -106,3 +106,17 @@
     }
   }
 }
+
+@media (max-width: 768px) {
+  .box {
+    padding: 16px;
+  }
+
+  .content {
+    padding: 16px;
+
+    .bottom {
+      border-radius: 8px;
+    }
+  }
+}

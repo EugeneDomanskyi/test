@@ -3,12 +3,15 @@ import { Grid } from '@mui/material'
 import Scrollbars from 'react-custom-scrollbars-2'
 import cn from 'classnames'
 
+import { usePropsHelper } from '@/myhooks/props-helper'
+
 import App from '@/components/App'
 import MintModalSelectItem from '@/components/MintModal/MintModalSelectItem'
 
 import styles from './styles.module.scss'
 
 const MintModalSelect = ({ nfts, token, loading, buttonLoading, onContinue }) => {
+  const { isMobile } = usePropsHelper()
   const [availableNftCount, setAvailableNftCount] = useState(0)
   const [selectedIds, setSelectedIds] = useState([])
 
@@ -107,7 +110,7 @@ const MintModalSelect = ({ nfts, token, loading, buttonLoading, onContinue }) =>
   return (
     <App.Flex column>
       <App.Flex row justify="space-between" align="center" className={styles.box}>
-        <App.Text size={20} weight={600}>{availableNftCount} NFT{availableNftCount > 1 ? 's' : ''} Available</App.Text>
+        <App.Text size={[20, 14]} weight={[600, 700]}>{availableNftCount} NFT{availableNftCount > 1 ? 's' : ''} Available</App.Text>
 
         {availableNftCount > 0 ? (
           <App.Checkbox checked={checkedAll()} onChange={handleCheckAll} label="Select All" />
@@ -150,7 +153,7 @@ const MintModalSelect = ({ nfts, token, loading, buttonLoading, onContinue }) =>
       </div>
 
       <App.Flex center className={cn(styles.box, styles.borderTop)}>
-        <App.Button primary large onClick={handleContinue} loading={buttonLoading} disabled={selectedIds.length == 0 || buttonLoading} sx={{ width: 200 }}>
+        <App.Button primary large onClick={handleContinue} loading={buttonLoading} disabled={selectedIds.length == 0 || buttonLoading} sx={{ width: isMobile ? '100%' : 200 }}>
           Mint {selectedNftsCount()} {token.code} NFT20
         </App.Button>
       </App.Flex>

@@ -58,6 +58,14 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
       )
     }
 
+    if (icon == 'chevron-right') {
+      return (
+        <svg width={width ?? 24} height={height ?? 25} viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.5" d="M8.91 20.61l6.52-6.52c.77-.77.77-2.03 0-2.8L8.91 4.77" />
+        </svg>
+      )
+    }
+
     if (icon == 'check-circle-fill') {
       return (
         <svg width={width ?? 48} height={height ?? 49} viewBox="0 0 48 49" fill="none" xmlns="http://www.w3.org/2000/svg">

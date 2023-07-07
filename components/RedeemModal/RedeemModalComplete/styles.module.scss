@@ -34,4 +34,10 @@
     border-top: solid #1D1937 1px;
     border-bottom: 0;
   }
+
+  @media (max-width: 768px) {
+    & {
+      padding: 16px;
+    }
+  }
 }

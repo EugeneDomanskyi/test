@@ -12,7 +12,6 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 import $modal from '@/store/modal'
 
 import App from '@/components/App'
-import HomeBalance from '@/components/HomeBalance'
 
 import styles from './styles.module.scss'
 
@@ -86,7 +85,12 @@ const HomeTable = ({ tokens }) => {
         return
       }
 
-      dispatch($modal.set.show({modal: 'TradeModal', props: { token: token, tokens: tokens }}))
+      dispatch($modal.set.show({modal: 'TradeModal', props: {
+        token: token,
+        header: {
+          title: `Trade`,
+        }
+      }}))
     }
   }
 
@@ -102,7 +106,19 @@ const HomeTable = ({ tokens }) => {
       return
     }
 
-    dispatch($modal.set.show({modal: 'MintModal', props: { token: token }}))
+    dispatch($modal.set.show({modal: 'MintModal', props: {
+      token: token,
+      header: {
+        title: `Mint ${token.code} NFT20`,
+        subtitle: `Convert ${token.collection} NFT to ${token.code} NFT20`,
+        steps: [
+          { title: 'Pick NFTs', step: 0 },
+          { title: 'Approve Transfer', step: 2 },
+          { title: 'Mint NFT20', step: 6 },
+        ],
+      },
+      footer: 'info',
+    }}))
   }
 
   const handleRedeem = (token) => async (e) => {
@@ -117,7 +133,18 @@ const HomeTable = ({ tokens }) => {
       return
     }
 
-    dispatch($modal.set.show({modal: 'RedeemModal', props: { token: token }}))
+    dispatch($modal.set.show({modal: 'RedeemModal', props: {
+      token: token,
+      header: {
+        title: `Redeem ${token.collection} NFTs`,
+        subtitle: `Convert ${token.code} NFT20 into ${token.collection} NFTs`,
+        steps: [
+          { title: 'Redeem NFT20', step: 0 },
+          { title: 'Successful', step: 3 },
+        ],
+      },
+      footer: 'info',
+    }}))
   }
 
   const onPressToken = (token) => () => {
@@ -135,29 +162,29 @@ const HomeTable = ({ tokens }) => {
     }
   }
 
-  const HowToUse = () => (
-    <App.Flex row center gap={12} className={styles.badge} sx={{ padding: '8px 16px', cursor: 'pointer' }} onClick={handleHowTo}>
-      <App.Text size={16} color="#B9B8C5">Wondering how to use?</App.Text>
-      <App.Icon icon="arrow-down" color="#fff" />
-    </App.Flex>
-  )
+  const handleInfo = (token) => () => {
+    dispatch($modal.set.show({modal: 'HomeInfoModal', props: {
+      token: token,
+      header: {
+        content: <App.Flex center><Image src={token.image} width={120} height={120} alt="" /></App.Flex>
+      },
+    }}))
+  }
 
-  const TabsEnd = () => (
-    ! isMobile ? (
-      <>
-        <HowToUse />
-        <HomeBalance />
-      </>
-    ) : null
+  const HowToUse = () => (
+    isMobile ? null : (
+      <App.Flex row center gap={12} className={styles.badge} sx={{ padding: '8px 16px', cursor: 'pointer' }} onClick={handleHowTo}>
+        <App.Text size={16} color="#B9B8C5">Wondering how to use?</App.Text>
+        <App.Icon icon="arrow-down" color="#fff" />
+      </App.Flex>
+    )
   )
 
   return (
     <div className={styles.container}>
       <App.Container className={styles.content}>
         <App.Flex column>
-          {isMobile ? <div style={{paddingBottom: 16}}><HomeBalance justify="space-between" /></div> : null}
-          
-          <App.Tabs options={tabs} active={tab} variant="classic" end={<TabsEnd />} onChange={handleTabChange} />
+          <App.Tabs options={tabs} active={tab} variant="classic" end={<HowToUse />} onChange={handleTabChange} />
 
           <App.Flex width="100%" className={cn(styles.paper, {[styles.glow]: tab == 'earn'})}>
             <TableContainer>
@@ -207,39 +234,27 @@ const HomeTable = ({ tokens }) => {
                             // '&:hover': {backgroundColor: 'rgba(255,255,255,0.1)', cursor: 'pointer'},
                           }}>
                           <TableCell colSpan={2}>
-                            <App.Flex column gap={16}>
-                              <App.Flex row justify="space-between">
-                                <App.Flex row gap={8} align="center">
-                                  <a href={scanUrl(item.ognft, 'address', item.chain)} target="_blank" rel="noreferrer">
-                                    <Image src={item.image} width={42} height={42} alt="" />
-                                  </a>
+                            <App.Flex row justify="space-between" align="center">
+                              <App.Flex row gap={8} align="center">
+                                <a href={scanUrl(item.ognft, 'address', item.chain)} target="_blank" rel="noreferrer">
+                                  <Image src={item.image} width={42} height={42} alt="" />
+                                </a>
 
-                                  <App.Flex column>
-                                    <App.Text height={1}>{item.collection}</App.Text>
+                                <App.Flex column>
+                                  <App.Text height={1}>{item.collection}</App.Text>
 
-                                    <App.Flex row center gap={8}>
-                                      <App.Text size={12} weight={400} height={1} color="#B9B8C5">{item.game}</App.Text>
-                                      <Image src={`/images/icon-${item.chain.toLowerCase()}.png`} width={24} height={24} alt="" />
-                                    </App.Flex>
-
-                                    <App.Text size={12} weight={400} height={1} color="#B9B8C5">{item.code}</App.Text>
+                                  <App.Flex row center gap={8}>
+                                    <App.Text size={12} weight={400} height={1} color="#B9B8C5">{item.game}</App.Text>
+                                    <Image src={`/images/icon-${item.chain.toLowerCase()}.png`} width={24} height={24} alt="" />
                                   </App.Flex>
-                                </App.Flex>
 
-                                <App.Flex column gap={8} align="flex-end">
-                                  <App.Text nowrap>{item.pool?.id ? numeral(item.price).format('$0.[0000]') : '-' }</App.Text>
-
-                                  <App.Button primary small onClick={handleTrade(item)}>Trade</App.Button>
+                                  <App.Text size={12} weight={400} height={1} color="#B9B8C5">{item.code}</App.Text>
                                 </App.Flex>
                               </App.Flex>
 
-                              <App.Flex row align="center" justify="space-between">
-                                <App.Text size={16} color="#B9B8C5">NFT20/NFT</App.Text>
-
-                                <App.Flex row>
-                                  <App.Button variant="success" outlined group small onClick={handleMint(item)}>Mint</App.Button>
-                                  <App.Button variant="danger" outlined group small onClick={handleRedeem(item)}>Redeem</App.Button>
-                                </App.Flex>
+                              <App.Flex row center onClick={handleInfo(item)}>
+                                <App.Text nowrap>{item.pool?.id ? numeral(item.price).format('$0.[0000]') : '-' }</App.Text>
+                                <App.Icon icon="chevron-right" />
                               </App.Flex>
                             </App.Flex>
                           </TableCell>
