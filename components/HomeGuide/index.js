@@ -78,8 +78,18 @@ const HomeGuide = () => {
             <App.Flex column center gap={16} className={styles.content}>
               <App.Text center size={[24, 16]} weight={700}>Swap NFT20 assets for other coins or tokens in a click.</App.Text>
 
-              <App.Flex center sx={{ position: 'relative', width: '100%', height: '0', paddingBottom: '56.25%' }}>
-                <Image src="/images/trade-1.png" fill alt="" />
+              <App.Flex center>
+                {step == 1 ? (
+                  <video muted autoPlay width="1080" height="534">
+                    <source src={`/videos/trade-1.mp4`} type="video/mp4" />
+                  </video>
+                ) : null}
+
+                {step == 2 ? (
+                  <video muted autoPlay width="1080" height="534">
+                    <source src={`/videos/trade-2.mp4`} type="video/mp4" />
+                  </video>
+                ) : null}
               </App.Flex>
 
               <App.Flex direction={['row', 'column']} gap={16} width="100%">
@@ -100,8 +110,18 @@ const HomeGuide = () => {
             <App.Flex column center gap={16} className={styles.content}>
               <App.Text center size={[24, 16]} weight={700}>Swap NFT20 assets for other coins or tokens in just a click.</App.Text>
 
-              <App.Flex center sx={{ position: 'relative', width: '100%', height: '0', paddingBottom: '56.25%' }}>
-                <Image src="/images/trade-1.png" fill alt="" />
+              <App.Flex center>
+                {step == 1 ? (
+                  <video muted autoPlay width="1080" height="534">
+                    <source src={`/videos/mint-1.mp4`} type="video/mp4" />
+                  </video>
+                ) : null}
+
+                {step == 2 ? (
+                  <video muted autoPlay width="1080" height="534">
+                    <source src={`/videos/mint-2.mp4`} type="video/mp4" />
+                  </video>
+                ) : null}
               </App.Flex>
 
               <App.Flex direction={['row', 'column']} gap={16} width="100%">
@@ -122,8 +142,18 @@ const HomeGuide = () => {
             <App.Flex column center gap={16} className={styles.content}>
               <App.Text center size={[24, 16]} weight={700}>Swap NFT20 assets for other coins or tokens in just a click.</App.Text>
 
-              <App.Flex center sx={{ position: 'relative', width: '100%', height: '0', paddingBottom: '56.25%' }}>
-                <Image src="/images/trade-1.png" fill alt="" />
+              <App.Flex center>
+                {step == 1 ? (
+                  <video muted autoPlay width="1080" height="534">
+                    <source src={`/videos/redeem-1.mp4`} type="video/mp4" />
+                  </video>
+                ) : null}
+
+                {step == 2 ? (
+                  <video muted autoPlay width="1080" height="534">
+                    <source src={`/videos/redeem-2.mp4`} type="video/mp4" />
+                  </video>
+                ) : null}
               </App.Flex>
 
               <App.Flex direction={['row', 'column']} gap={16} width="100%">
