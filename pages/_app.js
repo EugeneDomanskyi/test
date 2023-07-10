@@ -3,9 +3,10 @@ import Head from 'next/head'
 import { ToastContainer } from 'react-toastify'
 
 import { getDefaultWallets, RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
-import { configureChains, createClient, WagmiConfig } from 'wagmi'
+import { configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { polygon, mainnet, bsc } from 'wagmi/chains'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
+import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
 import merge from 'lodash.merge'
 
@@ -20,22 +21,25 @@ import '@/styles/globals.css'
 
 //const initialChain = process.env.NEXT_PUBLIC_APP_ENV == 'production' ? [mainnet, polygon] : [goerli, polygonMumbai]
 const initialChain = [polygon, mainnet, bsc]
-const { chains, provider } = configureChains(
+const { chains, publicClient, webSocketPublicClient } = configureChains(
   initialChain, [
     alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }),
+    infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_ID }),
     publicProvider(),
   ]
 )
 
 const { connectors } = getDefaultWallets({
   appName: process.env.NEXT_PUBLIC_APP_NAME,
+  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
   chains,
 })
 
-const wagmiClient = createClient({
+const wagmiConfig = createConfig({
   autoConnect: true,
   connectors,
-  provider,
+  publicClient,
+  webSocketPublicClient,
 })
 
 const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
@@ -57,7 +61,7 @@ const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
 
 function MyApp({ Component, pageProps }) { 
   return (
-    <WagmiConfig client={wagmiClient}>
+    <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
         <Provider store={store}>
           <Head>

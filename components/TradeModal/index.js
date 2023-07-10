@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useSigner } from 'wagmi'
+import { useWalletClient } from 'wagmi'
 import { SwapWidget } from '@uniswap/widgets'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -10,7 +10,7 @@ import styles from './styles.module.scss'
 
 const TradeModal = ({ token }) => {
   const { network } = useWalletConnect()
-  const { data } = useSigner()
+  const { data } = useWalletClient()
 
   const [provider, setProvider] = useState()
 
@@ -35,8 +35,9 @@ const TradeModal = ({ token }) => {
   }
 
   useEffect(() => {
-    if (data?.provider) {
-      setProvider(data.provider)
+    console.log(data)
+    if (data) {
+      setProvider(data.transport)
     }
   }, [data])
 
