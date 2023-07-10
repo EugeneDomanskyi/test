@@ -89,7 +89,30 @@ const HomeTable = ({ tokens }) => {
         token: token,
         header: {
           title: `Trade`,
-        }
+        },
+        size: 'small',
+      }}))
+    }
+  }
+
+  const handleBuy = (token) => async (e) => {
+    e.stopPropagation()
+    if (token.nft20) {
+      const address = await connect()
+      if ( ! address) {
+        return
+      }
+
+      const result = await changeNetwork(token.chain)
+      if ( ! result) {
+        return
+      }
+
+      dispatch($modal.set.show({modal: 'BuyModal', props: {
+        token: token,
+        header: {
+          title: `Buy`,
+        },
       }}))
     }
   }
@@ -366,6 +389,7 @@ const HomeTable = ({ tokens }) => {
 
                           <TableCell align="right">
                             <App.Button primary onClick={handleTrade(item)}>Trade</App.Button>
+                            <App.Button primary onClick={handleBuy(item)}>Buy</App.Button>
                           </TableCell>
 
                           <TableCell align="center">

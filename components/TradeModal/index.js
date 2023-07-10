@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react'
-import { useWalletClient } from 'wagmi'
 import { SwapWidget } from '@uniswap/widgets'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
+import { getEthersSigner } from '@/libs/ethers-adapter'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const TradeModal = ({ token }) => {
-  const { network } = useWalletConnect()
-  const { data } = useWalletClient()
+  const { network, usdt, jsonRpcEndpoints } = useWalletConnect()
 
   const [provider, setProvider] = useState()
 
@@ -28,18 +27,14 @@ const TradeModal = ({ token }) => {
     interactive: '#1D1937',
   }
 
-  const USDT = {
-    polygon: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-    ethereum: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-    bnb: '0x55d398326f99059fF775485246999027B3197955',
-  }
-
   useEffect(() => {
-    console.log(data)
-    if (data) {
-      setProvider(data.transport)
-    }
-  }, [data])
+    (async () => {
+      const signer = await getEthersSigner({ chainId })
+      if (signer?.provider) {
+        setProvider(signer?.provider)
+      }
+    })()
+  }, [chainId])
 
   const getTokenList = () => {
     return 'https://tegro-imagekit.s3.eu-central-1.amazonaws.com/tokenlist.json'
@@ -54,10 +49,12 @@ const TradeModal = ({ token }) => {
       <SwapWidget
         theme={theme}
         provider={provider}
+        jsonRpcUrlMap={jsonRpcEndpoints}
         onError={handleError}
+        locale="en-US"
         defaultChainId={chainId}
         defaultInputTokenAddress={token.nft20}
-        defaultOutputTokenAddress={USDT[token.chain.toLowerCase()]}
+        defaultOutputTokenAddress={usdt[token.chain.toLowerCase()]}
         tokenList={getTokenList()}
         hideConnectionUI={true}
         brandedFooter={false}

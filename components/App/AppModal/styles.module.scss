@@ -33,6 +33,10 @@
       width: 520px;
       max-width: 100%;
 
+      &.small {
+        width: 360px;
+      }
+
       .header {
         position: relative;
         border-bottom: solid #1D1937 1px;

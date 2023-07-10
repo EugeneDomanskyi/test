@@ -1,6 +1,7 @@
 import { Provider } from 'react-redux'
 import Head from 'next/head'
 import { ToastContainer } from 'react-toastify'
+import { createClient } from '@reservoir0x/reservoir-sdk'
 
 import { getDefaultWallets, RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
@@ -18,6 +19,28 @@ import 'react-toastify/dist/ReactToastify.css'
 import '@rainbow-me/rainbowkit/styles.css'
 import '@uniswap/widgets/fonts.css'
 import '@/styles/globals.css'
+
+createClient({
+  chains: [
+    {
+      id: 1,
+      baseApiUrl: 'https://api.reservoir.tools',
+      active: true,
+      apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
+    }, {
+      id: 56,
+      baseApiUrl: 'https://api-bsc.reservoir.tools',
+      active: true,
+      default: true,
+      apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
+    }, {
+      id: 137,
+      baseApiUrl: 'https://api-polygon.reservoir.tools',
+      active: true,
+      apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
+    },
+  ],
+})
 
 //const initialChain = process.env.NEXT_PUBLIC_APP_ENV == 'production' ? [mainnet, polygon] : [goerli, polygonMumbai]
 const initialChain = [polygon, mainnet, bsc]
