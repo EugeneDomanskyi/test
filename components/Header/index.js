@@ -4,6 +4,7 @@ import cn from 'classnames'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import $modal from '@/store/modal'
 
@@ -36,7 +37,11 @@ const Header = () => {
 
   const handleConnectWallet = async () => {
     if ( ! wallet) {
-      await connect()
+      trackEvent('Dex Wallet Connect Clicked')
+      const result = await connect()
+      if (result) {
+        trackEvent('Dex Wallet Connected Successfully')
+      }
     }
   }
 

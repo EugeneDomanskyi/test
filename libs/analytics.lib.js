@@ -59,5 +59,6 @@ export const amplitudeEventTrack = (post) => {
     ...post,
     services:  ['amplitude', 'intercom', 'redshift']
   }
+  console.log(payload)
   //return fetch(`${process.env.NEXT_PUBLIC_ANALYTICS_URL}/users/events/track`, {method: 'POST', body: JSON.stringify(payload), headers: headers})
 }

@@ -1,7 +1,10 @@
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
+import { loadIntercom } from 'next-intercom'
+import { v4 as uuid } from 'uuid'
 
 import { getPoolsAll } from '@/libs/query.lib'
+import { trackEvent } from '@/libs/analytics.lib'
 import $app from '@/store/app'
 
 import Header from '@/components/Header'
@@ -14,6 +17,21 @@ const AppLayout = ({ children }) => {
   
   useEffect(() => {
     (async () => {
+      const deviceId = localStorage.getItem('device_id')
+      if (!deviceId) {
+        localStorage.setItem('device_id', uuid())
+      }
+
+      loadIntercom({
+        user_id: deviceId,
+        appId: process.env.NEXT_PUBLIC_INTERCOM_APP_ID,
+        ssr: false,
+        initWindow: false,
+        delay: 0,
+      })
+
+      trackEvent('Dex Page Visited')
+
       dispatch($app.set.appKey({key: 'loadingTokens', data: true}))
       const temp = []
       const result = await fetch(tokensUrl)
@@ -46,8 +64,6 @@ const AppLayout = ({ children }) => {
         }
       }
       dispatch($app.set.tokens(temp))
-      // setTokens(temp)
-      // setLoading(false)
     })()
   })
 
