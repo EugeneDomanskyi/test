@@ -9,9 +9,8 @@ import Contracts from '@/libs/contracts.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
 import BuyModalInput from '@/components/BuyModal/BuyModalInput'
-/* import RedeemModalApprove from '@/components/RedeemModal/RedeemModalApprove'
-import RedeemModalConfirm from '@/components/RedeemModal/RedeemModalConfirm'
-import RedeemModalComplete from '@/components/RedeemModal/RedeemModalComplete' */
+import BuyModalConfirm from '@/components/BuyModal/BuyModalConfirm'
+import BuyModalComplete from '@/components/BuyModal/BuyModalComplete'
 
 const getMagic = (chains) => {
   const [initialChain] = chains.map((chain) => {
@@ -70,7 +69,6 @@ const BuyModal = ({ token, onClose, onStep }) => {
   }
 
   const handleBuy = async (nfts) => {
-    // setStep(1)
     const totalPrice = nfts.reduce((acc, nft) => acc+nft.price, 0)
     const balance = await getBalance()
     if (totalPrice > balance) {
@@ -87,14 +85,30 @@ const BuyModal = ({ token, onClose, onStep }) => {
         quantity: 1,
       }
     })
-    getClient()?.actions.buyToken({
-      items,
-      chainId,
-      wallet: walletClient,
-      onProgress: (steps) => {
-        console.log(steps)
-      }
-    })
+
+    try {
+      getClient()?.actions.buyToken({
+        items,
+        chainId,
+        wallet: walletClient,
+        onProgress: (steps) => {
+          const transaction = steps.find(item => item.kind == 'transaction')
+          if (transaction && transaction.hasOwnProperty('items')) {
+            if (transaction.items[0] && transaction.items[0].hasOwnProperty('status')) {
+              if (transaction.items[0].status == 'incomplete') {
+                setStep(1)
+                console.log('Incomplete txHash', transaction.items[0]?.txHash)
+              } else {
+                setStep(2)
+                console.log('Complete txHash', transaction.items[0]?.txHash)
+              }
+            }
+          }
+        }
+      })
+    } catch (error) {
+      console.log('Buy Error', error)
+    }
   }
 
   const handleBack = () => {
@@ -108,9 +122,8 @@ const BuyModal = ({ token, onClose, onStep }) => {
   const contentComponent = () => {
     switch (step) {
       case 0: return <BuyModalInput token={token} amount={amount} onAmountChange={handleAmountChange} onBuy={handleBuy} />
-      // case 1: return <RedeemModalApprove token={token} amount={amount} onBack={handleBack} onApprove={handleApprove} />
-      // case 2: return <RedeemModalConfirm token={token} amount={amount} />
-      // case 3: return <RedeemModalComplete token={token} amount={amount} onComplete={handleCloseModal} />
+      case 1: return <BuyModalConfirm token={token} amount={amount} />
+      case 2: return <BuyModalComplete token={token} amount={amount} onComplete={handleCloseModal} />
     }
   }
 
