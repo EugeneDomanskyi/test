@@ -24,6 +24,7 @@
     "lodash.merge": "^4.6.2",
     "moment": "^2.29.4",
     "next": "13.4.5",
+    "next-intercom": "^0.1.4",
     "numeral": "^2.0.6",
     "react": "18.2.0",
     "react-charts": "^3.0.0-beta.54",
