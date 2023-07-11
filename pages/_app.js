@@ -56,7 +56,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 const rainbowMagicConnector = ({ chains }) => ({
   id: 'magic',
   name: 'Magic',
-  iconUrl: '/images/magic-icon.svg',
+  iconUrl: '/images/icon-magic.png',
   iconBackground: '#fff',
   createConnector: () => {
     const [initialChain] = chains.map((chain) => {
