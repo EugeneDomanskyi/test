@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useWalletClient } from 'wagmi'
+import { Magic } from 'magic-sdk'
 
 import { getClient } from '@reservoir0x/reservoir-sdk'
 
@@ -12,9 +13,22 @@ import BuyModalInput from '@/components/BuyModal/BuyModalInput'
 import RedeemModalConfirm from '@/components/RedeemModal/RedeemModalConfirm'
 import RedeemModalComplete from '@/components/RedeemModal/RedeemModalComplete' */
 
+const getMagic = (chains) => {
+  const [initialChain] = chains.map((chain) => {
+    const [rpcUrl] = chain.rpcUrls.public.http
+    return {
+      rpcUrl: rpcUrl,
+      chainId: chain.id,
+    }
+  })
+  return new Magic(process.env.NEXT_PUBLIC_MAGIC_LINK_API_KEY, {
+    network: initialChain
+  })
+}
+
 const BuyModal = ({ token, onClose, onStep }) => {
   const { data: walletClient } = useWalletClient()
-  const { network } = useWalletConnect()
+  const { network, getBalance, chains } = useWalletConnect()
 
   const [amount, setAmount] = useState('')
   const [step, setStep] = useState(0)
@@ -55,8 +69,17 @@ const BuyModal = ({ token, onClose, onStep }) => {
     setStep(3)
   }
 
-  const handleBuy = (nfts) => {
+  const handleBuy = async (nfts) => {
     // setStep(1)
+    const totalPrice = nfts.reduce((acc, nft) => acc+nft.price, 0)
+    const balance = await getBalance()
+    if (totalPrice > balance) {
+      const magic = getMagic(chains)
+      const isMagicConnected = await magic.wallet.getInfo().catch(() => null)
+      if (isMagicConnected) {
+        await magic.wallet.showUI()
+      }
+    }
 
     const items = nfts.map(item => {
       return {
@@ -64,7 +87,6 @@ const BuyModal = ({ token, onClose, onStep }) => {
         quantity: 1,
       }
     })
-
     getClient()?.actions.buyToken({
       items,
       chainId,

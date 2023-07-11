@@ -3,13 +3,14 @@ import Head from 'next/head'
 import { ToastContainer } from 'react-toastify'
 import { createClient } from '@reservoir0x/reservoir-sdk'
 
-import { getDefaultWallets, RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
+import { getDefaultWallets, RainbowKitProvider, darkTheme, connectorsForWallets } from '@rainbow-me/rainbowkit'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { polygon, mainnet, bsc } from 'wagmi/chains'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
 import merge from 'lodash.merge'
+import { MagicConnectConnector } from '@everipedia/wagmi-magic-connector'
 
 import store from '@/store'
 
@@ -52,15 +53,51 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
   ]
 )
 
-const { connectors } = getDefaultWallets({
+const rainbowMagicConnector = ({ chains }) => ({
+  id: 'magic',
+  name: 'Magic',
+  iconUrl: '/images/magic-icon.svg',
+  iconBackground: '#fff',
+  createConnector: () => {
+    const [initialChain] = chains.map((chain) => {
+      const [rpcUrl] = chain.rpcUrls.public.http
+      return {
+        rpcUrl: rpcUrl,
+        chainId: chain.id,
+      }
+    })
+    const connector = new MagicConnectConnector({
+      chains: chains,
+      options: {
+        apiKey: process.env.NEXT_PUBLIC_MAGIC_LINK_API_KEY,
+        magicSdkConfiguration: {
+          network: initialChain,
+        },
+      },
+    });
+    return {
+      connector,
+    };
+  },
+})
+
+const { wallets: [popularWallets] } = getDefaultWallets({
   appName: process.env.NEXT_PUBLIC_APP_NAME,
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
   chains,
 })
 
+const connectors = connectorsForWallets([
+  {
+    groupName: 'Recommended',
+    wallets: [rainbowMagicConnector({ chains: initialChain })],
+  },
+  popularWallets
+])
+
 const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors,
+  connectors: connectors,
   publicClient,
   webSocketPublicClient,
 })

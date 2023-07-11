@@ -8,7 +8,7 @@ const useWalletConnect = () => {
 
   const { openConnectModal, connectModalOpen } = useConnectModal()
   const { address, isConnected } = useAccount()
-  const { chain } = useNetwork()
+  const { chain, chains } = useNetwork()
 
   const [modalOpen, setModalOpen] = useState(false)
   const [wallet, setWallet] = useState(null)
@@ -239,7 +239,7 @@ const useWalletConnect = () => {
     }
   }
 
-  return { wallet, blockchain, connect, disconnect, network, changeNetwork, getBalance, getPrice, scanUrl, usdt, jsonRpcEndpoints }
+  return { wallet, blockchain, connect, disconnect, network, changeNetwork, getBalance, getPrice, scanUrl, usdt, jsonRpcEndpoints, chains }
 }
 
 export default useWalletConnect
