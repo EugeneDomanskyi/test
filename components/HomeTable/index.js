@@ -388,8 +388,10 @@ const HomeTable = ({ tokens }) => {
                           </TableCell>
 
                           <TableCell align="right">
-                            <App.Button primary onClick={handleTrade(item)}>Trade</App.Button>
-                            <App.Button primary onClick={handleBuy(item)}>Buy</App.Button>
+                            <App.Flex row>
+                              <App.Button primary group onClick={handleTrade(item)}>Trade</App.Button>
+                              <App.Button variant="success" group onClick={handleBuy(item)}>Buy</App.Button>
+                            </App.Flex>
                           </TableCell>
 
                           <TableCell align="center">
