@@ -35,7 +35,7 @@ export const getDevice = () => {
 }
 
 export const trackEvent = (eventName, eventProperties) => {
-  const data = {
+  /* const data = {
     ...eventProperties,
     IsBrowser: true,
     OS: getOS(),
@@ -47,7 +47,7 @@ export const trackEvent = (eventName, eventProperties) => {
     event_type: eventName,
     event_properties: data,
   }
-  amplitudeEventTrack(post)
+  amplitudeEventTrack(post) */
 }
 
 export const amplitudeEventTrack = (post) => {
@@ -59,6 +59,6 @@ export const amplitudeEventTrack = (post) => {
     ...post,
     services:  ['amplitude', 'intercom', 'redshift']
   }
-  console.log(payload)
-  //return fetch(`${process.env.NEXT_PUBLIC_ANALYTICS_URL}/users/events/track`, {method: 'POST', body: JSON.stringify(payload), headers: headers})
+
+  return fetch(`${process.env.NEXT_PUBLIC_ANALYTICS_URL}/users/events/track`, {method: 'POST', body: JSON.stringify(payload), headers: headers})
 }

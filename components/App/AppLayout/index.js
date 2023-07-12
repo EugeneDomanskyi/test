@@ -5,15 +5,19 @@ import { v4 as uuid } from 'uuid'
 
 import { getPoolsAll } from '@/libs/query.lib'
 import { trackEvent } from '@/libs/analytics.lib'
+import useUtils from '@/myhooks/utils'
+
 import $app from '@/store/app'
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
-const tokensUrl = 'https://tegro-imagekit.s3.eu-central-1.amazonaws.com/nft20Tokens.json'
+const tokensUrl = `${process.env.NEXT_PUBLIC_S3_URL}/nft20Tokens.json`
 
 const AppLayout = ({ children }) => {
   const dispatch = useDispatch()
+
+  const { s3File } = useUtils()
   
   useEffect(() => {
     (async () => {
@@ -34,7 +38,8 @@ const AppLayout = ({ children }) => {
 
       dispatch($app.set.appKey({key: 'loadingTokens', data: true}))
       const temp = []
-      const result = await fetch(tokensUrl)
+
+      const result = await fetch(tokensUrl, { method: 'GET' })
       if (result && result.status == 200) {
         const json = await result.json()
         const pools = await getPoolsAll(json.map(el => el.PoolId.toLowerCase()))
@@ -53,7 +58,7 @@ const AppLayout = ({ children }) => {
               decimals: item['Decimals'],
               mintFee: item['Minting Fee'],
               redeemFee: item['Redemption Fee'],
-              image: `https://tegro-imagekit.s3.eu-central-1.amazonaws.com/NFT-20/${item['Code'].toUpperCase()}_256.png`,
+              image: s3File(item['Code'].toUpperCase()),
               pool,
               price: (pool?.token1Price ?? 0) * 1,
               tvl: (pool?.totalValueLockedUSD ?? 0) * 1,
