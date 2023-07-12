@@ -37,7 +37,7 @@ const TradeModal = ({ token }) => {
   }, [chainId])
 
   const getTokenList = () => {
-    return 'https://tegro-imagekit.s3.eu-central-1.amazonaws.com/tokenlist.json'
+    return `${process.env.NEXT_PUBLIC_S3_URL}/tokenlist.json`
   }
 
   const handleError = (error) => {

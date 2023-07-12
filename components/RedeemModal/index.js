@@ -3,6 +3,7 @@ import { toast } from 'react-toastify'
 
 import Contracts from '@/libs/contracts.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import RedeemModalInput from '@/components/RedeemModal/RedeemModalInput'
 import RedeemModalApprove from '@/components/RedeemModal/RedeemModalApprove'
@@ -45,6 +46,11 @@ const RedeemModal = ({ token, onClose, onStep }) => {
       toast.error("Redeem NFTs failed", { pauseOnFocusLoss: false })
       return 
     }
+
+    trackEvent('Dex Redeem Successful', {
+      'Token': token.collection,
+      'Quantity': amount,
+    })
 
     toast.success("Your Redemption Was Successful!", { pauseOnFocusLoss: false })
     setStep(3)

@@ -2,6 +2,7 @@ import Image from 'next/image'
 import cn from 'classnames'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 
@@ -11,6 +12,11 @@ const RedeemModalApprove = ({ token, amount, onBack, onApprove }) => {
   const { isMobile } = usePropsHelper()
 
   const handleApprove = () => {
+    trackEvent('Dex Confirm Redeem Clicked', {
+      'Token': token.collection,
+      'Quantity': amount,
+    })
+
     if (onApprove) {
       onApprove()
     }
