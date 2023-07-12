@@ -8,8 +8,9 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
+import { LegendToggle } from '@mui/icons-material'
 
-const BuyModalInput = ({ token, amount, onAmountChange, onBuy }) => {
+const BuyModalInput = ({ token, amount, price, onAmountChange, onPriceChange, onBuy }) => {
   const { isMobile } = usePropsHelper()
   const { wallet, network } = useWalletConnect()
 
@@ -42,14 +43,38 @@ const BuyModalInput = ({ token, amount, onAmountChange, onBuy }) => {
     }
   }, [amount])
 
-  const handleChange = (event) => {
+  const handleAmountChange = (event) => {
     if (onAmountChange) {
       onAmountChange(event.target.value)
+    }
+
+    if (onPriceChange) {
+      onPriceChange(getPrice(event.target.value))
+    }
+  }
+
+  const handlePriceChange = (event) => {
+    if (onPriceChange) {
+      onPriceChange(event.target.value)
+    }
+
+    if (onAmountChange) {
+      let amount = 0
+      let maxPrice = event.target.value
+      while (maxPrice > 0) {
+        if (nfts[amount].price <= maxPrice) {
+          maxPrice -= nfts[amount].price
+          amount++
+        } else {
+          maxPrice = 0
+        }
+      }
+      onAmountChange(amount)
     }
   }
 
   const handleKeyPress = (event) => {
-    if ((event.key === '0' && event.target.value.length == 0) || event.key === '-' || event.key === '+' || event.key === 'e' || event.key === '.' || event.key === ',') {
+    if ((event.key === '0' && event.target.value.length == 0) || event.key === '-' || event.key === '+' || event.key === 'e') {
       event.preventDefault()
     }
 
@@ -92,7 +117,7 @@ const BuyModalInput = ({ token, amount, onAmountChange, onBuy }) => {
 
       <App.Flex column gap={6} className={styles.content}>
         <App.Flex row gap={8} className={styles.item}>
-          <input type="number" placeholder="0" value={amount} onChange={handleChange} onKeyDown={handleKeyPress} className={cn(styles.input, {[styles.error]: error})} />
+          <input type="number" placeholder="0" value={amount} onChange={handleAmountChange} onKeyDown={handleKeyPress} className={cn(styles.input, {[styles.error]: error})} />
 
           <App.Flex column align="flex-end" gap={10}>
             <App.Flex row gap={8} align="center" className={styles.chip}>
@@ -117,10 +142,36 @@ const BuyModalInput = ({ token, amount, onAmountChange, onBuy }) => {
             </App.Text>
           </App.Flex>
         </App.Flex>
+
+        <div className={styles.arrowBox}>
+          <App.Flex center className={styles.arrow}>
+            <App.Icon icon="arrow-down" />
+          </App.Flex>
+        </div>
+
+        <App.Flex row gap={8} className={styles.item}>
+          <input type="number" placeholder="0" value={price} onChange={handlePriceChange} onKeyDown={handleKeyPress} className={styles.input} />
+
+          <App.Flex column gap={10}>
+            <App.Flex row gap={8} align="center" className={cn(styles.chip, styles.collection)}>
+              <div className={styles.imgSquare}>
+              <Image src={`/images/icon-${token.chain.toLowerCase()}.png`} width={25} height={25} alt="" />
+              </div>
+              <App.Text size={16}>{network(token.chain.toLowerCase()).currency}</App.Text>
+            </App.Flex>
+
+            {/* <App.Text right size={12} weight={400} color="#B9B8C5">
+              <App.Flex row align="center" justify="flex-end" gap={4}>
+                <span>Balance:</span>
+                {balanceLoading ? <App.Loader size={12} /> : count}
+              </App.Flex>
+            </App.Text> */}
+          </App.Flex>
+        </App.Flex>
       </App.Flex>
 
       <App.Flex center className={cn(styles.box, styles.borderTop)}>
-        <App.Button primary large disabled={error || amount * 1 <= 0} onClick={handleBuy} sx={{ width: isMobile ? '100%' : 200 }}>Buy for {`${getPrice(amount).toFixed(4)} MATIC`}</App.Button>
+        <App.Button primary large disabled={error || amount * 1 <= 0} onClick={handleBuy} sx={{ width: isMobile ? '100%' : 200 }}>Buy</App.Button>
       </App.Flex>
     </App.Flex>
   )

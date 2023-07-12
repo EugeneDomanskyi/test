@@ -30,10 +30,9 @@ const BuyModal = ({ token, onClose, onStep }) => {
   const { network, getBalance, chains } = useWalletConnect()
 
   const [amount, setAmount] = useState('')
+  const [price, setPrice] = useState('')
   const [step, setStep] = useState(0)
-  const [hash, setHash] = useState()
 
-  const contracts = new Contracts(network(token?.chain)?.gasLimit)
   const chainId = network(token.chain)?.chainId
 
   useEffect(() => {
@@ -44,28 +43,6 @@ const BuyModal = ({ token, onClose, onStep }) => {
     if (onClose) {
       onClose()
     }
-  }
-
-  const handleApprove = async () => {
-    setStep(2)
-
-    const txHash = await contracts.withdrawNFTs(amount, token.nft20)
-    if (txHash.error) {
-      setStep(0)
-      toast.error("Redeem NFTs failed", { pauseOnFocusLoss: false })
-      return
-    }
-
-    setHash(txHash)
-    const result = await contracts.waitForTransaction(txHash)
-    if (result.error) {
-      setStep(0)
-      toast.error("Redeem NFTs failed", { pauseOnFocusLoss: false })
-      return 
-    }
-
-    toast.success("Your Redemption Was Successful!", { pauseOnFocusLoss: false })
-    setStep(3)
   }
 
   const handleBuy = async (nfts) => {
@@ -111,17 +88,17 @@ const BuyModal = ({ token, onClose, onStep }) => {
     }
   }
 
-  const handleBack = () => {
-    setStep(0)
-  }
-
   const handleAmountChange = (val) => {
     setAmount(val)
   }
 
+  const handlePriceChange = (val) => {
+    setPrice(val)
+  }
+
   const contentComponent = () => {
     switch (step) {
-      case 0: return <BuyModalInput token={token} amount={amount} onAmountChange={handleAmountChange} onBuy={handleBuy} />
+      case 0: return <BuyModalInput token={token} amount={amount} price={price} onAmountChange={handleAmountChange} onPriceChange={handlePriceChange} onBuy={handleBuy} />
       case 1: return <BuyModalConfirm token={token} amount={amount} />
       case 2: return <BuyModalComplete token={token} amount={amount} onComplete={handleCloseModal} />
     }
