@@ -6,6 +6,8 @@ import AlchemyLibrary from '@/libs/alchemy.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
 
+import $exchange from '@/store/exchange'
+
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
@@ -26,6 +28,11 @@ const SellModalInput = ({ token, amount, onAmountChange, onSell }) => {
         const result = await getNfts(token.ognft)
         if (result) {
           setNfts(result)
+        }
+
+        const bids = await $exchange.api.bids({ collection: token.ognft })
+        if (bids) {
+          console.log(bids)
         }
         setBalanceLoading(false)
       })()
