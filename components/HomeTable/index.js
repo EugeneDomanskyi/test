@@ -12,6 +12,7 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 import $modal from '@/store/modal'
 
 import App from '@/components/App'
+import SellModal from '@/components/SellModal'
 
 import styles from './styles.module.scss'
 
@@ -112,6 +113,28 @@ const HomeTable = ({ tokens }) => {
         token: token,
         header: {
           title: `Buy`,
+        },
+      }}))
+    }
+  }
+
+  const handleSell = (token) => async (e) => {
+    e.stopPropagation()
+    if (token.nft20) {
+      const address = await connect()
+      if ( ! address) {
+        return
+      }
+
+      const result = await changeNetwork(token.chain)
+      if ( ! result) {
+        return
+      }
+
+      dispatch($modal.set.show({modal: 'SellModal', props: {
+        token: token,
+        header: {
+          title: `Sell`,
         },
       }}))
     }
@@ -391,6 +414,7 @@ const HomeTable = ({ tokens }) => {
                             <App.Flex row>
                               <App.Button primary group onClick={handleTrade(item)}>Trade</App.Button>
                               <App.Button variant="success" group onClick={handleBuy(item)}>Buy</App.Button>
+                              <App.Button variant="danger" group onClick={handleSell(item)}>Sell</App.Button>
                             </App.Flex>
                           </TableCell>
 
