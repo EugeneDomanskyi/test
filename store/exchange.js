@@ -31,10 +31,10 @@ const api = {
         request('orders/depth/v1', 'GET', {side: 'sell', ...params}),
       ]).then(([buy, sell]) => ({buy: buy.depth.slice(0, 10), sell: sell.depth.slice(0, 10)}))
     },
+  },
 
-    bids: (params) => {
-      return request('orders/bids/v6', 'GET', params)
-    },
+  bids: (params) => {
+    return request('orders/bids/v6', 'GET', params)
   },
 }
 

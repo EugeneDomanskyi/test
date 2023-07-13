@@ -17,6 +17,8 @@ const SellModalInput = ({ token, amount, onAmountChange, onSell }) => {
   const { wallet, network } = useWalletConnect()
 
   const [nfts, setNfts] = useState([])
+  const [bids, setBids] = useState([])
+  const [averagePrice, setAveragePrice] = useState(0)
   const [balanceLoading, setBalanceLoading] = useState(true)
   const [error, setError] = useState(false)
 
@@ -30,9 +32,20 @@ const SellModalInput = ({ token, amount, onAmountChange, onSell }) => {
           setNfts(result)
         }
 
-        const bids = await $exchange.api.bids({ collection: token.ognft })
-        if (bids) {
-          console.log(bids)
+        const resultBids = await $exchange.api.bids({ collection: token.ognft })
+        if (resultBids && resultBids.hasOwnProperty('orders')) {
+          setBids(resultBids.orders)
+          
+          if (resultBids.orders.length) {
+            let total = 0
+            for (const bid of resultBids.orders) {
+              if (bid.price?.amount && bid.price?.amount?.native) {
+                total += bid.price?.amount?.native
+              }
+            }
+
+            setAveragePrice(total / resultBids.orders.length)
+          }
         }
         setBalanceLoading(false)
       })()
@@ -74,7 +87,7 @@ const SellModalInput = ({ token, amount, onAmountChange, onSell }) => {
   }
 
   const handleSell = () => {
-    if (amount * 1 > nfts.length) {
+    if (amount * 1 > nfts.length || amount * 1 > bids.length) {
       setError(true)
       return
     } else {
@@ -92,7 +105,7 @@ const SellModalInput = ({ token, amount, onAmountChange, onSell }) => {
         <App.Text size={[20, 16]} weight={[600, 700]}>Enter the amount you would like to sell</App.Text>
       </div>
 
-      <App.Flex column gap={6} className={styles.content}>
+      <App.Flex column gap={16} className={styles.content}>
         <App.Flex row gap={8} className={styles.item}>
           <input type="number" placeholder="0" value={amount} onChange={handleAmountChange} onKeyDown={handleKeyPress} className={cn(styles.input, {[styles.error]: error})} />
 
@@ -112,10 +125,28 @@ const SellModalInput = ({ token, amount, onAmountChange, onSell }) => {
             </App.Text>
           </App.Flex>
         </App.Flex>
+
+        <App.Flex row justify="flex-end" sx={{ padding: '0 17px' }}>
+          <App.Flex column gap={8}>
+            <App.Text size={12} weight={400} color={error ? '#DE5C64' : '#B9B8C5'}>
+              <App.Flex row align="center" justify="flex-end" gap={4}>
+                <span>Total Offers:</span>
+                {balanceLoading ? <App.Loader size={12} /> : bids.length}
+              </App.Flex>
+            </App.Text>
+
+            <App.Text size={12} weight={400} color={error ? '#DE5C64' : '#B9B8C5'}>
+              <App.Flex row align="center" justify="flex-end" gap={4}>
+                <span>Average Price:</span>
+                {balanceLoading ? <App.Loader size={12} /> : `${averagePrice.toFixed(4)} ${network(token.chain.toLowerCase()).currency}`}
+              </App.Flex>
+            </App.Text>
+          </App.Flex>
+        </App.Flex>
       </App.Flex>
 
       <App.Flex center className={cn(styles.box, styles.borderTop)}>
-        <App.Button primary large disabled={error || amount * 1 <= 0} onClick={handleSell} sx={{ width: isMobile ? '100%' : 200 }}>Sell</App.Button>
+        <App.Button primary large disabled={error || amount * 1 <= 0 || amount * 1 > bids.length} onClick={handleSell} sx={{ width: isMobile ? '100%' : 200 }}>Sell</App.Button>
       </App.Flex>
     </App.Flex>
   )
