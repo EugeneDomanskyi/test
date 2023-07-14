@@ -7,7 +7,7 @@ import $exchange from '@/store/exchange'
 
 import App from '@/components/App'
 
-const OrderBook = ({collection}) => {
+const OrderBook = ({collectionId}) => {
   const dispatch = useDispatch()
 
   const orderBook = useSelector(({$exchange}) => $exchange.orderBook)
@@ -19,14 +19,14 @@ const OrderBook = ({collection}) => {
   const maxSellVolume = orderBook.sell.reduce((acc, {quantity}) => acc + quantity*1, 0)
 
   useEffect(() => {
-    if (collection) {
-      $exchange.api.get.orderBook({collection: collection}).then(res => {
+    if (collectionId) {
+      $exchange.api.get.orderBook({collection: collectionId, blockchain: 'polygon'}).then(res => {
         if (res) {
           dispatch($exchange.set.orderBook(res))
         }
       })
     }
-  }, [collection])
+  }, [collectionId])
 
   return (
     <App.Flex column flex={1} className={styles.card}>

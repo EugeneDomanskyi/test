@@ -27,6 +27,9 @@ export const exchangeSlice = createSlice({
     sales: (state, {payload}) => {
       state.sales = payload
     },
+    interval: (state, {payload}) => {
+      state.interval = payload
+    },
     collections: (state, {payload}) => {
       state.collections = payload
     }
@@ -36,7 +39,7 @@ export const exchangeSlice = createSlice({
 const getters = {
   kLineData: (interval) => ({$exchange}) => {
     const groupedSales = $exchange.sales.reduce((acc, sale) => {
-      const roundedDate = round(moment(sale.timestamp*1000), moment.duration(15, 'minutes'), 'ceil')
+      const roundedDate = round(moment(sale.timestamp*1000), moment.duration($exchange.interval.count, $exchange.interval.unit), 'ceil')
       const intervalKey = roundedDate.format('DD-MM-YY HH:mm')
       const formattedData = {
         price: sale.price.amount.native,
