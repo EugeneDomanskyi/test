@@ -24,7 +24,7 @@ const Exchange = () => {
   const collections = useSelector(({$exchange}) => $exchange.collections)
 
   useEffect(() => {
-    $exchange.api.get.topCollections({includeRecentSales: false}).then(res => {
+    $exchange.api.get.topCollections({includeRecentSales: false, blockchain: 'polygon'}).then(res => {
       dispatch($exchange.set.collections(res))
     })
   }, [])
@@ -32,12 +32,13 @@ const Exchange = () => {
   useEffect(() => {
     if (tokenId) {
       $exchange.api.get.sales({
+        blockchain: 'polygon',
         collection: tokenId,
         includeDeleted: false,
         includeTokenMetadata: false,
         sortDirection: 'asc',
         startTimestamp: moment().subtract(2, 'weeks').unix(),
-        limit: 1000
+        // limit: 1000
       }).then(res => {
         if (res) {
           dispatch($exchange.set.sales(res))

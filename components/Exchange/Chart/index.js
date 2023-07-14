@@ -2,6 +2,7 @@ import styles from './styles.module.scss'
 import { useRef, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
+import cn from 'classnames'
 
 import { createChart, ColorType } from 'lightweight-charts'
 import * as LightweightCharts from 'lightweight-charts'
@@ -59,8 +60,15 @@ const CHART_CONFIG = {
   },
 }
 
+const INTERVALS = [
+  {key: '15m', count: 15, unit: 'minutes'},
+  {key: '30m', count: 30, unit: 'minutes'},
+  {key: '1h', count: 1, unit: 'hours'},
+]
+
 const TradeChart = (props) => {
   const kLineData = useSelector($exchange.get.kLineData())
+  const activeInterval = useSelector(({$exchange}) => $exchange.interval)
 
   const wrapperRef = useRef(null)
   const containerRef = useRef(null)
@@ -93,6 +101,17 @@ const TradeChart = (props) => {
 
   return (
     <div ref={wrapperRef}>
+      <App.Flex>
+        {
+          INTERVALS.map((interval, i) => {
+            return (
+              <div key={i} className={cn(styles.interval, {[styles.active]: activeInterval.key === interval.key})}>
+                <App.Text>{ interval.key.toUpperCase() }</App.Text>
+              </div>
+            )
+          })
+        }
+      </App.Flex>
       <div ref={containerRef} />
     </div>
   )

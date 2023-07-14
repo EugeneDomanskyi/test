@@ -1,0 +1,13 @@
+.interval {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+
+  &.active, &:hover {
+    background-color: #1C1938;
+  }
+}
