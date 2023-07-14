@@ -6,7 +6,11 @@ import $app from './app'
 import $exchange from './exchange'
 import $collection from './collection'
 
-const BASE_URL = 'https://api-polygon.reservoir.tools'
+const BLOCKCHAIN_URL = {
+  polygon: 'https://api-polygon.reservoir.tools',
+  ethereum: 'https://api.reservoir.tools',
+  goerli: 'https://api-goerli.reservoir.tools',
+}
 
 const store = configureStore({
   reducer: {
@@ -17,7 +21,7 @@ const store = configureStore({
   },
 })
 
-export const request = async (uri, method = 'GET', data) => {
+export const request = async (uri, method = 'GET', {blockchain, ...data} = {}) => {
   const options = {
     method,
     headers: {
@@ -36,8 +40,7 @@ export const request = async (uri, method = 'GET', data) => {
       options.body = JSON.stringify(data)
     }
   }
-
-  const response = await fetch(`${BASE_URL}/${uri}${query}`, options)
+  const response = await fetch(`${BLOCKCHAIN_URL[blockchain]}/${uri}${query}`, options)
   if (response.ok) {
     return responseHandler(response)
   }
