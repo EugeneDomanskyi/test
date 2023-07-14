@@ -8,16 +8,18 @@ import cn from 'classnames'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import $modal from '@/store/modal'
 
 import App from '@/components/App'
+import SellModal from '@/components/SellModal'
 
 import styles from './styles.module.scss'
 
 const HomeTable = ({ tokens }) => {
   const { isMobile } = usePropsHelper()
-  const { connect, changeNetwork, scanUrl } = useWalletConnect()
+  const { wallet, connect, changeNetwork, scanUrl } = useWalletConnect()
 
   const dispatch = useDispatch()
   const router = useRouter()
@@ -74,6 +76,12 @@ const HomeTable = ({ tokens }) => {
 
   const handleTrade = (token) => async (e) => {
     e.stopPropagation()
+
+    trackEvent('Dex Trade Clicked', {
+      'Token': token.collection,
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+    })
+
     if (token.nft20) {
       const address = await connect()
       if ( ! address) {
@@ -117,8 +125,36 @@ const HomeTable = ({ tokens }) => {
     }
   }
 
+  const handleSell = (token) => async (e) => {
+    e.stopPropagation()
+    if (token.nft20) {
+      const address = await connect()
+      if ( ! address) {
+        return
+      }
+
+      const result = await changeNetwork(token.chain)
+      if ( ! result) {
+        return
+      }
+
+      dispatch($modal.set.show({modal: 'SellModal', props: {
+        token: token,
+        header: {
+          title: `Sell`,
+        },
+      }}))
+    }
+  }
+
   const handleMint = (token) => async (e) => {
     e.stopPropagation()
+
+    trackEvent('Dex Mint Clicked', {
+      'Token': token.collection,
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+    })
+
     const address = await connect()
     if ( ! address) {
       return
@@ -146,6 +182,12 @@ const HomeTable = ({ tokens }) => {
 
   const handleRedeem = (token) => async (e) => {
     e.stopPropagation()
+
+    trackEvent('Dex Redeem Clicked', {
+      'Token': token.collection,
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+    })
+
     const address = await connect()
     if ( ! address) {
       return
@@ -175,6 +217,12 @@ const HomeTable = ({ tokens }) => {
   }
 
   const handleTabChange = (value) => {
+    if (value == 'earn') {
+      trackEvent('Dex Earn Clicked', {
+        'Wallet Status': wallet ? 'Connected' : 'Not Connected',
+      })
+    }
+
     setTab(value)
   }
 
@@ -391,6 +439,7 @@ const HomeTable = ({ tokens }) => {
                             <App.Flex row>
                               <App.Button primary group onClick={handleTrade(item)}>Trade</App.Button>
                               <App.Button variant="success" group onClick={handleBuy(item)}>Buy</App.Button>
+                              <App.Button variant="danger" group onClick={handleSell(item)}>Sell</App.Button>
                             </App.Flex>
                           </TableCell>
 

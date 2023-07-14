@@ -47,7 +47,7 @@ const HomeGuide = () => {
           <App.Text center size={[20, 16]} weight={700} height={1} color="#B9B8C5">Get started with the NFT20 DEX!</App.Text>
         </App.Flex>
 
-        <App.Flex column gap={16} width="100%">
+        <App.Flex column center gap={16} width="100%">
           {isMobile ? (
             <Scrollbars
               autoHide
@@ -76,8 +76,6 @@ const HomeGuide = () => {
 
           {active == 'trade' ? (
             <App.Flex column center gap={16} className={styles.content}>
-              <App.Text center size={[24, 16]} weight={700}>Swap NFT20 assets for other coins or tokens in a click.</App.Text>
-
               <App.Flex center>
                 {step == 1 ? (
                   <video muted autoPlay width="1080" height="534">
@@ -91,6 +89,8 @@ const HomeGuide = () => {
                   </video>
                 ) : null}
               </App.Flex>
+
+              <App.Text center size={[24, 16]} weight={700}>Swap NFT20 assets for other coins or tokens in a click.</App.Text>
 
               <App.Flex direction={['row', 'column']} gap={16} width="100%">
                 <App.Flex column gap={8} flex={1} className={cn(styles.step, {[styles.active]: step == 1})} onClick={handleStepChange(1)}>
@@ -108,8 +108,6 @@ const HomeGuide = () => {
 
           {active == 'mint' ? (
             <App.Flex column center gap={16} className={styles.content}>
-              <App.Text center size={[24, 16]} weight={700}>Swap NFT20 assets for other coins or tokens in just a click.</App.Text>
-
               <App.Flex center>
                 {step == 1 ? (
                   <video muted autoPlay width="1080" height="534">
@@ -123,6 +121,8 @@ const HomeGuide = () => {
                   </video>
                 ) : null}
               </App.Flex>
+
+              <App.Text center size={[24, 16]} weight={700}>Swap NFT20 assets for other coins or tokens in just a click.</App.Text>
 
               <App.Flex direction={['row', 'column']} gap={16} width="100%">
                 <App.Flex column gap={8} flex={1} className={cn(styles.step, {[styles.active]: step == 1})} onClick={handleStepChange(1)}>
@@ -140,8 +140,6 @@ const HomeGuide = () => {
 
           {active == 'redeem' ? (
             <App.Flex column center gap={16} className={styles.content}>
-              <App.Text center size={[24, 16]} weight={700}>Swap NFT20 assets for other coins or tokens in just a click.</App.Text>
-
               <App.Flex center>
                 {step == 1 ? (
                   <video muted autoPlay width="1080" height="534">
@@ -155,6 +153,8 @@ const HomeGuide = () => {
                   </video>
                 ) : null}
               </App.Flex>
+
+              <App.Text center size={[24, 16]} weight={700}>Swap NFT20 assets for other coins or tokens in just a click.</App.Text>
 
               <App.Flex direction={['row', 'column']} gap={16} width="100%">
                 <App.Flex column gap={8} flex={1} className={cn(styles.step, {[styles.active]: step == 1})} onClick={handleStepChange(1)}>
@@ -172,11 +172,11 @@ const HomeGuide = () => {
 
           {active == 'pool' ? (
             <App.Flex column center gap={16} className={styles.content}>
-              <App.Text center size={[24, 16]} weight={700}>Add Liquidity to pools and start earning fees.</App.Text>
-
               <App.Flex center sx={{ position: 'relative', width: '100%', height: '0', paddingBottom: '56.25%' }}>
                 <Image src="/images/trade-1.png" fill alt="" />
               </App.Flex>
+
+              <App.Text center size={[24, 16]} weight={700}>Add Liquidity to pools and start earning fees.</App.Text>
 
               <App.Flex direction={['row', 'column']} gap={16} width="100%">
                 <App.Flex column gap={8} flex={1} className={cn(styles.step, {[styles.active]: step == 1})} onClick={handleStepChange(1)}>

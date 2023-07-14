@@ -103,6 +103,9 @@ const api = {
       return request('collections/top-selling/v1', 'GET', params).then(res => res.collections)
     }
   },
+  bids: (params) => {
+    return request('orders/bids/v6', 'GET', params)
+  }
 }
 
 export default {

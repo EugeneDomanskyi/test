@@ -6,6 +6,7 @@ import AlchemyLibrary from '@/libs/alchemy.lib'
 import Contracts from '@/libs/contracts.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 
@@ -79,6 +80,11 @@ const RedeemModalInput = ({ token, amount, onAmountChange, onRedeem }) => {
   }
 
   const handleRedeem = () => {
+    trackEvent('Dex Review Redeem Clicked', {
+      'Token': token.collection,
+      'Quantity': amount,
+    })
+
     if (amount * 1 > balance * 1) {
       setError(true)
       return

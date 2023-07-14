@@ -4,6 +4,7 @@ import Scrollbars from 'react-custom-scrollbars-2'
 import cn from 'classnames'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 import MintModalSelectItem from '@/components/MintModal/MintModalSelectItem'
@@ -61,6 +62,11 @@ const MintModalSelect = ({ nfts, token, loading, buttonLoading, onContinue }) =>
 
   const handleContinue = () => {
     if (onContinue && ! buttonLoading) {
+      trackEvent('Dex Review Mint Clicked', {
+        'Token': token.collection,
+        'Quantity': selectedIds.length,
+      })
+
       if (selectedIds.length) {
         const result = []
         for (const id of selectedIds) {
