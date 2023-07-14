@@ -4,6 +4,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import $modal from './modal'
 import $app from './app'
 import $exchange from './exchange'
+import $collection from './collection'
 
 const BASE_URL = 'https://api-polygon.reservoir.tools'
 
@@ -12,6 +13,7 @@ const store = configureStore({
     $modal: $modal.reducer,
     $app: $app.reducer,
     $exchange: $exchange.reducer,
+    $collection: $collection.reducer,
   },
 })
 
@@ -51,7 +53,16 @@ const errorHandler = async (response) => {
 }
 
 const queryBuilder = (data) => {
-  const params = new URLSearchParams(data)
+  const params = new URLSearchParams()
+  for (const key in data) {
+    if (typeof data[key] == 'object') {
+      for (const value of data[key]) {
+        params.append(key, value)
+      }
+    } else {
+      params.append(key, data[key])
+    }
+  }
   return `?${params}`
 }
 

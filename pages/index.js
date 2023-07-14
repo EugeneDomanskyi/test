@@ -1,24 +1,26 @@
 import { useSelector } from 'react-redux'
+import dynamic from 'next/dynamic'
 
 import App from '@/components/App'
-import HomeTop from '@/components/HomeTop'
-import HomeTable from '@/components/HomeTable'
-import HomeEarn from '@/components/HomeEarn'
-import HomeUsing from '@/components/HomeUsing'
-import HomeGuide from '@/components/HomeGuide'
+
+const HomeTop = dynamic(import('@/components/Home/HomeTop'), { ssr: false })
+const HomeTable = dynamic(import('@/components/Home/HomeTable'), { ssr: false })
+const HomeEarn = dynamic(import('@/components/Home/HomeEarn'), { ssr: false })
+const HomeUsing = dynamic(import('@/components/Home/HomeUsing'), { ssr: false })
+const HomeGuide = dynamic(import('@/components/Home/HomeGuide'), { ssr: false })
 
 export default function Home() {
-  const { tokens, loadingTokens: loading } = useSelector(({$app}) => $app)
+  const { loading } = useSelector(({ $collection }) => $collection)
 
   return (
     <App.Flex column sx={{ paddingBottom: 48, overflow: 'hidden' }}>
-      <App.Flex column gap={[96, 64]}>
+      <App.Flex column gap={64}>
         <App.Flex column gap={48}>
-          <HomeTop tokens={tokens} />
+          <HomeTop />
           {loading ? (
             <App.LoaderBlock height={600} />
           ) : (
-            <HomeTable tokens={tokens} />
+            <HomeTable />
           )}
         </App.Flex>
 

@@ -12,7 +12,7 @@ const useWalletConnect = () => {
 
   const [modalOpen, setModalOpen] = useState(false)
   const [wallet, setWallet] = useState(null)
-  const [blockchain, setBlockchain] = useState(null)
+  const [blockchain, setBlockchain] = useState('')
   const [callback, setCallback] = useState({ success: null, failed: null })
 
   const usdt = {

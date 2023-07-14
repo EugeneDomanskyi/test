@@ -9,7 +9,7 @@ import { trackEvent } from '@/libs/analytics.lib'
 import $modal from '@/store/modal'
 
 import App from '@/components/App'
-import HomeBalance from '@/components/HomeBalance'
+import HomeBalance from '@/components/Home/HomeBalance'
 
 import styles from './styles.module.scss'
 
@@ -51,16 +51,9 @@ const Header = () => {
 
   const handleMenuToggle = () => {
     if (isMobile) {
-      dispatch($modal.set.show({modal: 'HomeDisconnectModal', props: {
+      dispatch($modal.set.show({modal: 'Home/HomeDisconnectModal', props: {
         header: {
-          content: (
-            <App.Button primary large outlined rounded sx={{ width: 175 }}>
-              <App.Flex row gap={8} align="center">
-                <App.Flex width={28} height={28} sx={{ borderRadius: '50%', background: 'linear-gradient(91.77deg, #E792E4 2.92%, #B545BE 36.09%, #7931CB 70.47%, #4D42C9 100%)' }} />
-                <span>{shorterAddress()}</span>
-              </App.Flex>
-            </App.Button>
-          ),
+      
         },
       }}))
     } else {

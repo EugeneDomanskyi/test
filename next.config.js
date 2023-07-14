@@ -10,13 +10,6 @@ const nextConfig = {
 
   images: {
     remotePatterns: [
-      // {
-      //   protocol: 'https',
-      //   hostname: 'tegro-imagekit.s3.eu-central-1.amazonaws.com',
-      // }, {
-      //   protocol: 'https',
-      //   hostname: 'raw.githubusercontent.com',
-      // },
       {
         protocol: 'https',
         hostname: '**',
