@@ -13,6 +13,7 @@ const useWalletConnect = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [wallet, setWallet] = useState(null)
   const [blockchain, setBlockchain] = useState('')
+  const [blockchains, setBlockchains] = useState([])
   const [callback, setCallback] = useState({ success: null, failed: null })
 
   const usdt = {
@@ -76,6 +77,17 @@ const useWalletConnect = () => {
   useEffect(() => {
     setBlockchain(isConnected ? chain.name : null)
   }, [chain, isConnected])
+
+  useEffect(() => {
+    setBlockchains(isConnected ? chains.map(item => {
+      return {
+        id: item.id,
+        name: item.name,
+        currency: item.nativeCurrency.symbol,
+        decimals: item.nativeCurrency.decimals,
+      }
+    }) : [])
+  }, [chains, isConnected])
 
   const disconnect = () => {
     wagmiDisconnect()
@@ -239,7 +251,7 @@ const useWalletConnect = () => {
     }
   }
 
-  return { wallet, blockchain, connect, disconnect, network, changeNetwork, getBalance, getPrice, scanUrl, usdt, jsonRpcEndpoints, chains }
+  return { wallet, blockchain, blockchains, connect, disconnect, network, changeNetwork, getBalance, getPrice, scanUrl, usdt, jsonRpcEndpoints, chains }
 }
 
 export default useWalletConnect

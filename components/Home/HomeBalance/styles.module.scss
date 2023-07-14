@@ -4,3 +4,21 @@
   background-color: #0E0B23;
   border: solid #1D1937 1px;
 }
+
+.menu {
+  position: absolute;
+  background-color: rgba(9, 5, 29, 0.8);
+  border: solid #7204FF 1px;
+  border-radius: 12px;
+  left: 0;
+  top: 120%;
+  padding: 8px;
+  visibility: hidden;
+  opacity: 0;
+  transition: all .2s ease 0s;
+
+  &.active {
+    visibility: visible;
+    opacity: 1;
+  }
+}
