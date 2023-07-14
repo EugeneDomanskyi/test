@@ -14,7 +14,7 @@ const Header = dynamic(import('@/components/Header'), { ssr: false })
 const Footer = dynamic(import('@/components/Footer'), { ssr: false })
 
 const Wrapper = ({ children }) => {
-  const { blockchain } = useWalletConnect()
+  const { blockchains } = useWalletConnect()
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -35,41 +35,55 @@ const Wrapper = ({ children }) => {
       trackEvent('Dex Page Visited')
 
       dispatch($collection.set.loading(true))
-      const top = await $collection.api.top({ limit: 10 })
-      if (top && top.hasOwnProperty('collections')) {
-        dispatch($collection.set.all(top.collections.map(item => {
-          return {
-            address: item.id,
-            image: item.image,
-            name: item.name,
-          }
-        })))
-
-        const ids = top.collections.map(item => item.id)
-        const result = await $collection.api.all({ contract: ids })
-        if (result && result.hasOwnProperty('collections')) {
-          dispatch($collection.set.all(result.collections.map(item => {
-            return {
-              address: item.id,
-              image: item.image,
-              name: item.name,
-              slug: item.slug,
-              price: item.floorAsk?.price?.amount?.usd,
-              volume: item.volume['1day'],
-              tvl: item.volume['allTime'],
-            }
-          })))
+      let topCollections = []
+      for (const blockchain of blockchains) {
+        const top = await $collection.api.top({ blockchain: blockchain.code, limit: 10 })
+        if (top && top.hasOwnProperty('collections')) {
+          topCollections = [
+            ...topCollections,
+            ...top.collections.map(item => {
+              return {
+                blockchain: blockchain.code,
+                address: item.id,
+                image: item.image,
+                name: item.name,
+              }
+            })
+          ]
         }
+      }
+      dispatch($collection.set.all(topCollections))
+
+      if (topCollections.length) {
+        let topCollectionsInfo = []
+        for (const blockchain of blockchains) {
+          const ids = topCollections.filter(item => item.blockchain == blockchain.code).map(item => item.address)
+          const result = await $collection.api.all({ blockchain: blockchain.code, contract: ids })
+          if (result && result.hasOwnProperty('collections')) {
+            topCollectionsInfo = [
+              ...topCollectionsInfo,
+              ...result.collections.map(item => {
+                return {
+                  blockchain: blockchain.code,
+                  address: item.id,
+                  image: item.image,
+                  name: item.name,
+                  slug: item.slug,
+                  price: item.floorAsk?.price?.amount?.usd,
+                  volume: item.volume['1day'],
+                  tvl: item.volume['allTime'],
+                }
+              })
+            ]
+          }
+        }
+
+        topCollectionsInfo.sort((a, b) => b.tvl - a.tvl)
+        dispatch($collection.set.all(topCollectionsInfo))
       }
       dispatch($collection.set.loading(false))
     })()
-  })
-
-  useEffect(() => {
-    if (blockchain) {
-      dispatch($app.set.blockchain(blockchain))
-    }
-  }, [blockchain])
+  }, [])
 
   return (
     <>
