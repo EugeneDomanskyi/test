@@ -1,0 +1,9 @@
+.container {
+  width: 300px;
+
+  .token {
+    &.active {
+      background: linear-gradient(90deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+    }
+  }
+}

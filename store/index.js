@@ -34,7 +34,6 @@ export const request = async (uri, method = 'GET', data) => {
       options.body = JSON.stringify(data)
     }
   }
-
   const response = await fetch(`${BASE_URL}/${uri}${query}`, options)
   if (response.ok) {
     return responseHandler(response)

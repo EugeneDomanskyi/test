@@ -29,7 +29,10 @@ const OrderBook = ({collection}) => {
   }, [collection])
 
   return (
-    <App.Flex column flex={1}>
+    <App.Flex column flex={1} className={styles.card}>
+      <App.Flex center className={styles.header}>
+        <App.Text>ORDER BOOK</App.Text>
+      </App.Flex>
       <App.Flex gap={8}>
         <App.Flex column flex={1}>
         <App.Flex justify="space-between">
