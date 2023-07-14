@@ -3,6 +3,32 @@ import { useAccount, useNetwork } from 'wagmi'
 import { signMessage, disconnect as wagmiDisconnect, getNetwork, getAccount, switchNetwork, fetchBalance } from '@wagmi/core'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 
+const defaultBlockchains = [
+  {
+    id: 1,
+    code: 'ethereum',
+    name: 'Ethereum',
+    currency: 'ETH',
+    decimals: 18,
+  }, {
+    id: 137,
+    code: 'polygon',
+    name: 'Polygon',
+    currency: 'MATIC',
+    decimals: 18,
+  }
+]
+
+if (process.env.NEXT_PUBLIC_APP_ENV == 'local') {
+  defaultBlockchains.push({
+    id: 5,
+    code: 'goerli',
+    name: 'Goerli',
+    currency: 'ETH',
+    decimals: 18,
+  })
+}
+
 const useWalletConnect = () => {
   const debugMode = process.env.NEXT_PUBLIC_APP_ENV != 'production'
 
@@ -13,7 +39,7 @@ const useWalletConnect = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [wallet, setWallet] = useState(null)
   const [blockchain, setBlockchain] = useState('')
-  const [blockchains, setBlockchains] = useState([])
+  const [blockchains, setBlockchains] = useState(defaultBlockchains)
   const [callback, setCallback] = useState({ success: null, failed: null })
 
   const usdt = {
@@ -87,7 +113,7 @@ const useWalletConnect = () => {
         currency: item.nativeCurrency.symbol,
         decimals: item.nativeCurrency.decimals,
       }
-    }) : [])
+    }) : defaultBlockchains)
   }, [chains, isConnected])
 
   const disconnect = () => {
