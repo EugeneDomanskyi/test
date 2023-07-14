@@ -3,6 +3,10 @@ import moment from 'moment'
 
 import { request } from './index'
 
+const round = (date, duration, method) => {
+  return moment(Math[method]((+date) / (+duration)) * (+duration))
+}
+
 export const exchangeSlice = createSlice({
   name: '$exchange',
 
@@ -30,14 +34,17 @@ export const exchangeSlice = createSlice({
 
 const getters = {
   kLineData: (interval) => ({$exchange}) => {
+    
     const groupedSales = $exchange.sales.reduce((acc, sale) => {
       const intervalKey = moment(sale.timestamp*1000).format('YY-MM-DDTHH')
+      const roundedDate = round(moment(sale.timestamp*1000), moment.duration(15, 'minutes'), 'ceil')
       const groupTime = moment(intervalKey, 'YY-MM-DDTHH')
       const formattedData = {
         price: sale.price.amount.native,
         timestamp:  sale.timestamp*1000,
         volume: sale.amount*1,
         groupTime: groupTime.format('DD-MM-YY HH:mm'),
+        roundedDate: roundedDate,
         date: groupTime,
       }
       const list = acc[intervalKey] ? [...acc[intervalKey], formattedData] : [formattedData]
@@ -46,6 +53,8 @@ const getters = {
         [intervalKey]: list
       }
     }, {})
+
+    console.log(groupedSales)
 
     const result =  Object.entries(groupedSales).map(([intervalKey, sales]) => {
       const { timestamps, prices, volume } = sales.reduce((acc, sale) => {
