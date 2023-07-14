@@ -4,14 +4,17 @@ import dynamic from 'next/dynamic'
 import { loadIntercom } from 'next-intercom'
 import { v4 as uuid } from 'uuid'
 
+import useWalletConnect from '@/myhooks/wallet-connect'
 import { trackEvent } from '@/libs/analytics.lib'
 
+import $app from '@/store/app'
 import $collection from '@/store/collection'
 
 const Header = dynamic(import('@/components/Header'), { ssr: false })
 const Footer = dynamic(import('@/components/Footer'), { ssr: false })
 
 const Wrapper = ({ children }) => {
+  const { blockchain } = useWalletConnect()
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -34,6 +37,14 @@ const Wrapper = ({ children }) => {
       dispatch($collection.set.loading(true))
       const top = await $collection.api.top({ limit: 10 })
       if (top && top.hasOwnProperty('collections')) {
+        dispatch($collection.set.all(top.collections.map(item => {
+          return {
+            address: item.id,
+            image: item.image,
+            name: item.name,
+          }
+        })))
+
         const ids = top.collections.map(item => item.id)
         const result = await $collection.api.all({ contract: ids })
         if (result && result.hasOwnProperty('collections')) {
@@ -53,6 +64,12 @@ const Wrapper = ({ children }) => {
       dispatch($collection.set.loading(false))
     })()
   })
+
+  useEffect(() => {
+    if (blockchain) {
+      dispatch($app.set.blockchain(blockchain))
+    }
+  }, [blockchain])
 
   return (
     <>

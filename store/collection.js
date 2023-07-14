@@ -17,7 +17,7 @@ export const collectionSlice = createSlice({
 
     all: (state, { payload }) => {
       state.all = payload
-    }
+    },
   },
 })
 
