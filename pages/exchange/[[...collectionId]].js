@@ -21,13 +21,7 @@ const Exchange = () => {
   const dispatch = useDispatch()
   const [collectionId] = router.query.collectionId || []
 
-  const collections = useSelector(({$exchange}) => $exchange.collections)
-
-  useEffect(() => {
-    $exchange.api.get.topCollections({includeRecentSales: false, blockchain: 'polygon'}).then(res => {
-      dispatch($exchange.set.collections(res))
-    })
-  }, [])
+  const collections = useSelector(({$collection}) => $collection.all)
 
   useEffect(() => {
     if (collectionId) {
@@ -48,28 +42,28 @@ const Exchange = () => {
   }, [collectionId])
 
   useEffect(() => {
-    if (!collectionId && collections.length) {
+    if (!collectionId && collections) {
       const [first] = collections
-      router.replace(`${first.id}`)
+      if (first && 'tvl' in first) {
+        router.replace(`${first.address}`)
+      }
     }
-  }, [collectionId, collections.length])
+  }, [collectionId, collections])
 
   return (
     <App.Container sx={{paddingTop: 64+24, minHeight: '100vh'}}>
-      <App.Flex>
+      <App.Flex gap={8}>
         <CollectionList collectionId={collectionId} />
-        <App.Flex>
-
-        </App.Flex>
-        <App.Flex flex={1} gap={16} column>
-          <Chart />
-          <App.Flex gap={8}>
-            <OrderBook collectionId={collectionId} />
-            <Sales />
+        <App.Flex column flex={1} gap={8}>
+          <CollectionInfo />
+          <App.Flex>
+            <App.Flex flex={1} column>
+              <Chart />
+              <OrderBook collectionId={collectionId} />
+              <Sales />
+            </App.Flex>
+            <TradeForm />
           </App.Flex>
-        </App.Flex>
-        <App.Flex>
-          <TradeForm />
         </App.Flex>
       </App.Flex>
     </App.Container>

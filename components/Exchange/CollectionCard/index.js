@@ -5,14 +5,15 @@ import cn from 'classnames'
 
 import App from  '@/components/App'
 
-const CollectionCard = ({id, image, name, isActive}) => {
+const CollectionCard = ({id, address, image, name, price, isActive, ...rest}) => {
+  console.log(rest)
   return (
-    <Link href={`/exchange/${id}`}>
+    <Link href={`/exchange/${address}`}>
       <App.Flex gap={16} align="center" className={cn(styles.collection, {[styles.active]: isActive})}>
         {
           image
-            ? <Image src={image} width={48} height={48} alt="" />
-            : <div style={{width: 48, height: 48}} />
+            ? <Image src={image} width={72} height={72} className={styles.image} alt="" />
+            : <div style={{width: 72, height: 72}} />
         }
         <App.Flex column>
           <App.Text weight={700}>{name}</App.Text>

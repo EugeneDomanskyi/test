@@ -16,7 +16,6 @@ export const exchangeSlice = createSlice({
       sell: [],
     },
     sales: [],
-    collections: [],
     interval: {key: '15m', count: 15, unit: 'minutes'},
   },
 
@@ -30,9 +29,6 @@ export const exchangeSlice = createSlice({
     interval: (state, {payload}) => {
       state.interval = payload
     },
-    collections: (state, {payload}) => {
-      state.collections = payload
-    }
   },
 })
 

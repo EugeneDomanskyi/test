@@ -5,7 +5,7 @@ import App from '@/components/App'
 import CollectionCard from '@/components/Exchange/CollectionCard'
 
 const CollectionList = ({collectionId}) => {
-  const collections = useSelector(({$exchange}) => $exchange.collections)
+  const collections = useSelector(({$collection}) => $collection.all)
   
   return (
     <App.Flex column className={styles.container}>
@@ -13,9 +13,9 @@ const CollectionList = ({collectionId}) => {
         collections.filter(collection => collection.image).map((collection) => {
           return (
             <CollectionCard
-              key={collection.id}
+              key={collection.address}
               {...collection}
-              isActive={collectionId === collection.id} />
+              isActive={collectionId === collection.address} />
           )
         })
       }
