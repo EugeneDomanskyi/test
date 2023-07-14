@@ -5,7 +5,7 @@ import { createClient } from '@reservoir0x/reservoir-sdk'
 
 import { getDefaultWallets, RainbowKitProvider, darkTheme, connectorsForWallets } from '@rainbow-me/rainbowkit'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
-import { polygon, mainnet, bsc } from 'wagmi/chains'
+import { polygon, mainnet, goerli } from 'wagmi/chains'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
@@ -15,6 +15,7 @@ import { MagicConnectConnector } from '@everipedia/wagmi-magic-connector'
 import store from '@/store'
 
 import App from '@/components/App'
+import Wrapper from '@/components/Wrapper'
 
 import 'react-toastify/dist/ReactToastify.css'
 import '@rainbow-me/rainbowkit/styles.css'
@@ -29,12 +30,17 @@ createClient({
       active: true,
       apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     }, {
+      id: 5,
+      baseApiUrl: 'https://api-goerli.reservoir.tools/',
+      active: true,
+      apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
+    }, /* {
       id: 56,
       baseApiUrl: 'https://api-bsc.reservoir.tools',
       active: true,
       default: true,
       apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
-    }, {
+    }, */ {
       id: 137,
       baseApiUrl: 'https://api-polygon.reservoir.tools',
       active: true,
@@ -44,7 +50,11 @@ createClient({
 })
 
 //const initialChain = process.env.NEXT_PUBLIC_APP_ENV == 'production' ? [mainnet, polygon] : [goerli, polygonMumbai]
-const initialChain = [polygon, mainnet, bsc]
+const initialChain = [polygon, mainnet]
+if (process.env.NEXT_PUBLIC_APP_ENV == 'local') {
+  initialChain.push(goerli)
+}
+
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   initialChain, [
     alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }),
@@ -128,9 +138,9 @@ function MyApp({ Component, pageProps }) {
             <title>NFT20 | NFT Trading Platform</title>
           </Head>
 
-          <App.Layout>
+          <Wrapper>
             <Component {...pageProps} />
-          </App.Layout>
+          </Wrapper>
 
           <App.Modal />
           <ToastContainer autoClose={3000} />

@@ -62,4 +62,8 @@
       backdrop-filter: blur(6px);
     }
   }
+
+  .imagePlaceholder {
+    background: linear-gradient(180deg, #401698 0%, #29015B 100%);
+  }
 }

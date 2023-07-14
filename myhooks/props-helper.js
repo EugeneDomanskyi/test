@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
+import * as rdd from 'react-device-detect'
 
 export const usePropsHelper = () => {
+  const [isMobile, setIsMobile] = useState(rdd.isMobile)
+
   const getWindowSize = () => {
     if (typeof window !== 'undefined') {
       const {innerWidth, innerHeight} = window
@@ -9,8 +12,6 @@ export const usePropsHelper = () => {
   
     return {width: null, height: null}
   }
-  
-  const [isMobile, setIsMobile] = useState(getWindowSize().width != null && getWindowSize().width <= 768)
 
   const handleWindowResize = () => {
     setIsMobile(getWindowSize().width <= 768)
