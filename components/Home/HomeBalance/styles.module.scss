@@ -1,8 +1,8 @@
 .badge {
-  padding: 6px 8px;
+  padding: 8px;
   border-radius: 100px;
   background-color: #0E0B23;
-  border: solid #1D1937 1px;
+  border: solid #7204FF 1px;
 }
 
 .menu {
@@ -12,13 +12,31 @@
   border-radius: 12px;
   left: 0;
   top: 120%;
-  padding: 8px;
   visibility: hidden;
   opacity: 0;
+  min-width: 100%;
   transition: all .2s ease 0s;
+  overflow: hidden;
 
   &.active {
     visibility: visible;
     opacity: 1;
+  }
+
+  .item {
+    padding: 8px;
+    cursor: pointer;
+    transition: all .2s ease 0s;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .menu {
+    bottom: 120%;
+    top: auto;
   }
 }

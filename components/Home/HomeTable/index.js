@@ -25,7 +25,7 @@ const HomeTable = () => {
   const { all: collections } = useSelector(({ $collection }) => $collection)
 
   const [order, setOrder] = useState('desc')
-  const [orderBy, setOrderBy] = useState('tvl')
+  const [orderBy, setOrderBy] = useState('volume')
   const [tab, setTab] = useState('trade')
 
   const tabs = [

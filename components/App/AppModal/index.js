@@ -78,7 +78,7 @@ const AppModal = () => {
     <div ref={layout} className={styles.layout}>
       <div ref={content} className={styles.content} onClick={handleClose}>
         <div onClick={e => e.stopPropagation()}>
-          <div className={cn(styles.wrapper, {[styles[props.size]]: props.size})}>
+          <div className={cn(styles.wrapper, {[styles[props?.size]]: props?.size})}>
             {props?.header ? (
               <div className={styles.header}>
                 <div className={styles.closeButton} onClick={handleClose}>
