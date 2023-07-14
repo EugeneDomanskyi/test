@@ -44,7 +44,7 @@ const getters = {
         timestamp:  sale.timestamp*1000,
         volume: sale.amount*1,
         groupTime: groupTime.format('DD-MM-YY HH:mm'),
-        roundedDate: roundedDate,
+        roundedDate: roundedDate.format('DD-MM-YY HH:mm'),
         date: groupTime,
       }
       const list = acc[intervalKey] ? [...acc[intervalKey], formattedData] : [formattedData]
