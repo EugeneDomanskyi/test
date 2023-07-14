@@ -83,6 +83,7 @@ const useWalletConnect = () => {
       return {
         id: item.id,
         name: item.name,
+        code: item.name.toLowerCase(),
         currency: item.nativeCurrency.symbol,
         decimals: item.nativeCurrency.decimals,
       }

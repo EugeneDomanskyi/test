@@ -24,8 +24,8 @@ const HomeTable = () => {
   const { blockchain } = useSelector(({ $app }) => $app)
   const { all: collections } = useSelector(({ $collection }) => $collection)
 
-  const [order, setOrder] = useState('asc')
-  const [orderBy, setOrderBy] = useState('name')
+  const [order, setOrder] = useState('desc')
+  const [orderBy, setOrderBy] = useState('tvl')
   const [tab, setTab] = useState('trade')
 
   const tabs = [
@@ -297,7 +297,7 @@ const HomeTable = () => {
 
                                   <App.Flex row center gap={8}>
                                     <App.Text size={12} weight={400} height={1} color="#B9B8C5">{item.slug}</App.Text>
-                                    <Image src={`/images/icon-${blockchain}.png`} width={24} height={24} alt="" />
+                                    <Image src={`/images/icon-${item.blockchain}.png`} width={24} height={24} alt="" />
                                   </App.Flex>
                                 </App.Flex>
                               </App.Flex>
@@ -405,7 +405,7 @@ const HomeTable = () => {
                           </TableCell>
 
                           <TableCell align="center">
-                            <Image src={`/images/icon-${blockchain}.png`} width={24} height={24} alt="" />
+                            <Image src={`/images/icon-${item.blockchain}.png`} width={24} height={24} alt="" />
                           </TableCell>
 
                           <TableCell align="center">
