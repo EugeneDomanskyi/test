@@ -75,6 +75,8 @@ const Header = () => {
           </App.Flex>
 
           <App.Flex row gap={24} align="center">
+            {!isMobile ? <HomeBalance /> : null}
+            
             {wallet ? (
               <App.Flex sx={{ position: 'relative' }} id="wallet">
                 <App.Button primary large outlined rounded onClick={handleMenuToggle} sx={{ minWidth: 'auto' }}>
