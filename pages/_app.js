@@ -47,6 +47,7 @@ createClient({
       apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     },
   ],
+  source: "tegro.com"
 })
 
 //const initialChain = process.env.NEXT_PUBLIC_APP_ENV == 'production' ? [mainnet, polygon] : [goerli, polygonMumbai]
