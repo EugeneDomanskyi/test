@@ -8,7 +8,7 @@ import { getClient } from '@reservoir0x/reservoir-sdk'
 import Contracts from '@/libs/contracts.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
-import BuyModalInput from '@/components/BuyModal/BuyModalInput'
+import SwapModalInput from '@/components/SwapModal/SwapModalInput'
 import BuyModalConfirm from '@/components/BuyModal/BuyModalConfirm'
 import BuyModalComplete from '@/components/BuyModal/BuyModalComplete'
 
@@ -30,6 +30,7 @@ const SwapModal = ({ collection, onClose, onStep }) => {
 
   const [amount, setAmount] = useState('')
   const [price, setPrice] = useState('')
+  const [type, setType] = useState('buy')
   const [step, setStep] = useState(0)
 
   const chainId = network(collection.chain)?.chainId
@@ -44,7 +45,7 @@ const SwapModal = ({ collection, onClose, onStep }) => {
     }
   }
 
-  const handleBuy = async (nfts) => {
+  const handleSwap = async (nfts) => {
     const totalPrice = nfts.reduce((acc, nft) => acc+nft.price, 0)
     const balance = await getBalance()
     if (totalPrice > balance) {
@@ -95,15 +96,19 @@ const SwapModal = ({ collection, onClose, onStep }) => {
     setPrice(val)
   }
 
+  const handleTypeChange = (val) => {
+    setType(val)
+  }
+
   const contentComponent = () => {
     switch (step) {
-      case 0: return <BuyModalInput token={collection} amount={amount} price={price} onAmountChange={handleAmountChange} onPriceChange={handlePriceChange} onBuy={handleBuy} />
-      case 1: return <BuyModalConfirm token={collection} amount={amount} />
-      case 2: return <BuyModalComplete token={collection} amount={amount} onComplete={handleCloseModal} />
+      case 0: return <SwapModalInput collection={collection} amount={amount} price={price} type={type} onAmountChange={handleAmountChange} onPriceChange={handlePriceChange} onTypeChange={handleTypeChange} onSwap={handleSwap} />
+      /* case 1: return <BuyModalConfirm token={collection} amount={amount} />
+      case 2: return <BuyModalComplete token={collection} amount={amount} onComplete={handleCloseModal} /> */
     }
   }
 
-  return /* contentComponent() */
+  return contentComponent()
 }
 
 export default SwapModal

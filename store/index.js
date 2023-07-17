@@ -5,12 +5,7 @@ import $modal from './modal'
 import $app from './app'
 import $exchange from './exchange'
 import $collection from './collection'
-
-const BLOCKCHAIN_URL = {
-  polygon: 'https://api-polygon.reservoir.tools',
-  ethereum: 'https://api.reservoir.tools',
-  goerli: 'https://api-goerli.reservoir.tools',
-}
+import $nft from './nft'
 
 const store = configureStore({
   reducer: {
@@ -18,8 +13,15 @@ const store = configureStore({
     $app: $app.reducer,
     $exchange: $exchange.reducer,
     $collection: $collection.reducer,
+    $nft: $nft.reducer,
   },
 })
+
+const BLOCKCHAIN_URL = {
+  polygon: 'https://api-polygon.reservoir.tools',
+  ethereum: 'https://api.reservoir.tools',
+  goerli: 'https://api-goerli.reservoir.tools',
+}
 
 export const request = async (uri, method = 'GET', {blockchain, ...data} = {}) => {
   const options = {
@@ -59,12 +61,14 @@ const errorHandler = async (response) => {
 const queryBuilder = (data) => {
   const params = new URLSearchParams()
   for (const key in data) {
-    if (typeof data[key] == 'object') {
-      for (const value of data[key]) {
-        params.append(key, value)
+    if (data[key] != null) {
+      if (typeof data[key] == 'object') {
+        for (const value of data[key]) {
+          params.append(key, value)
+        }
+      } else {
+        params.append(key, data[key])
       }
-    } else {
-      params.append(key, data[key])
     }
   }
   return `?${params}`

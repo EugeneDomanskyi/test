@@ -1,38 +1,45 @@
 import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import cn from 'classnames'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
 
+import $app from '@/store/app'
+import $nft from '@/store/nft'
+
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
+import { LegendToggle } from '@mui/icons-material'
 
-const BuyModalInput = ({ token, amount, price, onAmountChange, onPriceChange, onBuy }) => {
+const SwapModalInput = ({ collection, amount, price, type, onAmountChange, onPriceChange, onTypeChange, onSwap }) => {
   const { isMobile } = usePropsHelper()
-  const { wallet, network } = useWalletConnect()
+  const { wallet, network, usdt } = useWalletConnect()
+
+  const dispatch = useDispatch()
+  const blockchain = useSelector($app.get.blockchain)
 
   const [nfts, setNfts] = useState([])
   const [balanceLoading, setBalanceLoading] = useState(true)
   const [error, setError] = useState(false)
 
   useEffect(() => {
-    if (wallet && token && token?.ognft) {
+    if (wallet && collection) {
       (async () => {
-        const response = await fetch(`https://api-polygon.reservoir.tools/tokens/floor/v1?collection=${token?.ognft}`)
-        if (response && response.status == 200) {
-          const result = await response.json()
-          if (result && result?.tokens) {
-            const temp = Object.entries(result.tokens).map(([id, price]) => ({ id, price }))
-            temp.sort((a, b) => a.price - b.price)
-            setNfts(temp)
-          }
+        let temp = []
+        const result = await $nft.api.prices({ blockchain: blockchain.code, collection: collection.address })
+        if (result && result?.tokens) {
+          temp = Object.entries(result.tokens).map(([id, price]) => ({ id, price }))
+          temp.sort((a, b) => a.price - b.price)
         }
+        console.log(temp.length)
+        dispatch($nft.set.prices(temp))
         setBalanceLoading(false)
       })()
     }
-  }, [wallet, token])
+  }, [wallet, collection, type])
 
   useEffect(() => {
     if (amount * 1 > nfts.length) {
@@ -86,7 +93,7 @@ const BuyModalInput = ({ token, amount, price, onAmountChange, onPriceChange, on
     }
   }
 
-  const handleBuy = () => {
+  const handleSwap = () => {
     if (amount * 1 > nfts.length) {
       setError(true)
       return
@@ -111,7 +118,7 @@ const BuyModalInput = ({ token, amount, price, onAmountChange, onPriceChange, on
   return (
     <App.Flex column>
       <div className={styles.box}>
-        <App.Text size={[20, 16]} weight={[600, 700]}>Enter the amount you would like to buy</App.Text>
+        <App.Text size={[20, 16]} weight={[600, 700]}>Enter the amount you would like to swap</App.Text>
       </div>
 
       <App.Flex column gap={6} className={styles.content}>
@@ -121,9 +128,9 @@ const BuyModalInput = ({ token, amount, price, onAmountChange, onPriceChange, on
           <App.Flex column align="flex-end" gap={10}>
             <App.Flex row gap={8} align="center" className={styles.chip}>
               <div className={styles.imgRound}>
-                <Image src={token.image} width={25} height={25} alt="" />
+                <Image src={collection.image} width={25} height={25} alt="" />
               </div>
-              <App.Text size={16}>{token.code}</App.Text>
+              <App.Text size={16}>{collection.name}</App.Text>
             </App.Flex>
 
             <App.Text size={12} weight={400} color={error ? '#DE5C64' : '#B9B8C5'}>
@@ -154,9 +161,9 @@ const BuyModalInput = ({ token, amount, price, onAmountChange, onPriceChange, on
           <App.Flex column gap={10}>
             <App.Flex row gap={8} align="center" className={cn(styles.chip, styles.collection)}>
               <div className={styles.imgSquare}>
-              <Image src={`/images/icon-${token.chain.toLowerCase()}.png`} width={25} height={25} alt="" />
+              <Image src={`/images/icon-${blockchain.code}.png`} width={25} height={25} alt="" />
               </div>
-              <App.Text size={16}>{network(token.chain.toLowerCase()).currency}</App.Text>
+              <App.Text size={16}>{network(blockchain.code).currency}</App.Text>
             </App.Flex>
 
             {/* <App.Text right size={12} weight={400} color="#B9B8C5">
@@ -170,10 +177,10 @@ const BuyModalInput = ({ token, amount, price, onAmountChange, onPriceChange, on
       </App.Flex>
 
       <App.Flex center className={cn(styles.box, styles.borderTop)}>
-        <App.Button primary large disabled={error || amount * 1 <= 0} onClick={handleBuy} sx={{ width: isMobile ? '100%' : 200 }}>Buy</App.Button>
+        <App.Button primary large disabled={error || amount * 1 <= 0} onClick={handleSwap} sx={{ width: isMobile ? '100%' : 200 }}>Swap</App.Button>
       </App.Flex>
     </App.Flex>
   )
 }
 
-export default BuyModalInput
+export default SwapModalInput
