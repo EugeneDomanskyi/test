@@ -35,6 +35,8 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
   const [variant, setVariant] = useState()
   const [listOpen, setListOpen] = useState(false)
 
+  let timeoutId = null
+
   useEffect(() => {
     if (wallet && collection && currency) {
       (async () => {
@@ -52,26 +54,34 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
     }
   }, [wallet, collection, currency])
 
-  const handleAmountChange = async (event) => {
+  const handleAmountChange = (event) => {
     setAmount(event.target.value)
 
-    if (event.target.value.trim() == '') {
-      setPrice('')
-    } else {
-      const price = await buyPriceByAmount(event.target.value, prices, currency, collection.address)
-      setPrice(price)
-    }
+    clearTimeout(timeoutId)
+
+    timeoutId = setTimeout(async () => {
+      if (event.target.value.trim() == '') {
+        setPrice('')
+      } else {
+        const price = await buyPriceByAmount(event.target.value, prices, currency, collection.address)
+        setPrice(price)
+      }
+    }, 1000)
   }
 
-  const handlePriceChange = async (event) => {
+  const handlePriceChange = (event) => {
     setPrice(event.target.value)
 
-    if (event.target.value.trim() == '') {
-      setAmount('')
-    } else {
-      const amount = await buyAmountByPrice(event.target.value, prices, currency, collection.address)
-      setAmount(amount)
-    }
+    clearTimeout(timeoutId)
+
+    timeoutId = setTimeout(async () => {
+      if (event.target.value.trim() == '') {
+        setAmount('')
+      } else {
+        const amount = await buyAmountByPrice(event.target.value, prices, currency, collection.address)
+        setAmount(amount)
+      }
+    }, 1000)
   }
 
   const handleKeyPress = (event) => {

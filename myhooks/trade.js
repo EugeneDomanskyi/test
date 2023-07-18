@@ -1,23 +1,26 @@
 import { useSelector } from 'react-redux'
+import { getClient } from '@reservoir0x/reservoir-sdk'
 
-import useWalletConnect from './wallet-connect'
+import useWalletConnect from '@/myhooks/wallet-connect'
 
 import $app from '@/store/app'
 import $nft from '@/store/nft'
 
 const useTrade = () => {
-  const { getPrice, network, usdt } = useWalletConnect()
+  const { getPrice, network, usdt, walletClient } = useWalletConnect()
   const blockchain = useSelector($app.get.blockchain)
+
+  const chainId = network(blockchain.code)?.chainId
 
   const getNftPricesNative = async (collection) => {
     let result = []
     const response = await $nft.api.prices({
       blockchain: blockchain.code,
-      collection
+      collection,
     })
 
     if (response && response?.tokens) {
-      result = Object.entries(response.tokens).map(([id, price]) => ({ id, price }))
+      result = Object.entries(response.tokens).map(([id, price]) => ({ id, price })).filter(item => item.price > 0)
       result.sort((a, b) => a.price - b.price)
     }
 
@@ -126,7 +129,8 @@ const useTrade = () => {
         }
 
         const delta = 5
-        const ids = prices.slice(0, usdAmount + delta).map(item => item.id)
+        const maxUsdAmount = (usdAmount + delta) > prices.length ? prices.length : (usdAmount + delta)
+        const ids = prices.slice(0, maxUsdAmount).map(item => item.id)
         pricesData = await getNftPricesCurrency(collection, ids, usdt[blockchain.code])
       }
     }
@@ -143,6 +147,25 @@ const useTrade = () => {
     return amount
   }
 
+  const buyNft = async (items, currency, onProgress, onError) => {
+    const options = {}
+    if (currency == 'usdt') {
+      options.currency = usdt[blockchain.code]
+    }
+
+    try {
+      getClient()?.actions.buyToken({
+        items,
+        wallet: walletClient,
+        options,
+        chainId,
+        onProgress,
+      }).catch(onError)
+    } catch (error) {
+      console.log('Buy Error', error)
+    }
+  }
+
   return {
     getNftPricesNative,
     getNftPricesCurrency,
@@ -151,6 +174,7 @@ const useTrade = () => {
     getNftUser,
     buyPriceByAmount,
     buyAmountByPrice,
+    buyNft,
   }
 }
 
