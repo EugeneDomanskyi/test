@@ -4,7 +4,9 @@ import { useSelector, useDispatch } from 'react-redux'
 import cn from 'classnames'
 
 import $exchange from '@/store/exchange'
+import $app from '@/store/app'
 import Stream from '@/libs/stream.lib'
+import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
 
@@ -17,7 +19,8 @@ const OrderBook = ({collectionId}) => {
       sell: $exchange.orderBook.sell.slice(0, 10),
     }
   })
-  const { blockchain, socketConnected } = useSelector(({$app}) => ({blockchain: $app.blockchain, socketConnected: $app.socketConnected}))
+  const socketConnected = useSelector(({$app}) => $app.socketConnected)
+  const blockchain = useSelector($app.get.blockchain)
 
   let prevBuyVolumeValue = 0
   let prevSellVolumeValue = 0
@@ -25,25 +28,12 @@ const OrderBook = ({collectionId}) => {
   const maxBuyVolume = orderBook.buy.reduce((acc, {quantity}) => acc + quantity*1, 0)
   const maxSellVolume = orderBook.sell.reduce((acc, {quantity}) => acc + quantity*1, 0)
 
-  // console.log(orderBook)
-
   useEffect(() => {
-    Stream.on('bid', (event, data) => {
-      // console.log(data.quantityRemaining)
-      console.log(event, ' -> ', data.price.amount.native, data.quantityRemaining, orderBook.buy.find(o => o.price === data.price.amount.native))
-      
-    })
-    Stream.on('ask', (event, data) => {
-      // console.log(event, ' -> ', data.price.amount.native, data.quantityRemaining, orderBook.sell.find(o => o.price === data.price.amount.native))
-      // console.log('ask -> ', data)
-    })
-  }, [])
-
-  useEffect(() => {
-    if (collectionId) {
+    if (collectionId && blockchain.code) {
       $exchange.api.get.orderBook({
         collection: collectionId,
-        blockchain: blockchain,
+        blockchain: blockchain.code,
+        // displayCurrency: usdt[blockchain.code],
       }).then(res => {
         if (res) {
           dispatch($exchange.set.orderBook(res))
@@ -51,7 +41,7 @@ const OrderBook = ({collectionId}) => {
         }
       })
     }
-  }, [collectionId, blockchain])
+  }, [collectionId, blockchain.code])
 
   useEffect(() => {
     if (collectionId && socketConnected) {

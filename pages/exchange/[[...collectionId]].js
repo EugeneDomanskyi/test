@@ -6,8 +6,10 @@ import dynamic from 'next/dynamic'
 import moment from 'moment'
 
 import $exchange from '@/store/exchange'
+import $app from '@/store/app'
 import $collection from '@/store/collection'
 import Stream from '@/libs/stream.lib'
+import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
 import CollectionList from '@/components/Exchange/CollectionList'
@@ -15,6 +17,7 @@ import OrderBook from '@/components/Exchange/OrderBook'
 import Sales from '@/components/Exchange/Sales'
 import TradeForm from '@/components/Exchange/TradeForm'
 import CollectionInfo from '@/components/Exchange/CollectionInfo'
+import Orders from '@/components/Exchange/Orders'
 
 const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 
@@ -25,24 +28,51 @@ const Exchange = () => {
   const dispatch = useDispatch()
   const [collectionId] = router.query.collectionId || []
 
-  const { blockchain, socketConnected } = useSelector(({$app}) => ({blockchain: $app.blockchain, socketConnected: $app.socketConnected}))
+  const { wallet, usdt } = useWalletConnect()
+  const socketConnected = useSelector(({$app}) => $app.socketConnected)
+  const blockchain = useSelector($app.get.blockchain)
   const { collections, isLoading } = useSelector($collection.get.all)
 
   useEffect(() => {
-    Stream.on('sale', (data) => {
-      console.log('sale -> ', data)
+    Stream.on('sale', (event, data) => {
+      console.log('sale -> ', event, data)
     })
-  }, [])
+    Stream.on('bid', (event, data) => {
+      if (wallet.toLowerCase() !== data.maker.toLowerCase()) {
+        return
+      }
+      switch (event) {
+        case 'bid.created':
+          dispatch($exchange.set.orderAdd(data))
+          break
+        case 'bid.updated':
+          dispatch($exchange.set.orderUpdate(data))
+          break
+      }
+    })
+    Stream.on('ask', (event, data) => {
+      if (wallet.toLowerCase() !== data.maker.toLowerCase()) {
+        return
+      }
+      switch (event) {
+        case 'ask.created':
+          dispatch($exchange.set.orderAdd(data))
+          break
+        case 'ask.updated':
+          dispatch($exchange.set.orderUpdate(data))
+          break
+      }
+    })
+  }, [wallet])
 
   useEffect(() => {
     if (collectionId) {
       $exchange.api.get.sales({
-        blockchain: blockchain,
+        blockchain: blockchain.code,
         collection: collectionId,
         includeDeleted: false,
         includeTokenMetadata: false,
         sortDirection: 'desc',
-        // startTimestamp: moment().subtract(3, 'weeks').unix(),
         limit: 1000,
       }).then(res => {
         if (res) {
@@ -51,10 +81,26 @@ const Exchange = () => {
       })
     }
   }, [collectionId])
+
+  useEffect(() => {
+    if (blockchain.code && collectionId && wallet) {
+      $exchange.api.get.orders({
+        blockchain: blockchain.code,
+        collection: collectionId,
+        maker: wallet,
+      }).then(res => {
+        if (res) {
+          dispatch($exchange.set.orders(res))
+        }
+      })
+    }
+  }, [blockchain.code, collectionId, wallet])
   
   useEffect(() => {
     if (socketConnected && collectionId) {
       Stream.subscribe('sale.*', [collectionId])
+      Stream.subscribe('bid.*', [collectionId])
+      Stream.subscribe('ask.*', [collectionId])
     }
     return () => {
       Stream.unsubscribe('sale.*')
@@ -69,7 +115,7 @@ const Exchange = () => {
         router.replace(`${first.address}`)
       }
     }
-  }, [isLoading, blockchain, collectionId])
+  }, [isLoading, blockchain.code, collectionId])
 
   return (
     <App.Container sx={{paddingTop: 64+24, minHeight: '100vh'}}>
@@ -85,8 +131,9 @@ const Exchange = () => {
                 <Sales />
               </App.Flex>
             </App.Flex>
-            <App.Flex column>
+            <App.Flex column gap={GRID_GAP}>
               <TradeForm collectionId={collectionId} />
+              <Orders />
             </App.Flex>
           </App.Flex>
         </App.Flex>

@@ -24,7 +24,7 @@ import '@/styles/globals.css'
 
 createClient({
   chains: [
-    {
+    /* {
       id: 1,
       baseApiUrl: 'https://api.reservoir.tools',
       active: true,

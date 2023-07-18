@@ -52,14 +52,16 @@ const Stream = () => {
     on: (event, callback) => {
       const [_, eventAction] = event.split('.')
       if (eventAction) {
-        callbacks[event] = [...callbacks[event], callback]
+        // callbacks[event] = [...callbacks[event], callback]
+        callbacks[event] = [callback]
         return
       }
       Object.entries(callbacks).forEach(([eventKey, eventCallbacks]) => {
         const [type, action] = eventKey.split('.')
         if (type === event) {
           const eventName = `${event}.${action}`
-          callbacks[eventName] = [...eventCallbacks, callback]
+          // callbacks[eventName] = [...eventCallbacks, callback]
+          callbacks[eventName] = [callback]
         }
       })
     },

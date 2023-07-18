@@ -23,7 +23,7 @@ const Sales = () => {
       </App.Flex>
       {
         sales.map((sale) => {
-          const price = sale.price.amount.usd
+          const price = sale.price.amount.decimal
           let color = {
             price: '#53F19C',
             row: '#06382f'
@@ -38,7 +38,7 @@ const Sales = () => {
           previousPrice = price * 1
           return (
             <App.Flex key={sale.id} justify="space-between" align="center" sx={{backgroundColor: color.row, padding: '3px 5px'}}>
-              <App.Text flex={1} size={12} color={color.price}>${ price }</App.Text>
+              <App.Text flex={1} size={12} color={color.price}>{ price }</App.Text>
               <App.Text flex={1} size={12} center>{ sale.amount }</App.Text>
               <App.Text flex={1} size={12} right>{ moment(sale.timestamp*1000).format('hh:mm:ss A') }</App.Text>
             </App.Flex>

@@ -15,6 +15,7 @@ export const exchangeSlice = createSlice({
       sell: [],
     },
     sales: [],
+    orders: [],
     interval: {key: '15m', count: 15, unit: 'minutes'},
     sortType: 'VOLUME:DESC',
   },
@@ -22,6 +23,15 @@ export const exchangeSlice = createSlice({
   reducers: {
     orderBook: (state, {payload}) => {
       state.orderBook = payload
+    },
+    orders: (state, {payload}) => {
+      state.orders = payload
+    },
+    orderAdd: (state, {payload}) => {
+      state.orders = [payload, ...state.orders]
+    },
+    orderUpdate: (state, {payload}) => {
+      state.orders = state.orders.map(o => (o.id === payload.id ? payload : o))
     },
     sales: (state, {payload}) => {
       state.sales = payload
@@ -41,7 +51,7 @@ const getters = {
       const roundedDate = round(moment(sale.timestamp*1000), moment.duration($exchange.interval.count, $exchange.interval.unit), 'ceil')
       const intervalKey = roundedDate.format('DD-MM-YY HH:mm')
       const formattedData = {
-        price: sale.price.amount.usd,
+        price: sale.price.amount.decimal,
         timestamp:  sale.timestamp*1000,
         volume: sale.amount*1,
         roundedDate: roundedDate.format('DD-MM-YY HH:mm'),
@@ -98,7 +108,12 @@ const api = {
       return request('sales/v5', 'GET', params).then(res => res.sales)
     },
     orders: (params) => {
-      return request('orders/bids/v6', 'GET', params).then(res => res)
+      return Promise.all([
+        request('orders/bids/v6', 'GET', params),
+        request('orders/asks/v5', 'GET', params),
+      ]).then(([bids, asks]) => {
+        return [...bids.orders, ...asks.orders]
+      })
     }
   },
   bids: (params) => {

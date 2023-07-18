@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 
 import { getClient, Execute } from "@reservoir0x/reservoir-sdk";
 import { createWalletClient, http } from 'viem'
+import { parseUnits } from 'viem'
 
 import $collection from '@/store/collection'
 import $app from '@/store/app'
@@ -69,22 +70,14 @@ const TradeForm = ({collectionId}) => {
       [field]: value,
     }))
   }
-  
-  // console.log(userBalances)
 
   const handleSubmit = async () => {
-    // const nfts = await getNftUser(collectionId, wallet)
-    // console.log(nfts)
-    const res = await $exchange.api.get.orders({blockchain: blockchain.code, collection: collectionId, maker: wallet})
-    console.log(res)
-    return
     if (currentTab === 'buy') {
       const bids = [{  
-        weiPrice: `${form.price*1000000000000000000}`,
-        // orderKind: 'seaport-v1.5',
+        weiPrice: parseUnits(`${form.price}`, 18).toString(),
         collection: collectionId,
         quantity: form.amount,
-        // currency: usdt[blockchain.code],
+        // currency: usdt[blockchain.code].toLowerCase(),
       }]
       placeBid(bids, (step) => {
         console.log(step)
@@ -96,11 +89,14 @@ const TradeForm = ({collectionId}) => {
       return
     }
     const listing = tokenIds.map((token) => ({
-      token: '',
-      weiPrice:`${form.price*1000000000000000000}`,
+      token: `${collectionId}:${token.token.tokenId}`,
+      weiPrice: parseUnits(`${form.price}`, 18).toString(),
       orderKind: "seaport-v1.5",
     }))
-    placeAsk(listing)
+    // return
+    placeAsk(listing, (step) => {
+      console.log(step)
+    }, () => {})
   }
 
   return (

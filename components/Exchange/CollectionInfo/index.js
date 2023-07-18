@@ -11,8 +11,6 @@ import { WebIcon, TwitterIcon, DiscordIcon } from '@/components/Icons/exchange'
 const CollectionInfo = ({collectionId}) => {
 
   const currentCollection = useSelector($collection.get.collection('address', collectionId))
-
-  console.log(currentCollection)
   
   return (
     <App.Flex className={styles.container}>
@@ -29,7 +27,7 @@ const CollectionInfo = ({collectionId}) => {
       <App.Flex flex={1} column>
         <App.Flex column flex={1}>
           <App.Text>{ currentCollection?.name }</App.Text>
-          <App.Text size={12} color="rgba(255, 255, 255, 0.5)" flex={1}>{ currentCollection?.description }</App.Text>
+          <App.Text sx={{maxHeight: 72, overflow: 'hidden'}} size={12} color="rgba(255, 255, 255, 0.5)" flex={1}>{ currentCollection?.description }</App.Text>
         </App.Flex>
         <App.Flex sx={{marginTop: 'auto'}}>
           <App.Flex column sx={{marginRight: 'auto'}}>
