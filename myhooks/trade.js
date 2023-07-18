@@ -61,8 +61,8 @@ const useTrade = () => {
     return result
   }
 
-  const getNftBalanceUser = async (collection, wallet) => {
-    let result = 0
+  const getNftUser = async (collection, wallet) => {
+    let result = []
     const response = await $nft.api.users({
       blockchain: blockchain.code,
       user: wallet,
@@ -70,10 +70,15 @@ const useTrade = () => {
     })
 
     if (response && response?.tokens) {
-      result = response.tokens.length
+      result = response.tokens
     }
 
     return result
+  }
+
+  const getNftBalanceUser = async (collection, wallet) => {
+    const nfts = await getNftUser(collection, wallet)
+    return nfts.length
   }
 
   const buyPriceByAmount = async (amount, prices = [], currency = 'native', collection = null) => {
@@ -143,6 +148,7 @@ const useTrade = () => {
     getNftPricesCurrency,
     getNftInfo,
     getNftBalanceUser,
+    getNftUser,
     buyPriceByAmount,
     buyAmountByPrice,
   }

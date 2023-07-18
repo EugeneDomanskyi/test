@@ -10,7 +10,6 @@ import Stream from '@/libs/stream.lib'
 
 import $app from '@/store/app'
 import $collection from '@/store/collection'
-import $app from '@/store/app'
 
 const Header = dynamic(import('@/components/Header'), { ssr: false })
 const Footer = dynamic(import('@/components/Footer'), { ssr: false })
@@ -52,11 +51,18 @@ const Wrapper = ({ children }) => {
             price: item.floorAsk?.price?.amount?.decimal,
             volume: item.volume['1day'],
             tvl: item.volume['allTime'],
+            description: item.description,
+            tokenCount: item.tokenCount,
+            onSaleCount: item.onSaleCount,
+            discordUrl: item.discordUrl,
+            externalUrl: item.externalUrl,
+            twitterUrl: `https://twitter.com/${item.twitterUsername}`,
+            openseaVerificationStatus: item.openseaVerificationStatus,
           }
         })))
       }
       dispatch($collection.set.loading(false))
-      initWSConnection(blockchain)
+      initWSConnection(blockchain.code)
       // Stream.subscribe('collection.updated', result.collections.map(c => c.id))
       // Stream.on('collection.updated', (data) => {
       //   console.log('collection.updated', data)

@@ -1,5 +1,5 @@
 .container {
-  height: 162px;
+  height: 180px;
   border: 1px solid rgba(161, 159, 255, 0.2);
   border-radius: 8px;
   padding: 16px;
@@ -8,5 +8,6 @@
   .image {
     border-radius: 8px;
     overflow: hidden;
+    margin-right: 16px;
   }
 }
