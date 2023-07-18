@@ -8,7 +8,6 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
-import { LegendToggle } from '@mui/icons-material'
 
 const BuyModalInput = ({ token, amount, price, onAmountChange, onPriceChange, onBuy }) => {
   const { isMobile } = usePropsHelper()

@@ -10,6 +10,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
 import { trackEvent } from '@/libs/analytics.lib'
 
+import $app from '@/store/app'
 import $modal from '@/store/modal'
 
 import App from '@/components/App'
@@ -18,10 +19,10 @@ import styles from './styles.module.scss'
 
 const HomeTable = () => {
   const { isMobile } = usePropsHelper()
-  const { wallet, connect, scanUrl } = useWalletConnect()
+  const { wallet, connect, scanUrl, changeNetwork } = useWalletConnect()
 
   const dispatch = useDispatch()
-  const { blockchain } = useSelector(({ $app }) => $app)
+  const blockchain = useSelector($app.get.blockchain)
   const { all: collections } = useSelector(({ $collection }) => $collection)
 
   const [order, setOrder] = useState('desc')
@@ -78,6 +79,11 @@ const HomeTable = () => {
     e.stopPropagation()
     const address = await connect()
     if ( ! address) {
+      return
+    }
+
+    const network = await changeNetwork(blockchain.code)
+    if ( ! network) {
       return
     }
 
@@ -284,7 +290,7 @@ const HomeTable = () => {
                           <TableCell colSpan={2}>
                             <App.Flex row justify="space-between" align="center">
                               <App.Flex row gap={8} align="center">
-                                <a href={scanUrl(item.address, 'address', blockchain)} target="_blank" rel="noreferrer">
+                                <a href={scanUrl(item.address, 'address', blockchain.code)} target="_blank" rel="noreferrer">
                                   {item.image ? (
                                     <img src={item.image} width={42} height={42} alt="" />
                                   ) : (
@@ -297,13 +303,13 @@ const HomeTable = () => {
 
                                   <App.Flex row center gap={8}>
                                     <App.Text size={12} weight={400} height={1} color="#B9B8C5">{item.slug}</App.Text>
-                                    <Image src={`/images/icon-${item.blockchain}.png`} width={24} height={24} alt="" />
+                                    <Image src={`/images/icon-${blockchain.code}.png`} width={24} height={24} alt="" />
                                   </App.Flex>
                                 </App.Flex>
                               </App.Flex>
 
                               <App.Flex row center onClick={handleInfo(item)}>
-                                <App.Text nowrap>{item.price ? numeral(item.price).format('$0.[0000]') : '-' }</App.Text>
+                                <App.Text nowrap>{item.price ? numeral(item.price).format('$0,0.[0000]') : '-' }</App.Text>
                                 <App.Icon icon="chevron-right" />
                               </App.Flex>
                             </App.Flex>
@@ -389,7 +395,7 @@ const HomeTable = () => {
                         >
                           <TableCell>
                             <App.Flex gap={16} align="center">
-                              <a href={scanUrl(item.address, 'address', blockchain)} target="_blank" rel="noreferrer">
+                              <a href={scanUrl(item.address, 'address', blockchain.code)} target="_blank" rel="noreferrer">
                                 {item.image ? (
                                   <img src={item.image} width={48} height={48} alt="" />
                                 ) : (
@@ -405,19 +411,19 @@ const HomeTable = () => {
                           </TableCell>
 
                           <TableCell align="center">
-                            <Image src={`/images/icon-${item.blockchain}.png`} width={24} height={24} alt="" />
+                            <Image src={`/images/icon-${blockchain.code}.png`} width={24} height={24} alt="" />
                           </TableCell>
 
                           <TableCell align="center">
-                            <App.Text center nowrap>{item.price ? numeral(item.price).format('$0.[0000]') : '-' }</App.Text>
+                            <App.Text center nowrap>{item.price ? numeral(item.price).format('$0,0.[0000]') : '-' }</App.Text>
                           </TableCell>
 
                           <TableCell align="center">
-                            <App.Text center>{item.volume ? numeral(item.volume).format('$0.[00]') : '-'}</App.Text>
+                            <App.Text center>{item.volume ? `${numeral(item.volume).format('0,0.[00]')} ${blockchain.currency}` : '-'}</App.Text>
                           </TableCell>
 
                           <TableCell align="center">
-                            <App.Text center>{item.tvl ? numeral(item.tvl).format('$0.[00]') : '-'}</App.Text>
+                            <App.Text center>{item.tvl ? `${numeral(item.tvl).format('0,0.[00]')} ${blockchain.currency}` : '-'}</App.Text>
                           </TableCell>
 
                           <TableCell align="center">

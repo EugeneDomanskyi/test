@@ -4,9 +4,11 @@ import dynamic from 'next/dynamic'
 import { loadIntercom } from 'next-intercom'
 import { v4 as uuid } from 'uuid'
 
+import useWalletConnect from '@/myhooks/wallet-connect'
 import { trackEvent } from '@/libs/analytics.lib'
 import Stream from '@/libs/stream.lib'
 
+import $app from '@/store/app'
 import $collection from '@/store/collection'
 import $app from '@/store/app'
 
@@ -14,8 +16,9 @@ const Header = dynamic(import('@/components/Header'), { ssr: false })
 const Footer = dynamic(import('@/components/Footer'), { ssr: false })
 
 const Wrapper = ({ children }) => {
+  const { usdt } = useWalletConnect()
   const dispatch = useDispatch()
-  const { blockchain } = useSelector(({ $app }) => $app)
+  const blockchain = useSelector($app.get.blockchain)
 
   useEffect(() => {
     const deviceId = localStorage.getItem('device_id')
@@ -37,16 +40,16 @@ const Wrapper = ({ children }) => {
   useEffect(() => {
     (async () => {
       dispatch($collection.set.loading(true))
-      const result = await $collection.api.all({ blockchain, sortBy: '1DayVolume', limit: 10 })
+      const result = await $collection.api.all({ blockchain: blockchain.code, sortBy: '1DayVolume', limit: 10, displayCurrency: usdt[blockchain.code] })
       if (result && result.hasOwnProperty('collections')) {
         dispatch($collection.set.all(result.collections.map(item => {
           return {
-            blockchain,
+            blockchain: blockchain.code,
             address: item.id,
             image: item.image,
             name: item.name,
             slug: item.slug,
-            price: item.floorAsk?.price?.amount?.usd,
+            price: item.floorAsk?.price?.amount?.decimal,
             volume: item.volume['1day'],
             tvl: item.volume['allTime'],
           }

@@ -3,6 +3,7 @@ import numeral from 'numeral'
 import Image from 'next/image'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
+import $app from '@/store/app'
 import $modal from '@/store/modal'
 
 import App from '@/components/App'
@@ -12,7 +13,7 @@ import styles from './styles.module.scss'
 const HomeInfoModal = ({ collection }) => {
   const { connect } = useWalletConnect()
   const dispatch = useDispatch()
-  const { blockchain } = useSelector(({ $app }) => $app)
+  const blockchain = useSelector($app.get.blockchain)
 
   const handleSwap = (collection) => async (e) => {
     e.stopPropagation()
@@ -35,7 +36,7 @@ const HomeInfoModal = ({ collection }) => {
         <App.Text>{collection.name}</App.Text>
         <App.Text color="#B9B8C5">&bull;</App.Text>
         <App.Text color="#B9B8C5">{collection.slug}</App.Text>
-        <Image src={`/images/icon-${blockchain}.png`} width={24} height={24} alt="" />
+        <Image src={`/images/icon-${blockchain.code}.png`} width={24} height={24} alt="" />
       </App.Flex>
 
       <div className={styles.hr} />

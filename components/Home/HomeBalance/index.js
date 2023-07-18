@@ -13,10 +13,11 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const HomeBalance = ({ justify = 'center' }) => {
-  const { wallet, blockchains, network, usdt } = useWalletConnect()
+  const { wallet, network, usdt } = useWalletConnect()
 
   const dispatch = useDispatch()
-  const { blockchain } = useSelector(({ $app }) => $app)
+  const blockchain = useSelector($app.get.blockchain)
+  const { blockchains } = useSelector(({ $app }) => $app)
 
   const [loading, setLoading] = useState(true)
   const [balance, setBalance] = useState(0)
@@ -46,7 +47,7 @@ const HomeBalance = ({ justify = 'center' }) => {
 
   const fetchBalance = async () => {
     setLoading(true)
-    const result = await contracts.balanceOf(wallet, usdt[blockchain.toLowerCase()])
+    const result = await contracts.balanceOf(wallet, usdt[blockchain.code])
     if (result) {
       setBalance(result)
     }
@@ -58,15 +59,15 @@ const HomeBalance = ({ justify = 'center' }) => {
   }
 
   const handleBlockchainChange = (val) => () => {
-    dispatch($app.set.blockchain(val))
+    dispatch($app.set.code(val))
     setMenuShow(false)
   }
 
-  return wallet ? (
+  return (
     <App.Flex row align="center" justify={justify} gap={8} sx={{ position: 'relative' }} id="blockchain">
       <App.Flex row center gap={8} className={styles.badge} sx={{ cursor: 'pointer' }} onClick={handleMenuToggle}>
-        <Image src={`/images/icon-${blockchain}.png`} width={28} height={28} alt="" />
-        <App.Text size={16} weight={700}>{blockchain.charAt(0).toUpperCase() + blockchain.slice(1)}</App.Text>
+        <Image src={`/images/icon-${blockchain.code}.png`} width={28} height={28} alt="" />
+        <App.Text size={16} weight={700}>{blockchain.name}</App.Text>
         <App.Icon icon="caret-down" />
       </App.Flex>
 
@@ -90,7 +91,7 @@ const HomeBalance = ({ justify = 'center' }) => {
         )}
       </App.Flex> */}
     </App.Flex>
-  ) : null
+  )
 }
 
 export default HomeBalance
