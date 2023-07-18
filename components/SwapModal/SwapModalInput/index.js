@@ -48,7 +48,7 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
         setNftBalance(tempNft.length)
         setNftTotalBalance(tempNft.reduce((acc, item) => acc + item?.ownership?.tokenCount * 1, 0))
 
-        const tempBids = await getNftBids(collection.address, [], currency == 'usdt' ? usdt[blockchain.code] : null)
+        const tempBids = await getNftBids(collection.address, currency == 'usdt' ? usdt[blockchain.code] : null)
         dispatch($nft.set.bids(tempBids))
 
         const tempCurrencyBalance = await getBalance(currency == 'usdt' ? usdt[blockchain.code] : null)
