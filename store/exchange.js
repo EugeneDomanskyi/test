@@ -116,9 +116,6 @@ const api = {
       })
     }
   },
-  bids: (params) => {
-    return request('orders/bids/v6', 'GET', params)
-  }
 }
 
 export default {
