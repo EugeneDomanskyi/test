@@ -1,12 +1,8 @@
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import { Magic } from 'magic-sdk'
-import { getClient } from '@reservoir0x/reservoir-sdk'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
-
-import $app from '@/store/app'
+import useTrade from '@/myhooks/trade'
 
 import SwapModalInput from '@/components/SwapModal/SwapModalInput'
 import BuyModalConfirm from '@/components/BuyModal/BuyModalConfirm'
@@ -27,16 +23,12 @@ const getMagic = (chains) => {
 }
 
 const SwapModal = ({ collection, onClose, onStep }) => {
-  const { network, usdt, walletClient } = useWalletConnect()
-
-  const blockchain = useSelector($app.get.blockchain)
+  const { buyNft } = useTrade()
 
   const [currentCollection, setCurrentCollection] = useState(collection)
   const [currentCurrency, setCurrentCurrency] = useState('native')
   const [type, setType] = useState('buy')
   const [step, setStep] = useState(0)
-
-  const chainId = network(collection.chain)?.chainId
 
   useEffect(() => {
     onStep(step)
@@ -49,21 +41,6 @@ const SwapModal = ({ collection, onClose, onStep }) => {
   }
 
   const handleSwap = async (nfts) => {
-    /* const totalPrice = nfts.reduce((acc, nft) => acc+nft.price, 0)
-    const balance = await getBalance()
-    if (totalPrice > balance) {
-      const magic = getMagic(chains)
-      const isMagicConnected = await magic.wallet.getInfo().catch(() => null)
-      if (isMagicConnected) {
-        await magic.wallet.showUI()
-      }
-    } */
-
-    const options = {}
-    if (currentCurrency == 'usdt') {
-      options.currency = usdt[blockchain.code]
-    }
-
     const items = nfts.map(item => {
       return {
         token: `${collection.address}:${item.id}`,
@@ -71,30 +48,32 @@ const SwapModal = ({ collection, onClose, onStep }) => {
       }
     })
 
-    try {
-      getClient()?.actions.buyToken({
-        items,
-        chainId,
-        wallet: walletClient,
-        options,
-        onProgress: (steps) => {
-          const transaction = steps.find(item => item.kind == 'transaction')
-          if (transaction && transaction.hasOwnProperty('items')) {
-            if (transaction.items[0] && transaction.items[0].hasOwnProperty('status')) {
-              if (transaction.items[0].status == 'incomplete') {
-                setStep(1)
-                console.log('Incomplete txHash', transaction.items[0]?.txHash)
-              } else {
-                setStep(2)
-                console.log('Complete txHash', transaction.items[0]?.txHash)
-              }
-            }
-          }
+    const result = await buyNft(items, currentCurrency, onProgress, onError)
+  }
+
+  const onProgress = (steps) => {
+    const transaction = steps.find(item => item.kind == 'transaction')
+    if (transaction && transaction.hasOwnProperty('items')) {
+      if (transaction.items[0] && transaction.items[0].hasOwnProperty('status')) {
+        if (transaction.items[0].status == 'incomplete') {
+          setStep(1)
+          console.log('Incomplete txHash', transaction.items[0]?.txHash)
+        } else {
+          setStep(2)
+          console.log('Complete txHash', transaction.items[0]?.txHash)
         }
-      })
-    } catch (error) {
-      console.log('Buy Error', error)
+      }
     }
+  }
+
+  const onError = (error) => {
+    if (error && error?.response) {
+      const message = error.response?.data?.message
+      toast.error(message, { pauseOnFocusLoss: false })
+    } else {
+      console.log('Swap Buy Error', error)
+    }
+    setStep(0)
   }
 
   const handleCollectionChange = (val) => {
