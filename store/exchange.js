@@ -101,9 +101,6 @@ const api = {
       return request('orders/bids/v6', 'GET', params).then(res => res)
     }
   },
-  bids: (params) => {
-    return request('orders/bids/v6', 'GET', params)
-  }
 }
 
 export default {

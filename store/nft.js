@@ -8,6 +8,7 @@ export const nftSlice = createSlice({
   initialState: {
     all: [],
     prices: [],
+    bids: [],
     loading: true,
   },
 
@@ -22,6 +23,10 @@ export const nftSlice = createSlice({
 
     prices: (state, { payload }) => {
       state.prices = payload
+    },
+
+    bids: (state, { payload }) => {
+      state.bids = payload
     },
   },
 })
@@ -38,6 +43,10 @@ const api = {
   users: ({user, ...params}) => {
     return request(`users/${user}/tokens/v7`, 'GET', params)
   },
+
+  bids: (params) => {
+    return request('orders/bids/v6', 'GET', params)
+  }
 }
 
 export default {

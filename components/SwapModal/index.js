@@ -23,7 +23,7 @@ const getMagic = (chains) => {
 }
 
 const SwapModal = ({ collection, onClose, onStep }) => {
-  const { buyNft } = useTrade()
+  const { buyNft, sellNft } = useTrade()
 
   const [currentCollection, setCurrentCollection] = useState(collection)
   const [currentCurrency, setCurrentCurrency] = useState('native')
@@ -41,7 +41,7 @@ const SwapModal = ({ collection, onClose, onStep }) => {
   }
 
   const handleSwap = (nfts) => {
-    if (type == buy) {
+    if (type == 'buy') {
       const items = nfts.map(item => {
         return {
           token: `${collection.address}:${item.id}`,
@@ -50,6 +50,15 @@ const SwapModal = ({ collection, onClose, onStep }) => {
       })
 
       buyNft(items, currentCurrency, onBuyProgress, onBuyError)
+    } else {
+      const items = nfts.map(item => {
+        return {
+          token: `${collection.address}:${item.id}`,
+          quantity: 1,
+        }
+      })
+
+      sellNft(items, currentCurrency, onSellProgress, onSellError)
     }
   }
 
@@ -74,6 +83,31 @@ const SwapModal = ({ collection, onClose, onStep }) => {
       toast.error(message, { pauseOnFocusLoss: false })
     } else {
       console.log('Swap Buy Error', error)
+    }
+    setStep(0)
+  }
+
+  const onSellProgress = (steps) => {
+    const transaction = steps.find(item => item.kind == 'transaction')
+    if (transaction && transaction.hasOwnProperty('items')) {
+      if (transaction.items[0] && transaction.items[0].hasOwnProperty('status')) {
+        if (transaction.items[0].status == 'incomplete') {
+          setStep(1)
+          console.log('Incomplete txHash', transaction.items[0]?.txHash)
+        } else {
+          setStep(2)
+          console.log('Complete txHash', transaction.items[0]?.txHash)
+        }
+      }
+    }
+  }
+
+  const onSellError = (error) => {
+    if (error && error?.response) {
+      const message = error.response?.data?.message
+      toast.error(message, { pauseOnFocusLoss: false })
+    } else {
+      console.log('Swap Sell Error', error)
     }
     setStep(0)
   }

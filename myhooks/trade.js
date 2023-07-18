@@ -84,6 +84,39 @@ const useTrade = () => {
     return nfts.length
   }
 
+  const getNftBids = async (collection, currencyContract = null) => {
+    let result = []
+    let continuation = null
+
+    do {
+      const response = await $nft.api.bids({
+        blockchain: blockchain.code,
+        collection,
+        displayCurrency: currencyContract,
+        limit: 50,
+        continuation,
+      })
+
+      if (response && response?.orders) {
+        result = [
+          ...result,
+          ...response.orders
+        ]
+
+        continuation = response.continuation
+      }
+    } while (continuation)
+
+    result = result.map(item => ({
+      quantity: (item.quantityRemaining - item.quantityFilled),
+      price: item?.price?.amount?.decimal ?? 0,
+    }))
+
+    result.sort((a, b) => b.price - a.price)
+
+    return result
+  }
+
   const buyPriceByAmount = async (amount, prices = [], currency = 'native', collection = null) => {
     amount = amount > prices.length ? prices.length : amount
 
@@ -147,6 +180,36 @@ const useTrade = () => {
     return amount
   }
 
+  const sellPriceByAmount = (amount, bids = []) => {
+    amount = amount > bids.length ? bids.length : amount
+
+    let result = 0
+
+    if (amount > 0) {
+      for (let i = 0; i < amount; i++) {
+        result += (bids[i].price * 1)
+      }
+    }
+
+    return result
+  }
+
+  const sellAmountByPrice = async (price, bids = []) => {
+    let amount = 0
+    let maxPrice = price
+
+    while (maxPrice > 0) {
+      if (bids[amount].price <= maxPrice) {
+        maxPrice -= bids[amount].price
+        amount++
+      } else {
+        maxPrice = 0
+      }
+    }
+
+    return amount
+  }
+
   const buyNft = async (items, currency, onProgress, onError) => {
     const options = {}
     if (currency == 'usdt') {
@@ -163,6 +226,25 @@ const useTrade = () => {
       }).catch(onError)
     } catch (error) {
       console.log('Buy Error', error)
+    }
+  }
+
+  const sellNft = async (items, currency, onProgress, onError) => {
+    const options = {}
+    if (currency == 'usdt') {
+      options.currency = usdt[blockchain.code]
+    }
+
+    try {
+      getClient()?.actions.acceptOffer({
+        items,
+        wallet: walletClient,
+        options,
+        chainId,
+        onProgress,
+      }).catch(onError)
+    } catch (error) {
+      console.log('Sell Error', error)
     }
   }
 
@@ -198,9 +280,13 @@ const useTrade = () => {
     getNftInfo,
     getNftBalanceUser,
     getNftUser,
+    getNftBids,
     buyPriceByAmount,
     buyAmountByPrice,
+    sellPriceByAmount,
+    sellAmountByPrice,
     buyNft,
+    sellNft,
     placeBid,
     placeAsk,
   }
