@@ -41,9 +41,11 @@
     "react-toastify": "^9.1.3",
     "recharts": "^2.7.1",
     "sass": "^1.63.4",
+    "socket.io-client": "^4.7.1",
     "uuid": "^9.0.0",
     "viem": "^1.2.10",
-    "wagmi": "^1.3.8"
+    "wagmi": "^1.3.8",
+    "ws": "^8.13.0"
   },
   "devDependencies": {
     "eslint": "8.42.0",

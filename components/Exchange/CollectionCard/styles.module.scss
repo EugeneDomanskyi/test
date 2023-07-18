@@ -1,0 +1,12 @@
+.collection {
+  height: 82px;
+  padding: 4px 15px;
+  
+  &:hover, &.active {
+    background: linear-gradient(-90deg,rgba(49,27,146,0),#311b92);
+  }
+
+  .image {
+    border-radius: 6px;
+  }
+}

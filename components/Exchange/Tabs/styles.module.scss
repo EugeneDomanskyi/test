@@ -1,0 +1,15 @@
+.container {
+  height: 40px;
+  position: relative;
+  .option {
+    cursor: pointer;
+  }
+  .badge {
+    height: 4px;
+    background-color: #fff;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transition: transform .2s;
+  }
+}

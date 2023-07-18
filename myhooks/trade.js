@@ -64,8 +64,8 @@ const useTrade = () => {
     return result
   }
 
-  const getNftBalanceUser = async (collection, wallet) => {
-    let result = 0
+  const getNftUser = async (collection, wallet) => {
+    let result = []
     const response = await $nft.api.users({
       blockchain: blockchain.code,
       user: wallet,
@@ -73,10 +73,15 @@ const useTrade = () => {
     })
 
     if (response && response?.tokens) {
-      result = response.tokens.length
+      result = response.tokens
     }
 
     return result
+  }
+
+  const getNftBalanceUser = async (collection, wallet) => {
+    const nfts = await getNftUser(collection, wallet)
+    return nfts.length
   }
 
   const buyPriceByAmount = async (amount, prices = [], currency = 'native', collection = null) => {
@@ -161,14 +166,43 @@ const useTrade = () => {
     }
   }
 
+  const placeBid = (bids, onProgress, onError) => {
+    try {
+      getClient()?.actions.placeBid({
+        bids: bids,
+        wallet: walletClient,
+        chainId,
+        onProgress: onProgress
+      }).catch(onError)
+    } catch (error) {
+      console.log('Place Bid Error', error)
+    }
+  }
+
+  const placeAsk = async (listing, onProgress, onError) => {
+    try {
+      getClient()?.actions.listToken({
+        listings: listing,
+        wallet: walletClient,
+        chainId,
+        onProgress: onProgress,
+      }).catch(onError)
+    } catch (error) {
+      console.log('Place Ask Error', error)
+    }
+  }
+
   return {
     getNftPricesNative,
     getNftPricesCurrency,
     getNftInfo,
     getNftBalanceUser,
+    getNftUser,
     buyPriceByAmount,
     buyAmountByPrice,
     buyNft,
+    placeBid,
+    placeAsk,
   }
 }
 

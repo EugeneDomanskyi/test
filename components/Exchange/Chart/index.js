@@ -3,8 +3,6 @@ import { useRef, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
 import cn from 'classnames'
-
-import { createChart, ColorType } from 'lightweight-charts'
 import * as LightweightCharts from 'lightweight-charts'
 
 import $exchange from '@/store/exchange'
@@ -24,15 +22,17 @@ const TYPES_SETTINGS = {
 
 const CHART_CONFIG = {
   layout: {
-    background: { type: ColorType.Solid, color: 'rgba(255, 255, 255, 0.0)' },
+    background: { type: LightweightCharts.ColorType.Solid, color: 'rgba(255, 255, 255, 0.0)' },
     textColor: 'rgba(255, 255, 255, 0.8)',
   },
+  lineStyle: 0,
   grid: {
     vertLines: { color: 'rgba(161, 159, 255, 0.2)' },
     horzLines: { color: 'rgba(161, 159, 255, 0.2)' },
   },
   timeScale: {
     borderColor: 'rgba(161, 159, 255, 0.2)',
+    borderColor: 'transparent',
     tickMarkFormatter: (time) => {
       return moment(time).format('DD MMM HH:mm')
     },
@@ -50,6 +50,7 @@ const CHART_CONFIG = {
   },
   rightPriceScale: {
     visible: true,
+    borderColor: 'transparent',
     scaleMargins: {
       top: 0.2,
       bottom: 0,
@@ -64,9 +65,11 @@ const INTERVALS = [
   {key: '15m', count: 15, unit: 'minutes'},
   {key: '30m', count: 30, unit: 'minutes'},
   {key: '1h', count: 1, unit: 'hours'},
+  {key: '6h', count: 6, unit: 'hours'},
 ]
 
-const TradeChart = (props) => {
+const TradeChart = () => {
+  const dispatch = useDispatch()
   const kLineData = useSelector($exchange.get.kLineData())
   const activeInterval = useSelector(({$exchange}) => $exchange.interval)
 
@@ -85,8 +88,12 @@ const TradeChart = (props) => {
     }
   }, [kLineData])
 
+  const handleChangeInterval = (interval) => () => {
+    dispatch($exchange.set.interval(interval))
+  }
+
   const buildChart = () => {
-    chartRef.current = createChart(containerRef.current, {
+    chartRef.current = LightweightCharts.createChart(containerRef.current, {
       ...CHART_CONFIG,
       width: wrapperRef.current.offsetWidth,
       height: 400,
@@ -100,19 +107,24 @@ const TradeChart = (props) => {
   }
 
   return (
-    <div ref={wrapperRef}>
-      <App.Flex>
-        {
-          INTERVALS.map((interval, i) => {
-            return (
-              <div key={i} className={cn(styles.interval, {[styles.active]: activeInterval.key === interval.key})}>
-                <App.Text>{ interval.key.toUpperCase() }</App.Text>
-              </div>
-            )
-          })
-        }
-      </App.Flex>
-      <div ref={containerRef} />
+    <div className={styles.container}>
+      <div ref={wrapperRef}>
+        <App.Flex>
+          {
+            INTERVALS.map((interval, i) => {
+              return (
+                <div
+                  key={i}
+                  onClick={handleChangeInterval(interval)}
+                  className={cn(styles.interval, {[styles.active]: activeInterval.key === interval.key})}>
+                  <App.Text>{ interval.key.toUpperCase() }</App.Text>
+                </div>
+              )
+            })
+          }
+        </App.Flex>
+        <div ref={containerRef} />
+      </div>
     </div>
   )
 }
