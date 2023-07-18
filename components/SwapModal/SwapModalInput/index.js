@@ -46,6 +46,9 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
         const tempNftBalance = await getNftBalanceUser(collection.address, wallet)
         setNftBalance(tempNftBalance * 1)
 
+        /* const tempBids = await getNftBidsNative(collection.address)
+        dispatch($nft.set.bids(tempBids)) */
+
         const tempCurrencyBalance = await getBalance(currency == 'usdt' ? usdt[blockchain.code] : null)
         setCurrencyBalance(tempCurrencyBalance * 1)
 

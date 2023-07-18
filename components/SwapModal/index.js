@@ -40,18 +40,20 @@ const SwapModal = ({ collection, onClose, onStep }) => {
     }
   }
 
-  const handleSwap = async (nfts) => {
-    const items = nfts.map(item => {
-      return {
-        token: `${collection.address}:${item.id}`,
-        quantity: 1,
-      }
-    })
+  const handleSwap = (nfts) => {
+    if (type == buy) {
+      const items = nfts.map(item => {
+        return {
+          token: `${collection.address}:${item.id}`,
+          quantity: 1,
+        }
+      })
 
-    const result = await buyNft(items, currentCurrency, onProgress, onError)
+      buyNft(items, currentCurrency, onBuyProgress, onBuyError)
+    }
   }
 
-  const onProgress = (steps) => {
+  const onBuyProgress = (steps) => {
     const transaction = steps.find(item => item.kind == 'transaction')
     if (transaction && transaction.hasOwnProperty('items')) {
       if (transaction.items[0] && transaction.items[0].hasOwnProperty('status')) {
@@ -66,7 +68,7 @@ const SwapModal = ({ collection, onClose, onStep }) => {
     }
   }
 
-  const onError = (error) => {
+  const onBuyError = (error) => {
     if (error && error?.response) {
       const message = error.response?.data?.message
       toast.error(message, { pauseOnFocusLoss: false })
