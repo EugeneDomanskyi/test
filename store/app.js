@@ -6,6 +6,7 @@ export const appSlice = createSlice({
 
   initialState: {
     blockchain: parseCookies().blockchain ?? 'polygon',
+    socketConnected: false,
   },
 
   reducers: {
@@ -13,6 +14,9 @@ export const appSlice = createSlice({
       state.blockchain = payload
       setCookie(null, 'blockchain', payload, {path: '/'})
     },
+    socketConnected: (state, { payload }) => {
+      state.socketConnected = payload
+    }
   },
 })
 

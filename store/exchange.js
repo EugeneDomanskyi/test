@@ -9,7 +9,6 @@ const round = (date, duration, method) => {
 
 export const exchangeSlice = createSlice({
   name: '$exchange',
-
   initialState: {
     orderBook: {
       buy: [],
@@ -17,6 +16,7 @@ export const exchangeSlice = createSlice({
     },
     sales: [],
     interval: {key: '15m', count: 15, unit: 'minutes'},
+    sortType: 'VOLUME:DESC',
   },
 
   reducers: {
@@ -29,6 +29,9 @@ export const exchangeSlice = createSlice({
     interval: (state, {payload}) => {
       state.interval = payload
     },
+    sortType: (state, {payload}) => {
+      state.sortType = payload
+    }
   },
 })
 
@@ -38,7 +41,7 @@ const getters = {
       const roundedDate = round(moment(sale.timestamp*1000), moment.duration($exchange.interval.count, $exchange.interval.unit), 'ceil')
       const intervalKey = roundedDate.format('DD-MM-YY HH:mm')
       const formattedData = {
-        price: sale.price.amount.native,
+        price: sale.price.amount.usd,
         timestamp:  sale.timestamp*1000,
         volume: sale.amount*1,
         roundedDate: roundedDate.format('DD-MM-YY HH:mm'),
@@ -77,7 +80,7 @@ const getters = {
         time: sales[0].date.unix()*1000
       }
     })
-    return result
+    return result.reverse()
   }
 }
 
@@ -88,7 +91,7 @@ const api = {
         request('orders/depth/v1', 'GET', {side: 'buy', ...params}),
         request('orders/depth/v1', 'GET', {side: 'sell', ...params}),
       ]).then(([buy, sell]) => {
-        return {buy: buy ? buy.depth.slice(0, 10) : [], sell: sell ? sell.depth.slice(0, 10) : []}
+        return {buy: buy ? buy.depth : [], sell: sell ? sell.depth : []}
       })
     },
     sales: (params) => {

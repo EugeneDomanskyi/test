@@ -48,3 +48,21 @@ export const polygon = (props) => {
     </svg>
   )
 }
+
+export const ArrowIcon = ({color = '#fff', ...props}) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={9}
+      height={11}
+      fill="none"
+      {...props}
+    >
+      <path
+        stroke={color}
+        strokeLinecap="round"
+        d="M1 6.25 4.75 10 8.5 6.25M4.75 9.992V1"
+      />
+    </svg>
+  )
+}

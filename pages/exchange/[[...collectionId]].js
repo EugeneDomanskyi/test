@@ -6,6 +6,8 @@ import dynamic from 'next/dynamic'
 import moment from 'moment'
 
 import $exchange from '@/store/exchange'
+import $collection from '@/store/collection'
+import Stream from '@/libs/stream.lib'
 
 import App from '@/components/App'
 import CollectionList from '@/components/Exchange/CollectionList'
@@ -16,22 +18,31 @@ import CollectionInfo from '@/components/Exchange/CollectionInfo'
 
 const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 
+const GRID_GAP = 6
+
 const Exchange = () => {
   const router = useRouter()
   const dispatch = useDispatch()
   const [collectionId] = router.query.collectionId || []
 
-  const collections = useSelector(({$collection}) => $collection.all)
+  const { blockchain, socketConnected } = useSelector(({$app}) => ({blockchain: $app.blockchain, socketConnected: $app.socketConnected}))
+  const { collections, isLoading } = useSelector($collection.get.all)
+
+  useEffect(() => {
+    Stream.on('sale', (data) => {
+      console.log('sale -> ', data)
+    })
+  }, [])
 
   useEffect(() => {
     if (collectionId) {
       $exchange.api.get.sales({
-        blockchain: 'polygon',
+        blockchain: blockchain,
         collection: collectionId,
         includeDeleted: false,
         includeTokenMetadata: false,
-        sortDirection: 'asc',
-        startTimestamp: moment().subtract(3, 'weeks').unix(),
+        sortDirection: 'desc',
+        // startTimestamp: moment().subtract(3, 'weeks').unix(),
         limit: 1000,
       }).then(res => {
         if (res) {
@@ -40,29 +51,43 @@ const Exchange = () => {
       })
     }
   }, [collectionId])
+  
+  useEffect(() => {
+    if (socketConnected && collectionId) {
+      Stream.subscribe('sale.*', [collectionId])
+    }
+    return () => {
+      Stream.unsubscribe('sale.*')
+    }
+  }, [socketConnected, collectionId])
 
   useEffect(() => {
-    if (!collectionId && collections) {
-      const [first] = collections
-      if (first && 'tvl' in first) {
+    if (!isLoading) {
+      const isSameBlockchain = collections.find(c => c.address === collectionId)
+      if (!collectionId || !isSameBlockchain) {
+        const [first] = collections
         router.replace(`${first.address}`)
       }
     }
-  }, [collectionId, collections])
+  }, [isLoading, blockchain, collectionId])
 
   return (
     <App.Container sx={{paddingTop: 64+24, minHeight: '100vh'}}>
-      <App.Flex gap={8}>
+      <App.Flex gap={GRID_GAP}>
         <CollectionList collectionId={collectionId} />
-        <App.Flex column flex={1} gap={8}>
-          <CollectionInfo />
-          <App.Flex>
-            <App.Flex flex={1} column>
+        <App.Flex column flex={1} gap={GRID_GAP}>
+          <CollectionInfo collectionId={collectionId} />
+          <App.Flex gap={GRID_GAP}>
+            <App.Flex flex={1} column gap={GRID_GAP}>
               <Chart />
-              <OrderBook collectionId={collectionId} />
-              <Sales />
+              <App.Flex gap={GRID_GAP}>
+                <OrderBook collectionId={collectionId} />
+                <Sales />
+              </App.Flex>
             </App.Flex>
-            <TradeForm />
+            <App.Flex column>
+              <TradeForm collectionId={collectionId} />
+            </App.Flex>
           </App.Flex>
         </App.Flex>
       </App.Flex>

@@ -5,8 +5,10 @@ import { loadIntercom } from 'next-intercom'
 import { v4 as uuid } from 'uuid'
 
 import { trackEvent } from '@/libs/analytics.lib'
+import Stream from '@/libs/stream.lib'
 
 import $collection from '@/store/collection'
+import $app from '@/store/app'
 
 const Header = dynamic(import('@/components/Header'), { ssr: false })
 const Footer = dynamic(import('@/components/Footer'), { ssr: false })
@@ -51,8 +53,19 @@ const Wrapper = ({ children }) => {
         })))
       }
       dispatch($collection.set.loading(false))
+      initWSConnection(blockchain)
+      // Stream.subscribe('collection.updated', result.collections.map(c => c.id))
+      // Stream.on('collection.updated', (data) => {
+      //   console.log('collection.updated', data)
+      // })
     })()
   }, [blockchain])
+
+  const initWSConnection = async (blockchain) => {
+    dispatch($app.set.socketConnected(false))
+    await Stream.connect(blockchain)
+    dispatch($app.set.socketConnected(true))
+  }
 
   return (
     <>
