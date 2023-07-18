@@ -166,6 +166,32 @@ const useTrade = () => {
     }
   }
 
+  const placeBid = (bids, onProgress, onError) => {
+    try {
+      getClient()?.actions.placeBid({
+        bids: bids,
+        wallet: walletClient,
+        chainId,
+        onProgress: onProgress
+      }).catch(onError)
+    } catch (error) {
+      console.log('Place Bid Error', error)
+    }
+  }
+
+  const placeAsk = async (listing, onProgress, onError) => {
+    try {
+      getClient()?.actions.listToken({
+        listings: listing,
+        wallet: walletClient,
+        chainId,
+        onProgress: onProgress,
+      }).catch(onError)
+    } catch (error) {
+      console.log('Place Ask Error', error)
+    }
+  }
+
   return {
     getNftPricesNative,
     getNftPricesCurrency,
@@ -175,6 +201,8 @@ const useTrade = () => {
     buyPriceByAmount,
     buyAmountByPrice,
     buyNft,
+    placeBid,
+    placeAsk,
   }
 }
 

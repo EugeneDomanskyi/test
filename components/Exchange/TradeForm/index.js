@@ -22,8 +22,8 @@ const TAB_OPTIONS = [
 const TradeForm = ({collectionId}) => {
 
   const { wallet, walletClient, usdt, getBalance } = useWalletConnect()
-  const { getNftBalanceUser, getNftUser } = useTrade()
-  const currentCollection = useSelector($collection.get.collection('address', collectionId))
+  const { getNftBalanceUser, getNftUser, placeBid, placeAsk } = useTrade()
+  // const currentCollection = useSelector($collection.get.collection('address', collectionId))
   const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector(({$exchange}) => {
     return {
@@ -42,13 +42,14 @@ const TradeForm = ({collectionId}) => {
 
   useEffect(() => {
     (async () => {
-      const nftBalance = await getNftBalanceUser(collectionId, wallet)
-      const usdtBalance = await getBalance(usdt[blockchain.code])
-      setUserBalances({
-        usdt: usdtBalance,
-        token: nftBalance,
-      })
-      // console.log(nftBalance, uisdtBalance)
+      if (collectionId && wallet) {
+        const nftBalance = await getNftBalanceUser(collectionId, wallet)
+        const usdtBalance = await getBalance(usdt[blockchain.code])
+        setUserBalances({
+          usdt: usdtBalance,
+          token: nftBalance,
+        })
+      }
     })()
   }, [blockchain, wallet, collectionId])
 
@@ -68,49 +69,28 @@ const TradeForm = ({collectionId}) => {
       [field]: value,
     }))
   }
+  
+  // console.log(userBalances)
 
-  const handleSubmit = () => {
-    getClient()?.actions.placeBid({
-      bids: [{  
-          weiPrice: `${form.price*1000000000000000000}`,
-          orderbook: 'reservoir',  
-          orderKind: 'seaport-v1.5',
-          collection: collectionId,
-          quantity: form.amount,
-          currency: usdt[blockchain.code],
-          // token: "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d:0"  
-      }],
-      wallet: walletClient,
-      onProgress: (steps) => {
-        console.log(steps)
-      }
-    })
-    // const signer = createWalletClient({
-    //   account: wallet,
-    //   transport: http()
-    // })
-    // const prices = getNftPricesNative(collectionId)
-    // console.log(prices)
-  }
-
-  const placeBid = () => {
-    getClient()?.actions.placeBid({
-      bids: [{  
-          weiPrice: `${form.price*1000000000000000000}`,
-          // orderbook: 'reservoir',
-          orderKind: 'seaport-v1.5',
-          collection: collectionId,
-          quantity: form.amount,
-          currency: usdt[blockchain.code],
-      }],
-      wallet: walletClient,
-      onProgress: (steps) => {
-        console.log(steps)
-      }
-    })
-  }
-
-  const placeAsk = async () => {
+  const handleSubmit = async () => {
+    // const nfts = await getNftUser(collectionId, wallet)
+    // console.log(nfts)
+    const res = await $exchange.api.get.orders({blockchain: blockchain.code, collection: collectionId, maker: wallet})
+    console.log(res)
+    return
+    if (currentTab === 'buy') {
+      const bids = [{  
+        weiPrice: `${form.price*1000000000000000000}`,
+        // orderKind: 'seaport-v1.5',
+        collection: collectionId,
+        quantity: form.amount,
+        // currency: usdt[blockchain.code],
+      }]
+      placeBid(bids, (step) => {
+        console.log(step)
+      }, () => {})
+      return
+    }
     const tokenIds = await getNftUser(collectionId, wallet)
     if (!tokenIds.length) {
       return
@@ -120,13 +100,7 @@ const TradeForm = ({collectionId}) => {
       weiPrice:`${form.price*1000000000000000000}`,
       orderKind: "seaport-v1.5",
     }))
-    getClient()?.actions.listToken({
-      listings: listing,
-      wallet: walletClient,
-      onProgress: (steps) => {
-        console.log(steps)
-      }
-    })
+    placeAsk(listing)
   }
 
   return (

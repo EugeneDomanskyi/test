@@ -97,8 +97,8 @@ const api = {
     sales: (params) => {
       return request('sales/v5', 'GET', params).then(res => res.sales)
     },
-    topCollections: (params) => {
-      return request('collections/top-selling/v1', 'GET', params).then(res => res.collections)
+    orders: (params) => {
+      return request('orders/bids/v6', 'GET', params).then(res => res)
     }
   },
   bids: (params) => {
