@@ -34,6 +34,10 @@ const api = {
   prices: (params) => {
     return request('tokens/floor/v1', 'GET', params)
   },
+
+  users: ({user, ...params}) => {
+    return request(`users/${user}/tokens/v7`, 'GET', params)
+  },
 }
 
 export default {

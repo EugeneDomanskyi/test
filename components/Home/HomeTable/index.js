@@ -19,7 +19,7 @@ import styles from './styles.module.scss'
 
 const HomeTable = () => {
   const { isMobile } = usePropsHelper()
-  const { wallet, connect, scanUrl } = useWalletConnect()
+  const { wallet, connect, scanUrl, changeNetwork } = useWalletConnect()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -79,6 +79,11 @@ const HomeTable = () => {
     e.stopPropagation()
     const address = await connect()
     if ( ! address) {
+      return
+    }
+
+    const network = await changeNetwork(blockchain.code)
+    if ( ! network) {
       return
     }
 

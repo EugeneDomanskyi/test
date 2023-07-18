@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
-import { useWalletClient } from 'wagmi'
 import { Magic } from 'magic-sdk'
-
 import { getClient } from '@reservoir0x/reservoir-sdk'
 
-import Contracts from '@/libs/contracts.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
+
+import $app from '@/store/app'
 
 import SwapModalInput from '@/components/SwapModal/SwapModalInput'
 import BuyModalConfirm from '@/components/BuyModal/BuyModalConfirm'
@@ -20,16 +20,19 @@ const getMagic = (chains) => {
       chainId: chain.id,
     }
   })
+
   return new Magic(process.env.NEXT_PUBLIC_MAGIC_LINK_API_KEY, {
     network: initialChain
   })
 }
 
 const SwapModal = ({ collection, onClose, onStep }) => {
-  const { network, getBalance, chains, walletClient } = useWalletConnect()
+  const { network, usdt, walletClient } = useWalletConnect()
 
-  const [amount, setAmount] = useState('')
-  const [price, setPrice] = useState('')
+  const blockchain = useSelector($app.get.blockchain)
+
+  const [currentCollection, setCurrentCollection] = useState(collection)
+  const [currentCurrency, setCurrentCurrency] = useState('native')
   const [type, setType] = useState('buy')
   const [step, setStep] = useState(0)
 
@@ -46,7 +49,7 @@ const SwapModal = ({ collection, onClose, onStep }) => {
   }
 
   const handleSwap = async (nfts) => {
-    const totalPrice = nfts.reduce((acc, nft) => acc+nft.price, 0)
+    /* const totalPrice = nfts.reduce((acc, nft) => acc+nft.price, 0)
     const balance = await getBalance()
     if (totalPrice > balance) {
       const magic = getMagic(chains)
@@ -54,11 +57,16 @@ const SwapModal = ({ collection, onClose, onStep }) => {
       if (isMagicConnected) {
         await magic.wallet.showUI()
       }
+    } */
+
+    const options = {}
+    if (currentCurrency == 'usdt') {
+      options.currency = usdt[blockchain.code]
     }
 
     const items = nfts.map(item => {
       return {
-        token: `${collection.ognft}:${item.id}`,
+        token: `${collection.address}:${item.id}`,
         quantity: 1,
       }
     })
@@ -68,6 +76,7 @@ const SwapModal = ({ collection, onClose, onStep }) => {
         items,
         chainId,
         wallet: walletClient,
+        options,
         onProgress: (steps) => {
           const transaction = steps.find(item => item.kind == 'transaction')
           if (transaction && transaction.hasOwnProperty('items')) {
@@ -88,12 +97,12 @@ const SwapModal = ({ collection, onClose, onStep }) => {
     }
   }
 
-  const handleAmountChange = (val) => {
-    setAmount(val)
+  const handleCollectionChange = (val) => {
+    setCurrentCollection(val)
   }
 
-  const handlePriceChange = (val) => {
-    setPrice(val)
+  const handleCurrencyChange = (val) => {
+    setCurrentCurrency(val)
   }
 
   const handleTypeChange = (val) => {
@@ -102,7 +111,7 @@ const SwapModal = ({ collection, onClose, onStep }) => {
 
   const contentComponent = () => {
     switch (step) {
-      case 0: return <SwapModalInput collection={collection} amount={amount} price={price} type={type} onAmountChange={handleAmountChange} onPriceChange={handlePriceChange} onTypeChange={handleTypeChange} onSwap={handleSwap} />
+      case 0: return <SwapModalInput collection={currentCollection} currency={currentCurrency} type={type} onCollectionChange={handleCollectionChange} onCurrencyChange={handleCurrencyChange} onTypeChange={handleTypeChange} onSwap={handleSwap} />
       /* case 1: return <BuyModalConfirm token={collection} amount={amount} />
       case 2: return <BuyModalComplete token={collection} amount={amount} onComplete={handleCloseModal} /> */
     }
