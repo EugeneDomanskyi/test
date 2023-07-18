@@ -2,7 +2,11 @@ import styles from './styles.module.scss'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 
+import { getClient, Execute } from "@reservoir0x/reservoir-sdk";
+import { createWalletClient, http } from 'viem'
+
 import $collection from '@/store/collection'
+import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
 import Tabs from '@/components/Exchange/Tabs'
@@ -14,9 +18,8 @@ const TAB_OPTIONS = [
 
 const TradeForm = ({collectionId}) => {
 
+  const { wallet } = useWalletConnect()
   const currentCollection = useSelector($collection.get.collection('address', collectionId))
-
-  console.log(currentCollection)
 
   const [form, setForm] = useState({price: '0', amount: '0', total: '0'})
   const [currentTab, setCurrentTab] = useState('buy')
@@ -34,7 +37,10 @@ const TradeForm = ({collectionId}) => {
   }
 
   const handleSubmit = () => {
-
+    const signer = createWalletClient({
+      account: wallet,
+      transport: http()
+    })
   }
 
   return (
@@ -62,7 +68,7 @@ const TradeForm = ({collectionId}) => {
             value={form.total}
             onChange={handleChangeForm('total')} />
         </App.Flex>
-        <App.Button variant={currentTab === 'buy' ? 'success' : 'danger'} sx={{marginTop: 'auto'}} onPress={handleSubmit}>
+        <App.Button variant={currentTab === 'buy' ? 'success' : 'danger'} sx={{marginTop: 'auto', backgroundColor: currentOption.color}} onPress={handleSubmit}>
           <App.Text>{ currentOption.title }</App.Text>
         </App.Button>
       </App.Flex>
