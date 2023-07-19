@@ -27,7 +27,7 @@ const CollectionInfo = ({collectionId}) => {
       <App.Flex flex={1} column>
         <App.Flex column flex={1}>
           <App.Text>{ currentCollection?.name }</App.Text>
-          <App.Text sx={{maxHeight: 72, overflow: 'hidden'}} size={12} color="rgba(255, 255, 255, 0.5)" flex={1}>{ currentCollection?.description }</App.Text>
+          <App.Text className={styles.description} size={12} color="rgba(255, 255, 255, 0.5)" flex={1}>{ currentCollection?.description }</App.Text>
         </App.Flex>
         <App.Flex sx={{marginTop: 'auto'}}>
           <App.Flex column sx={{marginRight: 'auto'}}>

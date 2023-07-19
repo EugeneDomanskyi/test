@@ -57,10 +57,10 @@ const OrderBook = ({collectionId}) => {
       </App.Flex>
       <App.Flex gap={8}>
         <App.Flex column flex={1}>
-        <App.Flex justify="space-between" sx={{padding: '0 5px'}}>
-          <App.Text>Buy Price</App.Text>
-          <App.Text>Volume</App.Text>
-        </App.Flex>
+          <App.Flex justify="space-between" align="center" sx={{padding: '0 5px', height: 30}}>
+            <App.Text size={12}>Buy Price</App.Text>
+            <App.Text size={12}>Volume</App.Text>
+          </App.Flex>
           {
             orderBook.buy.map((order, i) => {
               prevBuyVolumeValue += order.quantity * 1
@@ -76,9 +76,9 @@ const OrderBook = ({collectionId}) => {
           }
         </App.Flex>
         <App.Flex column flex={1}>
-          <App.Flex justify="space-between" sx={{padding: '0 5px'}}>
-            <App.Text>Volume</App.Text>
-            <App.Text>Sell Price</App.Text>
+          <App.Flex justify="space-between" align="center" sx={{padding: '0 5px', height: 30}}>
+            <App.Text size={12}>Volume</App.Text>
+            <App.Text size={12}>Sell Price</App.Text>
           </App.Flex>
           {
             orderBook.sell.map((order, i) => {

@@ -3,7 +3,6 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import dynamic from 'next/dynamic'
-import moment from 'moment'
 
 import $exchange from '@/store/exchange'
 import $app from '@/store/app'
@@ -28,19 +27,28 @@ const Exchange = () => {
   const dispatch = useDispatch()
   const [collectionId] = router.query.collectionId || []
 
-  const { wallet, usdt } = useWalletConnect()
+  const { wallet } = useWalletConnect()
   const socketConnected = useSelector(({$app}) => $app.socketConnected)
   const blockchain = useSelector($app.get.blockchain)
   const { collections, isLoading } = useSelector($collection.get.all)
 
   useEffect(() => {
     Stream.on('sale', (event, data) => {
-      console.log('sale -> ', event, data)
+      switch (event) {
+        case 'sale.created':
+          dispatch($exchange.set.saleAdd(data))
+          break
+        case 'sale.updated':
+          dispatch($exchange.set.saleUpdate(data))
+          break
+      }
+      // console.log('sale -> ', event, data)
     })
     Stream.on('bid', (event, data) => {
       if (wallet.toLowerCase() !== data.maker.toLowerCase()) {
         return
       }
+      console.log(event, data)
       switch (event) {
         case 'bid.created':
           dispatch($exchange.set.orderAdd(data))
@@ -54,6 +62,7 @@ const Exchange = () => {
       if (wallet.toLowerCase() !== data.maker.toLowerCase()) {
         return
       }
+      console.log(event, data)
       switch (event) {
         case 'ask.created':
           dispatch($exchange.set.orderAdd(data))
@@ -104,6 +113,8 @@ const Exchange = () => {
     }
     return () => {
       Stream.unsubscribe('sale.*')
+      Stream.unsubscribe('bid.*')
+      Stream.unsubscribe('ask.*')
     }
   }, [socketConnected, collectionId])
 
@@ -132,7 +143,9 @@ const Exchange = () => {
               </App.Flex>
             </App.Flex>
             <App.Flex column gap={GRID_GAP}>
-              <TradeForm collectionId={collectionId} />
+              <App.Flex>
+                <TradeForm collectionId={collectionId} />
+              </App.Flex>
               <Orders />
             </App.Flex>
           </App.Flex>

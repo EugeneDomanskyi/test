@@ -1,16 +1,14 @@
 import styles from './styles.module.scss'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
-
-import { getClient, Execute } from "@reservoir0x/reservoir-sdk";
-import { createWalletClient, http } from 'viem'
+import { toast } from 'react-toastify'
 import { parseUnits } from 'viem'
+import numeral from 'numeral'
 
-import $collection from '@/store/collection'
 import $app from '@/store/app'
-import $exchange from '@/store/exchange'
+import $collection from '@/store/collection'
 import useWalletConnect from '@/myhooks/wallet-connect'
-import useTrade from '@/myhooks/trade';
+import useTrade from '@/myhooks/trade'
 
 import App from '@/components/App'
 import Tabs from '@/components/Exchange/Tabs'
@@ -22,9 +20,9 @@ const TAB_OPTIONS = [
 
 const TradeForm = ({collectionId}) => {
 
-  const { wallet, walletClient, usdt, getBalance } = useWalletConnect()
-  const { getNftBalanceUser, getNftUser, placeBid, placeAsk } = useTrade()
-  // const currentCollection = useSelector($collection.get.collection('address', collectionId))
+  const { wallet, connect, changeNetwork, usdt, getBalance } = useWalletConnect()
+  const { getNftBalanceUser, getNftUser, placeBid, placeAsk, errorHandler } = useTrade()
+  const currentCollection = useSelector($collection.get.collection('address', collectionId))
   const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector(({$exchange}) => {
     return {
@@ -34,8 +32,10 @@ const TradeForm = ({collectionId}) => {
   })
 
   const [userBalances, setUserBalances] = useState({usdt: 0, token: 0})
-  const [form, setForm] = useState({price: '0', amount: '0', total: '0'})
+  const [form, setForm] = useState({price: '0', amount: '1', total: '0'})
   const [currentTab, setCurrentTab] = useState('buy')
+  const [loading, setLoading] = useState(false)
+  const loadingRef = useRef(false)
 
   const currentOption = TAB_OPTIONS.find(opt => opt.key === currentTab)
   const [lowestBuy] = orderBook.buy
@@ -55,33 +55,70 @@ const TradeForm = ({collectionId}) => {
   }, [blockchain, wallet, collectionId])
 
   useEffect(() => {
-    if (lowestBuy) {
-      setForm(state => ({...state, price: lowestBuy.price}))
+    if (currentTab === 'buy' && lowestBuy) {
+      handleChangeForm('price')(lowestBuy.price)
+    } else if (!lowestBuy && currentCollection?.price) {
+      handleChangeForm('price')(currentCollection?.price)
     }
-  }, [lowestBuy])
+    if (currentTab === 'sell' && lowestSell) {
+      handleChangeForm('price')(lowestSell.price)
+    } else if (!lowestBuy && currentCollection?.price) {
+      handleChangeForm('price')(currentCollection?.price)
+    }
+  }, [lowestBuy, lowestSell, currentCollection?.price, currentTab])
 
   const handleChangeTab = tab => {
     setCurrentTab(tab)
   }
 
   const handleChangeForm = field => value => {
-    setForm(state => ({
-      ...state,
-      [field]: value,
-    }))
+    switch (field) {
+      case 'price':
+        setForm(state => ({
+          ...state,
+          price: value,
+          total: (value*state.amount).toString(),
+        }))
+        return
+      case 'amount':
+        const regex = /^\d+[,]?\d{0,2}$/
+        if (value && !regex.test(value)) {
+          return 
+        }
+        setForm(state => ({
+          ...state,
+          amount: value,
+          total: (value*state.price).toString(),
+        }))
+        return
+      case 'total':
+        setForm(state => ({
+          ...state,
+          total: value,
+          amount: numeral(value/state.price).format('0')
+        }))
+        return
+    }
   }
 
   const handleSubmit = async () => {
+    const address = await connect()
+    if (!address) {
+      return
+    }
+
+    const network = await changeNetwork(blockchain.code)
+    if (!network) {
+      return
+    }
+    loadingRef.current = true
     if (currentTab === 'buy') {
       const bids = [{  
         weiPrice: parseUnits(`${form.price}`, 18).toString(),
         collection: collectionId,
         quantity: form.amount,
-        // currency: usdt[blockchain.code].toLowerCase(),
       }]
-      placeBid(bids, (step) => {
-        console.log(step)
-      }, () => {})
+      placeBid(bids, progressHandler, errorHandler)
       return
     }
     const tokenIds = await getNftUser(collectionId, wallet)
@@ -93,10 +130,23 @@ const TradeForm = ({collectionId}) => {
       weiPrice: parseUnits(`${form.price}`, 18).toString(),
       orderKind: "seaport-v1.5",
     }))
-    // return
-    placeAsk(listing, (step) => {
-      console.log(step)
-    }, () => {})
+    placeAsk(listing, progressHandler, errorHandler)
+  }
+
+  const progressHandler = steps => {
+    const isAllStepsComplete = steps.flatMap(step => step.items).every(step => step.status === 'complete')
+    if (isAllStepsComplete && loadingRef.current) {
+      toast.success('Order created successfully')
+      loadingRef.current = false
+    }
+  }
+
+  const renderBalance = () => {
+    return (
+      <App.Flex sx={{padding: '3px 0px'}}>
+        <App.Text size={10} color="rgba(255,255,255,0.6)">Balance: { currentTab === 'buy' ? userBalances.usdt : userBalances.token }</App.Text>
+      </App.Flex>
+    )
   }
 
   return (
@@ -116,16 +166,31 @@ const TradeForm = ({collectionId}) => {
           <App.Text>Amount</App.Text>
           <App.TextField
             value={form.amount}
+            type="number"
             onChange={handleChangeForm('amount')} />
+          {
+            currentTab === 'sell'
+              ? renderBalance()
+              : null
+          }
         </App.Flex>
         <App.Flex column sx={{marginBottom: 15}}>
           <App.Text>Total</App.Text>
           <App.TextField
             value={form.total}
             onChange={handleChangeForm('total')} />
+            {
+              currentTab === 'buy'
+                ? renderBalance()
+                : null
+            }
         </App.Flex>
-        <App.Button variant={currentTab === 'buy' ? 'success' : 'danger'} sx={{marginTop: 'auto', backgroundColor: currentOption.color}} onClick={handleSubmit}>
-          <App.Text>{ currentOption.title }</App.Text>
+        <App.Button
+          variant={currentTab === 'buy' ? 'success' : 'danger'}
+          sx={{marginTop: 'auto', backgroundColor: currentOption.color}}
+          disabled={!form.total}
+          onClick={handleSubmit}>
+          <App.Text>{ currentOption.title } {`${form.amount || 0} NFT${form.amount > 1 ? `'s` : ''}` }</App.Text>
         </App.Button>
       </App.Flex>
     </App.Flex>

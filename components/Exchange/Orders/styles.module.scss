@@ -3,6 +3,7 @@
   border-radius: 8px;
   box-shadow: 0px 0px 20px 5px rgba(161, 159, 255, 0.1);
   overflow: hidden;
+  height: 300px;
   .header {
     background-color: #1c192f;
     border-radius: 8px 8px 0px 0px;
@@ -16,12 +17,31 @@
     border-color: #fff;
     position: relative;
     margin-bottom: 3px;
+    position: relative;
+
+    &:hover {
+      background-color: rgba(255,255,255,0.1);
+
+      .cancelButton {
+        display: block;
+      }
+    }
 
     .side {
       position: absolute;
       left: 0;
       height: 100%;
       width: 3px;
+    }
+
+    .cancelButton {
+      position: absolute;
+      right: 10px;
+      background-color: rgb(77, 14, 39);
+      border: none;
+      cursor: pointer;
+      display: none;
+      border-radius: 4px;
     }
   }
 }

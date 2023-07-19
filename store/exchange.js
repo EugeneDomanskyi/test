@@ -36,6 +36,12 @@ export const exchangeSlice = createSlice({
     sales: (state, {payload}) => {
       state.sales = payload
     },
+    saleAdd: (state, {payload}) => {
+      state.sales = [...state.sales, payload]
+    },
+    saleUpdate: (state, {payload}) => {
+      state.sales = state.sales.map(s => (s.id === payload.id ? payload : s))
+    },
     interval: (state, {payload}) => {
       state.interval = payload
     },

@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux'
 import { getClient } from '@reservoir0x/reservoir-sdk'
+import { toast } from 'react-toastify'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 
@@ -274,6 +275,33 @@ const useTrade = () => {
     }
   }
 
+  const cancelOrder = (orderId, onProgress, onError) => {
+    try {
+      getClient()?.actions.cancelOrder({
+        ids: [orderId],
+        wallet: walletClient,
+        chainId,
+        onProgress: onProgress,
+      }).catch(onError)
+    } catch (error) {
+      console.log('Cancel Order Error', error)
+    }
+  }
+
+  const errorHandler = error => {
+    if (Array.isArray(error?.response?.data?.errors)) {
+      error.response.data.errors.forEach(error => {
+        toast.error(error.message, { pauseOnFocusLoss: false })
+      })
+    } else if (error?.response?.data?.message) {
+      toast.error(error.response.data.message, { pauseOnFocusLoss: false })
+    } else if (error?.shortMessage) {
+      toast.error(error.shortMessage, { pauseOnFocusLoss: false })
+    } else if (error?.message) {
+      toast.error(error.message, { pauseOnFocusLoss: false })
+    }
+  }
+
   return {
     getNftPricesNative,
     getNftPricesCurrency,
@@ -289,6 +317,8 @@ const useTrade = () => {
     sellNft,
     placeBid,
     placeAsk,
+    cancelOrder,
+    errorHandler,
   }
 }
 
