@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import $collection from '@/store/collection'
+import $exchange from '@/store/exchange'
 
 import App from '@/components/App'
 import { WebIcon, TwitterIcon, DiscordIcon } from '@/components/Icons/exchange'
@@ -11,27 +12,32 @@ import { WebIcon, TwitterIcon, DiscordIcon } from '@/components/Icons/exchange'
 const CollectionInfo = ({collectionId}) => {
 
   const currentCollection = useSelector($collection.get.collection('address', collectionId))
-  
+  const { high, low } = useSelector($exchange.get.highLow({count: 24, unit: 'hours'}))
   return (
-    <App.Flex className={styles.container}>
-      {
-        currentCollection?.image
-          ? <Image
-              width={130}
-              height={130}
-              alt=""
-              className={styles.image}
-              src={currentCollection?.image} />
-          : null
-      }
-      <App.Flex flex={1} column>
-        <App.Flex column flex={1}>
-          <App.Text>{ currentCollection?.name }</App.Text>
-          <App.Text className={styles.description} size={12} color="rgba(255, 255, 255, 0.5)" flex={1}>{ currentCollection?.description }</App.Text>
-        </App.Flex>
-        <App.Flex sx={{marginTop: 'auto'}}>
-          <App.Flex column sx={{marginRight: 'auto'}}>
-            <App.Text size={24}>${ currentCollection?.price }</App.Text>
+    <App.Flex className={styles.container} gap={6}>
+      <App.Flex>
+        {
+          currentCollection?.image
+            ? <Image
+                width={162}
+                height={162}
+                alt=""
+                className={styles.image}
+                src={currentCollection?.image} />
+            : null
+        }
+      </App.Flex>
+      <App.Flex flex={1} column className={styles.content}>
+        <App.Flex column gap={8} flex={1}>
+          <App.Flex align="center" justify="space-between">
+            <App.Flex align="center" gap={8}>
+              <App.Text weight={700} uppercase size={20}>{ currentCollection?.name }</App.Text>
+              {
+                currentCollection?.openseaVerificationStatus === 'verified'
+                  ? <App.Icon icon="verified" />
+                  : null
+              }
+            </App.Flex>
             <App.Flex align="center">
               <Link href={currentCollection?.externalUrl ?? ''} target="_blank" style={{marginRight: 5}}>
                 <WebIcon />
@@ -44,17 +50,32 @@ const CollectionInfo = ({collectionId}) => {
               </Link>
             </App.Flex>
           </App.Flex>
-          <App.Flex column align="center" justify="center" sx={{padding: '0 16px', backgroundColor: '#1a162e', borderRadius: 8, marginRight: 16}}>
-            <App.Text size={12}>Total count</App.Text>
-            <App.Text size={18}>{ currentCollection?.tokenCount }</App.Text>
-          </App.Flex>
-          <App.Flex column align="center" justify="center" sx={{padding: '0 16px', backgroundColor: '#1a162e', borderRadius: 8, marginRight: 16}}>
-            <App.Text size={12}>Listed count</App.Text>
-            <App.Text size={18}>{ currentCollection?.onSaleCount }</App.Text>
-          </App.Flex>
-          <App.Flex column align="center" justify="center" sx={{padding: '0 16px', backgroundColor: '#1a162e', borderRadius: 8}}>
-            <App.Text size={12}>OpenSea verification status</App.Text>
-            <App.Text size={18} uppercase color={currentCollection?.openseaVerificationStatus === 'verified' ? 'rgb(13, 198, 109)' : 'rgb(206, 22, 93)'}>{ currentCollection?.openseaVerificationStatus }</App.Text>
+          <App.Text lines={2} size={12} weight={500} color="#B9B8C5" flex={1}>{ currentCollection?.description }</App.Text>
+          <App.Flex sx={{marginTop: 'auto'}} gap={16}>
+            <App.Flex column className={styles.card}>
+              <App.Text color="#B9B8C5" size={10} weight={400}>Price</App.Text>
+              <App.Text size={16} weight={700}>${ currentCollection?.price }</App.Text>
+            </App.Flex>
+            <App.Flex column className={styles.card}>
+              <App.Text color="#B9B8C5" size={10} weight={400}>24h Price Change</App.Text>
+              <App.Text size={16} weight={700}>&nbsp;</App.Text>
+            </App.Flex>
+            <App.Flex column className={styles.card}>
+              <App.Text color="#B9B8C5" size={10} weight={400}>24h Volume</App.Text>
+              <App.Text size={16} weight={700}>{ currentCollection?.volume }</App.Text>
+            </App.Flex>
+            <App.Flex column className={styles.card}>
+              <App.Text color="#B9B8C5" size={10} weight={400}>24h High</App.Text>
+              <App.Text size={16} weight={700}>${ high }</App.Text>
+            </App.Flex>
+            <App.Flex column className={styles.card}>
+              <App.Text color="#B9B8C5" size={10} weight={400}>24h Low</App.Text>
+              <App.Text size={16} weight={700}>${ low }</App.Text>
+            </App.Flex>
+            <App.Flex column className={styles.card}>
+              <App.Text color="#B9B8C5" size={10} weight={400}>Total Supply</App.Text>
+              <App.Text size={16} weight={700}>{ currentCollection?.tokenCount }</App.Text>
+            </App.Flex>
           </App.Flex>
         </App.Flex>
       </App.Flex>

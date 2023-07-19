@@ -18,6 +18,7 @@ export const exchangeSlice = createSlice({
     orders: [],
     interval: {key: '15m', count: 15, unit: 'minutes'},
     sortType: 'VOLUME:DESC',
+    
   },
 
   reducers: {
@@ -97,6 +98,17 @@ const getters = {
       }
     })
     return result.reverse()
+  },
+  highLow: (interval) => ({$exchange}) => {
+    const now = moment()
+    const from = moment().subtract(interval.count, interval.unit)
+    const prices = $exchange.sales
+      .filter(sale => moment(sale.updatedAt).isAfter(from) && moment(sale.updatedAt).isBefore(now))
+      .map((sale) => sale.price.amount.usd)
+    return {
+      low: Math.min(...prices),
+      high: Math.max(...prices),
+    }
   }
 }
 

@@ -60,7 +60,7 @@ const AppText = ({ children, html, inline, family, size, weight, style, color, g
     }
 
     if (lines) {
-      result.WebkitLineClamp = propValue(lines)
+      result.WebkitLineClamp = propValue(lines, true)
     }
 
     if (flex) {

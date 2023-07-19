@@ -20,7 +20,7 @@ const TAB_OPTIONS = [
 
 const TradeForm = ({collectionId}) => {
 
-  const { wallet, connect, changeNetwork, usdt, getBalance } = useWalletConnect()
+  const { wallet, connect, changeNetwork, getBalance } = useWalletConnect()
   const { getNftBalanceUser, getNftUser, placeBid, placeAsk, errorHandler } = useTrade()
   const currentCollection = useSelector($collection.get.collection('address', collectionId))
   const blockchain = useSelector($app.get.blockchain)
@@ -31,7 +31,7 @@ const TradeForm = ({collectionId}) => {
     }
   })
 
-  const [userBalances, setUserBalances] = useState({usdt: 0, token: 0})
+  const [userBalances, setUserBalances] = useState({native: 0, token: 0})
   const [form, setForm] = useState({price: '0', amount: '1', total: '0'})
   const [currentTab, setCurrentTab] = useState('buy')
   const [loading, setLoading] = useState(false)
@@ -45,9 +45,9 @@ const TradeForm = ({collectionId}) => {
     (async () => {
       if (collectionId && wallet) {
         const nftBalance = await getNftBalanceUser(collectionId, wallet)
-        const usdtBalance = await getBalance(usdt[blockchain.code])
+        const nativeBalance = await getBalance()
         setUserBalances({
-          usdt: usdtBalance,
+          native: nativeBalance,
           token: nftBalance,
         })
       }
@@ -114,7 +114,7 @@ const TradeForm = ({collectionId}) => {
     loadingRef.current = true
     if (currentTab === 'buy') {
       const bids = [{  
-        weiPrice: parseUnits(`${form.price}`, 18).toString(),
+        weiPrice: parseUnits(`${form.total}`, 18).toString(),
         collection: collectionId,
         quantity: form.amount,
       }]
@@ -125,10 +125,11 @@ const TradeForm = ({collectionId}) => {
     if (!tokenIds.length) {
       return
     }
-    const listing = tokenIds.map((token) => ({
+    const listing = tokenIds.filter((_, i) => i < form.amount).map((token) => ({
       token: `${collectionId}:${token.token.tokenId}`,
       weiPrice: parseUnits(`${form.price}`, 18).toString(),
       orderKind: "seaport-v1.5",
+      quantity: 1,
     }))
     placeAsk(listing, progressHandler, errorHandler)
   }
@@ -144,7 +145,7 @@ const TradeForm = ({collectionId}) => {
   const renderBalance = () => {
     return (
       <App.Flex sx={{padding: '3px 0px'}}>
-        <App.Text size={10} color="rgba(255,255,255,0.6)">Balance: { currentTab === 'buy' ? userBalances.usdt : userBalances.token }</App.Text>
+        <App.Text size={10} color="rgba(255,255,255,0.6)">Balance: { currentTab === 'buy' ? userBalances.native : userBalances.token }</App.Text>
       </App.Flex>
     )
   }
