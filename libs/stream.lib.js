@@ -65,12 +65,13 @@ const Stream = () => {
         }
       })
     },
-    subscribe: (event, contracts) => {
+    subscribe: (event, contracts, params = {}) => {
       const post = {
         type: 'subscribe',
         event: event,
         filters: {
           contract: contracts,
+          ...params,
         }
       }
       socket.send(JSON.stringify(post))

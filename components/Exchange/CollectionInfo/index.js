@@ -13,6 +13,7 @@ const CollectionInfo = ({collectionId}) => {
 
   const currentCollection = useSelector($collection.get.collection('address', collectionId))
   const { high, low } = useSelector($exchange.get.highLow({count: 24, unit: 'hours'}))
+
   return (
     <App.Flex className={styles.container} gap={6}>
       <App.Flex>
@@ -58,7 +59,10 @@ const CollectionInfo = ({collectionId}) => {
             </App.Flex>
             <App.Flex column className={styles.card}>
               <App.Text color="#B9B8C5" size={10} weight={400}>24h Price Change</App.Text>
-              <App.Text size={16} weight={700}>&nbsp;</App.Text>
+              <App.Flex align="center" gap={4}>
+                <App.Icon style={{transform: `rotate(${currentCollection?.ticker?.type == 'minus' ? '0' : '180'}deg)`}} icon="caret-down" color={currentCollection?.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C' } />
+                <App.Text size={16} weight={500} color={currentCollection?.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C' }>{ currentCollection?.ticker?.value }%</App.Text>
+              </App.Flex>
             </App.Flex>
             <App.Flex column className={styles.card}>
               <App.Text color="#B9B8C5" size={10} weight={400}>24h Volume</App.Text>

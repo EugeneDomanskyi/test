@@ -1,25 +1,20 @@
 import styles from './styles.module.scss'
 import { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import cn from 'classnames'
 
 import $exchange from '@/store/exchange'
 import $app from '@/store/app'
-import Stream from '@/libs/stream.lib'
-import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
 
 const OrderBook = ({collectionId}) => {
   const dispatch = useDispatch()
 
-  const orderBook = useSelector(({$exchange}) => {
-    return {
-      buy: $exchange.orderBook.buy.slice(0, 10),
-      sell: $exchange.orderBook.sell.slice(0, 10),
-    }
-  })
-  const socketConnected = useSelector(({$app}) => $app.socketConnected)
+  const orderBook = useSelector(({$exchange}) => ({
+    buy: [...$exchange.orderBook.buy].slice(0, 10),
+    sell: [...$exchange.orderBook.sell].slice(0, 10),
+  }), shallowEqual)
   const blockchain = useSelector($app.get.blockchain)
 
   let prevBuyVolumeValue = 0
@@ -33,33 +28,24 @@ const OrderBook = ({collectionId}) => {
       $exchange.api.get.orderBook({
         collection: collectionId,
         blockchain: blockchain.code,
-        // displayCurrency: usdt[blockchain.code],
       }).then(res => {
         if (res) {
           dispatch($exchange.set.orderBook(res))
-          
         }
       })
     }
   }, [collectionId, blockchain.code])
 
-  useEffect(() => {
-    if (collectionId && socketConnected) {
-      // Stream.subscribe('bid.*', [collectionId])
-      // Stream.subscribe('ask.*', [collectionId])
-    }
-  }, [collectionId, socketConnected])
-
   return (
     <App.Flex column flex={1} className={styles.card}>
-      <App.Flex center className={styles.header}>
-        <App.Text>ORDER BOOK</App.Text>
+      <App.Flex className={styles.header} align="center">
+        <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600}>ORDER BOOK</App.Text>
       </App.Flex>
-      <App.Flex gap={8}>
+      <App.Flex gap={3}>
         <App.Flex column flex={1}>
-          <App.Flex justify="space-between" align="center" sx={{padding: '0 5px', height: 30}}>
-            <App.Text size={12}>Buy Price</App.Text>
-            <App.Text size={12}>Volume</App.Text>
+          <App.Flex justify="space-between" align="center" sx={{padding: '0 8px', height: 20}}>
+            <App.Text size={10} color="#908F99" weight={600}>Buy Price</App.Text>
+            <App.Text size={10} color="#908F99" weight={600}>Volume</App.Text>
           </App.Flex>
           {
             orderBook.buy.map((order, i) => {
@@ -68,17 +54,17 @@ const OrderBook = ({collectionId}) => {
               return (
                 <App.Flex key={i} justify="space-between" align="center" className={styles.row}>
                   <div className={cn(styles.fill, styles.buy)} style={{width}} />
-                  <App.Text size={12} sx={{position: 'relative'}} color="#53f19c">{ order.price }</App.Text>
-                  <App.Text size={12} sx={{position: 'relative'}}>{ order.quantity }</App.Text>
+                  <App.Text size={12} sx={{position: 'relative'}} weight={600} color="#53f19c">{ order.price }</App.Text>
+                  <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600} sx={{position: 'relative'}}>{ order.quantity }</App.Text>
                 </App.Flex>
               )
             })
           }
         </App.Flex>
         <App.Flex column flex={1}>
-          <App.Flex justify="space-between" align="center" sx={{padding: '0 5px', height: 30}}>
-            <App.Text size={12}>Volume</App.Text>
-            <App.Text size={12}>Sell Price</App.Text>
+          <App.Flex justify="space-between" align="center" sx={{padding: '0 8px', height: 20}}>
+            <App.Text size={10} color="#908F99" weight={600}>Volume</App.Text>
+            <App.Text size={10} color="#908F99" weight={600}>Sell Price</App.Text>
           </App.Flex>
           {
             orderBook.sell.map((order, i) => {
@@ -87,8 +73,8 @@ const OrderBook = ({collectionId}) => {
               return (
                 <App.Flex key={i} justify="space-between" align="center" className={styles.row}>
                   <div className={cn(styles.fill, styles.sell)} style={{width}} />
-                  <App.Text size={12} sx={{position: 'relative'}}>{ order.quantity }</App.Text>
-                  <App.Text size={12} sx={{position: 'relative'}} color="#eb3169">{ order.price }</App.Text>
+                  <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600} sx={{position: 'relative'}}>{ order.quantity }</App.Text>
+                  <App.Text size={12} sx={{position: 'relative'}} weight={600} color="#eb3169">{ order.price }</App.Text>
                 </App.Flex>
               )
             })

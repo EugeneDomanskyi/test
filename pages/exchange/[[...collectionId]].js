@@ -47,27 +47,13 @@ const Exchange = () => {
       if (wallet && wallet.toLowerCase() !== data.maker.toLowerCase()) {
         return
       }
-      switch (event) {
-        case 'bid.created':
-          dispatch($exchange.set.orderAdd(data))
-          break
-        case 'bid.updated':
-          dispatch($exchange.set.orderUpdate(data))
-          break
-      }
+      dispatch($exchange.set.orderUpdate(data))
     })
     Stream.on('ask', (event, data) => {
       if (wallet && wallet.toLowerCase() !== data.maker.toLowerCase()) {
         return
       }
-      switch (event) {
-        case 'ask.created':
-          dispatch($exchange.set.orderAdd(data))
-          break
-        case 'ask.updated':
-          dispatch($exchange.set.orderUpdate(data))
-          break
-      }
+      dispatch($exchange.set.orderUpdate(data))
     })
   }, [wallet])
 
@@ -94,6 +80,7 @@ const Exchange = () => {
         blockchain: blockchain.code,
         collection: collectionId,
         maker: wallet,
+        includeCriteriaMetadata: true,
       }).then(res => {
         if (res) {
           dispatch($exchange.set.orders(res))
@@ -105,8 +92,6 @@ const Exchange = () => {
   useEffect(() => {
     if (socketConnected && collectionId) {
       Stream.subscribe('sale.*', [collectionId])
-      Stream.subscribe('bid.*', [collectionId])
-      Stream.subscribe('ask.*', [collectionId])
     }
     return () => {
       Stream.unsubscribe('sale.*')
@@ -114,6 +99,14 @@ const Exchange = () => {
       Stream.unsubscribe('ask.*')
     }
   }, [socketConnected, collectionId])
+
+  useEffect(() => {
+    if (wallet && socketConnected && collectionId) {
+      Stream.subscribe('bid.*', [collectionId], {maker: wallet})
+      Stream.subscribe('ask.*', [collectionId], {maker: wallet})
+    }
+    
+  }, [socketConnected, collectionId, wallet])
 
   useEffect(() => {
     if (!isLoading) {
@@ -125,6 +118,27 @@ const Exchange = () => {
       }
     }
   }, [isLoading, blockchain.code, collectionId])
+
+  const handleOrdersUpdated = () => {
+    $exchange.api.get.orders({
+      blockchain: blockchain.code,
+      collection: collectionId,
+      maker: wallet,
+      includeCriteriaMetadata: true,
+    }).then(res => {
+      if (res) {
+        dispatch($exchange.set.orders(res))
+      }
+    })
+    $exchange.api.get.orderBook({
+      collection: collectionId,
+      blockchain: blockchain.code,
+    }).then(res => {
+      if (res) {
+        dispatch($exchange.set.orderBook(res))
+      }
+    })
+  }
 
   return (
     <App.Container sx={{paddingTop: 64+24, minHeight: '100vh'}}>
@@ -142,9 +156,9 @@ const Exchange = () => {
             </App.Flex>
             <App.Flex column gap={GRID_GAP}>
               <App.Flex>
-                <TradeForm collectionId={collectionId} />
+                <TradeForm collectionId={collectionId} onOrderCreated={handleOrdersUpdated} />
               </App.Flex>
-              <Orders />
+              <Orders onOrderCancelled={handleOrdersUpdated} />
             </App.Flex>
           </App.Flex>
         </App.Flex>
