@@ -154,12 +154,13 @@ const Exchange = () => {
               <OrderBook collectionId={collectionId} />
               <Sales />
             </App.Flex>
-            <App.Flex column gap={GRID_GAP}>
-              <App.Flex>
-                <TradeForm collectionId={collectionId} onOrderCreated={handleOrdersUpdated} />
-              </App.Flex>
-              <Orders collectionId={collectionId} onOrderCancelled={handleOrdersUpdated} />
+          </App.Flex>
+
+          <App.Flex column gap={GRID_GAP}>
+            <App.Flex>
+              <TradeForm collectionId={collectionId} onOrderCreated={handleOrdersUpdated} />
             </App.Flex>
+
             <Orders onOrderCancelled={handleOrdersUpdated} />
           </App.Flex>
         </App.Flex>
