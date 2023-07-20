@@ -10,7 +10,7 @@ import $app from '@/store/app'
 
 import App from '@/components/App'
 
-const Orders = () => {
+const Orders = ({onOrderCancelled}) => {
   const orders = useSelector(({$exchange}) => {
     return [...$exchange.orders].filter(order => order.status !== 'cancelled').sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
   })
@@ -31,6 +31,7 @@ const Orders = () => {
     if (isAllStepsComplete && loadingRef.current) {
       toast.success('Order cancelled successfully')
       loadingRef.current = false
+      onOrderCancelled()
     }
   }
 

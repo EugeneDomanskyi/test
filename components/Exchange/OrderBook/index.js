@@ -1,6 +1,6 @@
 import styles from './styles.module.scss'
 import { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import cn from 'classnames'
 
 import $exchange from '@/store/exchange'
@@ -12,9 +12,9 @@ const OrderBook = ({collectionId}) => {
   const dispatch = useDispatch()
 
   const orderBook = useSelector(({$exchange}) => ({
-    buy: $exchange.orderBook.buy.slice(0, 10),
-    sell: $exchange.orderBook.sell.slice(0, 10),
-  }))
+    buy: [...$exchange.orderBook.buy].slice(0, 10),
+    sell: [...$exchange.orderBook.sell].slice(0, 10),
+  }), shallowEqual)
   const blockchain = useSelector($app.get.blockchain)
 
   let prevBuyVolumeValue = 0

@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import { parseUnits } from 'viem'
-import numeral from 'numeral'
 import Image from 'next/image'
 
 import $app from '@/store/app'
@@ -20,7 +19,10 @@ const TAB_OPTIONS = [
   {key: 'sell', title: 'SELL', color: 'rgb(206, 22, 93)'},
 ]
 
-const TradeForm = ({collectionId}) => {
+const TradeForm = ({collectionId, onOrderCreated}) => {
+  if (!collectionId) {
+    return null
+  }
 
   const { wallet, connect, changeNetwork, getBalance } = useWalletConnect()
   const { getNftBalanceUser, getNftUser, placeBid, placeAsk, errorHandler } = useTrade()
@@ -144,6 +146,7 @@ const TradeForm = ({collectionId}) => {
     if (isAllStepsComplete && loadingRef.current) {
       toast.success('Order created successfully')
       loadingRef.current = false
+      onOrderCreated()
     }
   }
 
@@ -229,7 +232,7 @@ const TradeForm = ({collectionId}) => {
           disabled={!form.total}
           onClick={handleSubmit}>
           <App.Text color="#09051D" size={15} weight={700}>{ currentOption.title } {`${form.amount || 0} NFT${form.amount > 1 ? `'s` : ''}` }</App.Text>
-          { currentCollection?.image ? <Image src={currentCollection?.image} width={32} height={32} /> : null }
+          { currentCollection?.image ? <Image src={currentCollection?.image} width={32} height={32} alt="" /> : null }
         </App.Button>
       </App.Flex>
     </App.Flex>
