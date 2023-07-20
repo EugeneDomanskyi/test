@@ -1,21 +1,31 @@
 .container {
-  height: 180px;
-  border: 1px solid rgba(161, 159, 255, 0.2);
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0px 0px 20px 5px rgba(161, 159, 255, 0.1);
+  height: 162px;
+
+  .content {
+    background-color: #0E0B23;
+    border: 1px solid #1D1937;
+    border-radius: 2px;
+    padding: 12px;
+  }
 
   .image {
-    border-radius: 8px;
     overflow: hidden;
-    margin-right: 16px;
   }
 
   .description {
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .card {
+    background-color: #16132C;
+    border: 1px solid #1D1937;
+    padding: 8px;
+    border-radius: 4px;
+    flex: 1;
+    justify-content: center;
   }
 }

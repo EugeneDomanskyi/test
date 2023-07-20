@@ -18,8 +18,9 @@ const Tabs = ({options, active, onChange}) => {
               align="center"
               justify="center"
               onClick={() => onChange(option.key)}
+              sx={{backgroundColor: isActive ? '#1C192F' : 'transparent'}}
               className={styles.option}>
-              <App.Text color={isActive ? '#fff' : '#5e5c6b'}>{ option.title }</App.Text>
+              <App.Text color={isActive ? 'rgba(255,255,255,0.87)' : '#5E5C6B'} size={12} weight={600}>{ option.title }</App.Text>
             </App.Flex>
           )
         })

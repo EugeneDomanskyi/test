@@ -22,13 +22,17 @@ const TYPES_SETTINGS = {
 
 const CHART_CONFIG = {
   layout: {
-    background: { type: LightweightCharts.ColorType.Solid, color: 'rgba(255, 255, 255, 0.0)' },
-    textColor: 'rgba(255, 255, 255, 0.8)',
+    background: {
+      type: LightweightCharts.ColorType.Solid,
+      color: 'rgba(255, 255, 255, 0.0)'
+    },
+    textColor: 'rgba(161, 159, 255, 0.4)',
+    fontFamily: 'Gilroy',
   },
   lineStyle: 0,
   grid: {
-    vertLines: { color: 'rgba(161, 159, 255, 0.2)' },
-    horzLines: { color: 'rgba(161, 159, 255, 0.2)' },
+    vertLines: { color: 'rgba(161, 159, 255, 0)' },
+    horzLines: { color: 'rgba(161, 159, 255, 0)' },
   },
   timeScale: {
     borderColor: 'rgba(161, 159, 255, 0.2)',
@@ -62,6 +66,7 @@ const CHART_CONFIG = {
 }
 
 const INTERVALS = [
+  {key: '5m', count: 5, unit: 'minutes'},
   {key: '15m', count: 15, unit: 'minutes'},
   {key: '30m', count: 30, unit: 'minutes'},
   {key: '1h', count: 1, unit: 'hours'},
@@ -96,33 +101,34 @@ const TradeChart = () => {
     chartRef.current = LightweightCharts.createChart(containerRef.current, {
       ...CHART_CONFIG,
       width: wrapperRef.current.offsetWidth,
-      height: 400,
+      height: wrapperRef.current.offsetHeight,
     })
     candlestickSeriesRef.current = chartRef.current.addCandlestickSeries({...TYPES_SETTINGS['candlesticks']})
   }
 
   const updateChart = () => {
     candlestickSeriesRef.current.setData(kLineData)
-    chartRef.current.timeScale().setVisibleLogicalRange({ from: kLineData.length-40, to: kLineData.length-1})
+    chartRef.current.timeScale().setVisibleLogicalRange({ from: kLineData.length-30, to: kLineData.length-1})
   }
 
   return (
     <div className={styles.container}>
-      <div ref={wrapperRef}>
-        <App.Flex>
-          {
-            INTERVALS.map((interval, i) => {
-              return (
-                <div
-                  key={i}
-                  onClick={handleChangeInterval(interval)}
-                  className={cn(styles.interval, {[styles.active]: activeInterval.key === interval.key})}>
-                  <App.Text>{ interval.key.toUpperCase() }</App.Text>
-                </div>
-              )
-            })
-          }
-        </App.Flex>
+      <App.Flex sx={{marginBottom: 16}}>
+        {
+          INTERVALS.map((interval, i) => {
+            const isActive = activeInterval.key === interval.key
+            return (
+              <div
+                key={i}
+                onClick={handleChangeInterval(interval)}
+                className={cn(styles.interval, {[styles.active]: activeInterval.key === interval.key})}>
+                <App.Text weight={500} color={isActive ? 'rgba(255,255,255,0.87)' : "#ACA3D3"} size={14}>{ interval.key.toUpperCase() }</App.Text>
+              </div>
+            )
+          })
+        }
+      </App.Flex>
+      <div ref={wrapperRef} style={{flex: 1}}>
         <div ref={containerRef} />
       </div>
     </div>
