@@ -24,6 +24,7 @@ const Wrapper = ({ children }) => {
   const blockchain = useSelector($app.get.blockchain)
   const { blockchains } = useSelector(({ $app }) => $app)
 
+  const isInit = useRef(true)
   const updateCollections = useRef(true)
 
   useEffect(() => {
@@ -51,7 +52,9 @@ const Wrapper = ({ children }) => {
           let blockchainCode = blockchain.code
           let totalResult = []
 
-          if (collectionId) {
+          if (collectionId && isInit.current) {
+            isInit.current = false
+
             const result = await $collection.api.all(queryParams(blockchainCode, { id: collectionId, limit: 1 }))
             if (result && result.hasOwnProperty('collections')) {
               if (result.collections.length) {
@@ -93,6 +96,7 @@ const Wrapper = ({ children }) => {
             }
           }
 
+          dispatch($collection.set.searched([]))
           dispatch($collection.set.all(totalResult))
           dispatch($collection.set.loading(false))
           initWSConnection(blockchain.code)

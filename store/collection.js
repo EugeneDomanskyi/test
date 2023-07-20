@@ -66,6 +66,15 @@ export const collectionSlice = createSlice({
     searched: (state, { payload }) => {
       state.searched = payload.map(template)
     },
+
+    add: (state, { payload }) => {
+      if ( ! state.all.find(item => item.address == payload.address)) {
+        state.all = [
+          ...state.all,
+          payload
+        ]
+      }
+    },
   },
 })
 

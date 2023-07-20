@@ -6,6 +6,9 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
 import { trackEvent } from '@/libs/analytics.lib'
 
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+
 import $modal from '@/store/modal'
 
 import App from '@/components/App'
@@ -14,6 +17,7 @@ import HomeBalance from '@/components/Home/HomeBalance'
 import styles from './styles.module.scss'
 
 const Header = () => {
+  const router = useRouter()
   const { wallet, connect, disconnect } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
@@ -64,46 +68,61 @@ const Header = () => {
 
   return (
     <div className={styles.container}>
-      <App.Container height="100%">
-        <App.Flex row height="100%" align="center" justify="space-between">
-          <App.Flex row gap={8} align="center">
-            <App.Flex center width={32} height={32} sx={{ borderRadius: '50%', background: '#C8FD7C' }}>
-              <App.Icon icon="logo" />
-            </App.Flex>
+      <App.Flex row height="100%" align="center" justify="space-between">
+        <App.Flex row height="100%" align="center" gap={64}>
+          <Link href="/">
+            <div className={styles.logo}>
+              <div className={styles.badge}>
+                BETA
+              </div>
+              <App.Icon icon="tegro" width={117} height={25} />
+            </div>
+          </Link>
 
-            <App.Text size={16} weight={700}>nft-20.org</App.Text>
-          </App.Flex>
-
-          <App.Flex row gap={24} align="center">
-            {!isMobile ? <HomeBalance /> : null}
-            
-            {wallet ? (
-              <App.Flex sx={{ position: 'relative' }} id="wallet">
-                <App.Button primary large outlined rounded onClick={handleMenuToggle} sx={{ minWidth: 'auto' }}>
-                  <App.Flex row gap={8} align="center">
-                    <App.Flex width={28} height={28} sx={{ borderRadius: '50%', background: 'linear-gradient(91.77deg, #E792E4 2.92%, #B545BE 36.09%, #7931CB 70.47%, #4D42C9 100%)' }} />
-                    {isMobile ? (
-                      <App.Icon icon="caret-down" />
-                    ) : (
-                      <span>{shorterAddress()}</span>
-                    )}
-                  </App.Flex>
-                </App.Button>
-
-                <div className={cn(styles.menu, {[styles.active]: menuShow})}>
-                  <App.Button primary fullWidth onClick={handleDisconnect}>
-                  <App.Icon icon="logout" /> Disconnect
-                  </App.Button>
-                </div>
+          <App.Flex row height="100%" align="center">
+            <Link href="/exchange" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/exchange')})}>
+              <App.Flex center height="100%">
+                <App.Text size={18} weight={700}>EXCHANGE</App.Text>
               </App.Flex>
-            ) : (
-              <App.Button primary large onClick={handleConnectWallet}>
-                Connect Wallet
-              </App.Button>
-            )}
+            </Link>
+
+            <Link href="/" className={cn(styles.navbarItem, {[styles.active]: router.pathname == '/'})}>
+              <App.Flex center  height="100%">
+                <App.Text size={18} weight={700}>SWAP</App.Text>
+              </App.Flex>
+            </Link>
           </App.Flex>
         </App.Flex>
-      </App.Container>
+
+        <App.Flex row gap={24} align="center">
+          {!isMobile ? <HomeBalance /> : null}
+          
+          {wallet ? (
+            <App.Flex sx={{ position: 'relative' }} id="wallet">
+              <App.Button primary large outlined rounded onClick={handleMenuToggle} sx={{ minWidth: 'auto' }}>
+                <App.Flex row gap={8} align="center">
+                  <App.Flex width={28} height={28} sx={{ borderRadius: '50%', background: 'linear-gradient(91.77deg, #E792E4 2.92%, #B545BE 36.09%, #7931CB 70.47%, #4D42C9 100%)' }} />
+                  {isMobile ? (
+                    <App.Icon icon="caret-down" />
+                  ) : (
+                    <span>{shorterAddress()}</span>
+                  )}
+                </App.Flex>
+              </App.Button>
+
+              <div className={cn(styles.menu, {[styles.active]: menuShow})}>
+                <App.Button primary fullWidth onClick={handleDisconnect}>
+                <App.Icon icon="logout" /> Disconnect
+                </App.Button>
+              </div>
+            </App.Flex>
+          ) : (
+            <App.Button primary large onClick={handleConnectWallet}>
+              Connect Wallet
+            </App.Button>
+          )}
+        </App.Flex>
+      </App.Flex>
     </div>
   )
 }
