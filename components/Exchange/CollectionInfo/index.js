@@ -50,7 +50,7 @@ const CollectionInfo = ({collectionId}) => {
               </Link>
             </App.Flex>
           </App.Flex>
-          <App.Text lines={2} size={12} weight={500} color="#B9B8C5" flex={1}>{ currentCollection?.description }</App.Text>
+          <App.Text lines={2} size={12} weight={500} color="#B9B8C5">{ currentCollection?.description }</App.Text>
           <App.Flex sx={{marginTop: 'auto'}} gap={16}>
             <App.Flex column className={styles.card}>
               <App.Text color="#B9B8C5" size={10} weight={400}>Price</App.Text>

@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import { parseUnits } from 'viem'
 import numeral from 'numeral'
+import Image from 'next/image'
 
 import $app from '@/store/app'
 import $collection from '@/store/collection'
@@ -12,6 +13,7 @@ import useTrade from '@/myhooks/trade'
 
 import App from '@/components/App'
 import Tabs from '@/components/Exchange/Tabs'
+import TradeInput from '@/components/Exchange/TradeInput'
 
 const TAB_OPTIONS = [
   {key: 'buy', title: 'BUY', color: 'rgb(13, 198, 109)'},
@@ -92,11 +94,14 @@ const TradeForm = ({collectionId}) => {
         }))
         return
       case 'total':
-        setForm(state => ({
-          ...state,
-          total: value,
-          amount: numeral(value/state.price).format('0')
-        }))
+        setForm(state => {
+          const amount = Math.floor(value/state.price)
+          return {
+            ...state,
+            total: value,
+            amount: amount,
+          }
+        })
         return
     }
   }
@@ -142,10 +147,37 @@ const TradeForm = ({collectionId}) => {
     }
   }
 
+  const handleTotalBlur = () => {
+    handleChangeForm('price')(form.total/form.amount)
+  }
+
+  const handleClickMultipler = (percentage) => () => {
+    if (currentTab === 'buy') {
+      handleChangeForm('total')(userBalances.native * percentage)
+    } else {
+      handleChangeForm('amount')(userBalances.token * percentage)
+    }
+  }
+
   const renderBalance = () => {
     return (
-      <App.Flex sx={{padding: '3px 0px'}}>
-        <App.Text size={10} color="rgba(255,255,255,0.6)">Balance: { currentTab === 'buy' ? userBalances.native : userBalances.token }</App.Text>
+      <App.Flex className={styles.balance}>
+        <App.Flex flex={1} align="center" gap={4}>
+          <App.Icon icon="wallet" />
+          <App.Text size={10} color="rgba(255,255,255,0.6)">
+            {
+              currentTab === 'buy'
+                ? `${userBalances.native} ${blockchain.currency}`
+                : `${userBalances.token} NFT`
+            }
+          </App.Text>
+        </App.Flex>
+        <App.Flex className={styles.multipler} align="center" gap={8}>
+          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.25)}>25%</App.Text>
+          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.5)}>50%</App.Text>
+          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.75)}>75%</App.Text>
+          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(1)}>100%</App.Text>
+        </App.Flex>
       </App.Flex>
     )
   }
@@ -157,17 +189,19 @@ const TradeForm = ({collectionId}) => {
         active={currentTab}
         onChange={handleChangeTab} />
       <App.Flex column className={styles.form}>
-        <App.Flex column sx={{marginBottom: 15}}>
-          <App.Text>Price</App.Text>
-          <App.TextField
+        <App.Flex flex={1} />
+        <App.Flex column sx={{marginBottom: 24}}>
+          <TradeInput
+            label="AT PRICE"
+            currency={blockchain.currency}
             value={form.price}
             onChange={handleChangeForm('price')} />
         </App.Flex>
-        <App.Flex column sx={{marginBottom: 15}}>
-          <App.Text>Amount</App.Text>
-          <App.TextField
+        <App.Flex column sx={{marginBottom: 24}}>
+          <TradeInput
+            label="AMOUNT"
             value={form.amount}
-            type="number"
+            currency={`NFT${form.amount > 1 ? `'s` : ''}`}
             onChange={handleChangeForm('amount')} />
           {
             currentTab === 'sell'
@@ -175,10 +209,12 @@ const TradeForm = ({collectionId}) => {
               : null
           }
         </App.Flex>
-        <App.Flex column sx={{marginBottom: 15}}>
-          <App.Text>Total</App.Text>
-          <App.TextField
+        <App.Flex column sx={{marginBottom: 24}}>
+          <TradeInput
+            label="TOTAL"
+            currency={blockchain.currency}
             value={form.total}
+            onBlur={handleTotalBlur}
             onChange={handleChangeForm('total')} />
             {
               currentTab === 'buy'
@@ -186,12 +222,14 @@ const TradeForm = ({collectionId}) => {
                 : null
             }
         </App.Flex>
+        <App.Flex flex={1} />
         <App.Button
-          variant={currentTab === 'buy' ? 'success' : 'danger'}
-          sx={{marginTop: 'auto', backgroundColor: currentOption.color}}
+          sx={{backgroundColor: currentOption.color}}
+          className={styles.button}
           disabled={!form.total}
           onClick={handleSubmit}>
-          <App.Text>{ currentOption.title } {`${form.amount || 0} NFT${form.amount > 1 ? `'s` : ''}` }</App.Text>
+          <App.Text color="#09051D" size={15} weight={700}>{ currentOption.title } {`${form.amount || 0} NFT${form.amount > 1 ? `'s` : ''}` }</App.Text>
+          { currentCollection?.image ? <Image src={currentCollection?.image} width={32} height={32} /> : null }
         </App.Button>
       </App.Flex>
     </App.Flex>

@@ -3,10 +3,10 @@
   position: relative;
   .option {
     cursor: pointer;
+    border-bottom: 4px solid #1D1937;
   }
   .badge {
     height: 4px;
-    background-color: #fff;
     position: absolute;
     bottom: 0;
     left: 0;

@@ -97,7 +97,7 @@ const getters = {
         time: sales[0].date.unix()*1000
       }
     })
-    return result.reverse()
+    return result.sort((a,b) => a.time - b.time)
   },
   highLow: (interval) => ({$exchange}) => {
     const now = moment()

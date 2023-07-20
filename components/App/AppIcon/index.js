@@ -117,6 +117,14 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
         </svg>
       )
     }
+
+    if (icon === 'wallet') {
+      return (
+        <svg width={width ?? 10} height={height ?? 10} fill="none" {...props}>
+          <path fill={color ?? '#B9B8C5'} d="M8.75 7.5v.417a.833.833 0 0 1-.833.833H2.083a.833.833 0 0 1-.833-.833V2.083a.833.833 0 0 1 .833-.833h5.834a.833.833 0 0 1 .833.833V2.5H5a.833.833 0 0 0-.833.833v3.334A.833.833 0 0 0 5 7.5m0-.833h4.167V3.333H5m1.667 2.292a.625.625 0 1 1 0-1.25.625.625 0 0 1 0 1.25Z" />
+        </svg>
+      )
+    }
   }
 
   return getIcon()
