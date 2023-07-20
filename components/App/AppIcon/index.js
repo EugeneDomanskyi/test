@@ -2,7 +2,7 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
   const getIcon = () => {
     if (icon == 'logo') {
       return (
-        <svg width={width ?? 10} height={height ?? 24} viewBox="0 0 10 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width={width ?? 10} height={height ?? 24} viewBox="0 0 10 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <path fill={color ?? '#121212'} d="M4.19.863a1 1 0 01.973.77l4.81 20.385A1 1 0 019 23.248H5.854a1 1 0 01-.973-.771L.07 2.093a1 1 0 01.973-1.23H4.19z" />
         </svg>
       )
@@ -27,7 +27,7 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
 
     if (icon == 'lock-star-fill') {
       return (
-        <svg width={width ?? 25} height={width ?? 25} viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width={width ?? 25} height={width ?? 25} viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <path fill={color ?? '#53F19C'} d="M11.394 1.03c.828-.707 2.183-.707 3.023 0l1.896 1.633c.36.312 1.031.563 1.511.563h2.04a2.324 2.324 0 012.315 2.316v2.04c0 .467.252 1.151.564 1.511l1.632 1.895c.707.828.707 2.184 0 3.024l-1.632 1.895c-.312.36-.564 1.032-.564 1.512v2.04a2.324 2.324 0 01-2.315 2.315h-2.04c-.468 0-1.152.252-1.512.564l-1.895 1.631c-.828.708-2.184.708-3.023 0l-1.896-1.631c-.36-.312-1.032-.564-1.511-.564H5.91a2.324 2.324 0 01-2.315-2.316v-2.051c0-.468-.252-1.14-.552-1.5L1.424 14c-.696-.828-.696-2.172 0-3l1.62-1.907c.3-.36.552-1.032.552-1.5V5.542A2.324 2.324 0 015.91 3.226h2.076c.467 0 1.151-.251 1.511-.563l1.896-1.632z" />
           <path fill="#06382F" d="M16.38 10.91v-.829a3.48 3.48 0 00-3.475-3.476 3.48 3.48 0 00-3.476 3.476v.829a1.66 1.66 0 00-1.21 1.59v4.23c0 .92.744 1.663 1.663 1.663h6.045c.919 0 1.663-.743 1.663-1.662v-4.232c0-.755-.514-1.39-1.21-1.59zM12.906 8.72c.75 0 1.36.61 1.36 1.36v.756h-2.72v-.756c0-.75.61-1.36 1.36-1.36zm.453 6.54v.865a.457.457 0 01-.453.454.457.457 0 01-.454-.454v-.864a1.054 1.054 0 01-.604-.95c0-.58.477-1.057 1.058-1.057.58 0 1.058.477 1.058 1.058 0 .423-.248.78-.605.949z" />
         </svg>
@@ -36,7 +36,7 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
 
     if (icon == 'arrow-down') {
       return (
-        <svg width={width ?? 17} height={height ?? 16} viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width={width ?? 17} height={height ?? 16} viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <path stroke={color ?? '#605884'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.333" d="M8.902 3.332v9.333M13.569 8l-4.667 4.667L4.235 8" />
         </svg>
       )
@@ -44,7 +44,7 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
 
     if (icon == 'arrow-right') {
       return (
-        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.5" d="M14.43 5.93L20.5 12l-6.07 6.07M3.5 12h16.83" />
         </svg>
       )
@@ -52,7 +52,7 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
 
     if (icon == 'chevron-left') {
       return (
-        <svg width={width ?? 16} height={height ?? 16} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width={width ?? 16} height={height ?? 16} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <path stroke={color ?? '#B9B8C5'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.5" d="M10 13.279L5.654 8.932a1.324 1.324 0 010-1.867L10 2.72" />
         </svg>
       )
@@ -60,15 +60,24 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
 
     if (icon == 'chevron-right') {
       return (
-        <svg width={width ?? 24} height={height ?? 25} viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width={width ?? 24} height={height ?? 25} viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.5" d="M8.91 20.61l6.52-6.52c.77-.77.77-2.03 0-2.8L8.91 4.77" />
+        </svg>
+      )
+    }
+
+    if (icon == 'check-cloud-fill') {
+      return (
+        <svg width={width ?? 12} height={height ?? 12} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <circle fill="#fff" cx="6" cy="6" r="4"></circle>
+          <path fill={color ?? '#4C69FF'} d="M12 6.281c0 .42-.1.809-.302 1.165a2.157 2.157 0 01-.811.83c.01.063.014.162.014.295a2.27 2.27 0 01-.635 1.62c-.425.447-.936.67-1.533.67-.267 0-.523-.05-.764-.148a2.324 2.324 0 01-.811.93C6.806 11.884 6.42 12 6 12c-.429 0-.818-.115-1.165-.35a2.273 2.273 0 01-.804-.937 1.999 1.999 0 01-.764.148c-.597 0-1.11-.223-1.54-.67a2.25 2.25 0 01-.616-1.915 2.173 2.173 0 01-.811-.83A2.35 2.35 0 010 6.281c0-.445.113-.855.335-1.226.223-.37.523-.644.898-.822a2.318 2.318 0 01-.148-.804c0-.633.213-1.174.642-1.62.43-.445.943-.67 1.54-.67.267 0 .523.05.764.148.188-.385.457-.694.811-.93A2.033 2.033 0 016 0c.42 0 .806.12 1.158.354.351.237.623.546.81.93.242-.098.495-.147.765-.147.597 0 1.108.222 1.533.67.424.448.635.987.635 1.62 0 .295-.045.562-.134.803.375.179.675.453.898.823.223.373.335.783.335 1.228zM5.745 8.088l2.477-3.71a.43.43 0 00.06-.321.393.393 0 00-.18-.267.457.457 0 00-.32-.068.411.411 0 00-.282.173L5.318 7.177 4.313 6.173a.399.399 0 00-.308-.126.474.474 0 00-.307.126.41.41 0 00-.12.303c0 .12.04.22.12.302l1.38 1.38.069.055a.43.43 0 00.241.08.393.393 0 00.357-.205z" />
         </svg>
       )
     }
 
     if (icon == 'check-circle-fill') {
       return (
-        <svg width={width ?? 48} height={height ?? 49} viewBox="0 0 48 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width={width ?? 48} height={height ?? 49} viewBox="0 0 48 49" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <rect width="48" height="48" y="0.996" fill="#fff" rx="24"></rect>
           <path fill={color ?? '#53F19C'} d="M0 24.996c0-13.256 10.744-24 24-24s24 10.744 24 24-10.744 24-24 24-24-10.744-24-24zm34.856-4.144a2.631 2.631 0 000-3.712 2.631 2.631 0 00-3.712 0L21 27.284l-4.144-4.144a2.631 2.631 0 00-3.712 0 2.631 2.631 0 000 3.712l6 6a2.631 2.631 0 003.712 0l12-12z" />
         </svg>
@@ -77,7 +86,7 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
 
     if (icon == 'logout') {
       return (
-        <svg width={width ?? 25} height={height ?? 25} viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width={width ?? 25} height={height ?? 25} viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9.4 8.183c.31-3.6 2.16-5.07 6.21-5.07h.13c4.47 0 6.26 1.79 6.26 6.26v6.52c0 4.47-1.79 6.26-6.26 6.26h-.13c-4.02 0-5.87-1.45-6.2-4.99M15.5 12.623H4.12M6.35 9.273L3 12.623l3.35 3.35" />
         </svg>
       )
@@ -94,7 +103,7 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
 
     if (icon == 'tegro') {
       return (
-        <svg width={width ?? 156} height={height ?? 34} viewBox="0 0 156 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width={width ?? 156} height={height ?? 34} viewBox="0 0 156 34" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <path fill={color ?? '#fff'} d="M30.66 5.467l-.043 2.512 1.888 2.524.982-5.664-3.6-2.469-4.528 2.46-8.387-2.558V.84L8.576 4.83 4.048 2.37.444 4.85l.983 5.654 1.89-2.534-.046-2.512 3.293 1.874-5.809 7.283v10.572l5.311 6.373h4.026v-2.197H7.196L2.954 24.28v-7.044l4.42-5.497-2.219 6.174v5.455l2.199 2.616v-3.493l2.62-2.508 1.429.373-1.848 3.355v3.25l2.745 1.11 3.568-1.73v-2.103l-3.09-2.417.689-.919 3.505.92 3.493-.92.691.92-3.09 2.416v2.119l3.565 1.73 2.749-1.109v-3.267l-1.838-3.355 1.422-.37 2.62 2.509v3.502l2.202-2.616v-5.468l-2.224-6.174 4.416 5.497v7.044l-4.24 5.082h-2.886v2.198h4.014l5.313-6.374V14.614L27.368 7.34l3.292-1.874zM13.208 15.974l-4.518-.71V13.08h4.518v2.894zm3.764-8.59l-7.617 1.89 7.617-4.739 7.607 4.739-7.607-1.89zm8.28 7.88l-4.525.71V13.08h4.518l.006 2.184z" />
           <path fill={color ?? '#fff'} d="M13.209 13.078V10.95l-5.835.788-1.49 4.144 7.325 1.553v-1.462l-4.518-.71v-2.184h4.518zM6.565 7.345L8.576 4.83 4.05 2.371.46 4.85l.967 5.664 1.89-2.535-.046-2.511 3.293 1.877zM27.37 7.345L25.36 4.83l4.527-2.459 3.585 2.479-.963 5.664-1.89-2.535.042-2.511-3.29 1.877zM21.63 30.252l-4.665-1.314-4.665 1.314v2.011l4.665 1.655 4.666-1.655v-2.01zM63.72 4.719H44.093l-.681 5.941h6.332L47.45 30.695h6.963L56.71 10.66h6.332l.679-5.941zM85.634 10.66l.678-5.941h-15.99l-4.034 3.477-2.18 19.026 3.238 3.473h15.99l.682-5.938H71.353l.469-4.08h10.966l.678-5.939H72.503l.466-4.078h12.665zM113.104 4.718l-2.976 25.977h6.973l.985-8.605h5.705l-.985 8.605h6.972l.907-8.09-3.242-3.48 4.037-3.48.856-7.45-3.242-3.48-15.99.003zm11.353 11.43h-5.705l.634-5.489h5.705l-.634 5.49zM93.532 4.719l-4.038 3.477-2.177 19.026 3.239 3.473h12.351l4.038-3.473 1.157-10.18.022-.216h-9.863l-.514 4.451h3.427l-.387 3.48h-6.548l1.613-14.097h6.551l-.313 2.73h6.44l.596-5.194-3.243-3.477H93.532zM139.953 4.719l-4.038 3.48-2.181 19.026 3.242 3.48h12.361l4.038-3.48 2.181-19.026-3.242-3.48h-12.361zm7.258 20.035h-6.751l1.613-14.094h6.751l-1.613 14.094z" />
         </svg>
@@ -103,8 +112,16 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
 
     if (icon == 'caret-down') {
       return (
-        <svg width={width ?? 16} height={height ?? 16} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width={width ?? 16} height={height ?? 16} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <path fill={color ?? '#605884'} d="M6.765 11.231L2.319 6.785c-.327-.326-.402-.706-.227-1.137.175-.432.495-.648.962-.648h8.892c.466 0 .787.216.962.648.175.431.1.81-.227 1.137l-4.446 4.446a1.068 1.068 0 01-.35.245c-.117.047-.245.07-.385.07s-.268-.023-.385-.07a1.068 1.068 0 01-.35-.245z" />
+        </svg>
+      )
+    }
+
+    if (icon == 'search') {
+      return (
+        <svg width={width ?? 14} height={height ?? 15} viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#908F99'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 13.5l-1.2-1.2m-5.1.6a5.7 5.7 0 100-11.398 5.7 5.7 0 000 11.398z" />
         </svg>
       )
     }

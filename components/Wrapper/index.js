@@ -55,7 +55,7 @@ const Wrapper = ({ children }) => {
             image: item.image,
             name: item.name,
             slug: item.slug,
-            price: item.floorAsk?.price?.amount?.decimal,
+            price: item.floorAsk?.price?.amount?.decimal ?? 0,
             volume: item.volume['1day'],
             tvl: item.volume['allTime'],
             description: item.description,
@@ -65,6 +65,10 @@ const Wrapper = ({ children }) => {
             externalUrl: item.externalUrl,
             twitterUrl: `https://twitter.com/${item.twitterUsername}`,
             openseaVerificationStatus: item.openseaVerificationStatus,
+            ticker: {
+              value: (item.floorSaleChange['1day'] && item.floorSaleChange['1day'] != 0 ? Math.abs(1 - item.floorSaleChange['1day']) : 0).toFixed(2),
+              type: ((item.floorSaleChange['1day'] >= 1 || item.floorSaleChange['1day'] == 0) ? 'plus' : 'minus'),
+            },
           }
         })))
       }

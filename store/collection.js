@@ -48,6 +48,7 @@ const getters = {
       isLoading: $collection.loading
     }
   },
+  
   collection: (key, value) => ({$collection}) => {
     return $collection.all.find(c => c[key] === value)
   }
