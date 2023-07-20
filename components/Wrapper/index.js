@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import dynamic from 'next/dynamic'
 import { loadIntercom } from 'next-intercom'
@@ -22,6 +22,9 @@ const Wrapper = ({ children }) => {
   const { usdt } = useWalletConnect()
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
+  const { blockchains } = useSelector(({ $app }) => $app)
+
+  const updateCollections = useRef(true)
 
   useEffect(() => {
     const deviceId = localStorage.getItem('device_id')
@@ -42,47 +45,81 @@ const Wrapper = ({ children }) => {
 
   useEffect(() => {
     (async () => {
-      dispatch($collection.set.loading(true))
-      if (router.isReady) {
-        const params = {
-          blockchain: blockchain.code,
-          sortBy: '1DayVolume',
-          limit: 10,
-          displayCurrency: usdt[blockchain.code],
-        }
+      if (updateCollections.current) {
+        dispatch($collection.set.loading(true))
+        if (router.isReady) {
+          let blockchainCode = blockchain.code
+          let totalResult = []
 
-        let totalResult = []
-        if (collectionId) {
-          const result = await $collection.api.all({ ...params, id: collectionId })
+          if (collectionId) {
+            const result = await $collection.api.all(queryParams(blockchainCode, { id: collectionId, limit: 1 }))
+            if (result && result.hasOwnProperty('collections')) {
+              if (result.collections.length) {
+                totalResult = [
+                  ...result.collections,
+                ]
+              } else {
+                let check = false
+                for (const chain of blockchains) {
+                  if ( ! check && chain.code != blockchain.code) {
+                    const temp = await $collection.api.all(queryParams(chain.code, { id: collectionId, limit: 1 }))
+
+                    if (temp && temp.hasOwnProperty('collections') && temp.collections.length) {
+                      check = true
+                      blockchainCode = chain.code
+                      dispatch($app.set.code(chain.code))
+                      updateCollections.current = false
+
+                      totalResult = [
+                        ...temp.collections,
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          const result = await $collection.api.all(queryParams(blockchainCode, { maxFloorAskPrice: /* process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : */ null }))
+
           if (result && result.hasOwnProperty('collections')) {
-            if (result.collections.length) {
+            if (! collectionId || collectionId && result.collections.find(item => item.id == collectionId)) {
+              totalResult = result.collections
+            } else {
               totalResult = [
-                ...result.collections,
+                ...totalResult,
+                ...result.collections
               ]
             }
           }
-        }
-        console.log('totalResult', totalResult)
-        // params.maxFloorAskPrice = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null
-        const result = await $collection.api.all(params)
 
-        if (result && result.hasOwnProperty('collections')) {
-          totalResult = [
-            ...totalResult,
-            ...result.collections
-          ]
+          dispatch($collection.set.all(totalResult))
+          dispatch($collection.set.loading(false))
+          initWSConnection(blockchain.code)
+          // Stream.subscribe('collection.updated', result.collections.map(c => c.id))
+          // Stream.on('collection.updated', (data) => {
+          //   console.log('collection.updated', data)
+          // })
         }
-
-        dispatch($collection.set.all(totalResult))
-        dispatch($collection.set.loading(false))
-        initWSConnection(blockchain.code)
-        // Stream.subscribe('collection.updated', result.collections.map(c => c.id))
-        // Stream.on('collection.updated', (data) => {
-        //   console.log('collection.updated', data)
-        // })
+      } else {
+        updateCollections.current = true
       }
     })()
   }, [blockchain, router.isReady])
+
+  const queryParams = (blockchainCode, customParams) => {
+    const defaultParams = {
+      blockchain: blockchainCode,
+      sortBy: '1DayVolume',
+      limit: 10,
+      displayCurrency: usdt[blockchainCode],
+    }
+
+    return {
+      ...defaultParams,
+      ...customParams,
+    }
+  }
 
   const initWSConnection = async (blockchain) => {
     dispatch($app.set.socketConnected(false))
