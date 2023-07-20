@@ -28,11 +28,13 @@ export const exchangeSlice = createSlice({
     orders: (state, {payload}) => {
       state.orders = payload
     },
-    orderAdd: (state, {payload}) => {
-      state.orders = [payload, ...state.orders]
-    },
     orderUpdate: (state, {payload}) => {
-      state.orders = state.orders.map(o => (o.id === payload.id ? payload : o))
+      const exist = state.orders.find(o => o.id === payload.id)
+      if (exist) {
+        state.orders = state.orders.map(o => (o.id === payload.id ? payload : o))
+      } else {
+        state.orders = [payload, ...state.orders]
+      }
     },
     sales: (state, {payload}) => {
       state.sales = payload

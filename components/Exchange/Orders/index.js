@@ -2,8 +2,11 @@ import styles from './styles.module.scss'
 import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import { useRef } from 'react'
+import Image from 'next/image'
+import numeral from 'numeral'
 
 import useTrade from '@/myhooks/trade'
+import $app from '@/store/app'
 
 import App from '@/components/App'
 
@@ -12,12 +15,13 @@ const Orders = () => {
     return [...$exchange.orders].filter(order => order.status !== 'cancelled').sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
   })
 
+  const blockchain = useSelector($app.get.blockchain)
+
   const { cancelOrder, errorHandler } = useTrade()
 
   const loadingRef = useRef(false)
 
   const handlePressCancel = (order) => () => {
-    console.log(order)
     loadingRef.current = true
     cancelOrder(order.id, handleCancelProgress, errorHandler)
   }
@@ -33,22 +37,22 @@ const Orders = () => {
   return (
     <App.Flex column className={styles.container}>
       <App.Flex column>
-        <App.Flex center className={styles.header}>
-          <App.Text>MY ORDERS</App.Text>
+        <App.Flex className={styles.header} align="center">
+          <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600}>MY ORDERS</App.Text>
         </App.Flex>
       </App.Flex>
-      <App.Flex sx={{height: 30}} align="center">
+      <App.Flex sx={{height: 20}} align="center" sx={{borderBottom: '1px solid rgba(94, 92, 107, 0.3)'}}>
         <App.Flex column sx={{width: 60}} align="center">
-          <App.Text size={12} center>Asset</App.Text>
+          <App.Text size={10} weight={600} color="#B9B8C5" center>Asset</App.Text>
         </App.Flex>
         <App.Flex column sx={{width: 60}} align="center">
-          <App.Text size={12} center>Qty</App.Text>
-        </App.Flex>
-        <App.Flex column sx={{width: 60}} align="center">
-          <App.Text size={12} center sx={{width: 60}}>Price</App.Text>
+          <App.Text size={10} weight={600} color="#B9B8C5" center>Qty</App.Text>
         </App.Flex>
         <App.Flex column flex={1} align="center">
-          <App.Text size={12}>Total</App.Text>
+          <App.Text size={10} weight={600} color="#B9B8C5" center>Price</App.Text>
+        </App.Flex>
+        <App.Flex column flex={1} align="center">
+          <App.Text size={10} weight={600} color="#B9B8C5">Total</App.Text>
         </App.Flex>
       </App.Flex>
       <App.Flex column flex={1} sx={{overflow: 'auto'}}>
@@ -58,25 +62,29 @@ const Orders = () => {
             return (
               <App.Flex key={order.id} column>
                 <App.Flex align="center" className={styles.order}>
-                  <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? 'rgb(13, 198, 109)' : 'rgb(206, 22, 93)'}} />
-                  <App.Flex column sx={{width: 60}}>
-                    <App.Text></App.Text>
-                    <App.Text></App.Text>
+                  <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
+                  <App.Flex column align="center" justify="center" sx={{width: 60}}>
+                    {
+                      order.criteria.data.token?.image
+                        ? <Image alt="" src={order.criteria.data.token.image} width={35} height={35} />
+                        : order.criteria.data.collection?.image
+                          ? <Image alt="" src={order.criteria.data.collection.image} width={35} height={35} />
+                          : null
+                    }
                   </App.Flex>
-                  <App.Flex sx={{width: 60}} align="center" justify="center">
-                    <App.Text size={12} center>{ order.quantityFilled }</App.Text>
-                    <App.Text size={12}>&nbsp;/&nbsp;</App.Text>
-                    <App.Text size={12} center color="rgba(255,255,255,0.6)">{ totalQuantity }</App.Text>
-                  </App.Flex>
-                  <App.Flex sx={{width: 60}} column align="center" justify="center">
-                    <App.Text size={12} center>{ order.price.amount.decimal }</App.Text>
+                  <App.Flex column sx={{width: 60}} align="center" justify="center">
+                    <App.Text size={12} weight={600} center>{ order.quantityFilled }</App.Text>
+                    <App.Text size={10} weight={600} center color="rgba(94, 92, 107, 1)">{ totalQuantity }</App.Text>
                   </App.Flex>
                   <App.Flex flex={1} column align="center" justify="center">
-                    <App.Text size={12}>{ totalQuantity * order.price.amount.decimal }</App.Text>
+                    <App.Text size={12} weight={600} center color="rgba(185, 184, 197, 0.8)">{ numeral(order.price.amount.decimal / totalQuantity).format('0.[0000]') } { blockchain.currency }</App.Text>
                   </App.Flex>
-                  <App.Button variant="danger" className={styles.cancelButton} onClick={handlePressCancel(order)}>
-                    <App.Text size={12} color="rgb(235, 49, 105)">Cancel order</App.Text>
-                  </App.Button>
+                  <App.Flex flex={1} column align="center" justify="center" sx={{position: 'relative', height: '100%', overflow: 'hidden'}}>
+                    <App.Text size={12} weight={600}>{ order.price.amount.decimal } { blockchain.currency }</App.Text>
+                    <App.Flex className={styles.cancelButton} onClick={handlePressCancel(order)}>
+                      <App.Text size={12} color="rgb(235, 49, 105)">Cancel order</App.Text>
+                    </App.Flex>
+                  </App.Flex>
                 </App.Flex>
               </App.Flex>
             )

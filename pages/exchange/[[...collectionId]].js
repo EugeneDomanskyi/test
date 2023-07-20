@@ -47,27 +47,13 @@ const Exchange = () => {
       if (wallet && wallet.toLowerCase() !== data.maker.toLowerCase()) {
         return
       }
-      switch (event) {
-        case 'bid.created':
-          dispatch($exchange.set.orderAdd(data))
-          break
-        case 'bid.updated':
-          dispatch($exchange.set.orderUpdate(data))
-          break
-      }
+      dispatch($exchange.set.orderUpdate(data))
     })
     Stream.on('ask', (event, data) => {
       if (wallet && wallet.toLowerCase() !== data.maker.toLowerCase()) {
         return
       }
-      switch (event) {
-        case 'ask.created':
-          dispatch($exchange.set.orderAdd(data))
-          break
-        case 'ask.updated':
-          dispatch($exchange.set.orderUpdate(data))
-          break
-      }
+      dispatch($exchange.set.orderUpdate(data))
     })
   }, [wallet])
 
@@ -94,6 +80,7 @@ const Exchange = () => {
         blockchain: blockchain.code,
         collection: collectionId,
         maker: wallet,
+        includeCriteriaMetadata: true,
       }).then(res => {
         if (res) {
           dispatch($exchange.set.orders(res))
