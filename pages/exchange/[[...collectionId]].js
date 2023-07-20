@@ -1,4 +1,3 @@
-import styles from './styles.module.scss'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
@@ -141,29 +140,32 @@ const Exchange = () => {
   }
 
   return (
-    <App.Container sx={{paddingTop: 64+24, minHeight: '100vh'}}>
-      <App.Flex gap={GRID_GAP}>
-        <CollectionList collectionId={collectionId} />
-        <App.Flex column flex={1} gap={GRID_GAP}>
-          <CollectionInfo collectionId={collectionId} />
-          <App.Flex gap={GRID_GAP}>
-            <App.Flex flex={1} column gap={GRID_GAP}>
-              <Chart />
-              <App.Flex gap={GRID_GAP}>
-                <OrderBook collectionId={collectionId} />
-                <Sales />
-              </App.Flex>
+    <App.Flex gap={GRID_GAP} sx={{padding: '88px 24px 0', minHeight: '100vh'}}>
+      <CollectionList collectionId={collectionId} />
+
+      <App.Flex column flex={1} gap={GRID_GAP}>
+        <CollectionInfo collectionId={collectionId} />
+
+        <App.Flex gap={GRID_GAP}>
+          <App.Flex flex={1} column gap={GRID_GAP}>
+            <Chart />
+
+            <App.Flex gap={GRID_GAP}>
+              <OrderBook collectionId={collectionId} />
+              <Sales />
             </App.Flex>
-            <App.Flex column gap={GRID_GAP}>
-              <App.Flex>
-                <TradeForm collectionId={collectionId} onOrderCreated={handleOrdersUpdated} />
-              </App.Flex>
-              <Orders onOrderCancelled={handleOrdersUpdated} />
+          </App.Flex>
+
+          <App.Flex column gap={GRID_GAP}>
+            <App.Flex>
+              <TradeForm collectionId={collectionId} onOrderCreated={handleOrdersUpdated} />
             </App.Flex>
+
+            <Orders onOrderCancelled={handleOrdersUpdated} />
           </App.Flex>
         </App.Flex>
       </App.Flex>
-    </App.Container>
+    </App.Flex>
   )
 }
 

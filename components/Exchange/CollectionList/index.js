@@ -38,6 +38,10 @@ const CollectionList = ({collectionId}) => {
     }
   }, [search, collections, searched, wasSearched])
 
+  useEffect(() => {
+    setSearch('')
+  }, [blockchain])
+
   const setSort = field => () => {
     if (field === sortField) {
       dispatch($exchange.set.sortType(`${field}:${sortVerctor === 'ASC' ? 'DESC' : 'ASC'}`))
@@ -130,7 +134,7 @@ const CollectionList = ({collectionId}) => {
         return (
           <CollectionCard
             key={collection.address}
-            {...collection}
+            collection={collection}
             isActive={collectionId === collection.address}
           />
         )
