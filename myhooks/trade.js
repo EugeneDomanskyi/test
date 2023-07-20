@@ -281,6 +281,9 @@ const useTrade = () => {
         ids: [orderId],
         wallet: walletClient,
         chainId,
+        options: {
+          orderKind: 'seaport-v1.5',
+        },
         onProgress: onProgress,
       }).catch(onError)
     } catch (error) {

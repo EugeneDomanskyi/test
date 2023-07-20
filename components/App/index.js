@@ -12,6 +12,7 @@ import AppModal from '@/components/App/AppModal'
 import AppTabs from '@/components/App/AppTabs'
 import AppText from '@/components/App/AppText'
 import AppTextField from '@/components/App/AppTextField'
+import AppSwitch from '@/components/App/AppSwitch'
 
 export default {
   Address: AppAddress,
@@ -28,4 +29,5 @@ export default {
   Tabs: AppTabs,
   Text: AppText,
   TextField: AppTextField,
+  Switch: AppSwitch,
 }

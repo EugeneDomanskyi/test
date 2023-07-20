@@ -1,5 +1,5 @@
 import styles from './styles.module.scss'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Fragment } from 'react'
 import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import { parseUnits } from 'viem'
@@ -20,10 +20,6 @@ const TAB_OPTIONS = [
 ]
 
 const TradeForm = ({collectionId, onOrderCreated}) => {
-  if (!collectionId) {
-    return null
-  }
-
   const { wallet, connect, changeNetwork, getBalance } = useWalletConnect()
   const { getNftBalanceUser, getNftUser, placeBid, placeAsk, errorHandler } = useTrade()
   const currentCollection = useSelector($collection.get.collection('address', collectionId))
@@ -46,7 +42,7 @@ const TradeForm = ({collectionId, onOrderCreated}) => {
   const [lowestSell] = orderBook.sell
 
   useEffect(() => {
-    (async () => {
+    const getBalances = async () => {
       if (collectionId && wallet) {
         const nftBalance = await getNftBalanceUser(collectionId, wallet)
         const nativeBalance = await getBalance()
@@ -55,7 +51,8 @@ const TradeForm = ({collectionId, onOrderCreated}) => {
           token: nftBalance,
         })
       }
-    })()
+    }
+    getBalances()
   }, [blockchain, wallet, collectionId])
 
   useEffect(() => {
@@ -123,19 +120,31 @@ const TradeForm = ({collectionId, onOrderCreated}) => {
       const bids = [{  
         weiPrice: parseUnits(`${form.total}`, 18).toString(),
         collection: collectionId,
+        orderKind: 'seaport-v1.5',
+        options: {
+          'seaport-v1.5': {
+            "useOffChainCancellation": true
+          },
+        },
         quantity: form.amount,
       }]
       placeBid(bids, progressHandler, errorHandler)
       return
     }
     const tokenIds = await getNftUser(collectionId, wallet)
-    if (!tokenIds.length) {
+    if (tokenIds.length < form.amount) {
+      toast.error(`You don't have enough NFTs`)
       return
     }
     const listing = tokenIds.filter((_, i) => i < form.amount).map((token) => ({
       token: `${collectionId}:${token.token.tokenId}`,
       weiPrice: parseUnits(`${form.price}`, 18).toString(),
-      orderKind: "seaport-v1.5",
+      orderKind: 'seaport-v1.5',
+      options: {
+        'seaport-v1.5': {
+          "useOffChainCancellation": true
+        },
+      },
       quantity: 1,
     }))
     placeAsk(listing, progressHandler, errorHandler)
@@ -187,54 +196,60 @@ const TradeForm = ({collectionId, onOrderCreated}) => {
 
   return (
     <App.Flex className={styles.container} column>
-      <Tabs
-        options={TAB_OPTIONS}
-        active={currentTab}
-        onChange={handleChangeTab} />
-      <App.Flex column className={styles.form}>
-        <App.Flex flex={1} />
-        <App.Flex column sx={{marginBottom: 24}}>
-          <TradeInput
-            label="AT PRICE"
-            currency={blockchain.currency}
-            value={form.price}
-            onChange={handleChangeForm('price')} />
-        </App.Flex>
-        <App.Flex column sx={{marginBottom: 24}}>
-          <TradeInput
-            label="AMOUNT"
-            value={form.amount}
-            currency={`NFT${form.amount > 1 ? `'s` : ''}`}
-            onChange={handleChangeForm('amount')} />
-          {
-            currentTab === 'sell'
-              ? renderBalance()
-              : null
-          }
-        </App.Flex>
-        <App.Flex column sx={{marginBottom: 24}}>
-          <TradeInput
-            label="TOTAL"
-            currency={blockchain.currency}
-            value={form.total}
-            onBlur={handleTotalBlur}
-            onChange={handleChangeForm('total')} />
-            {
-              currentTab === 'buy'
-                ? renderBalance()
-                : null
-            }
-        </App.Flex>
-        <App.Flex flex={1} />
-        <App.Button
-          sx={{backgroundColor: currentOption.color}}
-          className={styles.button}
-          disabled={!form.total}
-          onClick={handleSubmit}>
-          <App.Text color="#09051D" size={15} weight={700}>{ currentOption.title } {`${form.amount || 0} NFT${form.amount > 1 ? `'s` : ''}` }</App.Text>
-          { currentCollection?.image ? <Image src={currentCollection?.image} width={32} height={32} alt="" /> : null }
-        </App.Button>
-      </App.Flex>
+      {
+        collectionId
+          ? <Fragment>
+              <Tabs
+                options={TAB_OPTIONS}
+                active={currentTab}
+                onChange={handleChangeTab} />
+              <App.Flex column className={styles.form}>
+                <App.Flex flex={1} />
+                <App.Flex column sx={{marginBottom: 24}}>
+                  <TradeInput
+                    label="AT PRICE"
+                    currency={blockchain.currency}
+                    value={form.price}
+                    onChange={handleChangeForm('price')} />
+                </App.Flex>
+                <App.Flex column sx={{marginBottom: 24}}>
+                  <TradeInput
+                    label="AMOUNT"
+                    value={form.amount}
+                    currency={`NFT${form.amount > 1 ? `'s` : ''}`}
+                    onChange={handleChangeForm('amount')} />
+                  {
+                    currentTab === 'sell'
+                      ? renderBalance()
+                      : null
+                  }
+                </App.Flex>
+                <App.Flex column sx={{marginBottom: 24}}>
+                  <TradeInput
+                    label="TOTAL"
+                    currency={blockchain.currency}
+                    value={form.total}
+                    onBlur={handleTotalBlur}
+                    onChange={handleChangeForm('total')} />
+                    {
+                      currentTab === 'buy'
+                        ? renderBalance()
+                        : null
+                    }
+                </App.Flex>
+                <App.Flex flex={1} />
+                <App.Button
+                  sx={{backgroundColor: currentOption.color}}
+                  className={styles.button}
+                  disabled={!form.total}
+                  onClick={handleSubmit}>
+                  <App.Text color="#09051D" size={15} weight={700}>{ currentOption.title } {`${form.amount || 0} NFT${form.amount > 1 ? `'s` : ''}` }</App.Text>
+                  { currentCollection?.image ? <Image src={currentCollection?.image} width={32} height={32} alt="" /> : null }
+                </App.Button>
+              </App.Flex>
+            </Fragment>
+          : null
+      }
     </App.Flex>
   )
 }

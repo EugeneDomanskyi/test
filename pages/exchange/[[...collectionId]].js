@@ -158,7 +158,7 @@ const Exchange = () => {
               <App.Flex>
                 <TradeForm collectionId={collectionId} onOrderCreated={handleOrdersUpdated} />
               </App.Flex>
-              <Orders onOrderCancelled={handleOrdersUpdated} />
+              <Orders collectionId={collectionId} onOrderCancelled={handleOrdersUpdated} />
             </App.Flex>
           </App.Flex>
         </App.Flex>

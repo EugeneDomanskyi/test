@@ -1,24 +1,26 @@
 import styles from './styles.module.scss'
 import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import Image from 'next/image'
 import numeral from 'numeral'
 
 import useTrade from '@/myhooks/trade'
 import $app from '@/store/app'
+import $collection from '@/store/collection'
 
 import App from '@/components/App'
 
-const Orders = ({onOrderCancelled}) => {
+const Orders = ({collectionId, onOrderCancelled}) => {
   const orders = useSelector(({$exchange}) => {
     return [...$exchange.orders].filter(order => order.status !== 'cancelled').sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
   })
-
+  const currentCollection = useSelector($collection.get.collection('address', collectionId))
   const blockchain = useSelector($app.get.blockchain)
 
   const { cancelOrder, errorHandler } = useTrade()
 
+  const [showCollectionOrders, setShowCollectionOrders] = useState(true)
   const loadingRef = useRef(false)
 
   const handlePressCancel = (order) => () => {
@@ -35,6 +37,10 @@ const Orders = ({onOrderCancelled}) => {
     }
   }
 
+  const handleChangeSwitch = (value) => {
+    setShowCollectionOrders(value)
+  }
+
   return (
     <App.Flex column className={styles.container}>
       <App.Flex column>
@@ -42,7 +48,18 @@ const Orders = ({onOrderCancelled}) => {
           <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600}>MY ORDERS</App.Text>
         </App.Flex>
       </App.Flex>
-      <App.Flex sx={{height: 20}} align="center" sx={{borderBottom: '1px solid rgba(94, 92, 107, 0.3)'}}>
+      <App.Flex sx={{height: 40, padding: '0 8px'}} align="center" justify="space-between">
+        <App.Flex align="center" gap={8}>
+          <App.Switch
+            width={40}
+            height={20}
+            checked={showCollectionOrders}
+            onChange={handleChangeSwitch} />
+          <Image alt="" src={currentCollection?.image} width={20} height={20} />
+          <App.Text>Orders</App.Text>
+        </App.Flex>
+      </App.Flex>
+      <App.Flex align="center" sx={{height: 20, borderBottom: '1px solid rgba(94, 92, 107, 0.3)'}}>
         <App.Flex column sx={{width: 60}} align="center">
           <App.Text size={10} weight={600} color="#B9B8C5" center>Asset</App.Text>
         </App.Flex>
