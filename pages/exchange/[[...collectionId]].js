@@ -121,7 +121,7 @@ const Exchange = () => {
   const handleOrdersUpdated = () => {
     $exchange.api.get.orders({
       blockchain: blockchain.code,
-      collection: collectionId,
+      // collection: collectionId,
       maker: wallet,
       includeCriteriaMetadata: true,
     }).then(res => {
@@ -161,7 +161,7 @@ const Exchange = () => {
               <TradeForm collectionId={collectionId} onOrderCreated={handleOrdersUpdated} />
             </App.Flex>
 
-            <Orders onOrderCancelled={handleOrdersUpdated} />
+            <Orders collectionId={collectionId} onOrderCancelled={handleOrdersUpdated} />
           </App.Flex>
         </App.Flex>
       </App.Flex>

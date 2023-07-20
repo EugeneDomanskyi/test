@@ -41,6 +41,8 @@ const Orders = ({collectionId, onOrderCancelled}) => {
     setShowCollectionOrders(value)
   }
 
+  console.log(currentCollection)
+
   return (
     <App.Flex column className={styles.container}>
       <App.Flex column>
