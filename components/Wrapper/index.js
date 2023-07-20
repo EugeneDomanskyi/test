@@ -10,11 +10,15 @@ import Stream from '@/libs/stream.lib'
 
 import $app from '@/store/app'
 import $collection from '@/store/collection'
+import { useRouter } from 'next/router'
 
 const Header = dynamic(import('@/components/Header'), { ssr: false })
 const Footer = dynamic(import('@/components/Footer'), { ssr: false })
 
 const Wrapper = ({ children }) => {
+  const router = useRouter()
+  const [collectionId] = router.query.collectionId || []
+
   const { usdt } = useWalletConnect()
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -39,47 +43,46 @@ const Wrapper = ({ children }) => {
   useEffect(() => {
     (async () => {
       dispatch($collection.set.loading(true))
-      const result = await $collection.api.all({
-        blockchain: blockchain.code,
-        sortBy: '1DayVolume',
-        limit: 10,
-        displayCurrency: usdt[blockchain.code],
-        // maxFloorAskPrice: process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null,
-      })
+      if (router.isReady) {
+        const params = {
+          blockchain: blockchain.code,
+          sortBy: '1DayVolume',
+          limit: 10,
+          displayCurrency: usdt[blockchain.code],
+        }
 
-      if (result && result.hasOwnProperty('collections')) {
-        dispatch($collection.set.all(result.collections.map(item => {
-          return {
-            blockchain: blockchain.code,
-            address: item.id,
-            image: item.image,
-            name: item.name,
-            slug: item.slug,
-            price: item.floorAsk?.price?.amount?.decimal ?? 0,
-            volume: item.volume['1day'],
-            tvl: item.volume['allTime'],
-            description: item.description,
-            tokenCount: item.tokenCount,
-            onSaleCount: item.onSaleCount,
-            discordUrl: item.discordUrl,
-            externalUrl: item.externalUrl,
-            twitterUrl: `https://twitter.com/${item.twitterUsername}`,
-            openseaVerificationStatus: item.openseaVerificationStatus,
-            ticker: {
-              value: (item.floorSaleChange['1day'] && item.floorSaleChange['1day'] != 0 ? Math.abs(1 - item.floorSaleChange['1day']) : 0).toFixed(2),
-              type: ((item.floorSaleChange['1day'] >= 1 || item.floorSaleChange['1day'] == 0) ? 'plus' : 'minus'),
-            },
+        let totalResult = []
+        if (collectionId) {
+          const result = await $collection.api.all({ ...params, id: collectionId })
+          if (result && result.hasOwnProperty('collections')) {
+            if (result.collections.length) {
+              totalResult = [
+                ...result.collections,
+              ]
+            }
           }
-        })))
+        }
+        console.log('totalResult', totalResult)
+        // params.maxFloorAskPrice = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null
+        const result = await $collection.api.all(params)
+
+        if (result && result.hasOwnProperty('collections')) {
+          totalResult = [
+            ...totalResult,
+            ...result.collections
+          ]
+        }
+
+        dispatch($collection.set.all(totalResult))
+        dispatch($collection.set.loading(false))
+        initWSConnection(blockchain.code)
+        // Stream.subscribe('collection.updated', result.collections.map(c => c.id))
+        // Stream.on('collection.updated', (data) => {
+        //   console.log('collection.updated', data)
+        // })
       }
-      dispatch($collection.set.loading(false))
-      initWSConnection(blockchain.code)
-      // Stream.subscribe('collection.updated', result.collections.map(c => c.id))
-      // Stream.on('collection.updated', (data) => {
-      //   console.log('collection.updated', data)
-      // })
     })()
-  }, [blockchain])
+  }, [blockchain, router.isReady])
 
   const initWSConnection = async (blockchain) => {
     dispatch($app.set.socketConnected(false))

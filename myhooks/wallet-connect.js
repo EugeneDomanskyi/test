@@ -38,6 +38,11 @@ const useWalletConnect = () => {
     ],
   }
 
+  const isContractAddress = (str) => {
+    const contractAddressRegExp = /^(0x)?[0-9a-fA-F]{40}$/;
+    return contractAddressRegExp.test(str)
+  }
+
   const connect = () => {
     return new Promise((resolve, reject) => {
       const account = getAccount()
@@ -254,7 +259,22 @@ const useWalletConnect = () => {
     }
   }
 
-  return { wallet, blockchain, blockchains, walletClient, connect, disconnect, network, changeNetwork, getBalance, getPrice, scanUrl, usdt, jsonRpcEndpoints, chains }
+  return {
+    wallet,
+    blockchain,
+    blockchains,
+    walletClient,
+    isContractAddress,
+    connect,
+    disconnect,
+    network,
+    changeNetwork,
+    getBalance,
+    getPrice,
+    scanUrl,
+    usdt,
+    jsonRpcEndpoints,
+  }
 }
 
 export default useWalletConnect

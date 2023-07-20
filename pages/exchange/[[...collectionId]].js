@@ -30,7 +30,7 @@ const Exchange = () => {
   const { wallet } = useWalletConnect()
   const socketConnected = useSelector(({$app}) => $app.socketConnected)
   const blockchain = useSelector($app.get.blockchain)
-  const { collections, isLoading } = useSelector($collection.get.all)
+  const { collections, searched, isLoading } = useSelector($collection.get.all)
 
   useEffect(() => {
     Stream.on('sale', (event, data) => {
@@ -117,8 +117,9 @@ const Exchange = () => {
 
   useEffect(() => {
     if (!isLoading) {
-      const isSameBlockchain = collections.find(c => c.address === collectionId)
-      if (!collectionId || !isSameBlockchain) {
+      const addressInCollections = collections.find(c => c.address === collectionId)
+      const addressInSearched = searched.find(c => c.address === collectionId)
+      if (!collectionId || (!addressInCollections && !addressInSearched)) {
         const [first] = collections
         router.replace(`${first.address}`)
       }

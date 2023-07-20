@@ -1,25 +1,42 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
+import useWalletConnect from '@/myhooks/wallet-connect'
+
+import $app from '@/store/app'
 import $exchange from '@/store/exchange'
 import $collection from '@/store/collection'
 
 import App from '@/components/App'
 import CollectionCard from '@/components/Exchange/CollectionCard'
 
-import { ArrowIcon } from '@/components/Icons/exchange'
-
 import styles from './styles.module.scss'
 
 const CollectionList = ({collectionId}) => {
+  const { isContractAddress, usdt } = useWalletConnect()
   const dispatch = useDispatch()
 
-  const { collections } = useSelector($collection.get.all)
+  const blockchain = useSelector($app.get.blockchain)
+  const { collections, searched } = useSelector($collection.get.all)
   const sortType = useSelector(({$exchange}) => $exchange.sortType)
 
+  const [collectionList, setCollectionList] = useState([])
   const [search, setSearch] = useState('')
+  const [searchLoading, setSearchLoading] = useState(false)
+  const [wasSearched, setWasSearched] = useState(false)
 
   const [sortField, sortVerctor] = sortType.split(':')
+  let timeoutId = useRef(null)
+
+  useEffect(() => {
+    if (search.trim() == '') {
+      setCollectionList(collections)
+    } else {
+      if (wasSearched) {
+        setCollectionList(searched)
+      }
+    }
+  }, [search, collections, searched, wasSearched])
 
   const setSort = field => () => {
     if (field === sortField) {
@@ -31,6 +48,45 @@ const CollectionList = ({collectionId}) => {
 
   const handleSearchChange = (value) => {
     setSearch(value)
+    
+    clearTimeout(timeoutId.current)
+
+    if (value.trim() == '') {
+      setWasSearched(false)
+    }
+
+    if (value.trim().length >= 3) {
+      timeoutId.current = setTimeout(() => {
+        handleSearch(value.trim())
+      }, 1000)
+    }
+  }
+
+  const handleSearch = async (searchQuery) => {
+    setSearchLoading(true)
+
+    const params = {
+      blockchain: blockchain.code,
+      sortBy: '1DayVolume',
+      limit: 10,
+      displayCurrency: usdt[blockchain.code],
+      // maxFloorAskPrice: process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null,
+    }
+
+    if (isContractAddress(searchQuery)) {
+      params.id = searchQuery
+    } else {
+      params.name = searchQuery
+    }
+
+    const result = await $collection.api.all(params)
+
+    if (result && result.hasOwnProperty('collections')) {
+      dispatch($collection.set.searched(result.collections))
+    }
+
+    setSearchLoading(false)
+    setWasSearched(true)
   }
   
   return (
@@ -43,6 +99,7 @@ const CollectionList = ({collectionId}) => {
           placeholder="Assets, Tokens, Games"
           onChange={handleSearchChange}
           start={<App.Icon icon="search" color={search.trim() != '' ? '#fff' : null } />}
+          end={searchLoading ? <App.Loader size={12} /> : null}
           size="small"
           variant="search"
           variantNotEmpty
@@ -69,7 +126,7 @@ const CollectionList = ({collectionId}) => {
         </App.Flex>
       </App.Flex>
 
-      {collections.map((collection) => {
+      {collectionList.map((collection) => {
         return (
           <CollectionCard
             key={collection.address}

@@ -5,7 +5,6 @@ export const appSlice = createSlice({
   name: '$app',
 
   initialState: {
-    blockchain: parseCookies().blockchain ?? 'polygon',
     socketConnected: false,
     code: parseCookies().blockchain ?? 'polygon',
     blockchains: [
