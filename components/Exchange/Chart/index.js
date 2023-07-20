@@ -27,6 +27,7 @@ const CHART_CONFIG = {
       color: 'rgba(255, 255, 255, 0.0)'
     },
     textColor: 'rgba(161, 159, 255, 0.4)',
+    fontFamily: 'Gilroy',
   },
   lineStyle: 0,
   grid: {

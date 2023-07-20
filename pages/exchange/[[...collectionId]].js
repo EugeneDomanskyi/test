@@ -42,13 +42,11 @@ const Exchange = () => {
           dispatch($exchange.set.saleUpdate(data))
           break
       }
-      // console.log('sale -> ', event, data)
     })
     Stream.on('bid', (event, data) => {
-      if (wallet.toLowerCase() !== data.maker.toLowerCase()) {
+      if (wallet && wallet.toLowerCase() !== data.maker.toLowerCase()) {
         return
       }
-      console.log(event, data)
       switch (event) {
         case 'bid.created':
           dispatch($exchange.set.orderAdd(data))
@@ -59,10 +57,9 @@ const Exchange = () => {
       }
     })
     Stream.on('ask', (event, data) => {
-      if (wallet.toLowerCase() !== data.maker.toLowerCase()) {
+      if (wallet && wallet.toLowerCase() !== data.maker.toLowerCase()) {
         return
       }
-      console.log(event, data)
       switch (event) {
         case 'ask.created':
           dispatch($exchange.set.orderAdd(data))
