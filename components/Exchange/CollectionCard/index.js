@@ -31,9 +31,11 @@ const CollectionCard = ({ isActive, collection }) => {
           <App.Flex row align="center" gap={4}>
             <App.Text nowrap weight={700}>{collection.name}</App.Text>
             {collection.openseaVerificationStatus == 'verified' ? (
-              <App.Flex center width={12} height={12} sx={{ minWidth: 12 }}>
-                <App.Icon icon="check-cloud-fill" />
-              </App.Flex>
+              <App.Tooltip text="Hello There" placement="bottom-center">
+                <App.Flex center width={12} height={12} sx={{ minWidth: 12 }}>
+                  <App.Icon icon="check-cloud-fill" />
+                </App.Flex>
+              </App.Tooltip>
             ) : null}
           </App.Flex>
 

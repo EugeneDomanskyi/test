@@ -9,10 +9,11 @@ import AppIcon from '@/components/App/AppIcon'
 import AppLoader from '@/components/App/AppLoader'
 import AppLoaderBlock from '@/components/App/AppLoaderBlock'
 import AppModal from '@/components/App/AppModal'
+import AppSwitch from '@/components/App/AppSwitch'
 import AppTabs from '@/components/App/AppTabs'
 import AppText from '@/components/App/AppText'
 import AppTextField from '@/components/App/AppTextField'
-import AppSwitch from '@/components/App/AppSwitch'
+import AppTooltip from '@/components/App/AppTooltip'
 
 export default {
   Address: AppAddress,
@@ -26,8 +27,9 @@ export default {
   Loader: AppLoader,
   LoaderBlock: AppLoaderBlock,
   Modal: AppModal,
+  Switch: AppSwitch,
   Tabs: AppTabs,
   Text: AppText,
   TextField: AppTextField,
-  Switch: AppSwitch,
+  Tooltip: AppTooltip,
 }

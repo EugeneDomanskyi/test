@@ -72,7 +72,6 @@ const SwapModal = ({ collection, onClose, onStep }) => {
         } else {
           setStep(2)
           console.log('Complete txHash', transaction.items[0]?.txHash)
-          console.log(transaction.items)
           toast.success('Swap was successful', { pauseOnFocusLoss: false })
           setStep(0)
         }

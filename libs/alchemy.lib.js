@@ -224,7 +224,6 @@ export default function AlchemyLibrary(network = null) {
 
       while (result.pageKey) {
         result = await alchemy.nft.getTransfersForContract(address, { pageKey: result.pageKey })
-        console.log(result)
         if (result.nfts && result.nfts.length) {
           transfers = transfers.concat(result.nfts)
         }
