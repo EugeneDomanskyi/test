@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import $app from '@/store/app'
 import $exchange from '@/store/exchange'
@@ -17,13 +18,16 @@ const CollectionList = ({collectionId}) => {
   const dispatch = useDispatch()
 
   const blockchain = useSelector($app.get.blockchain)
+  const pages = useSelector($collection.get.pages)
   const { collections, searched } = useSelector($collection.get.all)
+  const { loading } = useSelector(({$collection}) => $collection)
   const sortType = useSelector(({$exchange}) => $exchange.sortType)
 
   const [collectionList, setCollectionList] = useState([])
   const [search, setSearch] = useState('')
   const [searchLoading, setSearchLoading] = useState(false)
   const [wasSearched, setWasSearched] = useState(false)
+  const [pageType, setPageType] = useState(null)
 
   const [sortField, sortVerctor] = sortType.split(':')
   let timeoutId = useRef(null)
@@ -48,6 +52,12 @@ const CollectionList = ({collectionId}) => {
     } else {
       dispatch($exchange.set.sortType(`${field}:ASC`))
     }
+  }
+
+  const handleFocus = () => {
+    trackEvent('Dex Search Asset', {
+      'Network': blockchain.code.toUpperCase(),
+    })
   }
 
   const handleSearchChange = (value) => {
@@ -92,6 +102,11 @@ const CollectionList = ({collectionId}) => {
     setSearchLoading(false)
     setWasSearched(true)
   }
+
+  const handlePage = (page) => () => {
+    dispatch($collection.set.page(page))
+    setPageType(page)
+  }
   
   return (
     <App.Flex column className={styles.container}>
@@ -110,6 +125,7 @@ const CollectionList = ({collectionId}) => {
           withClear
           autoComplete="search no-autocomplete"
           name="search no-autocomplete"
+          onFocus={handleFocus}
         />
 
         <App.Flex row>
@@ -130,15 +146,39 @@ const CollectionList = ({collectionId}) => {
         </App.Flex>
       </App.Flex>
 
-      {collectionList.map((collection) => {
-        return (
-          <CollectionCard
-            key={collection.address}
-            collection={collection}
-            isActive={collectionId === collection.address}
-          />
-        )
-      })}
+      <div className={styles.cardBox}>
+        <div className={styles.cardBoxContent}>
+          {collectionList.map((collection) => {
+            return (
+              <CollectionCard
+                key={collection.address}
+                collection={collection}
+                isActive={collectionId === collection.address}
+              />
+            )
+          })}
+        </div>
+      </div>
+
+      <App.Flex row align="center" justify="space-between" sx={{ padding: 16 }}>
+        <App.Button small primary outlined={! pages.prev} disabled={! pages.prev} onClick={handlePage('prev')}>
+          {loading && pageType == 'prev' ? (
+            <App.Loader size={16} />
+          ) : (
+            <App.Icon icon="chevron-left" color="#fff" />
+          )}
+          Prev
+        </App.Button>
+
+        <App.Button small primary outlined={! pages.next} disabled={! pages.next} onClick={handlePage('next')}>
+          Next
+          {loading && pageType == 'next' ? (
+            <App.Loader size={16} />
+          ) : (
+            <App.Icon icon="chevron-right" width={16} height={16} />
+          )}
+        </App.Button>
+      </App.Flex>
     </App.Flex>
   )
 }

@@ -1,34 +1,26 @@
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
-import { Magic } from 'magic-sdk'
 
+import { trackEvent } from '@/libs/analytics.lib'
 import useTrade from '@/myhooks/trade'
 
+import $app from '@/store/app'
+
 import SwapModalInput from '@/components/SwapModal/SwapModalInput'
-import BuyModalConfirm from '@/components/BuyModal/BuyModalConfirm'
-import BuyModalComplete from '@/components/BuyModal/BuyModalComplete'
-
-const getMagic = (chains) => {
-  const [initialChain] = chains.map((chain) => {
-    const [rpcUrl] = chain.rpcUrls.public.http
-    return {
-      rpcUrl: rpcUrl,
-      chainId: chain.id,
-    }
-  })
-
-  return new Magic(process.env.NEXT_PUBLIC_MAGIC_LINK_API_KEY, {
-    network: initialChain
-  })
-}
+import SwapModalConfirm from '@/components/SwapModal/SwapModalConfirm'
+import SwapModalComplete from '@/components/SwapModal/SwapModalComplete'
 
 const SwapModal = ({ collection, onClose, onStep }) => {
   const { buyNft, sellNft } = useTrade()
+
+  const blockchain = useSelector($app.get.blockchain)
 
   const [currentCollection, setCurrentCollection] = useState(collection)
   const [currentCurrency, setCurrentCurrency] = useState('native')
   const [type, setType] = useState('buy')
   const [step, setStep] = useState(0)
+  const [nfts, setNfts] = useState()
 
   useEffect(() => {
     onStep(step)
@@ -41,23 +33,24 @@ const SwapModal = ({ collection, onClose, onStep }) => {
   }
 
   const handleSwap = (nfts) => {
-    if (type == 'buy') {
-      const items = nfts.map(item => {
-        return {
-          token: `${collection.address}:${item.id}`,
-          quantity: 1,
-        }
-      })
+    trackEvent('Dex Swap NFT', {
+      'Token': collection.name,
+      'Network': blockchain.code.toUpperCase(),
+      'Quantity': nfts.length,
+    })
 
+    setNfts(nfts)
+
+    const items = nfts.map(item => {
+      return {
+        token: `${collection.address}:${item.id}`,
+        quantity: 1,
+      }
+    })
+
+    if (type == 'buy') {
       buyNft(items, currentCurrency, onBuyProgress, onBuyError)
     } else {
-      const items = nfts.map(item => {
-        return {
-          token: `${collection.address}:${item.id}`,
-          quantity: 1,
-        }
-      })
-
       sellNft(items, currentCurrency, onSellProgress, onSellError)
     }
   }
@@ -72,8 +65,13 @@ const SwapModal = ({ collection, onClose, onStep }) => {
         } else {
           setStep(2)
           console.log('Complete txHash', transaction.items[0]?.txHash)
-          toast.success('Swap was successful', { pauseOnFocusLoss: false })
-          setStep(0)
+
+          trackEvent('Dex Swap Successful', {
+            'Token': collection.name,
+            'Network': blockchain.code.toUpperCase(),
+            'Quantity': nfts.length,
+            'At Price': 0,
+          })
         }
       }
     }
@@ -100,8 +98,12 @@ const SwapModal = ({ collection, onClose, onStep }) => {
           setStep(2)
           console.log('Complete txHash', transaction.items[0]?.txHash)
 
-          toast.success('Swap was successful', { pauseOnFocusLoss: false })
-          setStep(0)
+          trackEvent('Dex Swap Successful', {
+            'Token': collection.name,
+            'Network': blockchain.code.toUpperCase(),
+            'Quantity': nfts.length,
+            'At Price': 0,
+          })
         }
       }
     }
@@ -132,8 +134,8 @@ const SwapModal = ({ collection, onClose, onStep }) => {
   const contentComponent = () => {
     switch (step) {
       case 0: return <SwapModalInput collection={currentCollection} currency={currentCurrency} type={type} onCollectionChange={handleCollectionChange} onCurrencyChange={handleCurrencyChange} onTypeChange={handleTypeChange} onSwap={handleSwap} />
-      /* case 1: return <BuyModalConfirm token={collection} amount={amount} />
-      case 2: return <BuyModalComplete token={collection} amount={amount} onComplete={handleCloseModal} /> */
+      case 1: return <SwapModalConfirm collection={currentCollection} currency={currentCurrency} type={type} nfts={nfts} />
+      case 2: return <SwapModalComplete collection={currentCollection} currency={currentCurrency} type={type} nfts={nfts} onComplete={handleCloseModal} />
     }
   }
 

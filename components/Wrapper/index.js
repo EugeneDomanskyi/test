@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import { loadIntercom } from 'next-intercom'
 import { v4 as uuid } from 'uuid'
@@ -10,7 +11,6 @@ import Stream from '@/libs/stream.lib'
 
 import $app from '@/store/app'
 import $collection from '@/store/collection'
-import { useRouter } from 'next/router'
 
 const Header = dynamic(import('@/components/Header'), { ssr: false })
 const Footer = dynamic(import('@/components/Footer'), { ssr: false })
@@ -23,6 +23,8 @@ const Wrapper = ({ children }) => {
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const { blockchains } = useSelector(({ $app }) => $app)
+  const { page } = useSelector(({ $collection }) => $collection)
+  const pages = useSelector($collection.get.pages)
 
   const isInit = useRef(true)
   const updateCollections = useRef(true)
@@ -47,15 +49,16 @@ const Wrapper = ({ children }) => {
   useEffect(() => {
     (async () => {
       if (updateCollections.current) {
-        dispatch($collection.set.loading(true))
-        if (router.isReady) {
+        if (page && router.isReady) {
+          dispatch($collection.set.loading(true))
+
           let blockchainCode = blockchain.code
           let totalResult = []
 
           if (collectionId && isInit.current) {
             isInit.current = false
 
-            const result = await $collection.api.all(queryParams(blockchainCode, { id: collectionId, limit: 1 }))
+            const result = await $collection.api.all(queryParams(blockchainCode, page, { id: collectionId, limit: 1 }))
             if (result && result.hasOwnProperty('collections')) {
               if (result.collections.length) {
                 totalResult = [
@@ -65,7 +68,7 @@ const Wrapper = ({ children }) => {
                 let check = false
                 for (const chain of blockchains) {
                   if ( ! check && chain.code != blockchain.code) {
-                    const temp = await $collection.api.all(queryParams(chain.code, { id: collectionId, limit: 1 }))
+                    const temp = await $collection.api.all(queryParams(chain.code, page, { id: collectionId, limit: 1 }))
 
                     if (temp && temp.hasOwnProperty('collections') && temp.collections.length) {
                       check = true
@@ -83,7 +86,7 @@ const Wrapper = ({ children }) => {
             }
           }
 
-          const result = await $collection.api.all(queryParams(blockchainCode, { maxFloorAskPrice: /* process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : */ null }))
+          const result = await $collection.api.all(queryParams(blockchainCode, page, { maxFloorAskPrice: /* process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : */ null }))
 
           if (result && result.hasOwnProperty('collections')) {
             if (! collectionId || collectionId && result.collections.find(item => item.id == collectionId)) {
@@ -94,6 +97,9 @@ const Wrapper = ({ children }) => {
                 ...result.collections
               ]
             }
+
+            dispatch($collection.set.pages(result?.continuation))
+            dispatch($collection.set.page(null))
           }
 
           dispatch($collection.set.searched([]))
@@ -109,19 +115,26 @@ const Wrapper = ({ children }) => {
         updateCollections.current = true
       }
     })()
-  }, [blockchain, router.isReady])
+  }, [blockchain, page, router.isReady])
 
-  const queryParams = (blockchainCode, customParams) => {
+  const queryParams = (blockchainCode, page, customParams) => {
     const defaultParams = {
       blockchain: blockchainCode,
       sortBy: '1DayVolume',
       limit: 10,
       displayCurrency: usdt[blockchainCode],
+      // id: '0x4d544035500d7ac1b42329c70eb58e77f8249f0f',
+    }
+
+    let continuation = null
+    if (page != null && pages[page] != 'init') {
+      continuation = pages[page]
     }
 
     return {
       ...defaultParams,
       ...customParams,
+      continuation,
     }
   }
 

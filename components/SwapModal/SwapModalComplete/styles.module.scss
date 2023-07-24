@@ -1,0 +1,43 @@
+.content {
+  padding: 64px 26px;
+  background-color: #08051C;
+  position: relative;
+  z-index: 0;
+
+  .success {
+    width: 93px;
+    height: 93px;
+    border-radius: 50%;
+    background-color: #06382F;
+  }
+
+  .container {
+    background: linear-gradient(180deg, #401698 0%, #29015B 100%);
+    border-radius: 4px;
+    padding: 8px;
+  }
+}
+
+.imgSquare {
+  font-size: 0;
+
+  img {
+    border-radius: 4px;
+  }
+}
+
+.box {
+  padding: 16px 26px;
+  border-bottom: solid #1D1937 1px;
+
+  &.borderTop {
+    border-top: solid #1D1937 1px;
+    border-bottom: 0;
+  }
+
+  @media (max-width: 768px) {
+    & {
+      padding: 16px;
+    }
+  }
+}

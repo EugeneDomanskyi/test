@@ -52,6 +52,11 @@ export const collectionSlice = createSlice({
     all: [],
     searched: [],
     loading: true,
+    page: 'init',
+    pages: {
+      history: ['init'],
+      current: 'init',
+    },
   },
 
   reducers: {
@@ -75,6 +80,22 @@ export const collectionSlice = createSlice({
         ]
       }
     },
+
+    page: (state, { payload }) => {
+      state.page = payload
+    },
+
+    pages: (state, { payload }) => {
+      const current = getters.pages({$collection: state})[state.page] ?? 'init'
+      const currentIndex = state.pages.history.indexOf(current)
+      const history = currentIndex > 0 ? state.pages.history.slice(0, currentIndex + 1) : ['init']
+      history.push(payload)
+
+      state.pages = {
+        current,
+        history,
+      }
+    },
   },
 })
 
@@ -93,7 +114,15 @@ const getters = {
       collection = $collection.searched.find(c => c[key] === value)
     }
     return collection
-  }
+  },
+
+  pages: ({$collection}) => {
+    const currentIndex = $collection.pages.history.indexOf($collection.pages.current)
+    const prev = $collection.pages.history.find((_, index) => (currentIndex > 0) ? index === (currentIndex - 1) : null) ?? null
+    const next = $collection.pages.history.find((_, index) => (currentIndex >= 0 && currentIndex < $collection.pages.history.length - 1) ? index === (currentIndex + 1) : null) ?? null
+    console.log(prev)
+    return { prev, next }
+  },
 }
 
 const api = {

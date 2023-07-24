@@ -59,6 +59,10 @@ const HomeBalance = ({ justify = 'center' }) => {
   }
 
   const handleBlockchainChange = (val) => () => {
+    trackEvent('Dex Switch Network', {
+      Network: val.toUpperCase(),
+    })
+    
     dispatch($app.set.code(val))
     setMenuShow(false)
   }

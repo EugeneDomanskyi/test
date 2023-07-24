@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { ClickAwayListener, Tooltip } from '@mui/material'
 
+import styles from './styles.module.scss'
+
 const AppTooltip = ({ children, text, hover = true, focus, click, placement = 'right-start' }) => {
   const [open, setOpen] = useState(false)
 
@@ -56,7 +58,16 @@ const AppTooltip = ({ children, text, hover = true, focus, click, placement = 'r
   }
 
   return container(
-    <Tooltip title={text} arrow placement={placement} {...triggers()}>
+    <Tooltip
+      title={text}
+      arrow
+      placement={placement}
+      {...triggers()}
+      classes={{
+        tooltip: styles.tooltip,
+        arrow: styles.arrow,
+      }}
+    >
       <div onClick={handleTooltipOpen}>
         { children }
       </div>
