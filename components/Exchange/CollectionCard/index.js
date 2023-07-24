@@ -4,6 +4,7 @@ import Image from 'next/image'
 import cn from 'classnames'
 
 import $collection from '@/store/collection'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from  '@/components/App'
 
@@ -14,9 +15,20 @@ const CollectionCard = ({ isActive, collection }) => {
   const dispatch = useDispatch()
 
   const handleClick = () => {
+    trackEvent('Dex Select Asset', {
+      'Network': blockchain.code.toUpperCase(),
+      'Token': collection.name,
+    })
+
     dispatch($collection.set.add(collection))
-    router.push(`/exchange/${collection.address}`)
+    router.push(`/exchange/${collection.address}`, undefined, { scroll: false })
   }
+
+  const TooltipText = () => (
+    <App.Text color="#B9B8C5">
+      This collection belongs to a verified account and has significant interest or sales. <a href="#">Learn more</a>
+    </App.Text>
+  )
 
   return (
     <App.Flex row justify="space-between" align="center" onClick={handleClick} className={cn(styles.collection, {[styles.active]: isActive})}>
@@ -31,9 +43,11 @@ const CollectionCard = ({ isActive, collection }) => {
           <App.Flex row align="center" gap={4}>
             <App.Text nowrap weight={700}>{collection.name}</App.Text>
             {collection.openseaVerificationStatus == 'verified' ? (
-              <App.Flex center width={12} height={12} sx={{ minWidth: 12 }}>
-                <App.Icon icon="check-cloud-fill" />
-              </App.Flex>
+              <App.Tooltip text={<TooltipText />} placement="right">
+                <App.Flex center width={12} height={12} sx={{ minWidth: 12 }}>
+                  <App.Icon icon="check-cloud-fill" />
+                </App.Flex>
+              </App.Tooltip>
             ) : null}
           </App.Flex>
 

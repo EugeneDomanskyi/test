@@ -77,6 +77,12 @@ const HomeTable = () => {
 
   const handleSwap = (collection) => async (e) => {
     e.stopPropagation()
+
+    trackEvent('Dex Swap Clicked', {
+      'Token': collection.name,
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+    })
+
     const address = await connect()
     if ( ! address) {
       return
@@ -206,6 +212,12 @@ const HomeTable = () => {
     if (value == 'earn') {
       trackEvent('Dex Earn Clicked', {
         'Wallet Status': wallet ? 'Connected' : 'Not Connected',
+      })
+    }
+
+    if (value == 'trade') {
+      trackEvent('Dex Trade Clicked', {
+        'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
       })
     }
 

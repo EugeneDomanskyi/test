@@ -7,6 +7,11 @@
   position: relative;
   z-index: 0;
 
+  & > * {
+    position: relative;
+    z-index: 1;
+  }
+
   .secondaryText {
     color: #5E5C6B;
   }

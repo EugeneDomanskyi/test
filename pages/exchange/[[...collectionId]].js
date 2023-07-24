@@ -7,6 +7,7 @@ import $exchange from '@/store/exchange'
 import $app from '@/store/app'
 import $collection from '@/store/collection'
 import Stream from '@/libs/stream.lib'
+import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
@@ -30,6 +31,13 @@ const Exchange = () => {
   const socketConnected = useSelector(({$app}) => $app.socketConnected)
   const blockchain = useSelector($app.get.blockchain)
   const { collections, searched, isLoading } = useSelector($collection.get.all)
+
+  useEffect(() => {
+    trackEvent('Dex Exchange Clicked', {
+      'Network': blockchain.code.toUpperCase(),
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+    })
+  }, [])
 
   useEffect(() => {
     Stream.on('sale', (event, data) => {
@@ -113,7 +121,7 @@ const Exchange = () => {
       const addressInSearched = searched.find(c => c.address === collectionId)
       if (!collectionId || (!addressInCollections && !addressInSearched)) {
         const [first] = collections
-        router.replace(`${first.address}`)
+        router.replace(`${first.address}`, undefined, { scroll: false })
       }
     }
   }, [isLoading, blockchain.code, collectionId])

@@ -62,8 +62,10 @@ const Header = () => {
   }
 
   const handleDisconnect = () => {
+    trackEvent('Dex Wallet Disconnect Clicked')
     disconnect()
     setMenuShow(false)
+    trackEvent('Dex Wallet Disconnect successfully')
   }
 
   return (
