@@ -28,6 +28,7 @@
     "lightweight-charts": "^4.0.1",
     "lodash.merge": "^4.6.2",
     "moment": "^2.29.4",
+    "moment-range": "^4.0.2",
     "next": "13.4.5",
     "next-intercom": "^0.1.4",
     "nookies": "^2.5.2",

@@ -1,10 +1,32 @@
 import { createSlice } from '@reduxjs/toolkit'
-import moment from 'moment'
+import Moment from 'moment'
+import { extendMoment } from 'moment-range'
+const moment = extendMoment(Moment)
 
 import { request } from './index'
 
 const round = (date, duration, method) => {
   return moment(Math[method]((+date) / (+duration)) * (+duration))
+}
+
+const generatePeriods = (from, to, step) => {
+  const start = moment(from, 'DD-MM-YY HH:mm')
+  const end = moment(to, 'DD-MM-YY HH:mm')
+  const range = moment.range(start, end)
+  const array = Array.from(range.by(step.unit, {step: step.count, excludeEnd: true})).slice(1)
+ return array.reduce((acc, time) => {
+    const roundedDate = time.format('DD-MM-YY HH:mm')
+    return {
+      ...acc,
+      [roundedDate]: [{
+        date: time,
+        roundedDate: roundedDate,
+        volume: 0,
+        price: 0,
+        timestamp: time.unix()*1000,
+      }]
+    }
+  }, {})
 }
 
 export const exchangeSlice = createSlice({
@@ -72,7 +94,23 @@ const getters = {
       }
     }, {})
 
-    const result = Object.entries(groupedSales).map(([intervalKey, sales]) => {
+    let previousRoundedDate = ''
+
+    const temp = Object.entries(groupedSales).reduce((acc, [time, data]) => {
+      let emptyPeriods = {}
+      const isNext = !previousRoundedDate
+      if (!isNext) {
+        emptyPeriods = generatePeriods(time, previousRoundedDate, {count: $exchange.interval.count, unit: $exchange.interval.unit})
+      }
+      previousRoundedDate = time
+      return {
+        ...acc,
+        ...emptyPeriods,
+        [time]: data,
+      }
+    }, {})
+
+    const result = Object.entries(temp).map(([intervalKey, sales]) => {
       const { timestamps, prices, volume } = sales.reduce((acc, sale) => {
         return {
           timestamps: [...acc.timestamps, sale.timestamp],
