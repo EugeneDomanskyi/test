@@ -13,6 +13,7 @@ import AppTabs from '@/components/App/AppTabs'
 import AppText from '@/components/App/AppText'
 import AppTextField from '@/components/App/AppTextField'
 import AppSwitch from '@/components/App/AppSwitch'
+import AppRangeInput from '@/components/App/AppRangeInput'
 
 export default {
   Address: AppAddress,
@@ -30,4 +31,5 @@ export default {
   Text: AppText,
   TextField: AppTextField,
   Switch: AppSwitch,
+  RangeInput: AppRangeInput,
 }

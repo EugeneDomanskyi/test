@@ -77,7 +77,7 @@ const Exchange = () => {
     if (blockchain.code && collectionId && wallet) {
       $exchange.api.get.orders({
         blockchain: blockchain.code,
-        collection: collectionId,
+        // collection: collectionId,
         maker: wallet,
         includeCriteriaMetadata: true,
       }).then(res => {

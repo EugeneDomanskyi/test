@@ -20,12 +20,16 @@ const Orders = ({collectionId, onOrderCancelled}) => {
 
   const { cancelOrder, errorHandler } = useTrade()
 
-  const [showCollectionOrders, setShowCollectionOrders] = useState(true)
+  const [showCollectionOrders, setShowCollectionOrders] = useState(false)
   const loadingRef = useRef(false)
 
   const handlePressCancel = (order) => () => {
     loadingRef.current = true
     cancelOrder(order.id, handleCancelProgress, errorHandler)
+  }
+
+  const handleCancelAll = () => {
+
   }
 
   const handleCancelProgress = (steps) => {
@@ -41,8 +45,6 @@ const Orders = ({collectionId, onOrderCancelled}) => {
     setShowCollectionOrders(value)
   }
 
-  console.log(currentCollection)
-
   return (
     <App.Flex column className={styles.container}>
       <App.Flex column>
@@ -57,8 +59,15 @@ const Orders = ({collectionId, onOrderCancelled}) => {
             height={20}
             checked={showCollectionOrders}
             onChange={handleChangeSwitch} />
-          <Image alt="" src={currentCollection?.image} width={20} height={20} />
+          {
+            currentCollection?.image
+              ? <Image alt="" src={currentCollection?.image} width={20} height={20} />
+              : null
+          }
           <App.Text>Orders</App.Text>
+        </App.Flex>
+        <App.Flex className={styles.cancelAllButton} align="center" justify="center" onClick={handleCancelAll}>
+          <App.Text color="#B9B8C5" size={10} weight={600}>Cancell All</App.Text>
         </App.Flex>
       </App.Flex>
       <App.Flex align="center" sx={{height: 20, borderBottom: '1px solid rgba(94, 92, 107, 0.3)'}}>
@@ -77,7 +86,7 @@ const Orders = ({collectionId, onOrderCancelled}) => {
       </App.Flex>
       <App.Flex column flex={1} sx={{overflow: 'auto'}}>
         {
-          orders.map((order) => {
+          orders.filter(order => !showCollectionOrders || (order.contract === collectionId)).map((order) => {
             const totalQuantity = order.quantityRemaining +  order.quantityFilled
             return (
               <App.Flex key={order.id} column>

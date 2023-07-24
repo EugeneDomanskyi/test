@@ -72,7 +72,7 @@ const getters = {
       }
     }, {})
 
-    const result =  Object.entries(groupedSales).map(([intervalKey, sales]) => {
+    const result = Object.entries(groupedSales).map(([intervalKey, sales]) => {
       const { timestamps, prices, volume } = sales.reduce((acc, sale) => {
         return {
           timestamps: [...acc.timestamps, sale.timestamp],
@@ -105,10 +105,10 @@ const getters = {
     const from = moment().subtract(interval.count, interval.unit)
     const prices = $exchange.sales
       .filter(sale => moment(sale.updatedAt).isAfter(from) && moment(sale.updatedAt).isBefore(now))
-      .map((sale) => sale.price.amount.usd)
+      .map((sale) => sale.price.amount.decimal)
     return {
-      low: Math.min(...prices),
-      high: Math.max(...prices),
+      low: prices.length ? Math.min(...prices) : 0,
+      high: prices.length ? Math.max(...prices) : 0,
     }
   }
 }

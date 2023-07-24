@@ -1,12 +1,13 @@
 import styles from './styles.module.scss'
 import { useState, useEffect, useRef, Fragment } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import { parseUnits } from 'viem'
 import Image from 'next/image'
 
 import $app from '@/store/app'
 import $collection from '@/store/collection'
+import $modal from '@/store/modal'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useTrade from '@/myhooks/trade'
 
@@ -20,8 +21,9 @@ const TAB_OPTIONS = [
 ]
 
 const TradeForm = ({collectionId, onOrderCreated}) => {
+  const dispatch = useDispatch()
   const { wallet, connect, changeNetwork, getBalance } = useWalletConnect()
-  const { getNftBalanceUser, getNftUser, placeBid, placeAsk, errorHandler } = useTrade()
+  const { getNftBalanceUser, getNftUser, placeAsk, errorHandler } = useTrade()
   const currentCollection = useSelector($collection.get.collection('address', collectionId))
   const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector(({$exchange}) => {
@@ -34,7 +36,6 @@ const TradeForm = ({collectionId, onOrderCreated}) => {
   const [userBalances, setUserBalances] = useState({native: 0, token: 0})
   const [form, setForm] = useState({price: '0', amount: '1', total: '0'})
   const [currentTab, setCurrentTab] = useState('buy')
-  const [loading, setLoading] = useState(false)
   const loadingRef = useRef(false)
 
   const currentOption = TAB_OPTIONS.find(opt => opt.key === currentTab)
@@ -116,38 +117,60 @@ const TradeForm = ({collectionId, onOrderCreated}) => {
       return
     }
     loadingRef.current = true
-    if (currentTab === 'buy') {
-      const bids = [{  
-        weiPrice: parseUnits(`${form.total}`, 18).toString(),
-        collection: collectionId,
-        orderKind: 'seaport-v1.5',
-        options: {
-          'seaport-v1.5': {
-            "useOffChainCancellation": true
+    switch (currentTab) {
+      case 'buy':
+        dispatch($modal.set.show({
+          show: true,
+          modal: 'Exchange/BuyModal',
+          props: {
+            header: {
+              title: `Buy ${currentCollection.name} for ${blockchain.currency}`,
+            },
+            data: {
+              ...form,
+              collectionId: collectionId,
+            },
+          }
+        }))
+        return
+      case 'sell':
+        const tokenIds = await getNftUser(collectionId, wallet)
+        if (tokenIds.length < form.amount) {
+          toast.error(`You don't have enough NFTs`)
+          return
+        }
+        dispatch($modal.set.show({
+          show: true,
+          modal: 'Exchange/SellModal',
+          props: {
+            header: {
+              title: `${tokenIds.length} NFTs available`,
+              subtitle: `Choose the NFT collection you want to swap`
+            },
+            data: {
+              ...form,
+              tokens: tokenIds,
+              collectionId: collectionId,
+              blockchain: blockchain,
+            },
+          }
+        }))
+        return
+        const listing = tokenIds.filter((_, i) => i < form.amount).map((token) => ({
+          token: `${collectionId}:${token.token.tokenId}`,
+          weiPrice: parseUnits(`${form.price}`, 18).toString(),
+          orderKind: 'seaport-v1.5',
+          options: {
+            'seaport-v1.5': {
+              "useOffChainCancellation": true
+            },
           },
-        },
-        quantity: form.amount,
-      }]
-      placeBid(bids, progressHandler, errorHandler)
-      return
+          quantity: 1,
+        }))
+        placeAsk(listing, progressHandler, errorHandler)
+        return
     }
-    const tokenIds = await getNftUser(collectionId, wallet)
-    if (tokenIds.length < form.amount) {
-      toast.error(`You don't have enough NFTs`)
-      return
-    }
-    const listing = tokenIds.filter((_, i) => i < form.amount).map((token) => ({
-      token: `${collectionId}:${token.token.tokenId}`,
-      weiPrice: parseUnits(`${form.price}`, 18).toString(),
-      orderKind: 'seaport-v1.5',
-      options: {
-        'seaport-v1.5': {
-          "useOffChainCancellation": true
-        },
-      },
-      quantity: 1,
-    }))
-    placeAsk(listing, progressHandler, errorHandler)
+    
   }
 
   const progressHandler = steps => {
