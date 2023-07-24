@@ -86,7 +86,7 @@ const Wrapper = ({ children }) => {
             }
           }
 
-          const result = await $collection.api.all(queryParams(blockchainCode, page, { maxFloorAskPrice: /* process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : */ null }))
+          const result = await $collection.api.all(queryParams(blockchainCode, page, { maxFloorAskPrice: process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null }))
 
           if (result && result.hasOwnProperty('collections')) {
             if (! collectionId || collectionId && result.collections.find(item => item.id == collectionId)) {

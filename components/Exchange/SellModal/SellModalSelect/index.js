@@ -10,9 +10,9 @@ import SellModalSelectItem from '@/components/Exchange/SellModal/SellModalSelect
 
 import styles from './styles.module.scss'
 
-const MintModalSelect = ({ nfts, loading, buttonLoading, onSelect }) => {
+const MintModalSelect = ({ nfts, amount, onSelect }) => {
   const { isMobile } = usePropsHelper()
-  const [selectedIds, setSelectedIds] = useState([])
+  const [selectedIds, setSelectedIds] = useState(nfts.slice(0, amount).map(el => el.token.tokenId))
   const [sweepValue, setSweepValue] = useState(true)
 
   const scrollMaxHeightFunc = () => {
@@ -30,7 +30,7 @@ const MintModalSelect = ({ nfts, loading, buttonLoading, onSelect }) => {
   }
 
   const handleContinue = () => {
-    if (onSelect && !buttonLoading) {
+    if (onSelect) {
       if (selectedIds.length) {
         const result = []
         for (const id of selectedIds) {
@@ -92,34 +92,30 @@ const MintModalSelect = ({ nfts, loading, buttonLoading, onSelect }) => {
           renderThumbVertical={props => <div {...props} className="scrollThumb" />}
           renderThumbHorizontal={props => <div {...props} className="scrollThumb" />}
         >
-          {loading ? (
-            <App.LoaderBlock height={scrollMaxHeightFunc()} />
-          ) : (
-            <div className={styles.nfts}>
-              {nfts.length > 0 ? (
-                <Grid container spacing={3}>
-                  {nfts.map((item, index) => (
-                    <SellModalSelectItem
-                      key={index}
-                      nft={item.token}
-                      isEnabled={true}
-                      isChecked={selectedIds.includes(item.token.tokenId)}
-                      onCheck={handleNftCheck(item.token.tokenId)}
-                    />
-                  ))}
-                </Grid>
-              ) : (
-                <div className={styles.emptyText}>
-                  There are no NFTs connected to this wallet
-                </div>
-              )}
-            </div>
-          )}
+          <div className={styles.nfts}>
+            {nfts.length > 0 ? (
+              <Grid container spacing={3}>
+                {nfts.map((item, index) => (
+                  <SellModalSelectItem
+                    key={index}
+                    nft={item.token}
+                    isEnabled={true}
+                    isChecked={selectedIds.includes(item.token.tokenId)}
+                    onCheck={handleNftCheck(item.token.tokenId)}
+                  />
+                ))}
+              </Grid>
+            ) : (
+              <div className={styles.emptyText}>
+                There are no NFTs connected to this wallet
+              </div>
+            )}
+          </div>
         </Scrollbars>
       </div>
 
       <App.Flex center className={cn(styles.box, styles.borderTop)}>
-        <App.Button primary large onClick={handleContinue} loading={buttonLoading} disabled={selectedIds.length == 0 || buttonLoading} sx={{ width: isMobile ? '100%' : 200 }}>
+        <App.Button primary large onClick={handleContinue} disabled={selectedIds.length == 0} sx={{ width: isMobile ? '100%' : 200 }}>
           Sell {selectedIds.length} NFTs
         </App.Button>
       </App.Flex>

@@ -9,6 +9,8 @@ import useTrade from '@/myhooks/trade'
 import App from '@/components/App'
 import SellModalSelect from '@/components/Exchange/SellModal/SellModalSelect'
 import SellModalConfirm from '@/components/Exchange/SellModal/SellModalConfirm'
+import SellModalConfirming from '@/components/Exchange/SellModal/SellModalConfirming'
+import SellModalComplete from '@/components/Exchange/SellModal/SellModalComplete'
 
 const generateNft = (mod) => (el, i) => {
   return {
@@ -26,8 +28,6 @@ const SellModal = ({data}) => {
   const [selectedTokens, setSelectedTokens] = useState([])
   const [step, setStep] = useState('select')
 
-  console.log(data)
-
   const currentCollection = useSelector($collection.get.collection('address', data.collectionId))
 
   const loadingRef = useRef(false)
@@ -42,26 +42,52 @@ const SellModal = ({data}) => {
     dispatch($modal.set.update({header: {
       title: `Buy ${currentCollection.name} for ${data.blockchain.currency}`
     }}))
-    // const listing = selectedNfts.map((token) => ({
-    //   token: `${data.collectionId}:${token.id}`,
-    //   weiPrice: parseUnits(`${data.form.price}`, 18).toString(),
-    //   orderKind: 'seaport-v1.5',
-    //   options: {
-    //     'seaport-v1.5': {
-    //       "useOffChainCancellation": true
-    //     },
-    //   },
-    //   quantity: 1,
-    // }))
-    // placeAsk(listing, progressHandler, onError)
+    
+  }
+
+  const handleConfirm = () => {
+    const listing = selectedTokens.map((token) => ({
+      token: `${data.collectionId}:${token.id}`,
+      weiPrice: parseUnits(`${data.price}`, 18).toString(),
+      orderKind: 'seaport-v1.5',
+      options: {
+        'seaport-v1.5': {
+          "useOffChainCancellation": true
+        },
+      },
+      quantity: token.amount,
+    }))
+    loadingRef.current = true
+    setStep('confirming')
+    dispatch($modal.set.update({
+      header: {
+        title: 'Approve Transfer',
+        subtitle: `Sell ${currentCollection.name} using ${data.blockchain.currency}`
+      },
+    }))
+    placeAsk(listing, progressHandler, onError)
   }
 
   const progressHandler = (steps) => {
-
+    const isAllStepsComplete = steps.flatMap(step => step.items).every(step => step.status === 'complete')
+    if (isAllStepsComplete && loadingRef.current) {
+      loadingRef.current = false
+      dispatch($modal.set.update({
+        header: {
+          title: 'Success',
+          subtitle: `Sell ${currentCollection.name} using ${data.blockchain.currency}`
+        },
+      }))
+      setStep('complete')
+    }
   }
 
   const onError = (error) => {
     errorHandler(error)
+    dispatch($modal.set.close())
+  }
+
+  const handleComplete = () => {
     dispatch($modal.set.close())
   }
 
@@ -70,7 +96,8 @@ const SellModal = ({data}) => {
       case 'select':
         return (
           <SellModalSelect
-            nfts={tokens}
+            amount={data.amount}
+            nfts={data.tokens}
             token={currentCollection}
             onSelect={handleSelect} />
         )
@@ -79,7 +106,19 @@ const SellModal = ({data}) => {
           <SellModalConfirm
             price={data.price}
             amount={selectedAmount}
-            total={selectedAmount*data.price} />
+            total={selectedAmount*data.price}
+            onConfirm={handleConfirm} />
+        )
+      case 'confirming':
+        return (
+          <SellModalConfirming />
+        )
+      case 'complete':
+        return (
+          <SellModalComplete
+          currentCollection={currentCollection}
+          amount={selectedAmount}
+          onComplete={handleComplete} />
         )
     }
   })()

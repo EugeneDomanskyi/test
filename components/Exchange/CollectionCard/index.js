@@ -1,9 +1,10 @@
 import { useRouter } from 'next/router'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import cn from 'classnames'
 
 import $collection from '@/store/collection'
+import $app from '@/store/app'
 import { trackEvent } from '@/libs/analytics.lib'
 
 import App from  '@/components/App'
@@ -13,6 +14,7 @@ import styles from './styles.module.scss'
 const CollectionCard = ({ isActive, collection }) => {
   const router = useRouter()
   const dispatch = useDispatch()
+  const blockchain = useSelector($app.get.blockchain)
 
   const handleClick = () => {
     trackEvent('Dex Select Asset', {
