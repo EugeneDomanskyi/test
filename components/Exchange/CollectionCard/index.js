@@ -28,7 +28,7 @@ const CollectionCard = ({ isActive, collection }) => {
 
   const TooltipText = () => (
     <App.Text color="#B9B8C5">
-      This collection belongs to a verified account and has significant interest or sales. <a href="#">Learn more</a>
+      This collection belongs to a verified account and has significant interest or sales. <a href="https://support.opensea.io/hc/en-us/articles/360063519133-What-is-a-verified-account-or-badged-collection-" target="_blank">Learn more</a>
     </App.Text>
   )
 
