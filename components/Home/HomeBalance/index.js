@@ -5,8 +5,10 @@ import cn from 'classnames'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import Contracts from '@/libs/contracts.lib'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import $app from '@/store/app'
+import $collection from '@/store/collection'
 
 import App from '@/components/App'
 
@@ -63,6 +65,7 @@ const HomeBalance = ({ justify = 'center' }) => {
       Network: val.toUpperCase(),
     })
     
+    dispatch($collection.set.pagesClear())
     dispatch($app.set.code(val))
     setMenuShow(false)
   }

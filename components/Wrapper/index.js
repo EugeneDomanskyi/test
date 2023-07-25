@@ -24,7 +24,6 @@ const Wrapper = ({ children }) => {
   const blockchain = useSelector($app.get.blockchain)
   const { blockchains } = useSelector(({ $app }) => $app)
   const { page } = useSelector(({ $collection }) => $collection)
-  const pages = useSelector($collection.get.pages)
 
   const isInit = useRef(true)
   const updateCollections = useRef(true)
@@ -49,7 +48,7 @@ const Wrapper = ({ children }) => {
   useEffect(() => {
     (async () => {
       if (updateCollections.current) {
-        if (page && router.isReady) {
+        if (router.isReady) {
           dispatch($collection.set.loading(true))
 
           let blockchainCode = blockchain.code
@@ -99,7 +98,6 @@ const Wrapper = ({ children }) => {
             }
 
             dispatch($collection.set.pages(result?.continuation))
-            dispatch($collection.set.page(null))
           }
 
           dispatch($collection.set.searched([]))
@@ -115,7 +113,7 @@ const Wrapper = ({ children }) => {
         updateCollections.current = true
       }
     })()
-  }, [blockchain, page, router.isReady])
+  }, [blockchain, router.isReady])
 
   const queryParams = (blockchainCode, page, customParams) => {
     const defaultParams = {
@@ -127,8 +125,8 @@ const Wrapper = ({ children }) => {
     }
 
     let continuation = null
-    if (page != null && pages[page] != 'init') {
-      continuation = pages[page]
+    if (page != 'init') {
+      continuation = page
     }
 
     return {

@@ -24,6 +24,7 @@ const Header = () => {
   const dispatch = useDispatch()
 
   const [menuShow, setMenuShow] = useState(false)
+  const [mobileMenuShow, setMobileMenuShow] = useState(false)
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, false)
@@ -49,8 +50,8 @@ const Header = () => {
     }
   }
 
-  const shorterAddress = () => {
-    return wallet ? (wallet.slice(0, 6) + '...' + wallet.slice(wallet.length - 6)) : ''
+  const shorterAddress = (size = 6) => {
+    return wallet ? (wallet.slice(0, size) + '...' + wallet.slice(wallet.length - size)) : ''
   }
 
   const handleMenuToggle = () => {
@@ -68,8 +69,18 @@ const Header = () => {
     trackEvent('Dex Wallet Disconnect successfully')
   }
 
+  const handleMobileMenuClick = () => {
+    if (mobileMenuShow) {
+      document.body.classList.remove('modal-open')
+    } else {
+      document.body.classList.add('modal-open')
+    }
+
+    setMobileMenuShow(!mobileMenuShow)
+  }
+
   return (
-    <div className={styles.container}>
+    <App.Container fluid className={styles.container}>
       <App.Flex row height="100%" align="center" justify="space-between">
         <App.Flex row height="100%" align="center" gap={64}>
           <Link href="/">
@@ -81,7 +92,7 @@ const Header = () => {
             </div>
           </Link>
 
-          <App.Flex row height="100%" align="center">
+          <App.Flex row height="100%" align="center" className={styles.navItems}>
             <Link href="/exchange" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/exchange')})}>
               <App.Flex center height="100%">
                 <App.Text size={18} weight={700}>EXCHANGE</App.Text>
@@ -96,19 +107,18 @@ const Header = () => {
           </App.Flex>
         </App.Flex>
 
-        <App.Flex row gap={24} align="center">
+        <App.Flex row gap={[24, 16]} align="center">
           {!isMobile ? <HomeBalance /> : null}
           
           {wallet ? (
             <App.Flex sx={{ position: 'relative' }} id="wallet">
-              <App.Button primary large outlined rounded onClick={handleMenuToggle} sx={{ minWidth: 'auto' }}>
+              <App.Button primary large={!isMobile} outlined rounded onClick={handleMenuToggle} sx={{ minWidth: 'auto' }}>
                 <App.Flex row gap={8} align="center">
                   <App.Flex width={28} height={28} sx={{ borderRadius: '50%', background: 'linear-gradient(91.77deg, #E792E4 2.92%, #B545BE 36.09%, #7931CB 70.47%, #4D42C9 100%)' }} />
+                  <span>{shorterAddress(isMobile ? 4 : 6)}</span>
                   {isMobile ? (
                     <App.Icon icon="caret-down" />
-                  ) : (
-                    <span>{shorterAddress()}</span>
-                  )}
+                  ) : null}
                 </App.Flex>
               </App.Button>
 
@@ -119,13 +129,47 @@ const Header = () => {
               </div>
             </App.Flex>
           ) : (
-            <App.Button primary large onClick={handleConnectWallet}>
+            <App.Button primary large={!isMobile} onClick={handleConnectWallet}>
               Connect Wallet
             </App.Button>
           )}
+
+          <div className={cn(styles.mobileMenuButton, {[styles.show]: mobileMenuShow})} onClick={handleMobileMenuClick}>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+          <div className={cn(styles.mobileMenu, {[styles.show]: mobileMenuShow})}>
+            <div className={styles.content}>
+              <App.Flex row sx={{ padding: 16 }}>
+                <HomeBalance />
+              </App.Flex>
+
+              <div className={styles.line} />
+
+              <Link href="/exchange" className={cn(styles.link, {[styles.active]: router.pathname.includes('/exchange')})}>
+                <App.Flex align="center" height="100%" gap={16} onClick={handleMobileMenuClick}>
+                  <App.Flex center width={29}>
+                    <App.Icon icon="exchange" color="#fff" />
+                  </App.Flex>
+                  <App.Text size={18} weight={700}>EXCHANGE</App.Text>
+                </App.Flex>
+              </Link>
+
+              <Link href="/" className={cn(styles.link, {[styles.active]: router.pathname == '/'})}>
+                <App.Flex align="center" height="100%" gap={16} onClick={handleMobileMenuClick}>
+                  <App.Flex center width={29}>
+                    <App.Icon icon="arrow-refresh" width={24} height={24} color="#fff" />
+                  </App.Flex>
+                  <App.Text size={18} weight={700}>SWAP</App.Text>
+                </App.Flex>
+              </Link>
+            </div>
+          </div>
         </App.Flex>
       </App.Flex>
-    </div>
+    </App.Container>
   )
 }
 

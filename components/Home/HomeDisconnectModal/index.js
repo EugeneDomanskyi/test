@@ -13,23 +13,19 @@ const HomeDisconnectModal = ({ onClose }) => {
     onClose()
   }
 
-  const shorterAddress = () => {
-    return wallet ? (wallet.slice(0, 6) + '...' + wallet.slice(wallet.length - 6)) : ''
+  const shorterAddress = (size = 6) => {
+    return wallet ? (wallet.slice(0, size) + '...' + wallet.slice(wallet.length - size)) : ''
   }
 
   return (
     <App.Flex column>
-      <App.Flex row justify="flex-start" className={styles.box}>
-        <App.Button primary large outlined rounded sx={{ width: 175 }}>
+      <App.Flex row center className={styles.box}>
+        <App.Button primary large outlined rounded>
           <App.Flex row gap={8} align="center">
             <App.Flex width={28} height={28} sx={{ borderRadius: '50%', background: 'linear-gradient(91.77deg, #E792E4 2.92%, #B545BE 36.09%, #7931CB 70.47%, #4D42C9 100%)' }} />
-            <span>{shorterAddress()}</span>
+            <span>{shorterAddress(15)}</span>
           </App.Flex>
         </App.Button>
-      </App.Flex>
-
-      <App.Flex row justify="flex-start" className={styles.box}>
-        <HomeBalance />
       </App.Flex>
 
       <App.Flex center className={styles.boxDark}>

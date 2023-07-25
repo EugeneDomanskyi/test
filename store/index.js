@@ -54,7 +54,7 @@ const responseHandler = async (response) => {
 }
 
 const errorHandler = async (response) => {
-  console.log(response)
+  // console.log(response)
   return null
 }
 
