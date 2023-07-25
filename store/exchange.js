@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, createSelector } from '@reduxjs/toolkit'
 import Moment from 'moment'
 import { extendMoment } from 'moment-range'
 const moment = extendMoment(Moment)
@@ -76,8 +76,10 @@ export const exchangeSlice = createSlice({
 })
 
 const getters = {
-  kLineData: (interval) => ({$exchange}) => {
-    const groupedSales = $exchange.sales.reduce((acc, sale) => {
+  kLineData: (interval) => createSelector([
+    state => state.$exchange.sales,
+  ], (sales) => {
+    const groupedSales = sales.reduce((acc, sale) => {
       const roundedDate = round(moment(sale.timestamp*1000), moment.duration(interval.count, interval.unit), 'ceil')
       const intervalKey = roundedDate.format('DD-MM-YY HH:mm')
       const formattedData = {
@@ -100,7 +102,7 @@ const getters = {
       let emptyPeriods = {}
       const isNext = !previousRoundedDate
       if (!isNext) {
-        emptyPeriods = generatePeriods(time, previousRoundedDate, {count: $exchange.interval.count, unit: $exchange.interval.unit})
+        emptyPeriods = generatePeriods(time, previousRoundedDate, {count: interval.count, unit: interval.unit})
       }
       previousRoundedDate = time
       return {
@@ -137,18 +139,33 @@ const getters = {
       }
     })
     return result.sort((a,b) => a.time - b.time)
-  },
-  highLow: (interval) => ({$exchange}) => {
+  }),
+  highLow: (interval) => createSelector([
+    state => state.$exchange.sales
+  ], (sales) => {
     const now = moment()
     const from = moment().subtract(interval.count, interval.unit)
-    const prices = $exchange.sales
+    const prices = sales
       .filter(sale => moment(sale.updatedAt).isAfter(from) && moment(sale.updatedAt).isBefore(now))
       .map((sale) => sale.price.amount.decimal)
     return {
       low: prices.length ? Math.min(...prices) : 0,
       high: prices.length ? Math.max(...prices) : 0,
     }
-  }
+  }),
+  orderBook: createSelector([
+    state => state.$exchange.orderBook
+  ], (orderBook) => {
+    return {
+      buy: orderBook.buy.slice(0, 10),
+      sell: orderBook.sell.slice(0, 10),
+    }
+  }),
+  orders: createSelector([
+    state => state.$exchange.orders
+  ], (orders) => {
+    return orders.filter(order => order.status !== 'cancelled').sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  })
 }
 
 const api = {

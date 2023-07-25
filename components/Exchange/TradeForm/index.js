@@ -6,6 +6,7 @@ import Image from 'next/image'
 
 import $app from '@/store/app'
 import $collection from '@/store/collection'
+import $exchange from '@/store/exchange'
 import $modal from '@/store/modal'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useTrade from '@/myhooks/trade'
@@ -25,12 +26,7 @@ const TradeForm = ({collectionId, onOrderCreated}) => {
   const { getNftBalanceUser, getNftUser } = useTrade()
   const currentCollection = useSelector($collection.get.collection('address', collectionId))
   const blockchain = useSelector($app.get.blockchain)
-  const orderBook = useSelector(({$exchange}) => {
-    return {
-      buy: $exchange.orderBook.buy.slice(0, 10),
-      sell: $exchange.orderBook.sell.slice(0, 10),
-    }
-  })
+  const orderBook = useSelector($exchange.get.orderBook)
 
   const [userBalances, setUserBalances] = useState({native: 0, token: 0})
   const [form, setForm] = useState({price: '0', amount: '1', total: '0'})

@@ -8,13 +8,12 @@ import numeral from 'numeral'
 import useTrade from '@/myhooks/trade'
 import $app from '@/store/app'
 import $collection from '@/store/collection'
+import $exchange from '@/store/exchange'
 
 import App from '@/components/App'
 
 const Orders = ({collectionId, onOrderCancelled}) => {
-  const orders = useSelector(({$exchange}) => {
-    return [...$exchange.orders].filter(order => order.status !== 'cancelled').sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-  })
+  const orders = useSelector($exchange.get.orders)
   const currentCollection = useSelector($collection.get.collection('address', collectionId))
   const blockchain = useSelector($app.get.blockchain)
 

@@ -11,10 +11,7 @@ import App from '@/components/App'
 const OrderBook = ({collectionId}) => {
   const dispatch = useDispatch()
 
-  const orderBook = useSelector(({$exchange}) => ({
-    buy: [...$exchange.orderBook.buy].slice(0, 10),
-    sell: [...$exchange.orderBook.sell].slice(0, 10),
-  }), shallowEqual)
+  const orderBook = useSelector($exchange.get.orderBook)
   const blockchain = useSelector($app.get.blockchain)
 
   let prevBuyVolumeValue = 0
