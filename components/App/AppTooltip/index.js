@@ -64,6 +64,7 @@ const AppTooltip = ({ children, text, hover = true, focus, click, placement = 'r
       placement={placement}
       {...triggers()}
       classes={{
+        popper: styles.containerCustom,
         tooltip: styles.tooltip,
         arrow: styles.arrow,
       }}

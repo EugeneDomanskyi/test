@@ -1,5 +1,5 @@
 import styles from './styles.module.scss'
-import { useState, useEffect, useRef, Fragment } from 'react'
+import { useState, useEffect, useRef, Fragment, forwardRef, useImperativeHandle } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import Image from 'next/image'
@@ -20,7 +20,7 @@ const TAB_OPTIONS = [
   {key: 'sell', title: 'SELL', color: 'rgb(206, 22, 93)'},
 ]
 
-const TradeForm = ({collectionId, onOrderCreated}) => {
+const TradeForm = forwardRef(({collectionId, onOrderCreated}, ref) => {
   const dispatch = useDispatch()
   const { wallet, connect, changeNetwork, getBalance } = useWalletConnect()
   const { getNftBalanceUser, getNftUser } = useTrade()
@@ -31,11 +31,26 @@ const TradeForm = ({collectionId, onOrderCreated}) => {
   const [userBalances, setUserBalances] = useState({native: 0, token: 0})
   const [form, setForm] = useState({price: '0', amount: '1', total: '0'})
   const [currentTab, setCurrentTab] = useState('buy')
+
+  const priceSetted = useRef(false)
   const loadingRef = useRef(false)
+
+  useImperativeHandle(ref, () => ({
+    setForm: (data) => {
+      priceSetted.current = true
+      handleChangeTab(data.side)
+      handleChangeForm('price')(data.price.toString())
+      handleChangeForm('amount')(data.amount.toString())
+    }
+  }))
 
   const currentOption = TAB_OPTIONS.find(opt => opt.key === currentTab)
   const [lowestBuy] = orderBook.buy
   const [lowestSell] = orderBook.sell
+
+  useEffect(() => {
+    priceSetted.current = false
+  }, [collectionId])
 
   useEffect(() => {
     const getBalances = async () => {
@@ -52,17 +67,25 @@ const TradeForm = ({collectionId, onOrderCreated}) => {
   }, [blockchain, wallet, collectionId])
 
   useEffect(() => {
+    if (priceSetted.current) {
+      return
+    }
     if (currentTab === 'buy' && lowestBuy) {
-      handleChangeForm('price')(lowestBuy.price)
+      setInitialPrice(lowestBuy.price)
     } else if (!lowestBuy && currentCollection?.price) {
-      handleChangeForm('price')(currentCollection?.price)
+      setInitialPrice(currentCollection?.price)
     }
     if (currentTab === 'sell' && lowestSell) {
-      handleChangeForm('price')(lowestSell.price)
+      setInitialPrice(lowestSell.price)
     } else if (!lowestBuy && currentCollection?.price) {
-      handleChangeForm('price')(currentCollection?.price)
+      setInitialPrice(currentCollection?.price)
     }
-  }, [lowestBuy, lowestSell, currentCollection?.price, currentTab])
+  }, [lowestBuy, lowestSell, currentCollection?.price])
+
+  const setInitialPrice = price => {
+    handleChangeForm('price')(price)
+    priceSetted.current = true
+  }
 
   const handleChangeTab = tab => {
     setCurrentTab(tab)
@@ -269,6 +292,6 @@ const TradeForm = ({collectionId, onOrderCreated}) => {
       }
     </App.Flex>
   )
-}
+})
 
 export default TradeForm

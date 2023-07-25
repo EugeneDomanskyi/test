@@ -4,6 +4,7 @@ import { toast } from 'react-toastify'
 import { useRef, useState } from 'react'
 import Image from 'next/image'
 import numeral from 'numeral'
+import { useRouter } from 'next/router'
 
 import useTrade from '@/myhooks/trade'
 import $app from '@/store/app'
@@ -12,10 +13,11 @@ import $exchange from '@/store/exchange'
 
 import App from '@/components/App'
 
-const Orders = ({collectionId, onOrderCancelled}) => {
+const Orders = ({collectionId, onOrderCancelled, onClickOrder}) => {
   const orders = useSelector($exchange.get.orders)
   const currentCollection = useSelector($collection.get.collection('address', collectionId))
   const blockchain = useSelector($app.get.blockchain)
+  const router = useRouter()
 
   const { cancelOrder, errorHandler } = useTrade()
 
@@ -42,6 +44,17 @@ const Orders = ({collectionId, onOrderCancelled}) => {
 
   const handleChangeSwitch = (value) => {
     setShowCollectionOrders(value)
+  }
+
+  const handleClick = order => () => {
+    router.push(`${order.contract}`, undefined, {scroll: false})
+    // console.log(order)
+    const totalQuantity = order.quantityFilled + order.quantityRemaining
+    onClickOrder({
+      quantity: totalQuantity,
+      price: order.price.amount.decimal / totalQuantity,
+      side: order.side,
+    })
   }
 
   return (
@@ -89,7 +102,7 @@ const Orders = ({collectionId, onOrderCancelled}) => {
             const totalQuantity = order.quantityRemaining +  order.quantityFilled
             return (
               <App.Flex key={order.id} column>
-                <App.Flex align="center" className={styles.order}>
+                <App.Flex align="center" className={styles.order} onClick={handleClick(order)}>
                   <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
                   <App.Flex column align="center" justify="center" sx={{width: 60}}>
                     {
