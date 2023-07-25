@@ -34,7 +34,7 @@ const SellModal = ({data}) => {
 
   const selectedAmount = selectedTokens.reduce((acc, token) => (acc + token.amount), 0)
 
-  const tokens = [...data.tokens, ...data.tokens.map(generateNft(100)), ...data.tokens.map(generateNft(200)), ...data.tokens.map(generateNft(300))]
+  // const tokens = [...data.tokens, ...data.tokens.map(generateNft(100)), ...data.tokens.map(generateNft(200)), ...data.tokens.map(generateNft(300))]
 
   const handleSelect = tokens => {
     setSelectedTokens(tokens)

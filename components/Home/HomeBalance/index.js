@@ -7,6 +7,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import Contracts from '@/libs/contracts.lib'
 
 import $app from '@/store/app'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 

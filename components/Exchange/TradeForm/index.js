@@ -2,7 +2,6 @@ import styles from './styles.module.scss'
 import { useState, useEffect, useRef, Fragment } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
-import { parseUnits } from 'viem'
 import Image from 'next/image'
 
 import $app from '@/store/app'
@@ -23,7 +22,7 @@ const TAB_OPTIONS = [
 const TradeForm = ({collectionId, onOrderCreated}) => {
   const dispatch = useDispatch()
   const { wallet, connect, changeNetwork, getBalance } = useWalletConnect()
-  const { getNftBalanceUser, getNftUser, placeAsk, errorHandler } = useTrade()
+  const { getNftBalanceUser, getNftUser } = useTrade()
   const currentCollection = useSelector($collection.get.collection('address', collectionId))
   const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector(({$exchange}) => {
@@ -129,6 +128,7 @@ const TradeForm = ({collectionId, onOrderCreated}) => {
             data: {
               ...form,
               collectionId: collectionId,
+              blockchain: blockchain,
             },
           }
         }))
@@ -156,21 +156,19 @@ const TradeForm = ({collectionId, onOrderCreated}) => {
           }
         }))
         return
-        const listing = tokenIds.filter((_, i) => i < form.amount).map((token) => ({
-          token: `${collectionId}:${token.token.tokenId}`,
-          weiPrice: parseUnits(`${form.price}`, 18).toString(),
-          orderKind: 'seaport-v1.5',
-          options: {
-            'seaport-v1.5': {
-              "useOffChainCancellation": true
-            },
-          },
-          quantity: 1,
-        }))
-        placeAsk(listing, progressHandler, errorHandler)
-        return
+        // const listing = tokenIds.filter((_, i) => i < form.amount).map((token) => ({
+        //   token: `${collectionId}:${token.token.tokenId}`,
+        //   weiPrice: parseUnits(`${form.price}`, 18).toString(),
+        //   orderKind: 'seaport-v1.5',
+        //   options: {
+        //     'seaport-v1.5': {
+        //       "useOffChainCancellation": true
+        //     },
+        //   },
+        //   quantity: 1,
+        // }))
+        // placeAsk(listing, progressHandler, errorHandler)
     }
-    
   }
 
   const progressHandler = steps => {

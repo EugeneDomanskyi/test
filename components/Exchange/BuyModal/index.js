@@ -37,7 +37,7 @@ const TradeBuyModal = ({data}) => {
     dispatch($modal.set.update({
       header: {
         title: 'Approve Transfer',
-        subtitle: `Buy Strikers using USDT`
+        subtitle: `Buy ${currentCollection.name} using ${data.blockchain.currency}`
       },
     }))
     placeBid(bids, progressHandler, onError)
@@ -55,7 +55,7 @@ const TradeBuyModal = ({data}) => {
       dispatch($modal.set.update({
         header: {
           title: 'Success',
-          subtitle: `Buy Strikers using USDT`
+          subtitle: `Buy ${currentCollection.name} using USDT`
         },
       }))
       setStep('complete')

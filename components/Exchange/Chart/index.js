@@ -75,8 +75,9 @@ const INTERVALS = [
 
 const TradeChart = () => {
   const dispatch = useDispatch()
-  const kLineData = useSelector($exchange.get.kLineData())
+  
   const activeInterval = useSelector(({$exchange}) => $exchange.interval)
+  const kLineData = [] //useSelector($exchange.get.kLineData(activeInterval))
 
   const wrapperRef = useRef(null)
   const containerRef = useRef(null)
