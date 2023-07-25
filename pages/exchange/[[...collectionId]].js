@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import dynamic from 'next/dynamic'
@@ -9,6 +9,7 @@ import $collection from '@/store/collection'
 import Stream from '@/libs/stream.lib'
 import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
+import { usePropsHelper } from '@/myhooks/props-helper'
 
 import App from '@/components/App'
 import CollectionList from '@/components/Exchange/CollectionList'
@@ -17,6 +18,9 @@ import Sales from '@/components/Exchange/Sales'
 import TradeForm from '@/components/Exchange/TradeForm'
 import CollectionInfo from '@/components/Exchange/CollectionInfo'
 import Orders from '@/components/Exchange/Orders'
+import MobileTabsBar from '@/components/Exchange/MobileTabsBar'
+
+import styles from './styles.module.scss'
 
 const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 
@@ -27,16 +31,23 @@ const Exchange = () => {
   const dispatch = useDispatch()
   const [collectionId] = router.query.collectionId || []
 
+  const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
   const socketConnected = useSelector(({$app}) => $app.socketConnected)
   const blockchain = useSelector($app.get.blockchain)
   const { collections, searched, isLoading } = useSelector($collection.get.all)
+
+  const [isSSR, setIsSSR] = useState(true)
+  const [mobileTab, setMobileTab] = useState('markets')
+  const [mobileTabTrade, setMobileTabTrade] = useState(false)
 
   useEffect(() => {
     trackEvent('Dex Exchange Clicked', {
       'Network': blockchain.code.toUpperCase(),
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
     })
+
+    setIsSSR(false)
   }, [])
 
   useEffect(() => {
@@ -137,6 +148,7 @@ const Exchange = () => {
         dispatch($exchange.set.orders(res))
       }
     })
+
     $exchange.api.get.orderBook({
       collection: collectionId,
       blockchain: blockchain.code,
@@ -147,34 +159,60 @@ const Exchange = () => {
     })
   }
 
-  return (
-    <App.Flex gap={GRID_GAP} sx={{padding: '88px 24px 0', minHeight: '100vh'}}>
-      <CollectionList collectionId={collectionId} />
+  const handleMobileTabChange = (tab) => {
+    if (tab === 'buy_sell') {
+      setMobileTabTrade(!mobileTabTrade)
+      return
+    }
 
-      <App.Flex column flex={1} gap={GRID_GAP}>
-        <CollectionInfo collectionId={collectionId} />
+    setMobileTabTrade(false)
+    setMobileTab(tab)
+  }
 
-        <App.Flex gap={GRID_GAP}>
-          <App.Flex flex={1} column gap={GRID_GAP}>
-            <Chart />
+  return ! isSSR ? (
+    <App.Flex gap={GRID_GAP} className={styles.container}>
+      {!isMobile ? (
+        <>
+          <CollectionList collectionId={collectionId} />
+
+          <App.Flex column flex={1} gap={GRID_GAP}>
+            <CollectionInfo collectionId={collectionId} />
 
             <App.Flex gap={GRID_GAP}>
-              <OrderBook collectionId={collectionId} />
-              <Sales />
+              <App.Flex flex={1} column gap={GRID_GAP}>
+                <Chart />
+
+                <App.Flex gap={GRID_GAP}>
+                  <OrderBook collectionId={collectionId} />
+                  <Sales />
+                </App.Flex>
+              </App.Flex>
+
+              <App.Flex column gap={GRID_GAP}>
+                <App.Flex>
+                  <TradeForm collectionId={collectionId} onOrderCreated={handleOrdersUpdated} />
+                </App.Flex>
+
+                <Orders collectionId={collectionId} onOrderCancelled={handleOrdersUpdated} />
+              </App.Flex>
             </App.Flex>
           </App.Flex>
+        </>
+      ) : (
+        <>
+          {mobileTab == 'markets' ? (
+            <CollectionList collectionId={collectionId} />
+          ) : null}
 
-          <App.Flex column gap={GRID_GAP}>
-            <App.Flex>
-              <TradeForm collectionId={collectionId} onOrderCreated={handleOrdersUpdated} />
-            </App.Flex>
-
-            <Orders collectionId={collectionId} onOrderCancelled={handleOrdersUpdated} />
-          </App.Flex>
-        </App.Flex>
-      </App.Flex>
+          <MobileTabsBar
+            active={mobileTab}
+            actvieTrade={mobileTabTrade}
+            onTabChange={handleMobileTabChange}
+          />
+        </>
+      )}
     </App.Flex>
-  )
+  ) : null
 }
 
 export default Exchange

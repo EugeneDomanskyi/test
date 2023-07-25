@@ -104,7 +104,12 @@ const CollectionList = ({collectionId}) => {
   }
 
   const handlePage = (page) => () => {
-    dispatch($collection.set.page(page))
+    let continuation = null
+    if (page != null) {
+      continuation = pages[page]
+    }
+
+    dispatch($collection.set.page(continuation))
     setPageType(page)
   }
   
@@ -159,26 +164,28 @@ const CollectionList = ({collectionId}) => {
           })}
         </div>
       </div>
+      
+      {!wasSearched ? (
+        <App.Flex row align="center" justify="space-between" sx={{ padding: 16 }}>
+          <App.Button small primary outlined={! pages.prev} disabled={! pages.prev} onClick={handlePage('prev')}>
+            {loading && pageType == 'prev' ? (
+              <App.Loader size={16} />
+            ) : (
+              <App.Icon icon="chevron-left" color="#fff" />
+            )}
+            Prev
+          </App.Button>
 
-      <App.Flex row align="center" justify="space-between" sx={{ padding: 16 }}>
-        <App.Button small primary outlined={! pages.prev} disabled={! pages.prev} onClick={handlePage('prev')}>
-          {loading && pageType == 'prev' ? (
-            <App.Loader size={16} />
-          ) : (
-            <App.Icon icon="chevron-left" color="#fff" />
-          )}
-          Prev
-        </App.Button>
-
-        <App.Button small primary outlined={! pages.next} disabled={! pages.next} onClick={handlePage('next')}>
-          Next
-          {loading && pageType == 'next' ? (
-            <App.Loader size={16} />
-          ) : (
-            <App.Icon icon="chevron-right" width={16} height={16} />
-          )}
-        </App.Button>
-      </App.Flex>
+          <App.Button small primary outlined={! pages.next} disabled={! pages.next} onClick={handlePage('next')}>
+            Next
+            {loading && pageType == 'next' ? (
+              <App.Loader size={16} />
+            ) : (
+              <App.Icon icon="chevron-right" width={16} height={16} />
+            )}
+          </App.Button>
+        </App.Flex>
+      ) : null}
     </App.Flex>
   )
 }

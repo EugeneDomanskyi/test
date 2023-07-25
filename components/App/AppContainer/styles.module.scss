@@ -6,7 +6,6 @@
   display: block;
   padding-left: 16px;
   padding-right: 16px;
-  height: 100%;
 
   @media (min-width: 768px) {
     & {
@@ -16,7 +15,7 @@
   }
 
   @media (min-width: 1536px) {
-    & {
+    &:not(.fluid) {
       max-width: 1536px;
     }
   }

@@ -86,14 +86,22 @@ export const collectionSlice = createSlice({
     },
 
     pages: (state, { payload }) => {
-      const current = getters.pages({$collection: state})[state.page] ?? 'init'
-      const currentIndex = state.pages.history.indexOf(current)
+      const current = state.pages.history.find(item => item == state.page) ?? 'init'
+      const currentIndex = state.pages.history.indexOf(state.page)
       const history = currentIndex > 0 ? state.pages.history.slice(0, currentIndex + 1) : ['init']
       history.push(payload)
 
       state.pages = {
         current,
         history,
+      }
+    },
+
+    pagesClear: (state) => {
+      state.page = 'init'
+      state.pages = {
+        current: 'init',
+        history: ['init'],
       }
     },
   },
@@ -120,7 +128,6 @@ const getters = {
     const currentIndex = $collection.pages.history.indexOf($collection.pages.current)
     const prev = $collection.pages.history.find((_, index) => (currentIndex > 0) ? index === (currentIndex - 1) : null) ?? null
     const next = $collection.pages.history.find((_, index) => (currentIndex >= 0 && currentIndex < $collection.pages.history.length - 1) ? index === (currentIndex + 1) : null) ?? null
-    console.log(prev)
     return { prev, next }
   },
 }

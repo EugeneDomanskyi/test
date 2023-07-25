@@ -48,13 +48,13 @@ const BuyModal = ({ token, onClose, onStep }) => {
   const handleBuy = async (nfts) => {
     const totalPrice = nfts.reduce((acc, nft) => acc+nft.price, 0)
     const balance = await getBalance()
-    if (totalPrice > balance) {
+    /* if (totalPrice > balance) {
       const magic = getMagic(chains)
       const isMagicConnected = await magic.wallet.getInfo().catch(() => null)
       if (isMagicConnected) {
         await magic.wallet.showUI()
       }
-    }
+    } */
 
     const items = nfts.map(item => {
       return {
