@@ -24,7 +24,7 @@ import '@/styles/globals.css'
 
 createClient({
   chains: [
-    /* {
+    {
       id: 1,
       baseApiUrl: 'https://api.reservoir.tools',
       active: true,
@@ -77,6 +77,7 @@ const rainbowMagicConnector = ({ chains }) => ({
         chainId: chain.id,
       }
     })
+    
     const connector = new MagicConnectConnector({
       chains: chains,
       options: {

@@ -19,9 +19,9 @@ const CollectionList = ({collectionId}) => {
 
   const blockchain = useSelector($app.get.blockchain)
   const pages = useSelector($collection.get.pages)
-  const { collections, searched } = useSelector($collection.get.all)
+  const { sortType } = useSelector(({$exchange}) => $exchange)
   const { loading } = useSelector(({$collection}) => $collection)
-  const sortType = useSelector(({$exchange}) => $exchange.sortType)
+  const { collections, searched } = useSelector($collection.get.all)
 
   const [collectionList, setCollectionList] = useState([])
   const [search, setSearch] = useState('')

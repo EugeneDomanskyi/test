@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, createSelector } from '@reduxjs/toolkit'
 
 import { request } from './index'
 
@@ -108,28 +108,40 @@ export const collectionSlice = createSlice({
 })
 
 const getters = {
-  all: ({$collection, $exchange}) => {
+  all: createSelector([
+    (state) => state.$collection.all,
+    (state) => state.$collection.searched,
+    (state) => state.$collection.loading,
+    (state) => state.$exchange.sortType,
+  ], (all, searched, loading, sortType) => {
     return {
-      collections: sortCollections($collection.all, $exchange.sortType),
-      searched: sortCollections($collection.searched, $exchange.sortType),
-      isLoading: $collection.loading
+      collections: sortCollections(all, sortType),
+      searched: sortCollections(searched, sortType),
+      isLoading: loading,
     }
-  },
+  }),
   
-  collection: (key, value) => ({$collection}) => {
-    let collection = $collection.all.find(c => c[key] === value)
+  collection: (key, value) => createSelector([
+    (state) => state.$collection.all,
+    (state) => state.$collection.searched,
+  ], (all, searched) => {
+    let collection = all.find(c => c[key] === value)
     if (!collection) {
-      collection = $collection.searched.find(c => c[key] === value)
+      collection = searched.find(c => c[key] === value)
     }
-    return collection
-  },
 
-  pages: ({$collection}) => {
-    const currentIndex = $collection.pages.history.indexOf($collection.pages.current)
-    const prev = $collection.pages.history.find((_, index) => (currentIndex > 0) ? index === (currentIndex - 1) : null) ?? null
-    const next = $collection.pages.history.find((_, index) => (currentIndex >= 0 && currentIndex < $collection.pages.history.length - 1) ? index === (currentIndex + 1) : null) ?? null
+    return collection
+  }),
+
+  pages: createSelector([
+    (state) => state.$collection.pages.history,
+    (state) => state.$collection.pages.current,
+  ], (history, current) => {
+    const currentIndex = history.indexOf(current)
+    const prev = history.find((_, index) => (currentIndex > 0) ? index === (currentIndex - 1) : null) ?? null
+    const next = history.find((_, index) => (currentIndex >= 0 && currentIndex < history.length - 1) ? index === (currentIndex + 1) : null) ?? null
     return { prev, next }
-  },
+  }),
 }
 
 const api = {
