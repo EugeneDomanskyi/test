@@ -2,7 +2,7 @@ import { createSlice, createSelector } from '@reduxjs/toolkit'
 
 import { request } from './index'
 
-const template = (item) => {
+export const template = (item) => {
   return {
     address: item.id,
     image: item.image,
@@ -25,7 +25,7 @@ const template = (item) => {
   }
 }
 
-const sortCollections = (collections, sortType) => {
+export const sortCollections = (collections, sortType) => {
   const [sortField, sortVerctor] = sortType.split(':')
   const sortedMarkets = [...collections].sort((a, b) => {
     switch (sortField) {
@@ -49,8 +49,10 @@ export const collectionSlice = createSlice({
   name: '$collection',
 
   initialState: {
+    fetching: true,
     all: [],
     searched: [],
+    current: {},
     loading: true,
     page: 'init',
     pages: {
@@ -60,6 +62,10 @@ export const collectionSlice = createSlice({
   },
 
   reducers: {
+    fetching: (state, { payload }) => {
+      state.fetching = payload
+    },
+
     loading: (state, { payload }) => {
       state.loading = payload
     },
@@ -70,6 +76,10 @@ export const collectionSlice = createSlice({
 
     searched: (state, { payload }) => {
       state.searched = payload.map(template)
+    },
+
+    current: (state, { payload }) => {
+      state.current = payload
     },
 
     add: (state, { payload }) => {

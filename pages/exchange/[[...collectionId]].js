@@ -36,6 +36,7 @@ const Exchange = () => {
   const socketConnected = useSelector(({$app}) => $app.socketConnected)
   const blockchain = useSelector($app.get.blockchain)
   const { collections, searched, isLoading } = useSelector($collection.get.all)
+  const { current } = useSelector(({$collection}) => $collection)
 
   const [isSSR, setIsSSR] = useState(true)
   const [mobileTab, setMobileTab] = useState('markets')
@@ -93,10 +94,9 @@ const Exchange = () => {
   }, [collectionId])
 
   useEffect(() => {
-    if (blockchain.code && collectionId && wallet) {
+    if (blockchain.code && wallet) {
       $exchange.api.get.orders({
         blockchain: blockchain.code,
-        // collection: collectionId,
         maker: wallet,
         includeCriteriaMetadata: true,
       }).then(res => {
@@ -105,34 +105,45 @@ const Exchange = () => {
         }
       })
     }
-  }, [blockchain.code, collectionId, wallet])
+  }, [blockchain.code, wallet])
   
   useEffect(() => {
     if (socketConnected && collectionId) {
       Stream.subscribe('sale.*', [collectionId])
     }
+
     return () => {
       Stream.unsubscribe('sale.*')
-      Stream.unsubscribe('bid.*')
-      Stream.unsubscribe('ask.*')
     }
   }, [socketConnected, collectionId])
 
   useEffect(() => {
-    if (wallet && socketConnected && collectionId) {
+    if (socketConnected && collectionId && wallet) {
       Stream.subscribe('bid.*', [collectionId], {maker: wallet})
       Stream.subscribe('ask.*', [collectionId], {maker: wallet})
     }
     
+    return () => {
+      Stream.unsubscribe('bid.*')
+      Stream.unsubscribe('ask.*')
+    }
   }, [socketConnected, collectionId, wallet])
 
   useEffect(() => {
     if (!isLoading) {
-      const addressInCollections = collections.find(c => c.address === collectionId)
-      const addressInSearched = searched.find(c => c.address === collectionId)
-      if (!collectionId || (!addressInCollections && !addressInSearched)) {
+      if (!collectionId) {
         const [first] = collections
         router.replace(`${first.address}`, undefined, { scroll: false })
+        dispatch($collection.set.current(first))
+      } else {
+        let find = collections.find(item => item.address == collectionId)
+        if ( ! find) {
+          find = searched.find(item => item.address == collectionId)
+        }
+
+        if (find) {
+          dispatch($collection.set.current(find))
+        }
       }
     }
   }, [isLoading, blockchain.code, collectionId])
@@ -140,7 +151,6 @@ const Exchange = () => {
   const handleOrdersUpdated = () => {
     $exchange.api.get.orders({
       blockchain: blockchain.code,
-      // collection: collectionId,
       maker: wallet,
       includeCriteriaMetadata: true,
     }).then(res => {
@@ -173,27 +183,27 @@ const Exchange = () => {
     <App.Flex gap={GRID_GAP} className={styles.container}>
       {!isMobile ? (
         <>
-          <CollectionList collectionId={collectionId} />
+          <CollectionList current={current} />
 
           <App.Flex column flex={1} gap={GRID_GAP}>
-            <CollectionInfo collectionId={collectionId} />
+            <CollectionInfo current={current} />
 
             <App.Flex gap={GRID_GAP}>
               <App.Flex flex={1} column gap={GRID_GAP}>
                 <Chart />
 
                 <App.Flex gap={GRID_GAP}>
-                  <OrderBook collectionId={collectionId} />
+                  <OrderBook current={current} />
                   <Sales />
                 </App.Flex>
               </App.Flex>
 
               <App.Flex column gap={GRID_GAP}>
                 <App.Flex>
-                  <TradeForm collectionId={collectionId} onOrderCreated={handleOrdersUpdated} />
+                  <TradeForm current={current} onOrderCreated={handleOrdersUpdated} />
                 </App.Flex>
 
-                <Orders collectionId={collectionId} onOrderCancelled={handleOrdersUpdated} />
+                <Orders current={current} onOrderCancelled={handleOrdersUpdated} />
               </App.Flex>
             </App.Flex>
           </App.Flex>
@@ -201,7 +211,7 @@ const Exchange = () => {
       ) : (
         <>
           {mobileTab == 'markets' ? (
-            <CollectionList collectionId={collectionId} />
+            <CollectionList current={current} />
           ) : null}
 
           <MobileTabsBar

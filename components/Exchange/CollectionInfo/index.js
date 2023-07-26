@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import $collection from '@/store/collection'
 import $exchange from '@/store/exchange'
 import $app from '@/store/app'
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -11,13 +10,13 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import App from '@/components/App'
 import { WebIcon, TwitterIcon, DiscordIcon } from '@/components/Icons/exchange'
 
-const CollectionInfo = ({collectionId}) => {
+const CollectionInfo = ({current}) => {
   const { scanUrl } = useWalletConnect()
   const blockchain = useSelector($app.get.blockchain)
-  const currentCollection = useSelector($collection.get.collection('address', collectionId))
   const { high, low } = useSelector($exchange.get.highLow({count: 24, unit: 'hours'}))
-
-  const scanLink = scanUrl(collectionId, 'address', blockchain?.code)
+  
+  const currentCollection = current
+  const scanLink = scanUrl(current.address, 'address', blockchain?.code)
 
   return (
     <App.Flex className={styles.container} gap={6}>
@@ -30,6 +29,7 @@ const CollectionInfo = ({collectionId}) => {
                     ? <Image
                         width={162}
                         height={162}
+                        priority
                         alt=""
                         className={styles.image}
                         src={currentCollection?.image} />

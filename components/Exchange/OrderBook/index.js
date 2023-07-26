@@ -1,6 +1,6 @@
 import styles from './styles.module.scss'
 import { useEffect } from 'react'
-import { useSelector, useDispatch, shallowEqual } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import cn from 'classnames'
 
 import $exchange from '@/store/exchange'
@@ -8,7 +8,7 @@ import $app from '@/store/app'
 
 import App from '@/components/App'
 
-const OrderBook = ({collectionId}) => {
+const OrderBook = ({current}) => {
   const dispatch = useDispatch()
 
   const orderBook = useSelector($exchange.get.orderBook)
@@ -21,9 +21,9 @@ const OrderBook = ({collectionId}) => {
   const maxSellVolume = orderBook.sell.reduce((acc, {quantity}) => acc + quantity*1, 0)
 
   useEffect(() => {
-    if (collectionId && blockchain.code) {
+    if (current?.address && blockchain.code) {
       $exchange.api.get.orderBook({
-        collection: collectionId,
+        collection: current.address,
         blockchain: blockchain.code,
       }).then(res => {
         if (res) {
@@ -31,7 +31,7 @@ const OrderBook = ({collectionId}) => {
         }
       })
     }
-  }, [collectionId, blockchain.code])
+  }, [current, blockchain.code])
 
   return (
     <App.Flex column flex={1} className={styles.card}>

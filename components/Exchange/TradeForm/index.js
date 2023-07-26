@@ -5,7 +5,6 @@ import { toast } from 'react-toastify'
 import Image from 'next/image'
 
 import $app from '@/store/app'
-import $collection from '@/store/collection'
 import $exchange from '@/store/exchange'
 import $modal from '@/store/modal'
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -20,11 +19,11 @@ const TAB_OPTIONS = [
   {key: 'sell', title: 'SELL', color: 'rgb(206, 22, 93)'},
 ]
 
-const TradeForm = ({collectionId, onOrderCreated}) => {
+const TradeForm = ({current, onOrderCreated}) => {
   const dispatch = useDispatch()
   const { wallet, connect, changeNetwork, getBalance } = useWalletConnect()
   const { getNftBalanceUser, getNftUser } = useTrade()
-  const currentCollection = useSelector($collection.get.collection('address', collectionId))
+  
   const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector($exchange.get.orderBook)
 
@@ -33,14 +32,15 @@ const TradeForm = ({collectionId, onOrderCreated}) => {
   const [currentTab, setCurrentTab] = useState('buy')
   const loadingRef = useRef(false)
 
+  const currentCollection = current
   const currentOption = TAB_OPTIONS.find(opt => opt.key === currentTab)
   const [lowestBuy] = orderBook.buy
   const [lowestSell] = orderBook.sell
 
   useEffect(() => {
     const getBalances = async () => {
-      if (collectionId && wallet) {
-        const nftBalance = await getNftBalanceUser(collectionId, wallet)
+      if (current?.address && wallet) {
+        const nftBalance = await getNftBalanceUser(current.address, wallet)
         const nativeBalance = await getBalance()
         setUserBalances({
           native: nativeBalance,
@@ -49,7 +49,7 @@ const TradeForm = ({collectionId, onOrderCreated}) => {
       }
     }
     getBalances()
-  }, [blockchain, wallet, collectionId])
+  }, [blockchain, wallet, current?.address])
 
   useEffect(() => {
     if (currentTab === 'buy' && lowestBuy) {
@@ -123,14 +123,14 @@ const TradeForm = ({collectionId, onOrderCreated}) => {
             },
             data: {
               ...form,
-              collectionId: collectionId,
+              collectionId: current.address,
               blockchain: blockchain,
             },
           }
         }))
         return
       case 'sell':
-        const tokenIds = await getNftUser(collectionId, wallet)
+        const tokenIds = await getNftUser(current.address, wallet)
         if (tokenIds.length < form.amount) {
           toast.error(`You don't have enough NFTs`)
           return
@@ -146,14 +146,14 @@ const TradeForm = ({collectionId, onOrderCreated}) => {
             data: {
               ...form,
               tokens: tokenIds,
-              collectionId: collectionId,
+              collectionId: current.address,
               blockchain: blockchain,
             },
           }
         }))
         return
         // const listing = tokenIds.filter((_, i) => i < form.amount).map((token) => ({
-        //   token: `${collectionId}:${token.token.tokenId}`,
+        //   token: `${current.address}:${token.token.tokenId}`,
         //   weiPrice: parseUnits(`${form.price}`, 18).toString(),
         //   orderKind: 'seaport-v1.5',
         //   options: {
@@ -214,7 +214,7 @@ const TradeForm = ({collectionId, onOrderCreated}) => {
   return (
     <App.Flex className={styles.container} column>
       {
-        collectionId
+        current?.address
           ? <Fragment>
               <Tabs
                 options={TAB_OPTIONS}

@@ -10,7 +10,7 @@ import { trackEvent } from '@/libs/analytics.lib'
 import Stream from '@/libs/stream.lib'
 
 import $app from '@/store/app'
-import $collection from '@/store/collection'
+import $collection, { template } from '@/store/collection'
 
 const Header = dynamic(import('@/components/Header'), { ssr: false })
 const Footer = dynamic(import('@/components/Footer'), { ssr: false })
@@ -23,7 +23,7 @@ const Wrapper = ({ children }) => {
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const { blockchains } = useSelector(({ $app }) => $app)
-  const { page } = useSelector(({ $collection }) => $collection)
+  const { fetching, page, current: collection } = useSelector(({ $collection }) => $collection)
 
   const isInit = useRef(true)
   const updateCollections = useRef(true)
@@ -48,21 +48,22 @@ const Wrapper = ({ children }) => {
   useEffect(() => {
     (async () => {
       if (updateCollections.current) {
-        if (router.isReady) {
+        if (fetching && router.isReady) {
           dispatch($collection.set.loading(true))
 
           let blockchainCode = blockchain.code
           let totalResult = []
 
+          let currentDefined = false
           if (collectionId && isInit.current) {
             isInit.current = false
 
             const result = await $collection.api.all(queryParams(blockchainCode, page, { id: collectionId, limit: 1 }))
             if (result && result.hasOwnProperty('collections')) {
               if (result.collections.length) {
-                totalResult = [
-                  ...result.collections,
-                ]
+                const [current] = result.collections
+                dispatch($collection.set.current(template(current)))
+                currentDefined = true
               } else {
                 let check = false
                 for (const chain of blockchains) {
@@ -75,9 +76,9 @@ const Wrapper = ({ children }) => {
                       dispatch($app.set.code(chain.code))
                       updateCollections.current = false
 
-                      totalResult = [
-                        ...temp.collections,
-                      ]
+                      const [current] = temp.collections
+                      dispatch($collection.set.current(template(current)))
+                      currentDefined = true
                     }
                   }
                 }
@@ -88,21 +89,19 @@ const Wrapper = ({ children }) => {
           const result = await $collection.api.all(queryParams(blockchainCode, page, { maxFloorAskPrice: process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null }))
 
           if (result && result.hasOwnProperty('collections')) {
-            if (! collectionId || collectionId && result.collections.find(item => item.id == collectionId)) {
-              totalResult = result.collections
-            } else {
-              totalResult = [
-                ...totalResult,
-                ...result.collections
-              ]
-            }
-
+            totalResult = result.collections
             dispatch($collection.set.pages(result?.continuation))
+          }
+
+          if ( ! collection?.address && ! currentDefined) {
+            const [current] = totalResult
+            dispatch($collection.set.current(template(current)))
           }
 
           dispatch($collection.set.searched([]))
           dispatch($collection.set.all(totalResult))
           dispatch($collection.set.loading(false))
+          dispatch($collection.set.fetching(false))
           initWSConnection(blockchain.code)
           // Stream.subscribe('collection.updated', result.collections.map(c => c.id))
           // Stream.on('collection.updated', (data) => {
@@ -113,7 +112,7 @@ const Wrapper = ({ children }) => {
         updateCollections.current = true
       }
     })()
-  }, [blockchain, router.isReady])
+  }, [fetching, router.isReady])
 
   const queryParams = (blockchainCode, page, customParams) => {
     const defaultParams = {

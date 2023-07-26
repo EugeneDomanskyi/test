@@ -23,7 +23,7 @@ const Sales = () => {
       </App.Flex>
       <App.Flex flex={1} column sx={{overflow: 'auto'}}>
         {
-          sales.map((sale) => {
+          sales.map((sale, index) => {
             const price = sale.price.amount.decimal
             let color = {
               price: '#53F19C',
@@ -38,7 +38,7 @@ const Sales = () => {
 
             previousPrice = price * 1
             return (
-              <App.Flex key={sale.id} column>
+              <App.Flex key={sale.id + '->' + index} column>
                 <App.Flex  justify="space-between" align="center" className={styles.sale} sx={{backgroundColor: color.row}}>
                   <App.Text flex={1} size={12} weight={500} color={color.price}>{ price }</App.Text>
                   <App.Text flex={1} size={12} weight={600} color="rgba(255,255,255,0.8)" center>{ sale.amount }</App.Text>
