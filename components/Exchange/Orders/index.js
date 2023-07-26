@@ -1,7 +1,7 @@
 import styles from './styles.module.scss'
 import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
-import { useRef, useState } from 'react'
+import { useRef, useState, memo } from 'react'
 import Image from 'next/image'
 import numeral from 'numeral'
 import { useRouter } from 'next/router'
@@ -12,17 +12,16 @@ import $exchange from '@/store/exchange'
 
 import App from '@/components/App'
 
-const Orders = ({current, onOrderCancelled, onClickOrder}) => {
+const Orders = ({onOrderCancelled, onClickOrder}) => {
+  const router = useRouter()
   const orders = useSelector($exchange.get.orders)
   const blockchain = useSelector($app.get.blockchain)
-  const router = useRouter()
+  const current = useSelector(({$collection}) => $collection.current)
 
   const { cancelOrder, errorHandler } = useTrade()
   
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
   const loadingRef = useRef(false)
-
-  const currentCollection = current
 
   const handlePressCancel = (order) => () => {
     loadingRef.current = true
@@ -30,7 +29,7 @@ const Orders = ({current, onOrderCancelled, onClickOrder}) => {
   }
 
   const handleCancelAll = () => {
-
+    onOrderCancelled()
   }
 
   const handleCancelProgress = (steps) => {
@@ -48,7 +47,6 @@ const Orders = ({current, onOrderCancelled, onClickOrder}) => {
 
   const handleClick = order => () => {
     router.push(`${order.contract}`, undefined, {scroll: false})
-    // console.log(order)
     const totalQuantity = order.quantityFilled + order.quantityRemaining
     onClickOrder({
       quantity: totalQuantity,
@@ -72,8 +70,8 @@ const Orders = ({current, onOrderCancelled, onClickOrder}) => {
             checked={showCollectionOrders}
             onChange={handleChangeSwitch} />
           {
-            currentCollection?.image
-              ? <Image alt="" src={currentCollection?.image} width={20} height={20} />
+            current?.image
+              ? <Image alt="" src={current?.image} width={20} height={20} />
               : null
           }
           <App.Text>Orders</App.Text>
@@ -136,4 +134,8 @@ const Orders = ({current, onOrderCancelled, onClickOrder}) => {
   )
 }
 
-export default Orders
+const isEqual = (prev, next) => {
+  return prev.onClickOrder === next.onClickOrder && prev.onOrderCancelled === next.onOrderCancelled
+}
+
+export default memo(Orders, isEqual)

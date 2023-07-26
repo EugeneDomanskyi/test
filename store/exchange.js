@@ -159,6 +159,11 @@ const getters = {
       high: prices.length ? Math.max(...prices) : 0,
     }
   }),
+  recentSales: (limit) => createSelector([
+    state => state.$exchange.sales
+  ], (sales) => {
+    return sales.slice(0, limit)
+  }),
   orderBook: createSelector([
     state => state.$exchange.orderBook
   ], (orderBook) => {

@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { Provider } from 'react-redux'
 import Head from 'next/head'
 import { ToastContainer } from 'react-toastify'
@@ -134,10 +135,11 @@ const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
 })
 
 function MyApp({ Component, pageProps, initialData }) {
+  const storeRef = useRef(store(initialData)).current
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
-        <Provider store={store(initialData)}>
+        <Provider store={storeRef}>
           <Head>
             <title>NFT20 | NFT Trading Platform</title>
           </Head>

@@ -117,7 +117,6 @@ const Exchange = () => {
   }, [socketConnected, collectionId, wallet])
 
   const initCollection = (collectionId, blockchain) => {
-    console.log('initCollection')
     dispatch($exchange.set.loadingCollectionData(true))
     Promise.all([
       $exchange.api.get.sales({
@@ -126,7 +125,7 @@ const Exchange = () => {
         includeDeleted: false,
         includeTokenMetadata: false,
         sortDirection: 'desc',
-        limit: 1000,
+        limit: 800,
       }),
       $exchange.api.get.orderBook({
         collection: collectionId,
@@ -143,16 +142,18 @@ const Exchange = () => {
     })
   }
 
-  const handleOrdersUpdated = () => {
-    $exchange.api.get.orders({
-      blockchain: blockchain.code,
-      maker: wallet,
-      includeCriteriaMetadata: true,
-    }).then(res => {
-      if (res) {
-        dispatch($exchange.set.orders(res))
-      }
-    })
+  const handleOrdersUpdated = useCallback(() => {
+    if (wallet) {
+      $exchange.api.get.orders({
+        blockchain: blockchain.code,
+        maker: wallet,
+        includeCriteriaMetadata: true,
+      }).then(res => {
+        if (res) {
+          dispatch($exchange.set.orders(res))
+        }
+      })
+    }
 
     $exchange.api.get.orderBook({
       collection: collectionId,
@@ -162,7 +163,7 @@ const Exchange = () => {
         dispatch($exchange.set.orderBook(res))
       }
     })
-  }
+  }, [wallet, collectionId, blockchain.code])
 
   const handleMobileTabChange = (tab) => {
     if (tab === 'buy_sell') {
@@ -199,10 +200,10 @@ const Exchange = () => {
 
               <App.Flex column gap={GRID_GAP}>
                 <App.Flex>
-                  <TradeForm ref={tradeForm} current={current} onOrderCreated={handleOrdersUpdated} />
+                  <TradeForm ref={tradeForm} />
                 </App.Flex>
 
-                <Orders current={current} onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
+                <Orders onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
               </App.Flex>
             </App.Flex>
           </App.Flex>

@@ -1,5 +1,5 @@
 import styles from './styles.module.scss'
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, memo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
 import cn from 'classnames'
@@ -136,4 +136,8 @@ const TradeChart = () => {
   )
 }
 
-export default TradeChart
+const isEqual = () => {
+  return true
+}
+
+export default memo(TradeChart, isEqual)

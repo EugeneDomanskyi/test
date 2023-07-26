@@ -1,6 +1,6 @@
 import App from '@/components/App'
 
-const AppLoaderBlock = ({ height=300 }) => {
+const AppLoaderBlock = ({ height = 300 }) => {
   return (
     <App.Flex center height={height}>
       <App.Loader size={40} />
