@@ -1,7 +1,10 @@
+import { useRef } from 'react'
 import { Provider } from 'react-redux'
 import Head from 'next/head'
 import { ToastContainer } from 'react-toastify'
 import { createClient } from '@reservoir0x/reservoir-sdk'
+import nookies from 'nookies'
+import { getSelectorsByUserAgent } from 'react-device-detect'
 
 import { getDefaultWallets, RainbowKitProvider, darkTheme, connectorsForWallets } from '@rainbow-me/rainbowkit'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
@@ -131,13 +134,14 @@ const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
   },
 })
 
-function MyApp({ Component, pageProps }) { 
+function MyApp({ Component, pageProps, initialData }) {
+  const storeRef = useRef(store(initialData)).current
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
-        <Provider store={store}>
+        <Provider store={storeRef}>
           <Head>
-            <title>NFT20 | NFT Trading Platform</title>
+            <title>TEGRO | NFT Trading Platform</title>
           </Head>
 
           <Wrapper>
@@ -150,6 +154,17 @@ function MyApp({ Component, pageProps }) {
       </RainbowKitProvider>
     </WagmiConfig>
   )
+}
+
+MyApp.getInitialProps = async ({ctx}) => {
+  const cookies = nookies.get(ctx)
+  const res = getSelectorsByUserAgent(ctx.req?.headers?.['user-agent'])
+  return {
+    initialData: {
+      blockchain: cookies.blockchain,
+      isMobile: res?.isMobile,
+    }
+  }
 }
 
 export default MyApp

@@ -143,7 +143,7 @@ const Header = () => {
           <div className={cn(styles.mobileMenu, {[styles.show]: mobileMenuShow})}>
             <div className={styles.content}>
               <App.Flex row sx={{ padding: 16 }}>
-                <SwitchBlockchain />
+                <SwitchBlockchain onMobileMenuClose={handleMobileMenuClick} />
               </App.Flex>
 
               <div className={styles.line} />

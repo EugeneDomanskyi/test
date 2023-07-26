@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import useTrade from '@/myhooks/trade'
 import $modal from '@/store/modal'
-import $collection from '@/store/collection'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import BuyModalConfirm from './BuyModalConfirm'
 import BuyModalConfirming from './BuyModalConfirming'
@@ -13,7 +13,7 @@ import BuyModalComplete from './BuyModalComplete'
 const TradeBuyModal = ({data}) => {
   const dispatch = useDispatch()
 
-  const currentCollection = useSelector($collection.get.collection('address', data.collectionId))
+  const currentCollection = useSelector(({$collection}) => $collection.current)
 
   const { placeBid, errorHandler } = useTrade()
   const [step, setStep] = useState('confirm')
@@ -24,13 +24,11 @@ const TradeBuyModal = ({data}) => {
     const bids = [{  
       weiPrice: parseUnits(`${data.total*data.amount}`, 18).toString(),
       collection: data.collectionId,
-      orderKind: 'seaport-v1.5',
-      options: {
-        'seaport-v1.5': {
-          "useOffChainCancellation": true
-        },
-      },
       quantity: data.amount,
+      royaltyBps: 0,
+      // currency: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
+      // orderbookApiKey: '895d629046a0458199e9e8639b63bb57',
+      // orderbook: 'opensea',
     }]
     loadingRef.current = true
     setStep('confirming')
@@ -41,6 +39,16 @@ const TradeBuyModal = ({data}) => {
       },
     }))
     placeBid(bids, progressHandler, onError)
+    trackEvent('Dex Create Order Submit', {
+      'Wallet connect Status': 'Connected',
+      'Network': data.blockchain.name,
+      'Price': data.price,
+      'Quantity': data.amount,
+      'Total': data.total*data.amount,
+      'Side': 'Buy',
+      'Base Currency': data.blockchain.currency,
+      'Quote Currency': currentCollection.name
+    })
   }
 
   const onError = (error) => {
@@ -59,6 +67,16 @@ const TradeBuyModal = ({data}) => {
         },
       }))
       setStep('complete')
+      trackEvent('Dex Create Order Success', {
+        'Wallet connect Status': 'Connected',
+        'Network': data.blockchain.name,
+        'Price': data.price,
+        'Quantity': data.amount,
+        'Total': data.total*data.amount,
+        'Side': 'Buy',
+        'Base Currency': data.blockchain.currency,
+        'Quote Currency': currentCollection.name
+      })
     }
   }
 

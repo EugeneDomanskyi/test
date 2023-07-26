@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import dynamic from 'next/dynamic'
@@ -35,8 +35,8 @@ const Exchange = () => {
   const socketConnected = useSelector(({$app}) => $app.socketConnected)
   const blockchain = useSelector($app.get.blockchain)
   const { current } = useSelector(({$collection}) => $collection)
+  const loadingCollectionData = useSelector(({$exchange}) => $exchange.loadingCollectionData)
 
-  const [isSSR, setIsSSR] = useState(true)
   const [mobileTab, setMobileTab] = useState('markets')
   const [mobileTabTrade, setMobileTabTrade] = useState(false)
 
@@ -47,8 +47,6 @@ const Exchange = () => {
       'Network': blockchain.code.toUpperCase(),
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
     })
-
-    setIsSSR(false)
   }, [])
 
   useEffect(() => {
@@ -77,21 +75,10 @@ const Exchange = () => {
   }, [wallet])
 
   useEffect(() => {
-    if (collectionId) {
-      $exchange.api.get.sales({
-        blockchain: blockchain.code,
-        collection: collectionId,
-        includeDeleted: false,
-        includeTokenMetadata: false,
-        sortDirection: 'desc',
-        limit: 1000,
-      }).then(res => {
-        if (res) {
-          dispatch($exchange.set.sales(res))
-        }
-      })
+    if (collectionId && blockchain.code) {
+      initCollection(collectionId, blockchain.code)
     }
-  }, [collectionId])
+  }, [collectionId, blockchain.code])
 
   useEffect(() => {
     if (blockchain.code && wallet) {
@@ -129,16 +116,44 @@ const Exchange = () => {
     }
   }, [socketConnected, collectionId, wallet])
 
-  const handleOrdersUpdated = () => {
-    $exchange.api.get.orders({
-      blockchain: blockchain.code,
-      maker: wallet,
-      includeCriteriaMetadata: true,
-    }).then(res => {
-      if (res) {
-        dispatch($exchange.set.orders(res))
+  const initCollection = (collectionId, blockchain) => {
+    dispatch($exchange.set.loadingCollectionData(true))
+    Promise.all([
+      $exchange.api.get.sales({
+        collection: collectionId,
+        blockchain: blockchain,
+        includeDeleted: false,
+        includeTokenMetadata: false,
+        sortDirection: 'desc',
+        limit: 800,
+      }),
+      $exchange.api.get.orderBook({
+        collection: collectionId,
+        blockchain: blockchain,
+      })
+    ]).then(([sales, orderBook]) => {
+      if (sales) {
+        dispatch($exchange.set.sales(sales))
       }
+      if (orderBook) {
+        dispatch($exchange.set.orderBook(orderBook))
+      }
+      dispatch($exchange.set.loadingCollectionData(false))
     })
+  }
+
+  const handleOrdersUpdated = useCallback(() => {
+    if (wallet) {
+      $exchange.api.get.orders({
+        blockchain: blockchain.code,
+        maker: wallet,
+        includeCriteriaMetadata: true,
+      }).then(res => {
+        if (res) {
+          dispatch($exchange.set.orders(res))
+        }
+      })
+    }
 
     $exchange.api.get.orderBook({
       collection: collectionId,
@@ -148,7 +163,7 @@ const Exchange = () => {
         dispatch($exchange.set.orderBook(res))
       }
     })
-  }
+  }, [wallet, collectionId, blockchain.code])
 
   const handleMobileTabChange = (tab) => {
     if (tab === 'buy_sell') {
@@ -160,11 +175,11 @@ const Exchange = () => {
     setMobileTab(tab)
   }
 
-  const handleClickOrder = (order) => {
+  const handleClickOrder = useCallback(order => {
     tradeForm.current.setForm({price: order.price, amount: order.quantity, side: order.side})
-  }
+  }, [])
 
-  return ! isSSR ? (
+  return (
     <App.Flex gap={GRID_GAP} className={styles.container}>
       {!isMobile ? (
         <>
@@ -178,17 +193,17 @@ const Exchange = () => {
                 <Chart />
 
                 <App.Flex gap={GRID_GAP}>
-                  <OrderBook current={current} onClickOrder={handleClickOrder} />
+                  <OrderBook onClickOrder={handleClickOrder} />
                   <Sales onClickSale={handleClickOrder} />
                 </App.Flex>
               </App.Flex>
 
               <App.Flex column gap={GRID_GAP}>
                 <App.Flex>
-                  <TradeForm ref={tradeForm} current={current} onOrderCreated={handleOrdersUpdated} />
+                  <TradeForm ref={tradeForm} />
                 </App.Flex>
 
-                <Orders current={current} onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
+                <Orders onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
               </App.Flex>
             </App.Flex>
           </App.Flex>
@@ -206,8 +221,15 @@ const Exchange = () => {
           />
         </>
       )}
+      {
+        loadingCollectionData
+          ? <App.Flex sx={{position: 'fixed', width: '100%', height: '100%'}} align="center" justify="center">
+              <App.Loader size={100} color="#7204FF" />
+            </App.Flex>
+          : null
+      }
     </App.Flex>
-  ) : null
+  )
 }
 
 export default Exchange

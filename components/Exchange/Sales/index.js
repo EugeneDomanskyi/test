@@ -1,11 +1,14 @@
+import { memo } from 'react'
 import { useSelector } from 'react-redux'
 import moment from 'moment'
 import styles from './styles.module.scss'
 
+import $exchange from '@/store/exchange'
+
 import App from '@/components/App'
 
 const Sales = ({onClickSale}) => {
-  const sales = useSelector(({$exchange}) => $exchange.sales)
+  const sales = useSelector($exchange.get.recentSales(50))
 
   let previousPrice = 0
 
@@ -59,4 +62,8 @@ const Sales = ({onClickSale}) => {
   )
 }
 
-export default Sales
+const isEqual = (prev, next) => {
+  return prev.onClickSale === next.onClickSale
+}
+
+export default memo(Sales, isEqual)
