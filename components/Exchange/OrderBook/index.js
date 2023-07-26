@@ -8,7 +8,7 @@ import $app from '@/store/app'
 
 import App from '@/components/App'
 
-const OrderBook = ({collectionId, onClickOrder}) => {
+const OrderBook = ({current, onClickOrder}) => {
   const dispatch = useDispatch()
 
   const orderBook = useSelector($exchange.get.orderBook)
@@ -21,9 +21,9 @@ const OrderBook = ({collectionId, onClickOrder}) => {
   const maxSellVolume = orderBook.sell.reduce((acc, {quantity}) => acc + quantity*1, 0)
 
   useEffect(() => {
-    if (collectionId && blockchain.code) {
+    if (current?.address && blockchain.code) {
       $exchange.api.get.orderBook({
-        collection: collectionId,
+        collection: current.address,
         blockchain: blockchain.code,
       }).then(res => {
         if (res) {
@@ -31,7 +31,7 @@ const OrderBook = ({collectionId, onClickOrder}) => {
         }
       })
     }
-  }, [collectionId, blockchain.code])
+  }, [current, blockchain.code])
 
   const handleClick = (order) => () => {
     onClickOrder(order)

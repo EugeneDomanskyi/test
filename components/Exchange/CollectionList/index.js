@@ -13,38 +13,35 @@ import CollectionCard from '@/components/Exchange/CollectionCard'
 
 import styles from './styles.module.scss'
 
-const CollectionList = ({collectionId}) => {
+const CollectionList = ({current}) => {
   const { isContractAddress, usdt } = useWalletConnect()
   const dispatch = useDispatch()
 
   const blockchain = useSelector($app.get.blockchain)
   const pages = useSelector($collection.get.pages)
+  const { page } = useSelector(({$collection}) => $collection)
   const { sortType } = useSelector(({$exchange}) => $exchange)
   const { loading } = useSelector(({$collection}) => $collection)
   const { collections, searched } = useSelector($collection.get.all)
 
-  const [collectionList, setCollectionList] = useState([])
   const [search, setSearch] = useState('')
   const [searchLoading, setSearchLoading] = useState(false)
   const [wasSearched, setWasSearched] = useState(false)
-  const [pageType, setPageType] = useState(null)
 
   const [sortField, sortVerctor] = sortType.split(':')
   let timeoutId = useRef(null)
 
   useEffect(() => {
-    if (search.trim() == '') {
-      setCollectionList(collections)
-    } else {
-      if (wasSearched) {
-        setCollectionList(searched)
-      }
-    }
-  }, [search, collections, searched, wasSearched])
-
-  useEffect(() => {
     setSearch('')
   }, [blockchain])
+
+  const collectionList = () => {
+    if (search.trim() != '' && wasSearched) {
+      return searched
+    }
+
+    return collections
+  }
 
   const setSort = field => () => {
     if (field === sortField) {
@@ -110,7 +107,7 @@ const CollectionList = ({collectionId}) => {
     }
 
     dispatch($collection.set.page(continuation))
-    setPageType(page)
+    dispatch($collection.set.fetching(true))
   }
   
   return (
@@ -153,12 +150,12 @@ const CollectionList = ({collectionId}) => {
 
       <div className={styles.cardBox}>
         <div className={styles.cardBoxContent}>
-          {collectionList.map((collection) => {
+          {collectionList().map((collection) => {
             return (
               <CollectionCard
                 key={collection.address}
                 collection={collection}
-                isActive={collectionId === collection.address}
+                isActive={current.address === collection.address}
               />
             )
           })}
@@ -168,7 +165,7 @@ const CollectionList = ({collectionId}) => {
       {!wasSearched ? (
         <App.Flex row align="center" justify="space-between" sx={{ padding: 16 }}>
           <App.Button small primary outlined={! pages.prev} disabled={! pages.prev} onClick={handlePage('prev')}>
-            {loading && pageType == 'prev' ? (
+            {loading && page == pages.prev ? (
               <App.Loader size={16} />
             ) : (
               <App.Icon icon="chevron-left" color="#fff" />
@@ -178,7 +175,7 @@ const CollectionList = ({collectionId}) => {
 
           <App.Button small primary outlined={! pages.next} disabled={! pages.next} onClick={handlePage('next')}>
             Next
-            {loading && pageType == 'next' ? (
+            {loading && page == pages.next ? (
               <App.Loader size={16} />
             ) : (
               <App.Icon icon="chevron-right" width={16} height={16} />

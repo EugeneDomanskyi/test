@@ -5,7 +5,6 @@ import { toast } from 'react-toastify'
 import Image from 'next/image'
 
 import $app from '@/store/app'
-import $collection from '@/store/collection'
 import $exchange from '@/store/exchange'
 import $modal from '@/store/modal'
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -21,11 +20,11 @@ const TAB_OPTIONS = [
   {key: 'sell', title: 'SELL', color: 'rgb(206, 22, 93)'},
 ]
 
-const TradeForm = forwardRef(({collectionId, onOrderCreated}, ref) => {
+const TradeForm = forwardRef(({current, onOrderCreated}, ref) => {
   const dispatch = useDispatch()
   const { wallet, connect, changeNetwork, getBalance } = useWalletConnect()
   const { getNftBalanceUser, getNftUser } = useTrade()
-  const currentCollection = useSelector($collection.get.collection('address', collectionId))
+  
   const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector($exchange.get.orderBook)
 
@@ -36,6 +35,7 @@ const TradeForm = forwardRef(({collectionId, onOrderCreated}, ref) => {
   const priceSetted = useRef(false)
   const loadingRef = useRef(false)
 
+  const currentCollection = current
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
       priceSetted.current = true
@@ -51,12 +51,12 @@ const TradeForm = forwardRef(({collectionId, onOrderCreated}, ref) => {
 
   useEffect(() => {
     priceSetted.current = false
-  }, [collectionId])
+  }, [current?.address])
 
   useEffect(() => {
     const getBalances = async () => {
-      if (collectionId && wallet) {
-        const nftBalance = await getNftBalanceUser(collectionId, wallet)
+      if (current?.address && wallet) {
+        const nftBalance = await getNftBalanceUser(current.address, wallet)
         const nativeBalance = await getBalance()
         setUserBalances({
           native: nativeBalance,
@@ -65,7 +65,7 @@ const TradeForm = forwardRef(({collectionId, onOrderCreated}, ref) => {
       }
     }
     getBalances()
-  }, [blockchain, wallet, collectionId])
+  }, [blockchain, wallet, current?.address])
 
   useEffect(() => {
     if (priceSetted.current) {
@@ -147,14 +147,14 @@ const TradeForm = forwardRef(({collectionId, onOrderCreated}, ref) => {
             },
             data: {
               ...form,
-              collectionId: collectionId,
+              collectionId: current.address,
               blockchain: blockchain,
             },
           }
         }))
         return
       case 'sell':
-        const tokenIds = await getNftUser(collectionId, wallet)
+        const tokenIds = await getNftUser(current.address, wallet)
         if (tokenIds.length < form.amount) {
           toast.error(`You don't have enough NFTs`)
           return
@@ -170,7 +170,7 @@ const TradeForm = forwardRef(({collectionId, onOrderCreated}, ref) => {
             data: {
               ...form,
               tokens: tokenIds,
-              collectionId: collectionId,
+              collectionId: current.address,
               blockchain: blockchain,
             },
           }
@@ -243,7 +243,7 @@ const TradeForm = forwardRef(({collectionId, onOrderCreated}, ref) => {
   return (
     <App.Flex className={styles.container} column>
       {
-        collectionId
+        current?.address
           ? <Fragment>
               <Tabs
                 options={TAB_OPTIONS}

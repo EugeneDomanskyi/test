@@ -27,7 +27,7 @@ const Sales = ({onClickSale}) => {
       </App.Flex>
       <App.Flex flex={1} column sx={{overflow: 'auto'}}>
         {
-          sales.map((sale) => {
+          sales.map((sale, index) => {
             const price = sale.price.amount.decimal
             let color = {
               price: '#53F19C',

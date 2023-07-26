@@ -65,8 +65,10 @@ const HomeBalance = ({ justify = 'center' }) => {
       Network: val.toUpperCase(),
     })
     
-    dispatch($collection.set.pagesClear())
     dispatch($app.set.code(val))
+    dispatch($collection.set.pagesClear())
+    dispatch($collection.set.current({}))
+    dispatch($collection.set.fetching(true))
     setMenuShow(false)
   }
 

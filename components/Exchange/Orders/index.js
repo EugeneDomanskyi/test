@@ -8,21 +8,21 @@ import { useRouter } from 'next/router'
 
 import useTrade from '@/myhooks/trade'
 import $app from '@/store/app'
-import $collection from '@/store/collection'
 import $exchange from '@/store/exchange'
 
 import App from '@/components/App'
 
-const Orders = ({collectionId, onOrderCancelled, onClickOrder}) => {
+const Orders = ({current, onOrderCancelled, onClickOrder}) => {
   const orders = useSelector($exchange.get.orders)
-  const currentCollection = useSelector($collection.get.collection('address', collectionId))
   const blockchain = useSelector($app.get.blockchain)
   const router = useRouter()
 
   const { cancelOrder, errorHandler } = useTrade()
-
+  
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
   const loadingRef = useRef(false)
+
+  const currentCollection = current
 
   const handlePressCancel = (order) => () => {
     loadingRef.current = true
@@ -98,7 +98,7 @@ const Orders = ({collectionId, onOrderCancelled, onClickOrder}) => {
       </App.Flex>
       <App.Flex column flex={1} sx={{overflow: 'auto'}}>
         {
-          orders.filter(order => !showCollectionOrders || (order.contract === collectionId)).map((order) => {
+          orders.filter(order => !showCollectionOrders || (order.contract === current.address)).map((order) => {
             const totalQuantity = order.quantityRemaining +  order.quantityFilled
             return (
               <App.Flex key={order.id} column>
