@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import dynamic from 'next/dynamic'
@@ -41,6 +41,8 @@ const Exchange = () => {
   const [isSSR, setIsSSR] = useState(true)
   const [mobileTab, setMobileTab] = useState('markets')
   const [mobileTabTrade, setMobileTabTrade] = useState(false)
+
+  const tradeForm = useRef(null)
 
   useEffect(() => {
     trackEvent('Dex Exchange Clicked', {
@@ -179,6 +181,10 @@ const Exchange = () => {
     setMobileTab(tab)
   }
 
+  const handleClickOrder = (order) => {
+    tradeForm.current.setForm({price: order.price, amount: order.quantity, side: order.side})
+  }
+
   return ! isSSR ? (
     <App.Flex gap={GRID_GAP} className={styles.container}>
       {!isMobile ? (
@@ -193,17 +199,17 @@ const Exchange = () => {
                 <Chart />
 
                 <App.Flex gap={GRID_GAP}>
-                  <OrderBook current={current} />
-                  <Sales />
+                  <OrderBook current={current} onClickOrder={handleClickOrder} />
+                  <Sales onClickSale={handleClickOrder} />
                 </App.Flex>
               </App.Flex>
 
               <App.Flex column gap={GRID_GAP}>
                 <App.Flex>
-                  <TradeForm current={current} onOrderCreated={handleOrdersUpdated} />
+                  <TradeForm ref={tradeForm} current={current} onOrderCreated={handleOrdersUpdated} />
                 </App.Flex>
 
-                <Orders current={current} onOrderCancelled={handleOrdersUpdated} />
+                <Orders current={current} onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
               </App.Flex>
             </App.Flex>
           </App.Flex>

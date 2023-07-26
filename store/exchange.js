@@ -9,7 +9,7 @@ const round = (date, duration, method) => {
   return moment(Math[method]((+date) / (+duration)) * (+duration))
 }
 
-const generatePeriods = (from, to, step) => {
+const generatePeriods = (from, to, closePrice, step) => {
   const start = moment(from, 'DD-MM-YY HH:mm')
   const end = moment(to, 'DD-MM-YY HH:mm')
   const range = moment.range(start, end)
@@ -22,7 +22,7 @@ const generatePeriods = (from, to, step) => {
         date: time,
         roundedDate: roundedDate,
         volume: 0,
-        price: 0,
+        price: closePrice,
         timestamp: time.unix()*1000,
       }]
     }
@@ -97,18 +97,20 @@ const getters = {
     }, {})
 
     let previousRoundedDate = ''
+    let previousClosePrice = 0
 
-    const temp = Object.entries(groupedSales).reduce((acc, [time, data]) => {
+    const temp = Object.entries(groupedSales).reduce((acc, [time, sales]) => {
       let emptyPeriods = {}
       const isNext = !previousRoundedDate
       if (!isNext) {
-        emptyPeriods = generatePeriods(time, previousRoundedDate, {count: interval.count, unit: interval.unit})
+        emptyPeriods = generatePeriods(time, previousRoundedDate, previousClosePrice, {count: interval.count, unit: interval.unit})
       }
       previousRoundedDate = time
+      previousClosePrice = sales.sort((a, b) => b.timestamp - a.timestamp)[0].price
       return {
         ...acc,
         ...emptyPeriods,
-        [time]: data,
+        [time]: sales,
       }
     }, {})
 

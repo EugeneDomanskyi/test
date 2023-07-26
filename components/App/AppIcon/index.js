@@ -207,6 +207,14 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
         </svg>
       )
     }
+
+    if (icon === 'info') {
+      return (
+        <svg width={width ?? 10} height={height ?? 10} viewBox="0 0 10 10" fill="none" {...props}>
+          <path stroke={color ?? '#B9B8C5'} strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M5 6.6v-2M5 1C2.8 1 1 2.8 1 5s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4ZM5.002 3.4h-.004" />
+        </svg>
+      )
+    }
   }
 
   return getIcon()

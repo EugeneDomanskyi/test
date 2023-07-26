@@ -22,7 +22,7 @@ const TradeBuyModal = ({data}) => {
 
   const handleConfirm = () => {
     const bids = [{  
-      weiPrice: parseUnits(`${data.total}`, 18).toString(),
+      weiPrice: parseUnits(`${data.total*data.amount}`, 18).toString(),
       collection: data.collectionId,
       orderKind: 'seaport-v1.5',
       options: {

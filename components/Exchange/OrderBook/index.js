@@ -8,7 +8,7 @@ import $app from '@/store/app'
 
 import App from '@/components/App'
 
-const OrderBook = ({current}) => {
+const OrderBook = ({current, onClickOrder}) => {
   const dispatch = useDispatch()
 
   const orderBook = useSelector($exchange.get.orderBook)
@@ -33,6 +33,10 @@ const OrderBook = ({current}) => {
     }
   }, [current, blockchain.code])
 
+  const handleClick = (order) => () => {
+    onClickOrder(order)
+  }
+
   return (
     <App.Flex column flex={1} className={styles.card}>
       <App.Flex className={styles.header} align="center">
@@ -49,7 +53,7 @@ const OrderBook = ({current}) => {
               prevBuyVolumeValue += order.quantity * 1
               const width = prevBuyVolumeValue * 100 / maxBuyVolume
               return (
-                <App.Flex key={i} justify="space-between" align="center" className={styles.row}>
+                <App.Flex key={i} justify="space-between" align="center" className={styles.row} onClick={handleClick({...order, side: 'sell'})}>
                   <div className={cn(styles.fill, styles.buy)} style={{width}} />
                   <App.Text size={12} sx={{position: 'relative'}} weight={600} color="#53f19c">{ order.price }</App.Text>
                   <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600} sx={{position: 'relative'}}>{ order.quantity }</App.Text>
@@ -68,7 +72,7 @@ const OrderBook = ({current}) => {
               prevSellVolumeValue += order.quantity * 1
               const width = prevSellVolumeValue * 100 / maxSellVolume
               return (
-                <App.Flex key={i} justify="space-between" align="center" className={styles.row}>
+                <App.Flex key={i} justify="space-between" align="center" className={styles.row} onClick={handleClick({...order, side: 'buy'})}>
                   <div className={cn(styles.fill, styles.sell)} style={{width}} />
                   <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600} sx={{position: 'relative'}}>{ order.quantity }</App.Text>
                   <App.Text size={12} sx={{position: 'relative'}} weight={600} color="#eb3169">{ order.price }</App.Text>
