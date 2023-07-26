@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import useTrade from '@/myhooks/trade'
 import $modal from '@/store/modal'
 import $collection from '@/store/collection'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import BuyModalConfirm from './BuyModalConfirm'
 import BuyModalConfirming from './BuyModalConfirming'
@@ -41,6 +42,16 @@ const TradeBuyModal = ({data}) => {
       },
     }))
     placeBid(bids, progressHandler, onError)
+    trackEvent('Dex Create Order Submit', {
+      'Wallet connect Status': 'Connected',
+      'Network': data.blockchain.name,
+      'Price': data.price,
+      'Quantity': data.amount,
+      'Total': data.total*data.amount,
+      'Side': 'Buy',
+      'Base Currency': data.blockchain.currency,
+      'Quote Currency': currentCollection.name
+    })
   }
 
   const onError = (error) => {
@@ -59,6 +70,16 @@ const TradeBuyModal = ({data}) => {
         },
       }))
       setStep('complete')
+      trackEvent('Dex Create Order Success', {
+        'Wallet connect Status': 'Connected',
+        'Network': data.blockchain.name,
+        'Price': data.price,
+        'Quantity': data.amount,
+        'Total': data.total*data.amount,
+        'Side': 'Buy',
+        'Base Currency': data.blockchain.currency,
+        'Quote Currency': currentCollection.name
+      })
     }
   }
 

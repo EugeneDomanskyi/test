@@ -5,6 +5,7 @@ import { parseUnits } from 'viem'
 import $collection from '@/store/collection'
 import $modal from '@/store/modal'
 import useTrade from '@/myhooks/trade'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 import SellModalSelect from '@/components/Exchange/SellModal/SellModalSelect'
@@ -42,7 +43,6 @@ const SellModal = ({data}) => {
     dispatch($modal.set.update({header: {
       title: `Buy ${currentCollection.name} for ${data.blockchain.currency}`
     }}))
-    
   }
 
   const handleConfirm = () => {
@@ -66,6 +66,16 @@ const SellModal = ({data}) => {
       },
     }))
     placeAsk(listing, progressHandler, onError)
+    trackEvent('Dex Create Order Submit', {
+      'Wallet connect Status': 'Connected',
+      'Network': data.blockchain.name,
+      'Price': data.price,
+      'Quantity': selectedAmount,
+      'Total': selectedAmount*data.price,
+      'Side': 'Sell',
+      'Base Currency': data.blockchain.currency,
+      'Quote Currency': currentCollection.name
+    })
   }
 
   const progressHandler = (steps) => {
@@ -79,6 +89,16 @@ const SellModal = ({data}) => {
         },
       }))
       setStep('complete')
+      trackEvent('Dex Create Order Success', {
+        'Wallet connect Status': 'Connected',
+        'Network': data.blockchain.name,
+        'Price': data.price,
+        'Quantity': selectedAmount,
+        'Total': selectedAmount*data.price,
+        'Side': 'Sell',
+        'Base Currency': data.blockchain.currency,
+        'Quote Currency': currentCollection.name
+      })
     }
   }
 

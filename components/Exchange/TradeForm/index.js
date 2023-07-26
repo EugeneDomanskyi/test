@@ -10,6 +10,7 @@ import $exchange from '@/store/exchange'
 import $modal from '@/store/modal'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useTrade from '@/myhooks/trade'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 import Tabs from '@/components/Exchange/Tabs'
@@ -174,33 +175,38 @@ const TradeForm = forwardRef(({collectionId, onOrderCreated}, ref) => {
             },
           }
         }))
-        return
-        // const listing = tokenIds.filter((_, i) => i < form.amount).map((token) => ({
-        //   token: `${collectionId}:${token.token.tokenId}`,
-        //   weiPrice: parseUnits(`${form.price}`, 18).toString(),
-        //   orderKind: 'seaport-v1.5',
-        //   options: {
-        //     'seaport-v1.5': {
-        //       "useOffChainCancellation": true
-        //     },
-        //   },
-        //   quantity: 1,
-        // }))
-        // placeAsk(listing, progressHandler, errorHandler)
-    }
-  }
-
-  const progressHandler = steps => {
-    const isAllStepsComplete = steps.flatMap(step => step.items).every(step => step.status === 'complete')
-    if (isAllStepsComplete && loadingRef.current) {
-      toast.success('Order created successfully')
-      loadingRef.current = false
-      onOrderCreated()
     }
   }
 
   const handleTotalBlur = () => {
     handleChangeForm('price')(form.total/form.amount)
+    trackEvent('Dex Add Total', {
+      'Base Currency': blockchain.currency,
+      'Quote Currency': currentCollection.name,
+      'Total': form.total,
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Network': blockchain.name,
+    })
+  }
+
+  const handleBlurPrice = () => {
+    trackEvent('Dex Add Price', {
+      'Base Currency': blockchain.currency,
+      'Quote Currency': currentCollection.name,
+      'Price': form.price,
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Network': blockchain.name,
+    })
+  }
+
+  const handleBlurAmount = () => {
+    trackEvent('Dex Add Amount', {
+      'Base Currency': blockchain.currency,
+      'Quote Currency': currentCollection.name,
+      'Amount': form.amount,
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Network': blockchain.name,
+    })
   }
 
   const handleClickMultipler = (percentage) => () => {
@@ -250,6 +256,7 @@ const TradeForm = forwardRef(({collectionId, onOrderCreated}, ref) => {
                     label="AT PRICE"
                     currency={blockchain.currency}
                     value={form.price}
+                    onBlur={handleBlurPrice}
                     onChange={handleChangeForm('price')} />
                 </App.Flex>
                 <App.Flex column sx={{marginBottom: 24}}>
@@ -257,6 +264,7 @@ const TradeForm = forwardRef(({collectionId, onOrderCreated}, ref) => {
                     label="AMOUNT"
                     value={form.amount}
                     currency={`NFT${form.amount > 1 ? `'s` : ''}`}
+                    onBlur={handleBlurAmount}
                     onChange={handleChangeForm('amount')} />
                   {
                     currentTab === 'sell'
