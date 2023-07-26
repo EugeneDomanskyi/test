@@ -1,0 +1,65 @@
+.box {
+  padding: 16px 26px;
+  border-bottom: solid #1D1937 1px;
+
+  &.borderTop {
+    border-top: solid #1D1937 1px;
+    border-bottom: 0;
+  }
+}
+
+.content {
+  background-color: #08051C;
+  
+  .nfts {
+    padding: 26px;
+    min-height: 300px;
+  }
+}
+
+.buttonsBox {
+  background-color: #120F25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 24px;
+  padding: 26px;
+
+  .backLink {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 19px;
+    color: #AAA3CF;
+    cursor: pointer;
+    transition: all .3s ease 0s;
+
+    &:hover {
+      opacity: .5;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .infoRow {
+    .infoRight {
+      .selectedCount {
+        display: none;
+      }
+    }
+  }
+
+  .content {
+    .nfts {
+      padding: 16px;
+    }
+  }
+
+  .box {
+    padding: 16px;
+  }
+
+  .buttonsBox {
+    padding: 16px;
+  }
+}

@@ -4,13 +4,14 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 
 import styles from './styles.module.scss'
 
-const AppContainer = ({ children, width, height, className, sx = {}, ...props }) => {
+const AppContainer = ({ children, fluid, width, height, className, sx = {}, ...props }) => {
   const { propValue } = usePropsHelper()
 
   const classes = () => {
     return cn(
       styles.container,
-      className
+      {[styles.fluid]: fluid},
+      className,
     )
   }
 

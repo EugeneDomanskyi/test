@@ -1,0 +1,26 @@
+// .input {
+//   -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+//   width: 100%; /* Specific width is required for Firefox. */
+//   background: transparent; /* Otherwise white in Chrome */
+// }
+.container {
+  width: 300px;
+  padding: 0px 10px;
+
+  &.disabled {
+    opacity: 0.6;
+  }
+
+  .root {
+    color: #7204FF;
+  }
+
+  .thumb {
+    width: 20px;
+    height: 20px;
+  }
+
+  .rail {
+    background-color: #7204FF;
+  }
+}

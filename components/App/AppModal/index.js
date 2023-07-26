@@ -78,7 +78,7 @@ const AppModal = () => {
     <div ref={layout} className={styles.layout}>
       <div ref={content} className={styles.content} onClick={handleClose}>
         <div onClick={e => e.stopPropagation()}>
-          <div className={styles.wrapper}>
+          <div className={cn(styles.wrapper, {[styles[props?.size]]: props?.size})}>
             {props?.header ? (
               <div className={styles.header}>
                 <div className={styles.closeButton} onClick={handleClose}>
@@ -86,7 +86,11 @@ const AppModal = () => {
                 </div>
 
                 <App.Flex column gap={[16, 32]} className={styles.headerContent}>
-                  {props.header?.content ? props.header.content : (
+                  {props.header?.image ? (
+                    <App.Flex center>
+                      <img src={props.header?.image} width={120} height={120} alt="" />
+                    </App.Flex>
+                  ) : (
                     <>
                       <App.Flex column align={['center', 'flex-start']} gap={[16, 8]}>
                         {props.header?.title ? (

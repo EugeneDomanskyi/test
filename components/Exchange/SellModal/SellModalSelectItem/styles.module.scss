@@ -1,0 +1,52 @@
+.item {
+  background: #0E0B23;
+  border-radius: 8px;
+  transition: all .1s ease 0s;
+  border: solid transparent 1px;
+  opacity: .7;
+  width: 140px;
+  cursor: pointer;
+
+  &:hover:not(.disabled) {
+    opacity: 1;
+  }
+
+  &.selected {
+    border-color: #7204FF;
+    opacity: 1;
+  }
+
+  &.disabled {
+    opacity: .5;
+  }
+
+  .preview {
+    height: 138px;
+    width: 138px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    border-radius: 8px;
+  }
+
+  .label {
+    border-radius: 0 0 8px 8px;
+    background: #605884;
+    padding: 4px;
+
+    &.supported {
+      background: #7204FF;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .item {
+    width: 120px;
+
+    .preview {
+      height: 120px;
+      width: 120px;
+    }
+  }
+}

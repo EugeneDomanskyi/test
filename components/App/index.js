@@ -6,13 +6,15 @@ import AppContainer from '@/components/App/AppContainer'
 import AppFlex from '@/components/App/AppFlex'
 import AppFrame from '@/components/App/AppFrame'
 import AppIcon from '@/components/App/AppIcon'
-import AppLayout from '@/components/App/AppLayout'
 import AppLoader from '@/components/App/AppLoader'
 import AppLoaderBlock from '@/components/App/AppLoaderBlock'
 import AppModal from '@/components/App/AppModal'
+import AppSwitch from '@/components/App/AppSwitch'
 import AppTabs from '@/components/App/AppTabs'
 import AppText from '@/components/App/AppText'
 import AppTextField from '@/components/App/AppTextField'
+import AppRangeInput from '@/components/App/AppRangeInput'
+import AppTooltip from '@/components/App/AppTooltip'
 
 export default {
   Address: AppAddress,
@@ -23,11 +25,14 @@ export default {
   Flex: AppFlex,
   Frame: AppFrame,
   Icon: AppIcon,
-  Layout: AppLayout,
   Loader: AppLoader,
   LoaderBlock: AppLoaderBlock,
   Modal: AppModal,
+  Switch: AppSwitch,
   Tabs: AppTabs,
   Text: AppText,
   TextField: AppTextField,
+  Switch: AppSwitch,
+  RangeInput: AppRangeInput,
+  Tooltip: AppTooltip,
 }

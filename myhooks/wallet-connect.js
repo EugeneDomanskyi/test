@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount, useNetwork, useWalletClient } from 'wagmi'
 import { signMessage, disconnect as wagmiDisconnect, getNetwork, getAccount, switchNetwork, fetchBalance } from '@wagmi/core'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 
@@ -8,16 +8,39 @@ const useWalletConnect = () => {
 
   const { openConnectModal, connectModalOpen } = useConnectModal()
   const { address, isConnected } = useAccount()
-  const { chain } = useNetwork()
+  const { chain, chains } = useNetwork()
+  const { data: walletClient } = useWalletClient()
 
   const [modalOpen, setModalOpen] = useState(false)
   const [wallet, setWallet] = useState(null)
-  const [blockchain, setBlockchain] = useState(null)
+  const [blockchain, setBlockchain] = useState('')
+  const [blockchains, setBlockchains] = useState([])
   const [callback, setCallback] = useState({ success: null, failed: null })
 
   const usdt = {
     polygon: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
     ethereum: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    goerli: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    bnb: '0x55d398326f99059fF775485246999027B3197955',
+  }
+
+  const jsonRpcEndpoints = {
+    1: [
+      `https://eth-mainnet.alchemyapi.io/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`,
+      `https://mainnet.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_ID}`,
+    ],
+    56: [
+      `https://bnbsmartchain-mainnet.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_ID}`,
+    ],
+    137: [
+      `https://polygon-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`,
+      `https://polygon-mainnet.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_ID}`,
+    ],
+  }
+
+  const isContractAddress = (str) => {
+    const contractAddressRegExp = /^(0x)?[0-9a-fA-F]{40}$/;
+    return contractAddressRegExp.test(str)
   }
 
   const connect = () => {
@@ -61,6 +84,18 @@ const useWalletConnect = () => {
   useEffect(() => {
     setBlockchain(isConnected ? chain.name : null)
   }, [chain, isConnected])
+
+  useEffect(() => {
+    setBlockchains(isConnected ? chains.map(item => {
+      return {
+        id: item.id,
+        name: item.name,
+        code: item.name.toLowerCase(),
+        currency: item.nativeCurrency.symbol,
+        decimals: item.nativeCurrency.decimals,
+      }
+    }) : [])
+  }, [chains, isConnected])
 
   const disconnect = () => {
     wagmiDisconnect()
@@ -224,7 +259,22 @@ const useWalletConnect = () => {
     }
   }
 
-  return { wallet, blockchain, connect, disconnect, network, changeNetwork, getBalance, getPrice, scanUrl, usdt }
+  return {
+    wallet,
+    blockchain,
+    blockchains,
+    walletClient,
+    isContractAddress,
+    connect,
+    disconnect,
+    network,
+    changeNetwork,
+    getBalance,
+    getPrice,
+    scanUrl,
+    usdt,
+    jsonRpcEndpoints,
+  }
 }
 
 export default useWalletConnect

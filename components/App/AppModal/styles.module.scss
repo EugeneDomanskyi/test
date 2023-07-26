@@ -32,9 +32,17 @@
       border-radius: 20px;
       width: 520px;
       max-width: 100%;
+      position: relative;
+      z-index: 0;
+      overflow: hidden;
+
+      &.small {
+        width: 360px;
+      }
 
       .header {
         position: relative;
+        z-index: 0;
         border-bottom: solid #1D1937 1px;
 
         .closeButton {
