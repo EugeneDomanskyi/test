@@ -1,8 +1,12 @@
-import { useEffect, useState } from 'react'
-import * as rdd from 'react-device-detect'
+import { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+
+import $app from '@/store/app'
 
 export const usePropsHelper = () => {
-  const [isMobile, setIsMobile] = useState(rdd.isMobile)
+  const dispatch = useDispatch()
+
+  const isMobile = useSelector(({$app}) => $app.isMobile)
 
   const getWindowSize = () => {
     if (typeof window !== 'undefined') {
@@ -14,7 +18,7 @@ export const usePropsHelper = () => {
   }
 
   const handleWindowResize = () => {
-    setIsMobile(getWindowSize().width <= 768)
+    dispatch($app.set.isMobile(getWindowSize().width <= 768))
   }
 
   useEffect(() => {

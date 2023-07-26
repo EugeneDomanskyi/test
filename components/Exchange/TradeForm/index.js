@@ -1,5 +1,5 @@
 import styles from './styles.module.scss'
-import { useState, useEffect, useRef, Fragment, forwardRef, useImperativeHandle } from 'react'
+import { useState, useEffect, useRef, Fragment, forwardRef, useImperativeHandle, memo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import Image from 'next/image'
@@ -9,6 +9,7 @@ import $exchange from '@/store/exchange'
 import $modal from '@/store/modal'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useTrade from '@/myhooks/trade'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 import Tabs from '@/components/Exchange/Tabs'
@@ -19,13 +20,14 @@ const TAB_OPTIONS = [
   {key: 'sell', title: 'SELL', color: 'rgb(206, 22, 93)'},
 ]
 
-const TradeForm = forwardRef(({current, onOrderCreated}, ref) => {
+const TradeForm = forwardRef((_props, ref) => {
   const dispatch = useDispatch()
   const { wallet, connect, changeNetwork, getBalance } = useWalletConnect()
   const { getNftBalanceUser, getNftUser } = useTrade()
   
   const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector($exchange.get.orderBook)
+  const currentCollection = useSelector(({$collection}) => $collection.current)
 
   const [userBalances, setUserBalances] = useState({native: 0, token: 0})
   const [form, setForm] = useState({price: '0', amount: '1', total: '0'})
@@ -34,7 +36,6 @@ const TradeForm = forwardRef(({current, onOrderCreated}, ref) => {
   const priceSetted = useRef(false)
   const loadingRef = useRef(false)
 
-  const currentCollection = current
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
       priceSetted.current = true
@@ -50,12 +51,12 @@ const TradeForm = forwardRef(({current, onOrderCreated}, ref) => {
 
   useEffect(() => {
     priceSetted.current = false
-  }, [current?.address])
+  }, [currentCollection?.address])
 
   useEffect(() => {
     const getBalances = async () => {
-      if (current?.address && wallet) {
-        const nftBalance = await getNftBalanceUser(current.address, wallet)
+      if (currentCollection?.address && wallet) {
+        const nftBalance = await getNftBalanceUser(currentCollection.address, wallet)
         const nativeBalance = await getBalance()
         setUserBalances({
           native: nativeBalance,
@@ -64,7 +65,7 @@ const TradeForm = forwardRef(({current, onOrderCreated}, ref) => {
       }
     }
     getBalances()
-  }, [blockchain, wallet, current?.address])
+  }, [blockchain, wallet, currentCollection?.address])
 
   useEffect(() => {
     if (priceSetted.current) {
@@ -146,14 +147,14 @@ const TradeForm = forwardRef(({current, onOrderCreated}, ref) => {
             },
             data: {
               ...form,
-              collectionId: current.address,
+              collectionId: currentCollection.address,
               blockchain: blockchain,
             },
           }
         }))
         return
       case 'sell':
-        const tokenIds = await getNftUser(current.address, wallet)
+        const tokenIds = await getNftUser(currentCollection.address, wallet)
         if (tokenIds.length < form.amount) {
           toast.error(`You don't have enough NFTs`)
           return
@@ -169,38 +170,43 @@ const TradeForm = forwardRef(({current, onOrderCreated}, ref) => {
             data: {
               ...form,
               tokens: tokenIds,
-              collectionId: current.address,
+              collectionId: currentCollection.address,
               blockchain: blockchain,
             },
           }
         }))
-        return
-        // const listing = tokenIds.filter((_, i) => i < form.amount).map((token) => ({
-        //   token: `${current.address}:${token.token.tokenId}`,
-        //   weiPrice: parseUnits(`${form.price}`, 18).toString(),
-        //   orderKind: 'seaport-v1.5',
-        //   options: {
-        //     'seaport-v1.5': {
-        //       "useOffChainCancellation": true
-        //     },
-        //   },
-        //   quantity: 1,
-        // }))
-        // placeAsk(listing, progressHandler, errorHandler)
-    }
-  }
-
-  const progressHandler = steps => {
-    const isAllStepsComplete = steps.flatMap(step => step.items).every(step => step.status === 'complete')
-    if (isAllStepsComplete && loadingRef.current) {
-      toast.success('Order created successfully')
-      loadingRef.current = false
-      onOrderCreated()
     }
   }
 
   const handleTotalBlur = () => {
     handleChangeForm('price')(form.total/form.amount)
+    trackEvent('Dex Add Total', {
+      'Base Currency': blockchain.currency,
+      'Quote Currency': currentCollection.name,
+      'Total': form.total,
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Network': blockchain.name,
+    })
+  }
+
+  const handleBlurPrice = () => {
+    trackEvent('Dex Add Price', {
+      'Base Currency': blockchain.currency,
+      'Quote Currency': currentCollection.name,
+      'Price': form.price,
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Network': blockchain.name,
+    })
+  }
+
+  const handleBlurAmount = () => {
+    trackEvent('Dex Add Amount', {
+      'Base Currency': blockchain.currency,
+      'Quote Currency': currentCollection.name,
+      'Amount': form.amount,
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Network': blockchain.name,
+    })
   }
 
   const handleClickMultipler = (percentage) => () => {
@@ -237,7 +243,7 @@ const TradeForm = forwardRef(({current, onOrderCreated}, ref) => {
   return (
     <App.Flex className={styles.container} column>
       {
-        current?.address
+        currentCollection?.address
           ? <Fragment>
               <Tabs
                 options={TAB_OPTIONS}
@@ -250,6 +256,7 @@ const TradeForm = forwardRef(({current, onOrderCreated}, ref) => {
                     label="AT PRICE"
                     currency={blockchain.currency}
                     value={form.price}
+                    onBlur={handleBlurPrice}
                     onChange={handleChangeForm('price')} />
                 </App.Flex>
                 <App.Flex column sx={{marginBottom: 24}}>
@@ -257,6 +264,7 @@ const TradeForm = forwardRef(({current, onOrderCreated}, ref) => {
                     label="AMOUNT"
                     value={form.amount}
                     currency={`NFT${form.amount > 1 ? `'s` : ''}`}
+                    onBlur={handleBlurAmount}
                     onChange={handleChangeForm('amount')} />
                   {
                     currentTab === 'sell'
@@ -294,4 +302,9 @@ const TradeForm = forwardRef(({current, onOrderCreated}, ref) => {
   )
 })
 
-export default TradeForm
+const isEqual = (prev, next) => {
+  console.log(prev, next)
+  return true
+}
+
+export default memo(TradeForm, isEqual)

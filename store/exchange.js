@@ -40,6 +40,7 @@ export const exchangeSlice = createSlice({
     orders: [],
     interval: {key: '15m', count: 15, unit: 'minutes'},
     sortType: 'VOLUME:DESC',
+    loadingCollectionData: false,
   },
 
   reducers: {
@@ -71,6 +72,9 @@ export const exchangeSlice = createSlice({
     },
     sortType: (state, {payload}) => {
       state.sortType = payload
+    },
+    loadingCollectionData: (state, {payload}) => {
+      state.loadingCollectionData = payload
     }
   },
 })
@@ -154,6 +158,11 @@ const getters = {
       low: prices.length ? Math.min(...prices) : 0,
       high: prices.length ? Math.max(...prices) : 0,
     }
+  }),
+  recentSales: (limit) => createSelector([
+    state => state.$exchange.sales
+  ], (sales) => {
+    return sales.slice(0, limit)
   }),
   orderBook: createSelector([
     state => state.$exchange.orderBook
