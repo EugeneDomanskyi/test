@@ -9,8 +9,9 @@ import { trackEvent } from '@/libs/analytics.lib'
 import App from  '@/components/App'
 
 import styles from './styles.module.scss'
+import { memo } from 'react'
 
-const CollectionCard = ({ isActive, collection }) => {
+const CollectionListItem = ({ isActive, collection }) => {
   const router = useRouter()
   const blockchain = useSelector($app.get.blockchain)
 
@@ -33,7 +34,7 @@ const CollectionCard = ({ isActive, collection }) => {
     <App.Flex row justify="space-between" align="center" onClick={handleClick} className={cn(styles.collection, {[styles.active]: isActive})}>
       <App.Flex row gap={8} align="center">
         {collection.image ? (
-          <Image src={collection.image} width={72} height={72} className={styles.image} alt="" />
+          <Image src={collection.image} priority width={72} height={72} className={styles.image} alt="" />
         ) : (
           <div style={{width: 72, height: 72}} />
         )}
@@ -67,4 +68,8 @@ const CollectionCard = ({ isActive, collection }) => {
   )
 }
 
-export default CollectionCard
+const isEqual = (prevProps, nextProps) => {
+  return prevProps.isActive === nextProps.isActive && JSON.stringify(prevProps.collection) === JSON.stringify(nextProps.collection)
+}
+
+export default memo(CollectionListItem, isEqual)

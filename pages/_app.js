@@ -137,7 +137,7 @@ function MyApp({ Component, pageProps }) {
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
         <Provider store={store}>
           <Head>
-            <title>NFT20 | NFT Trading Platform</title>
+            <title>TEGRO | NFT Trading Platform</title>
           </Head>
 
           <Wrapper>
