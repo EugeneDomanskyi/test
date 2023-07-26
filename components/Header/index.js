@@ -12,7 +12,7 @@ import { useRouter } from 'next/router'
 import $modal from '@/store/modal'
 
 import App from '@/components/App'
-import HomeBalance from '@/components/Home/HomeBalance'
+import SwitchBlockchain from '@/components/SwitchBlockchain'
 
 import styles from './styles.module.scss'
 
@@ -108,7 +108,7 @@ const Header = () => {
         </App.Flex>
 
         <App.Flex row gap={[24, 16]} align="center">
-          {!isMobile ? <HomeBalance /> : null}
+          {!isMobile ? <SwitchBlockchain /> : null}
           
           {wallet ? (
             <App.Flex sx={{ position: 'relative' }} id="wallet">
@@ -143,7 +143,7 @@ const Header = () => {
           <div className={cn(styles.mobileMenu, {[styles.show]: mobileMenuShow})}>
             <div className={styles.content}>
               <App.Flex row sx={{ padding: 16 }}>
-                <HomeBalance />
+                <SwitchBlockchain />
               </App.Flex>
 
               <div className={styles.line} />

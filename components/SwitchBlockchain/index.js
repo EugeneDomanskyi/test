@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import cn from 'classnames'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
-import Contracts from '@/libs/contracts.lib'
 import { trackEvent } from '@/libs/analytics.lib'
 
 import $app from '@/store/app'
@@ -14,24 +12,12 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const HomeBalance = ({ justify = 'center' }) => {
-  const { wallet, network, usdt } = useWalletConnect()
-
+const SwitchBlockchain = ({ justify = 'center' }) => {
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const { blockchains } = useSelector(({ $app }) => $app)
 
-  const [loading, setLoading] = useState(true)
-  const [balance, setBalance] = useState(0)
   const [menuShow, setMenuShow] = useState(false)
-
-  const contracts = new Contracts()
-
-  /* useEffect(() => {
-    if (wallet) {
-      fetchBalance()
-    }
-  }, [wallet]) */
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, false)
@@ -47,15 +33,6 @@ const HomeBalance = ({ justify = 'center' }) => {
     }
   }
 
-  const fetchBalance = async () => {
-    setLoading(true)
-    const result = await contracts.balanceOf(wallet, usdt[blockchain.code])
-    if (result) {
-      setBalance(result)
-    }
-    setLoading(false)
-  }
-
   const handleMenuToggle = () => {
     setMenuShow( ! menuShow)
   }
@@ -68,7 +45,6 @@ const HomeBalance = ({ justify = 'center' }) => {
     dispatch($app.set.code(val))
     dispatch($collection.set.pagesClear())
     dispatch($collection.set.current({}))
-    dispatch($collection.set.fetching(true))
     setMenuShow(false)
   }
 
@@ -90,17 +66,8 @@ const HomeBalance = ({ justify = 'center' }) => {
           ))}
         </App.Flex>
       </div>
-
-      {/* <App.Flex row center gap={6} className={styles.badge} sx={{ padding: '8px 16px' }}>
-        <App.Text size={16} height={1} color="#B9B8C5">Balance</App.Text>
-        {loading ? (
-          <App.Loader size={20} />
-        ) : (
-          <App.Text size={20} weight={700} height={1}>{balance} USDT</App.Text>
-        )}
-      </App.Flex> */}
     </App.Flex>
   )
 }
 
-export default HomeBalance
+export default SwitchBlockchain

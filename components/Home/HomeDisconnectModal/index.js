@@ -1,5 +1,4 @@
 import App from '@/components/App'
-import HomeBalance from '@/components/Home/HomeBalance'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 
