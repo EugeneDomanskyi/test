@@ -109,6 +109,8 @@ const CollectionList = ({current}) => {
     dispatch($collection.set.page(continuation))
     dispatch($collection.set.fetching(true))
   }
+
+  console.log('CollectionList', 'Render')
   
   return (
     <App.Flex column className={styles.container}>

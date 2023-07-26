@@ -85,13 +85,14 @@ const Wrapper = ({ children }) => {
           tempCollectionId = temp[1].replace(/^\/|\/$/g, '') || null
         }
         
+        const currentBlockchainCode = blockchainCode.current
         const realCollectionId = collectionId ?? tempCollectionId
         if (realCollectionId) {
           const currentCollection = await getCollection(realCollectionId)
           dispatch($collection.set.current(currentCollection))
         }
 
-        if ( ! collections.length) {
+        if ( ! collections.length && currentBlockchainCode == blockchainCode.current) {
           dispatch($collection.set.fetching(true))
         }
       }
@@ -171,7 +172,10 @@ const Wrapper = ({ children }) => {
     <>
       <Header />
       {children}
-      <Footer />
+
+      {!isExchange ? (
+        <Footer />
+      ) : null}
     </>
   )
 }
