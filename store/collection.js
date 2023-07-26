@@ -49,7 +49,7 @@ export const collectionSlice = createSlice({
   name: '$collection',
 
   initialState: {
-    fetching: true,
+    fetching: false,
     all: [],
     searched: [],
     current: {},
