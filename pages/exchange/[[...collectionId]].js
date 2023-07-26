@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic'
 
 import $exchange from '@/store/exchange'
 import $app from '@/store/app'
-import $collection from '@/store/collection'
 import Stream from '@/libs/stream.lib'
 import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -35,7 +34,6 @@ const Exchange = () => {
   const { wallet } = useWalletConnect()
   const socketConnected = useSelector(({$app}) => $app.socketConnected)
   const blockchain = useSelector($app.get.blockchain)
-  const { collections, searched, isLoading } = useSelector($collection.get.all)
   const { current } = useSelector(({$collection}) => $collection)
 
   const [isSSR, setIsSSR] = useState(true)
@@ -130,25 +128,6 @@ const Exchange = () => {
       Stream.unsubscribe('ask.*')
     }
   }, [socketConnected, collectionId, wallet])
-
-  useEffect(() => {
-    if (!isLoading) {
-      if (!collectionId) {
-        const [first] = collections
-        router.replace(`${first.address}`, undefined, { scroll: false })
-        dispatch($collection.set.current(first))
-      } else {
-        let find = collections.find(item => item.address == collectionId)
-        if ( ! find) {
-          find = searched.find(item => item.address == collectionId)
-        }
-
-        if (find) {
-          dispatch($collection.set.current(find))
-        }
-      }
-    }
-  }, [isLoading, blockchain.code, collectionId])
 
   const handleOrdersUpdated = () => {
     $exchange.api.get.orders({

@@ -18,15 +18,16 @@ const Footer = dynamic(import('@/components/Footer'), { ssr: false })
 const Wrapper = ({ children }) => {
   const router = useRouter()
   const [collectionId] = router.query.collectionId || []
+  const isExchange = router.pathname.includes('/exchange')
 
   const { usdt } = useWalletConnect()
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const { blockchains } = useSelector(({ $app }) => $app)
   const { fetching, page, current: collection } = useSelector(({ $collection }) => $collection)
+  const { collections, searched } = useSelector($collection.get.all)
 
-  const isInit = useRef(true)
-  const updateCollections = useRef(true)
+  const blockchainCode = useRef(blockchain.code)
 
   useEffect(() => {
     const deviceId = localStorage.getItem('device_id')
@@ -47,72 +48,97 @@ const Wrapper = ({ children }) => {
 
   useEffect(() => {
     (async () => {
-      if (updateCollections.current) {
-        if (fetching && router.isReady) {
+      if (router.isReady) {
+        if ( ! isExchange || isExchange && fetching) {
           dispatch($collection.set.loading(true))
 
-          let blockchainCode = blockchain.code
-          let totalResult = []
+          const result = await $collection.api.all(queryParams(blockchainCode.current, page, { maxFloorAskPrice: process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null }))
+          if (result && result.hasOwnProperty('collections')) {
+            dispatch($collection.set.searched([]))
+            dispatch($collection.set.all(result.collections))
+            dispatch($collection.set.pages(result?.continuation))
 
-          let currentDefined = false
-          if (collectionId && isInit.current) {
-            isInit.current = false
-
-            const result = await $collection.api.all(queryParams(blockchainCode, page, { id: collectionId, limit: 1 }))
-            if (result && result.hasOwnProperty('collections')) {
-              if (result.collections.length) {
-                const [current] = result.collections
-                dispatch($collection.set.current(template(current)))
-                currentDefined = true
-              } else {
-                let check = false
-                for (const chain of blockchains) {
-                  if ( ! check && chain.code != blockchain.code) {
-                    const temp = await $collection.api.all(queryParams(chain.code, page, { id: collectionId, limit: 1 }))
-
-                    if (temp && temp.hasOwnProperty('collections') && temp.collections.length) {
-                      check = true
-                      blockchainCode = chain.code
-                      dispatch($app.set.code(chain.code))
-                      updateCollections.current = false
-
-                      const [current] = temp.collections
-                      dispatch($collection.set.current(template(current)))
-                      currentDefined = true
-                    }
-                  }
-                }
-              }
+            if (isExchange && ! collection?.address) {
+              const [first] = result.collections
+              router.replace(first.id, undefined, { scroll: false })
             }
           }
 
-          const result = await $collection.api.all(queryParams(blockchainCode, page, { maxFloorAskPrice: process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null }))
-
-          if (result && result.hasOwnProperty('collections')) {
-            totalResult = result.collections
-            dispatch($collection.set.pages(result?.continuation))
-          }
-
-          if ( ! collection?.address && ! currentDefined) {
-            const [current] = totalResult
-            dispatch($collection.set.current(template(current)))
-          }
-
-          dispatch($collection.set.searched([]))
-          dispatch($collection.set.all(totalResult))
           dispatch($collection.set.loading(false))
           dispatch($collection.set.fetching(false))
-          initWSConnection(blockchain.code)
+          initWSConnection(blockchainCode.current)
           // Stream.subscribe('collection.updated', result.collections.map(c => c.id))
           // Stream.on('collection.updated', (data) => {
           //   console.log('collection.updated', data)
           // })
         }
-      } else {
-        updateCollections.current = true
       }
     })()
   }, [fetching, router.isReady])
+
+  useEffect(() => {
+    (async () => {
+      if (isExchange) {
+        let tempCollectionId = null
+        const temp = window.location.pathname.split('exchange')
+        if (temp.length > 1) {
+          tempCollectionId = temp[1].replace(/^\/|\/$/g, '') || null
+        }
+        
+        const realCollectionId = collectionId ?? tempCollectionId
+        if (realCollectionId) {
+          const currentCollection = await getCollection(realCollectionId)
+          dispatch($collection.set.current(currentCollection))
+        }
+
+        if ( ! collections.length) {
+          dispatch($collection.set.fetching(true))
+        }
+      }
+    })()
+  }, [collectionId])
+
+  useEffect(() => {
+    if (blockchain.code != blockchainCode.current) {
+      blockchainCode.current = blockchain.code
+      dispatch($collection.set.fetching(true))
+    }
+  }, [blockchain.code])
+
+  const getCollection = async (address) => {
+    let collection = collections.find(item => item.address == address)
+    if ( ! collection) {
+      collection = searched.find(item => item.address == address)
+    }
+
+    if ( ! collection) {
+      const result = await $collection.api.all(queryParams(blockchainCode.current, page, { id: address, limit: 1 }))
+      if (result && result.hasOwnProperty('collections')) {
+        if (result.collections.length) {
+          const [current] = result.collections
+          collection = template(current)
+        } else {
+          let collectionWasFound = false
+          for (const chain of blockchains) {
+            if ( ! collectionWasFound && chain.code != blockchainCode.current) {
+              const result = await $collection.api.all(queryParams(chain.code, page, { id: address, limit: 1 }))
+
+              if (result && result.hasOwnProperty('collections') && result.collections.length) {
+                collectionWasFound = true
+                blockchainCode.current = chain.code
+                dispatch($app.set.code(chain.code))
+
+                const [current] = result.collections
+                collection = template(current)
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return collection ?? {}
+  }
 
   const queryParams = (blockchainCode, page, customParams) => {
     const defaultParams = {
