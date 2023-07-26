@@ -40,6 +40,7 @@ export const exchangeSlice = createSlice({
     orders: [],
     interval: {key: '15m', count: 15, unit: 'minutes'},
     sortType: 'VOLUME:DESC',
+    loadingCollectionData: false,
   },
 
   reducers: {
@@ -71,6 +72,9 @@ export const exchangeSlice = createSlice({
     },
     sortType: (state, {payload}) => {
       state.sortType = payload
+    },
+    loadingCollectionData: (state, {payload}) => {
+      state.loadingCollectionData = payload
     }
   },
 })

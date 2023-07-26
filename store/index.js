@@ -2,20 +2,29 @@
 import { configureStore } from '@reduxjs/toolkit'
 
 import $modal from './modal'
-import $app from './app'
+import $app, { appSlice } from './app'
 import $exchange from './exchange'
 import $collection from './collection'
 import $nft from './nft'
 
-const store = configureStore({
-  reducer: {
-    $modal: $modal.reducer,
-    $app: $app.reducer,
-    $exchange: $exchange.reducer,
-    $collection: $collection.reducer,
-    $nft: $nft.reducer,
-  },
-})
+const createStore = initialData => {
+  return configureStore({
+    reducer: {
+      $modal: $modal.reducer,
+      $app: $app.reducer,
+      $exchange: $exchange.reducer,
+      $collection: $collection.reducer,
+      $nft: $nft.reducer,
+    },
+    preloadedState: {
+      $app: {
+        ...appSlice.getInitialState(),
+        code: initialData.blockchain,
+        isMobile: initialData.isMobile,
+      }
+    }
+  })
+}
 
 const BLOCKCHAIN_URL = {
   polygon: 'https://api-polygon.reservoir.tools',
@@ -74,4 +83,4 @@ const queryBuilder = (data) => {
   return `?${params}`
 }
 
-export default store
+export default createStore

@@ -2,12 +2,10 @@ import { useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { parseUnits } from 'viem'
 
-import $collection from '@/store/collection'
 import $modal from '@/store/modal'
 import useTrade from '@/myhooks/trade'
 import { trackEvent } from '@/libs/analytics.lib'
 
-import App from '@/components/App'
 import SellModalSelect from '@/components/Exchange/SellModal/SellModalSelect'
 import SellModalConfirm from '@/components/Exchange/SellModal/SellModalConfirm'
 import SellModalConfirming from '@/components/Exchange/SellModal/SellModalConfirming'
@@ -29,7 +27,7 @@ const SellModal = ({data}) => {
   const [selectedTokens, setSelectedTokens] = useState([])
   const [step, setStep] = useState('select')
 
-  const currentCollection = useSelector($collection.get.collection('address', data.collectionId))
+  const currentCollection = useSelector(({$collection}) => $collection.current)
 
   const loadingRef = useRef(false)
 
@@ -49,13 +47,8 @@ const SellModal = ({data}) => {
     const listing = selectedTokens.map((token) => ({
       token: `${data.collectionId}:${token.id}`,
       weiPrice: parseUnits(`${data.price}`, 18).toString(),
-      orderKind: 'seaport-v1.5',
-      options: {
-        'seaport-v1.5': {
-          "useOffChainCancellation": true
-        },
-      },
       quantity: token.amount,
+      royaltyBps: 0,
     }))
     loadingRef.current = true
     setStep('confirming')

@@ -1,18 +1,14 @@
 import styles from './styles.module.scss'
-import { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { memo } from 'react'
+import { useSelector } from 'react-redux'
 import cn from 'classnames'
 
 import $exchange from '@/store/exchange'
-import $app from '@/store/app'
 
 import App from '@/components/App'
 
-const OrderBook = ({current, onClickOrder}) => {
-  const dispatch = useDispatch()
-
+const OrderBook = ({onClickOrder}) => {
   const orderBook = useSelector($exchange.get.orderBook)
-  const blockchain = useSelector($app.get.blockchain)
 
   let prevBuyVolumeValue = 0
   let prevSellVolumeValue = 0
@@ -20,23 +16,10 @@ const OrderBook = ({current, onClickOrder}) => {
   const maxBuyVolume = orderBook.buy.reduce((acc, {quantity}) => acc + quantity*1, 0)
   const maxSellVolume = orderBook.sell.reduce((acc, {quantity}) => acc + quantity*1, 0)
 
-  useEffect(() => {
-    if (current?.address && blockchain.code) {
-      $exchange.api.get.orderBook({
-        collection: current.address,
-        blockchain: blockchain.code,
-      }).then(res => {
-        if (res) {
-          dispatch($exchange.set.orderBook(res))
-        }
-      })
-    }
-  }, [current, blockchain.code])
-
   const handleClick = (order) => () => {
     onClickOrder(order)
   }
-
+  
   return (
     <App.Flex column flex={1} className={styles.card}>
       <App.Flex className={styles.header} align="center">
@@ -86,4 +69,8 @@ const OrderBook = ({current, onClickOrder}) => {
   )
 }
 
-export default OrderBook
+const isEqual = (prev, next) => {
+  return prev.onClickOrder === next.onClickOrder
+}
+
+export default memo(OrderBook, isEqual)

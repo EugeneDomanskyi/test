@@ -1,12 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { parseCookies, setCookie } from 'nookies'
+import { setCookie } from 'nookies'
 
 export const appSlice = createSlice({
   name: '$app',
 
   initialState: {
     socketConnected: false,
-    code: parseCookies().blockchain ?? 'polygon',
+    code: null,
     blockchains: [
       {
         id: 1,
@@ -38,6 +38,9 @@ export const appSlice = createSlice({
     },
     socketConnected: (state, { payload }) => {
       state.socketConnected = payload
+    },
+    isMobile: (state, { payload }) => {
+      state.isMobile = payload
     }
   },
 })
