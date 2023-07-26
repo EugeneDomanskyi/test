@@ -302,8 +302,7 @@ const TradeForm = forwardRef((_props, ref) => {
   )
 })
 
-const isEqual = (prev, next) => {
-  console.log(prev, next)
+const isEqual = () => {
   return true
 }
 
