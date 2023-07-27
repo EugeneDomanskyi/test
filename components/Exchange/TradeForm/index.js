@@ -1,20 +1,15 @@
 import styles from './styles.module.scss'
-import { useState, useEffect, useRef, Fragment, forwardRef, useImperativeHandle, memo } from 'react'
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle, memo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { toast } from 'react-toastify'
-import Image from 'next/image'
 import cn from 'classnames'
 
 import $app from '@/store/app'
 import $exchange from '@/store/exchange'
-import $modal from '@/store/modal'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useTrade from '@/myhooks/trade'
-import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 import Tabs from '@/components/Exchange/Tabs'
-import TradeInput from '@/components/Exchange/TradeInput'
 import TradeFormLimit from '@/components/Exchange/TradeForm/TradeFormLimit'
 import TradeFormMarket from '@/components/Exchange/TradeForm/TradeFormMarket'
 
@@ -24,29 +19,30 @@ const TAB_OPTIONS = [
 ]
 
 const TradeForm = forwardRef((_props, ref) => {
-  const dispatch = useDispatch()
-  const { wallet, connect, changeNetwork, getBalance } = useWalletConnect()
+  const { wallet, getBalance } = useWalletConnect()
   const { getNftBalanceUser, getNftUser } = useTrade()
   
   const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector($exchange.get.orderBook)
   const currentCollection = useSelector(({$collection}) => $collection.current)
+  const loadingCollectionData = useSelector(({$exchange}) => $exchange.loadingCollectionData)
 
   const [userBalances, setUserBalances] = useState({native: 0, token: 0})
   const [form, setForm] = useState({price: '0', amount: '1', total: '0'})
+
+  const [limitForm, setLimitForm] = useState({price: '0', amount: '1'})
 
   const [currentTab, setCurrentTab] = useState('buy')
   const [formType, setFormType] = useState('market')
 
   const priceSetted = useRef(false)
-  const loadingRef = useRef(false)
 
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
       priceSetted.current = true
       handleChangeTab(data.side)
-      handleChangeForm('price')(data.price.toString())
-      handleChangeForm('amount')(data.amount.toString())
+      // handleChangeForm('price')(data.price.toString())
+      // handleChangeForm('amount')(data.amount.toString())
     }
   }))
 
@@ -54,9 +50,9 @@ const TradeForm = forwardRef((_props, ref) => {
   const [lowestBuy] = orderBook.buy
   const [lowestSell] = orderBook.sell
 
-  useEffect(() => {
-    priceSetted.current = false
-  }, [currentCollection?.address])
+  // useEffect(() => {
+  //   priceSetted.current = false
+  // }, [currentCollection?.address])
 
   useEffect(() => {
     const getBalances = async () => {
@@ -76,177 +72,71 @@ const TradeForm = forwardRef((_props, ref) => {
     if (priceSetted.current) {
       return
     }
-    if (currentTab === 'buy' && lowestBuy) {
-      setInitialPrice(lowestBuy.price)
-    } else if (!lowestBuy && currentCollection?.price) {
-      setInitialPrice(currentCollection?.price)
+    if (!loadingCollectionData && currentCollection?.address) {
+      if (currentTab === 'buy') {
+        setInitialPrice(lowestBuy?.price || currentCollection?.price)
+      } else {
+        setInitialPrice(lowestSell?.price || currentCollection?.price)
+      }
     }
-    if (currentTab === 'sell' && lowestSell) {
-      setInitialPrice(lowestSell.price)
-    } else if (!lowestBuy && currentCollection?.price) {
-      setInitialPrice(currentCollection?.price)
-    }
-  }, [lowestBuy, lowestSell, currentCollection?.price])
+    // if (currentTab === 'buy' && lowestBuy) {
+    //   setInitialPrice(lowestBuy.price)
+    // } else if (!lowestBuy && currentCollection?.price) {
+    //   setInitialPrice(currentCollection?.price)
+    // }
+    // if (currentTab === 'sell' && lowestSell) {
+    //   setInitialPrice(lowestSell.price)
+    // } else if (!lowestBuy && currentCollection?.price) {
+    //   setInitialPrice(currentCollection?.price)
+    // }
+  }, [loadingCollectionData, currentCollection?.address])
 
   const setInitialPrice = price => {
-    handleChangeForm('price')(price)
-    priceSetted.current = true
+    console.log('setInitialPrice', price)
+    setLimitForm(state => ({...state, price: price.toString()}))
+    // handleChangeForm('price')(price)
+    // priceSetted.current = true
   }
 
   const handleChangeTab = tab => {
     setCurrentTab(tab)
   }
 
-  const handleChangeForm = field => value => {
-    switch (field) {
-      case 'price':
-        setForm(state => ({
-          ...state,
-          price: value,
-          total: (value*state.amount).toString(),
-        }))
-        return
-      case 'amount':
-        const regex = /^\d+[,]?\d{0,2}$/
-        if (value && !regex.test(value)) {
-          return 
-        }
-        setForm(state => ({
-          ...state,
-          amount: value,
-          total: (value*state.price).toString(),
-        }))
-        return
-      case 'total':
-        setForm(state => {
-          const amount = Math.floor(value/state.price)
-          return {
-            ...state,
-            total: value,
-            amount: amount,
-          }
-        })
-        return
-    }
-  }
-
-  const handleSubmit = async () => {
-    const address = await connect()
-    if (!address) {
-      return
-    }
-
-    const network = await changeNetwork(blockchain.code)
-    if (!network) {
-      return
-    }
-    loadingRef.current = true
-    switch (currentTab) {
-      case 'buy':
-        dispatch($modal.set.show({
-          show: true,
-          modal: 'Exchange/BuyModal',
-          props: {
-            header: {
-              title: `Buy ${currentCollection.name} for ${blockchain.currency}`,
-            },
-            data: {
-              ...form,
-              collectionId: currentCollection.address,
-              blockchain: blockchain,
-            },
-          }
-        }))
-        return
-      case 'sell':
-        const tokenIds = await getNftUser(currentCollection.address, wallet)
-        if (tokenIds.length < form.amount) {
-          toast.error(`You don't have enough NFTs`)
-          return
-        }
-        dispatch($modal.set.show({
-          show: true,
-          modal: 'Exchange/SellModal',
-          props: {
-            header: {
-              title: `${tokenIds.length} NFTs available`,
-              subtitle: `Choose the NFT collection you want to swap`
-            },
-            data: {
-              ...form,
-              tokens: tokenIds,
-              collectionId: currentCollection.address,
-              blockchain: blockchain,
-            },
-          }
-        }))
-    }
-  }
-
-  const handleTotalBlur = () => {
-    handleChangeForm('price')(form.total/form.amount)
-    trackEvent('Dex Add Total', {
-      'Base Currency': blockchain.currency,
-      'Quote Currency': currentCollection.name,
-      'Total': form.total,
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Network': blockchain.name,
-    })
-  }
-
-  const handleBlurPrice = () => {
-    trackEvent('Dex Add Price', {
-      'Base Currency': blockchain.currency,
-      'Quote Currency': currentCollection.name,
-      'Price': form.price,
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Network': blockchain.name,
-    })
-  }
-
-  const handleBlurAmount = () => {
-    trackEvent('Dex Add Amount', {
-      'Base Currency': blockchain.currency,
-      'Quote Currency': currentCollection.name,
-      'Amount': form.amount,
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Network': blockchain.name,
-    })
-  }
-
-  const handleClickMultipler = (percentage) => () => {
-    if (currentTab === 'buy') {
-      handleChangeForm('total')(userBalances.native * percentage)
-    } else {
-      handleChangeForm('amount')(userBalances.token * percentage)
-    }
-  }
+  // const handleChangeForm = field => value => {
+  //   switch (field) {
+  //     case 'price':
+  //       setForm(state => ({
+  //         ...state,
+  //         price: value,
+  //         total: (value*state.amount).toString(),
+  //       }))
+  //       return
+  //     case 'amount':
+  //       const regex = /^\d+[,]?\d{0,2}$/
+  //       if (value && !regex.test(value)) {
+  //         return 
+  //       }
+  //       setForm(state => ({
+  //         ...state,
+  //         amount: value,
+  //         total: (value*state.price).toString(),
+  //       }))
+  //       return
+  //     case 'total':
+  //       setForm(state => {
+  //         const amount = Math.floor(value/state.price)
+  //         return {
+  //           ...state,
+  //           total: value,
+  //           amount: amount,
+  //         }
+  //       })
+  //       return
+  //   }
+  // }
 
   const handleChangeFormType = type => () => {
     setFormType(type)
-  }
-
-  const renderBalance = () => {
-    return (
-      <App.Flex className={styles.balance}>
-        <App.Flex flex={1} align="center" gap={4}>
-          <App.Icon icon="wallet" />
-          <App.Text size={10} color="rgba(255,255,255,0.6)">
-            {
-              currentTab === 'buy'
-                ? `${userBalances.native} ${blockchain.currency}`
-                : `${userBalances.token} NFT`
-            }
-          </App.Text>
-        </App.Flex>
-        <App.Flex className={styles.multipler} align="center" gap={8}>
-          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.25)}>25%</App.Text>
-          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.5)}>50%</App.Text>
-          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.75)}>75%</App.Text>
-          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(1)}>100%</App.Text>
-        </App.Flex>
-      </App.Flex>
-    )
   }
 
   return (
@@ -255,7 +145,7 @@ const TradeForm = forwardRef((_props, ref) => {
         options={TAB_OPTIONS}
         active={currentTab}
         onChange={handleChangeTab} />
-      <App.Flex gap={16} sx={{padding: 16}}>
+      <App.Flex gap={16} sx={{padding: '24px 16px'}}>
         <App.Button className={cn(styles.formTypeButton, {[styles.active]: formType === 'market'})} onClick={handleChangeFormType('market')}>
           {
             formType === 'market'
@@ -278,11 +168,15 @@ const TradeForm = forwardRef((_props, ref) => {
           switch (form) {
             case 'market':
               return (
-                <TradeFormMarket />
+                <TradeFormMarket
+                  currentTab={currentTab} />
               )
               case 'limit':
                 return (
-                  <TradeFormLimit currentTab={currentTab} currentOption={currentOption} />
+                  <TradeFormLimit
+                    currentTab={currentTab}
+                    currentOption={currentOption}
+                    initialForm={limitForm} />
                 )
               default:
                 return null

@@ -13,10 +13,9 @@ import useTrade from '@/myhooks/trade'
 import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
-import Tabs from '@/components/Exchange/Tabs'
 import TradeInput from '@/components/Exchange/TradeInput'
 
-const TradeFormLimit = ({currentTab, currentOption}) => {
+const TradeFormLimit = ({initialForm, currentTab, currentOption}) => {
   const dispatch = useDispatch()
   const { wallet, connect, changeNetwork, getBalance } = useWalletConnect()
   const { getNftBalanceUser, getNftUser } = useTrade()
@@ -26,9 +25,20 @@ const TradeFormLimit = ({currentTab, currentOption}) => {
   const currentCollection = useSelector(({$collection}) => $collection.current)
 
   const [userBalances, setUserBalances] = useState({native: 0, token: 0})
-  const [form, setForm] = useState({price: '0', amount: '1', total: '0'})
+  const [form, setForm] = useState({...initialForm, total: '0'})
 
   const loadingRef = useRef(false)
+
+  console.log(initialForm)
+
+  useEffect(() => {
+    Object.entries(initialForm).forEach(([key, value]) => {
+      if (key in form && form[key] !== value) {
+        console.log(key, 'changed', value)
+        handleChangeForm(key)(value)
+      }
+    })
+  }, [initialForm])
 
   const handleChangeForm = field => value => {
     switch (field) {
@@ -180,7 +190,6 @@ const TradeFormLimit = ({currentTab, currentOption}) => {
 
   return (
     <App.Flex column className={styles.form}>
-      <App.Flex flex={1} />
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
           label="AT PRICE"
@@ -215,7 +224,6 @@ const TradeFormLimit = ({currentTab, currentOption}) => {
               : null
           }
       </App.Flex>
-      <App.Flex flex={1} />
       <App.Button
         sx={{backgroundColor: currentOption.color}}
         className={styles.button}
