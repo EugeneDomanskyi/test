@@ -4,7 +4,8 @@ const AppLoaderBlock = ({ height = 300, width = '100%', backgroundColor = 'rgba(
   const styles = {
     ...(fixed ? {position: 'fixed', inset: 0} : null),
     backgroundColor: 'rgba(0,0,0,0.1)',
-    backdropFilter: `blur(${blur}px)`
+    backdropFilter: `blur(${blur}px)`,
+    zIndex: 10,
   }
   return (
     <App.Flex center height={height} width={width} sx={styles}>

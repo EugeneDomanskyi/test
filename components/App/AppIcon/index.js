@@ -82,6 +82,14 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
       )
     }
 
+    if (icon === 'check') {
+      return (
+        <svg width={width ?? 14} height={height ?? 11} fill="none" {...props}>
+          <path fill={color ?? '#fff'} d="M5 8.127 1.873 5 .806 6.057 5 10.25l9-9L12.943.192 5 8.127Z" />
+        </svg>
+      )
+    }
+
     if (icon == 'check-cloud-fill') {
       return (
         <svg width={width ?? 12} height={height ?? 12} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>

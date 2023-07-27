@@ -15,15 +15,8 @@ import { trackEvent } from '@/libs/analytics.lib'
 import App from '@/components/App'
 import Tabs from '@/components/Exchange/Tabs'
 import TradeInput from '@/components/Exchange/TradeInput'
-import TradeFormLimit from '@/components/Exchange/TradeForm/TradeFormLimit'
-import TradeFormMarket from '@/components/Exchange/TradeForm/TradeFormMarket'
 
-const TAB_OPTIONS = [
-  {key: 'buy', title: 'BUY', color: 'rgb(13, 198, 109)'},
-  {key: 'sell', title: 'SELL', color: 'rgb(206, 22, 93)'},
-]
-
-const TradeForm = forwardRef((_props, ref) => {
+const TradeFormLimit = ({currentTab, currentOption}) => {
   const dispatch = useDispatch()
   const { wallet, connect, changeNetwork, getBalance } = useWalletConnect()
   const { getNftBalanceUser, getNftUser } = useTrade()
@@ -35,67 +28,7 @@ const TradeForm = forwardRef((_props, ref) => {
   const [userBalances, setUserBalances] = useState({native: 0, token: 0})
   const [form, setForm] = useState({price: '0', amount: '1', total: '0'})
 
-  const [currentTab, setCurrentTab] = useState('buy')
-  const [formType, setFormType] = useState('market')
-
-  const priceSetted = useRef(false)
   const loadingRef = useRef(false)
-
-  useImperativeHandle(ref, () => ({
-    setForm: (data) => {
-      priceSetted.current = true
-      handleChangeTab(data.side)
-      handleChangeForm('price')(data.price.toString())
-      handleChangeForm('amount')(data.amount.toString())
-    }
-  }))
-
-  const currentOption = TAB_OPTIONS.find(opt => opt.key === currentTab)
-  const [lowestBuy] = orderBook.buy
-  const [lowestSell] = orderBook.sell
-
-  useEffect(() => {
-    priceSetted.current = false
-  }, [currentCollection?.address])
-
-  useEffect(() => {
-    const getBalances = async () => {
-      if (currentCollection?.address && wallet) {
-        const nftBalance = await getNftBalanceUser(currentCollection.address, wallet)
-        const nativeBalance = await getBalance()
-        setUserBalances({
-          native: nativeBalance,
-          token: nftBalance,
-        })
-      }
-    }
-    getBalances()
-  }, [blockchain, wallet, currentCollection?.address])
-
-  useEffect(() => {
-    if (priceSetted.current) {
-      return
-    }
-    if (currentTab === 'buy' && lowestBuy) {
-      setInitialPrice(lowestBuy.price)
-    } else if (!lowestBuy && currentCollection?.price) {
-      setInitialPrice(currentCollection?.price)
-    }
-    if (currentTab === 'sell' && lowestSell) {
-      setInitialPrice(lowestSell.price)
-    } else if (!lowestBuy && currentCollection?.price) {
-      setInitialPrice(currentCollection?.price)
-    }
-  }, [lowestBuy, lowestSell, currentCollection?.price])
-
-  const setInitialPrice = price => {
-    handleChangeForm('price')(price)
-    priceSetted.current = true
-  }
-
-  const handleChangeTab = tab => {
-    setCurrentTab(tab)
-  }
 
   const handleChangeForm = field => value => {
     switch (field) {
@@ -222,10 +155,6 @@ const TradeForm = forwardRef((_props, ref) => {
     }
   }
 
-  const handleChangeFormType = type => () => {
-    setFormType(type)
-  }
-
   const renderBalance = () => {
     return (
       <App.Flex className={styles.balance}>
@@ -250,51 +179,53 @@ const TradeForm = forwardRef((_props, ref) => {
   }
 
   return (
-    <App.Flex className={styles.container} column>
-      <Tabs
-        options={TAB_OPTIONS}
-        active={currentTab}
-        onChange={handleChangeTab} />
-      <App.Flex gap={16} sx={{padding: 16}}>
-        <App.Button className={cn(styles.formTypeButton, {[styles.active]: formType === 'market'})} onClick={handleChangeFormType('market')}>
-          {
-            formType === 'market'
-              ? <App.Icon icon="check" />
-              : null
-          }
-          <App.Text color={formType === 'market' ? '#fff' : '#5E5C6B'} weight={600} size={12}>Market Order</App.Text>
-        </App.Button>
-        <App.Button className={cn(styles.formTypeButton, {[styles.active]: formType === 'limit'})} onClick={handleChangeFormType('limit')}>
-          {
-            formType === 'limit'
-              ? <App.Icon icon="check" />
-              : null
-          }
-          <App.Text color={formType === 'limit' ? '#fff' : '#5E5C6B'} weight={600} size={12}>Limit Order</App.Text>
-        </App.Button>
+    <App.Flex column className={styles.form}>
+      <App.Flex flex={1} />
+      <App.Flex column sx={{marginBottom: 24}}>
+        <TradeInput
+          label="AT PRICE"
+          currency={blockchain.currency}
+          value={form.price}
+          onBlur={handleBlurPrice}
+          onChange={handleChangeForm('price')} />
       </App.Flex>
-      {
-        (form => {
-          switch (form) {
-            case 'market':
-              return (
-                <TradeFormMarket />
-              )
-              case 'limit':
-                return (
-                  <TradeFormLimit currentTab={currentTab} currentOption={currentOption} />
-                )
-              default:
-                return null
+      <App.Flex column sx={{marginBottom: 24}}>
+        <TradeInput
+          label="AMOUNT"
+          value={form.amount}
+          currency={`NFT${form.amount > 1 ? `'s` : ''}`}
+          onBlur={handleBlurAmount}
+          onChange={handleChangeForm('amount')} />
+        {
+          currentTab === 'sell'
+            ? renderBalance()
+            : null
+        }
+      </App.Flex>
+      <App.Flex column sx={{marginBottom: 24}}>
+        <TradeInput
+          label="TOTAL"
+          currency={blockchain.currency}
+          value={form.total}
+          onBlur={handleTotalBlur}
+          onChange={handleChangeForm('total')} />
+          {
+            currentTab === 'buy'
+              ? renderBalance()
+              : null
           }
-        })(formType)
-      }
+      </App.Flex>
+      <App.Flex flex={1} />
+      <App.Button
+        sx={{backgroundColor: currentOption.color}}
+        className={styles.button}
+        disabled={!form.total}
+        onClick={handleSubmit}>
+        <App.Text color="#09051D" size={15} weight={700}>{ currentOption.title } {`${form.amount || 0} NFT${form.amount > 1 ? `'s` : ''}` }</App.Text>
+        { currentCollection?.image ? <Image src={currentCollection?.image} width={32} height={32} alt="" /> : null }
+      </App.Button>
     </App.Flex>
   )
-})
-
-const isEqual = () => {
-  return true
 }
 
-export default memo(TradeForm, isEqual)
+export default TradeFormLimit
