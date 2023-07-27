@@ -1,4 +1,5 @@
 import styles from './styles.module.scss'
+import { memo } from 'react'
 import { useSelector } from 'react-redux'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -10,13 +11,13 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import App from '@/components/App'
 import { WebIcon, TwitterIcon, DiscordIcon } from '@/components/Icons/exchange'
 
-const CollectionInfo = ({current}) => {
+const CollectionInfo = () => {
   const { scanUrl } = useWalletConnect()
   const blockchain = useSelector($app.get.blockchain)
   const { high, low } = useSelector($exchange.get.highLow({count: 24, unit: 'hours'}))
-  
-  const currentCollection = current
-  const scanLink = scanUrl(current.address, 'address', blockchain?.code)
+  const currentCollection = useSelector(({$collection}) => $collection.current)
+
+  const scanLink = scanUrl(currentCollection.address, 'address', blockchain?.code)
 
   return (
     <App.Flex className={styles.container} gap={6}>
@@ -113,4 +114,8 @@ const CollectionInfo = ({current}) => {
   )
 }
 
-export default CollectionInfo
+const isEqual = () => {
+  return true
+}
+
+export default memo(CollectionInfo, isEqual)

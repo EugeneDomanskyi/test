@@ -186,7 +186,7 @@ const Exchange = () => {
           <CollectionList current={current} />
 
           <App.Flex column flex={1} gap={GRID_GAP}>
-            <CollectionInfo current={current} />
+            <CollectionInfo />
 
             <App.Flex gap={GRID_GAP}>
               <App.Flex flex={1} column gap={GRID_GAP}>
@@ -223,9 +223,7 @@ const Exchange = () => {
       )}
       {
         loadingCollectionData
-          ? <App.Flex sx={{position: 'fixed', width: '100%', height: '100%'}} align="center" justify="center">
-              <App.Loader size={100} color="#7204FF" />
-            </App.Flex>
+          ? <App.LoaderBlock size={100} color="#7204FF" fixed height="100%" />
           : null
       }
     </App.Flex>
