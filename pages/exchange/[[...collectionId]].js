@@ -215,6 +215,10 @@ const Exchange = () => {
             <CollectionList />
           ) : null}
 
+          {mobileTab == 'charts' ? (
+            <Chart />
+          ) : null}
+
           {mobileTab == 'trades' ? (
             <App.Flex column gap={GRID_GAP} width="100%">
               <CollectionListMobile />
@@ -226,6 +230,10 @@ const Exchange = () => {
                 </App.Flex>
               </App.Flex>
             </App.Flex>
+          ) : null}
+
+          {mobileTab == 'orders' ? (
+            <Orders onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
           ) : null}
 
           <MobileTabsBar

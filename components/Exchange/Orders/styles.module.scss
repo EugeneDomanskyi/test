@@ -3,6 +3,14 @@
   overflow: hidden;
   height: 300px;
 
+  @media (max-width: 768px) {
+    & {
+      height: auto;
+      width: 100%;
+      padding-bottom: 69px;
+    }
+  }
+
   .header {
     background-color: #1C192F;
     height: 24px;
