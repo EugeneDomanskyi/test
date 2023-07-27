@@ -17,7 +17,7 @@ const Sales = ({onClickSale}) => {
   }
 
   return (
-    <App.Flex flex={1} column className={styles.container}>
+    <App.Flex flex={[1, null]} column className={styles.container}>
       <App.Flex column>
         <App.Flex align="center" className={styles.header}>
           <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600}>TRADES</App.Text>

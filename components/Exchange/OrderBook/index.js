@@ -21,7 +21,7 @@ const OrderBook = ({onClickOrder}) => {
   }
   
   return (
-    <App.Flex column flex={1} className={styles.card}>
+    <App.Flex column flex={[1, null]} className={styles.card}>
       <App.Flex className={styles.header} align="center">
         <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600}>ORDER BOOK</App.Text>
       </App.Flex>

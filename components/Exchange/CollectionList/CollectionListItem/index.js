@@ -11,17 +11,21 @@ import App from  '@/components/App'
 import styles from './styles.module.scss'
 import { memo } from 'react'
 
-const CollectionListItem = ({ isActive, collection }) => {
+const CollectionListItem = ({ isActive, collection, withArrow, onClick }) => {
   const router = useRouter()
   const blockchain = useSelector($app.get.blockchain)
 
   const handleClick = () => {
-    trackEvent('Dex Select Asset', {
-      'Network': blockchain.code.toUpperCase(),
-      'Token': collection.name,
-    })
+    if (onClick) {
+      onClick()
+    } else {
+      trackEvent('Dex Select Asset', {
+        'Network': blockchain.code.toUpperCase(),
+        'Token': collection.name,
+      })
 
-    router.push(`/exchange/${collection.address}`, undefined, { scroll: false })
+      router.push(`/exchange/${collection.address}`, undefined, { scroll: false })
+    }
   }
 
   const TooltipText = () => (
@@ -31,7 +35,7 @@ const CollectionListItem = ({ isActive, collection }) => {
   )
 
   return (
-    <App.Flex row justify="space-between" align="center" onClick={handleClick} className={cn(styles.collection, {[styles.active]: isActive})}>
+    <App.Flex row justify="space-between" align="center" onClick={handleClick} className={cn(styles.collection, {[styles.active]: isActive && ! withArrow})}>
       <App.Flex row gap={8} align="center">
         {collection.image ? (
           <Image src={collection.image} priority width={72} height={72} className={styles.image} alt="" />
@@ -48,6 +52,10 @@ const CollectionListItem = ({ isActive, collection }) => {
                   <App.Icon icon="check-cloud-fill" />
                 </App.Flex>
               </App.Tooltip>
+            ) : null}
+
+            {withArrow ? (
+              <App.Icon icon="caret-down" />
             ) : null}
           </App.Flex>
 
@@ -69,7 +77,10 @@ const CollectionListItem = ({ isActive, collection }) => {
 }
 
 const isEqual = (prevProps, nextProps) => {
-  return prevProps.isActive === nextProps.isActive && JSON.stringify(prevProps.collection) === JSON.stringify(nextProps.collection)
+  return prevProps.isActive === nextProps.isActive &&
+    JSON.stringify(prevProps.collection) === JSON.stringify(nextProps.collection) &&
+    prevProps.withArrow === nextProps.withArrow &&
+    prevProps.onClick === nextProps.onClick
 }
 
 export default memo(CollectionListItem, isEqual)

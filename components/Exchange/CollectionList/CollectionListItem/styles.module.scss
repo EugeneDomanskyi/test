@@ -25,6 +25,17 @@
     }
   }
 
+  @media (max-width: 768px) {
+    &:hover,
+    &.active {
+      background: transparent;
+
+      .secondaryText {
+        color: #5E5C6B;
+      }
+    }
+  }
+
   .image {
     border-radius: 4px;
   }

@@ -2,6 +2,13 @@
   height: 300px;
   background-color: #17142A;
   overflow: hidden;
+
+  @media (max-width: 768px) {
+    & {
+      flex: 1;
+    }
+  }
+
   .header {
     background-color: #1C192F;
     height: 24px;
