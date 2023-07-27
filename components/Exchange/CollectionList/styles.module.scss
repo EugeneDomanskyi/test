@@ -14,6 +14,11 @@
     }
   }
 
+  &.collection-list-modal {
+    height: 80vh;
+    padding-bottom: 0;
+  }
+
   .cardBox {
     overflow: hidden;
     flex: 1;

@@ -69,7 +69,7 @@ const CollectionInfo = () => {
                   <App.Flex sx={{marginTop: 'auto'}} gap={16}>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>Price</App.Text>
-                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ currentCollection?.price } { blockchain?.currency }</App.Text>
+                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ currentCollection?.price } { currentCollection?.currency }</App.Text>
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>24h Price Change</App.Text>
@@ -81,7 +81,7 @@ const CollectionInfo = () => {
                     <App.Flex column className={styles.card}>
                       <App.Flex align="center" gap={4}>
                         <App.Text color="#B9B8C5" size={10} weight={400}>24h Volume</App.Text>
-                        <App.Tooltip placement="bottom" text={<App.Text center color="#B9B8C5">A measure of how much NFTs was traded traded in the last 24 hours </App.Text>}>
+                        <App.Tooltip placement="bottom" text={<App.Text center color="#B9B8C5">A measure of how much NFTs was traded in the last 24 hours </App.Text>}>
                           <App.Icon icon="info" width={12} height={12} />
                         </App.Tooltip>
                       </App.Flex>
@@ -89,11 +89,11 @@ const CollectionInfo = () => {
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>24h High</App.Text>
-                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ high } { blockchain?.currency }</App.Text>
+                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ high } { currentCollection?.currency }</App.Text>
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>24h Low</App.Text>
-                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ low } { blockchain?.currency }</App.Text>
+                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ low } { currentCollection?.currency }</App.Text>
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Flex align="center" gap={4}>

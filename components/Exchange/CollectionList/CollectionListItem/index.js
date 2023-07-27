@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector } from 'react-redux'
 import Image from 'next/image'
@@ -9,9 +10,8 @@ import { trackEvent } from '@/libs/analytics.lib'
 import App from  '@/components/App'
 
 import styles from './styles.module.scss'
-import { memo } from 'react'
 
-const CollectionListItem = ({ isActive, collection, withArrow, onClick }) => {
+const CollectionListItem = ({ isActive, collection, withArrow, onClick, onClose }) => {
   const router = useRouter()
   const blockchain = useSelector($app.get.blockchain)
 
@@ -25,6 +25,10 @@ const CollectionListItem = ({ isActive, collection, withArrow, onClick }) => {
       })
 
       router.push(`/exchange/${collection.address}`, undefined, { scroll: false })
+
+      if (onClose) {
+        onClose()
+      }
     }
   }
 
@@ -64,7 +68,7 @@ const CollectionListItem = ({ isActive, collection, withArrow, onClick }) => {
       </App.Flex>
       
       <App.Flex column>
-        <App.Text right>{ collection.price } { blockchain.currency }</App.Text>
+        <App.Text right>{ collection.price } { collection.currency }</App.Text>
         <App.Flex row align="center" justify="flex-end" gap={2}>
           <App.Icon icon="caret-down" width={10} height={10} color={collection.ticker.type == 'minus' ? '#FF1D61' : '#53F19C'} style={{transform: `rotate(${collection.ticker.type == 'plus' ? '180deg' : '0deg'})`}} />
           <App.Text size={10} color={collection.ticker.type == 'minus' ? '#FF1D61' : '#53F19C'}>{ collection.ticker.value }%</App.Text>
@@ -80,7 +84,8 @@ const isEqual = (prevProps, nextProps) => {
   return prevProps.isActive === nextProps.isActive &&
     JSON.stringify(prevProps.collection) === JSON.stringify(nextProps.collection) &&
     prevProps.withArrow === nextProps.withArrow &&
-    prevProps.onClick === nextProps.onClick
+    prevProps.onClick === nextProps.onClick &&
+    prevProps.onClose === nextProps.onClose
 }
 
 export default memo(CollectionListItem, isEqual)

@@ -11,7 +11,7 @@ const CollectionListMobile = () => {
   const current = useSelector(({ $collection }) => $collection.current)
 
   const handleClick = useCallback(() => {
-    dispatch($modal.set.show({modal: 'Exchange/CollectionList'< {props: { header: {} }}}))
+    dispatch($modal.set.show({modal: 'Exchange/CollectionList', props: { header: {title: 'Select a Collection'}, className: 'collection-list-modal'  }}))
   }, [])
 
   return (
