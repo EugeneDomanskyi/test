@@ -1,161 +1,47 @@
-import { useEffect, useRef, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { memo, useCallback, useState } from 'react'
+import { useSelector } from 'react-redux'
+import cn from 'classnames'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
-import { trackEvent } from '@/libs/analytics.lib'
-
-import $app from '@/store/app'
-import $exchange from '@/store/exchange'
 import $collection from '@/store/collection'
 
 import App from '@/components/App'
-import CollectionCard from '@/components/Exchange/CollectionCard'
+import CollectionListSearch from '@/components/Exchange/CollectionList/CollectionListSearch'
+import CollectionListSort from '@/components/Exchange/CollectionList/CollectionListSort'
+import CollectionListPagination from '@/components/Exchange/CollectionList/CollectionListPagination'
+import CollectionListItem from '@/components/Exchange/CollectionList/CollectionListItem'
 
 import styles from './styles.module.scss'
 
-const CollectionList = ({current}) => {
-  const { isContractAddress, usdt } = useWalletConnect()
-  const dispatch = useDispatch()
-
-  const blockchain = useSelector($app.get.blockchain)
-  const pages = useSelector($collection.get.pages)
-  const { page } = useSelector(({$collection}) => $collection)
-  const { sortType } = useSelector(({$exchange}) => $exchange)
-  const { loading } = useSelector(({$collection}) => $collection)
+const CollectionList = ({ className, onClose }) => {
   const { collections, searched } = useSelector($collection.get.all)
+  const current = useSelector(({$collection}) => $collection.current)
 
-  const [search, setSearch] = useState('')
-  const [searchLoading, setSearchLoading] = useState(false)
   const [wasSearched, setWasSearched] = useState(false)
 
-  const [sortField, sortVerctor] = sortType.split(':')
-  let timeoutId = useRef(null)
-
-  useEffect(() => {
-    setSearch('')
-  }, [blockchain])
-
   const collectionList = () => {
-    if (search.trim() != '' && wasSearched) {
-      return searched
-    }
-
-    return collections
+    return (wasSearched) ? searched : collections
   }
 
-  const setSort = field => () => {
-    if (field === sortField) {
-      dispatch($exchange.set.sortType(`${field}:${sortVerctor === 'ASC' ? 'DESC' : 'ASC'}`))
-    } else {
-      dispatch($exchange.set.sortType(`${field}:ASC`))
-    }
-  }
-
-  const handleFocus = () => {
-    trackEvent('Dex Search Asset', {
-      'Network': blockchain.code.toUpperCase(),
-    })
-  }
-
-  const handleSearchChange = (value) => {
-    setSearch(value)
-    
-    clearTimeout(timeoutId.current)
-
-    if (value.trim() == '') {
-      setWasSearched(false)
-    }
-
-    if (value.trim().length >= 3) {
-      timeoutId.current = setTimeout(() => {
-        handleSearch(value.trim())
-      }, 1000)
-    }
-  }
-
-  const handleSearch = async (searchQuery) => {
-    setSearchLoading(true)
-
-    const params = {
-      blockchain: blockchain.code,
-      sortBy: '1DayVolume',
-      limit: 10,
-      displayCurrency: usdt[blockchain.code],
-      // maxFloorAskPrice: process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null,
-    }
-
-    if (isContractAddress(searchQuery)) {
-      params.id = searchQuery
-    } else {
-      params.name = searchQuery
-    }
-
-    const result = await $collection.api.all(params)
-
-    if (result && result.hasOwnProperty('collections')) {
-      dispatch($collection.set.searched(result.collections))
-    }
-
-    setSearchLoading(false)
-    setWasSearched(true)
-  }
-
-  const handlePage = (page) => () => {
-    let continuation = null
-    if (page != null) {
-      continuation = pages[page]
-    }
-
-    dispatch($collection.set.page(continuation))
-    dispatch($collection.set.fetching(true))
-  }
+  const handleSearched = useCallback((value) => {
+    setWasSearched(value)
+  }, [])
   
   return (
-    <App.Flex column className={styles.container}>
+    <App.Flex column className={cn(styles.container, styles[className])}>
       <App.Flex column gap={16} sx={{ padding: 16 }}>
-        <App.TextField
-          value={search}
-          type="text"
-          labelFixed
-          placeholder="Assets, Tokens, Games"
-          onChange={handleSearchChange}
-          start={<App.Icon icon="search" color={search.trim() != '' ? '#fff' : null } />}
-          end={searchLoading ? <App.Loader size={12} /> : null}
-          size="small"
-          variant="search"
-          variantNotEmpty
-          withClear
-          autoComplete="search no-autocomplete"
-          name="search no-autocomplete"
-          onFocus={handleFocus}
-        />
-
-        <App.Flex row>
-          <App.Flex row flex={1} gap={4} align="center" justify="flex-start" onClick={setSort('NAME')} sx={{ cursor: 'pointer' }}>
-            <App.Text color={sortField === 'NAME' ? '#fff' : '#908f99'}>Name</App.Text>
-            <App.Icon icon="arrow-down" color={sortField === 'NAME' ? '#fff' : 'transparent'} style={{transform: `rotate(${sortVerctor === 'DESC' ? '180deg' : '0deg'})`}} />
-          </App.Flex>
-
-          <App.Flex row flex={1} gap={4} center onClick={setSort('VOLUME')} sx={{ cursor: 'pointer' }}>
-            <App.Text color={sortField === 'VOLUME' ? '#fff' : '#908f99'}>Volume</App.Text>
-            <App.Icon icon="arrow-down" color={sortField === 'VOLUME' ? '#fff' : 'transparent'} style={{transform: `rotate(${sortVerctor === 'DESC' ? '180deg' : '0deg'})`}} />
-          </App.Flex>
-
-          <App.Flex row flex={1} gap={4} align="center" justify="flex-end" onClick={setSort('PRICE')} sx={{ cursor: 'pointer' }}>
-            <App.Icon icon="arrow-down" color={sortField === 'PRICE' ? '#fff' : 'transparent'} style={{transform: `rotate(${sortVerctor === 'DESC' ? '180deg' : '0deg'})`}} />
-            <App.Text color={sortField === 'PRICE' ? '#fff' : '#908f99'}>Price</App.Text>
-          </App.Flex>
-        </App.Flex>
+        <CollectionListSearch onSearched={handleSearched} />
+        <CollectionListSort />
       </App.Flex>
 
       <div className={styles.cardBox}>
         <div className={styles.cardBoxContent}>
           {collectionList().map((collection) => {
             return (
-              <CollectionCard
+              <CollectionListItem
                 key={collection.address}
                 collection={collection}
                 isActive={current.address === collection.address}
+                onClose={onClose}
               />
             )
           })}
@@ -163,28 +49,10 @@ const CollectionList = ({current}) => {
       </div>
       
       {!wasSearched ? (
-        <App.Flex row align="center" justify="space-between" sx={{ padding: 16 }}>
-          <App.Button small primary outlined={! pages.prev} disabled={! pages.prev} onClick={handlePage('prev')}>
-            {loading && page == pages.prev ? (
-              <App.Loader size={16} />
-            ) : (
-              <App.Icon icon="chevron-left" color="#fff" />
-            )}
-            Prev
-          </App.Button>
-
-          <App.Button small primary outlined={! pages.next} disabled={! pages.next} onClick={handlePage('next')}>
-            Next
-            {loading && page == pages.next ? (
-              <App.Loader size={16} />
-            ) : (
-              <App.Icon icon="chevron-right" width={16} height={16} />
-            )}
-          </App.Button>
-        </App.Flex>
+        <CollectionListPagination />
       ) : null}
     </App.Flex>
   )
 }
 
-export default CollectionList
+export default memo(CollectionList, () => true)

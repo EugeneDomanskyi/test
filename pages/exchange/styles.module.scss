@@ -7,6 +7,13 @@
   @media (max-width: 768px) {
     & {
       padding: 64px 0 0;
+      width: 100%;
+    }
+
+    .tradesContent {
+      position: absolute;
+      z-index: 0;
+      inset: 0 0 69px;
     }
   }
 }

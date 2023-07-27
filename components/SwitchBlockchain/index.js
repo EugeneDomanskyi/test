@@ -12,7 +12,7 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const SwitchBlockchain = ({ justify = 'center' }) => {
+const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const { blockchains } = useSelector(({ $app }) => $app)
@@ -44,8 +44,11 @@ const SwitchBlockchain = ({ justify = 'center' }) => {
     
     dispatch($app.set.code(val))
     dispatch($collection.set.pagesClear())
-    dispatch($collection.set.current({}))
     setMenuShow(false)
+
+    if (onMobileMenuClose) {
+      onMobileMenuClose()
+    }
   }
 
   return (

@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector } from 'react-redux'
 import Image from 'next/image'
@@ -10,17 +11,25 @@ import App from  '@/components/App'
 
 import styles from './styles.module.scss'
 
-const CollectionCard = ({ isActive, collection }) => {
+const CollectionListItem = ({ isActive, collection, withArrow, onClick, onClose }) => {
   const router = useRouter()
   const blockchain = useSelector($app.get.blockchain)
 
   const handleClick = () => {
-    trackEvent('Dex Select Asset', {
-      'Network': blockchain.code.toUpperCase(),
-      'Token': collection.name,
-    })
+    if (onClick) {
+      onClick()
+    } else {
+      trackEvent('Dex Select Asset', {
+        'Network': blockchain.code.toUpperCase(),
+        'Token': collection.name,
+      })
 
-    router.push(`/exchange/${collection.address}`, undefined, { scroll: false })
+      router.push(`/exchange/${collection.address}`, undefined, { scroll: false })
+
+      if (onClose) {
+        onClose()
+      }
+    }
   }
 
   const TooltipText = () => (
@@ -30,10 +39,10 @@ const CollectionCard = ({ isActive, collection }) => {
   )
 
   return (
-    <App.Flex row justify="space-between" align="center" onClick={handleClick} className={cn(styles.collection, {[styles.active]: isActive})}>
+    <App.Flex row justify="space-between" align="center" onClick={handleClick} className={cn(styles.collection, {[styles.active]: isActive && ! withArrow})}>
       <App.Flex row gap={8} align="center">
         {collection.image ? (
-          <Image src={collection.image} width={72} height={72} className={styles.image} alt="" />
+          <Image src={collection.image} priority width={72} height={72} className={styles.image} alt="" />
         ) : (
           <div style={{width: 72, height: 72}} />
         )}
@@ -48,6 +57,10 @@ const CollectionCard = ({ isActive, collection }) => {
                 </App.Flex>
               </App.Tooltip>
             ) : null}
+
+            {withArrow ? (
+              <App.Icon icon="caret-down" />
+            ) : null}
           </App.Flex>
 
           <App.Text nowrap size={10} className={styles.secondaryText}>{collection.slug}</App.Text>
@@ -55,7 +68,7 @@ const CollectionCard = ({ isActive, collection }) => {
       </App.Flex>
       
       <App.Flex column>
-        <App.Text right>{ collection.price } { blockchain.currency }</App.Text>
+        <App.Text right>{ collection.price } { collection.currency }</App.Text>
         <App.Flex row align="center" justify="flex-end" gap={2}>
           <App.Icon icon="caret-down" width={10} height={10} color={collection.ticker.type == 'minus' ? '#FF1D61' : '#53F19C'} style={{transform: `rotate(${collection.ticker.type == 'plus' ? '180deg' : '0deg'})`}} />
           <App.Text size={10} color={collection.ticker.type == 'minus' ? '#FF1D61' : '#53F19C'}>{ collection.ticker.value }%</App.Text>
@@ -67,4 +80,12 @@ const CollectionCard = ({ isActive, collection }) => {
   )
 }
 
-export default CollectionCard
+const isEqual = (prevProps, nextProps) => {
+  return prevProps.isActive === nextProps.isActive &&
+    JSON.stringify(prevProps.collection) === JSON.stringify(nextProps.collection) &&
+    prevProps.withArrow === nextProps.withArrow &&
+    prevProps.onClick === nextProps.onClick &&
+    prevProps.onClose === nextProps.onClose
+}
+
+export default memo(CollectionListItem, isEqual)
