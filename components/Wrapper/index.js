@@ -55,7 +55,7 @@ const Wrapper = ({ children }) => {
           const result = await $collection.api.all(queryParams(blockchainCode.current, page, { maxFloorAskPrice: process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null }))
           if (result && result.hasOwnProperty('collections')) {
             dispatch($collection.set.searched([]))
-            dispatch($collection.set.all(result.collections))
+            dispatch($collection.set.all(result.collections.map(item => ({ ...item, blockchain: blockchainCode.current }))))
             dispatch($collection.set.pages(result?.continuation))
 
             if (isExchange && ! collection?.address) {
@@ -117,6 +117,7 @@ const Wrapper = ({ children }) => {
       if (result && result.hasOwnProperty('collections')) {
         if (result.collections.length) {
           const [current] = result.collections
+          current.blockchain = blockchainCode.current
           collection = template(current)
         } else {
           let collectionWasFound = false
@@ -130,6 +131,7 @@ const Wrapper = ({ children }) => {
                 dispatch($app.set.code(chain.code))
 
                 const [current] = result.collections
+                current.blockchain = chain.code
                 collection = template(current)
               }
             }
@@ -146,7 +148,7 @@ const Wrapper = ({ children }) => {
       blockchain: blockchainCode,
       sortBy: '1DayVolume',
       limit: 10,
-      displayCurrency: usdt[blockchainCode],
+      // displayCurrency: usdt[blockchainCode],
       // id: '0x4d544035500d7ac1b42329c70eb58e77f8249f0f',
     }
 

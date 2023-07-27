@@ -12,6 +12,7 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 
 import App from '@/components/App'
 import CollectionList from '@/components/Exchange/CollectionList'
+import CollectionListMobile from '@/components/Exchange/CollectionList/CollectionListMobile'
 import OrderBook from '@/components/Exchange/OrderBook'
 import Sales from '@/components/Exchange/Sales'
 import TradeForm from '@/components/Exchange/TradeForm'
@@ -183,10 +184,10 @@ const Exchange = () => {
     <App.Flex gap={GRID_GAP} className={styles.container}>
       {!isMobile ? (
         <>
-          <CollectionList current={current} />
+          <CollectionList />
 
           <App.Flex column flex={1} gap={GRID_GAP}>
-            <CollectionInfo current={current} />
+            <CollectionInfo />
 
             <App.Flex gap={GRID_GAP}>
               <App.Flex flex={1} column gap={GRID_GAP}>
@@ -211,7 +212,20 @@ const Exchange = () => {
       ) : (
         <>
           {mobileTab == 'markets' ? (
-            <CollectionList current={current} />
+            <CollectionList />
+          ) : null}
+
+          {mobileTab == 'trades' ? (
+            <App.Flex column gap={GRID_GAP} width="100%">
+              <CollectionListMobile />
+
+              <App.Flex column flex={1} sx={{ position: 'relative' }}>
+                <App.Flex column gap={GRID_GAP} className={styles.tradesContent}>
+                  <OrderBook onClickOrder={handleClickOrder} />
+                  <Sales onClickSale={handleClickOrder} />
+                </App.Flex>
+              </App.Flex>
+            </App.Flex>
           ) : null}
 
           <MobileTabsBar
@@ -223,9 +237,7 @@ const Exchange = () => {
       )}
       {
         loadingCollectionData
-          ? <App.Flex sx={{position: 'fixed', width: '100%', height: '100%'}} align="center" justify="center">
-              <App.Loader size={100} color="#7204FF" />
-            </App.Flex>
+          ? <App.LoaderBlock size={100} color="#7204FF" fixed height="100%" />
           : null
       }
     </App.Flex>

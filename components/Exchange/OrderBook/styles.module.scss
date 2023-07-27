@@ -5,6 +5,12 @@
     height: 24px;
     padding: 0 8px;
   }
+
+  @media (max-width: 768px) {
+    & {
+      flex: 1;
+    }
+  }
 }
 
 .row {

@@ -1,4 +1,5 @@
 import styles from './styles.module.scss'
+import { memo } from 'react'
 import { useSelector } from 'react-redux'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -10,13 +11,13 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import App from '@/components/App'
 import { WebIcon, TwitterIcon, DiscordIcon } from '@/components/Icons/exchange'
 
-const CollectionInfo = ({current}) => {
+const CollectionInfo = () => {
   const { scanUrl } = useWalletConnect()
   const blockchain = useSelector($app.get.blockchain)
   const { high, low } = useSelector($exchange.get.highLow({count: 24, unit: 'hours'}))
-  
-  const currentCollection = current
-  const scanLink = scanUrl(current.address, 'address', blockchain?.code)
+  const currentCollection = useSelector(({$collection}) => $collection.current)
+
+  const scanLink = scanUrl(currentCollection.address, 'address', blockchain?.code)
 
   return (
     <App.Flex className={styles.container} gap={6}>
@@ -68,7 +69,7 @@ const CollectionInfo = ({current}) => {
                   <App.Flex sx={{marginTop: 'auto'}} gap={16}>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>Price</App.Text>
-                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ currentCollection?.price } { blockchain?.currency }</App.Text>
+                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ currentCollection?.price } { currentCollection?.currency }</App.Text>
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>24h Price Change</App.Text>
@@ -80,7 +81,7 @@ const CollectionInfo = ({current}) => {
                     <App.Flex column className={styles.card}>
                       <App.Flex align="center" gap={4}>
                         <App.Text color="#B9B8C5" size={10} weight={400}>24h Volume</App.Text>
-                        <App.Tooltip placement="bottom" text={<App.Text center color="#B9B8C5">A measure of how much NFTs was traded traded in the last 24 hours </App.Text>}>
+                        <App.Tooltip placement="bottom" text={<App.Text center color="#B9B8C5">A measure of how much NFTs was traded in the last 24 hours </App.Text>}>
                           <App.Icon icon="info" width={12} height={12} />
                         </App.Tooltip>
                       </App.Flex>
@@ -88,11 +89,11 @@ const CollectionInfo = ({current}) => {
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>24h High</App.Text>
-                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ high } { blockchain?.currency }</App.Text>
+                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ high } { currentCollection?.currency }</App.Text>
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>24h Low</App.Text>
-                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ low } { blockchain?.currency }</App.Text>
+                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ low } { currentCollection?.currency }</App.Text>
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Flex align="center" gap={4}>
@@ -113,4 +114,8 @@ const CollectionInfo = ({current}) => {
   )
 }
 
-export default CollectionInfo
+const isEqual = () => {
+  return true
+}
+
+export default memo(CollectionInfo, isEqual)

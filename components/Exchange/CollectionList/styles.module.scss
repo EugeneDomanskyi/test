@@ -8,10 +8,15 @@
 
   @media (max-width: 768px) {
     & {
-      min-width: none;
+      min-width: auto;
       width: 100%;
       padding-bottom: 68px;
     }
+  }
+
+  &.collection-list-modal {
+    height: 80vh;
+    padding-bottom: 0;
   }
 
   .cardBox {

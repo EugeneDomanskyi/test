@@ -1,5 +1,6 @@
 import { memo, useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
+import cn from 'classnames'
 
 import $collection from '@/store/collection'
 
@@ -11,7 +12,7 @@ import CollectionListItem from '@/components/Exchange/CollectionList/CollectionL
 
 import styles from './styles.module.scss'
 
-const CollectionList = () => {
+const CollectionList = ({ className, onClose }) => {
   const { collections, searched } = useSelector($collection.get.all)
   const current = useSelector(({$collection}) => $collection.current)
 
@@ -26,7 +27,7 @@ const CollectionList = () => {
   }, [])
   
   return (
-    <App.Flex column className={styles.container}>
+    <App.Flex column className={cn(styles.container, styles[className])}>
       <App.Flex column gap={16} sx={{ padding: 16 }}>
         <CollectionListSearch onSearched={handleSearched} />
         <CollectionListSort />
@@ -40,6 +41,7 @@ const CollectionList = () => {
                 key={collection.address}
                 collection={collection}
                 isActive={current.address === collection.address}
+                onClose={onClose}
               />
             )
           })}

@@ -1,10 +1,19 @@
 .container {
   padding: 88px 24px 0;
   min-height: 100vh;
+  // position: relative;
+  // z-index: 10;
 
   @media (max-width: 768px) {
     & {
       padding: 64px 0 0;
+      width: 100%;
+    }
+
+    .tradesContent {
+      position: absolute;
+      z-index: 0;
+      inset: 0 0 69px;
     }
   }
 }

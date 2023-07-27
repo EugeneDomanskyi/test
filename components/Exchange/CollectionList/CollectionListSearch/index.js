@@ -47,7 +47,7 @@ const CollectionListSearch = ({ onSearched }) => {
       blockchain: blockchain.code,
       sortBy: '1DayVolume',
       limit: 10,
-      displayCurrency: usdt[blockchain.code],
+      // displayCurrency: usdt[blockchain.code],
       // maxFloorAskPrice: process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null,
     }
 
@@ -60,7 +60,7 @@ const CollectionListSearch = ({ onSearched }) => {
     const result = await $collection.api.all(params)
 
     if (result && result.hasOwnProperty('collections')) {
-      dispatch($collection.set.searched(result.collections))
+      dispatch($collection.set.searched(result.collections.map(item => ({ ...item, blockchain: blockchain.code }))))
     }
 
     setSearchLoading(false)

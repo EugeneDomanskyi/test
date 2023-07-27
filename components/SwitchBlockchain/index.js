@@ -44,7 +44,6 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
     
     dispatch($app.set.code(val))
     dispatch($collection.set.pagesClear())
-    dispatch($collection.set.current({}))
     setMenuShow(false)
 
     if (onMobileMenuClose) {
