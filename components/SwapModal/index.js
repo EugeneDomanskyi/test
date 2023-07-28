@@ -56,23 +56,21 @@ const SwapModal = ({ collection, onClose, onStep }) => {
   }
 
   const onBuyProgress = (nfts) => (steps) => {
-    const transaction = steps.find(item => item.kind == 'transaction')
-    if (transaction && transaction.hasOwnProperty('items')) {
-      if (transaction.items[0] && transaction.items[0].hasOwnProperty('status')) {
-        if (transaction.items[0].status == 'incomplete') {
-          setStep(1)
-          console.log('Incomplete txHash', transaction.items[0]?.txHash)
-        } else {
-          setStep(2)
-          console.log('Complete txHash', transaction.items[0]?.txHash)
+    const transaction = steps.find(item => item.kind == 'transaction' && item.items.length)
+    if (transaction.items[0] && transaction.items[0].hasOwnProperty('status')) {
+      if (transaction.items[0].status == 'incomplete') {
+        setStep(1)
+        console.log('Incomplete txHash', transaction.items[0]?.txHash)
+      } else {
+        setStep(2)
+        console.log('Complete txHash', transaction.items[0]?.txHash)
 
-          trackEvent('Dex Swap Successful', {
-            'Token': collection.name,
-            'Network': blockchain.code.toUpperCase(),
-            'Quantity': nfts.length,
-            'At Price': 0,
-          })
-        }
+        trackEvent('Dex Swap Successful', {
+          'Token': collection.name,
+          'Network': blockchain.code.toUpperCase(),
+          'Quantity': nfts.length,
+          'At Price': 0,
+        })
       }
     }
   }
@@ -88,23 +86,21 @@ const SwapModal = ({ collection, onClose, onStep }) => {
   }
 
   const onSellProgress = (nfts) => (steps) => {
-    const transaction = steps.find(item => item.kind == 'transaction')
-    if (transaction && transaction.hasOwnProperty('items')) {
-      if (transaction.items[0] && transaction.items[0].hasOwnProperty('status')) {
-        if (transaction.items[0].status == 'incomplete') {
-          setStep(1)
-          console.log('Incomplete txHash', transaction.items[0]?.txHash)
-        } else {
-          setStep(2)
-          console.log('Complete txHash', transaction.items[0]?.txHash)
+    const transaction = steps.find(item => item.kind == 'transaction' && item.items.length)
+    if (transaction.items[0] && transaction.items[0].hasOwnProperty('status')) {
+      if (transaction.items[0].status == 'incomplete') {
+        setStep(1)
+        console.log('Incomplete txHash', transaction.items[0]?.txHash)
+      } else {
+        setStep(2)
+        console.log('Complete txHash', transaction.items[0]?.txHash)
 
-          trackEvent('Dex Swap Successful', {
-            'Token': collection.name,
-            'Network': blockchain.code.toUpperCase(),
-            'Quantity': nfts.length,
-            'At Price': 0,
-          })
-        }
+        trackEvent('Dex Swap Successful', {
+          'Token': collection.name,
+          'Network': blockchain.code.toUpperCase(),
+          'Quantity': nfts.length,
+          'At Price': 0,
+        })
       }
     }
   }
