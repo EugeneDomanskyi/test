@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, Fragment, forwardRef, useImperativeHandle,
 import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import Image from 'next/image'
-import cn from 'classnames'
+import { parseUnits } from 'viem'
 
 import $app from '@/store/app'
 import $exchange from '@/store/exchange'
@@ -13,22 +13,27 @@ import useTrade from '@/myhooks/trade'
 import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
-import Tabs from '@/components/Exchange/Tabs'
 import TradeInput from '@/components/Exchange/TradeInput'
 
-const TradeFormLimit = ({currentTab, currentOption}) => {
+const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) => {
   const dispatch = useDispatch()
-  const { wallet, connect, changeNetwork, getBalance } = useWalletConnect()
-  const { getNftBalanceUser, getNftUser } = useTrade()
+  const { wallet, connect, changeNetwork } = useWalletConnect()
+  const { getNftUser } = useTrade()
   
   const blockchain = useSelector($app.get.blockchain)
-  const orderBook = useSelector($exchange.get.orderBook)
   const currentCollection = useSelector(({$collection}) => $collection.current)
 
-  const [userBalances, setUserBalances] = useState({native: 0, token: 0})
-  const [form, setForm] = useState({price: '0', amount: '1', total: '0'})
+  const [form, setForm] = useState(initialForm)
 
   const loadingRef = useRef(false)
+
+  useEffect(() => {
+    Object.entries(initialForm).forEach(([key, value]) => {
+      if (key !== 'total' && form[key] !== value) {
+        handleChangeForm(key)(value)
+      }
+    })
+  }, [initialForm])
 
   const handleChangeForm = field => value => {
     switch (field) {
@@ -76,15 +81,44 @@ const TradeFormLimit = ({currentTab, currentOption}) => {
     loadingRef.current = true
     switch (currentTab) {
       case 'buy':
+        // $exchange.api.executeOrder({
+        //   maker: wallet,
+        //   blockchain: blockchain.code,
+        //   params: [{
+        //     collection: currentCollection.address,
+        //     weiPrice: parseUnits(`${form.total*form.amount}`, 18).toString()
+        //   }],
+        // }).then(async ({steps}) => {
+        //   const currentStep = steps.filter(step => step.items.length).find(step => {
+        //     const [action] = step.items
+        //     return action.status !== 'complete'
+        //   })
+        //   if (currentStep) {
+        //     switch (currentStep.kind) {
+        //       case 'signature':
+        //         const [step] = currentStep.items
+        //         const needToSign = step.data.sign
+        //         console.log(needToSign)
+        //         const signature = await walletClient.signTypedData({
+        //           ...needToSign,
+        //           message: needToSign.value,
+        //         })
+        //         console.log('signature', signature)
+        //         break
+        //     }
+        //   }
+        // })
+        // return
         dispatch($modal.set.show({
           show: true,
           modal: 'Exchange/BuyModal',
           props: {
             header: {
-              title: `Buy ${currentCollection.name} for ${blockchain.currency}`,
+              title: `Buy ${currentCollection.name} for ${blockchain.wrapped.shortName}`,
             },
             data: {
               ...form,
+              type: 'place',
               collectionId: currentCollection.address,
               blockchain: blockchain,
             },
@@ -103,10 +137,11 @@ const TradeFormLimit = ({currentTab, currentOption}) => {
           props: {
             header: {
               title: `${tokenIds.length} NFTs available`,
-              subtitle: `Choose the NFT collection you want to swap`
+              subtitle: `Choose the NFT collection you want to sell`
             },
             data: {
               ...form,
+              type: 'place',
               tokens: tokenIds,
               collectionId: currentCollection.address,
               blockchain: blockchain,
@@ -163,7 +198,7 @@ const TradeFormLimit = ({currentTab, currentOption}) => {
           <App.Text size={10} color="rgba(255,255,255,0.6)">
             {
               currentTab === 'buy'
-                ? `${userBalances.native} ${blockchain.currency}`
+                ? `${userBalances.native} ${blockchain.wrapped.shortName}`
                 : `${userBalances.token} NFT`
             }
           </App.Text>
@@ -180,11 +215,10 @@ const TradeFormLimit = ({currentTab, currentOption}) => {
 
   return (
     <App.Flex column className={styles.form}>
-      <App.Flex flex={1} />
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
           label="AT PRICE"
-          currency={blockchain.currency}
+          currency={blockchain.wrapped.shortName}
           value={form.price}
           onBlur={handleBlurPrice}
           onChange={handleChangeForm('price')} />
@@ -205,7 +239,7 @@ const TradeFormLimit = ({currentTab, currentOption}) => {
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
           label="TOTAL"
-          currency={blockchain.currency}
+          currency={blockchain.wrapped.shortName}
           value={form.total}
           onBlur={handleTotalBlur}
           onChange={handleChangeForm('total')} />
@@ -215,7 +249,6 @@ const TradeFormLimit = ({currentTab, currentOption}) => {
               : null
           }
       </App.Flex>
-      <App.Flex flex={1} />
       <App.Button
         sx={{backgroundColor: currentOption.color}}
         className={styles.button}

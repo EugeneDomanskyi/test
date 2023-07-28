@@ -15,7 +15,6 @@ import App from '@/components/App'
 const Orders = ({onOrderCancelled, onClickOrder}) => {
   const router = useRouter()
   const orders = useSelector($exchange.get.orders)
-  const blockchain = useSelector($app.get.blockchain)
   const current = useSelector(({$collection}) => $collection.current)
 
   const { cancelOrder, errorHandler } = useTrade()
@@ -116,10 +115,10 @@ const Orders = ({onOrderCancelled, onClickOrder}) => {
                     <App.Text size={10} weight={600} center color="rgba(94, 92, 107, 1)">{ totalQuantity }</App.Text>
                   </App.Flex>
                   <App.Flex flex={1} column align="center" justify="center">
-                    <App.Text size={12} weight={600} center color="rgba(185, 184, 197, 0.8)">{ numeral(order.price.amount.decimal / totalQuantity).format('0.[0000]') } { blockchain.currency }</App.Text>
+                    <App.Text size={12} weight={600} center color="rgba(185, 184, 197, 0.8)">{ numeral(order.price.amount.decimal / totalQuantity).format('0.[0000]') } { order.price.currency.symbol }</App.Text>
                   </App.Flex>
                   <App.Flex flex={1} column align="center" justify="center" sx={{position: 'relative', height: '100%', overflow: 'hidden'}}>
-                    <App.Text size={12} weight={600}>{ order.price.amount.decimal } { blockchain.currency }</App.Text>
+                    <App.Text size={12} weight={600}>{ order.price.amount.decimal } { order.price.currency.symbol }</App.Text>
                     <App.Flex className={styles.cancelButton} onClick={handlePressCancel(order)}>
                       <App.Text size={12} color="rgb(235, 49, 105)">Cancel order</App.Text>
                     </App.Flex>

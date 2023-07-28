@@ -7,7 +7,7 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const BuyModalComplete = ({currentCollection, amount, onComplete }) => {
+const BuyModalComplete = ({type, currentCollection, amount, onComplete}) => {
   const { isMobile } = usePropsHelper()
 
   const handleComplete = () => {
@@ -23,14 +23,17 @@ const BuyModalComplete = ({currentCollection, amount, onComplete }) => {
           <App.Icon icon="check-circle-fill" />
         </App.Flex>
 
-        <App.Text center size={20} weight={600}>Order Placed Successful!</App.Text>
+        <App.Text center size={20} weight={600}>{type === 'placed' ? 'Order Placed Successful!' : 'Buy Successful!'}</App.Text>
 
         <App.Flex row center gap={8} className={styles.container}>
           <div className={styles.imgRound}>
             <Image src={currentCollection.image} width={64} height={64} alt="" />
           </div>
-
-          <App.Text color="#B9B8C5">You placed order to buy {amount} {currentCollection.name} {`NFT${amount > 1 ? `'s` : ''}`}</App.Text>
+          {
+            type === 'placed'
+              ? <App.Text color="#B9B8C5">You placed order to buy {amount} {currentCollection.name} {`NFT${amount > 1 ? `'s` : ''}`}</App.Text>
+              : <App.Text color="#B9B8C5">You have buy {amount} {currentCollection.name} {`NFT${amount > 1 ? `'s` : ''}`}</App.Text>
+          }
         </App.Flex>
       </App.Flex>
 
