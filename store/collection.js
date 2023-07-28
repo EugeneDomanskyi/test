@@ -20,7 +20,7 @@ export const template = (item) => {
     onSaleCount: item.onSaleCount,
     discordUrl: item.discordUrl,
     externalUrl: item.externalUrl,
-    twitterUrl: `https://twitter.com/${item.twitterUsername}`,
+    twitterUrl: item.twitterUsername ? `https://twitter.com/${item.twitterUsername}` : null,
     openseaVerificationStatus: item.openseaVerificationStatus,
     ticker: {
       value: (item.floorSaleChange['1day'] && item.floorSaleChange['1day'] != 0 ? Math.abs(1 - item.floorSaleChange['1day']) : 0).toFixed(2),

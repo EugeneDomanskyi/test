@@ -54,15 +54,27 @@ const CollectionInfo = () => {
                       <Link href={scanLink} target="_blank" style={{marginRight: 8}}>
                         <App.Icon width={15} height={15} icon={blockchain?.code === 'polygon' ? 'polyscan' : 'etherscan'} />
                       </Link>
-                      <Link href={currentCollection?.externalUrl ?? ''} target="_blank" style={{marginRight: 5}}>
-                        <WebIcon />
-                      </Link>
-                      <Link href={currentCollection?.twitterUrl ?? ''} target="_blank" style={{marginRight: 8}}>
-                        <TwitterIcon />
-                      </Link>
-                      <Link href={currentCollection?.discordUrl ?? ''} target="_blank">
-                        <DiscordIcon />
-                      </Link>
+                      {
+                        currentCollection?.externalUrl
+                          ? <Link href={currentCollection?.externalUrl ?? ''} target="_blank" style={{marginRight: 5}}>
+                              <WebIcon />
+                            </Link>
+                          : null
+                      }
+                      {
+                        currentCollection?.twitterUrl
+                          ? <Link href={currentCollection?.twitterUrl ?? ''} target="_blank" style={{marginRight: 8}}>
+                              <TwitterIcon />
+                            </Link>
+                          : null
+                      }
+                      {
+                        currentCollection?.discordUrl
+                          ? <Link href={currentCollection?.discordUrl ?? ''} target="_blank">
+                              <DiscordIcon />
+                            </Link>
+                          : null
+                      }
                     </App.Flex>
                   </App.Flex>
                   <App.Text lines={2} size={12} weight={500} color="#B9B8C5">{ currentCollection?.description }</App.Text>

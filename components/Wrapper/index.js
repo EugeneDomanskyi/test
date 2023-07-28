@@ -134,12 +134,11 @@ const Wrapper = ({ children }) => {
               const result = await $collection.api.all(queryParams(chain.code, page, { id: address, limit: 1 }))
 
               if (result && result.hasOwnProperty('collections') && result.collections.length) {
+                const [current] = result.collections
                 collectionWasFound = true
                 blockchainCode.current = chain.code
                 current.currency = network(chain.code)?.currency
                 dispatch($app.set.code(chain.code))
-
-                const [current] = result.collections
                 current.blockchain = chain.code
                 collection = template(current)
               }

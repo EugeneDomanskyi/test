@@ -46,16 +46,21 @@ const TradeForm = forwardRef((_props, ref) => {
   const [lowestSell] = orderBook.sell
 
   useEffect(() => {
-    const getBalances = async () => {
+    const getBalances = () => {
       if (currentCollection?.address && wallet) {
-        const nftBalance = await getNftBalanceUser(currentCollection.address, wallet)
-        const nativeBalance = await getBalance()
-        const wrappedBalance = await getBalance(blockchain.wrapped.contract)
-        setUserBalances({native: nativeBalance, wrapped: wrappedBalance, token: nftBalance})
+        getNftBalanceUser(currentCollection.address, wallet).then(res => {
+          setUserBalances(state => ({...state, token: res}))
+        })
+        getBalance().then(res => {
+          setUserBalances(state => ({...state, native: res}))
+        })
+        getBalance(blockchain.wrapped.contract).then(res => {
+          setUserBalances(state => ({...state, wrapped: res}))
+        })
       }
     }
     getBalances()
-  }, [wallet, currentCollection?.address])
+  }, [wallet, currentCollection?.address, blockchain])
 
   useEffect(() => {
     if (!loadingCollectionData && currentCollection?.address) {
