@@ -52,6 +52,8 @@ const TradeFormMarket = ({currentTab, currentOption}) => {
   }
 
   const handleChangeAmount = value => {
+    const maxLength = currentTab === 'buy' ? onSaleNft.length : userNfts.length
+    value = value > maxLength ? maxLength : value
     setAmount(value)
   }
 
