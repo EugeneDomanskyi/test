@@ -99,7 +99,7 @@ const Header = () => {
               </App.Flex>
             </Link>
 
-            <Link href="/" className={cn(styles.navbarItem, {[styles.active]: router.pathname == '/'})}>
+            <Link href="/swap" className={cn(styles.navbarItem, {[styles.active]: router.pathname == '/swap'})}>
               <App.Flex center  height="100%">
                 <App.Text size={18} weight={700}>SWAP</App.Text>
               </App.Flex>
