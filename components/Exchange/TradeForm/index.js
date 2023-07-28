@@ -117,6 +117,7 @@ const TradeForm = forwardRef((_props, ref) => {
             case 'market':
               return (
                 <TradeFormMarket
+                  userBalances={userBalances}
                   currentTab={currentTab}
                   currentOption={currentOption} />
               )

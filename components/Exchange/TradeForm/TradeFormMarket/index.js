@@ -11,7 +11,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
 
-const TradeFormMarket = ({currentTab, currentOption}) => {
+const TradeFormMarket = ({currentTab, currentOption, userBalances}) => {
   const dispatch = useDispatch()
   const { getNftPricesNative, getNftUser, getNftBids, sellPriceByAmount, getNftPricesCurrency } = useTrade()
   const { wallet, connect, changeNetwork } = useWalletConnect()
@@ -27,10 +27,12 @@ const TradeFormMarket = ({currentTab, currentOption}) => {
   useEffect(() => {
     if (currentCollection.address) {
       getNftPricesNative(currentCollection.address).then(res => {
-        const tokenIds = res.map(token => token.id)
-        getNftPricesCurrency(currentCollection.address, tokenIds, blockchain.wrapped.contract).then(res => {
-          setOnSaleNft(res)
-        })
+        // const tokenIds = res.map(token => token.id)
+        // console.log(tokenIds)
+        setOnSaleNft(res)
+        // getNftPricesCurrency(currentCollection.address, tokenIds, blockchain.wrapped.contract).then(res => {
+        //   setOnSaleNft(res)
+        // })
       })
       getNftBids(currentCollection.address, blockchain.wrapped.contract).then(res => {
         setOnBuyNft(res)
@@ -126,7 +128,7 @@ const TradeFormMarket = ({currentTab, currentOption}) => {
           value={amount}
           currency={`NFT${amount > 1 ? `'s` : ''}`}
           onChange={handleChangeAmount} />
-        <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto'}}>NFTs available: {currentTab === 'buy' ? onSaleNft.length : userNfts.length}</App.Text>
+        <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto', marginTop: 5}}>NFTs available: {currentTab === 'buy' ? onSaleNft.length : userNfts.length}</App.Text>
       </App.Flex>
       <App.Flex sx={{marginBottom: 24}}>
         <App.RangeInput
@@ -142,6 +144,7 @@ const TradeFormMarket = ({currentTab, currentOption}) => {
           currency={blockchain.wrapped.shortName}
           readOnly={true}
           value={getTotal()} />
+        <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto', marginTop: 5}}>Balance: { userBalances.native } { blockchain.wrapped.shortName }</App.Text>
       </App.Flex>
       <App.Button
         sx={{backgroundColor: currentOption.color}}
