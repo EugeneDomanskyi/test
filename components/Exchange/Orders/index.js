@@ -75,9 +75,9 @@ const Orders = ({onOrderCancelled, onClickOrder}) => {
           }
           <App.Text>Orders</App.Text>
         </App.Flex>
-        <App.Flex className={styles.cancelAllButton} align="center" justify="center" onClick={handleCancelAll}>
+        {/* <App.Flex className={styles.cancelAllButton} align="center" justify="center" onClick={handleCancelAll}>
           <App.Text color="#B9B8C5" size={10} weight={600}>Cancell All</App.Text>
-        </App.Flex>
+        </App.Flex> */}
       </App.Flex>
       <App.Flex align="center" sx={{height: 20, borderBottom: '1px solid rgba(94, 92, 107, 0.3)'}}>
         <App.Flex column sx={{width: 60}} align="center">

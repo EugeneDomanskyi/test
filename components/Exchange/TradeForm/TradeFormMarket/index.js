@@ -1,5 +1,5 @@
 import styles from './styles.module.scss'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, forwardRef, useImperativeHandle } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Image from 'next/image'
 
@@ -11,30 +11,32 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
 
-const TradeFormMarket = ({currentTab, currentOption, userBalances}) => {
+const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm}) => {
   const dispatch = useDispatch()
-  const { getNftPricesNative, getNftUser, getNftBids, sellPriceByAmount, getNftPricesCurrency } = useTrade()
+  const { getNftPricesNative, getNftUser, getNftBids, sellPriceByAmount } = useTrade()
   const { wallet, connect, changeNetwork } = useWalletConnect()
 
   const currentCollection = useSelector(({$collection}) => $collection.current)
   const blockchain = useSelector($app.get.blockchain)
 
-  const [amount, setAmount] = useState('1')
+  const [amount, setAmount] = useState(initialForm.amount)
   const [userNfts, setUserNfts] = useState([])
   const [onSaleNft, setOnSaleNft] = useState([])
   const [onBuyNft, setOnBuyNft] = useState([])
 
+  const isDisabled = !(amount*1) || (currentTab === 'buy' && !onSaleNft.length)
+
+  useEffect(() => {
+    const maxLength = currentTab === 'buy' ? onSaleNft.length : userNfts.length
+    setAmount(initialForm.amount > maxLength ? maxLength : initialForm.amount)
+  }, [initialForm.amount])
+
   useEffect(() => {
     if (currentCollection.address) {
       getNftPricesNative(currentCollection.address).then(res => {
-        // const tokenIds = res.map(token => token.id)
-        // console.log(tokenIds)
         setOnSaleNft(res)
-        // getNftPricesCurrency(currentCollection.address, tokenIds, blockchain.wrapped.contract).then(res => {
-        //   setOnSaleNft(res)
-        // })
       })
-      getNftBids(currentCollection.address, blockchain.wrapped.contract).then(res => {
+      getNftBids(currentCollection.address).then(res => {
         setOnBuyNft(res)
       })
       if (wallet) {
@@ -83,7 +85,7 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances}) => {
           modal: 'Exchange/BuyModal',
           props: {
             header: {
-              title: `Buy ${currentCollection.name} for ${blockchain.wrapped.shortName}`,
+              title: `Buy ${currentCollection.name} for ${blockchain.currency}`,
             },
             data: {
               type: 'fulfill',
@@ -141,15 +143,18 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances}) => {
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
           label="TOTAL"
-          currency={blockchain.wrapped.shortName}
+          currency={blockchain.currency}
           readOnly={true}
           value={getTotal()} />
-        <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto', marginTop: 5}}>Balance: { userBalances.native } { blockchain.wrapped.shortName }</App.Text>
+        <App.Flex align="center" gap={4} className={styles.balance}>
+          <App.Icon icon="wallet" />
+          <App.Text color="#B9B8C5" size={10}>{ userBalances.native } { blockchain.currency }</App.Text>
+        </App.Flex>
       </App.Flex>
       <App.Button
-        sx={{backgroundColor: currentOption.color}}
+        sx={{backgroundColor: currentOption.color, opacity: isDisabled ? 0.5 : 1, cursor: isDisabled ? 'default' : 'pointer'}}
         className={styles.button}
-        disabled={!amount}
+        disabled={isDisabled}
         onClick={handleSubmit}>
         <App.Text color="#09051D" size={15} weight={700}>{ currentOption.title } {`${amount || 0} NFT${amount > 1 ? `'s` : ''}` }</App.Text>
         { currentCollection?.image ? <Image src={currentCollection?.image} width={32} height={32} alt="" /> : null }

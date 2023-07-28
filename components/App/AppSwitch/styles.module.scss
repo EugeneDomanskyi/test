@@ -9,6 +9,13 @@
   border-radius: 16px;
   transition: background-color .5s;
 
+  &.checked {
+    background-color: #7204FF;
+    .badge {
+      transform: translateX(var(--translate-x));
+    }
+  }
+
   &:has(.input:checked) {
     background-color: #7204FF;
 

@@ -27,7 +27,7 @@ const SellModal = ({data}) => {
     setSelectedTokens(tokens)
     setStep('confirm')
     dispatch($modal.set.update({header: {
-      title: `Buy ${currentCollection.name} for ${data.blockchain.wrapped.shortName}`
+      title: `Buy ${currentCollection.name} for ${data.type === 'place' ? data.blockchain.wrapped.shortName : data.blockchain.currency}`
     }}))
   }
 
@@ -37,7 +37,7 @@ const SellModal = ({data}) => {
     dispatch($modal.set.update({
       header: {
         title: 'Approve Transfer',
-        subtitle: `Sell ${currentCollection.name} using ${data.blockchain.wrapped.shortName}`
+        subtitle: `Sell ${currentCollection.name} using ${data.type === 'place' ? data.blockchain.wrapped.shortName : data.blockchain.currency}`
       },
     }))
     switch (data.type) {

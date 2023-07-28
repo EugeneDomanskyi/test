@@ -98,6 +98,7 @@ const useTrade = () => {
         sortDirection: 'DESC',
         limit: 50,
         continuation,
+        status: 'active',
       })
 
       if (response && response?.orders) {

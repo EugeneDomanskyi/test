@@ -184,7 +184,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
 
   const handleClickMultipler = (percentage) => () => {
     if (currentTab === 'buy') {
-      handleChangeForm('total')(userBalances.native * percentage)
+      handleChangeForm('total')(userBalances.wrapped * percentage)
     } else {
       handleChangeForm('amount')(userBalances.token * percentage)
     }
@@ -198,7 +198,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
           <App.Text size={10} color="rgba(255,255,255,0.6)">
             {
               currentTab === 'buy'
-                ? `${userBalances.native} ${blockchain.wrapped.shortName}`
+                ? `${userBalances.wrapped} ${blockchain.wrapped.shortName}`
                 : `${userBalances.token} NFT`
             }
           </App.Text>

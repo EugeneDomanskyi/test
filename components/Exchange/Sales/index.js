@@ -4,11 +4,13 @@ import moment from 'moment'
 import styles from './styles.module.scss'
 
 import $exchange from '@/store/exchange'
+import $app from '@/store/app'
 
 import App from '@/components/App'
 
 const Sales = ({onClickSale}) => {
   const sales = useSelector($exchange.get.recentSales(50))
+  const blockchain = useSelector($app.get.blockchain)
 
   let previousPrice = 0
 
@@ -24,7 +26,7 @@ const Sales = ({onClickSale}) => {
         </App.Flex>
       </App.Flex>
       <App.Flex sx={{padding: '0 5px', height: 20}} justify="space-between" align="center">
-        <App.Text size={10} color="#908F99" weight={600}>Price</App.Text>
+        <App.Text size={10} color="#908F99" weight={600}>Price ({blockchain.currency})</App.Text>
         <App.Text size={10} color="#908F99" center weight={600}>Volume</App.Text>
         <App.Text size={10} color="#908F99" right weight={600}>Time</App.Text>
       </App.Flex>

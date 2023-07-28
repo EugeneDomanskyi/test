@@ -35,7 +35,6 @@ const Exchange = () => {
   const { wallet } = useWalletConnect()
   const socketConnected = useSelector(({$app}) => $app.socketConnected)
   const blockchain = useSelector($app.get.blockchain)
-  const { current } = useSelector(({$collection}) => $collection)
   const loadingCollectionData = useSelector(({$exchange}) => $exchange.loadingCollectionData)
 
   const [mobileTab, setMobileTab] = useState('markets')
@@ -177,7 +176,7 @@ const Exchange = () => {
   }
 
   const handleClickOrder = useCallback(order => {
-    tradeForm.current.setForm({price: order.price, amount: order.quantity, side: order.side})
+    tradeForm.current.setForm({formType: 'market', amount: order.quantity, side: order.side})
   }, [])
 
   return (

@@ -29,17 +29,15 @@ const TradeForm = forwardRef((_props, ref) => {
 
   const [currentTab, setCurrentTab] = useState('buy')
   const [formType, setFormType] = useState('market')
-  const [userBalances, setUserBalances] = useState({native: 0, token: 0})
+  const [userBalances, setUserBalances] = useState({native: 0, wrapped: 0, token: 0})
   const [limitForm, setLimitForm] = useState({price: '0', amount: '1', total: '0'})
-
-  const priceSetted = useRef(false)
+  const [marketForm, setMarketForm] = useState({amount: '1'})
 
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
-      priceSetted.current = true
       handleChangeTab(data.side)
-      // handleChangeForm('price')(data.price.toString())
-      // handleChangeForm('amount')(data.amount.toString())
+      setFormType(data.formType)
+      setMarketForm({amount: data.amount.toString()})
     }
   }))
 
@@ -51,17 +49,15 @@ const TradeForm = forwardRef((_props, ref) => {
     const getBalances = async () => {
       if (currentCollection?.address && wallet) {
         const nftBalance = await getNftBalanceUser(currentCollection.address, wallet)
-        const nativeBalance = await getBalance(blockchain.wrapped.contract)
-        setUserBalances({native: nativeBalance, token: nftBalance})
+        const nativeBalance = await getBalance()
+        const wrappedBalance = await getBalance(blockchain.wrapped.contract)
+        setUserBalances({native: nativeBalance, wrapped: wrappedBalance, token: nftBalance})
       }
     }
     getBalances()
   }, [wallet, currentCollection?.address])
 
   useEffect(() => {
-    if (priceSetted.current) {
-      return
-    }
     if (!loadingCollectionData && currentCollection?.address) {
       if (currentTab === 'buy') {
         setInitialPrice(lowestBuy?.price || currentCollection?.price)
@@ -117,6 +113,7 @@ const TradeForm = forwardRef((_props, ref) => {
             case 'market':
               return (
                 <TradeFormMarket
+                  initialForm={marketForm}
                   userBalances={userBalances}
                   currentTab={currentTab}
                   currentOption={currentOption} />
