@@ -22,10 +22,10 @@ const SwapModalConfirm = ({ collection, currency, type, nfts }) => {
       {type == 'buy' ? (
         <App.Flex row center gap={8}>
           <div className={styles.imgRound}>
-            <Image src={type == 'buy' ? `/images/icon-${(currency == 'native' ? blockchain.code : 'usdt')}.png` : collection.image} width={25} height={25} alt="" />
+            <Image src={`/images/icon-${(currency == 'native' ? blockchain.code : 'usdt')}.png`} width={25} height={25} alt="" />
           </div>
 
-          <App.Text size={16}>{type == 'buy' ? (currency == 'native' ? blockchain.currency : 'USDT') : collection.name}</App.Text>
+          <App.Text size={16}>{currency == 'native' ? blockchain.currency : 'USDT'}</App.Text>
 
           <App.Icon icon="arrow-right" />
           
@@ -46,10 +46,10 @@ const SwapModalConfirm = ({ collection, currency, type, nfts }) => {
           <App.Icon icon="arrow-right" />
 
           <div className={styles.imgRound}>
-            <Image src={type == 'buy' ? `/images/icon-${(currency == 'native' ? blockchain.code : 'usdt')}.png` : collection.image} width={25} height={25} alt="" />
+            <Image src={`/images/icon-${(currency == 'native' ? blockchain.code : 'usdt')}.png`} width={25} height={25} alt="" />
           </div>
 
-          <App.Text size={16}>{type == 'buy' ? (currency == 'native' ? blockchain.currency : 'USDT') : collection.name}</App.Text>
+          <App.Text size={16}>{currency == 'native' ? blockchain.currency : 'USDT'}</App.Text>
         </App.Flex>
       )}
     </App.Flex>

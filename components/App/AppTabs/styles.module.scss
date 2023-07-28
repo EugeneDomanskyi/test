@@ -6,12 +6,19 @@
     border-bottom: solid #1D1937 1px;
   }
 
+  &.back {
+    border-radius: 18px;
+    border: solid #1D1937 1px;
+    padding: 4px;
+  }
+
   .options {
     position: relative;
     z-index: 0;
     display: flex;
     flex-direction: row;
     align-items: flex-end;
+    flex: 1;
 
     @media (max-width: 768px) {
       &.classic {
@@ -21,6 +28,9 @@
 
     .option {
       cursor: pointer;
+      flex: 1;
+      position: relative;
+      z-index: 1;
 
       .optionInner {
         padding: 8px 16px;
@@ -44,6 +54,7 @@
         border: solid #1D1937 1px;
         border-right-width: 0;
         border-bottom-width: 0;
+        flex: 0;
 
         @media (max-width: 768px) {
           flex: 1;
@@ -181,7 +192,17 @@
       bottom: 0;
       background-color: #7204FF;
       border-radius: 20px;
-      transition: all .3s ease 0s;
+      transition: all .2s ease 0s;
+    }
+  }
+
+  &.back {
+    .options {
+      .badge {
+        height: auto;
+        top: 0;
+        border-radius: 60px;
+      }
     }
   }
 }

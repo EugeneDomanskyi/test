@@ -39,7 +39,7 @@ const CollectionListItem = ({ isActive, collection, withArrow, onClick, onClose 
   )
 
   return (
-    <App.Flex row justify="space-between" align="center" onClick={handleClick} className={cn(styles.collection, {[styles.active]: isActive && ! withArrow})}>
+    <App.Flex row justify="space-between" align="center" onClick={handleClick} className={cn(styles.collection, {[styles.withArrow]: withArrow}, {[styles.active]: isActive && ! withArrow})}>
       <App.Flex row gap={8} align="center">
         {collection.image ? (
           <Image src={collection.image} priority width={72} height={72} className={styles.image} alt="" />

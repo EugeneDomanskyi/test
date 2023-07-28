@@ -26,12 +26,14 @@
   }
 
   @media (max-width: 768px) {
-    &:hover,
-    &.active {
-      background: transparent;
+    &.withArrow {
+      &:hover,
+      &.active {
+        background: transparent;
 
-      .secondaryText {
-        color: #5E5C6B;
+        .secondaryText {
+          color: #5E5C6B;
+        }
       }
     }
   }

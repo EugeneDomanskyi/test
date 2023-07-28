@@ -321,7 +321,7 @@ const HomeTable = () => {
                               </App.Flex>
 
                               <App.Flex row center onClick={handleInfo(item)}>
-                                <App.Text nowrap>{item.price ? numeral(item.price).format('$0,0.[0000]') : '-' }</App.Text>
+                                <App.Text nowrap>{item.price ? `${numeral(item.price).format('0,0.[0000]')} ${item.currency}` : '-' }</App.Text>
                                 <App.Icon icon="chevron-right" />
                               </App.Flex>
                             </App.Flex>
@@ -427,7 +427,7 @@ const HomeTable = () => {
                           </TableCell>
 
                           <TableCell align="center">
-                            <App.Text center nowrap>{item.price ? numeral(item.price).format('$0,0.[0000]') : '-' }</App.Text>
+                            <App.Text center nowrap>{item.price ? `${numeral(item.price).format('0,0.[0000]')} ${item.currency}` : '-' }</App.Text>
                           </TableCell>
 
                           <TableCell align="center">
