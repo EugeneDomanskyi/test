@@ -17,7 +17,7 @@ import styles from './styles.module.scss'
 
 const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyChange, type, onTypeChange, onSwap }) => {
   const { isMobile } = usePropsHelper()
-  const { wallet, network, getBalance, usdt } = useWalletConnect()
+  const { wallet, network, getBalance, getPrice, usdt } = useWalletConnect()
   const { getNftPricesNative, getNftUser, getNftBids, buyPriceByAmount, buyAmountByPrice, sellPriceByAmount, sellAmountByPrice } = useTrade()
 
   const dispatch = useDispatch()
@@ -28,6 +28,8 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
   const [nftBalance, setNftBalance] = useState(0)
   const [nftTotalBalance, setNftTotalBalance] = useState(0)
   const [currencyBalance, setCurrencyBalance] = useState(0)
+  const [bidsCount, setBidsCount] = useState(0)
+  const [calculateLoading, setCalculateLoading] = useState(false)
   const [balanceLoading, setBalanceLoading] = useState(true)
   const [amount, setAmount] = useState('')
   const [price, setPrice] = useState('')
@@ -47,6 +49,8 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
   useEffect(() => {
     if (wallet && collection && currency) {
       (async () => {
+        setBalanceLoading(true)
+
         const tempPrices = await getNftPricesNative(collection.address)
         dispatch($nft.set.prices(tempPrices))
 
@@ -57,8 +61,14 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
         const tempBids = await getNftBids(collection.address, currency == 'usdt' ? usdt[blockchain.code] : null)
         dispatch($nft.set.bids(tempBids))
 
+        const tempBidsCount = tempBids.reduce((acc, bid) => [...acc, ...new Array(bid.quantity).fill(bid.price)], []).length
+        setBidsCount(tempBidsCount)
+
         const tempCurrencyBalance = await getBalance(currency == 'usdt' ? usdt[blockchain.code] : null)
         setCurrencyBalance(tempCurrencyBalance * 1)
+
+        const tempPrice = await getPrice(currency == 'usdt' ? 'tether' : network(blockchain.code)?.coingecko, 'usd')
+        setUsdPrice(tempPrice)
 
         setBalanceLoading(false)
       })()
@@ -73,11 +83,13 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
     const value = (event?.target?.value ?? event).toString()
     setAmount(value)
 
+    setCalculateLoading(true)
     clearTimeout(timeoutId.current)
 
     timeoutId.current = setTimeout(() => {
       if (value.trim() == '') {
         setPrice('')
+        setCalculateLoading(false)
       } else {
         calculatePrice(value.trim())
       }
@@ -85,6 +97,7 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
   }
 
   const calculatePrice = async (customAmount = amount, customType = type) => {
+    setCalculateLoading(true)
     let price = 0
     if (customType == 'buy') {
       price = await buyPriceByAmount(customAmount, prices, currency, collection.address)
@@ -92,6 +105,7 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
       price = await sellPriceByAmount(customAmount, bids)
     }
     setPrice(price)
+    setCalculateLoading(false)
   }
 
   const handleKeyPress = (event) => {
@@ -129,7 +143,7 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
     }
 
     if (customType == 'sell') {
-      return bids.length
+      return nftBalance
     }
 
     return 0
@@ -196,8 +210,8 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
       setError(null)
     }
 
-    if (amount != '' && amount * 1 <= 0) {
-      if (withErrors) {
+    if (amount * 1 <= 0) {
+      if (amount != '' && withErrors) {
         setError('amount')
       }
 
@@ -205,8 +219,8 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
       return false
     }
 
-    if (price != '' && price * 1 <= 0) {
-      if (withErrors) {
+    if (price * 1 <= 0) {
+      if (price != '' && withErrors) {
         setError('price')
       }
 
@@ -238,7 +252,7 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
         return false
       }
     } else {
-      if (!bids.length) {
+      if (bidsCount <= 0) {
         console.log('Empty bids')
         return false
       }
@@ -254,6 +268,15 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
         }
 
         console.log('Amount is higher than balance')
+        return false
+      }
+
+      if (amount * 1 > bidsCount) {
+        if (withErrors) {
+          setError('offer')
+        }
+
+        console.log('Amount is higher than total offers count')
         return false
       }
     }
@@ -314,6 +337,15 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
               {balanceLoading ? <App.Loader size={12} /> : `${getNftBalance()} NFT${getNftBalance() > 1 ? 's' : ''}`}
             </App.Flex>
           </App.Text>
+
+          {type == 'sell' ? (
+            <App.Text right color={error == 'offer' ? '#DE5C64' : '#B9B8C5'}>
+              <App.Flex row align="center" justify="flex-end" gap={4}>
+                <span>Total Offers:</span>
+                {balanceLoading ? <App.Loader size={12} /> : `${bidsCount} NFT${bidsCount > 1 ? 's' : ''}`}
+              </App.Flex>
+            </App.Text>
+          ) : null}
         </App.Flex>
 
         <App.Flex row align="center" gap={16} className={styles.item}>
@@ -322,7 +354,11 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
 
           <App.Flex row gap={8} align="center" className={styles.chip} onClick={handleListClick('currency')}>
             <div className={styles.imgRound}>
-              <Image src={`/images/icon-${currency == 'native' ? blockchain.code : 'usdt'}.png`} width={25} height={25} alt="" />
+              {calculateLoading ? (
+                <App.Loader size={25} />
+              ) : (
+                <Image src={`/images/icon-${currency == 'native' ? blockchain.code : 'usdt'}.png`} priority width={25} height={25} alt="" />
+              )}
             </div>
             <App.Text size={16}>{currency == 'native' ? blockchain.currency : 'USDT'}</App.Text>
             <App.Icon icon="caret-down" />
@@ -340,19 +376,23 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
 
         <App.Flex row center gap={4}>
           <div className={styles.imgRound}>
-            <Image src={`/images/icon-${currency == 'native' ? blockchain.code : 'usdt'}.png`} width={25} height={25} alt="" />
+            {calculateLoading ? (
+              <App.Loader size={25} />
+            ) : (
+              <Image src={`/images/icon-${currency == 'native' ? blockchain.code : 'usdt'}.png`} width={25} height={25} alt="" />
+            )}
           </div>
 
           <App.Text size={16}>{price != '' ? (price * 1).toFixed(4) : 0} {currency == 'native' ? blockchain.currency : 'USDT'}</App.Text>
           
           <App.Text color="#929292">&asymp;</App.Text>
 
-          <App.Text color="#929292">$ {usdPrice}</App.Text>
+          <App.Text color="#929292">$ {price != '' ? (price * usdPrice).toFixed(4) : 0}</App.Text>
         </App.Flex>
+      </App.Flex>
 
-        <App.Flex center>
-          <App.Button primary large disabled={error || !handleValidate()} onClick={handleSwap} sx={{ width: isMobile ? '100%' : 200 }}>Swap</App.Button>
-        </App.Flex>
+      <App.Flex center>
+        <App.Button primary large disabled={error || !handleValidate()} onClick={handleSwap} sx={{ width: isMobile ? '100%' : 200 }}>Swap</App.Button>
       </App.Flex>
 
       <SwapModalInputList tokens={tokens} open={listOpen} variant={variant} onClose={handleListClose} onSelect={handleListSelect} />

@@ -20,7 +20,7 @@ const SwapModal = ({ collection, onClose, onStep }) => {
   const [currentCurrency, setCurrentCurrency] = useState('native')
   const [type, setType] = useState('buy')
   const [step, setStep] = useState(0)
-  const [nfts, setNfts] = useState()
+  const [nfts, setNfts] = useState([])
 
   useEffect(() => {
     onStep(step)
@@ -49,13 +49,13 @@ const SwapModal = ({ collection, onClose, onStep }) => {
     })
 
     if (type == 'buy') {
-      buyNft(items, currentCurrency, onBuyProgress, onBuyError)
+      buyNft(items, currentCurrency, onBuyProgress(nfts), onBuyError)
     } else {
-      sellNft(items, currentCurrency, onSellProgress, onSellError)
+      sellNft(items, currentCurrency, onSellProgress(nfts), onSellError)
     }
   }
 
-  const onBuyProgress = (steps) => {
+  const onBuyProgress = (nfts) => (steps) => {
     const transaction = steps.find(item => item.kind == 'transaction')
     if (transaction && transaction.hasOwnProperty('items')) {
       if (transaction.items[0] && transaction.items[0].hasOwnProperty('status')) {
@@ -87,7 +87,7 @@ const SwapModal = ({ collection, onClose, onStep }) => {
     setStep(0)
   }
 
-  const onSellProgress = (steps) => {
+  const onSellProgress = (nfts) => (steps) => {
     const transaction = steps.find(item => item.kind == 'transaction')
     if (transaction && transaction.hasOwnProperty('items')) {
       if (transaction.items[0] && transaction.items[0].hasOwnProperty('status')) {
