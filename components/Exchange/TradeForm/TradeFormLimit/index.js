@@ -110,7 +110,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
           props: {
             header: {
               title: `${tokenIds.length} NFTs available`,
-              subtitle: `Choose the NFT collection you want to swap`
+              subtitle: `Choose the NFT collection you want to sell`
             },
             data: {
               ...form,

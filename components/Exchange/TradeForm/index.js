@@ -1,9 +1,8 @@
 import styles from './styles.module.scss'
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle, memo } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import cn from 'classnames'
 
-import $app from '@/store/app'
 import $exchange from '@/store/exchange'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useTrade from '@/myhooks/trade'
@@ -20,7 +19,7 @@ const TAB_OPTIONS = [
 
 const TradeForm = forwardRef((_props, ref) => {
   const { wallet, getBalance } = useWalletConnect()
-  const { getNftBalanceUser, getNftUser } = useTrade()
+  const { getNftBalanceUser } = useTrade()
   
   const orderBook = useSelector($exchange.get.orderBook)
   const currentCollection = useSelector(({$collection}) => $collection.current)

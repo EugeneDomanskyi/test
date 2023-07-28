@@ -99,7 +99,7 @@ const TradeFormMarket = ({currentTab, currentOption}) => {
           props: {
             header: {
               title: `${userNfts.length} NFTs available`,
-              subtitle: `Choose the NFT collection you want to swap`
+              subtitle: `Choose the NFT collection you want to sell`
             },
             data: {
               type: 'fulfill',
