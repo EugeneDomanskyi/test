@@ -1,11 +1,15 @@
 import Image from 'next/image'
 import cn from 'classnames'
 
+import { usePropsHelper } from '@/myhooks/props-helper'
+
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const RedeemModalComplete = ({ token, amount, onComplete }) => {
+  const { isMobile } = usePropsHelper()
+
   const handleComplete = () => {
     if (onComplete) {
       onComplete()
@@ -31,7 +35,7 @@ const RedeemModalComplete = ({ token, amount, onComplete }) => {
       </App.Flex>
 
       <App.Flex center className={cn(styles.box, styles.borderTop)}>
-        <App.Button primary large onClick={handleComplete} sx={{ width: 200 }}>Got It</App.Button>
+        <App.Button primary large onClick={handleComplete} sx={{ width: isMobile ? '100%' : 200 }}>Got It</App.Button>
       </App.Flex>
     </App.Flex>
   )

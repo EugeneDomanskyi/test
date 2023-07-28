@@ -1,0 +1,31 @@
+.container {
+  height: 162px;
+
+  .content {
+    background-color: #0E0B23;
+    border: 1px solid #1D1937;
+    border-radius: 2px;
+    padding: 12px;
+  }
+
+  .image {
+    overflow: hidden;
+  }
+
+  .description {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .card {
+    background-color: #16132C;
+    border: 1px solid #1D1937;
+    padding: 8px;
+    border-radius: 4px;
+    flex: 1;
+    justify-content: center;
+  }
+}

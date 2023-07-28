@@ -16,6 +16,10 @@ export const modalSlice = createSlice({
       state.props = payload?.props
     },
 
+    update: (state, { payload }) => {
+      state.props = { ...state.props, ...payload }
+    },
+
     close: (state) => {
       state.show = false
     },

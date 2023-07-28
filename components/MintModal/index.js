@@ -1,27 +1,18 @@
 import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
-import cn from 'classnames'
 
 import AlchemyLibrary from '@/libs/alchemy.lib'
 import Contracts from '@/libs/contracts.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
-import $modal from '@/store/modal'
-
-import App from '@/components/App'
 import MintModalSelect from '@/components/MintModal/MintModalSelect'
 import MintModalApprove from '@/components/MintModal/MintModalApprove'
 import MintModalWait from '@/components/MintModal/MintModalWait'
 import MintModalConfirm from '@/components/MintModal/MintModalConfirm'
 import MintModalComplete from '@/components/MintModal/MintModalComplete'
 
-import styles from './styles.module.scss'
-
-const MintModal = ({ token }) => {
-  const { wallet, connect, network, scanUrl } = useWalletConnect()
-
-  const dispatch = useDispatch()
+const MintModal = ({ token, onClose, onStep }) => {
+  const { wallet, connect, network } = useWalletConnect()
 
   const [nfts, setNfts] = useState([])
   const [nftsLoading, setNftsLoading] = useState(true)
@@ -47,6 +38,10 @@ const MintModal = ({ token }) => {
     }
   }, [wallet])
 
+  useEffect(() => {
+    onStep(step)
+  }, [step])
+
   const getNfts = async () => {
     setNftsLoading(true)
     const nfts = await alchemy.getNftsForOwner(wallet, token.type)
@@ -66,7 +61,9 @@ const MintModal = ({ token }) => {
   }
 
   const handleCloseModal = () => {
-    dispatch($modal.set.close())
+    if (onClose) {
+      onClose()
+    }
   }
 
   const componentStep = () => {
@@ -77,7 +74,7 @@ const MintModal = ({ token }) => {
       case 3: return <MintModalConfirm nfts={preparedNfts} token={token} onMint={handleMint} />
       case 4: return <MintModalWait type="confirm" nfts={preparedNfts} token={token} />
       case 5: return <MintModalWait type="wait" nfts={preparedNfts} token={token} />
-      case 6: return <MintModalComplete nfts={preparedNfts} token={token} onComplete={handleComplete} />
+      case 6: return <MintModalComplete nfts={preparedNfts} token={token} onComplete={handleCloseModal} />
     }
   }
 
@@ -150,59 +147,15 @@ const MintModal = ({ token }) => {
       return 
     }
 
+    trackEvent('Dex Mint Successful', {
+      'Token': token.collection,
+      'Quantity': preparedNfts.length,
+    })
+
     setStep(6)
   }
 
-  const handleComplete = () => {
-    handleCloseModal()
-  }
-
-  return (
-    <div className={styles.walletModal}>
-      <div className={styles.header}>
-        <div className={styles.closeButton} onClick={handleCloseModal}>
-          <App.Icon icon="cross" color="#fff" />
-        </div>
-
-        <div className={styles.titleRow}>
-          <div className={styles.title}>Mint {token.code} NFT20</div>
-          <div className={styles.subtitle}>Convert {token.collection} NFT to {token.code} NFT20</div>
-
-          <App.Flex row gap={8}>
-            <App.Flex column flex={1} gap={2}>
-              <App.Text size={10} center color="#53F19C">Pick NFTs</App.Text>
-              <div className={cn(styles.progress, styles.active)} />
-            </App.Flex>
-
-            <App.Flex column flex={1} gap={2}>
-              <App.Text size={10} center color={step >= 2 ? '#53F19C' : '#605884'}>Approve Transfer</App.Text>
-              <div className={cn(styles.progress, {[styles.active]: step >= 2})} />
-            </App.Flex>
-
-            <App.Flex column flex={1} gap={2}>
-              <App.Text size={10} center color={step == 6 ? '#53F19C' : '#605884'}>Mint NFT20</App.Text>
-              <div className={cn(styles.progress, {[styles.active]: step == 6})} />
-            </App.Flex>
-          </App.Flex>
-        </div>
-      </div>
-
-      <div className={styles.content}>
-        {componentStep()}
-      </div>
-      
-      <div className={styles.footer}>
-        <App.Flex row gap={8} align="center">
-          <App.Icon icon="lock-star-fill" />
-          <App.Flex column >
-            <App.Text>1 NFT = 1 NFT20</App.Text>
-            <App.Text>ALL NFT20 tokens are backed 1:1 by NFTs</App.Text>
-            <App.Text>Check our verified contracts <a href={scanUrl(token.nft20, 'address', token.chain)} target="_blank" rel="noreferrer" className={styles.link}>here</a></App.Text>
-          </App.Flex>
-        </App.Flex>
-      </div>
-    </div>
-  )
+  return componentStep()
 }
 
 export default MintModal

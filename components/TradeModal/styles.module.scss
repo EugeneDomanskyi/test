@@ -1,46 +1,4 @@
-.walletModal {
-  background-color: #120F25;
-  border-radius: 1em;
-  max-width: 100%;
-  position: relative;
-  border: 1px solid #1D1937;
-  width: 362px;
-  min-height: 362px;
-
-  .header {
-    position: relative;
-  }
-
-  .title {
-    font-weight: 700;
-    font-size: 20px;
-    line-height: 24px;
-    color: #fff;
-    text-align: center;
-    margin-bottom: 16px;
-  }
-
-  .closeButton {
-    position: absolute;
-    z-index: 3;
-    width: 34px;
-    height: 34px;
-    right: -40px;
-    top: 0;
-    background: #120A37;
-    border: 1px solid #2E2C4F;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all .3s ease 0s;
-
-    &:hover {
-      background: #231757;
-    }
-  }
-
+.content {
   [class*="TokenOptions__OnHover"],
   [class*="BrandedFooter"] {
     display: none !important;
@@ -53,11 +11,5 @@
     svg {
       stroke: #fff !important;
     }
-  }
-}
-
-@media (max-width: 768px) {
-  .walletModal {
-    width: calc(100vw - 16px);
   }
 }

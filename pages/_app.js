@@ -1,41 +1,120 @@
+import { useRef } from 'react'
 import { Provider } from 'react-redux'
 import Head from 'next/head'
 import { ToastContainer } from 'react-toastify'
+import { createClient } from '@reservoir0x/reservoir-sdk'
+import nookies from 'nookies'
+import { getSelectorsByUserAgent } from 'react-device-detect'
 
-import { getDefaultWallets, RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
-import { configureChains, createClient, WagmiConfig } from 'wagmi'
-import { polygon, mainnet, bsc } from 'wagmi/chains'
+import { getDefaultWallets, RainbowKitProvider, darkTheme, connectorsForWallets } from '@rainbow-me/rainbowkit'
+import { configureChains, createConfig, WagmiConfig } from 'wagmi'
+import { polygon, mainnet, goerli } from 'wagmi/chains'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
+import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
 import merge from 'lodash.merge'
+import { MagicConnectConnector } from '@everipedia/wagmi-magic-connector'
 
 import store from '@/store'
 
 import App from '@/components/App'
+import Wrapper from '@/components/Wrapper'
 
 import 'react-toastify/dist/ReactToastify.css'
 import '@rainbow-me/rainbowkit/styles.css'
 import '@uniswap/widgets/fonts.css'
 import '@/styles/globals.css'
 
+createClient({
+  chains: [
+    {
+      id: 1,
+      baseApiUrl: 'https://api.reservoir.tools',
+      active: true,
+      apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
+    }, {
+      id: 5,
+      baseApiUrl: 'https://api-goerli.reservoir.tools/',
+      active: true,
+      apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
+    }, /* {
+      id: 56,
+      baseApiUrl: 'https://api-bsc.reservoir.tools',
+      active: true,
+      default: true,
+      apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
+    }, */ {
+      id: 137,
+      baseApiUrl: 'https://api-polygon.reservoir.tools',
+      active: true,
+      apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
+    },
+  ],
+  source: "tegro.com"
+})
+
 //const initialChain = process.env.NEXT_PUBLIC_APP_ENV == 'production' ? [mainnet, polygon] : [goerli, polygonMumbai]
-const initialChain = [polygon, mainnet, bsc]
-const { chains, provider } = configureChains(
+const initialChain = [polygon, mainnet]
+if (process.env.NEXT_PUBLIC_APP_ENV == 'local') {
+  initialChain.push(goerli)
+}
+
+const { chains, publicClient, webSocketPublicClient } = configureChains(
   initialChain, [
     alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }),
+    infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_ID }),
     publicProvider(),
   ]
 )
 
-const { connectors } = getDefaultWallets({
+const rainbowMagicConnector = ({ chains }) => ({
+  id: 'magic',
+  name: 'Magic',
+  iconUrl: '/images/icon-magic.png',
+  iconBackground: '#fff',
+  createConnector: () => {
+    const [initialChain] = chains.map((chain) => {
+      const [rpcUrl] = chain.rpcUrls.public.http
+      return {
+        rpcUrl: rpcUrl,
+        chainId: chain.id,
+      }
+    })
+    
+    const connector = new MagicConnectConnector({
+      chains: chains,
+      options: {
+        apiKey: process.env.NEXT_PUBLIC_MAGIC_LINK_API_KEY,
+        magicSdkConfiguration: {
+          network: initialChain,
+        },
+      },
+    });
+    return {
+      connector,
+    };
+  },
+})
+
+const { wallets: [popularWallets] } = getDefaultWallets({
   appName: process.env.NEXT_PUBLIC_APP_NAME,
+  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
   chains,
 })
 
-const wagmiClient = createClient({
+const connectors = connectorsForWallets([
+  {
+    groupName: 'Recommended',
+    wallets: [rainbowMagicConnector({ chains: initialChain })],
+  },
+  popularWallets
+])
+
+const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors,
-  provider,
+  connectors: connectors,
+  publicClient,
+  webSocketPublicClient,
 })
 
 const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
@@ -55,18 +134,19 @@ const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
   },
 })
 
-function MyApp({ Component, pageProps }) { 
+function MyApp({ Component, pageProps, initialData }) {
+  const storeRef = useRef(store(initialData)).current
   return (
-    <WagmiConfig client={wagmiClient}>
+    <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
-        <Provider store={store}>
+        <Provider store={storeRef}>
           <Head>
-            <title>NFT20 | NFT Trading Platform</title>
+            <title>TEGRO | NFT Trading Platform</title>
           </Head>
 
-          <App.Layout>
+          <Wrapper>
             <Component {...pageProps} />
-          </App.Layout>
+          </Wrapper>
 
           <App.Modal />
           <ToastContainer autoClose={3000} />
@@ -74,6 +154,17 @@ function MyApp({ Component, pageProps }) {
       </RainbowKitProvider>
     </WagmiConfig>
   )
+}
+
+MyApp.getInitialProps = async ({ctx}) => {
+  const cookies = nookies.get(ctx)
+  const res = getSelectorsByUserAgent(ctx.req?.headers?.['user-agent'])
+  return {
+    initialData: {
+      blockchain: cookies.blockchain,
+      isMobile: res?.isMobile,
+    }
+  }
 }
 
 export default MyApp

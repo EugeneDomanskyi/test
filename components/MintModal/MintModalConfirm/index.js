@@ -1,12 +1,22 @@
 import Image from 'next/image'
 import cn from 'classnames'
 
+import { usePropsHelper } from '@/myhooks/props-helper'
+import { trackEvent } from '@/libs/analytics.lib'
+
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const MintModalConfirm = ({ nfts, token, onMint }) => {
+  const { isMobile } = usePropsHelper()
+
   const handleMint = () => {
+    trackEvent('Dex Confirm Mint Clicked', {
+      'Token': token.collection,
+      'Quantity': nfts.length,
+    })
+
     if (onMint) {
       onMint()
     }
@@ -38,7 +48,7 @@ const MintModalConfirm = ({ nfts, token, onMint }) => {
       </App.Flex>
 
       <App.Flex column center gap={32} className={cn(styles.box, styles.borderTop)}>
-        <App.Button primary large onClick={handleMint} sx={{ width: 200 }}>Mint</App.Button>
+        <App.Button primary large onClick={handleMint} sx={{ width: isMobile ? '100%' : 200 }}>Mint</App.Button>
       </App.Flex>
     </App.Flex>
   )

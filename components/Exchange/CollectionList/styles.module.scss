@@ -1,0 +1,35 @@
+.container {
+  width: 350px;
+  min-width: 350px;
+  border-radius: 2px;
+  overflow: hidden;
+  background-color: #0E0B23;
+  border: 1px solid #1D1937;
+
+  @media (max-width: 768px) {
+    & {
+      min-width: auto;
+      width: 100%;
+      padding-bottom: 68px;
+    }
+  }
+
+  &.collection-list-modal {
+    height: 80vh;
+    padding-bottom: 0;
+  }
+
+  .cardBox {
+    overflow: hidden;
+    flex: 1;
+    position: relative;
+    z-index: 0;
+
+    .cardBoxContent {
+      overflow: auto;
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+    }
+  }
+}

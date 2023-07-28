@@ -1,0 +1,27 @@
+.form {
+  padding: 0 16px 24px 16px;
+  flex: 1;
+
+  .balance {
+    margin-top: -2px;
+    border: 2px solid #272338;
+    height: 30px;
+    padding: 0 8px;
+  }
+
+  .button {
+    margin-top: auto;
+    height: 56px;
+    border-radius: 8px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    gap: 8px;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}

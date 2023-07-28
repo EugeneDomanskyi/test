@@ -74,7 +74,7 @@ export default function AlchemyLibrary(network = null) {
       const result = []
       const nfts = await methods.getNftsForOwner(wallet)
       for (const nft of nfts) {
-        if (nft.collectionAddress == address) {
+        if (nft.collectionAddress.toLowerCase() == address.toLowerCase()) {
           result.push(nft)
         }
       }
@@ -224,7 +224,6 @@ export default function AlchemyLibrary(network = null) {
 
       while (result.pageKey) {
         result = await alchemy.nft.getTransfersForContract(address, { pageKey: result.pageKey })
-        console.log(result)
         if (result.nfts && result.nfts.length) {
           transfers = transfers.concat(result.nfts)
         }

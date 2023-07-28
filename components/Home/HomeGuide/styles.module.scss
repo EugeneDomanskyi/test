@@ -1,0 +1,66 @@
+.badge {
+  min-width: 190px;
+  padding: 16px 32px;
+  border-radius: 100px;
+  background: #0E0B23;
+  cursor: pointer;
+  transition: all .2s ease 0s;
+
+  &:hover {
+    background: #241d52;
+  }
+
+  & > * {
+    color: #B9B8C5;
+  }
+
+  &.active {
+    background: linear-gradient(180deg, #401698 0%, #29015B 100%);
+
+    & > * {
+      color: #fff;
+    }
+  }
+}
+
+.content {
+  background: #0E0B23;
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 1146px;
+
+  @media (max-width: 768px) {
+    & {
+      padding: 16px 8px;
+    }
+  }
+
+  .step {
+    padding: 16px;
+    background: #FFFFFF0A;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all .2s ease 0s;
+
+    & > * {
+      color: #5E5C6B;
+      transition: all .2s ease 0s;
+    }
+
+    &:hover {
+      background: #ffffff15;
+      
+      & > * {
+        color: #fff;
+      }
+    }
+
+    &.active {
+      background: linear-gradient(#401698, #29015B);
+
+      & > * {
+        color: #fff;
+      }
+    }
+  }
+}

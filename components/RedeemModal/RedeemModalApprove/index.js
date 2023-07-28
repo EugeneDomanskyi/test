@@ -1,12 +1,22 @@
 import Image from 'next/image'
 import cn from 'classnames'
 
+import { usePropsHelper } from '@/myhooks/props-helper'
+import { trackEvent } from '@/libs/analytics.lib'
+
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const RedeemModalApprove = ({ token, amount, onBack, onApprove }) => {
+  const { isMobile } = usePropsHelper()
+
   const handleApprove = () => {
+    trackEvent('Dex Confirm Redeem Clicked', {
+      'Token': token.collection,
+      'Quantity': amount,
+    })
+
     if (onApprove) {
       onApprove()
     }
@@ -44,7 +54,7 @@ const RedeemModalApprove = ({ token, amount, onBack, onApprove }) => {
       </App.Flex>
 
       <App.Flex column center gap={32} className={cn(styles.box, styles.borderTop)}>
-        <App.Button primary large onClick={handleApprove} sx={{ width: 200 }}>Redeem</App.Button>
+        <App.Button primary large onClick={handleApprove} sx={{ width: isMobile ? '100%' : 200 }}>Redeem</App.Button>
 
         <App.Flex row gap={8} onClick={handleBack} className={styles.link}>
           <App.Icon icon="chevron-left" />
