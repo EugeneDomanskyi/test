@@ -1,8 +1,151 @@
-import App from '@/components/App'
+import styles from './styles.module.scss'
+import { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import Image from 'next/image'
 
-const TradeFormMarket = () => {
+import useTrade from '@/myhooks/trade'
+import $app from '@/store/app'
+import $modal from '@/store/modal'
+import useWalletConnect from '@/myhooks/wallet-connect'
+
+import App from '@/components/App'
+import TradeInput from '@/components/Exchange/TradeInput'
+
+const TradeFormMarket = ({currentTab, currentOption}) => {
+  const dispatch = useDispatch()
+  const { getNftPricesNative, getNftUser, getNftBids, sellPriceByAmount } = useTrade()
+  const { wallet, connect, changeNetwork } = useWalletConnect()
+
+  const currentCollection = useSelector(({$collection}) => $collection.current)
+  const blockchain = useSelector($app.get.blockchain)
+
+  const [amount, setAmount] = useState('1')
+  const [userNfts, setUserNfts] = useState([])
+  const [onSaleNft, setOnSaleNft] = useState([])
+  const [onBuyNft, setOnBuyNft] = useState([])
+
+  useEffect(() => {
+    if (currentCollection.address) {
+      getNftPricesNative(currentCollection.address).then(res => {
+        setOnSaleNft(res)
+      })
+      getNftBids(currentCollection.address).then(res => {
+        setOnBuyNft(res)
+      })
+      if (wallet) {
+        getNftUser(currentCollection.address, wallet).then(res => {
+          setUserNfts(res)
+        })
+      }
+    }
+  }, [currentCollection.address, wallet])
+
+  useEffect(() => {
+    setAmount('1')
+  }, [currentTab, currentCollection.address])
+
+  const getTotal = () => {
+    if (currentTab === 'buy') {
+      return onSaleNft.slice(0, amount).reduce((acc, nft) => (acc + nft.price), 0)
+    }
+    return sellPriceByAmount(amount, onBuyNft)
+  }
+
+  const handleChangeAmount = value => {
+    setAmount(value)
+  }
+
+  const handleChangeRange = value => {
+    setAmount(value)
+  }
+
+  const handleSubmit = async () => {
+    const address = await connect()
+    if (!address) {
+      return
+    }
+    const network = await changeNetwork(blockchain.code)
+    if (!network) {
+      return
+    }
+    const total = getTotal()
+    switch (currentTab) {
+      case 'buy':
+        dispatch($modal.set.show({
+          show: true,
+          modal: 'Exchange/BuyModal',
+          props: {
+            header: {
+              title: `Buy ${currentCollection.name} for ${blockchain.currency}`,
+            },
+            data: {
+              type: 'fulfill',
+              amount: amount,
+              price: total / amount,
+              total: total,
+              items: onSaleNft.slice(0, amount).map(nft => ({token: `${currentCollection.address}:${nft.id}`})),
+              collectionId: currentCollection.address,
+              blockchain: blockchain,
+            },
+          }
+        }))
+        break
+      case 'sell':
+        dispatch($modal.set.show({
+          show: true,
+          modal: 'Exchange/SellModal',
+          props: {
+            header: {
+              title: `${userNfts.length} NFTs available`,
+              subtitle: `Choose the NFT collection you want to swap`
+            },
+            data: {
+              type: 'fulfill',
+              amount: amount,
+              price: total / amount,
+              tokens: userNfts,
+              collectionId: currentCollection.address,
+              blockchain: blockchain,
+            },
+          }
+        }))
+        break
+    }
+  }
+
   return (
-    <App.Flex>
+    <App.Flex column className={styles.form}>
+      <App.Flex column sx={{marginBottom: 16}}>
+        <TradeInput
+          label="AMOUNT"
+          value={amount}
+          currency={`NFT${amount > 1 ? `'s` : ''}`}
+          onChange={handleChangeAmount} />
+        <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto'}}>NFTs available: {currentTab === 'buy' ? onSaleNft.length : userNfts.length}</App.Text>
+      </App.Flex>
+      <App.Flex sx={{marginBottom: 24}}>
+        <App.RangeInput
+          value={amount*1}
+          min={0}
+          max={currentTab === 'buy' ? onSaleNft.length : userNfts.length}
+          onChange={handleChangeRange}
+          containerStyle={{width: '100%'}} />
+      </App.Flex>
+      <App.Flex column sx={{marginBottom: 24}}>
+        <TradeInput
+          label="TOTAL"
+          currency={blockchain.currency}
+          readOnly={true}
+          value={getTotal()} />
+      </App.Flex>
+      <App.Button
+        sx={{backgroundColor: currentOption.color}}
+        className={styles.button}
+        disabled={!amount}
+        onClick={handleSubmit}>
+        <App.Text color="#09051D" size={15} weight={700}>{ currentOption.title } {`${amount || 0} NFT${amount > 1 ? `'s` : ''}` }</App.Text>
+        { currentCollection?.image ? <Image src={currentCollection?.image} width={32} height={32} alt="" /> : null }
+      </App.Button>
     </App.Flex>
   )
 }

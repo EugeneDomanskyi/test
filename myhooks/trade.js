@@ -94,6 +94,8 @@ const useTrade = () => {
         blockchain: blockchain.code,
         collection,
         displayCurrency: currencyContract,
+        sortBy: 'price',
+        sortDirection: 'DESC',
         limit: 50,
         continuation,
       })
@@ -109,7 +111,7 @@ const useTrade = () => {
     } while (continuation)
 
     result = result.map(item => ({
-      quantity: (item.quantityRemaining - item.quantityFilled),
+      quantity: item.quantityRemaining,
       price: item?.price?.amount?.decimal ?? 0,
     }))
 
@@ -182,17 +184,10 @@ const useTrade = () => {
   }
 
   const sellPriceByAmount = (amount, bids = []) => {
-    amount = amount > bids.length ? bids.length : amount
-
-    let result = 0
-
-    if (amount > 0) {
-      for (let i = 0; i < amount; i++) {
-        result += (bids[i].price * 1)
-      }
-    }
-
-    return result
+    return bids
+      .reduce((acc, bid) => [...acc, ...new Array(bid.quantity).fill(bid.price)], [])
+      .slice(0, amount)
+      .reduce((acc, price) => acc + price, 0)
   }
 
   const sellAmountByPrice = async (price, bids = []) => {

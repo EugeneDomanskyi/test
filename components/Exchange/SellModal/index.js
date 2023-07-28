@@ -23,7 +23,7 @@ const generateNft = (mod) => (el, i) => {
 
 const SellModal = ({data}) => {
   const dispatch = useDispatch()
-  const { placeAsk, errorHandler } = useTrade()
+  const { placeAsk, sellNft, errorHandler } = useTrade()
   const [selectedTokens, setSelectedTokens] = useState([])
   const [step, setStep] = useState('select')
 
@@ -32,8 +32,6 @@ const SellModal = ({data}) => {
   const loadingRef = useRef(false)
 
   const selectedAmount = selectedTokens.reduce((acc, token) => (acc + token.amount), 0)
-
-  // const tokens = [...data.tokens, ...data.tokens.map(generateNft(100)), ...data.tokens.map(generateNft(200)), ...data.tokens.map(generateNft(300))]
 
   const handleSelect = tokens => {
     setSelectedTokens(tokens)
@@ -44,12 +42,6 @@ const SellModal = ({data}) => {
   }
 
   const handleConfirm = () => {
-    const listing = selectedTokens.map((token) => ({
-      token: `${data.collectionId}:${token.id}`,
-      weiPrice: parseUnits(`${data.price}`, 18).toString(),
-      quantity: token.amount,
-      royaltyBps: 0,
-    }))
     loadingRef.current = true
     setStep('confirming')
     dispatch($modal.set.update({
@@ -57,6 +49,28 @@ const SellModal = ({data}) => {
         title: 'Approve Transfer',
         subtitle: `Sell ${currentCollection.name} using ${data.blockchain.currency}`
       },
+    }))
+    switch (data.type) {
+      case 'place':
+        placeOrder()
+        break
+      case 'fulfill':
+        fulfillOrder()
+        break
+    }
+  }
+
+  const fulfillOrder = () => {
+    const items = selectedTokens.map(token => ({token: `${data.collectionId}:${token.id}`, quantity: token.amount}))
+    sellNft(items, null, progressHandler, onError)
+  }
+
+  const placeOrder = () => {
+    const listing = selectedTokens.map((token) => ({
+      token: `${data.collectionId}:${token.id}`,
+      weiPrice: parseUnits(`${data.price}`, 18).toString(),
+      quantity: token.amount,
+      royaltyBps: 0,
     }))
     placeAsk(listing, progressHandler, onError)
     trackEvent('Dex Create Order Submit', {
@@ -129,9 +143,10 @@ const SellModal = ({data}) => {
       case 'complete':
         return (
           <SellModalComplete
-          currentCollection={currentCollection}
-          amount={selectedAmount}
-          onComplete={handleComplete} />
+            type={data.type}
+            currentCollection={currentCollection}
+            amount={selectedAmount}
+            onComplete={handleComplete} />
         )
     }
   })()

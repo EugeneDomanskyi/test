@@ -199,7 +199,12 @@ const api = {
       ]).then(([bids, asks]) => {
         return [...bids.orders, ...asks.orders]
       })
-    }
+    },
+    bids: (params) => {
+      return request('orders/bids/v6', 'GET', params).then(res => {
+        return res.orders
+      })
+    },
   },
 }
 

@@ -15,12 +15,31 @@ const TradeBuyModal = ({data}) => {
 
   const currentCollection = useSelector(({$collection}) => $collection.current)
 
-  const { placeBid, errorHandler } = useTrade()
+  const { placeBid, buyNft, errorHandler } = useTrade()
   const [step, setStep] = useState('confirm')
 
   const loadingRef = useRef(false)
 
   const handleConfirm = () => {
+    loadingRef.current = true
+    setStep('confirming')
+    switch (data.type) {
+      case 'place':
+        palceOrder()
+        break
+      case 'fulfill':
+        fulfillOrder()
+        break
+      default:
+        return
+    }
+  }
+
+  const fulfillOrder = () => {
+    buyNft(data.items, null, progressHandler, onError)
+  }
+
+  const palceOrder = () => {
     const bids = [{  
       weiPrice: parseUnits(`${data.total*data.amount}`, 18).toString(),
       collection: data.collectionId,
@@ -30,8 +49,6 @@ const TradeBuyModal = ({data}) => {
       // orderbookApiKey: '895d629046a0458199e9e8639b63bb57',
       // orderbook: 'opensea',
     }]
-    loadingRef.current = true
-    setStep('confirming')
     dispatch($modal.set.update({
       header: {
         title: 'Approve Transfer',
@@ -99,6 +116,7 @@ const TradeBuyModal = ({data}) => {
       case 'complete':
         return (
           <BuyModalComplete
+            type={data.type}
             currentCollection={currentCollection}
             amount={data.amount}
             onComplete={handleComplete} />

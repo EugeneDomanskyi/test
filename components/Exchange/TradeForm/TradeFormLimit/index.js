@@ -15,25 +15,21 @@ import { trackEvent } from '@/libs/analytics.lib'
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
 
-const TradeFormLimit = ({initialForm, currentTab, currentOption}) => {
+const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) => {
   const dispatch = useDispatch()
-  const { wallet, connect, changeNetwork, getBalance } = useWalletConnect()
-  const { getNftBalanceUser, getNftUser } = useTrade()
+  const { wallet, connect, changeNetwork } = useWalletConnect()
+  const { getNftUser } = useTrade()
   
   const blockchain = useSelector($app.get.blockchain)
-  const orderBook = useSelector($exchange.get.orderBook)
   const currentCollection = useSelector(({$collection}) => $collection.current)
 
-  const [userBalances, setUserBalances] = useState({native: 0, token: 0})
-  const [form, setForm] = useState({...initialForm, total: '0'})
+  const [form, setForm] = useState(initialForm)
 
   const loadingRef = useRef(false)
 
-  console.log(initialForm)
-
   useEffect(() => {
     Object.entries(initialForm).forEach(([key, value]) => {
-      if (key in form && form[key] !== value) {
+      if (key !== 'total' && form[key] !== value) {
         console.log(key, 'changed', value)
         handleChangeForm(key)(value)
       }
@@ -95,6 +91,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption}) => {
             },
             data: {
               ...form,
+              type: 'place',
               collectionId: currentCollection.address,
               blockchain: blockchain,
             },
@@ -117,6 +114,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption}) => {
             },
             data: {
               ...form,
+              type: 'place',
               tokens: tokenIds,
               collectionId: currentCollection.address,
               blockchain: blockchain,

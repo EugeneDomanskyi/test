@@ -22,18 +22,14 @@ const TradeForm = forwardRef((_props, ref) => {
   const { wallet, getBalance } = useWalletConnect()
   const { getNftBalanceUser, getNftUser } = useTrade()
   
-  const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector($exchange.get.orderBook)
   const currentCollection = useSelector(({$collection}) => $collection.current)
   const loadingCollectionData = useSelector(({$exchange}) => $exchange.loadingCollectionData)
 
-  const [userBalances, setUserBalances] = useState({native: 0, token: 0})
-  const [form, setForm] = useState({price: '0', amount: '1', total: '0'})
-
-  const [limitForm, setLimitForm] = useState({price: '0', amount: '1'})
-
   const [currentTab, setCurrentTab] = useState('buy')
   const [formType, setFormType] = useState('market')
+  const [userBalances, setUserBalances] = useState({native: 0, token: 0})
+  const [limitForm, setLimitForm] = useState({price: '0', amount: '1', total: '0'})
 
   const priceSetted = useRef(false)
 
@@ -50,23 +46,16 @@ const TradeForm = forwardRef((_props, ref) => {
   const [lowestBuy] = orderBook.buy
   const [lowestSell] = orderBook.sell
 
-  // useEffect(() => {
-  //   priceSetted.current = false
-  // }, [currentCollection?.address])
-
   useEffect(() => {
     const getBalances = async () => {
       if (currentCollection?.address && wallet) {
         const nftBalance = await getNftBalanceUser(currentCollection.address, wallet)
         const nativeBalance = await getBalance()
-        setUserBalances({
-          native: nativeBalance,
-          token: nftBalance,
-        })
+        setUserBalances({native: nativeBalance, token: nftBalance})
       }
     }
     getBalances()
-  }, [blockchain, wallet, currentCollection?.address])
+  }, [wallet, currentCollection?.address])
 
   useEffect(() => {
     if (priceSetted.current) {
@@ -79,61 +68,19 @@ const TradeForm = forwardRef((_props, ref) => {
         setInitialPrice(lowestSell?.price || currentCollection?.price)
       }
     }
-    // if (currentTab === 'buy' && lowestBuy) {
-    //   setInitialPrice(lowestBuy.price)
-    // } else if (!lowestBuy && currentCollection?.price) {
-    //   setInitialPrice(currentCollection?.price)
-    // }
-    // if (currentTab === 'sell' && lowestSell) {
-    //   setInitialPrice(lowestSell.price)
-    // } else if (!lowestBuy && currentCollection?.price) {
-    //   setInitialPrice(currentCollection?.price)
-    // }
   }, [loadingCollectionData, currentCollection?.address])
 
   const setInitialPrice = price => {
-    console.log('setInitialPrice', price)
-    setLimitForm(state => ({...state, price: price.toString()}))
-    // handleChangeForm('price')(price)
-    // priceSetted.current = true
+    setLimitForm(state => ({
+      ...state,
+      price: price.toString(),
+      total: (state.amount * price).toString()
+    }))
   }
 
   const handleChangeTab = tab => {
     setCurrentTab(tab)
   }
-
-  // const handleChangeForm = field => value => {
-  //   switch (field) {
-  //     case 'price':
-  //       setForm(state => ({
-  //         ...state,
-  //         price: value,
-  //         total: (value*state.amount).toString(),
-  //       }))
-  //       return
-  //     case 'amount':
-  //       const regex = /^\d+[,]?\d{0,2}$/
-  //       if (value && !regex.test(value)) {
-  //         return 
-  //       }
-  //       setForm(state => ({
-  //         ...state,
-  //         amount: value,
-  //         total: (value*state.price).toString(),
-  //       }))
-  //       return
-  //     case 'total':
-  //       setForm(state => {
-  //         const amount = Math.floor(value/state.price)
-  //         return {
-  //           ...state,
-  //           total: value,
-  //           amount: amount,
-  //         }
-  //       })
-  //       return
-  //   }
-  // }
 
   const handleChangeFormType = type => () => {
     setFormType(type)
@@ -169,13 +116,15 @@ const TradeForm = forwardRef((_props, ref) => {
             case 'market':
               return (
                 <TradeFormMarket
-                  currentTab={currentTab} />
+                  currentTab={currentTab}
+                  currentOption={currentOption} />
               )
               case 'limit':
                 return (
                   <TradeFormLimit
                     currentTab={currentTab}
                     currentOption={currentOption}
+                    userBalances={userBalances}
                     initialForm={limitForm} />
                 )
               default:
