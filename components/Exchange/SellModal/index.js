@@ -136,7 +136,10 @@ const SellModal = ({data}) => {
           <SellModalComplete
             type={data.type}
             currentCollection={currentCollection}
+            blockchain={data.blockchain}
+            price={data.price}
             amount={selectedAmount}
+            total={selectedAmount*data.price}
             onComplete={handleComplete} />
         )
     }

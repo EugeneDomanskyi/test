@@ -227,7 +227,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
         <TradeInput
           label="AMOUNT"
           value={form.amount}
-          currency={`NFT${form.amount > 1 ? `'s` : ''}`}
+          currency={`NFT${form.amount > 1 ? `s` : ''}`}
           onBlur={handleBlurAmount}
           onChange={handleChangeForm('amount')} />
         {
@@ -254,7 +254,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
         className={styles.button}
         disabled={!form.total}
         onClick={handleSubmit}>
-        <App.Text color="#09051D" size={15} weight={700}>{ currentOption.title } {`${form.amount || 0} NFT${form.amount > 1 ? `'s` : ''}` }</App.Text>
+        <App.Text color="#09051D" size={15} weight={700}>{ currentOption.title } {`${form.amount || 0} NFT${form.amount > 1 ? `s` : ''}` }</App.Text>
         { currentCollection?.image ? <Image src={currentCollection?.image} width={32} height={32} alt="" /> : null }
       </App.Button>
     </App.Flex>

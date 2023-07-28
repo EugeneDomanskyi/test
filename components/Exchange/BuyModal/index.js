@@ -117,9 +117,8 @@ const TradeBuyModal = ({data}) => {
       case 'complete':
         return (
           <BuyModalComplete
-            type={data.type}
+            {...data}
             currentCollection={currentCollection}
-            amount={data.amount}
             onComplete={handleComplete} />
         )
     }

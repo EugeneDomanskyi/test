@@ -128,7 +128,7 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
         <TradeInput
           label="AMOUNT"
           value={amount}
-          currency={`NFT${amount > 1 ? `'s` : ''}`}
+          currency={`NFT${amount > 1 ? `s` : ''}`}
           onChange={handleChangeAmount} />
         <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto', marginTop: 5}}>NFTs available: {currentTab === 'buy' ? onSaleNft.length : userNfts.length}</App.Text>
       </App.Flex>
@@ -156,7 +156,7 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
         className={styles.button}
         disabled={isDisabled}
         onClick={handleSubmit}>
-        <App.Text color="#09051D" size={15} weight={700}>{ currentOption.title } {`${amount || 0} NFT${amount > 1 ? `'s` : ''}` }</App.Text>
+        <App.Text color="#09051D" size={15} weight={700}>{ currentOption.title } {`${amount || 0} NFT${amount > 1 ? `s` : ''}` }</App.Text>
         { currentCollection?.image ? <Image src={currentCollection?.image} width={32} height={32} alt="" /> : null }
       </App.Button>
     </App.Flex>

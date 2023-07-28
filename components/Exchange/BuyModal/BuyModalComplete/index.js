@@ -7,7 +7,8 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const BuyModalComplete = ({type, currentCollection, amount, onComplete}) => {
+const BuyModalComplete = ({type, currentCollection, amount, price, blockchain, onComplete}) => {
+  console.log(type)
   const { isMobile } = usePropsHelper()
 
   const handleComplete = () => {
@@ -23,16 +24,16 @@ const BuyModalComplete = ({type, currentCollection, amount, onComplete}) => {
           <App.Icon icon="check-circle-fill" />
         </App.Flex>
 
-        <App.Text center size={20} weight={600}>{type === 'placed' ? 'Order Placed Successful!' : 'Buy Successful!'}</App.Text>
+        <App.Text center size={20} weight={600}>{type === 'place' ? 'Order Placed Successfully!' : 'Buy Successfully!'}</App.Text>
 
         <App.Flex row center gap={8} className={styles.container}>
           <div className={styles.imgRound}>
             <Image src={currentCollection.image} width={64} height={64} alt="" />
           </div>
           {
-            type === 'placed'
-              ? <App.Text color="#B9B8C5">You placed order to buy {amount} {currentCollection.name} {`NFT${amount > 1 ? `'s` : ''}`}</App.Text>
-              : <App.Text color="#B9B8C5">You have buy {amount} {currentCollection.name} {`NFT${amount > 1 ? `'s` : ''}`}</App.Text>
+            type === 'place'
+              ? <App.Text color="#B9B8C5">{amount} {currentCollection.name} for {price} {blockchain.wrapped.shortName} each</App.Text>
+              : <App.Text color="#B9B8C5">You have buy {amount} {currentCollection.name} {`NFT${amount > 1 ? `s` : ''}`}</App.Text>
           }
         </App.Flex>
       </App.Flex>

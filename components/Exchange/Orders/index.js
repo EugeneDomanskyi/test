@@ -7,7 +7,6 @@ import numeral from 'numeral'
 import { useRouter } from 'next/router'
 
 import useTrade from '@/myhooks/trade'
-import $app from '@/store/app'
 import $exchange from '@/store/exchange'
 
 import App from '@/components/App'
