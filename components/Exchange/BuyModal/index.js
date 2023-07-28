@@ -45,6 +45,7 @@ const TradeBuyModal = ({data}) => {
       collection: data.collectionId,
       quantity: data.amount,
       royaltyBps: 0,
+      currency: data.blockchain.wrapped.contract,
       // currency: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
       // orderbookApiKey: '895d629046a0458199e9e8639b63bb57',
       // orderbook: 'opensea',
@@ -52,7 +53,7 @@ const TradeBuyModal = ({data}) => {
     dispatch($modal.set.update({
       header: {
         title: 'Approve Transfer',
-        subtitle: `Buy ${currentCollection.name} using ${data.blockchain.currency}`
+        subtitle: `Buy ${currentCollection.name} using ${data.blockchain.wrapped.shortName}`
       },
     }))
     placeBid(bids, progressHandler, onError)

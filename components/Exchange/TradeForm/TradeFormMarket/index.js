@@ -13,7 +13,7 @@ import TradeInput from '@/components/Exchange/TradeInput'
 
 const TradeFormMarket = ({currentTab, currentOption}) => {
   const dispatch = useDispatch()
-  const { getNftPricesNative, getNftUser, getNftBids, sellPriceByAmount } = useTrade()
+  const { getNftPricesNative, getNftUser, getNftBids, sellPriceByAmount, getNftPricesCurrency } = useTrade()
   const { wallet, connect, changeNetwork } = useWalletConnect()
 
   const currentCollection = useSelector(({$collection}) => $collection.current)
@@ -27,9 +27,12 @@ const TradeFormMarket = ({currentTab, currentOption}) => {
   useEffect(() => {
     if (currentCollection.address) {
       getNftPricesNative(currentCollection.address).then(res => {
-        setOnSaleNft(res)
+        const tokenIds = res.map(token => token.id)
+        getNftPricesCurrency(currentCollection.address, tokenIds, blockchain.wrapped.contract).then(res => {
+          setOnSaleNft(res)
+        })
       })
-      getNftBids(currentCollection.address).then(res => {
+      getNftBids(currentCollection.address, blockchain.wrapped.contract).then(res => {
         setOnBuyNft(res)
       })
       if (wallet) {
@@ -38,7 +41,7 @@ const TradeFormMarket = ({currentTab, currentOption}) => {
         })
       }
     }
-  }, [currentCollection.address, wallet])
+  }, [currentCollection.address, wallet, blockchain.code])
 
   useEffect(() => {
     setAmount('1')
@@ -78,7 +81,7 @@ const TradeFormMarket = ({currentTab, currentOption}) => {
           modal: 'Exchange/BuyModal',
           props: {
             header: {
-              title: `Buy ${currentCollection.name} for ${blockchain.currency}`,
+              title: `Buy ${currentCollection.name} for ${blockchain.wrapped.shortName}`,
             },
             data: {
               type: 'fulfill',
@@ -136,7 +139,7 @@ const TradeFormMarket = ({currentTab, currentOption}) => {
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
           label="TOTAL"
-          currency={blockchain.currency}
+          currency={blockchain.wrapped.shortName}
           readOnly={true}
           value={getTotal()} />
       </App.Flex>

@@ -11,16 +11,6 @@ import SellModalConfirm from '@/components/Exchange/SellModal/SellModalConfirm'
 import SellModalConfirming from '@/components/Exchange/SellModal/SellModalConfirming'
 import SellModalComplete from '@/components/Exchange/SellModal/SellModalComplete'
 
-const generateNft = (mod) => (el, i) => {
-  return {
-    ...el,
-    token: {
-      ...el.token,
-      tokenId: `${el.token.tokenId*1 + (i+1)*mod}`
-    }
-  }
-}
-
 const SellModal = ({data}) => {
   const dispatch = useDispatch()
   const { placeAsk, sellNft, errorHandler } = useTrade()
@@ -37,7 +27,7 @@ const SellModal = ({data}) => {
     setSelectedTokens(tokens)
     setStep('confirm')
     dispatch($modal.set.update({header: {
-      title: `Buy ${currentCollection.name} for ${data.blockchain.currency}`
+      title: `Buy ${currentCollection.name} for ${data.blockchain.wrapped.shortName}`
     }}))
   }
 
@@ -47,7 +37,7 @@ const SellModal = ({data}) => {
     dispatch($modal.set.update({
       header: {
         title: 'Approve Transfer',
-        subtitle: `Sell ${currentCollection.name} using ${data.blockchain.currency}`
+        subtitle: `Sell ${currentCollection.name} using ${data.blockchain.wrapped.shortName}`
       },
     }))
     switch (data.type) {
@@ -71,6 +61,7 @@ const SellModal = ({data}) => {
       weiPrice: parseUnits(`${data.price}`, 18).toString(),
       quantity: token.amount,
       royaltyBps: 0,
+      currency: data.blockchain.wrapped.contract,
     }))
     placeAsk(listing, progressHandler, onError)
     trackEvent('Dex Create Order Submit', {
@@ -92,7 +83,7 @@ const SellModal = ({data}) => {
       dispatch($modal.set.update({
         header: {
           title: 'Success',
-          subtitle: `Sell ${currentCollection.name} using ${data.blockchain.currency}`
+          subtitle: `Sell ${currentCollection.name} using ${data.blockchain.wrapped.shortName}`
         },
       }))
       setStep('complete')

@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import cn from 'classnames'
 
 import $exchange from '@/store/exchange'
+import $app from '@/store/app'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useTrade from '@/myhooks/trade'
 
@@ -24,6 +25,7 @@ const TradeForm = forwardRef((_props, ref) => {
   const orderBook = useSelector($exchange.get.orderBook)
   const currentCollection = useSelector(({$collection}) => $collection.current)
   const loadingCollectionData = useSelector(({$exchange}) => $exchange.loadingCollectionData)
+  const blockchain = useSelector($app.get.blockchain)
 
   const [currentTab, setCurrentTab] = useState('buy')
   const [formType, setFormType] = useState('market')
@@ -49,7 +51,7 @@ const TradeForm = forwardRef((_props, ref) => {
     const getBalances = async () => {
       if (currentCollection?.address && wallet) {
         const nftBalance = await getNftBalanceUser(currentCollection.address, wallet)
-        const nativeBalance = await getBalance()
+        const nativeBalance = await getBalance(blockchain.wrapped.contract)
         setUserBalances({native: nativeBalance, token: nftBalance})
       }
     }

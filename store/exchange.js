@@ -206,6 +206,9 @@ const api = {
       })
     },
   },
+  executeOrder: (params) => {
+    return request('execute/bid/v5', 'POST', params)
+  }
 }
 
 export default {

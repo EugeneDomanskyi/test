@@ -14,12 +14,22 @@ export const appSlice = createSlice({
         name: 'Ethereum',
         currency: 'ETH',
         decimals: 18,
+        wrapped: {
+          contract: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+          name: 'Wrapped Ether',
+          shortName: 'WETH',
+        },
       }, {
         id: 137,
         code: 'polygon',
         name: 'Polygon',
         currency: 'MATIC',
         decimals: 18,
+        wrapped: {
+          contract: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+          name: 'Wrapped Matic',
+          shortName: 'WMATIC',
+        },
       },
       ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? [{
         id: 5,
@@ -27,6 +37,11 @@ export const appSlice = createSlice({
         name: 'Goerli',
         currency: 'ETH',
         decimals: 18,
+        wrapped: {
+          contract: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+          name: 'Wrapped Ether',
+          shortName: 'WETH',
+        },
       }] : [])
     ],
   },

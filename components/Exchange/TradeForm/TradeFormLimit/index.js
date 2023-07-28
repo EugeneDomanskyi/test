@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, Fragment, forwardRef, useImperativeHandle,
 import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import Image from 'next/image'
-import cn from 'classnames'
+import { parseUnits } from 'viem'
 
 import $app from '@/store/app'
 import $exchange from '@/store/exchange'
@@ -30,7 +30,6 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
   useEffect(() => {
     Object.entries(initialForm).forEach(([key, value]) => {
       if (key !== 'total' && form[key] !== value) {
-        console.log(key, 'changed', value)
         handleChangeForm(key)(value)
       }
     })
@@ -82,12 +81,40 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
     loadingRef.current = true
     switch (currentTab) {
       case 'buy':
+        // $exchange.api.executeOrder({
+        //   maker: wallet,
+        //   blockchain: blockchain.code,
+        //   params: [{
+        //     collection: currentCollection.address,
+        //     weiPrice: parseUnits(`${form.total*form.amount}`, 18).toString()
+        //   }],
+        // }).then(async ({steps}) => {
+        //   const currentStep = steps.filter(step => step.items.length).find(step => {
+        //     const [action] = step.items
+        //     return action.status !== 'complete'
+        //   })
+        //   if (currentStep) {
+        //     switch (currentStep.kind) {
+        //       case 'signature':
+        //         const [step] = currentStep.items
+        //         const needToSign = step.data.sign
+        //         console.log(needToSign)
+        //         const signature = await walletClient.signTypedData({
+        //           ...needToSign,
+        //           message: needToSign.value,
+        //         })
+        //         console.log('signature', signature)
+        //         break
+        //     }
+        //   }
+        // })
+        // return
         dispatch($modal.set.show({
           show: true,
           modal: 'Exchange/BuyModal',
           props: {
             header: {
-              title: `Buy ${currentCollection.name} for ${blockchain.currency}`,
+              title: `Buy ${currentCollection.name} for ${blockchain.wrapped.shortName}`,
             },
             data: {
               ...form,
@@ -171,7 +198,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
           <App.Text size={10} color="rgba(255,255,255,0.6)">
             {
               currentTab === 'buy'
-                ? `${userBalances.native} ${blockchain.currency}`
+                ? `${userBalances.native} ${blockchain.wrapped.shortName}`
                 : `${userBalances.token} NFT`
             }
           </App.Text>
@@ -191,7 +218,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
           label="AT PRICE"
-          currency={blockchain.currency}
+          currency={blockchain.wrapped.shortName}
           value={form.price}
           onBlur={handleBlurPrice}
           onChange={handleChangeForm('price')} />
@@ -212,7 +239,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
           label="TOTAL"
-          currency={blockchain.currency}
+          currency={blockchain.wrapped.shortName}
           value={form.total}
           onBlur={handleTotalBlur}
           onChange={handleChangeForm('total')} />
