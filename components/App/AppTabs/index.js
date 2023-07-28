@@ -1,15 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import cn from 'classnames'
 
-import { usePropsHelper } from '@/myhooks/props-helper'
-
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const AppTabs = ({width = '100%', height = '100%', options, active, end, variant = 'standard', onChange}) => {
-  const { propValue } = usePropsHelper()
-
   const EndComponent = useMemo(() => {
     return end
   }, [end])
@@ -34,7 +30,7 @@ const AppTabs = ({width = '100%', height = '100%', options, active, end, variant
   return (
     <App.Flex row width={width} height={height} align="center" justify="space-between" className={cn(styles.container, styles[variant])}>
       <div ref={parentRef} className={cn(styles.options, styles[variant])}>
-        {variant == 'standard' ? (
+        {variant != 'classic' ? (
           <div className={styles.badge} style={{width: `${badgeWidth}px`, left: `${badgeLeft}px`}} />
         ) : null}
 
@@ -43,7 +39,7 @@ const AppTabs = ({width = '100%', height = '100%', options, active, end, variant
           return (
             <div key={index} ref={(element) => optionRefs.current[index] = element} className={cn(styles.option, styles[variant], styles[option?.variant], {[styles.active]: isActive})} onClick={() => onChange(option.key)}>
               <div className={styles.optionInner}>
-                <App.Text center size={variant == 'classic' ? 20 : 16} weight={variant == 'classic' ? 700 : 500} className={cn(styles.optionText, {[styles.active]: isActive})}>{ option.title }</App.Text>
+                <App.Text center size={variant == 'classic' ? 20 : variant == 'back' ? 12 : 16} weight={variant == 'classic' ? 700 : 500} height={1} className={cn(styles.optionText, {[styles.active]: isActive})}>{ option.title }</App.Text>
               </div>
             </div>
           )
