@@ -21,7 +21,7 @@ const CollectionListPagination = () => {
   }
 
   return (
-    <App.Flex row align="center" justify="space-between" sx={{ padding: 16 }}>
+    <App.Flex row align="center" justify="space-between" gap={24} sx={{ padding: 16 }}>
       <App.Button small primary outlined={! pages.prev} disabled={! pages.prev} onClick={handlePage('prev')}>
         {loading && page == pages.prev ? (
           <App.Loader size={16} />

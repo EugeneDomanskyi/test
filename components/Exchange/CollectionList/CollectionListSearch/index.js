@@ -9,7 +9,7 @@ import $collection from '@/store/collection'
 
 import App from '@/components/App'
 
-const CollectionListSearch = ({ onSearched }) => {
+const CollectionListSearch = ({ onSearched, ...props }) => {
   const { isContractAddress, usdt } = useWalletConnect()
 
   const dispatch = useDispatch()
@@ -91,6 +91,7 @@ const CollectionListSearch = ({ onSearched }) => {
       autoComplete="search no-autocomplete"
       name="search no-autocomplete"
       onFocus={handleFocus}
+      {...props}
     />
   )
 }

@@ -329,12 +329,12 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
         </App.Flex>
 
         <App.Flex column width="100%" align="flex-end">
-          <App.RangeInput value={amount * 1} onChange={handleAmountChange} min={0} max={getNftBalance()} containerStyle={{width: '100%'}} />
+          <App.RangeInput value={amount * 1} onChange={handleAmountChange} min={0} max={getNftBalance() || 0.01} containerStyle={{width: '100%'}} />
 
           <App.Text right color={error == 'amount' ? '#DE5C64' : '#B9B8C5'}>
             <App.Flex row align="center" justify="flex-end" gap={4}>
-              <span>{type == 'buy' ? 'Available ': ''}Balance:</span>
-              {balanceLoading ? <App.Loader size={12} /> : `${getNftBalance()} NFT${getNftBalance() > 1 ? 's' : ''}`}
+              <span>{type == 'buy' ? 'Available to Buy ': 'Balance'}:</span>
+              <App.Text right color={getNftBalance() == 0 ? '#DE5C64' : '#B9B8C5'}>{balanceLoading ? <App.Loader size={12} /> : `${getNftBalance()} NFT${getNftBalance() > 1 ? 's' : ''}`}</App.Text>
             </App.Flex>
           </App.Text>
 
@@ -342,14 +342,14 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
             <App.Text right color={error == 'offer' ? '#DE5C64' : '#B9B8C5'}>
               <App.Flex row align="center" justify="flex-end" gap={4}>
                 <span>Total Offers:</span>
-                {balanceLoading ? <App.Loader size={12} /> : `${bidsCount} NFT${bidsCount > 1 ? 's' : ''}`}
+                <App.Text right color={bidsCount == 0 ? '#DE5C64' : '#B9B8C5'}>{balanceLoading ? <App.Loader size={12} /> : `${bidsCount} NFT${bidsCount > 1 ? 's' : ''}`}</App.Text>
               </App.Flex>
             </App.Text>
           ) : null}
         </App.Flex>
 
         <App.Flex row align="center" gap={16} className={styles.item}>
-          <App.Text size={16} color="#B9B8C5">Price</App.Text>
+          <App.Text size={16} color="#B9B8C5">You Get</App.Text>
           <input type="number" placeholder="0" value={price != '' ? (price * 1).toFixed(4) : ''} readOnly className={cn(styles.input, {[styles.error]: error == 'price'})} />
 
           <App.Flex row gap={8} align="center" className={styles.chip} onClick={handleListClick('currency')}>
@@ -369,7 +369,7 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
           <App.Text right color={error == 'price' ? '#DE5C64' : '#B9B8C5'}>
             <App.Flex row align="center" justify="flex-end" gap={4}>
               <span>Balance:</span>
-              {balanceLoading ? <App.Loader size={12} /> : `${currencyBalance.toFixed(4)} ${(currency == 'native' ? blockchain.currency : 'USDT')}`}
+              <App.Text right color={currencyBalance == 0 ? '#DE5C64' : '#B9B8C5'}>{balanceLoading ? <App.Loader size={12} /> : `${currencyBalance.toFixed(4)} ${(currency == 'native' ? blockchain.currency : 'USDT')}`}</App.Text>
             </App.Flex>
           </App.Text>
         </App.Flex>
