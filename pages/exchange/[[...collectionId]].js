@@ -166,10 +166,10 @@ const Exchange = () => {
   }, [wallet, collectionId, blockchain.code])
 
   const handleMobileTabChange = (tab) => {
-    if (tab === 'buy_sell') {
-      setMobileTabTrade(!mobileTabTrade)
-      return
-    }
+    // if (tab === 'buy_sell') {
+    //   setMobileTabTrade(!mobileTabTrade)
+    //   return
+    // }
 
     setMobileTabTrade(false)
     setMobileTab(tab)
@@ -178,6 +178,8 @@ const Exchange = () => {
   const handleClickOrder = useCallback(order => {
     tradeForm.current.setForm({formType: 'market', amount: order.quantity, side: order.side})
   }, [])
+
+  console.log(mobileTab)
 
   return (
     <App.Flex gap={GRID_GAP} className={styles.container}>
@@ -233,6 +235,10 @@ const Exchange = () => {
 
           {mobileTab == 'orders' ? (
             <Orders onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
+          ) : null}
+
+          {mobileTab == 'buy_sell' ? (
+            <TradeForm ref={tradeForm} />
           ) : null}
 
           <MobileTabsBar

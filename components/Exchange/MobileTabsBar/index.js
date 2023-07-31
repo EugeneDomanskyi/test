@@ -21,7 +21,7 @@ const MobileTabsBar = ({active, actvieTrade, onTabChange}) => {
     if (tab.key === active || !wallet && tab.key === 'orders') {
       return
     }
-
+    
     if (onTabChange) {
       onTabChange(tab.key)
     }
