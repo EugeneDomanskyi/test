@@ -1,4 +1,5 @@
 import * as Intercom from 'next-intercom'
+import amplitude from 'amplitude-js'
 
 export const getOS = () => {
   let userAgent = window.navigator.userAgent,
@@ -48,6 +49,7 @@ export const trackEvent = (eventName, eventProperties) => {
     event_properties: data,
   }
   amplitudeEventTrack(post) */
+  amplitude.getInstance().logEvent(eventName, eventProperties)
 }
 
 export const amplitudeEventTrack = (post) => {
