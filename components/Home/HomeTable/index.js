@@ -1,10 +1,8 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useRouter } from 'next/router'
 import Image from 'next/image'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel } from '@mui/material'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from '@mui/material'
 import numeral from 'numeral'
-import cn from 'classnames'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
@@ -12,8 +10,11 @@ import { trackEvent } from '@/libs/analytics.lib'
 
 import $app from '@/store/app'
 import $modal from '@/store/modal'
+import $collection from '@/store/collection'
 
 import App from '@/components/App'
+import CollectionListSearch from '@/components/Exchange/CollectionList/CollectionListSearch'
+import CollectionListPagination from '@/components/Exchange/CollectionList/CollectionListPagination'
 
 import styles from './styles.module.scss'
 
@@ -23,16 +24,19 @@ const HomeTable = () => {
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
-  const { all: collections } = useSelector(({ $collection }) => $collection)
+  const { collections, searched } = useSelector($collection.get.all)
 
   const [order, setOrder] = useState('desc')
   const [orderBy, setOrderBy] = useState('volume')
-  const [tab, setTab] = useState('trade')
+  const [wasSearched, setWasSearched] = useState(false)
 
-  const tabs = [
-    { key: 'trade', title: 'Trade' },
-    { key: 'earn', title: 'Earn', variant: 'glow' },
-  ]
+  const handleSearched = useCallback((value) => {
+    setWasSearched(value)
+  }, [])
+
+  const collectionList = () => {
+    return (wasSearched) ? searched : collections
+  }
 
   const handleSort = (field) => () => {
     const isAsc = orderBy === field && order === 'asc'
@@ -41,7 +45,7 @@ const HomeTable = () => {
   }
 
   const sortedTokens = () => {
-    return stableSort(collections, getComparator(order, orderBy))
+    return stableSort(collectionList(), getComparator(order, orderBy))
   }
 
   const stableSort = (array, comparator) => {
@@ -101,136 +105,6 @@ const HomeTable = () => {
     }}))
   }
 
-  const handleTrade = (collection) => async (e) => {
-    e.stopPropagation()
-
-    trackEvent('Dex Trade Clicked', {
-      'Token': collection.name,
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-    })
-
-    const address = await connect()
-    if ( ! address) {
-      return
-    }
-
-    dispatch($modal.set.show({modal: 'TradeModal', props: {
-      collection,
-      header: {
-        title: `Trade`,
-      },
-      size: 'small',
-    }}))
-  }
-
-  const handleBuy = (collection) => async (e) => {
-    e.stopPropagation()
-    const address = await connect()
-    if ( ! address) {
-      return
-    }
-
-    dispatch($modal.set.show({modal: 'BuyModal', props: {
-      collection,
-      header: {
-        title: `Buy`,
-      },
-    }}))
-  }
-
-  const handleSell = (collection) => async (e) => {
-    e.stopPropagation()
-    const address = await connect()
-    if ( ! address) {
-      return
-    }
-
-    dispatch($modal.set.show({modal: 'SellModal', props: {
-      collection,
-      header: {
-        title: `Sell`,
-      },
-    }}))
-  }
-
-  const handleMint = (collection) => async (e) => {
-    e.stopPropagation()
-
-    trackEvent('Dex Mint Clicked', {
-      'Token': token.collection,
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-    })
-
-    const address = await connect()
-    if ( ! address) {
-      return
-    }
-
-    dispatch($modal.set.show({modal: 'MintModal', props: {
-      collection,
-      header: {
-        title: `Mint ${collection.name} NFT20`,
-        subtitle: `Convert ${collection.name} NFT to ${collection.name} NFT20`,
-        steps: [
-          { title: 'Pick NFTs', step: 0 },
-          { title: 'Approve Transfer', step: 2 },
-          { title: 'Mint NFT20', step: 6 },
-        ],
-      },
-      footer: 'info',
-    }}))
-  }
-
-  const handleRedeem = (collection) => async (e) => {
-    e.stopPropagation()
-
-    trackEvent('Dex Redeem Clicked', {
-      'Token': collection.name,
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-    })
-
-    const address = await connect()
-    if ( ! address) {
-      return
-    }
-
-    dispatch($modal.set.show({modal: 'RedeemModal', props: {
-      collection,
-      header: {
-        title: `Redeem ${collection.name} NFTs`,
-        subtitle: `Convert ${collection.name} NFT20 into ${collection.name} NFTs`,
-        steps: [
-          { title: 'Redeem NFT20', step: 0 },
-          { title: 'Successful', step: 3 },
-        ],
-      },
-      footer: 'info',
-    }}))
-  }
-
-  const handleTabChange = (value) => {
-    if (value == 'earn') {
-      trackEvent('Dex Earn Clicked', {
-        'Wallet Status': wallet ? 'Connected' : 'Not Connected',
-      })
-    }
-
-    if (value == 'trade') {
-      trackEvent('Dex Trade Clicked', {
-        'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      })
-    }
-
-    setTab(value)
-  }
-
-  const handleHowTo = () => {
-    const guide = document.getElementById('guide')
-    if (guide) {
-      guide.scrollIntoView({ behavior: 'smooth' })
-    }
-  }
-
   const handleInfo = (collection) => () => {
     dispatch($modal.set.show({modal: 'Home/HomeInfoModal', props: {
       collection,
@@ -240,22 +114,13 @@ const HomeTable = () => {
     }}))
   }
 
-  const HowToUse = () => (
-    isMobile ? null : (
-      <App.Flex row center gap={12} className={styles.badge} sx={{ padding: '8px 16px', cursor: 'pointer' }} onClick={handleHowTo}>
-        <App.Text size={16} color="#B9B8C5">Wondering how to use?</App.Text>
-        <App.Icon icon="arrow-down" color="#fff" />
-      </App.Flex>
-    )
-  )
-
   return (
     <div className={styles.container}>
       <App.Container className={styles.content}>
-        <App.Flex column>
-          <App.Tabs options={tabs} active={tab} variant="classic" end={<HowToUse />} onChange={handleTabChange} />
+        <App.Flex column align="flex-end" gap={16}>
+          <CollectionListSearch sx={{ width: 300 }} onSearched={handleSearched} />
 
-          <App.Flex width="100%" className={cn(styles.paper, {[styles.glow]: tab == 'earn'})}>
+          <App.Flex width="100%">
             <TableContainer>
               {isMobile ? (
                 <Table>
@@ -448,28 +313,11 @@ const HomeTable = () => {
                 </Table>
               )}
             </TableContainer>
-
-            {/* <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={rows.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            /> */}
-
-            {tab == 'earn' ? (
-              <App.Flex column center className={styles.earn}>
-                <Image src="/images/crown.png" width={166} height={167} alt="" />
-
-                <App.Text center size={[40, 28]} weight={700} gradient="linear-gradient(90deg, #FFF066, #FF9A01)">Excitement awaits!</App.Text>
-                <App.Text center size={[20, 16]} weight={700} color="#B9B8C5">Stay tuned for something incredible coming soon.</App.Text>
-              </App.Flex>
-            ) : null}
           </App.Flex>
 
-          {isMobile ? <div style={{paddingTop: 16}}><HowToUse /></div> : null}
+          {!wasSearched ? (
+            <CollectionListPagination />
+          ) : null}
         </App.Flex>
       </App.Container>
     </div>

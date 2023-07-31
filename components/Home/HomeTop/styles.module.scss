@@ -45,6 +45,7 @@
 
     @media (max-width: 768px) {
       &:before {
+        display: none;
         width: 190.05px;
         height: 203.644px;
         left: -60px;
@@ -52,6 +53,7 @@
       }
   
       &:after {
+        display: none;
         width: 190.05px;
         height: 203.644px;
         right: -60px;
