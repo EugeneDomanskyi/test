@@ -113,7 +113,7 @@ const useTrade = () => {
 
     result = result.map(item => ({
       quantity: item.quantityRemaining,
-      price: item?.price?.amount?.decimal ?? 0,
+      price: (currencyContract ? item?.price?.amount?.decimal : item?.price?.amount?.native) ?? 0,
     }))
 
     result.sort((a, b) => b.price - a.price)
