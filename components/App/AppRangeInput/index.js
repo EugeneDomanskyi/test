@@ -3,7 +3,6 @@ import Slider from '@mui/material/Slider'
 import cn from 'classnames'
 
 const AppRangeInput = ({value, onChange, containerStyle = {}, disabled, ...props}) => {
-  
   const handleChange = (e, value) => {
     onChange(value)
   }

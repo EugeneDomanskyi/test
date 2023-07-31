@@ -24,9 +24,9 @@ export default function Home() {
           )}
         </App.Flex>
 
-        <HomeEarn />
+        {/* <HomeEarn />
         <HomeUsing />
-        <HomeGuide />
+        <HomeGuide /> */}
       </App.Flex>
     </App.Flex>
   )
