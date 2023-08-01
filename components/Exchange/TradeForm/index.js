@@ -95,10 +95,12 @@ const TradeForm = forwardRef((_props, ref) => {
 
   return (
     <App.Flex className={styles.container} column>
-      <Tabs
-        options={TAB_OPTIONS}
-        active={currentTab}
-        onChange={handleChangeTab} />
+      <App.Flex column>
+        <Tabs
+          options={TAB_OPTIONS}
+          active={currentTab}
+          onChange={handleChangeTab} />
+      </App.Flex>
       <App.Flex gap={16} sx={{padding: '24px 16px'}}>
         <App.Button className={cn(styles.formTypeButton, {[styles.active]: formType === 'market'})} onClick={handleChangeFormType('market')}>
           {

@@ -1,6 +1,7 @@
 .container {
   width: 366px;
-  height: 460px;
+  height: 500px;
+  max-height: calc(100vh - 64px - 162px - 24px - 16px - 24px);
   // flex: 1;
   overflow: hidden;
   background-color: #0E0B23;
@@ -32,6 +33,7 @@
   .container {
     width: 100%;
     height: unset;
+    max-height: unset;
     padding-bottom: 64px;
   }
 }
