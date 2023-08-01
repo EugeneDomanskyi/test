@@ -153,7 +153,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
 
   const handleTotalBlur = () => {
     handleChangeForm('price')(form.total/form.amount)
-    trackEvent('Dex Add Total', {
+    trackEvent('Add Total', {
       'Base Currency': blockchain.currency,
       'Quote Currency': currentCollection.name,
       'Total': form.total,
@@ -163,7 +163,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
   }
 
   const handleBlurPrice = () => {
-    trackEvent('Dex Add Price', {
+    trackEvent('Add Price', {
       'Base Currency': blockchain.currency,
       'Quote Currency': currentCollection.name,
       'Price': form.price,
@@ -173,7 +173,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
   }
 
   const handleBlurAmount = () => {
-    trackEvent('Dex Add Amount', {
+    trackEvent('Add Amount', {
       'Base Currency': blockchain.currency,
       'Quote Currency': currentCollection.name,
       'Amount': form.amount,

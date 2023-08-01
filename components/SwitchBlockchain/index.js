@@ -38,7 +38,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
   }
 
   const handleBlockchainChange = (val) => () => {
-    trackEvent('Dex Switch Network', {
+    trackEvent('Switch Network', {
       Network: val.toUpperCase(),
     })
     
