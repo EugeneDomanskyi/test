@@ -38,6 +38,7 @@ const CollectionList = ({ className, onClose }) => {
           {collectionList().map((collection) => {
             return (
               <CollectionListItem
+                isSearched={wasSearched}
                 key={collection.address}
                 collection={collection}
                 isActive={current.address === collection.address}

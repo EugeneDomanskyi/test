@@ -33,7 +33,7 @@ const SwapModal = ({ collection, onClose, onStep }) => {
   }
 
   const handleSwap = (nfts) => {
-    trackEvent('Dex Swap NFT', {
+    trackEvent('Swap NFT', {
       'Token': collection.name,
       'Network': blockchain.code.toUpperCase(),
       'Quantity': nfts.length,
@@ -65,7 +65,7 @@ const SwapModal = ({ collection, onClose, onStep }) => {
         setStep(2)
         console.log('Complete txHash', transaction.items[0]?.txHash)
 
-        trackEvent('Dex Swap Successful', {
+        trackEvent('Swap Successful', {
           'Token': collection.name,
           'Network': blockchain.code.toUpperCase(),
           'Quantity': nfts.length,
@@ -95,7 +95,7 @@ const SwapModal = ({ collection, onClose, onStep }) => {
         setStep(2)
         console.log('Complete txHash', transaction.items[0]?.txHash)
 
-        trackEvent('Dex Swap Successful', {
+        trackEvent('Swap Successful', {
           'Token': collection.name,
           'Network': blockchain.code.toUpperCase(),
           'Quantity': nfts.length,

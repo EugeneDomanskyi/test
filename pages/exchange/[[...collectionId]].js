@@ -43,7 +43,7 @@ const Exchange = () => {
   const tradeForm = useRef(null)
 
   useEffect(() => {
-    trackEvent('Dex Exchange Clicked', {
+    trackEvent('Exchange Clicked', {
       'Network': blockchain.code.toUpperCase(),
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
     })
@@ -178,8 +178,6 @@ const Exchange = () => {
   const handleClickOrder = useCallback(order => {
     tradeForm.current.setForm({formType: 'market', amount: order.quantity, side: order.side})
   }, [])
-
-  console.log(mobileTab)
 
   return (
     <App.Flex gap={GRID_GAP} className={styles.container}>

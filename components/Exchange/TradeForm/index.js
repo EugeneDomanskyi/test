@@ -7,6 +7,7 @@ import $exchange from '@/store/exchange'
 import $app from '@/store/app'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useTrade from '@/myhooks/trade'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 import Tabs from '@/components/Exchange/Tabs'
@@ -86,6 +87,10 @@ const TradeForm = forwardRef((_props, ref) => {
 
   const handleChangeFormType = type => () => {
     setFormType(type)
+    trackEvent(`Select ${type} Order`, {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Network': blockchain.code,
+    })
   }
 
   return (

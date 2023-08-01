@@ -43,7 +43,7 @@ const Wrapper = ({ children }) => {
       delay: 0,
     })
 
-    trackEvent('Dex Page Visited')
+    trackEvent('Page Visited')
   }, [])
 
   useEffect(() => {

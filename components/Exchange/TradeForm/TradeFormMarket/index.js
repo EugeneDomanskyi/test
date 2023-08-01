@@ -7,6 +7,7 @@ import useTrade from '@/myhooks/trade'
 import $app from '@/store/app'
 import $modal from '@/store/modal'
 import useWalletConnect from '@/myhooks/wallet-connect'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
@@ -62,6 +63,16 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
     const maxLength = currentTab === 'buy' ? onSaleNft.length : userNfts.length
     value = value > maxLength ? maxLength : value
     setAmount(value)
+  }
+
+  const handleBlurAmount = () => {
+    trackEvent('Add Amount', {
+      'Base Currency': blockchain.currency,
+      'Quote Currency': currentCollection.name,
+      'Amount': amount,
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Network': blockchain.name,
+    })
   }
 
   const handleChangeRange = value => {
@@ -129,6 +140,7 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
           label="AMOUNT"
           value={amount}
           currency={`NFT${amount > 1 ? `s` : ''}`}
+          onBlur={handleBlurAmount}
           onChange={handleChangeAmount} />
         <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto', marginTop: 5}}>NFTs available: {currentTab === 'buy' ? onSaleNft.length : userNfts.length}</App.Text>
       </App.Flex>

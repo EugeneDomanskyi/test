@@ -48,11 +48,13 @@ export const trackEvent = (eventName, eventProperties) => {
     event_properties: data,
   }
   amplitudeEventTrack(post) */
+  const [subDomain] = window.location.hostname.split('.')
   const data = {
     ...eventProperties,
     IsBrowser: true,
     OS: getOS(),
     Device: getDevice(),
+    Source: `${subDomain.charAt(0).toUpperCase()}${subDomain.slice(1)}`,
   }
   amplitude.getInstance().logEvent(eventName, data)
 }

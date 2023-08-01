@@ -2,6 +2,10 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Scrollbars from 'react-custom-scrollbars-2'
 import cn from 'classnames'
+import { useSelector } from 'react-redux'
+
+import { trackEvent } from '@/libs/analytics.lib'
+import $app from '@/store/app'
 
 import App from '@/components/App'
 
@@ -9,6 +13,8 @@ import styles from './styles.module.scss'
 
 const SwapModalInputList = ({ tokens, open, variant, onSelect, onClose }) => {
   const [search, setSearch] = useState('')
+
+  const blockchain = useSelector($app.get.blockchain)
 
   const handleClose = () => {
     if (onClose) {
@@ -27,9 +33,13 @@ const SwapModalInputList = ({ tokens, open, variant, onSelect, onClose }) => {
     })
   }
 
-  const handleSelect = (code) => () => {
+  const handleSelect = (item) => () => {
+    trackEvent('Select Asset', {
+      'Network': blockchain.code.toUpperCase(),
+      'Token': item.name,
+    })
     if (onSelect) {
-      onSelect(code, variant)
+      onSelect(item.code, variant)
     }
   }
 
@@ -65,7 +75,7 @@ const SwapModalInputList = ({ tokens, open, variant, onSelect, onClose }) => {
         >
           <div className={styles.content}>
             {filteredTokens().map((item, index) => (
-              <App.Flex key={index} row align="center" gap={8} className={cn(styles.item, {[styles.active]: item.active})} onClick={handleSelect(item.code)}>
+              <App.Flex key={index} row align="center" gap={8} className={cn(styles.item, {[styles.active]: item.active})} onClick={handleSelect(item)}>
                 {item.image ? (
                   <Image src={item.image} width={40} height={40} alt="" />
                 ) : (
