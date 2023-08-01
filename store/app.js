@@ -64,6 +64,9 @@ export const get = {
   blockchain: ({ $app }) => {
     return $app.blockchains.find(item => item.code == $app.code)
   },
+  blockchainByCode: (code) => ({ $app }) => {
+    return $app.blockchains.find(item => item.code == code)
+  }
 }
 
 export default {

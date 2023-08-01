@@ -1,5 +1,5 @@
 import styles from './styles.module.scss'
-import { useState, useEffect, forwardRef, useImperativeHandle } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Image from 'next/image'
 
@@ -17,7 +17,7 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
   const { wallet, connect, changeNetwork } = useWalletConnect()
 
   const currentCollection = useSelector(({$collection}) => $collection.current)
-  const blockchain = useSelector($app.get.blockchain)
+  const blockchain = useSelector($app.get.blockchainByCode(currentCollection?.blockchain))
 
   const [amount, setAmount] = useState(initialForm.amount)
   const [userNfts, setUserNfts] = useState([])
@@ -45,7 +45,7 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
         })
       }
     }
-  }, [currentCollection.address, wallet, blockchain.code])
+  }, [currentCollection.address, wallet, blockchain?.code])
 
   useEffect(() => {
     setAmount('1')
@@ -143,12 +143,12 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
           label="TOTAL"
-          currency={blockchain.currency}
+          currency={blockchain?.currency}
           readOnly={true}
           value={getTotal()} />
         <App.Flex align="center" gap={4} className={styles.balance}>
           <App.Icon icon="wallet" />
-          <App.Text color="#B9B8C5" size={10}>{ userBalances.native } { blockchain.currency }</App.Text>
+          <App.Text color="#B9B8C5" size={10}>{ userBalances.native } { blockchain?.currency }</App.Text>
         </App.Flex>
       </App.Flex>
       <App.Button

@@ -20,8 +20,8 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
   const { wallet, connect, changeNetwork } = useWalletConnect()
   const { getNftUser } = useTrade()
   
-  const blockchain = useSelector($app.get.blockchain)
   const currentCollection = useSelector(({$collection}) => $collection.current)
+  const blockchain = useSelector($app.get.blockchainByCode(currentCollection?.blockchain))
 
   const [form, setForm] = useState(initialForm)
 
