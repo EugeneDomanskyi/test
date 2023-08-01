@@ -36,7 +36,6 @@ const SwapModal = ({ collection, onClose, onStep }) => {
     }
   }
 
-
   const handleContinue = (price, amount, usdPrice, nfts) => {
     setForm({price, amount, usdPrice})
     nftsRef.current = nfts

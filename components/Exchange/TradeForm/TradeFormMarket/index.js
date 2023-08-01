@@ -60,8 +60,12 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
   }
 
   const handleChangeAmount = value => {
+    const regex = /^\d+[,]?\d{0,2}$/
+    if (value && !regex.test(value)) {
+      return 
+    }
     const maxLength = currentTab === 'buy' ? onSaleNft.length : userNfts.length
-    value = value > maxLength ? maxLength : value
+    value = value*1 > maxLength ? maxLength : value
     setAmount(value)
   }
 

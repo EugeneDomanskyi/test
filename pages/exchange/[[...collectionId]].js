@@ -91,6 +91,8 @@ const Exchange = () => {
           dispatch($exchange.set.orders(res))
         }
       })
+    } else if (!wallet) {
+      dispatch($exchange.set.orders([]))
     }
   }, [blockchain.code, wallet])
   
