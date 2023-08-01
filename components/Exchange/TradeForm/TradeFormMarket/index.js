@@ -24,8 +24,6 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
   const [onSaleNft, setOnSaleNft] = useState([])
   const [onBuyNft, setOnBuyNft] = useState([])
 
-  console.log(onBuyNft)
-
   const isDisabled = !(amount*1) || (currentTab === 'buy' && !onSaleNft.length)
 
   useEffect(() => {
