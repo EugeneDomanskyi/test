@@ -25,7 +25,7 @@ const TradeForm = forwardRef((_props, ref) => {
   const orderBook = useSelector($exchange.get.orderBook)
   const currentCollection = useSelector(({$collection}) => $collection.current)
   const loadingCollectionData = useSelector(({$exchange}) => $exchange.loadingCollectionData)
-  const blockchain = useSelector($app.get.blockchain)
+  const blockchain = useSelector($app.get.blockchainByCode(currentCollection?.blockchain))
 
   const [currentTab, setCurrentTab] = useState('buy')
   const [formType, setFormType] = useState('market')
