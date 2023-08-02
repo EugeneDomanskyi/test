@@ -188,11 +188,11 @@ const useTrade = () => {
     let tempBids = bids
       .reduce((acc, bid) => [...acc, ...new Array(bid.quantity).fill(bid.price)], [])
       .slice(0, amount)
-
+    
     if (amount > tempBids.length) {
       tempBids = [
         ...tempBids,
-        ...Array.from({ length: (amount - tempBids.length) }, () => tempBids[tempBids.length - 1])
+        ...Array.from({ length: (amount - tempBids.length) }, () => tempBids[tempBids.length - 1] || 0)
       ]
     }
     return tempBids
