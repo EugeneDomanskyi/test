@@ -5,6 +5,7 @@ import { ToastContainer } from 'react-toastify'
 import { createClient } from '@reservoir0x/reservoir-sdk'
 import nookies from 'nookies'
 import { getSelectorsByUserAgent } from 'react-device-detect'
+import amplitude from 'amplitude-js'
 
 import { getDefaultWallets, RainbowKitProvider, darkTheme, connectorsForWallets } from '@rainbow-me/rainbowkit'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
@@ -133,6 +134,8 @@ const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
     body: 'Gilroy',
   },
 })
+
+amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
 
 function MyApp({ Component, pageProps, initialData }) {
   const storeRef = useRef(store(initialData)).current

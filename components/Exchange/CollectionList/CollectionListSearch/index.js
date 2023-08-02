@@ -9,7 +9,7 @@ import $collection from '@/store/collection'
 
 import App from '@/components/App'
 
-const CollectionListSearch = ({ onSearched }) => {
+const CollectionListSearch = ({ onSearched, ...props }) => {
   const { isContractAddress, usdt } = useWalletConnect()
 
   const dispatch = useDispatch()
@@ -63,16 +63,15 @@ const CollectionListSearch = ({ onSearched }) => {
     }
 
     setSearchLoading(false)
+
+    trackEvent('Search Asset', {
+      'Network': blockchain.code.toUpperCase(),
+      'Search Term': searchQuery,
+    })
     
     if (onSearched) {
       onSearched(true)
     }
-  }
-
-  const handleFocus = () => {
-    trackEvent('Dex Search Asset', {
-      'Network': blockchain.code.toUpperCase(),
-    })
   }
 
   return (
@@ -90,7 +89,7 @@ const CollectionListSearch = ({ onSearched }) => {
       withClear
       autoComplete="search no-autocomplete"
       name="search no-autocomplete"
-      onFocus={handleFocus}
+      {...props}
     />
   )
 }

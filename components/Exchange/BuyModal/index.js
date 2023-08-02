@@ -57,7 +57,7 @@ const TradeBuyModal = ({data}) => {
       },
     }))
     placeBid(bids, progressHandler, onError)
-    trackEvent('Dex Create Order Submit', {
+    trackEvent('Create Order Submit', {
       'Wallet connect Status': 'Connected',
       'Network': data.blockchain.name,
       'Price': data.price,
@@ -85,7 +85,7 @@ const TradeBuyModal = ({data}) => {
         },
       }))
       setStep('complete')
-      trackEvent('Dex Create Order Success', {
+      trackEvent('Create Order Success', {
         'Wallet connect Status': 'Connected',
         'Network': data.blockchain.name,
         'Price': data.price,

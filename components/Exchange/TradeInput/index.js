@@ -32,7 +32,7 @@ const TradeInput = ({label, currency, onChange, onBlur, ...props}) => {
         onWheel={e => e.target.blur()}
         onFocus={() => setFocused(true)}
         onBlur={handleBlur}
-        type="number"
+        // type="number"
         {...props} />
     </div>
   )

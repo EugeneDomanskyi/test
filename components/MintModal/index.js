@@ -147,7 +147,7 @@ const MintModal = ({ token, onClose, onStep }) => {
       return 
     }
 
-    trackEvent('Dex Mint Successful', {
+    trackEvent('Mint Successful', {
       'Token': token.collection,
       'Quantity': preparedNfts.length,
     })

@@ -43,7 +43,7 @@ const Wrapper = ({ children }) => {
       delay: 0,
     })
 
-    trackEvent('Dex Page Visited')
+    trackEvent('Page Visited')
   }, [])
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const Wrapper = ({ children }) => {
         if ( ! isExchange || isExchange && fetching) {
           dispatch($collection.set.loading(true))
 
-          const result = await $collection.api.all(queryParams(blockchainCode.current, page, { maxFloorAskPrice: process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null }))
+          const result = await $collection.api.all(queryParams(blockchainCode.current, page, {minFloorAskPrice: '0.000001', maxFloorAskPrice: process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null }))
           if (result && result.hasOwnProperty('collections')) {
             dispatch($collection.set.searched([]))
             dispatch($collection.set.all(result.collections.map(item => ({ ...item, blockchain: blockchainCode.current, currency: network(blockchainCode.current)?.currency }))))
@@ -156,7 +156,7 @@ const Wrapper = ({ children }) => {
       blockchain: blockchainCode,
       sortBy: '1DayVolume',
       limit: 10,
-      minFloorAskPrice: '0.000001',
+      // minFloorAskPrice: '0.000001',
       // displayCurrency: usdt[blockchainCode],
       // id: '0x4d544035500d7ac1b42329c70eb58e77f8249f0f',
     }

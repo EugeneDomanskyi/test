@@ -7,6 +7,7 @@ import Link from 'next/link'
 import $exchange from '@/store/exchange'
 import $app from '@/store/app'
 import useWalletConnect from '@/myhooks/wallet-connect'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 import { WebIcon, TwitterIcon, DiscordIcon } from '@/components/Icons/exchange'
@@ -18,6 +19,12 @@ const CollectionInfo = () => {
   const currentCollection = useSelector(({$collection}) => $collection.current)
 
   const scanLink = scanUrl(currentCollection.address, 'address', blockchain?.code)
+
+  const handleClickLink = (type) => () => {
+    trackEvent(`Click NFT ${type} Redirect`, {
+      Markets: currentCollection.name,
+    })
+  }
 
   return (
     <App.Flex className={styles.container} gap={6}>
@@ -51,26 +58,26 @@ const CollectionInfo = () => {
                       }
                     </App.Flex>
                     <App.Flex align="center">
-                      <Link href={scanLink} target="_blank" style={{marginRight: 8}}>
+                      <Link href={scanLink} target="_blank" onClick={handleClickLink(blockchain?.code)} style={{marginRight: 8}}>
                         <App.Icon width={15} height={15} icon={blockchain?.code === 'polygon' ? 'polyscan' : 'etherscan'} />
                       </Link>
                       {
                         currentCollection?.externalUrl
-                          ? <Link href={currentCollection?.externalUrl ?? ''} target="_blank" style={{marginRight: 5}}>
+                          ? <Link href={currentCollection?.externalUrl ?? ''} onClick={handleClickLink('website')} target="_blank" style={{marginRight: 5}}>
                               <WebIcon />
                             </Link>
                           : null
                       }
                       {
                         currentCollection?.twitterUrl
-                          ? <Link href={currentCollection?.twitterUrl ?? ''} target="_blank" style={{marginRight: 8}}>
+                          ? <Link href={currentCollection?.twitterUrl ?? ''} onClick={handleClickLink('twitter')} target="_blank" style={{marginRight: 8}}>
                               <TwitterIcon />
                             </Link>
                           : null
                       }
                       {
                         currentCollection?.discordUrl
-                          ? <Link href={currentCollection?.discordUrl ?? ''} target="_blank">
+                          ? <Link href={currentCollection?.discordUrl ?? ''} onClick={handleClickLink('discord')} target="_blank">
                               <DiscordIcon />
                             </Link>
                           : null

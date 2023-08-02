@@ -38,7 +38,7 @@ export const exchangeSlice = createSlice({
     },
     sales: [],
     orders: [],
-    interval: {key: '15m', count: 15, unit: 'minutes'},
+    interval: {key: '6h', count: 6, unit: 'hours'},
     sortType: 'VOLUME:DESC',
     loadingCollectionData: false,
   },

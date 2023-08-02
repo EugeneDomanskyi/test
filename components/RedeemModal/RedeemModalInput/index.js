@@ -80,7 +80,7 @@ const RedeemModalInput = ({ token, amount, onAmountChange, onRedeem }) => {
   }
 
   const handleRedeem = () => {
-    trackEvent('Dex Review Redeem Clicked', {
+    trackEvent('Review Redeem Clicked', {
       'Token': token.collection,
       'Quantity': amount,
     })

@@ -47,7 +47,7 @@ const RedeemModal = ({ token, onClose, onStep }) => {
       return 
     }
 
-    trackEvent('Dex Redeem Successful', {
+    trackEvent('Redeem Successful', {
       'Token': token.collection,
       'Quantity': amount,
     })

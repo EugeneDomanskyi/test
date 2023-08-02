@@ -43,7 +43,7 @@ const Exchange = () => {
   const tradeForm = useRef(null)
 
   useEffect(() => {
-    trackEvent('Dex Exchange Clicked', {
+    trackEvent('Exchange Clicked', {
       'Network': blockchain.code.toUpperCase(),
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
     })
@@ -91,6 +91,8 @@ const Exchange = () => {
           dispatch($exchange.set.orders(res))
         }
       })
+    } else if (!wallet) {
+      dispatch($exchange.set.orders([]))
     }
   }, [blockchain.code, wallet])
   
@@ -166,10 +168,10 @@ const Exchange = () => {
   }, [wallet, collectionId, blockchain.code])
 
   const handleMobileTabChange = (tab) => {
-    if (tab === 'buy_sell') {
-      setMobileTabTrade(!mobileTabTrade)
-      return
-    }
+    // if (tab === 'buy_sell') {
+    //   setMobileTabTrade(!mobileTabTrade)
+    //   return
+    // }
 
     setMobileTabTrade(false)
     setMobileTab(tab)
@@ -233,6 +235,10 @@ const Exchange = () => {
 
           {mobileTab == 'orders' ? (
             <Orders onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
+          ) : null}
+
+          {mobileTab == 'buy_sell' ? (
+            <TradeForm ref={tradeForm} />
           ) : null}
 
           <MobileTabsBar

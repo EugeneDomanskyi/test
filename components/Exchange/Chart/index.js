@@ -71,6 +71,8 @@ const INTERVALS = [
   {key: '30m', count: 30, unit: 'minutes'},
   {key: '1h', count: 1, unit: 'hours'},
   {key: '6h', count: 6, unit: 'hours'},
+  {key: '1d', count: 1, unit: 'days'},
+  {key: '1w', count: 1, unit: 'weeks'},
 ]
 
 const TradeChart = () => {

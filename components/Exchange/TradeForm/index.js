@@ -7,6 +7,7 @@ import $exchange from '@/store/exchange'
 import $app from '@/store/app'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useTrade from '@/myhooks/trade'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 import Tabs from '@/components/Exchange/Tabs'
@@ -25,7 +26,7 @@ const TradeForm = forwardRef((_props, ref) => {
   const orderBook = useSelector($exchange.get.orderBook)
   const currentCollection = useSelector(({$collection}) => $collection.current)
   const loadingCollectionData = useSelector(({$exchange}) => $exchange.loadingCollectionData)
-  const blockchain = useSelector($app.get.blockchain)
+  const blockchain = useSelector($app.get.blockchainByCode(currentCollection?.blockchain))
 
   const [currentTab, setCurrentTab] = useState('buy')
   const [formType, setFormType] = useState('market')
@@ -86,14 +87,20 @@ const TradeForm = forwardRef((_props, ref) => {
 
   const handleChangeFormType = type => () => {
     setFormType(type)
+    trackEvent(`Select ${type} Order`, {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Network': blockchain.code,
+    })
   }
 
   return (
     <App.Flex className={styles.container} column>
-      <Tabs
-        options={TAB_OPTIONS}
-        active={currentTab}
-        onChange={handleChangeTab} />
+      <App.Flex column>
+        <Tabs
+          options={TAB_OPTIONS}
+          active={currentTab}
+          onChange={handleChangeTab} />
+      </App.Flex>
       <App.Flex gap={16} sx={{padding: '24px 16px'}}>
         <App.Button className={cn(styles.formTypeButton, {[styles.active]: formType === 'market'})} onClick={handleChangeFormType('market')}>
           {

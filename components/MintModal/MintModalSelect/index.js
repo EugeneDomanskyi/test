@@ -62,7 +62,7 @@ const MintModalSelect = ({ nfts, token, loading, buttonLoading, onContinue }) =>
 
   const handleContinue = () => {
     if (onContinue && ! buttonLoading) {
-      trackEvent('Dex Review Mint Clicked', {
+      trackEvent('Review Mint Clicked', {
         'Token': token.collection,
         'Quantity': selectedIds.length,
       })
