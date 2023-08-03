@@ -4,6 +4,10 @@ import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import Image from 'next/image'
 import { parseUnits } from 'viem'
+import {
+  LimitOrderBuilder,
+  Web3ProviderConnector,
+} from '@1inch/limit-order-protocol-utils'
 
 import $app from '@/store/app'
 import $exchange from '@/store/exchange'
@@ -17,7 +21,7 @@ import TradeInput from '@/components/Exchange/TradeInput'
 
 const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) => {
   const dispatch = useDispatch()
-  const { wallet, connect, changeNetwork } = useWalletConnect()
+  const { wallet, connect, changeNetwork, walletClient } = useWalletConnect()
   const { getNftUser } = useTrade()
   
   const currentCollection = useSelector(({$collection}) => $collection.current)
@@ -74,41 +78,51 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
       return
     }
 
-    const network = await changeNetwork(blockchain.code)
-    if (!network) {
-      return
-    }
+    // const network = await changeNetwork(blockchain.code)
+    // if (!network) {
+    //   return
+    // }
     loadingRef.current = true
     switch (currentTab) {
       case 'buy':
-        // $exchange.api.executeOrder({
-        //   maker: wallet,
-        //   blockchain: blockchain.code,
-        //   params: [{
-        //     collection: currentCollection.address,
-        //     weiPrice: parseUnits(`${form.total*form.amount}`, 18).toString()
-        //   }],
-        // }).then(async ({steps}) => {
-        //   const currentStep = steps.filter(step => step.items.length).find(step => {
-        //     const [action] = step.items
-        //     return action.status !== 'complete'
-        //   })
-        //   if (currentStep) {
-        //     switch (currentStep.kind) {
-        //       case 'signature':
-        //         const [step] = currentStep.items
-        //         const needToSign = step.data.sign
-        //         console.log(needToSign)
-        //         const signature = await walletClient.signTypedData({
-        //           ...needToSign,
-        //           message: needToSign.value,
-        //         })
-        //         console.log('signature', signature)
-        //         break
-        //     }
-        //   }
+        const contractAddress = '0x7643b8c2457c1f36dc6e3b8f8e112fdf6da7698a';
+        const walletAddress = '0xd337163ef588f2ee7cdd30a3387660019be415c9';
+        const chainId = 1;
+        const limitOrderBuilder = new LimitOrderBuilder(
+          contractAddress,
+          chainId,
+          walletClient,
+        );
+        const limitOrder = limitOrderBuilder.buildLimitOrder({
+          makerAssetAddress: '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c',
+          takerAssetAddress: '0x111111111117dc0aa78b770fa6a738034120c302',
+          makerAddress: '0xfb3c7ebccccAA12B5A884d612393969Adddddddd',
+          makingAmount: '100',
+          takingAmount: '200',
+          // predicate = '0x',
+          // permit = '0x',
+          // receiver = ZERO_ADDRESS,
+          // allowedSender = ZERO_ADDRESS,
+          // getMakingAmount = ZERO_ADDRESS,
+          // getTakingAmount = ZERO_ADDRESS,
+          // preInteraction  = '0x',
+          // postInteraction = '0x',
+      });
+        const limitOrderTypedData = limitOrderBuilder.buildLimitOrderTypedData(
+          limitOrder
+        );
+        // const signature = walletClient.signTypedData({
+        //   ...limitOrderTypedData,
         // })
-        // return
+        const limitOrderSignature = limitOrderBuilder.buildOrderSignature(
+          walletAddress,
+          limitOrderTypedData
+        )
+        // const limitOrderHash = limitOrderBuilder.buildLimitOrderHash(
+        //   limitOrderTypedData
+        // )
+        console.log(limitOrderTypedData)
+        return
         dispatch($modal.set.show({
           show: true,
           modal: 'Exchange/BuyModal',
