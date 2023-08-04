@@ -19,9 +19,12 @@ const TAB_OPTIONS = [
   {key: 'sell', title: 'SELL', color: 'rgb(206, 22, 93)'},
 ]
 
-const TradeForm = forwardRef((_props, ref) => {
+// const TradeForm = forwardRef((_props, ref) => {
+const TradeForm = forwardRef(({fullWidth, ...props}, ref) => {
   const { wallet, getBalance } = useWalletConnect()
   const { getNftBalanceUser } = useTrade()
+
+  console.log('fullWidth', fullWidth);
   
   const orderBook = useSelector($exchange.get.orderBook)
   const currentCollection = useSelector(({$collection}) => $collection.current)
@@ -94,7 +97,7 @@ const TradeForm = forwardRef((_props, ref) => {
   }
 
   return (
-    <App.Flex className={styles.container} column>
+    <App.Flex className={styles.container} column sx={{width: fullWidth ? '100%' : 366}}>
       <App.Flex column>
         <Tabs
           options={TAB_OPTIONS}

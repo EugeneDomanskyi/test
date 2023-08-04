@@ -19,6 +19,7 @@ const Wrapper = ({ children }) => {
   const router = useRouter()
   const [collectionId] = router.query.collectionId || []
   const isExchange = router.pathname.includes('/exchange')
+  const isSwap = router.pathname.includes('/swap')
 
   const { usdt, network } = useWalletConnect()
   const dispatch = useDispatch()
@@ -184,7 +185,7 @@ const Wrapper = ({ children }) => {
       <Header />
       {children}
 
-      {!isExchange ? (
+      {isSwap ? (
         <Footer />
       ) : null}
     </>
