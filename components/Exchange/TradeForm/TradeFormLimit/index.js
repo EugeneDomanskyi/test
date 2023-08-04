@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, Fragment, forwardRef, useImperativeHandle,
 import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import Image from 'next/image'
-import { parseUnits } from 'viem'
+import { hashTypedData } from 'viem'
 import {
   LimitOrderBuilder,
   Web3ProviderConnector,
@@ -15,6 +15,7 @@ import $modal from '@/store/modal'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useTrade from '@/myhooks/trade'
 import { trackEvent } from '@/libs/analytics.lib'
+import { walletClientToSigner } from '@/libs/ethers-adapter'
 
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
@@ -78,25 +79,18 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
       return
     }
 
-    // const network = await changeNetwork(blockchain.code)
-    // if (!network) {
-    //   return
-    // }
+    const network = await changeNetwork(blockchain.code)
+    if (!network) {
+      return
+    }
     loadingRef.current = true
     switch (currentTab) {
       case 'buy':
-        const contractAddress = '0x7643b8c2457c1f36dc6e3b8f8e112fdf6da7698a';
-        const walletAddress = '0xd337163ef588f2ee7cdd30a3387660019be415c9';
-        const chainId = 1;
-        const limitOrderBuilder = new LimitOrderBuilder(
-          contractAddress,
-          chainId,
-          walletClient,
-        );
+        const limitOrderBuilder = new LimitOrderBuilder(currentCollection.address, blockchain.id, walletClient)
         const limitOrder = limitOrderBuilder.buildLimitOrder({
           makerAssetAddress: '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c',
           takerAssetAddress: '0x111111111117dc0aa78b770fa6a738034120c302',
-          makerAddress: '0xfb3c7ebccccAA12B5A884d612393969Adddddddd',
+          makerAddress: wallet,
           makingAmount: '100',
           takingAmount: '200',
           // predicate = '0x',
@@ -107,21 +101,19 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
           // getTakingAmount = ZERO_ADDRESS,
           // preInteraction  = '0x',
           // postInteraction = '0x',
-      });
-        const limitOrderTypedData = limitOrderBuilder.buildLimitOrderTypedData(
-          limitOrder
-        );
-        // const signature = walletClient.signTypedData({
-        //   ...limitOrderTypedData,
-        // })
-        const limitOrderSignature = limitOrderBuilder.buildOrderSignature(
-          walletAddress,
-          limitOrderTypedData
-        )
-        // const limitOrderHash = limitOrderBuilder.buildLimitOrderHash(
-        //   limitOrderTypedData
-        // )
-        console.log(limitOrderTypedData)
+        })
+        const limitOrderTypedData = limitOrderBuilder.buildLimitOrderTypedData(limitOrder)
+        // const signature = limitOrderBuilder.buildOrderSignature(wallet, limitOrderTypedData)
+        const signature = await walletClient.signTypedData(limitOrderTypedData)
+        const limitOrderHash = hashTypedData(limitOrderTypedData)
+        const post = {
+          orderHash: limitOrderHash,
+          signature: signature,
+          data: limitOrder,
+        }
+        console.log(limitOrderHash)
+        fetch(`https://limit-orders.1inch.io/v3.0/${blockchain.id}/limit-order`, {method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify(post)})
+        
         return
         dispatch($modal.set.show({
           show: true,
