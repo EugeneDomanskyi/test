@@ -42,10 +42,14 @@ const Header = () => {
 
   const handleConnectWallet = async () => {
     if ( ! wallet) {
-      trackEvent('Dex Wallet Connect Clicked')
+      trackEvent('Wallet Connect Clicked', {
+        'Wallet connected Status': 'Not Connected'
+      })
       const result = await connect()
       if (result) {
-        trackEvent('Dex Wallet Connected Successfully')
+        trackEvent('Wallet Connected Successfully', {
+          'Wallet connected Status': 'Connected'
+        })
       }
     }
   }
@@ -63,10 +67,14 @@ const Header = () => {
   }
 
   const handleDisconnect = () => {
-    trackEvent('Dex Wallet Disconnect Clicked')
+    trackEvent('Wallet Disconnect Clicked', {
+      'Wallet connected Status': wallet ? 'Connected' : 'Not Connected'
+    })
     disconnect()
     setMenuShow(false)
-    trackEvent('Dex Wallet Disconnect successfully')
+    trackEvent('Wallet Disconnect successfully', {
+      'Wallet connected Status': 'Not Connected'
+    })
   }
 
   const handleMobileMenuClick = () => {
@@ -96,6 +104,12 @@ const Header = () => {
             <Link href="/exchange" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/exchange')})}>
               <App.Flex center height="100%">
                 <App.Text size={18} weight={700}>EXCHANGE</App.Text>
+              </App.Flex>
+            </Link>
+
+            <Link href="/tokens" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/tokens')})}>
+              <App.Flex center height="100%">
+                <App.Text size={18} weight={700}>TOKENS</App.Text>
               </App.Flex>
             </Link>
 
@@ -154,6 +168,15 @@ const Header = () => {
                     <App.Icon icon="exchange" color="#fff" />
                   </App.Flex>
                   <App.Text size={18} weight={700}>EXCHANGE</App.Text>
+                </App.Flex>
+              </Link>
+
+              <Link href="/tokens" className={cn(styles.link, {[styles.active]: router.pathname.includes('/tokens')})}>
+                <App.Flex align="center" height="100%" gap={16} onClick={handleMobileMenuClick}>
+                  <App.Flex center width={29}>
+                    <App.Icon icon="trade" color="#fff" />
+                  </App.Flex>
+                  <App.Text size={18} weight={700}>TOKENS</App.Text>
                 </App.Flex>
               </Link>
 

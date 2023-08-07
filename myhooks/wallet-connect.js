@@ -3,6 +3,8 @@ import { useAccount, useNetwork, useWalletClient } from 'wagmi'
 import { signMessage, disconnect as wagmiDisconnect, getNetwork, getAccount, switchNetwork, fetchBalance } from '@wagmi/core'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 
+import { CHAINS } from '@/config'
+
 const useWalletConnect = () => {
   const debugMode = process.env.NEXT_PUBLIC_APP_ENV != 'production'
 
@@ -21,6 +23,7 @@ const useWalletConnect = () => {
     polygon: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
     ethereum: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     goerli: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    arbitrum: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
     bnb: '0x55d398326f99059fF775485246999027B3197955',
   }
 
@@ -102,74 +105,70 @@ const useWalletConnect = () => {
   }
 
   const network = (currentChain) => {
-    switch (currentChain) {
-      case 'goerli': return {
-        name: 'Goerli',
-        server: 'eth-goerli',
-        connect: 'goerli',
-        alchemy: 'ETH_GOERLI',
-        coingecko: 'ethereum',
-        platform: 'ethereum',
-        currency: 'ETH',
-        gasLimit: 60000,
-        scanDomain: 'https://goerli.etherscan.io/',
-        color: '#617DEA',
-        chainId: 5,
-      }
-      case 'ethereum': return {
-        name: 'Ethereum',
-        server: 'eth-mainet',
-        connect: 'homestead',
-        alchemy: 'ETH_MAINNET',
-        coingecko: 'ethereum',
-        platform: 'ethereum',
-        currency: 'ETH',
-        gasLimit: 60000,
-        scanDomain: 'https://etherscan.io/',
-        color: '#617DEA',
-        chainId: 1,
-      }
-      case 'mumbai': return {
-        name: 'Mumbai',
-        server: 'polygon-testnet',
-        connect: 'maticmum',
-        alchemy: 'MATIC_MUMBAI',
-        coingecko: 'matic-network',
-        platform: 'polygon-pos',
-        currency: 'MATIC',
-        gasLimit: 250000,
-        scanDomain: 'https://mumbai.polygonscan.com/',
-        color: '#8247e5',
-        chainId: 80001,
-      }
-      case 'polygon': return {
-        name: 'Polygon',
-        server: 'matic-mainet',
-        connect: 'matic',
-        alchemy: 'MATIC_MAINNET',
-        coingecko: 'matic-network',
-        platform: 'polygon-pos',
-        currency: 'MATIC',
-        gasLimit: 250000,
-        scanDomain: 'https://polygonscan.com/',
-        color: '#8247e5',
-        chainId: 137,
-      }
-      case 'bnb': return {
-        name: 'BSC',
-        server: 'bsc',
-        connect: 'bsc',
-        alchemy: 'BSC',
-        coingecko: 'binancecoin',
-        platform: 'binancecoin',
-        currency: 'BSC',
-        gasLimit: 250000,
-        scanDomain: 'https://bscscan.com/',
-        color: '#FBDA3C',
-        chainId: 56,
-      }
-      default: return null
-    }
+    return CHAINS.find(chain => chain.code === currentChain)
+    // switch (currentChain) {
+    //   case 'goerli': return {
+    //     name: 'Goerli',
+    //     server: 'eth-goerli',
+    //     connect: 'goerli',
+    //     alchemy: 'ETH_GOERLI',
+    //     coingecko: 'ethereum',
+    //     currency: 'ETH',
+    //     gasLimit: 60000,
+    //     scanDomain: 'https://goerli.etherscan.io/',
+    //     color: '#617DEA',
+    //     chainId: 5,
+    //   }
+    //   case 'ethereum': return {
+    //     name: 'Ethereum',
+    //     server: 'eth-mainet',
+    //     connect: 'homestead',
+    //     alchemy: 'ETH_MAINNET',
+    //     coingecko: 'ethereum',
+    //     currency: 'ETH',
+    //     gasLimit: 60000,
+    //     scanDomain: 'https://etherscan.io/',
+    //     color: '#617DEA',
+    //     chainId: 1,
+    //   }
+    //   case 'mumbai': return {
+    //     name: 'Mumbai',
+    //     server: 'polygon-testnet',
+    //     connect: 'maticmum',
+    //     alchemy: 'MATIC_MUMBAI',
+    //     coingecko: 'matic-network',
+    //     currency: 'MATIC',
+    //     gasLimit: 250000,
+    //     scanDomain: 'https://mumbai.polygonscan.com/',
+    //     color: '#8247e5',
+    //     chainId: 80001,
+    //   }
+    //   case 'polygon': return {
+    //     name: 'Polygon',
+    //     server: 'matic-mainet',
+    //     connect: 'matic',
+    //     alchemy: 'MATIC_MAINNET',
+    //     coingecko: 'matic-network',
+    //     currency: 'MATIC',
+    //     gasLimit: 250000,
+    //     scanDomain: 'https://polygonscan.com/',
+    //     color: '#8247e5',
+    //     chainId: 137,
+    //   }
+    //   case 'bnb': return {
+    //     name: 'BSC',
+    //     server: 'bsc',
+    //     connect: 'bsc',
+    //     alchemy: 'BSC',
+    //     coingecko: 'binancecoin',
+    //     currency: 'BSC',
+    //     gasLimit: 250000,
+    //     scanDomain: 'https://bscscan.com/',
+    //     color: '#FBDA3C',
+    //     chainId: 56,
+    //   }
+    //   default: return null
+    // }
   }
 
   const getBalance = async (token) => {
@@ -201,13 +200,7 @@ const useWalletConnect = () => {
   }
 
   const scanUrl = (address, type = 'tx', chain) => {
-    switch (chain.toLowerCase()) {
-      case 'goerli': return `https://goerli.etherscan.io/${type}/${address}`
-      case 'ethereum': return `https://etherscan.io/${type}/${address}`
-      case 'mumbai': return `https://mumbai.polygonscan.com/${type}/${address}`
-      case 'polygon': return `https://polygonscan.com/${type}/${address}`
-      default: return null
-    }
+    return `${chain.scanUrl}/${type}/${address}`
   }
 
   const changeNetwork = async (newChain) => {
@@ -215,18 +208,18 @@ const useWalletConnect = () => {
     if (wallet) {
       const { chain, chains } = getNetwork()
       const chainData = network(newChain)
-      if (chain.network == chainData.connect) {
+      if (chain.network == chainData.network) {
         return true
       }
 
-      if ( ! chains.some(ch => ch.network == chainData.connect)) {
-        debugMessage('Change Network', `The Network ${newChain} does not support`)
-        return false
-      }
+      // if ( ! chains.some(ch => ch.network == chainData.connect)) {
+      //   debugMessage('Change Network', `The Network ${newChain} does not support`)
+      //   return false
+      // }
 
       try {
-        const chainId = chains.find(ch => ch.network == chainData.connect)?.id
-        const result = await switchNetwork({ chainId })
+        // const chainId = chains.find(ch => ch.network == chainData.connect)?.id
+        const result = await switchNetwork({ chainId: chainData.id })
         console.log('result is', result)
         return result.hasOwnProperty('id')
       } catch (error) {

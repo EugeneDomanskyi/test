@@ -20,8 +20,8 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
   const { wallet, connect, changeNetwork } = useWalletConnect()
   const { getNftUser } = useTrade()
   
-  const blockchain = useSelector($app.get.blockchain)
   const currentCollection = useSelector(({$collection}) => $collection.current)
+  const blockchain = useSelector($app.get.blockchainByCode(currentCollection?.blockchain))
 
   const [form, setForm] = useState(initialForm)
 
@@ -73,11 +73,12 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
     if (!address) {
       return
     }
-
+    console.log('handleSubmit')
     const network = await changeNetwork(blockchain.code)
     if (!network) {
       return
     }
+    
     loadingRef.current = true
     switch (currentTab) {
       case 'buy':
@@ -153,7 +154,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
 
   const handleTotalBlur = () => {
     handleChangeForm('price')(form.total/form.amount)
-    trackEvent('Dex Add Total', {
+    trackEvent('Add Total', {
       'Base Currency': blockchain.currency,
       'Quote Currency': currentCollection.name,
       'Total': form.total,
@@ -163,7 +164,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
   }
 
   const handleBlurPrice = () => {
-    trackEvent('Dex Add Price', {
+    trackEvent('Add Price', {
       'Base Currency': blockchain.currency,
       'Quote Currency': currentCollection.name,
       'Price': form.price,
@@ -173,7 +174,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
   }
 
   const handleBlurAmount = () => {
-    trackEvent('Dex Add Amount', {
+    trackEvent('Add Amount', {
       'Base Currency': blockchain.currency,
       'Quote Currency': currentCollection.name,
       'Amount': form.amount,
@@ -221,7 +222,8 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
           currency={blockchain.wrapped.shortName}
           value={form.price}
           onBlur={handleBlurPrice}
-          onChange={handleChangeForm('price')} />
+          onChange={handleChangeForm('price')}
+          type="number" />
       </App.Flex>
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
@@ -242,7 +244,8 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
           currency={blockchain.wrapped.shortName}
           value={form.total}
           onBlur={handleTotalBlur}
-          onChange={handleChangeForm('total')} />
+          onChange={handleChangeForm('total')}
+          type="number" />
           {
             currentTab === 'buy'
               ? renderBalance()

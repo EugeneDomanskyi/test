@@ -167,7 +167,7 @@ const HomeTable = () => {
                           <TableCell colSpan={2}>
                             <App.Flex row justify="space-between" align="center">
                               <App.Flex row gap={8} align="center">
-                                <a href={scanUrl(item.address, 'address', blockchain.code)} target="_blank" rel="noreferrer">
+                                <a href={scanUrl(item.address, 'address', blockchain)} target="_blank" rel="noreferrer">
                                   {item.image ? (
                                     <img src={item.image} width={42} height={42} alt="" />
                                   ) : (
@@ -272,7 +272,7 @@ const HomeTable = () => {
                         >
                           <TableCell>
                             <App.Flex gap={16} align="center">
-                              <a href={scanUrl(item.address, 'address', blockchain.code)} target="_blank" rel="noreferrer">
+                              <a href={scanUrl(item.address, 'address', blockchain)} target="_blank" rel="noreferrer">
                                 {item.image ? (
                                   <img src={item.image} width={48} height={48} alt="" />
                                 ) : (

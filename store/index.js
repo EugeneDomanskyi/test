@@ -7,6 +7,7 @@ import $exchange from './exchange'
 import $collection from './collection'
 import $token from './token'
 import $nft from './nft'
+import { CHAINS } from '@/config'
 
 const createStore = initialData => {
   return configureStore({
@@ -29,12 +30,6 @@ const createStore = initialData => {
   })
 }
 
-const BLOCKCHAIN_URL = {
-  polygon: 'https://api-polygon.reservoir.tools',
-  ethereum: 'https://api.reservoir.tools',
-  goerli: 'https://api-goerli.reservoir.tools',
-}
-
 const COINGECKO_URL = 'https://api.coingecko.com/api/v3'
 const UNISWAP_URL = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3'
 const OPTIMISM_URL = 'https://static.optimism.io'
@@ -44,6 +39,8 @@ const CELO_URL = 'https://celo-org.github.io'
 const BNB_URL = 'https://raw.githubusercontent.com'
 
 export const request = async (uri, method = 'GET', {blockchain, api, ...data} = {}) => {
+  const currentChain = CHAINS.find(chain => chain.code === blockchain)
+
   const options = {
     method,
     headers: {
@@ -66,7 +63,7 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
     }
   }
 
-  let base_url = BLOCKCHAIN_URL[blockchain]
+  let base_url = currentChain?.baseApiUrl
   if (api) {
     switch (api) {
       case 'coingecko':
@@ -93,10 +90,14 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
     }
   }
 
-  const response = await fetch(`${base_url}/${uri}${query}`, options)
-  if (response.ok) {
+  const response = await fetch(`${base_url}/${uri}${query}`, options).catch(error => {
+    console.error('Fetch error:', error)
+  })
+
+  if (response?.ok) {
     return responseHandler(response)
   }
+  
   return errorHandler(response)
 }
 

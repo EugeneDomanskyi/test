@@ -7,6 +7,7 @@ import Link from 'next/link'
 import $exchange from '@/store/exchange'
 import $app from '@/store/app'
 import useWalletConnect from '@/myhooks/wallet-connect'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 import { WebIcon, TwitterIcon, DiscordIcon } from '@/components/Icons/exchange'
@@ -16,7 +17,13 @@ const CollectionInfo = ({ current }) => {
   const blockchain = useSelector($app.get.blockchain)
   const { high, low } = useSelector($exchange.get.highLow({count: 24, unit: 'hours'}))
 
-  const scanLink = scanUrl(current.address, 'address', blockchain?.code)
+  const scanLink = scanUrl(current.address, 'address', blockchain)
+
+  const handleClickLink = (type) => () => {
+    trackEvent(`Click NFT ${type} Redirect`, {
+      Markets: current.name,
+    })
+  }
 
   return (
     <App.Flex className={styles.container} gap={6}>
@@ -50,26 +57,26 @@ const CollectionInfo = ({ current }) => {
                       }
                     </App.Flex>
                     <App.Flex align="center">
-                      <Link href={scanLink} target="_blank" style={{marginRight: 8}}>
+                      <Link href={scanLink} target="_blank" onClick={handleClickLink(blockchain?.code)} style={{marginRight: 8}}>
                         <App.Icon width={15} height={15} icon={blockchain?.code === 'polygon' ? 'polyscan' : 'etherscan'} />
                       </Link>
                       {
                         current?.externalUrl
-                          ? <Link href={current?.externalUrl ?? ''} target="_blank" style={{marginRight: 5}}>
+                          ? <Link href={current?.externalUrl ?? ''} onClick={handleClickLink('website')} target="_blank" style={{marginRight: 5}}>
                               <WebIcon />
                             </Link>
                           : null
                       }
                       {
                         current?.twitterUrl
-                          ? <Link href={current?.twitterUrl ?? ''} target="_blank" style={{marginRight: 8}}>
+                          ? <Link href={current?.twitterUrl ?? ''} onClick={handleClickLink('twitter')} target="_blank" style={{marginRight: 8}}>
                               <TwitterIcon />
                             </Link>
                           : null
                       }
                       {
                         current?.discordUrl
-                          ? <Link href={current?.discordUrl ?? ''} target="_blank">
+                          ? <Link href={current?.discordUrl ?? ''} onClick={handleClickLink('discord')} target="_blank">
                               <DiscordIcon />
                             </Link>
                           : null

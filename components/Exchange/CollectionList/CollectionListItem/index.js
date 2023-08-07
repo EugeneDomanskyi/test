@@ -11,7 +11,7 @@ import App from  '@/components/App'
 
 import styles from './styles.module.scss'
 
-const CollectionListItem = ({ isActive, collection, withArrow, onClick, onClose }) => {
+const CollectionListItem = ({ isActive, collection, withArrow, isSearched, onClick, onClose }) => {
   const router = useRouter()
   const isExchange = router.pathname.includes('/exchange')
 
@@ -21,10 +21,17 @@ const CollectionListItem = ({ isActive, collection, withArrow, onClick, onClose 
     if (onClick) {
       onClick()
     } else {
-      trackEvent('Dex Select Asset', {
+      trackEvent('Select Asset', {
         'Network': blockchain.code.toUpperCase(),
         'Token': collection.name,
       })
+
+      if (isSearched) {
+        trackEvent('Search Select Asset', {
+          'Network': blockchain.code.toUpperCase(),
+          'Token': collection.name,
+        })
+      }
 
       router.push(`/${isExchange ? 'exchange' : 'tokens'}/${collection.address}`, undefined, { scroll: false })
 

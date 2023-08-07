@@ -106,16 +106,15 @@ const CollectionListSearch = ({ onSearched, ...props }) => {
     }
 
     setSearchLoading(false)
+
+    trackEvent('Search Asset', {
+      'Network': blockchain.code.toUpperCase(),
+      'Search Term': searchQuery,
+    })
     
     if (onSearched) {
       onSearched(true)
     }
-  }
-
-  const handleFocus = () => {
-    trackEvent('Dex Search Asset', {
-      'Network': blockchain.code.toUpperCase(),
-    })
   }
 
   return (
@@ -133,7 +132,6 @@ const CollectionListSearch = ({ onSearched, ...props }) => {
       withClear
       autoComplete="search no-autocomplete"
       name="search no-autocomplete"
-      onFocus={handleFocus}
       {...props}
     />
   )

@@ -48,7 +48,7 @@ const Exchange = () => {
   const tradeForm = useRef(null)
 
   useEffect(() => {
-    trackEvent('Dex Exchange Clicked', {
+    trackEvent('Exchange Clicked', {
       'Network': blockchain.code.toUpperCase(),
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
     })
@@ -96,6 +96,8 @@ const Exchange = () => {
           dispatch($exchange.set.orders(res))
         }
       })
+    } else if (!wallet) {
+      dispatch($exchange.set.orders([]))
     }
   }, [blockchain.code, wallet])
   

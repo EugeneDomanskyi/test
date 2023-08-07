@@ -1,5 +1,5 @@
 import styles from './styles.module.scss'
-import { useState, useEffect, forwardRef, useImperativeHandle } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Image from 'next/image'
 
@@ -7,6 +7,7 @@ import useTrade from '@/myhooks/trade'
 import $app from '@/store/app'
 import $modal from '@/store/modal'
 import useWalletConnect from '@/myhooks/wallet-connect'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
@@ -17,7 +18,7 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
   const { wallet, connect, changeNetwork } = useWalletConnect()
 
   const currentCollection = useSelector(({$collection}) => $collection.current)
-  const blockchain = useSelector($app.get.blockchain)
+  const blockchain = useSelector($app.get.blockchainByCode(currentCollection?.blockchain))
 
   const [amount, setAmount] = useState(initialForm.amount)
   const [userNfts, setUserNfts] = useState([])
@@ -45,7 +46,7 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
         })
       }
     }
-  }, [currentCollection.address, wallet, blockchain.code])
+  }, [currentCollection.address, wallet, blockchain?.code])
 
   useEffect(() => {
     setAmount('1')
@@ -59,9 +60,23 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
   }
 
   const handleChangeAmount = value => {
+    const regex = /^\d+[,]?\d{0,2}$/
+    if (value && !regex.test(value)) {
+      return 
+    }
     const maxLength = currentTab === 'buy' ? onSaleNft.length : userNfts.length
-    value = value > maxLength ? maxLength : value
+    value = value*1 > maxLength ? maxLength : value
     setAmount(value)
+  }
+
+  const handleBlurAmount = () => {
+    trackEvent('Add Amount', {
+      'Base Currency': blockchain.currency,
+      'Quote Currency': currentCollection.name,
+      'Amount': amount,
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Network': blockchain.name,
+    })
   }
 
   const handleChangeRange = value => {
@@ -129,6 +144,7 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
           label="AMOUNT"
           value={amount}
           currency={`NFT${amount > 1 ? `s` : ''}`}
+          onBlur={handleBlurAmount}
           onChange={handleChangeAmount} />
         <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto', marginTop: 5}}>NFTs available: {currentTab === 'buy' ? onSaleNft.length : userNfts.length}</App.Text>
       </App.Flex>
@@ -143,12 +159,12 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
           label="TOTAL"
-          currency={blockchain.currency}
+          currency={blockchain?.currency}
           readOnly={true}
           value={getTotal()} />
         <App.Flex align="center" gap={4} className={styles.balance}>
           <App.Icon icon="wallet" />
-          <App.Text color="#B9B8C5" size={10}>{ userBalances.native } { blockchain.currency }</App.Text>
+          <App.Text color="#B9B8C5" size={10}>{ userBalances.native } { blockchain?.currency }</App.Text>
         </App.Flex>
       </App.Flex>
       <App.Button

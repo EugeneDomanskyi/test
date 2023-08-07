@@ -32,9 +32,10 @@ const CollectionList = ({ items, searched, current, className, pages, page, load
           {itemList().map((item) => {
             return (
               <CollectionListItem
+                isSearched={wasSearched}
                 key={item.address}
                 collection={item}
-                isActive={current.id === item.id}
+                isActive={current.address === item.address}
                 onClose={onClose}
               />
             )

@@ -298,7 +298,7 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
     }
 
     if (onSwap) {
-      onSwap(prices.slice(0, amount))
+      onSwap(price, amount, usdPrice, prices.slice(0, amount))
     }
   }
 
