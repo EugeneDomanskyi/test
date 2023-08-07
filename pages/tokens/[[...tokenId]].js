@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 
 import $exchange from '@/store/exchange'
 import $app from '@/store/app'
-import $collection from '@/store/collection'
+import $token from '@/store/token'
 import Stream from '@/libs/stream.lib'
 import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -27,20 +27,20 @@ const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 
 const GRID_GAP = 6
 
-const Exchange = () => {
+const Tokens = () => {
   const router = useRouter()
   const dispatch = useDispatch()
-  const [collectionId] = router.query.collectionId || []
+  const [tokenId] = router.query.tokenId || []
 
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
   const socketConnected = useSelector(({$app}) => $app.socketConnected)
   const blockchain = useSelector($app.get.blockchain)
   const loading = useSelector(({$exchange}) => $exchange.loading)
-  const current = useSelector(({$collection}) => $collection.current)
-  const { collections, searched } = useSelector($collection.get.all)
-  const pages = useSelector($collection.get.pages)
-  const { loading: pageLoading, page } = useSelector(({$collection}) => $collection)
+  const current = useSelector(({$token}) => $token.current)
+  const { tokens, searched } = useSelector($token.get.all)
+  const pages = useSelector($token.get.pages)
+  const { loading: pageLoading, page } = useSelector(({$token}) => $token)
 
   const [mobileTab, setMobileTab] = useState('markets')
   const [mobileTabTrade, setMobileTabTrade] = useState(false)
@@ -48,13 +48,13 @@ const Exchange = () => {
   const tradeForm = useRef(null)
 
   useEffect(() => {
-    trackEvent('Dex Exchange Clicked', {
+    trackEvent('Dex Tokens Clicked', {
       'Network': blockchain.code.toUpperCase(),
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
     })
   }, [])
 
-  useEffect(() => {
+  /* useEffect(() => {
     Stream.on('sale', (event, data) => {
       switch (event) {
         case 'sale.created':
@@ -77,15 +77,15 @@ const Exchange = () => {
       }
       dispatch($exchange.set.orderUpdate(data))
     })
-  }, [wallet])
+  }, [wallet]) */
 
   useEffect(() => {
-    if (collectionId && blockchain.code) {
-      initCollection(collectionId, blockchain.code)
+    if (tokenId && blockchain.code) {
+      initCollection(tokenId, blockchain.code)
     }
-  }, [collectionId, blockchain.code])
+  }, [tokenId, blockchain.code])
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (blockchain.code && wallet) {
       $exchange.api.get.orders({
         blockchain: blockchain.code,
@@ -120,10 +120,11 @@ const Exchange = () => {
       Stream.unsubscribe('ask.*')
     }
   }, [socketConnected, collectionId, wallet])
+  */
 
-  const initCollection = (collectionId, blockchain) => {
-    dispatch($exchange.set.loading(true))
-    Promise.all([
+  const initCollection = (tokenId, blockchain) => {
+    //dispatch($exchange.set.loading(true))
+    /* Promise.all([
       $exchange.api.get.sales({
         collection: collectionId,
         blockchain: blockchain,
@@ -144,7 +145,7 @@ const Exchange = () => {
         dispatch($exchange.set.orderBook(orderBook))
       }
       dispatch($exchange.set.loading(false))
-    })
+    }) */
   }
 
   const handleOrdersUpdated = useCallback(() => {
@@ -168,14 +169,9 @@ const Exchange = () => {
         dispatch($exchange.set.orderBook(res))
       }
     })
-  }, [wallet, collectionId, blockchain.code])
+  }, [wallet, tokenId, blockchain.code])
 
   const handleMobileTabChange = (tab) => {
-    // if (tab === 'buy_sell') {
-    //   setMobileTabTrade(!mobileTabTrade)
-    //   return
-    // }
-
     setMobileTabTrade(false)
     setMobileTab(tab)
   }
@@ -185,15 +181,15 @@ const Exchange = () => {
   }, [])
 
   const handlePageChange = (value) => {
-    dispatch($collection.set.page(value))
-    dispatch($collection.set.fetching(true))
+    dispatch($token.set.page(value))
+    dispatch($token.set.fetching(true))
   }
 
   return (
     <App.Flex gap={GRID_GAP} className={styles.container}>
       {!isMobile ? (
         <>
-          <CollectionList items={collections} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
+          <CollectionList items={tokens} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
 
           <App.Flex column flex={1} gap={GRID_GAP}>
             <CollectionInfo current={current} />
@@ -221,7 +217,7 @@ const Exchange = () => {
       ) : (
         <>
           {mobileTab == 'markets' ? (
-            <CollectionList items={collections} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
+            <CollectionList items={tokens} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
           ) : null}
 
           {mobileTab == 'charts' ? (
@@ -230,7 +226,7 @@ const Exchange = () => {
 
           {mobileTab == 'trades' ? (
             <App.Flex column gap={GRID_GAP} width="100%">
-              <CollectionListMobile items={collections} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
+              <CollectionListMobile items={tokens} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
 
               <App.Flex column flex={1} sx={{ position: 'relative' }}>
                 <App.Flex column gap={GRID_GAP} className={styles.tradesContent}>
@@ -265,4 +261,4 @@ const Exchange = () => {
   )
 }
 
-export default Exchange
+export default Tokens

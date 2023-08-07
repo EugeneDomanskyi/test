@@ -4,6 +4,7 @@ import { request } from './index'
 
 export const template = (item) => {
   return {
+    id: item.id,
     address: item.id,
     image: item.image,
     name: item.name,

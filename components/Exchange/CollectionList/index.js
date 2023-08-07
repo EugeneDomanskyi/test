@@ -1,8 +1,5 @@
 import { memo, useCallback, useState } from 'react'
-import { useSelector } from 'react-redux'
 import cn from 'classnames'
-
-import $collection from '@/store/collection'
 
 import App from '@/components/App'
 import CollectionListSearch from '@/components/Exchange/CollectionList/CollectionListSearch'
@@ -12,14 +9,11 @@ import CollectionListItem from '@/components/Exchange/CollectionList/CollectionL
 
 import styles from './styles.module.scss'
 
-const CollectionList = ({ className, onClose }) => {
-  const { collections, searched } = useSelector($collection.get.all)
-  const current = useSelector(({$collection}) => $collection.current)
-
+const CollectionList = ({ items, searched, current, className, pages, page, loading, onPageChange, onClose }) => {
   const [wasSearched, setWasSearched] = useState(false)
 
-  const collectionList = () => {
-    return (wasSearched) ? searched : collections
+  const itemList = () => {
+    return (wasSearched) ? searched : items
   }
 
   const handleSearched = useCallback((value) => {
@@ -35,12 +29,12 @@ const CollectionList = ({ className, onClose }) => {
 
       <div className={styles.cardBox}>
         <div className={styles.cardBoxContent}>
-          {collectionList().map((collection) => {
+          {itemList().map((item) => {
             return (
               <CollectionListItem
-                key={collection.address}
-                collection={collection}
-                isActive={current.address === collection.address}
+                key={item.address}
+                collection={item}
+                isActive={current.id === item.id}
                 onClose={onClose}
               />
             )
@@ -49,10 +43,22 @@ const CollectionList = ({ className, onClose }) => {
       </div>
       
       {!wasSearched ? (
-        <CollectionListPagination />
+        <CollectionListPagination pages={pages} page={page} loading={loading} onPageChange={onPageChange} />
       ) : null}
     </App.Flex>
   )
 }
 
-export default memo(CollectionList, () => true)
+const isEqual = (prevProps, nextProps) => {
+  return JSON.stringify(prevProps.items) == JSON.stringify(nextProps.items) &&
+    JSON.stringify(prevProps.searched) == JSON.stringify(nextProps.searched) &&
+    JSON.stringify(prevProps.current) == JSON.stringify(nextProps.current) &&
+    prevProps.className == nextProps.className &&
+    JSON.stringify(prevProps.pages) == JSON.stringify(nextProps.pages) &&
+    prevProps.page == nextProps.page &&
+    prevProps.loading == nextProps.loading &&
+    prevProps.onPageChange == nextProps.onPageChange &&
+    prevProps.onClose == nextProps.onClose
+}
+
+export default memo(CollectionList, isEqual)

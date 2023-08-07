@@ -1,23 +1,17 @@
 import { memo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-
-import $collection from '@/store/collection'
 
 import App from '@/components/App'
 
-const CollectionListPagination = () => {
-  const dispatch = useDispatch()
-  const pages = useSelector($collection.get.pages)
-  const { loading, page } = useSelector(({$collection}) => $collection)
-
+const CollectionListPagination = ({ pages, page, loading, onPageChange }) => {
   const handlePage = (type) => () => {
     let continuation = null
     if (type != null) {
       continuation = pages[type]
     }
 
-    dispatch($collection.set.page(continuation))
-    dispatch($collection.set.fetching(true))
+    if (onPageChange) {
+      onPageChange(continuation)
+    }
   }
 
   return (
@@ -43,4 +37,11 @@ const CollectionListPagination = () => {
   )
 }
 
-export default memo(CollectionListPagination, () => true)
+const isEqual = (prevProps, nextProps) => {
+  return JSON.stringify(prevProps.pages) == JSON.stringify(nextProps.pages) &&
+    prevProps.page == nextProps.page &&
+    prevProps.loading == nextProps.loading &&
+    prevProps.onPageChange == nextProps.onPageChange
+}
+
+export default memo(CollectionListPagination, isEqual)

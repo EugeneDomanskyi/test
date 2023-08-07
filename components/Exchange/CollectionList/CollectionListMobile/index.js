@@ -6,12 +6,15 @@ import $modal from '@/store/modal'
 import App from '@/components/App'
 import CollectionListItem from '@/components/Exchange/CollectionList/CollectionListItem'
 
-const CollectionListMobile = () => {
+const CollectionListMobile = ({ items, searched, current, className, pages, page, loading, onPageChange, onClose }) => {
   const dispatch = useDispatch()
-  const current = useSelector(({ $collection }) => $collection.current)
 
   const handleClick = useCallback(() => {
-    dispatch($modal.set.show({modal: 'Exchange/CollectionList', props: { header: {title: 'Select a Collection'}, className: 'collection-list-modal'  }}))
+    dispatch($modal.set.show({modal: 'Exchange/CollectionList', props: {
+      header: {title: 'Select a Collection'},
+      className: 'collection-list-modal',
+      items, searched, current, className, pages, page, loading, onPageChange,
+    }}))
   }, [])
 
   return (
