@@ -18,7 +18,7 @@ const CollectionInfo = () => {
   const { high, low } = useSelector($exchange.get.highLow({count: 24, unit: 'hours'}))
   const currentCollection = useSelector(({$collection}) => $collection.current)
 
-  const scanLink = scanUrl(currentCollection.address, 'address', blockchain?.code)
+  const scanLink = scanUrl(currentCollection.address, 'address', blockchain)
 
   const handleClickLink = (type) => () => {
     trackEvent(`Click NFT ${type} Redirect`, {
