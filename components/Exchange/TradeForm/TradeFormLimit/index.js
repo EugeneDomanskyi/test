@@ -10,12 +10,7 @@ import {
   contractAddresses,
 } from '@1inch/limit-order-protocol-utils'
 
-import * as givno from '@1inch/limit-order-protocol-utils'
-
-console.log(givno)
-
 import $app from '@/store/app'
-import $exchange from '@/store/exchange'
 import $modal from '@/store/modal'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useTrade from '@/myhooks/trade'
@@ -24,13 +19,12 @@ import { trackEvent } from '@/libs/analytics.lib'
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
 
-const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) => {
+const TradeFormLimit = ({current, initialForm, currentTab, currentOption, userBalances}) => {
   const dispatch = useDispatch()
   const { wallet, connect, changeNetwork, walletClient } = useWalletConnect()
   const { getNftUser } = useTrade()
   
-  const currentCollection = useSelector(({$collection}) => $collection.current)
-  const blockchain = useSelector($app.get.blockchainByCode(currentCollection?.blockchain))
+  const blockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
 
   const [form, setForm] = useState(initialForm)
 
@@ -91,8 +85,6 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
     loadingRef.current = true
     switch (currentTab) {
       case 'buy':
-        console.log(contractAddresses)
-        return
         const limitOrderBuilder = new LimitOrderBuilder(contractAddresses[blockchain.id], blockchain.id, walletClient)
         const limitOrder = limitOrderBuilder.buildLimitOrder({
           makerAssetAddress: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
@@ -135,19 +127,19 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
           modal: 'Exchange/BuyModal',
           props: {
             header: {
-              title: `Buy ${currentCollection.name} for ${blockchain.wrapped.shortName}`,
+              title: `Buy ${current.name} for ${blockchain.wrapped.shortName}`,
             },
             data: {
               ...form,
               type: 'place',
-              collectionId: currentCollection.address,
+              collectionId: current.address,
               blockchain: blockchain,
             },
           }
         }))
         return
       case 'sell':
-        const tokenIds = await getNftUser(currentCollection.address, wallet)
+        const tokenIds = await getNftUser(current.address, wallet)
         if (tokenIds.length < form.amount) {
           toast.error(`You don't have enough NFTs`)
           return
@@ -164,7 +156,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
               ...form,
               type: 'place',
               tokens: tokenIds,
-              collectionId: currentCollection.address,
+              collectionId: current.address,
               blockchain: blockchain,
             },
           }
@@ -176,7 +168,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
     handleChangeForm('price')(form.total/form.amount)
     trackEvent('Add Total', {
       'Base Currency': blockchain.currency,
-      'Quote Currency': currentCollection.name,
+      'Quote Currency': current.name,
       'Total': form.total,
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
       'Network': blockchain.name,
@@ -186,7 +178,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
   const handleBlurPrice = () => {
     trackEvent('Add Price', {
       'Base Currency': blockchain.currency,
-      'Quote Currency': currentCollection.name,
+      'Quote Currency': current.name,
       'Price': form.price,
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
       'Network': blockchain.name,
@@ -196,7 +188,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
   const handleBlurAmount = () => {
     trackEvent('Add Amount', {
       'Base Currency': blockchain.currency,
-      'Quote Currency': currentCollection.name,
+      'Quote Currency': current.name,
       'Amount': form.amount,
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
       'Network': blockchain.name,
@@ -278,7 +270,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
         disabled={!form.total}
         onClick={handleSubmit}>
         <App.Text color="#09051D" size={15} weight={700}>{ currentOption.title } {`${form.amount || 0} NFT${form.amount > 1 ? `s` : ''}` }</App.Text>
-        { currentCollection?.image ? <Image src={currentCollection?.image} width={32} height={32} alt="" /> : null }
+        { current?.image ? <Image src={current?.image} width={32} height={32} alt="" /> : null }
       </App.Button>
     </App.Flex>
   )

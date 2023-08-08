@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic'
 import $exchange from '@/store/exchange'
 import $app from '@/store/app'
 import $token from '@/store/token'
+import $orders from '@/store/orders'
 import Stream from '@/libs/stream.lib'
 import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -47,6 +48,11 @@ const Tokens = () => {
 
   const tradeForm = useRef(null)
 
+  const orders = useSelector($orders.get.tokens)
+  orders.map(order => {
+    console.log(order)
+  })
+
   useEffect(() => {
     trackEvent('Dex Tokens Clicked', {
       'Network': blockchain.code.toUpperCase(),
@@ -85,42 +91,42 @@ const Tokens = () => {
     }
   }, [tokenId, blockchain.code])
 
-  /* useEffect(() => {
+  useEffect(() => {
     if (blockchain.code && wallet) {
-      $exchange.api.get.orders({
+      $orders.api.get.tokens({
         blockchain: blockchain.code,
-        maker: wallet,
-        includeCriteriaMetadata: true,
+        address: wallet,
+        sortBy: 'createDateTime',
+        statuses: '[1,2]',
       }).then(res => {
         if (res) {
-          dispatch($exchange.set.orders(res))
+          dispatch($orders.set.tokens(res))
         }
       })
     }
   }, [blockchain.code, wallet])
   
-  useEffect(() => {
-    if (socketConnected && collectionId) {
-      Stream.subscribe('sale.*', [collectionId])
-    }
+  // useEffect(() => {
+  //   if (socketConnected && collectionId) {
+  //     Stream.subscribe('sale.*', [collectionId])
+  //   }
 
-    return () => {
-      Stream.unsubscribe('sale.*')
-    }
-  }, [socketConnected, collectionId])
+  //   return () => {
+  //     Stream.unsubscribe('sale.*')
+  //   }
+  // }, [socketConnected, collectionId])
 
-  useEffect(() => {
-    if (socketConnected && collectionId && wallet) {
-      Stream.subscribe('bid.*', [collectionId], {maker: wallet})
-      Stream.subscribe('ask.*', [collectionId], {maker: wallet})
-    }
+  // useEffect(() => {
+  //   if (socketConnected && collectionId && wallet) {
+  //     Stream.subscribe('bid.*', [collectionId], {maker: wallet})
+  //     Stream.subscribe('ask.*', [collectionId], {maker: wallet})
+  //   }
     
-    return () => {
-      Stream.unsubscribe('bid.*')
-      Stream.unsubscribe('ask.*')
-    }
-  }, [socketConnected, collectionId, wallet])
-  */
+  //   return () => {
+  //     Stream.unsubscribe('bid.*')
+  //     Stream.unsubscribe('ask.*')
+  //   }
+  // }, [socketConnected, collectionId, wallet])
 
   const initCollection = (tokenId, blockchain) => {
     //dispatch($exchange.set.loading(true))
@@ -206,10 +212,10 @@ const Tokens = () => {
 
               <App.Flex column gap={GRID_GAP}>
                 <App.Flex>
-                  <TradeForm ref={tradeForm} />
+                  <TradeForm ref={tradeForm} current={current} />
                 </App.Flex>
 
-                <Orders onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
+                <Orders current={current} onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
               </App.Flex>
             </App.Flex>
           </App.Flex>

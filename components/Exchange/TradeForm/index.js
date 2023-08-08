@@ -19,14 +19,14 @@ const TAB_OPTIONS = [
   {key: 'sell', title: 'SELL', color: 'rgb(206, 22, 93)'},
 ]
 
-const TradeForm = forwardRef((_props, ref) => {
+const TradeForm = forwardRef(({current}, ref) => {
   const { wallet, getBalance } = useWalletConnect()
   const { getNftBalanceUser } = useTrade()
   
   const orderBook = useSelector($exchange.get.orderBook)
-  const currentCollection = useSelector(({$collection}) => $collection.current)
+  // const currentCollection = useSelector(({$collection}) => $collection.current)
   const loading = useSelector(({$exchange}) => $exchange.loadingCollectionData)
-  const blockchain = useSelector($app.get.blockchainByCode(currentCollection?.blockchain))
+  const blockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
 
   const [currentTab, setCurrentTab] = useState('buy')
   const [formType, setFormType] = useState('market')
@@ -48,8 +48,8 @@ const TradeForm = forwardRef((_props, ref) => {
 
   useEffect(() => {
     const getBalances = () => {
-      if (currentCollection?.address && wallet) {
-        getNftBalanceUser(currentCollection.address, wallet).then(res => {
+      if (current?.address && wallet) {
+        getNftBalanceUser(current.address, wallet).then(res => {
           setUserBalances(state => ({...state, token: res}))
         })
         getBalance().then(res => {
@@ -61,17 +61,17 @@ const TradeForm = forwardRef((_props, ref) => {
       }
     }
     getBalances()
-  }, [wallet, currentCollection?.address, blockchain])
+  }, [wallet, current?.address, blockchain])
 
   useEffect(() => {
-    if (!loading && currentCollection?.address) {
+    if (!loading && current?.address) {
       if (currentTab === 'buy') {
-        setInitialPrice(lowestBuy?.price || currentCollection?.price)
+        setInitialPrice(lowestBuy?.price || current?.price)
       } else {
-        setInitialPrice(lowestSell?.price || currentCollection?.price)
+        setInitialPrice(lowestSell?.price || current?.price)
       }
     }
-  }, [loading, currentCollection?.address])
+  }, [loading, current?.address])
 
   const setInitialPrice = price => {
     setLimitForm(state => ({
@@ -125,6 +125,7 @@ const TradeForm = forwardRef((_props, ref) => {
             case 'market':
               return (
                 <TradeFormMarket
+                  current={current}
                   initialForm={marketForm}
                   userBalances={userBalances}
                   currentTab={currentTab}
@@ -133,6 +134,7 @@ const TradeForm = forwardRef((_props, ref) => {
               case 'limit':
                 return (
                   <TradeFormLimit
+                    current={current}
                     currentTab={currentTab}
                     currentOption={currentOption}
                     userBalances={userBalances}
@@ -147,7 +149,8 @@ const TradeForm = forwardRef((_props, ref) => {
   )
 })
 
-const isEqual = () => {
+const isEqual = (prev, next) => {
+  return prev.current === next.current
   return true
 }
 

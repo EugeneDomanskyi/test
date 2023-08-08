@@ -12,13 +12,12 @@ import { trackEvent } from '@/libs/analytics.lib'
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
 
-const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm}) => {
+const TradeFormMarket = ({current, currentTab, currentOption, userBalances, initialForm}) => {
   const dispatch = useDispatch()
   const { getNftPricesNative, getNftUser, getNftBids, sellPriceByAmount } = useTrade()
   const { wallet, connect, changeNetwork } = useWalletConnect()
 
-  const currentCollection = useSelector(({$collection}) => $collection.current)
-  const blockchain = useSelector($app.get.blockchainByCode(currentCollection?.blockchain))
+  const blockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
 
   const [amount, setAmount] = useState(initialForm.amount)
   const [userNfts, setUserNfts] = useState([])
@@ -33,24 +32,24 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
   }, [initialForm.amount])
 
   useEffect(() => {
-    if (currentCollection.address) {
-      getNftPricesNative(currentCollection.address).then(res => {
+    if (current.address) {
+      getNftPricesNative(current.address).then(res => {
         setOnSaleNft(res)
       })
-      getNftBids(currentCollection.address).then(res => {
+      getNftBids(current.address).then(res => {
         setOnBuyNft(res)
       })
       if (wallet) {
-        getNftUser(currentCollection.address, wallet).then(res => {
+        getNftUser(current.address, wallet).then(res => {
           setUserNfts(res)
         })
       }
     }
-  }, [currentCollection.address, wallet, blockchain?.code])
+  }, [current.address, wallet, blockchain?.code])
 
   useEffect(() => {
     setAmount('1')
-  }, [currentTab, currentCollection.address])
+  }, [currentTab, current.address])
 
   const getTotal = () => {
     if (currentTab === 'buy') {
@@ -72,7 +71,7 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
   const handleBlurAmount = () => {
     trackEvent('Add Amount', {
       'Base Currency': blockchain.currency,
-      'Quote Currency': currentCollection.name,
+      'Quote Currency': current.name,
       'Amount': amount,
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
       'Network': blockchain.name,
@@ -100,15 +99,15 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
           modal: 'Exchange/BuyModal',
           props: {
             header: {
-              title: `Buy ${currentCollection.name} for ${blockchain.currency}`,
+              title: `Buy ${current.name} for ${blockchain.currency}`,
             },
             data: {
               type: 'fulfill',
               amount: amount,
               price: total / amount,
               total: total,
-              items: onSaleNft.slice(0, amount).map(nft => ({token: `${currentCollection.address}:${nft.id}`, quantity: 1})),
-              collectionId: currentCollection.address,
+              items: onSaleNft.slice(0, amount).map(nft => ({token: `${current.address}:${nft.id}`, quantity: 1})),
+              collectionId: current.address,
               blockchain: blockchain,
             },
           }
@@ -128,7 +127,7 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
               amount: amount,
               price: total / amount,
               tokens: userNfts,
-              collectionId: currentCollection.address,
+              collectionId: current.address,
               blockchain: blockchain,
             },
           }
@@ -173,7 +172,7 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
         disabled={isDisabled}
         onClick={handleSubmit}>
         <App.Text color="#09051D" size={15} weight={700}>{ currentOption.title } {`${amount || 0} NFT${amount > 1 ? `s` : ''}` }</App.Text>
-        { currentCollection?.image ? <Image src={currentCollection?.image} width={32} height={32} alt="" /> : null }
+        { current?.image ? <Image src={current?.image} width={32} height={32} alt="" /> : null }
       </App.Button>
     </App.Flex>
   )

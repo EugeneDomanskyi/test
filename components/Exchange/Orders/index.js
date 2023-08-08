@@ -3,21 +3,19 @@ import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import { useRef, useState, memo } from 'react'
 import Image from 'next/image'
-import numeral from 'numeral'
 import { useRouter } from 'next/router'
 
 import useTrade from '@/myhooks/trade'
-import $exchange from '@/store/exchange'
 import $app from '@/store/app'
+import $orders from '@/store/orders'
 
 import App from '@/components/App'
 import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
-const Orders = ({onOrderCancelled, onClickOrder}) => {
+const Orders = ({current, onOrderCancelled, onClickOrder}) => {
   const router = useRouter()
-  const orders = useSelector($exchange.get.orders)
-  const current = useSelector(({$collection}) => $collection.current)
+  const orders = useSelector($orders.get.nfts)
   const blockchain = useSelector($app.get.blockchain)
   const { wallet } = useWalletConnect()
 
@@ -26,20 +24,28 @@ const Orders = ({onOrderCancelled, onClickOrder}) => {
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
   const loadingRef = useRef(false)
 
-  const handlePressCancel = (order) => () => {
+  const handlePressCancel = (order) => (e) => {
+    e.stopPropagation()
+    // order.cancel().then(() => {
+    //   console.log('order canceled')
+    // }).catch(error => {
+    //   console.log('order cancel error', error)
+    // })
+    // return
     loadingRef.current = true
     
     const eventPost = {
-      'Base Currency': order.price.currency.symbol,
-      'Quote Currency': order.criteria.data.collection.name,
+      'Base Currency': order.baseCurrency,
+      'Quote Currency': order.quoteCurrency,
       'Side': order.side,
-      'Quantity': order.totalQuantity,
-      'Price': order.price.amount.decimal / order.totalQuantity,
-      'Total': order.price.amount.decimal,
+      'Quantity': order.quantity,
+      'Price': order.itemPrice,
+      'Total': order.price,
       'Network': blockchain.name,
       'Wallet connect Status': wallet ? 'Connected' : 'Not connected',
       'Order Type': 'Limit Order',
     }
+
     trackEvent('Cancel Order Submit', eventPost)
     cancelOrder(order.id, handleCancelProgress(eventPost), errorHandler)
   }
@@ -65,10 +71,9 @@ const Orders = ({onOrderCancelled, onClickOrder}) => {
 
   const handleClick = order => () => {
     router.push(`${order.contract}`, undefined, {scroll: false})
-    const totalQuantity = order.quantityFilled + order.quantityRemaining
     onClickOrder({
-      quantity: totalQuantity,
-      price: order.price.amount.decimal / totalQuantity,
+      quantity: order.quantity,
+      price: order.itemPrice,
       side: order.side,
     })
   }
@@ -114,32 +119,28 @@ const Orders = ({onOrderCancelled, onClickOrder}) => {
       </App.Flex>
       <App.Flex column flex={1} sx={{overflow: 'auto'}}>
         {
-          orders.filter(order => !showCollectionOrders || (order.contract === current.address)).map((order) => {
-            const totalQuantity = order.quantityRemaining + order.quantityFilled
-            const price = numeral(order.price.amount.decimal / totalQuantity).format('0.[0000]')
+          orders.filter(order => !showCollectionOrders || (order.contractAddress === current.address)).map((order) => {
             return (
               <App.Flex key={order.id} column>
                 <App.Flex align="center" className={styles.order} onClick={handleClick(order)}>
                   <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
                   <App.Flex column align="center" justify="center" sx={{width: 60}}>
                     {
-                      order.criteria.data.token?.image
-                        ? <Image alt="" src={order.criteria.data.token.image} width={35} height={35} />
-                        : order.criteria.data.collection?.image
-                          ? <Image alt="" src={order.criteria.data.collection.image} width={35} height={35} />
-                          : null
+                      order.image
+                        ? <Image alt="" src={order.image} width={35} height={35} />
+                        : null
                     }
                   </App.Flex>
                   <App.Flex column sx={{width: 60}} align="center" justify="center">
                     <App.Text size={12} weight={600} center>{ order.quantityFilled }</App.Text>
-                    <App.Text size={10} weight={600} center color="rgba(94, 92, 107, 1)">{ totalQuantity }</App.Text>
+                    <App.Text size={10} weight={600} center color="rgba(94, 92, 107, 1)">{ order.quantity }</App.Text>
                   </App.Flex>
                   <App.Flex flex={1} column align="center" justify="center">
-                    <App.Text size={12} weight={600} center color="rgba(185, 184, 197, 0.8)">{ price } { order.price.currency.symbol }</App.Text>
+                    <App.Text size={12} weight={600} center color="rgba(185, 184, 197, 0.8)">{ order.itemPrice } { order.baseCurrency }</App.Text>
                   </App.Flex>
                   <App.Flex flex={1} column align="center" justify="center" sx={{position: 'relative', height: '100%', overflow: 'hidden'}}>
-                    <App.Text size={12} weight={600}>{ order.price.amount.decimal } { order.price.currency.symbol }</App.Text>
-                    <App.Flex className={styles.cancelButton} onClick={handlePressCancel({...order, totalQuantity})}>
+                    <App.Text size={12} weight={600}>{ order.price } { order.baseCurrency }</App.Text>
+                    <App.Flex className={styles.cancelButton} onClick={handlePressCancel(order)}>
                       <App.Text size={12} color="rgb(235, 49, 105)">Cancel order</App.Text>
                     </App.Flex>
                   </App.Flex>
@@ -154,7 +155,7 @@ const Orders = ({onOrderCancelled, onClickOrder}) => {
 }
 
 const isEqual = (prev, next) => {
-  return prev.onClickOrder === next.onClickOrder && prev.onOrderCancelled === next.onOrderCancelled
+  return prev.onClickOrder === next.onClickOrder && prev.onOrderCancelled === next.onOrderCancelled && prev.current === next.current
 }
 
 export default memo(Orders, isEqual)

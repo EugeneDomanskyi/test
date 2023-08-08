@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic'
 import $exchange from '@/store/exchange'
 import $app from '@/store/app'
 import $collection from '@/store/collection'
+import $orders from '@/store/orders'
 import Stream from '@/libs/stream.lib'
 import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -93,7 +94,7 @@ const Exchange = () => {
         includeCriteriaMetadata: true,
       }).then(res => {
         if (res) {
-          dispatch($exchange.set.orders(res))
+          dispatch($orders.set.nfts(res))
         }
       })
     } else if (!wallet) {
@@ -157,7 +158,7 @@ const Exchange = () => {
         includeCriteriaMetadata: true,
       }).then(res => {
         if (res) {
-          dispatch($exchange.set.orders(res))
+          dispatch($orders.set.nfts(res))
         }
       })
     }
@@ -212,10 +213,10 @@ const Exchange = () => {
 
               <App.Flex column gap={GRID_GAP}>
                 <App.Flex>
-                  <TradeForm ref={tradeForm} />
+                  <TradeForm ref={tradeForm} current={current} />
                 </App.Flex>
 
-                <Orders onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
+                <Orders current={current} onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
               </App.Flex>
             </App.Flex>
           </App.Flex>
