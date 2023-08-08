@@ -13,6 +13,8 @@ import styles from './styles.module.scss'
 
 const CollectionListItem = ({ isActive, collection, withArrow, isSearched, onClick, onClose }) => {
   const router = useRouter()
+  const isExchange = router.pathname.includes('/exchange')
+
   const blockchain = useSelector($app.get.blockchain)
 
   const handleClick = () => {
@@ -31,7 +33,7 @@ const CollectionListItem = ({ isActive, collection, withArrow, isSearched, onCli
         })
       }
 
-      router.push(`/exchange/${collection.address}`, undefined, { scroll: false })
+      router.push(`/${isExchange ? 'exchange' : 'tokens'}/${collection.address}`, undefined, { scroll: false })
 
       if (onClose) {
         onClose()

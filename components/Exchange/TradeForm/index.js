@@ -25,7 +25,7 @@ const TradeForm = forwardRef((_props, ref) => {
   
   const orderBook = useSelector($exchange.get.orderBook)
   const currentCollection = useSelector(({$collection}) => $collection.current)
-  const loadingCollectionData = useSelector(({$exchange}) => $exchange.loadingCollectionData)
+  const loading = useSelector(({$exchange}) => $exchange.loadingCollectionData)
   const blockchain = useSelector($app.get.blockchainByCode(currentCollection?.blockchain))
 
   const [currentTab, setCurrentTab] = useState('buy')
@@ -64,14 +64,14 @@ const TradeForm = forwardRef((_props, ref) => {
   }, [wallet, currentCollection?.address, blockchain])
 
   useEffect(() => {
-    if (!loadingCollectionData && currentCollection?.address) {
+    if (!loading && currentCollection?.address) {
       if (currentTab === 'buy') {
         setInitialPrice(lowestBuy?.price || currentCollection?.price)
       } else {
         setInitialPrice(lowestSell?.price || currentCollection?.price)
       }
     }
-  }, [loadingCollectionData, currentCollection?.address])
+  }, [loading, currentCollection?.address])
 
   const setInitialPrice = price => {
     setLimitForm(state => ({

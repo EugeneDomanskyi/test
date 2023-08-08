@@ -12,35 +12,34 @@ import { trackEvent } from '@/libs/analytics.lib'
 import App from '@/components/App'
 import { WebIcon, TwitterIcon, DiscordIcon } from '@/components/Icons/exchange'
 
-const CollectionInfo = () => {
+const CollectionInfo = ({ current }) => {
   const { scanUrl } = useWalletConnect()
   const blockchain = useSelector($app.get.blockchain)
   const { high, low } = useSelector($exchange.get.highLow({count: 24, unit: 'hours'}))
-  const currentCollection = useSelector(({$collection}) => $collection.current)
 
-  const scanLink = scanUrl(currentCollection.address, 'address', blockchain)
+  const scanLink = scanUrl(current.address, 'address', blockchain)
 
   const handleClickLink = (type) => () => {
     trackEvent(`Click NFT ${type} Redirect`, {
-      Markets: currentCollection.name,
+      Markets: current.name,
     })
   }
 
   return (
     <App.Flex className={styles.container} gap={6}>
       {
-        currentCollection
+        current
           ? <>
               <App.Flex>
                 {
-                  currentCollection?.image
+                  current?.image
                     ? <Image
                         width={162}
                         height={162}
                         priority
                         alt=""
                         className={styles.image}
-                        src={currentCollection?.image} />
+                        src={current?.image} />
                     : null
                 }
               </App.Flex>
@@ -48,9 +47,9 @@ const CollectionInfo = () => {
                 <App.Flex column gap={8} flex={1}>
                   <App.Flex align="center" justify="space-between">
                     <App.Flex align="center" gap={8}>
-                      <App.Text weight={700} uppercase size={20}>{ currentCollection?.name }</App.Text>
+                      <App.Text weight={700} uppercase size={20}>{ current?.name }</App.Text>
                       {
-                        currentCollection?.openseaVerificationStatus === 'verified'
+                        current?.openseaVerificationStatus === 'verified'
                           ? <App.Tooltip text={<App.Text>This collection belongs to a verified account and has significant interest or sales. <a href="https://support.opensea.io/hc/en-us/articles/360063519133-What-is-a-verified-account-or-badged-collection-" target="_blank">Learn more</a></App.Text>}>
                               <App.Icon icon="verified" />
                             </App.Tooltip>
@@ -62,39 +61,39 @@ const CollectionInfo = () => {
                         <App.Icon width={15} height={15} icon={blockchain?.code === 'polygon' ? 'polyscan' : 'etherscan'} />
                       </Link>
                       {
-                        currentCollection?.externalUrl
-                          ? <Link href={currentCollection?.externalUrl ?? ''} onClick={handleClickLink('website')} target="_blank" style={{marginRight: 5}}>
+                        current?.externalUrl
+                          ? <Link href={current?.externalUrl ?? ''} onClick={handleClickLink('website')} target="_blank" style={{marginRight: 5}}>
                               <WebIcon />
                             </Link>
                           : null
                       }
                       {
-                        currentCollection?.twitterUrl
-                          ? <Link href={currentCollection?.twitterUrl ?? ''} onClick={handleClickLink('twitter')} target="_blank" style={{marginRight: 8}}>
+                        current?.twitterUrl
+                          ? <Link href={current?.twitterUrl ?? ''} onClick={handleClickLink('twitter')} target="_blank" style={{marginRight: 8}}>
                               <TwitterIcon />
                             </Link>
                           : null
                       }
                       {
-                        currentCollection?.discordUrl
-                          ? <Link href={currentCollection?.discordUrl ?? ''} onClick={handleClickLink('discord')} target="_blank">
+                        current?.discordUrl
+                          ? <Link href={current?.discordUrl ?? ''} onClick={handleClickLink('discord')} target="_blank">
                               <DiscordIcon />
                             </Link>
                           : null
                       }
                     </App.Flex>
                   </App.Flex>
-                  <App.Text lines={2} size={12} weight={500} color="#B9B8C5">{ currentCollection?.description }</App.Text>
+                  <App.Text lines={2} size={12} weight={500} color="#B9B8C5">{ current?.description }</App.Text>
                   <App.Flex sx={{marginTop: 'auto'}} gap={16}>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>Price</App.Text>
-                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ currentCollection?.price } { currentCollection?.currency }</App.Text>
+                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.price } { current?.currency }</App.Text>
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>24h Price Change</App.Text>
                       <App.Flex align="center" gap={4}>
-                        <App.Icon style={{transform: `rotate(${currentCollection?.ticker?.type == 'minus' ? '0' : '180'}deg)`}} icon="caret-down" color={currentCollection?.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C' } />
-                        <App.Text size={16} weight={500} color={currentCollection?.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C' }>{ currentCollection?.ticker?.value }%</App.Text>
+                        <App.Icon style={{transform: `rotate(${current?.ticker?.type == 'minus' ? '0' : '180'}deg)`}} icon="caret-down" color={current?.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C' } />
+                        <App.Text size={16} weight={500} color={current?.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C' }>{ current?.ticker?.value }%</App.Text>
                       </App.Flex>
                     </App.Flex>
                     <App.Flex column className={styles.card}>
@@ -104,15 +103,15 @@ const CollectionInfo = () => {
                           <App.Icon icon="info" width={12} height={12} />
                         </App.Tooltip>
                       </App.Flex>
-                      <App.Text size={16} weight={700}>{ currentCollection?.volume }</App.Text>
+                      <App.Text size={16} weight={700}>{ current?.volume }</App.Text>
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>24h High</App.Text>
-                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ high } { currentCollection?.currency }</App.Text>
+                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.high ?? high } { current?.currency }</App.Text>
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>24h Low</App.Text>
-                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ low } { currentCollection?.currency }</App.Text>
+                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.low ?? low } { current?.currency }</App.Text>
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Flex align="center" gap={4}>
@@ -121,7 +120,7 @@ const CollectionInfo = () => {
                           <App.Icon icon="info" width={12} height={12} />
                         </App.Tooltip>
                       </App.Flex>
-                      <App.Text size={16} weight={700}>{ currentCollection?.tokenCount }</App.Text>
+                      <App.Text size={16} weight={700}>{ current?.tokenCount }</App.Text>
                     </App.Flex>
                   </App.Flex>
                 </App.Flex>
@@ -133,8 +132,8 @@ const CollectionInfo = () => {
   )
 }
 
-const isEqual = () => {
-  return true
+const isEqual = (prevProps, nextProps) => {
+  return JSON.stringify(prevProps.current) == JSON.stringify(nextProps.current)
 }
 
 export default memo(CollectionInfo, isEqual)

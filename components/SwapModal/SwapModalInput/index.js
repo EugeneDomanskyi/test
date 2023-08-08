@@ -349,7 +349,7 @@ const SwapModalInput = ({ collection, onCollectionChange, currency, onCurrencyCh
         </App.Flex>
 
         <App.Flex row align="center" gap={16} className={styles.item}>
-          <App.Text size={16} color="#B9B8C5">You Get</App.Text>
+          <App.Text size={16} color="#B9B8C5">You {type == 'buy' ? 'Pay' : 'Get'}</App.Text>
           <input type="number" placeholder="0" value={price != '' ? (price * 1).toFixed(4) : ''} readOnly className={cn(styles.input, {[styles.error]: error == 'price'})} />
 
           <App.Flex row gap={8} align="center" className={styles.chip} onClick={handleListClick('currency')}>

@@ -107,6 +107,12 @@ const Header = () => {
               </App.Flex>
             </Link>
 
+            <Link href="/tokens" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/tokens')})}>
+              <App.Flex center height="100%">
+                <App.Text size={18} weight={700}>TOKENS</App.Text>
+              </App.Flex>
+            </Link>
+
             <Link href="/swap" className={cn(styles.navbarItem, {[styles.active]: router.pathname == '/swap'})}>
               <App.Flex center  height="100%">
                 <App.Text size={18} weight={700}>SWAP</App.Text>
@@ -162,6 +168,15 @@ const Header = () => {
                     <App.Icon icon="exchange" color="#fff" />
                   </App.Flex>
                   <App.Text size={18} weight={700}>EXCHANGE</App.Text>
+                </App.Flex>
+              </Link>
+
+              <Link href="/tokens" className={cn(styles.link, {[styles.active]: router.pathname.includes('/tokens')})}>
+                <App.Flex align="center" height="100%" gap={16} onClick={handleMobileMenuClick}>
+                  <App.Flex center width={29}>
+                    <App.Icon icon="trade" color="#fff" />
+                  </App.Flex>
+                  <App.Text size={18} weight={700}>TOKENS</App.Text>
                 </App.Flex>
               </Link>
 

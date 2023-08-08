@@ -1,7 +1,5 @@
 import { arbitrum, mainnet, polygon, goerli, optimism } from 'wagmi/chains'
 
-console.log(optimism.nativeCurrency)
-
 const TEST_NETWORK = {
   ...goerli,
   code: 'goerli',

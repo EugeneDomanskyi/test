@@ -44,7 +44,7 @@ export const exchangeSlice = createSlice({
     orders: [],
     interval: {key: '6h', count: 6, unit: 'hours'},
     sortType: 'VOLUME:DESC',
-    loadingCollectionData: false,
+    loading: false,
   },
 
   reducers: {
@@ -77,8 +77,8 @@ export const exchangeSlice = createSlice({
     sortType: (state, {payload}) => {
       state.sortType = payload
     },
-    loadingCollectionData: (state, {payload}) => {
-      state.loadingCollectionData = payload
+    loading: (state, {payload}) => {
+      state.loading = payload
     }
   },
 })
@@ -150,6 +150,7 @@ const getters = {
     })
     return result.sort((a,b) => a.time - b.time)
   }),
+
   highLow: (interval) => createSelector([
     state => state.$exchange.sales
   ], (sales) => {
@@ -163,11 +164,13 @@ const getters = {
       high: prices.length ? Math.max(...prices) : 0,
     }
   }),
+
   recentSales: (limit) => createSelector([
     state => state.$exchange.sales
   ], (sales) => {
     return sales.slice(0, limit)
   }),
+
   orderBook: createSelector([
     state => state.$exchange.orderBook
   ], (orderBook) => {
@@ -176,11 +179,12 @@ const getters = {
       sell: orderBook.sell.slice(0, 10),
     }
   }),
+
   orders: createSelector([
     state => state.$exchange.orders
   ], (orders) => {
     return orders.filter(order => order.status !== 'cancelled').sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-  })
+  }),
 }
 
 // https://limit-orders.1inch.io/v3.0/137/all?page=1&limit=100&statuses=[1]&sortBy=takerRate
