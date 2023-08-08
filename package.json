@@ -17,7 +17,7 @@
     "@mui/material": "^5.13.5",
     "@rainbow-me/rainbowkit": "^1.0.5",
     "@reduxjs/toolkit": "^1.9.5",
-    "@reservoir0x/reservoir-sdk": "^1.1.24",
+    "@reservoir0x/reservoir-sdk": "^1.1.15",
     "@uniswap/widgets": "^1.1.1",
     "alchemy-sdk": "^2.9.0",
     "amplitude-js": "^8.21.9",
