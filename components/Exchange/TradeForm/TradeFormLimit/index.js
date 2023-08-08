@@ -78,11 +78,12 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
     if (!address) {
       return
     }
-
+    console.log('handleSubmit')
     const network = await changeNetwork(blockchain.code)
     if (!network) {
       return
     }
+    
     loadingRef.current = true
     switch (currentTab) {
       case 'buy':
