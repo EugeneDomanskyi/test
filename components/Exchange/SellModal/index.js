@@ -27,7 +27,7 @@ const SellModal = ({data}) => {
     setSelectedTokens(tokens)
     setStep('confirm')
     dispatch($modal.set.update({header: {
-      title: `Buy ${currentCollection.name} for ${data.type === 'place' ? data.blockchain.wrapped.shortName : data.blockchain.currency}`
+      title: `Sell ${currentCollection.name} for ${data.type === 'place' ? data.blockchain.wrapped.shortName : data.blockchain.currency}`
     }}))
   }
 
