@@ -11,6 +11,7 @@ import Stream from '@/libs/stream.lib'
 import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
+import useOrders from '@/myhooks/useOrders'
 
 import App from '@/components/App'
 import Sidebar from '@/components/Exchange/Sidebar'
@@ -48,6 +49,7 @@ const Exchange = () => {
   const search = useSelector(({$collection}) => $collection.search)
   const searching = useSelector(({$collection}) => $collection.searching)
   const pages = useSelector($collection.get.pages)
+  const { updateOrders } = useOrders({tokenAddress: collectionId, type: 'nfts'})
 
   const [mobileTab, setMobileTab] = useState('markets')
   const [mobileTabTrade, setMobileTabTrade] = useState(false)
@@ -93,19 +95,10 @@ const Exchange = () => {
   }, [collectionId, blockchain.code])
 
   useEffect(() => {
-    if (blockchain.code && wallet) {
-      $orders.api.get.nfts({
-        blockchain: blockchain.code,
-        maker: wallet,
-        includeCriteriaMetadata: true,
-      }).then(res => {
-        if (res) {
-          dispatch($orders.set.nfts(res))
-        }
-      })
-    } else if (!wallet) {
-      dispatch($orders.set.nfts([]))
-    }
+    updateOrders()
+    // if (!wallet) {
+    //   dispatch($orders.set.nfts([]))
+    // }
   }, [blockchain.code, wallet])
   
   useEffect(() => {
@@ -141,16 +134,9 @@ const Exchange = () => {
         sortDirection: 'desc',
         limit: 800,
       }),
-      $orders.api.get.nfts.orderBook({
-        collection: collectionId,
-        blockchain: blockchain,
-      })
     ]).then(([sales, orderBook]) => {
       if (sales) {
         dispatch($exchange.set.sales(sales))
-      }
-      if (orderBook) {
-        dispatch($orders.set.orderBook({type: 'nfts', data: orderBook}))
       }
       dispatch($exchange.set.loading(false))
     })

@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
 
-import $exchange from '@/store/exchange'
 import $orders from '@/store/orders'
 import $app from '@/store/app'
 import useWalletConnect from './wallet-connect'
@@ -28,11 +27,11 @@ const useOrders = ({tokenAddress, type}) => {
       })
     }
     
-    $exchange.api.get.orderBook({
+    $orders.api.get[type].orderBook({
       collection: tokenAddress,
       blockchain: blockchain.code,
     }).then(res => {
-      dispatch($exchange.set.orderBook(res))
+      dispatch($orders.set.orderBook({type: type, data: res}))
     })
   }
 
