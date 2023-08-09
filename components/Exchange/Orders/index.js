@@ -15,12 +15,21 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
   const router = useRouter()
   const orders = useSelector($orders.get[type])
   const blockchain = useSelector($app.get.blockchain)
-  const { wallet } = useWalletConnect()
+  const { wallet, connect, changeNetwork } = useWalletConnect()
   
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
 
-  const handlePressCancel = (order) => (e) => {
+  const handlePressCancel = (order) => async (e) => {
     e.stopPropagation()
+    const address = await connect()
+    if (!address) {
+      return
+    }
+    const network = await changeNetwork(blockchain.code)
+    if (!network) {
+      return
+    }
+    
     const eventPost = {
       'Base Currency': order.baseCurrency,
       'Quote Currency': order.quoteCurrency,

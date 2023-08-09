@@ -4,6 +4,7 @@ import { parseUnits } from 'viem'
 
 import $modal from '@/store/modal'
 import useTrade from '@/myhooks/trade'
+import useOrders from '@/myhooks/useOrders'
 import { trackEvent } from '@/libs/analytics.lib'
 
 import SellModalSelect from '@/components/Exchange/SellModal/SellModalSelect'
@@ -15,9 +16,12 @@ const SellModal = ({data}) => {
   const dispatch = useDispatch()
   const { placeAsk, sellNft, errorHandler } = useTrade()
   const [selectedTokens, setSelectedTokens] = useState([])
+
   const [step, setStep] = useState('select')
 
   const currentCollection = useSelector(({$collection}) => $collection.current)
+  
+  const { updateOrders } = useOrders({collectionId: currentCollection.address})
 
   const loadingRef = useRef(false)
 
@@ -27,7 +31,7 @@ const SellModal = ({data}) => {
     setSelectedTokens(tokens)
     setStep('confirm')
     dispatch($modal.set.update({header: {
-      title: `Buy ${currentCollection.name} for ${data.type === 'place' ? data.blockchain.wrapped.shortName : data.blockchain.currency}`
+      title: `Sell ${currentCollection.name} for ${data.type === 'place' ? data.blockchain.wrapped.shortName : data.blockchain.currency}`
     }}))
   }
 
@@ -107,6 +111,7 @@ const SellModal = ({data}) => {
 
   const handleComplete = () => {
     dispatch($modal.set.close())
+    updateOrders()
   }
 
   return (() => {
