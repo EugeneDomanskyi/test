@@ -49,7 +49,7 @@ const Tokens = () => {
   const tradeForm = useRef(null)
 
   useEffect(() => {
-    trackEvent('Dex Tokens Clicked', {
+    trackEvent('Tokens Clicked', {
       'Network': blockchain.code.toUpperCase(),
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
     })
@@ -162,14 +162,14 @@ const Tokens = () => {
       })
     }
 
-    $exchange.api.get.orderBook({
-      collection: collectionId,
-      blockchain: blockchain.code,
-    }).then(res => {
-      if (res) {
-        dispatch($exchange.set.orderBook(res))
-      }
-    })
+    // $exchange.api.get.orderBook({
+    //   collection: collectionId,
+    //   blockchain: blockchain.code,
+    // }).then(res => {
+    //   if (res) {
+    //     dispatch($exchange.set.orderBook(res))
+    //   }
+    // })
   }, [wallet, tokenId, blockchain.code])
 
   const handleMobileTabChange = (tab) => {
@@ -243,7 +243,11 @@ const Tokens = () => {
           ) : null}
 
           {mobileTab == 'orders' ? (
-            <Orders onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
+            <Orders
+              current={current}
+              type="tokens"
+              onOrderCancelled={handleOrdersUpdated}
+              onClickOrder={handleClickOrder} />
           ) : null}
 
           {mobileTab == 'buy_sell' ? (

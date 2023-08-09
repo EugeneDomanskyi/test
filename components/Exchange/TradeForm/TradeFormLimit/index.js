@@ -92,14 +92,6 @@ const TradeFormLimit = ({current, initialForm, currentTab, currentOption, userBa
           makerAddress: wallet,
           makingAmount: '100',
           takingAmount: '200',
-          // predicate = '0x',
-          // permit = '0x',
-          // receiver = ZERO_ADDRESS,
-          // allowedSender = ZERO_ADDRESS,
-          // getMakingAmount = ZERO_ADDRESS,
-          // getTakingAmount = ZERO_ADDRESS,
-          // preInteraction: '0x',
-          // postInteraction: '0x0000000000000000000000000000000000000000' + wallet.slice(2),
         })
         const limitOrderTypedData = limitOrderBuilder.buildLimitOrderTypedData(limitOrder)
         const limitOrderHash = hashTypedData(limitOrderTypedData)
