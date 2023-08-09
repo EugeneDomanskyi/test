@@ -19,14 +19,22 @@ const Orders = ({onOrderCancelled, onClickOrder}) => {
   const orders = useSelector($exchange.get.orders)
   const current = useSelector(({$collection}) => $collection.current)
   const blockchain = useSelector($app.get.blockchain)
-  const { wallet } = useWalletConnect()
+  const { wallet, connect, changeNetwork } = useWalletConnect()
 
   const { cancelOrder, errorHandler } = useTrade()
   
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
   const loadingRef = useRef(false)
 
-  const handlePressCancel = (order) => () => {
+  const handlePressCancel = (order) => async () => {
+    const address = await connect()
+    if (!address) {
+      return
+    }
+    const network = await changeNetwork(blockchain.code)
+    if (!network) {
+      return
+    }
     loadingRef.current = true
     
     const eventPost = {
