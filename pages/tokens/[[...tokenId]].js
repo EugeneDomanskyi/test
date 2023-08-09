@@ -210,7 +210,11 @@ const Tokens = () => {
                   <TradeForm ref={tradeForm} current={current} />
                 </App.Flex>
 
-                <Orders current={current} onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
+                <Orders
+                  current={current}
+                  type="tokens"
+                  onOrderCancelled={handleOrdersUpdated}
+                  onClickOrder={handleClickOrder} />
               </App.Flex>
             </App.Flex>
           </App.Flex>

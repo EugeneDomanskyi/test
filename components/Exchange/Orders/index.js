@@ -1,11 +1,9 @@
 import styles from './styles.module.scss'
 import { useSelector } from 'react-redux'
-import { toast } from 'react-toastify'
-import { useRef, useState, memo } from 'react'
+import { useState, memo } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
-import useTrade from '@/myhooks/trade'
 import $app from '@/store/app'
 import $orders from '@/store/orders'
 
@@ -13,14 +11,13 @@ import App from '@/components/App'
 import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
-const Orders = ({current, onOrderCancelled, onClickOrder}) => {
+const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
   const router = useRouter()
-  const orders = useSelector($orders.get.tokens)
+  const orders = useSelector($orders.get[type])
   const blockchain = useSelector($app.get.blockchain)
   const { wallet } = useWalletConnect()
   
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
-  const loadingRef = useRef(false)
 
   const handlePressCancel = (order) => (e) => {
     e.stopPropagation()
@@ -36,27 +33,12 @@ const Orders = ({current, onOrderCancelled, onClickOrder}) => {
       'Order Type': 'Limit Order',
     }
     trackEvent('Cancel Order Submit', eventPost)
-    order.cancel().then((res) => {
-      console.log('order canceled', res)
+    order.cancel().then(() => {
       trackEvent('Create Order Success', eventPost)
+      onOrderCancelled()
     }).catch(error => {
       console.log('order cancel error', error)
     })
-  }
-
-  const handleCancelAll = () => {
-    onOrderCancelled()
-  }
-
-  const handleCancelProgress = (eventPost) => (steps) => {
-    console.log(eventPost)
-    const isAllStepsComplete = steps.flatMap(step => step.items).every(step => step.status === 'complete')
-    if (isAllStepsComplete && loadingRef.current) {
-      toast.success('Order cancelled successfully')
-      loadingRef.current = false
-      onOrderCancelled()
-      trackEvent('Create Order Success', eventPost)
-    }
   }
 
   const handleChangeSwitch = (value) => {
@@ -93,9 +75,6 @@ const Orders = ({current, onOrderCancelled, onClickOrder}) => {
           }
           <App.Text>Orders</App.Text>
         </App.Flex>
-        {/* <App.Flex className={styles.cancelAllButton} align="center" justify="center" onClick={handleCancelAll}>
-          <App.Text color="#B9B8C5" size={10} weight={600}>Cancell All</App.Text>
-        </App.Flex> */}
       </App.Flex>
       <App.Flex align="center" sx={{height: 20, borderBottom: '1px solid rgba(94, 92, 107, 0.3)'}}>
         <App.Flex column sx={{width: 60}} align="center">
@@ -149,7 +128,10 @@ const Orders = ({current, onOrderCancelled, onClickOrder}) => {
 }
 
 const isEqual = (prev, next) => {
-  return prev.onClickOrder === next.onClickOrder && prev.onOrderCancelled === next.onOrderCancelled && prev.current === next.current
+  return prev.onClickOrder === next.onClickOrder
+    && prev.onOrderCancelled === next.onOrderCancelled
+    && JSON.stringify(prev.current) === JSON.stringify(next.current)
+    && prev.type === next.type
 }
 
 export default memo(Orders, isEqual)
