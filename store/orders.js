@@ -84,6 +84,12 @@ api.get.nfts.orderBook = (params) => {
   })
 }
 
+api.get.tokens.orderBook = (params) => {
+  return new Promise(resolve => {
+    resolve({buy: [], sell: []})
+  })
+}
+
 export default {
   reducer: ordersSlice.reducer,
   set: ordersSlice.actions,

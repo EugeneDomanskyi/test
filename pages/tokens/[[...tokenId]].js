@@ -34,7 +34,7 @@ const Tokens = () => {
   
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
-  const { updateOrders } = useOrders({tokenAddress: tokenId, type: 'tokens'})
+  const { updateOrders } = useOrders({tokenAddress: queryTokenId, type: 'tokens'})
   // const socketConnected = useSelector(({$app}) => $app.socketConnected)
   
   const dispatch = useDispatch()
