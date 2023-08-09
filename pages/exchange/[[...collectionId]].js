@@ -12,12 +12,12 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
 
 import App from '@/components/App'
-import CollectionList from '@/components/Exchange/CollectionList'
-import CollectionListMobile from '@/components/Exchange/CollectionList/CollectionListMobile'
+import Sidebar from '@/components/Exchange/Sidebar'
+import SidebarMobile from '@/components/Exchange/Sidebar/SidebarMobile'
 import OrderBook from '@/components/Exchange/OrderBook'
 import Sales from '@/components/Exchange/Sales'
 import TradeForm from '@/components/Exchange/TradeForm'
-import CollectionInfo from '@/components/Exchange/CollectionInfo'
+import CollectionInfo from '@/components/Exchange/Info'
 import Orders from '@/components/Exchange/Orders'
 import MobileTabsBar from '@/components/Exchange/MobileTabsBar'
 
@@ -195,7 +195,7 @@ const Exchange = () => {
     <App.Flex gap={GRID_GAP} className={styles.container}>
       {!isMobile ? (
         <>
-          <CollectionList items={collections} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
+          <Sidebar items={collections} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
 
           <App.Flex column flex={1} gap={GRID_GAP}>
             <CollectionInfo current={current} />
@@ -223,7 +223,7 @@ const Exchange = () => {
       ) : (
         <>
           {mobileTab == 'markets' ? (
-            <CollectionList items={collections} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
+            <Sidebar items={collections} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
           ) : null}
 
           {mobileTab == 'charts' ? (
@@ -232,7 +232,7 @@ const Exchange = () => {
 
           {mobileTab == 'trades' ? (
             <App.Flex column gap={GRID_GAP} width="100%">
-              <CollectionListMobile items={collections} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
+              <SidebarMobile items={collections} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
 
               <App.Flex column flex={1} sx={{ position: 'relative' }}>
                 <App.Flex column gap={GRID_GAP} className={styles.tradesContent}>

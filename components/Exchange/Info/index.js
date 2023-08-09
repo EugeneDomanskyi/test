@@ -12,7 +12,7 @@ import { trackEvent } from '@/libs/analytics.lib'
 import App from '@/components/App'
 import { WebIcon, TwitterIcon, DiscordIcon } from '@/components/Icons/exchange'
 
-const CollectionInfo = ({ current }) => {
+const Info = ({ current }) => {
   const { scanUrl } = useWalletConnect()
   const blockchain = useSelector($app.get.blockchain)
   const { high, low } = useSelector($exchange.get.highLow({count: 24, unit: 'hours'}))
@@ -43,6 +43,7 @@ const CollectionInfo = ({ current }) => {
                     : null
                 }
               </App.Flex>
+              
               <App.Flex flex={1} column className={styles.content}>
                 <App.Flex column gap={8} flex={1}>
                   <App.Flex align="center" justify="space-between">
@@ -136,4 +137,4 @@ const isEqual = (prevProps, nextProps) => {
   return JSON.stringify(prevProps.current) == JSON.stringify(nextProps.current)
 }
 
-export default memo(CollectionInfo, isEqual)
+export default memo(Info, isEqual)

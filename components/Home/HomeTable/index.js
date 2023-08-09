@@ -13,8 +13,8 @@ import $modal from '@/store/modal'
 import $collection from '@/store/collection'
 
 import App from '@/components/App'
-import CollectionListSearch from '@/components/Exchange/CollectionList/CollectionListSearch'
-import CollectionListPagination from '@/components/Exchange/CollectionList/CollectionListPagination'
+import SidebarSearch from '@/components/Exchange/Sidebar/SidebarSearch'
+import SidebarPagination from '@/components/Exchange/Sidebar/SidebarPagination'
 
 import styles from './styles.module.scss'
 
@@ -118,7 +118,7 @@ const HomeTable = () => {
     <div className={styles.container}>
       <App.Container className={styles.content}>
         <App.Flex column align="flex-end" gap={16}>
-          <CollectionListSearch sx={{ width: 300 }} onSearched={handleSearched} />
+          <SidebarSearch sx={{ width: 300 }} onSearched={handleSearched} />
 
           <App.Flex width="100%">
             <TableContainer>
@@ -316,7 +316,7 @@ const HomeTable = () => {
           </App.Flex>
 
           {!wasSearched ? (
-            <CollectionListPagination />
+            <SidebarPagination />
           ) : null}
         </App.Flex>
       </App.Container>

@@ -3,21 +3,21 @@ import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import dynamic from 'next/dynamic'
 
-import $exchange from '@/store/exchange'
-import $app from '@/store/app'
-import $token from '@/store/token'
-import Stream from '@/libs/stream.lib'
 import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
 
+import $exchange from '@/store/exchange'
+import $app from '@/store/app'
+import $token from '@/store/token'
+
 import App from '@/components/App'
-import CollectionList from '@/components/Exchange/CollectionList'
-import CollectionListMobile from '@/components/Exchange/CollectionList/CollectionListMobile'
+import Sidebar from '@/components/Exchange/Sidebar'
+import SidebarMobile from '@/components/Exchange/Sidebar/SidebarMobile'
 import OrderBook from '@/components/Exchange/OrderBook'
 import Sales from '@/components/Exchange/Sales'
 import TradeForm from '@/components/Exchange/TradeForm'
-import CollectionInfo from '@/components/Exchange/CollectionInfo'
+import CollectionInfo from '@/components/Exchange/Info'
 import Orders from '@/components/Exchange/Orders'
 import MobileTabsBar from '@/components/Exchange/MobileTabsBar'
 
@@ -29,18 +29,23 @@ const GRID_GAP = 6
 
 const Tokens = () => {
   const router = useRouter()
-  const dispatch = useDispatch()
-  const [tokenId] = router.query.tokenId || []
-
+  const [queryTokenId] = router.query.tokenId || []
+  
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
-  const socketConnected = useSelector(({$app}) => $app.socketConnected)
+  
+  const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
-  const loading = useSelector(({$exchange}) => $exchange.loading)
+  const exchangeLoading = useSelector(({$exchange}) => $exchange.loading)
+
+  const tokens = useSelector(({$token}) => $token.all)
+  const searched = useSelector(({$token}) => $token.searched)
   const current = useSelector(({$token}) => $token.current)
-  const { tokens, searched } = useSelector($token.get.all)
+  const tokenLoading = useSelector(({$token}) => $token.loading)
+  const sort = useSelector(({$token}) => $token.sort)
+  const search = useSelector(({$token}) => $token.search)
+  const searching = useSelector(({$token}) => $token.searching)
   const pages = useSelector($token.get.pages)
-  const { loading: pageLoading, page } = useSelector(({$token}) => $token)
 
   const [mobileTab, setMobileTab] = useState('markets')
   const [mobileTabTrade, setMobileTabTrade] = useState(false)
@@ -48,81 +53,19 @@ const Tokens = () => {
   const tradeForm = useRef(null)
 
   useEffect(() => {
-    trackEvent('Dex Tokens Clicked', {
+    trackEvent('Tokens Clicked', {
       'Network': blockchain.code.toUpperCase(),
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
     })
   }, [])
 
-  /* useEffect(() => {
-    Stream.on('sale', (event, data) => {
-      switch (event) {
-        case 'sale.created':
-          dispatch($exchange.set.saleAdd(data))
-          break
-        case 'sale.updated':
-          dispatch($exchange.set.saleUpdate(data))
-          break
-      }
-    })
-    Stream.on('bid', (event, data) => {
-      if (wallet && wallet.toLowerCase() !== data.maker.toLowerCase()) {
-        return
-      }
-      dispatch($exchange.set.orderUpdate(data))
-    })
-    Stream.on('ask', (event, data) => {
-      if (wallet && wallet.toLowerCase() !== data.maker.toLowerCase()) {
-        return
-      }
-      dispatch($exchange.set.orderUpdate(data))
-    })
-  }, [wallet]) */
-
   useEffect(() => {
-    if (tokenId && blockchain.code) {
-      initCollection(tokenId, blockchain.code)
+    if (queryTokenId && blockchain.code) {
+      getExchangeData(queryTokenId, blockchain.code)
     }
-  }, [tokenId, blockchain.code])
+  }, [queryTokenId, blockchain.code])
 
-  /* useEffect(() => {
-    if (blockchain.code && wallet) {
-      $exchange.api.get.orders({
-        blockchain: blockchain.code,
-        maker: wallet,
-        includeCriteriaMetadata: true,
-      }).then(res => {
-        if (res) {
-          dispatch($exchange.set.orders(res))
-        }
-      })
-    }
-  }, [blockchain.code, wallet])
-  
-  useEffect(() => {
-    if (socketConnected && collectionId) {
-      Stream.subscribe('sale.*', [collectionId])
-    }
-
-    return () => {
-      Stream.unsubscribe('sale.*')
-    }
-  }, [socketConnected, collectionId])
-
-  useEffect(() => {
-    if (socketConnected && collectionId && wallet) {
-      Stream.subscribe('bid.*', [collectionId], {maker: wallet})
-      Stream.subscribe('ask.*', [collectionId], {maker: wallet})
-    }
-    
-    return () => {
-      Stream.unsubscribe('bid.*')
-      Stream.unsubscribe('ask.*')
-    }
-  }, [socketConnected, collectionId, wallet])
-  */
-
-  const initCollection = (tokenId, blockchain) => {
+  const getExchangeData = (tokenId, blockchain) => {
     //dispatch($exchange.set.loading(true))
     /* Promise.all([
       $exchange.api.get.sales({
@@ -148,6 +91,20 @@ const Tokens = () => {
     }) */
   }
 
+  /* useEffect(() => {
+    if (blockchain.code && wallet) {
+      $exchange.api.get.orders({
+        blockchain: blockchain.code,
+        maker: wallet,
+        includeCriteriaMetadata: true,
+      }).then(res => {
+        if (res) {
+          dispatch($exchange.set.orders(res))
+        }
+      })
+    }
+  }, [blockchain.code, wallet]) */
+
   const handleOrdersUpdated = useCallback(() => {
     if (wallet) {
       $exchange.api.get.orders({
@@ -162,14 +119,14 @@ const Tokens = () => {
     }
 
     $exchange.api.get.orderBook({
-      collection: collectionId,
+      collection: queryTokenId,
       blockchain: blockchain.code,
     }).then(res => {
       if (res) {
         dispatch($exchange.set.orderBook(res))
       }
     })
-  }, [wallet, tokenId, blockchain.code])
+  }, [wallet, queryTokenId, blockchain.code])
 
   const handleMobileTabChange = (tab) => {
     setMobileTabTrade(false)
@@ -180,16 +137,35 @@ const Tokens = () => {
     tradeForm.current.setForm({formType: 'market', amount: order.quantity, side: order.side})
   }, [])
 
-  const handlePageChange = (value) => {
-    dispatch($token.set.page(value))
-    dispatch($token.set.fetching(true))
-  }
+  const handleSort = useCallback((value) => {
+    dispatch($token.set.sort(value))
+  }, [])
+
+  const handleSearch = useCallback((value) => {
+    dispatch($token.set.search(value))
+  }, [])
+
+  const handlePage = useCallback((value) => {
+    dispatch($token.set.pages({current: value ?? 1}))
+  }, [])
 
   return (
     <App.Flex gap={GRID_GAP} className={styles.container}>
       {!isMobile ? (
         <>
-          <CollectionList items={tokens} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
+          <Sidebar
+            items={tokens}
+            searched={searched}
+            current={current}
+            sort={sort}
+            search={search}
+            searching={searching}
+            pages={pages}
+            loading={tokenLoading}
+            onSort={handleSort}
+            onSearch={handleSearch}
+            onPage={handlePage}
+          />
 
           <App.Flex column flex={1} gap={GRID_GAP}>
             <CollectionInfo current={current} />
@@ -217,7 +193,19 @@ const Tokens = () => {
       ) : (
         <>
           {mobileTab == 'markets' ? (
-            <CollectionList items={tokens} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
+            <Sidebar
+              items={tokens}
+              searched={searched}
+              current={current}
+              sort={sort}
+              search={search}
+              searching={searching}
+              pages={pages}
+              loading={tokenLoading}
+              onSort={handleSort}
+              onSearch={handleSearch}
+              onPage={handlePage}
+            />
           ) : null}
 
           {mobileTab == 'charts' ? (
@@ -226,7 +214,19 @@ const Tokens = () => {
 
           {mobileTab == 'trades' ? (
             <App.Flex column gap={GRID_GAP} width="100%">
-              <CollectionListMobile items={tokens} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
+              <SidebarMobile
+                items={tokens}
+                searched={searched}
+                current={current}
+                sort={sort}
+                search={search}
+                searching={searching}
+                pages={pages}
+                loading={tokenLoading}
+                onSort={handleSort}
+                onSearch={handleSearch}
+                onPage={handlePage}
+              />
 
               <App.Flex column flex={1} sx={{ position: 'relative' }}>
                 <App.Flex column gap={GRID_GAP} className={styles.tradesContent}>
@@ -252,11 +252,10 @@ const Tokens = () => {
           />
         </>
       )}
-      {
-        loading
-          ? <App.LoaderBlock size={100} color="#7204FF" fixed height="100%" />
-          : null
-      }
+
+      {exchangeLoading ? (
+        <App.LoaderBlock size={100} color="#7204FF" fixed height="100%" />
+      ) : null}
     </App.Flex>
   )
 }
