@@ -3,6 +3,7 @@ import { parseUnits } from 'viem'
 import { useDispatch, useSelector } from 'react-redux'
 
 import useTrade from '@/myhooks/trade'
+import useOrders from '@/myhooks/useOrders'
 import $modal from '@/store/modal'
 import { trackEvent } from '@/libs/analytics.lib'
 
@@ -16,6 +17,8 @@ const TradeBuyModal = ({data}) => {
   const currentCollection = useSelector(({$collection}) => $collection.current)
 
   const { placeBid, buyNft, errorHandler } = useTrade()
+  const { updateOrders } = useOrders({collectionId: currentCollection.address})
+
   const [step, setStep] = useState('confirm')
 
   const loadingRef = useRef(false)
@@ -100,6 +103,7 @@ const TradeBuyModal = ({data}) => {
 
   const handleComplete = () => {
     dispatch($modal.set.close())
+    updateOrders()
   }
 
   return (() => {

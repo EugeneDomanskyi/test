@@ -42,10 +42,14 @@ const Header = () => {
 
   const handleConnectWallet = async () => {
     if ( ! wallet) {
-      trackEvent('Wallet Connect Clicked')
+      trackEvent('Wallet Connect Clicked', {
+        'Wallet connected Status': 'Not Connected'
+      })
       const result = await connect()
       if (result) {
-        trackEvent('Dex Wallet Connected Successfully')
+        trackEvent('Wallet Connected Successfully', {
+          'Wallet connected Status': 'Connected'
+        })
       }
     }
   }
@@ -63,10 +67,14 @@ const Header = () => {
   }
 
   const handleDisconnect = () => {
-    trackEvent('Wallet Disconnect Clicked')
+    trackEvent('Wallet Disconnect Clicked', {
+      'Wallet connected Status': wallet ? 'Connected' : 'Not Connected'
+    })
     disconnect()
     setMenuShow(false)
-    trackEvent('Wallet Disconnect successfully')
+    trackEvent('Wallet Disconnect successfully', {
+      'Wallet connected Status': 'Not Connected'
+    })
   }
 
   const handleMobileMenuClick = () => {

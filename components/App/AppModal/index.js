@@ -4,8 +4,6 @@ import dynamic from 'next/dynamic'
 import { gsap } from 'gsap'
 import cn from 'classnames'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
-
 import $modal from '@/store/modal'
 
 import App from '@/components/App'
@@ -13,7 +11,6 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const AppModal = () => {
-  const { scanUrl } = useWalletConnect()
   const dispatch = useDispatch()
   const { show, modal, props } = useSelector((state) => state.$modal)
 
@@ -123,23 +120,6 @@ const AppModal = () => {
             ) : (
               <App.LoaderBlock height={300} />
             )}
-
-            {props?.footer ? (
-              <>
-                {props.footer == 'info' ? (
-                  <div className={styles.footer}>
-                    <App.Flex row gap={8} align="center">
-                      <App.Icon icon="lock-star-fill" />
-                      <App.Flex column>
-                        <App.Text>1 NFT = 1 NFT20</App.Text>
-                        <App.Text>ALL NFT20 tokens are backed 1:1 by NFTs</App.Text>
-                        <App.Text>Check our verified contracts <a href={scanUrl(props.token.nft20, 'address', props.token.chain)} target="_blank" rel="noreferrer" className={styles.link}>here</a></App.Text>
-                      </App.Flex>
-                    </App.Flex>
-                  </div>
-                ) : null}
-              </>
-            ) : null}
           </div>
         </div>
       </div>

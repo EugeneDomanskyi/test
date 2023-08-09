@@ -6,6 +6,7 @@ import $app, { appSlice } from './app'
 import $exchange from './exchange'
 import $collection from './collection'
 import $nft from './nft'
+import { CHAINS } from '@/config'
 
 const createStore = initialData => {
   return configureStore({
@@ -26,13 +27,8 @@ const createStore = initialData => {
   })
 }
 
-const BLOCKCHAIN_URL = {
-  polygon: 'https://api-polygon.reservoir.tools',
-  ethereum: 'https://api.reservoir.tools',
-  goerli: 'https://api-goerli.reservoir.tools',
-}
-
 export const request = async (uri, method = 'GET', {blockchain, ...data} = {}) => {
+  const currentChain = CHAINS.find(chain => chain.code === blockchain)
   const options = {
     method,
     headers: {
@@ -51,7 +47,7 @@ export const request = async (uri, method = 'GET', {blockchain, ...data} = {}) =
       options.body = JSON.stringify(data)
     }
   }
-  const response = await fetch(`${BLOCKCHAIN_URL[blockchain]}/${uri}${query}`, options)
+  const response = await fetch(`${currentChain.baseApiUrl}/${uri}${query}`, options)
   if (response.ok) {
     return responseHandler(response)
   }

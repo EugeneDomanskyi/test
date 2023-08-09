@@ -44,6 +44,9 @@ const Stream = () => {
   return {
     connect: (blockchain) => {
       return new Promise(resolve => {
+        if (!BLOCKCHAIN_URL[blockchain]) {
+          return
+        }
         connectResolver = resolve
         socket = new WebSocket(`${BLOCKCHAIN_URL[blockchain]}?api_key=${process.env.NEXT_PUBLIC_RESERVOIR_API_KEY}`)
         socket.onmessage = messageHandler

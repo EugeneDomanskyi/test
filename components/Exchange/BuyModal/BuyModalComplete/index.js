@@ -8,7 +8,6 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const BuyModalComplete = ({type, currentCollection, amount, price, blockchain, onComplete}) => {
-  console.log(type)
   const { isMobile } = usePropsHelper()
 
   const handleComplete = () => {

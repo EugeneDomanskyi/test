@@ -64,7 +64,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
           {blockchains.map(item => (
             <App.Flex row gap={8} key={item.id} align="center" className={styles.item} onClick={handleBlockchainChange(item.code)}>
               <Image src={`/images/icon-${item.code}.png`} width={28} height={28} alt="" />
-              <App.Text size={16} weight={700} height={1}>{ item.name }</App.Text>
+              <App.Text nowrap size={16} weight={700} height={1}>{ item.name }</App.Text>
             </App.Flex>
           ))}
         </App.Flex>
