@@ -87,7 +87,7 @@ export const CHAINS = [
   ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? [TEST_NETWORK] : [])
 ]
 
-const INCH_CONTRACTS = {
+export const INCH_CONTRACTS = {
   1: "0x1111111254eeb25477b68fb85ed929f73a960582",
   10: "0x1111111254eeb25477b68fb85ed929f73a960582",
   56: "0x1111111254eeb25477b68fb85ed929f73a960582",

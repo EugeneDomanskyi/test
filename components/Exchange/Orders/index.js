@@ -15,25 +15,15 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 
 const Orders = ({current, onOrderCancelled, onClickOrder}) => {
   const router = useRouter()
-  const orders = useSelector($orders.get.nfts)
+  const orders = useSelector($orders.get.tokens)
   const blockchain = useSelector($app.get.blockchain)
   const { wallet } = useWalletConnect()
-
-  const { cancelOrder, errorHandler } = useTrade()
   
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
   const loadingRef = useRef(false)
 
   const handlePressCancel = (order) => (e) => {
     e.stopPropagation()
-    // order.cancel().then(() => {
-    //   console.log('order canceled')
-    // }).catch(error => {
-    //   console.log('order cancel error', error)
-    // })
-    // return
-    loadingRef.current = true
-    
     const eventPost = {
       'Base Currency': order.baseCurrency,
       'Quote Currency': order.quoteCurrency,
@@ -45,9 +35,13 @@ const Orders = ({current, onOrderCancelled, onClickOrder}) => {
       'Wallet connect Status': wallet ? 'Connected' : 'Not connected',
       'Order Type': 'Limit Order',
     }
-
     trackEvent('Cancel Order Submit', eventPost)
-    cancelOrder(order.id, handleCancelProgress(eventPost), errorHandler)
+    order.cancel().then((res) => {
+      console.log('order canceled', res)
+      trackEvent('Create Order Success', eventPost)
+    }).catch(error => {
+      console.log('order cancel error', error)
+    })
   }
 
   const handleCancelAll = () => {

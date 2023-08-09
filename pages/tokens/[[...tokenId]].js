@@ -48,11 +48,6 @@ const Tokens = () => {
 
   const tradeForm = useRef(null)
 
-  const orders = useSelector($orders.get.tokens)
-  orders.map(order => {
-    console.log(order)
-  })
-
   useEffect(() => {
     trackEvent('Dex Tokens Clicked', {
       'Network': blockchain.code.toUpperCase(),

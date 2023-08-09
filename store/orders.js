@@ -1,11 +1,17 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
 import numeral from 'numeral'
-import { formatUnits } from 'viem'
+import { formatUnits, encodeAbiParameters, encodeFunctionData } from 'viem'
 import { getClient } from '@reservoir0x/reservoir-sdk'
-import { getWalletClient } from '@wagmi/core'
+import { getWalletClient, waitForTransaction, sendTransaction } from '@wagmi/core'
+import {
+  LimitOrderProtocolFacade,
+  LimitOrder,
+  Web3ProviderConnector
+} from '@1inch/limit-order-protocol-utils'
+import Web3 from 'web3'
 
 import { request } from './index'
-import { CHAINS } from '@/config'
+import { CHAINS, INCH_CONTRACTS } from '@/config'
 
 const Order = {
   NFT: class NFT {
@@ -76,6 +82,29 @@ const Order = {
 
     get itemPrice () {
       return numeral(this.price).divide(this.quantity).format('0.0[000]')
+    }
+
+    cancel = () => {
+      return new Promise(async (resolve, reject) => {
+        const walletClient = await getWalletClient()
+        const chainId = await walletClient.getChainId()
+        walletClient.contractEncodeABI = (abi, address, methodName, methodParams) => {
+          return encodeFunctionData({
+            abi: abi,
+            functionName: methodName, 
+            args: [methodParams[0].data]
+          })
+        }
+        const limitOrderProtocolFacade = new LimitOrderProtocolFacade(INCH_CONTRACTS[chainId], chainId, walletClient)
+        const callData = limitOrderProtocolFacade.cancelLimitOrder(this.rawData)
+        const res = await sendTransaction({
+          chainId: chainId,
+          to: INCH_CONTRACTS[chainId],
+          data: callData,
+        })
+        const txResult = await waitForTransaction(res)
+        resolve(txResult)
+      })
     }
   }
 }
