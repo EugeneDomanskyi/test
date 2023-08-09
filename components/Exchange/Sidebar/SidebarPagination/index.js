@@ -2,22 +2,22 @@ import { memo } from 'react'
 
 import App from '@/components/App'
 
-const CollectionListPagination = ({ pages, page, loading, onPageChange }) => {
+const SidebarPagination = ({ pages, loading, onPage }) => {
   const handlePage = (type) => () => {
-    let continuation = null
+    let newPage = null
     if (type != null) {
-      continuation = pages[type]
+      newPage = pages[type]
     }
 
-    if (onPageChange) {
-      onPageChange(continuation)
+    if (onPage) {
+      onPage(newPage)
     }
   }
 
   return (
     <App.Flex row align="center" justify="space-between" gap={24} sx={{ padding: 16 }}>
-      <App.Button small primary outlined={! pages.prev} disabled={! pages.prev} onClick={handlePage('prev')}>
-        {loading && page == pages.prev ? (
+      <App.Button small primary outlined={! pages.prev || loading} disabled={! pages.prev || loading} onClick={handlePage('prev')}>
+        {loading ? (
           <App.Loader size={16} />
         ) : (
           <App.Icon icon="chevron-left" color="#fff" />
@@ -25,9 +25,9 @@ const CollectionListPagination = ({ pages, page, loading, onPageChange }) => {
         Prev
       </App.Button>
 
-      <App.Button small primary outlined={! pages.next} disabled={! pages.next} onClick={handlePage('next')}>
+      <App.Button small primary outlined={! pages.next || loading} disabled={! pages.next || loading} onClick={handlePage('next')}>
         Next
-        {loading && page == pages.next ? (
+        {loading ? (
           <App.Loader size={16} />
         ) : (
           <App.Icon icon="chevron-right" width={16} height={16} />
@@ -44,4 +44,4 @@ const isEqual = (prevProps, nextProps) => {
     prevProps.onPageChange == nextProps.onPageChange
 }
 
-export default memo(CollectionListPagination, isEqual)
+export default memo(SidebarPagination, isEqual)

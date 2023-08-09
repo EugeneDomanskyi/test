@@ -59,7 +59,7 @@ export const CHAINS = [
     baseApiUrl: 'https://api-arbitrum.reservoir.tools',
     scanUrl: arbitrum.blockExplorers.etherscan.url,
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
-    coingecko: '',
+    coingecko: 'arbitrum',
     platform: 'arbitrum-one',
     usdtContract: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
     wrapped: {
@@ -75,8 +75,8 @@ export const CHAINS = [
     baseApiUrl: 'https://api-optimism.reservoir.tools',
     scanUrl: optimism.blockExplorers.etherscan.url,
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
-    coingecko: '',
-    platform: 'arbitrum-one',
+    coingecko: 'optimism',
+    platform: 'optimistic-ethereum',
     usdtContract: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58',
     wrapped: {
       contract: '0x4200000000000000000000000000000000000006',

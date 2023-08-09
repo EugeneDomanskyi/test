@@ -1,0 +1,258 @@
+import { useEffect, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
+
+import useWalletConnect from '@/myhooks/wallet-connect'
+import Stream from '@/libs/stream.lib'
+
+import $app from '@/store/app'
+import $collection, { template } from '@/store/collection'
+
+const WrapperCollections = ({ children }) => {
+  const router = useRouter()
+  const [queryCollectionId] = router.query.collectionId || []
+  const isExchange = router.pathname.includes('/exchange')
+
+  const { network, isContractAddress } = useWalletConnect()
+
+  const dispatch = useDispatch()
+  const blockchain = useSelector($app.get.blockchain)
+  const blockchains = useSelector(({ $app }) => $app.blockchains)
+
+  const collections = useSelector(({ $collection }) => $collection.all)
+  const searched = useSelector(({ $collection }) => $collection.searched)
+  const current = useSelector(({ $collection }) => $collection.current)
+  const fetching = useSelector(({ $collection }) => $collection.fetching)
+  const sort = useSelector(({ $collection }) => $collection.sort)
+  const search = useSelector(({ $collection }) => $collection.search)
+  const pages = useSelector(({ $collection }) => $collection.pages)
+
+  const sortRef = useRef(sort)
+  const searchRef = useRef(search)
+  const pageRef = useRef(pages.current)
+  const blockchainCode = useRef(blockchain.code)
+
+  useEffect(() => {
+    if (router.isReady && fetching) {
+      getCollectionList()
+      dispatch($collection.set.fetching(false))
+    }
+  }, [router.isReady, fetching])
+
+  const getCollectionList = async () => {
+    dispatch($collection.set.loading(true))
+
+    const result = await $collection.api.all(queryParams(
+      blockchainCode.current,
+      pages.current,
+      sort,
+      search
+    ))
+
+    if (result && result.hasOwnProperty('collections')) {
+      const tempCollections = result.collections
+
+      dispatch($collection.set.pages({next: result?.continuation}))
+
+      const tempAll = tempCollections.map(item => {
+        return {
+          ...item,
+          blockchain: blockchainCode.current,
+          currency: network(blockchainCode.current)?.currency,
+        }
+      })
+
+      if (search == '') {
+        dispatch($collection.set.searched([]))
+        dispatch($collection.set.all(tempAll))
+      } else {
+        dispatch($collection.set.searched(tempAll))
+        dispatch($collection.set.searching(true))
+      }
+
+      if (isExchange && ! current?.id) {
+        const [first] = tempCollections
+        router.replace(first.id, undefined, { scroll: false })
+      }
+
+      initWSConnection(blockchainCode.current, tempCollections)
+    }
+
+    dispatch($collection.set.loading(false))
+  }
+
+  useEffect(() => {
+    (async () => {
+      if (router.isReady, isExchange) {
+        let tempCollectionId = null
+        const temp = window.location.pathname.split('exchange')
+        if (temp.length > 1) {
+          tempCollectionId = temp[1].replace(/^\/|\/$/g, '') || null
+        }
+        
+        const currentBlockchainCode = blockchainCode.current
+        const realCollectionId = queryCollectionId ?? tempCollectionId
+
+        if ( ! realCollectionId && ! current?.id && collections.length) {
+          const [first] = collections
+          router.replace(first.id, undefined, { scroll: false })
+          return
+        }
+
+        if (realCollectionId) {
+          const currentCollection = await getCollection(realCollectionId)
+          dispatch($collection.set.current(currentCollection))
+        }
+
+        if ( ! collections.length) {
+          dispatch($collection.set.fetching(true))
+        }
+      }
+    })()
+  }, [router.isReady, isExchange, queryCollectionId])
+
+  const queryParams = (blockchainCode, page, sortType, searchQuery, customParams) => {
+    const [sortBy] = sortType.split(':')
+
+    let orderBy = sortBy.toLowerCase()
+    switch (orderBy) {
+      case 'volume':
+        orderBy = '1DayVolume'
+        break
+      case 'price':
+        orderBy = 'floorAskPrice'
+        break
+      case 'name':
+        orderBy = 'createdAt'
+        break
+    }
+
+    const defaultParams = {
+      blockchain: blockchainCode,
+      sortBy: orderBy,
+      limit: 10,
+    }
+
+    if (searchQuery != '') {
+      if (isContractAddress(searchQuery)) {
+        defaultParams.id = searchQuery
+      } else {
+        defaultParams.name = searchQuery
+      }
+    } else {
+      defaultParams.minFloorAskPrice = '0.000001'
+      defaultParams.maxFloorAskPrice = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null
+    }
+
+    let continuation = null
+    if (page != 'init' && searchQuery == '') {
+      continuation = page
+    }
+
+    return {
+      ...defaultParams,
+      ...customParams,
+      continuation,
+    }
+  }
+
+  const getCollection = async (address) => {
+    let collection = collections.find(item => item.address == address)
+    if ( ! collection) {
+      collection = searched.find(item => item.address == address)
+    }
+
+    if ( ! collection) {
+      const result = await $collection.api.all(queryParams(
+        blockchainCode.current,
+        null,
+        sort,
+        '',
+        { id: address, limit: 1 }
+      ))
+
+      if (result && result.hasOwnProperty('collections')) {
+        if (result.collections.length) {
+          const [current] = result.collections
+          current.blockchain = blockchainCode.current
+          current.currency = network(blockchainCode.current)?.currency
+          collection = template(current)
+        } else {
+          let collectionWasFound = false
+          for (const chain of blockchains) {
+            if ( ! collectionWasFound && chain.code != blockchainCode.current) {
+              const result = await $collection.api.all(queryParams(
+                chain.code,
+                null,
+                sort,
+                '',
+                { id: address, limit: 1 }
+              ))
+
+              if (result && result.hasOwnProperty('collections') && result.collections.length) {
+                blockchainCode.current = chain.code
+                dispatch($app.set.code(chain.code))
+
+                collectionWasFound = true
+
+                const [current] = result.collections
+                current.currency = network(chain.code)?.currency
+                current.blockchain = chain.code
+                collection = template(current)
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return collection ?? {}
+  }
+
+  useEffect(() => {
+    if (blockchain.code != blockchainCode.current) {
+      blockchainCode.current = blockchain.code
+      dispatch($collection.set.fetching(true))
+    }
+  }, [blockchain.code])
+
+  useEffect(() => {
+    if (sort != sortRef.current) {
+      sortRef.current = sort
+      dispatch($collection.set.fetching(true))
+    }
+  }, [sort])
+
+  useEffect(() => {
+    if (search != searchRef.current) {
+      searchRef.current = search
+      if (search != '') {
+        dispatch($collection.set.fetching(true))
+      } else {
+        dispatch($collection.set.searching(false))
+      }
+    }
+  }, [search])
+
+  useEffect(() => {
+    if (pages.current != pageRef.current) {
+      pageRef.current = pages.current
+      dispatch($collection.set.fetching(true))
+    }
+  }, [pages])
+
+  const initWSConnection = async (blockchain, resultCollections) => {
+    dispatch($app.set.socketConnected(false))
+    await Stream.connect(blockchain)
+    dispatch($app.set.socketConnected(true))
+
+    Stream.subscribe('collection.updated', resultCollections.map(c => c.id))
+    Stream.on('collection.updated', (data) => {
+      console.log('collection.updated', data)
+    })
+  }
+
+  return children
+}
+
+export default WrapperCollections
