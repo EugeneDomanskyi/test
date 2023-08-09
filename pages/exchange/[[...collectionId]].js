@@ -29,18 +29,24 @@ const GRID_GAP = 6
 
 const Exchange = () => {
   const router = useRouter()
-  const dispatch = useDispatch()
   const [collectionId] = router.query.collectionId || []
 
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
+
+  const dispatch = useDispatch()
   const socketConnected = useSelector(({$app}) => $app.socketConnected)
   const blockchain = useSelector($app.get.blockchain)
-  const loading = useSelector(({$exchange}) => $exchange.loading)
+  const exchangeLoading = useSelector(({$exchange}) => $exchange.loading)
+
+  const collections = useSelector(({$collection}) => $collection.all)
+  const searched = useSelector(({$collection}) => $collection.searched)
   const current = useSelector(({$collection}) => $collection.current)
-  const { collections, searched } = useSelector($collection.get.all)
+  const collectionLoading = useSelector(({$collection}) => $collection.loading)
+  const sort = useSelector(({$collection}) => $collection.sort)
+  const search = useSelector(({$collection}) => $collection.search)
+  const searching = useSelector(({$collection}) => $collection.searching)
   const pages = useSelector($collection.get.pages)
-  const { loading: pageLoading, page } = useSelector(({$collection}) => $collection)
 
   const [mobileTab, setMobileTab] = useState('markets')
   const [mobileTabTrade, setMobileTabTrade] = useState(false)
@@ -173,11 +179,6 @@ const Exchange = () => {
   }, [wallet, collectionId, blockchain.code])
 
   const handleMobileTabChange = (tab) => {
-    // if (tab === 'buy_sell') {
-    //   setMobileTabTrade(!mobileTabTrade)
-    //   return
-    // }
-
     setMobileTabTrade(false)
     setMobileTab(tab)
   }
@@ -186,16 +187,35 @@ const Exchange = () => {
     tradeForm.current.setForm({formType: 'market', amount: order.quantity, side: order.side})
   }, [])
 
-  const handlePageChange = (value) => {
-    dispatch($collection.set.page(value))
-    dispatch($collection.set.fetching(true))
-  }
+  const handleSort = useCallback((value) => {
+    dispatch($collection.set.sort(value))
+  }, [])
+
+  const handleSearch = useCallback((value) => {
+    dispatch($collection.set.search(value))
+  }, [])
+
+  const handlePage = useCallback((value) => {
+    dispatch($collection.set.pages({current: value ?? 1}))
+  }, [])
 
   return (
     <App.Flex gap={GRID_GAP} className={styles.container}>
       {!isMobile ? (
         <>
-          <Sidebar items={collections} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
+          <Sidebar
+            items={collections}
+            searched={searched}
+            current={current}
+            sort={sort}
+            search={search}
+            searching={searching}
+            pages={pages}
+            loading={collectionLoading}
+            onSort={handleSort}
+            onSearch={handleSearch}
+            onPage={handlePage}
+          />
 
           <App.Flex column flex={1} gap={GRID_GAP}>
             <CollectionInfo current={current} />
@@ -223,7 +243,19 @@ const Exchange = () => {
       ) : (
         <>
           {mobileTab == 'markets' ? (
-            <Sidebar items={collections} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
+            <Sidebar
+              items={collections}
+              searched={searched}
+              current={current}
+              sort={sort}
+              search={search}
+              searching={searching}
+              pages={pages}
+              loading={collectionLoading}
+              onSort={handleSort}
+              onSearch={handleSearch}
+              onPage={handlePage}
+            />
           ) : null}
 
           {mobileTab == 'charts' ? (
@@ -232,7 +264,19 @@ const Exchange = () => {
 
           {mobileTab == 'trades' ? (
             <App.Flex column gap={GRID_GAP} width="100%">
-              <SidebarMobile items={collections} searched={searched} current={current} pages={pages} page={page} loading={pageLoading} onPageChange={handlePageChange} />
+              <SidebarMobile
+                items={collections}
+                searched={searched}
+                current={current}
+                sort={sort}
+                search={search}
+                searching={searching}
+                pages={pages}
+                loading={collectionLoading}
+                onSort={handleSort}
+                onSearch={handleSearch}
+                onPage={handlePage}
+              />
 
               <App.Flex column flex={1} sx={{ position: 'relative' }}>
                 <App.Flex column gap={GRID_GAP} className={styles.tradesContent}>
@@ -258,11 +302,10 @@ const Exchange = () => {
           />
         </>
       )}
-      {
-        loading
-          ? <App.LoaderBlock size={100} color="#7204FF" fixed height="100%" />
-          : null
-      }
+
+      {exchangeLoading ? (
+        <App.LoaderBlock size={100} color="#7204FF" fixed height="100%" />
+      ) : null}
     </App.Flex>
   )
 }

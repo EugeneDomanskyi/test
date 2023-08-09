@@ -59,7 +59,6 @@ const WrapperTokens = ({ children }) => {
   const [isReady, setIsReady] = useState(false)
   const [isList, setIsList] = useState(false)
 
-  const mounted = useRef(false)
   const sortRef = useRef(sort)
   const searchRef = useRef(search)
   const pageRef = useRef(pages.current)
@@ -147,7 +146,6 @@ const WrapperTokens = ({ children }) => {
       }
     }
 
-    mounted.current = true
     dispatch($token.set.loading(false))
   }
 
@@ -190,6 +188,7 @@ const WrapperTokens = ({ children }) => {
           tempTokenId = temp[1].replace(/^\/|\/$/g, '') || null
         }
         
+        const currentBlockchainCode = blockchainCode.current
         const realTokenId = queryTokenId ?? tempTokenId
         if ( ! realTokenId && ! current?.id && tokens.length) {
           const [first] = tokens
@@ -269,7 +268,7 @@ const WrapperTokens = ({ children }) => {
   }
 
   useEffect(() => {
-    if (mounted.current && blockchain.code != blockchainCode.current) {
+    if (blockchain.code != blockchainCode.current) {
       blockchainCode.current = blockchain.code
       apollo = getApolloClient(blockchain.code)
       dispatch($token.set.fetching(true))
@@ -277,14 +276,14 @@ const WrapperTokens = ({ children }) => {
   }, [blockchain.code])
 
   useEffect(() => {
-    if (mounted.current && sort != sortRef.current) {
+    if (sort != sortRef.current) {
       sortRef.current = sort
       dispatch($token.set.fetching(true))
     }
-  }, [mounted.current, sort])
+  }, [sort])
 
   useEffect(() => {
-    if (mounted.current && search != searchRef.current) {
+    if (search != searchRef.current) {
       searchRef.current = search
       if (search != '') {
         dispatch($token.set.fetching(true))
@@ -292,14 +291,14 @@ const WrapperTokens = ({ children }) => {
         dispatch($token.set.searching(false))
       }
     }
-  }, [mounted.current, search])
+  }, [search])
 
   useEffect(() => {
-    if (mounted.current && pages.current != pageRef.current) {
+    if (pages.current != pageRef.current) {
       pageRef.current = pages.current
       dispatch($token.set.fetching(true))
     }
-  }, [mounted.current, pages])
+  }, [pages])
 
   return children
 }

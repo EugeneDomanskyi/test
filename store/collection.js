@@ -59,7 +59,9 @@ export const collectionSlice = createSlice({
     searched: [],
     current: {},
     loading: true,
-    page: 'init',
+    sort: 'VOLUME:DESC',
+    search: '',
+    searching: false,
     pages: {
       history: ['init'],
       current: 'init',
@@ -96,15 +98,26 @@ export const collectionSlice = createSlice({
       }
     },
 
-    page: (state, { payload }) => {
-      state.page = payload
+    sort: (state, { payload }) => {
+      state.sort = payload
+    },
+
+    search: (state, { payload }) => {
+      state.search = payload
+    },
+
+    searching: (state, { payload }) => {
+      state.searching = payload
     },
 
     pages: (state, { payload }) => {
-      const current = state.pages.history.find(item => item == state.page) ?? 'init'
-      const currentIndex = state.pages.history.indexOf(state.page)
+      const current = payload.current ?? state.pages.history.find(item => item == state.pages.current) ?? 'init'
+      const currentIndex = state.pages.history.indexOf(current)
       const history = currentIndex > 0 ? state.pages.history.slice(0, currentIndex + 1) : ['init']
-      history.push(payload)
+
+      if (payload.next) {
+        history.push(payload.next)
+      }
 
       state.pages = {
         current,
@@ -113,7 +126,6 @@ export const collectionSlice = createSlice({
     },
 
     pagesClear: (state) => {
-      state.page = 'init'
       state.pages = {
         current: 'init',
         history: ['init'],
@@ -123,31 +135,6 @@ export const collectionSlice = createSlice({
 })
 
 const getters = {
-  all: createSelector([
-    (state) => state.$collection.all,
-    (state) => state.$collection.searched,
-    (state) => state.$collection.loading,
-    (state) => state.$exchange.sortType,
-  ], (all, searched, loading, sortType) => {
-    return {
-      collections: sortCollections(all, sortType),
-      searched: sortCollections(searched, sortType),
-      isLoading: loading,
-    }
-  }),
-  
-  collection: (key, value) => createSelector([
-    (state) => state.$collection.all,
-    (state) => state.$collection.searched,
-  ], (all, searched) => {
-    let collection = all.find(c => c[key] === value)
-    if (!collection) {
-      collection = searched.find(c => c[key] === value)
-    }
-
-    return collection
-  }),
-
   pages: createSelector([
     (state) => state.$collection.pages.history,
     (state) => state.$collection.pages.current,
@@ -155,7 +142,7 @@ const getters = {
     const currentIndex = history.indexOf(current)
     const prev = history.find((_, index) => (currentIndex > 0) ? index === (currentIndex - 1) : null) ?? null
     const next = history.find((_, index) => (currentIndex >= 0 && currentIndex < history.length - 1) ? index === (currentIndex + 1) : null) ?? null
-    return { prev, next }
+    return { prev, current, next }
   }),
 }
 
