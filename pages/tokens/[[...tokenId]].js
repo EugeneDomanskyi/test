@@ -3,14 +3,12 @@ import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import dynamic from 'next/dynamic'
 
-import $exchange from '@/store/exchange'
 import $app from '@/store/app'
 import $token from '@/store/token'
-import $orders from '@/store/orders'
-import Stream from '@/libs/stream.lib'
 import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
+import useOrders from '@/myhooks/useOrders'
 
 import App from '@/components/App'
 import CollectionList from '@/components/Exchange/CollectionList'
@@ -35,7 +33,8 @@ const Tokens = () => {
 
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
-  const socketConnected = useSelector(({$app}) => $app.socketConnected)
+  const { updateOrders } = useOrders({tokenAddress: tokenId, type: 'tokens'})
+  // const socketConnected = useSelector(({$app}) => $app.socketConnected)
   const blockchain = useSelector($app.get.blockchain)
   const loading = useSelector(({$exchange}) => $exchange.loading)
   const current = useSelector(({$token}) => $token.current)
@@ -87,17 +86,8 @@ const Tokens = () => {
   }, [tokenId, blockchain.code])
 
   useEffect(() => {
-    if (blockchain.code && wallet) {
-      $orders.api.get.tokens({
-        blockchain: blockchain.code,
-        address: wallet,
-        sortBy: 'createDateTime',
-        statuses: '[1,2]',
-      }).then(res => {
-        if (res) {
-          dispatch($orders.set.tokens(res))
-        }
-      })
+    if (wallet) {
+      updateOrders()
     }
   }, [blockchain.code, wallet])
   
@@ -151,25 +141,8 @@ const Tokens = () => {
 
   const handleOrdersUpdated = useCallback(() => {
     if (wallet) {
-      $exchange.api.get.orders({
-        blockchain: blockchain.code,
-        maker: wallet,
-        includeCriteriaMetadata: true,
-      }).then(res => {
-        if (res) {
-          dispatch($exchange.set.orders(res))
-        }
-      })
+      updateOrders()
     }
-
-    // $exchange.api.get.orderBook({
-    //   collection: collectionId,
-    //   blockchain: blockchain.code,
-    // }).then(res => {
-    //   if (res) {
-    //     dispatch($exchange.set.orderBook(res))
-    //   }
-    // })
   }, [wallet, tokenId, blockchain.code])
 
   const handleMobileTabChange = (tab) => {
@@ -200,14 +173,19 @@ const Tokens = () => {
                 <Chart />
 
                 <App.Flex gap={GRID_GAP}>
-                  <OrderBook onClickOrder={handleClickOrder} />
+                  <OrderBook
+                    type="tokens"
+                    onClickOrder={handleClickOrder} />
                   <Sales onClickSale={handleClickOrder} />
                 </App.Flex>
               </App.Flex>
 
               <App.Flex column gap={GRID_GAP}>
                 <App.Flex>
-                  <TradeForm ref={tradeForm} current={current} />
+                  <TradeForm
+                    ref={tradeForm}
+                    type="tokens"
+                    current={current} />
                 </App.Flex>
 
                 <Orders
@@ -235,7 +213,9 @@ const Tokens = () => {
 
               <App.Flex column flex={1} sx={{ position: 'relative' }}>
                 <App.Flex column gap={GRID_GAP} className={styles.tradesContent}>
-                  <OrderBook onClickOrder={handleClickOrder} />
+                  <OrderBook
+                    type="tokens"
+                    onClickOrder={handleClickOrder} />
                   <Sales onClickSale={handleClickOrder} />
                 </App.Flex>
               </App.Flex>
@@ -251,7 +231,10 @@ const Tokens = () => {
           ) : null}
 
           {mobileTab == 'buy_sell' ? (
-            <TradeForm ref={tradeForm} />
+            <TradeForm
+              ref={tradeForm}
+              type="tokens"
+              current={current} />
           ) : null}
 
           <MobileTabsBar

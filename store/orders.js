@@ -7,6 +7,16 @@ export const ordersSlice = createSlice({
   initialState: {
     nfts: [],
     tokens: [],
+    orderBooks: {
+      nfts: {
+        buy: [],
+        sell: [],
+      },
+      tokens: {
+        buy: [],
+        sell: [],
+      },
+    }
   },
 
   reducers: {
@@ -15,6 +25,9 @@ export const ordersSlice = createSlice({
     },
     nfts: (state, {payload}) => {
       state.nfts = payload
+    },
+    orderBook: (state, {payload}) => {
+      state.orderBooks[payload.type] = payload.data
     }
   },
 })
@@ -33,6 +46,14 @@ const getters = {
     return orders.map(order => {
       return new Order.TOKEN(order)
     })
+  }),
+  orderBook: (type) => createSelector([
+    state => state.$orders.orderBooks[type]
+  ], (orderBook) => {
+    return {
+      buy: orderBook.buy.slice(0, 10),
+      sell: orderBook.sell.slice(0, 10),
+    }
   })
 }
 
@@ -52,6 +73,15 @@ const api = {
       })
     },
   }
+}
+
+api.get.nfts.orderBook = (params) => {
+  return Promise.all([
+    request('orders/depth/v1', 'GET', {side: 'buy', ...params}),
+    request('orders/depth/v1', 'GET', {side: 'sell', ...params}),
+  ]).then(([buy, sell]) => {
+    return {buy: buy ? buy.depth : [], sell: sell ? sell.depth : []}
+  })
 }
 
 export default {

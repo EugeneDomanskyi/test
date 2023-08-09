@@ -1,5 +1,5 @@
 import numeral from 'numeral'
-import { formatUnits, encodeFunctionData } from 'viem'
+import { formatUnits, encodeFunctionData, parseUnits } from 'viem'
 import { getClient } from '@reservoir0x/reservoir-sdk'
 import { getWalletClient, waitForTransaction, sendTransaction } from '@wagmi/core'
 import { LimitOrderProtocolFacade } from '@1inch/limit-order-protocol-utils'
@@ -8,8 +8,15 @@ import { toast } from 'react-toastify'
 import { CHAINS, INCH_CONTRACTS } from '@/config'
 
 class Order {
-  showSuccessMessage = () => {
-    toast.success('Order cancelled successfully')
+
+  static showSuccessMessage = (message) => {
+    toast.success(message)
+  }
+
+  static getWalletData = async () => {
+    const walletClient = await getWalletClient()
+    const chainId = await walletClient.getChainId()
+    return { walletClient, chainId }
   }
 }
 
@@ -35,26 +42,66 @@ class NFT extends Order {
     return numeral(this.price).divide(this.quantity).value()
   }
 
+  static place = ({address, price, amount}) => {
+    return new Promise(async (resolve, reject) => {
+      const { walletClient, chainId } = await Order.getWalletData()
+      const blockchain = CHAINS.find(chain => chain.id === chainId)
+      const bids = [{
+        weiPrice: parseUnits(`${price}`, 18).toString(),
+        collection: address,
+        quantity: amount,
+        royaltyBps: 0,
+        currency: blockchain.wrapped.contract,
+      }]
+
+      let completed = false
+
+      const onComplete = () => {
+        if (!completed) {
+          completed = true
+          resolve()
+          Order.showSuccessMessage('Order placed successfully')
+        }
+      }
+
+      getClient()?.actions.placeBid({
+        bids: bids,
+        wallet: walletClient,
+        chainId,
+        onProgress: NFT.onProgress(onComplete)
+      }).catch(reject)
+    })
+  }
+
+  static onProgress = (resolver) => (steps) => {
+    const isAllStepsComplete = steps.flatMap(step => step.items).every(step => step.status === 'complete')
+    if (isAllStepsComplete) {
+      resolver()
+    }
+  }
+
   cancel = () => {
     return new Promise(async (resolve, reject) => {
-      const walletClient = await getWalletClient()
-      const chainId = await walletClient.getChainId()
+      const { walletClient, chainId } = await Order.getWalletData()
+
+      let completed = false
+
+      const onComplete = () => {
+        if (!completed) {
+          completed = true
+          resolve()
+          Order.showSuccessMessage('Order cancel successfully')
+        }
+      }
+      
       getClient()?.actions.cancelOrder({
         ids: [this.id],
         wallet: walletClient,
         chainId,
         options: { orderKind: 'seaport-v1.5'},
-        onProgress: this.onProgress(resolve),
+        onProgress: NFT.onProgress(onComplete),
       }).catch(reject)
     })
-  }
-
-  onProgress = (resolver) => (steps) => {
-    const isAllStepsComplete = steps.flatMap(step => step.items).every(step => step.status === 'complete')
-    if (isAllStepsComplete) {
-      resolver()
-      this.showSuccessMessage()
-    }
   }
 }
 
@@ -82,8 +129,7 @@ class TOKEN extends Order {
 
   cancel = () => {
     return new Promise(async (resolve, reject) => {
-      const walletClient = await getWalletClient()
-      const chainId = await walletClient.getChainId()
+      const { chainId } = await this.getWalletData()
       const contractEncodeABI = (abi, address, methodName, methodParams) => {
         return encodeFunctionData({abi: abi, functionName: methodName, args: methodParams})
       }
@@ -96,7 +142,7 @@ class TOKEN extends Order {
       })
       const txResult = await waitForTransaction(res)
       resolve(txResult)
-      this.showSuccessMessage()
+      this.showSuccessMessage('Order cancelled successfully')
     })
   }
 }

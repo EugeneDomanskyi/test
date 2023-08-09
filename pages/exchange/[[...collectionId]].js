@@ -88,7 +88,7 @@ const Exchange = () => {
 
   useEffect(() => {
     if (blockchain.code && wallet) {
-      $exchange.api.get.orders({
+      $orders.api.get.nfts({
         blockchain: blockchain.code,
         maker: wallet,
         includeCriteriaMetadata: true,
@@ -98,7 +98,7 @@ const Exchange = () => {
         }
       })
     } else if (!wallet) {
-      dispatch($exchange.set.orders([]))
+      dispatch($orders.set.nfts([]))
     }
   }, [blockchain.code, wallet])
   
@@ -135,7 +135,7 @@ const Exchange = () => {
         sortDirection: 'desc',
         limit: 800,
       }),
-      $exchange.api.get.orderBook({
+      $orders.api.get.nfts.orderBook({
         collection: collectionId,
         blockchain: blockchain,
       })
@@ -144,7 +144,7 @@ const Exchange = () => {
         dispatch($exchange.set.sales(sales))
       }
       if (orderBook) {
-        dispatch($exchange.set.orderBook(orderBook))
+        dispatch($orders.set.orderBook({type: 'nfts', data: orderBook}))
       }
       dispatch($exchange.set.loading(false))
     })
@@ -152,7 +152,7 @@ const Exchange = () => {
 
   const handleOrdersUpdated = useCallback(() => {
     if (wallet) {
-      $exchange.api.get.orders({
+      $orders.api.get.nfts({
         blockchain: blockchain.code,
         maker: wallet,
         includeCriteriaMetadata: true,
@@ -163,12 +163,12 @@ const Exchange = () => {
       })
     }
 
-    $exchange.api.get.orderBook({
+    $orders.api.get.nfts.orderBook({
       collection: collectionId,
       blockchain: blockchain.code,
     }).then(res => {
       if (res) {
-        dispatch($exchange.set.orderBook(res))
+        dispatch($orders.set.orderBook({type: 'nfts', data: res}))
       }
     })
   }, [wallet, collectionId, blockchain.code])
@@ -206,14 +206,19 @@ const Exchange = () => {
                 <Chart />
 
                 <App.Flex gap={GRID_GAP}>
-                  <OrderBook onClickOrder={handleClickOrder} />
+                  <OrderBook
+                    type="nfts"
+                    onClickOrder={handleClickOrder} />
                   <Sales onClickSale={handleClickOrder} />
                 </App.Flex>
               </App.Flex>
 
               <App.Flex column gap={GRID_GAP}>
                 <App.Flex>
-                  <TradeForm ref={tradeForm} current={current} />
+                  <TradeForm
+                    ref={tradeForm}
+                    type="nfts"
+                    current={current} />
                 </App.Flex>
 
                 <Orders
@@ -241,7 +246,9 @@ const Exchange = () => {
 
               <App.Flex column flex={1} sx={{ position: 'relative' }}>
                 <App.Flex column gap={GRID_GAP} className={styles.tradesContent}>
-                  <OrderBook onClickOrder={handleClickOrder} />
+                  <OrderBook
+                    type="nfts"
+                    onClickOrder={handleClickOrder} />
                   <Sales onClickSale={handleClickOrder} />
                 </App.Flex>
               </App.Flex>
@@ -253,7 +260,10 @@ const Exchange = () => {
           ) : null}
 
           {mobileTab == 'buy_sell' ? (
-            <TradeForm ref={tradeForm} />
+            <TradeForm
+              ref={tradeForm}
+              type="nfts"
+              current={current} />
           ) : null}
 
           <MobileTabsBar

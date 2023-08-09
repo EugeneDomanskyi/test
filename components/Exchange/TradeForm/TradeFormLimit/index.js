@@ -19,7 +19,7 @@ import { trackEvent } from '@/libs/analytics.lib'
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
 
-const TradeFormLimit = ({current, initialForm, currentTab, currentOption, userBalances}) => {
+const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, userBalances}) => {
   const dispatch = useDispatch()
   const { wallet, connect, changeNetwork, walletClient } = useWalletConnect()
   const { getNftUser } = useTrade()
@@ -76,7 +76,6 @@ const TradeFormLimit = ({current, initialForm, currentTab, currentOption, userBa
     if (!address) {
       return
     }
-    console.log('handleSubmit')
     const network = await changeNetwork(blockchain.code)
     if (!network) {
       return
@@ -85,35 +84,35 @@ const TradeFormLimit = ({current, initialForm, currentTab, currentOption, userBa
     loadingRef.current = true
     switch (currentTab) {
       case 'buy':
-        const limitOrderBuilder = new LimitOrderBuilder(contractAddresses[blockchain.id], blockchain.id, walletClient)
-        const limitOrder = limitOrderBuilder.buildLimitOrder({
-          makerAssetAddress: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
-          takerAssetAddress: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-          makerAddress: wallet,
-          makingAmount: '100',
-          takingAmount: '200',
-        })
-        const limitOrderTypedData = limitOrderBuilder.buildLimitOrderTypedData(limitOrder)
-        const limitOrderHash = hashTypedData(limitOrderTypedData)
-        const signature = await walletClient.signTypedData(limitOrderTypedData)
+        // const limitOrderBuilder = new LimitOrderBuilder(contractAddresses[blockchain.id], blockchain.id, walletClient)
+        // const limitOrder = limitOrderBuilder.buildLimitOrder({
+        //   makerAssetAddress: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+        //   takerAssetAddress: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+        //   makerAddress: wallet,
+        //   makingAmount: '100',
+        //   takingAmount: '200',
+        // })
+        // const limitOrderTypedData = limitOrderBuilder.buildLimitOrderTypedData(limitOrder)
+        // const limitOrderHash = hashTypedData(limitOrderTypedData)
+        // const signature = await walletClient.signTypedData(limitOrderTypedData)
 
-        const post = {
-          orderHash: limitOrderHash,
-          signature: signature,
-          data: limitOrder,
-          chainId: blockchain.id,
-          orderType: 'active',
-        }
-        fetch(
-          `https://limit-orders.1inch.io/v3.0/${blockchain.id}/limit-order`,
-          {
-            method: 'POST',
-            headers: {'content-type': 'application/json', 'accept': 'application/json, text/plain, */*'},
-            body: JSON.stringify(post),
-          }
-        )
+        // const post = {
+        //   orderHash: limitOrderHash,
+        //   signature: signature,
+        //   data: limitOrder,
+        //   chainId: blockchain.id,
+        //   orderType: 'active',
+        // }
+        // fetch(
+        //   `https://limit-orders.1inch.io/v3.0/${blockchain.id}/limit-order`,
+        //   {
+        //     method: 'POST',
+        //     headers: {'content-type': 'application/json', 'accept': 'application/json, text/plain, */*'},
+        //     body: JSON.stringify(post),
+        //   }
+        // )
         
-        return
+        // return
         dispatch($modal.set.show({
           show: true,
           modal: 'Exchange/BuyModal',
@@ -124,8 +123,9 @@ const TradeFormLimit = ({current, initialForm, currentTab, currentOption, userBa
             data: {
               ...form,
               type: 'place',
-              collectionId: current.address,
               blockchain: blockchain,
+              current: current,
+              tokenType: type,
             },
           }
         }))

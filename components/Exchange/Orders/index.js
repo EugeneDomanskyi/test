@@ -43,7 +43,7 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
     }
     trackEvent('Cancel Order Submit', eventPost)
     order.cancel().then(() => {
-      trackEvent('Create Order Success', eventPost)
+      trackEvent('Cancel Order Success', eventPost)
       onOrderCancelled()
     }).catch(error => {
       console.log('order cancel error', error)

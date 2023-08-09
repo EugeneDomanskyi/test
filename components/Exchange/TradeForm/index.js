@@ -19,12 +19,11 @@ const TAB_OPTIONS = [
   {key: 'sell', title: 'SELL', color: 'rgb(206, 22, 93)'},
 ]
 
-const TradeForm = forwardRef(({current}, ref) => {
+const TradeForm = forwardRef(({current, type}, ref) => {
   const { wallet, getBalance } = useWalletConnect()
   const { getNftBalanceUser } = useTrade()
   
   const orderBook = useSelector($exchange.get.orderBook)
-  // const currentCollection = useSelector(({$collection}) => $collection.current)
   const loading = useSelector(({$exchange}) => $exchange.loadingCollectionData)
   const blockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
 
@@ -126,6 +125,7 @@ const TradeForm = forwardRef(({current}, ref) => {
               return (
                 <TradeFormMarket
                   current={current}
+                  type={type}
                   initialForm={marketForm}
                   userBalances={userBalances}
                   currentTab={currentTab}
@@ -135,6 +135,7 @@ const TradeForm = forwardRef(({current}, ref) => {
                 return (
                   <TradeFormLimit
                     current={current}
+                    type={type}
                     currentTab={currentTab}
                     currentOption={currentOption}
                     userBalances={userBalances}
@@ -150,8 +151,7 @@ const TradeForm = forwardRef(({current}, ref) => {
 })
 
 const isEqual = (prev, next) => {
-  return prev.current === next.current
-  return true
+  return JSON.stringify(prev.current) === JSON.stringify(next.current)
 }
 
 export default memo(TradeForm, isEqual)
