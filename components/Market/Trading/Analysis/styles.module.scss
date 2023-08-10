@@ -1,0 +1,21 @@
+.container {
+  flex-wrap: wrap;
+
+  .analysisBlock {
+    display: flex;
+    border-radius: 12px;
+    border: 1px solid #1D1937;
+    padding-bottom: 16px;
+    overflow: hidden;
+    
+    .image {
+      width: 178px;
+      height: 152px;
+      background: #9B4EFC;
+      border-radius: 8px;
+    }
+  }
+}
+
+
+

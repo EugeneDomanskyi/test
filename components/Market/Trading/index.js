@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux'
 
 import TradeForm from '@/components/Exchange/TradeForm'
 import OrderBook from '@/components/Exchange/OrderBook'
+import Trending from '@/components/Market/Trading/Trending'
+import Analysis from '@/components/Market/Trading/Analysis'
 
 import App from '@/components/App'
 
@@ -14,14 +16,13 @@ export default function Trading() {
   }, [])
 
   return (
-    <App.Flex column sx={{paddingTop: 64}} gap={16}>
-      <App.Flex justify="center">
+    <App.Flex column justify="center" sx={{paddingTop: 64}} gap={96}>
+      <App.Flex column gap={16}>
         <TradeForm ref={tradeForm} fullWidth />
-      </App.Flex>
-
-      <App.Flex justify="center">
         <OrderBook onClickOrder={handleClickOrder} />
       </App.Flex>
+      <Trending />
+      <Analysis />
     </App.Flex>
   )
 }
