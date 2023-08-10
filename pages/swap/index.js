@@ -10,7 +10,7 @@ const HomeUsing = dynamic(import('@/components/Home/HomeUsing'), { ssr: false })
 const HomeGuide = dynamic(import('@/components/Home/HomeGuide'), { ssr: false })
 
 export default function Home() {
-  const { loading } = useSelector(({ $collection }) => $collection)
+  const loading = useSelector(({ $collection }) => $collection.loading)
 
   return (
     <App.Flex column sx={{ paddingBottom: 48, overflow: 'hidden' }}>

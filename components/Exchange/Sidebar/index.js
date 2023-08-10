@@ -10,9 +10,7 @@ import SidebarPagination from '@/components/Exchange/Sidebar/SidebarPagination'
 import styles from './styles.module.scss'
 
 const Sidebar = ({ items, searched, current, sort, search, searching, pages, loading, onSort, onSearch, onPage, onClose, className }) => {
-  const itemList = () => {
-    return (searching) ? searched : items
-  }
+  const list = (searching) ? searched : items
 
   return (
     <App.Flex column className={cn(styles.container, styles[className])}>
@@ -23,7 +21,7 @@ const Sidebar = ({ items, searched, current, sort, search, searching, pages, loa
 
       <div className={styles.cardBox}>
         <div className={styles.cardBoxContent}>
-          {itemList().map((item) => {
+          {list.map((item) => {
             return (
               <SidebarItem
                 key={item.address}
