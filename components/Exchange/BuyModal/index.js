@@ -50,9 +50,16 @@ const TradeBuyModal = ({data}) => {
           address: current.address,
           price: data.total*data.amount,
           amount: data.amount,
+          type: 'buy',
         }).then(onSuccessPlaced)
         break
       case 'tokens':
+        Order.TOKEN.place({
+          address: current.address,
+          price: data.total*data.amount,
+          amount: data.amount,
+          type: 'buy',
+        }).then(onSuccessPlaced)
         break
     }
     dispatch($modal.set.update({
@@ -64,7 +71,6 @@ const TradeBuyModal = ({data}) => {
   }
 
   const onSuccessPlaced = () => {
-    console.log('order placed')
     dispatch($modal.set.update({
       header: {
         title: 'Success',

@@ -72,6 +72,11 @@ const api = {
         return [...bids.orders, ...asks.orders]
       })
     },
+  },
+  create: {
+    token: (params) => {
+      return request(`limit-order`, 'POST', {api: 'inch', ...params})
+    }
   }
 }
 

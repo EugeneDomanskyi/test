@@ -1,11 +1,12 @@
 import numeral from 'numeral'
-import { formatUnits, encodeFunctionData, parseUnits } from 'viem'
+import { formatUnits, encodeFunctionData, parseUnits, hashTypedData } from 'viem'
 import { getClient } from '@reservoir0x/reservoir-sdk'
 import { getWalletClient, waitForTransaction, sendTransaction } from '@wagmi/core'
-import { LimitOrderProtocolFacade } from '@1inch/limit-order-protocol-utils'
+import { LimitOrderProtocolFacade, LimitOrderBuilder, Web3ProviderConnector } from '@1inch/limit-order-protocol-utils'
 import { toast } from 'react-toastify'
 
 import { CHAINS, INCH_CONTRACTS } from '@/config'
+import $orders from '@/store/orders'
 
 class Order {
 
@@ -42,17 +43,10 @@ class NFT extends Order {
     return numeral(this.price).divide(this.quantity).value()
   }
 
-  static place = ({address, price, amount}) => {
+  static place = ({address, price, amount, nfts, type = 'buy'}) => {
     return new Promise(async (resolve, reject) => {
       const { walletClient, chainId } = await Order.getWalletData()
       const blockchain = CHAINS.find(chain => chain.id === chainId)
-      const bids = [{
-        weiPrice: parseUnits(`${price}`, 18).toString(),
-        collection: address,
-        quantity: amount,
-        royaltyBps: 0,
-        currency: blockchain.wrapped.contract,
-      }]
 
       let completed = false
 
@@ -64,11 +58,37 @@ class NFT extends Order {
         }
       }
 
-      getClient()?.actions.placeBid({
-        bids: bids,
+      if (type === 'buy') {
+        const bids = [{
+          weiPrice: parseUnits(`${price}`, 18).toString(),
+          collection: address,
+          quantity: amount,
+          royaltyBps: 0,
+          currency: blockchain.wrapped.contract,
+        }]
+
+        getClient()?.actions.placeBid({
+          bids: bids,
+          wallet: walletClient,
+          chainId,
+          onProgress: NFT.onProgress(onComplete)
+        }).catch(reject)
+        return
+      }
+
+      const listing = nfts.map((token) => ({
+        token: `${address}:${token.id}`,
+        weiPrice: parseUnits(`${price}`, 18).toString(),
+        quantity: token.amount,
+        royaltyBps: 0,
+        currency: blockchain.wrapped.contract,
+      }))
+
+      getClient()?.actions.listToken({
+        listings: listing,
         wallet: walletClient,
         chainId,
-        onProgress: NFT.onProgress(onComplete)
+        onProgress: NFT.onProgress(onComplete),
       }).catch(reject)
     })
   }
@@ -127,6 +147,49 @@ class TOKEN extends Order {
     return numeral(this.price).divide(this.quantity).format('0.0[000]')
   }
 
+  static place = ({address, price, amount, type = 'buy'}) => {
+    return new Promise(async (resolve, reject) => {
+      
+      const { walletClient, chainId } = await Order.getWalletData()
+      const limitOrderBuilder = new LimitOrderBuilder(INCH_CONTRACTS[chainId], chainId, walletClient)
+      const network = CHAINS.find(chain => chain.id === chainId)
+
+      let sellAsset = network.usdtContract
+      let buyAsset = address
+      let sellAmount = parseUnits(`${price}`, 6).toString()
+      let buyAmount = parseUnits(`${amount}`, 18).toString()
+      if (type === 'sell') {
+        console.log(amount, price)
+        sellAsset = address
+        buyAsset = network.usdtContract
+        sellAmount = parseUnits(`${amount}`, 18).toString()
+        buyAmount = parseUnits(`${price}`, 6).toString()
+      }
+      
+      const limitOrder = limitOrderBuilder.buildLimitOrder({
+        makerAssetAddress: sellAsset,
+        takerAssetAddress: buyAsset,
+        makerAddress: walletClient.account.address,
+        makingAmount: sellAmount,
+        takingAmount: buyAmount,
+      })
+
+      const limitOrderTypedData = limitOrderBuilder.buildLimitOrderTypedData(limitOrder)
+      const limitOrderHash = hashTypedData(limitOrderTypedData)
+      const signature = await walletClient.signTypedData(limitOrderTypedData)
+
+      const post = {
+        orderHash: limitOrderHash,
+        signature: signature,
+        data: limitOrder,
+        chainId: chainId,
+        orderType: 'active',
+        blockchain: network.code,
+      }
+      $orders.api.create.token(post).then(resolve).catch(reject)
+    })
+  }
+
   cancel = () => {
     return new Promise(async (resolve, reject) => {
       const { chainId } = await this.getWalletData()
@@ -142,7 +205,7 @@ class TOKEN extends Order {
       })
       const txResult = await waitForTransaction(res)
       resolve(txResult)
-      this.showSuccessMessage('Order cancelled successfully')
+      Order.showSuccessMessage('Order cancelled successfully')
     })
   }
 }

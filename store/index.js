@@ -48,6 +48,7 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
     method,
     headers: {
       'Accept': 'application/json',
+      'content-type': 'application/json',
     },
   }
 
