@@ -11,7 +11,7 @@ const useTrade = () => {
   const { getPrice, network, usdt, walletClient } = useWalletConnect()
   const blockchain = useSelector($app.get.blockchain)
 
-  const chainId = network(blockchain.code)?.chainId
+  const chainId = network(blockchain.code)?.id
 
   const getNftPricesNative = async (collection) => {
     let result = []
@@ -188,11 +188,11 @@ const useTrade = () => {
     let tempBids = bids
       .reduce((acc, bid) => [...acc, ...new Array(bid.quantity).fill(bid.price)], [])
       .slice(0, amount)
-
+    
     if (amount > tempBids.length) {
       tempBids = [
         ...tempBids,
-        ...Array.from({ length: (amount - tempBids.length) }, () => tempBids[tempBids.length - 1])
+        ...Array.from({ length: (amount - tempBids.length) }, () => tempBids[tempBids.length - 1] || 0)
       ]
     }
     return tempBids
