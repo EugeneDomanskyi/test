@@ -16,6 +16,7 @@ export const template = (item) => {
     currency: item.currency,
     volume: item.volume['1day'],
     tvl: item.volume['allTime'],
+    marketCap: item.tokenCount * (item.floorAsk?.price?.amount?.native ?? 0),
     description: item.description,
     tokenCount: item.tokenCount,
     onSaleCount: item.onSaleCount,
@@ -89,6 +90,10 @@ export const collectionSlice = createSlice({
       state.current = payload
     },
 
+    update: (state, { payload }) => {
+      state[payload.key] = payload.value
+    },
+
     add: (state, { payload }) => {
       if ( ! state.all.find(item => item.address == payload.address)) {
         state.all = [
@@ -142,6 +147,7 @@ const getters = {
     const currentIndex = history.indexOf(current)
     const prev = history.find((_, index) => (currentIndex > 0) ? index === (currentIndex - 1) : null) ?? null
     const next = history.find((_, index) => (currentIndex >= 0 && currentIndex < history.length - 1) ? index === (currentIndex + 1) : null) ?? null
+
     return { prev, current, next }
   }),
 }

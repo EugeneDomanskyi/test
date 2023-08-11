@@ -22,6 +22,7 @@ const WrapperCollections = ({ children }) => {
   const collections = useSelector(({ $collection }) => $collection.all)
   const searched = useSelector(({ $collection }) => $collection.searched)
   const current = useSelector(({ $collection }) => $collection.current)
+  const searching = useSelector(({ $collection }) => $collection.searching)
   const fetching = useSelector(({ $collection }) => $collection.fetching)
   const sort = useSelector(({ $collection }) => $collection.sort)
   const search = useSelector(({ $collection }) => $collection.search)
@@ -33,7 +34,7 @@ const WrapperCollections = ({ children }) => {
   const blockchainCode = useRef(blockchain.code)
 
   useEffect(() => {
-    if (router.isReady && fetching) {
+    if (router.isReady && (fetching || ! isExchange)) {
       getCollectionList()
       dispatch($collection.set.fetching(false))
     }
@@ -83,14 +84,13 @@ const WrapperCollections = ({ children }) => {
 
   useEffect(() => {
     (async () => {
-      if (router.isReady, isExchange) {
+      if (router.isReady && isExchange) {
         let tempCollectionId = null
         const temp = window.location.pathname.split('exchange')
         if (temp.length > 1) {
           tempCollectionId = temp[1].replace(/^\/|\/$/g, '') || null
         }
         
-        const currentBlockchainCode = blockchainCode.current
         const realCollectionId = queryCollectionId ?? tempCollectionId
 
         if ( ! realCollectionId && ! current?.id && collections.length) {
@@ -126,6 +126,9 @@ const WrapperCollections = ({ children }) => {
         orderBy = 'createdAt'
         break
     }
+
+    // Need to make Server Side Sort
+    orderBy = '1DayVolume'
 
     const defaultParams = {
       blockchain: blockchainCode,
@@ -219,9 +222,30 @@ const WrapperCollections = ({ children }) => {
   useEffect(() => {
     if (sort != sortRef.current) {
       sortRef.current = sort
-      dispatch($collection.set.fetching(true))
+      //dispatch($collection.set.fetching(true))
+
+      dispatch($collection.set.update({value: sorting(collections, sort), key: 'all'}))
+      if (searching) {
+        dispatch($collection.set.update({value: sorting(searched, sort), key: 'searched'}))
+      }
     }
   }, [sort])
+
+  const sorting = (items, order) => {
+    const sortedItems = [...items]
+    sortedItems.sort((a, b) => {
+      const [orderBy, orderDirection] = order.toLowerCase().split(':')
+      if (orderBy == 'name') {
+        const aa = a[orderBy].toUpperCase()
+        const bb = b[orderBy].toUpperCase()
+        return orderDirection == 'asc' ? aa.localeCompare(bb) : bb.localeCompare(aa)
+      } else {
+        return orderDirection == 'asc' ? a[orderBy] - b[orderBy] : b[orderBy] - a[orderBy]
+      }
+    })
+
+    return sortedItems
+  }
 
   useEffect(() => {
     if (search != searchRef.current) {
@@ -246,10 +270,10 @@ const WrapperCollections = ({ children }) => {
     await Stream.connect(blockchain)
     dispatch($app.set.socketConnected(true))
 
-    Stream.subscribe('collection.updated', resultCollections.map(c => c.id))
+    /* Stream.subscribe('collection.updated', resultCollections.map(c => c.id))
     Stream.on('collection.updated', (data) => {
       console.log('collection.updated', data)
-    })
+    }) */
   }
 
   return children

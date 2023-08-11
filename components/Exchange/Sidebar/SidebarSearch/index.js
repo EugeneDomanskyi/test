@@ -1,13 +1,9 @@
-import { memo, useEffect, useRef, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useRouter } from 'next/router'
+import { memo, useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
 import { trackEvent } from '@/libs/analytics.lib'
 
 import $app from '@/store/app'
-import $collection from '@/store/collection'
-import $token from '@/store/token'
 
 import App from '@/components/App'
 
@@ -44,27 +40,6 @@ const SidebarSearch = ({ search, loading, onSearch, ...props }) => {
       'Network': blockchain.code.toUpperCase(),
       'Search Term': searchQuery,
     })
-
-    /* if (isExchange) {
-      const params = {
-        blockchain: blockchain.code,
-        sortBy: '1DayVolume',
-        limit: 10,
-        // displayCurrency: usdt[blockchain.code],
-      }
-
-      if (isContractAddress(searchQuery)) {
-        params.id = searchQuery
-      } else {
-        params.name = searchQuery
-      }
-
-      const result = await $collection.api.all(params)
-
-      if (result && result.hasOwnProperty('collections')) {
-        dispatch($collection.set.searched(result.collections.map(item => ({ ...item, blockchain: blockchain.code, currency: blockchain.currency }))))
-      }
-    } */
   }
 
   return (
