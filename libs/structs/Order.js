@@ -159,7 +159,6 @@ class TOKEN extends Order {
       let sellAmount = parseUnits(`${price}`, 6).toString()
       let buyAmount = parseUnits(`${amount}`, 18).toString()
       if (type === 'sell') {
-        console.log(amount, price)
         sellAsset = address
         buyAsset = network.usdtContract
         sellAmount = parseUnits(`${amount}`, 18).toString()
