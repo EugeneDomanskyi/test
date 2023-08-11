@@ -89,10 +89,14 @@ api.get.nfts.orderBook = (params) => {
   })
 }
 
-api.get.tokens.orderBook = (params) => {
-  return new Promise(resolve => {
-    resolve({buy: [], sell: []})
+api.get.tokens.orderBook = ({address, ...rest}) => {
+  return Promise.all([
+    request('all', 'GET', {api: 'inch', takerAsset: address, ...rest}),
+    request('all', 'GET', {api: 'inch', makerAsset: address, ...rest}),
+  ]).then(([buy, sell]) => {
+    return {buy: buy, sell: sell}
   })
+  
 }
 
 export default {

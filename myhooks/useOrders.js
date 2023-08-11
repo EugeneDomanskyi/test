@@ -29,7 +29,10 @@ const useOrders = ({tokenAddress, type}) => {
     
     $orders.api.get[type].orderBook({
       collection: tokenAddress,
+      address: tokenAddress,
       blockchain: blockchain.code,
+      statuses: '[1]',
+      sortBy: 'createDateTime',
     }).then(res => {
       dispatch($orders.set.orderBook({type: type, data: res}))
     })

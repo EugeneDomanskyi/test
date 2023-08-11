@@ -1,8 +1,9 @@
 import numeral from 'numeral'
 import { formatUnits, encodeFunctionData, parseUnits, hashTypedData } from 'viem'
 import { getClient } from '@reservoir0x/reservoir-sdk'
-import { getWalletClient, waitForTransaction, sendTransaction } from '@wagmi/core'
-import { LimitOrderProtocolFacade, LimitOrderBuilder, Web3ProviderConnector } from '@1inch/limit-order-protocol-utils'
+import { getWalletClient, waitForTransaction, sendTransaction, signTypedData } from '@wagmi/core'
+import { LimitOrderProtocolFacade, LimitOrderBuilder } from '@1inch/limit-order-protocol-utils'
+import { FusionSDK, NetworkEnum } from '@1inch/fusion-sdk'
 import { toast } from 'react-toastify'
 
 import { CHAINS, INCH_CONTRACTS } from '@/config'
@@ -147,6 +148,53 @@ class TOKEN extends Order {
     return numeral(this.price).divide(this.quantity).format('0.0[000]')
   }
 
+  static getQuote = async ({chainId, address, amount, side}) => {
+    const { walletClient } = await Order.getWalletData()
+    const network = CHAINS.find(chain => chain.id === chainId)
+    const sdk = new FusionSDK({url: 'https://fusion.1inch.io', network: chainId, blockchainProvider: walletClient})
+    let fromToken = network.usdtContract
+    let toToken = address
+    let amountFrom = parseUnits(`${amount}`, 6)
+    if (side === 'sell') {
+      fromToken = address
+      toToken = network.usdtContract
+      amountFrom = parseUnits(`${amount}`, 18)
+    }
+    const params = {
+      fromTokenAddress: fromToken,
+      toTokenAddress: toToken,
+      amount: amountFrom,
+      preset: 'maxReturnResult',
+    }
+    const quote = await sdk.getQuote(params)
+    return formatUnits(`${quote.toTokenAmount}`, side === 'buy' ? 18 : 6)
+  }
+
+  static swap = async ({address, amount, side}) => {
+    const { chainId, walletClient } = await Order.getWalletData()
+    const network = CHAINS.find(chain => chain.id === chainId)
+    walletClient.signTypedData = (address, typedData) => {
+      return signTypedData(typedData)
+    }
+    const sdk = new FusionSDK({url: 'https://fusion.1inch.io', network: chainId, blockchainProvider: walletClient})
+
+    let fromToken = network.usdtContract
+    let toToken = address
+    let amountFrom = parseUnits(`${amount}`, 6)
+    if (side === 'sell') {
+      fromToken = address
+      toToken = network.usdtContract
+      amountFrom = parseUnits(`${amount}`, 18)
+    }
+
+    sdk.placeOrder({
+      fromTokenAddress: fromToken,
+      toTokenAddress: toToken,
+      amount: amountFrom,
+      walletAddress: walletClient.account.address
+  }).then(console.log)
+  }
+
   static place = ({address, price, amount, type = 'buy'}) => {
     return new Promise(async (resolve, reject) => {
       
@@ -191,7 +239,7 @@ class TOKEN extends Order {
 
   cancel = () => {
     return new Promise(async (resolve, reject) => {
-      const { chainId } = await this.getWalletData()
+      const { chainId } = await Order.getWalletData()
       const contractEncodeABI = (abi, address, methodName, methodParams) => {
         return encodeFunctionData({abi: abi, functionName: methodName, args: methodParams})
       }
@@ -209,4 +257,4 @@ class TOKEN extends Order {
   }
 }
 
-export default { NFT, TOKEN }
+export default { NFT, TOKEN, Order }

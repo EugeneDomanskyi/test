@@ -1,5 +1,5 @@
 import styles from './styles.module.scss'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Image from 'next/image'
 
@@ -8,11 +8,12 @@ import $app from '@/store/app'
 import $modal from '@/store/modal'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { trackEvent } from '@/libs/analytics.lib'
+import OrderStruct from '@/libs/structs/Order'
 
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
 
-const TradeFormMarket = ({current, currentTab, currentOption, userBalances, initialForm}) => {
+const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances, initialForm}) => {
   const dispatch = useDispatch()
   const { getNftPricesNative, getNftUser, getNftBids, sellPriceByAmount } = useTrade()
   const { wallet, connect, changeNetwork } = useWalletConnect()
@@ -20,11 +21,14 @@ const TradeFormMarket = ({current, currentTab, currentOption, userBalances, init
   const blockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
 
   const [amount, setAmount] = useState(initialForm.amount)
+  const [totalPrice, setTotalPrice] = useState('0')
   const [userNfts, setUserNfts] = useState([])
   const [onSaleNft, setOnSaleNft] = useState([])
   const [onBuyNft, setOnBuyNft] = useState([])
 
-  const isDisabled = !(amount*1) || (currentTab === 'buy' && !onSaleNft.length)
+  const fetchTimeout = useRef(null)
+
+  const isDisabled = (!(amount*1) || (currentTab === 'buy' && !onSaleNft.length)) && type === 'nfts'
 
   useEffect(() => {
     // const maxLength = currentTab === 'buy' ? onSaleNft.length : userNfts.length
@@ -51,6 +55,24 @@ const TradeFormMarket = ({current, currentTab, currentOption, userBalances, init
     setAmount('1')
   }, [currentTab, current.address])
 
+  useEffect(() => {
+    if (type === 'tokens' && current?.address) {
+      if (fetchTimeout.current) {
+        clearTimeout(fetchTimeout.current)
+      }
+      fetchTimeout.current = setTimeout(() => {
+        OrderStruct.TOKEN.getQuote({
+          chainId: blockchain.id,
+          address: current.address,
+          amount: amount,
+          side: currentTab
+        }).then(res => {
+          setTotalPrice(res)
+        })
+      }, 1000)
+    }
+  }, [amount, type, currentTab, blockchain?.id, current?.address])
+
   const getTotal = () => {
     if (currentTab === 'buy') {
       return onSaleNft.slice(0, amount).reduce((acc, nft) => (acc + nft.price), 0)
@@ -59,12 +81,15 @@ const TradeFormMarket = ({current, currentTab, currentOption, userBalances, init
   }
 
   const handleChangeAmount = value => {
-    const regex = /^\d+[,]?\d{0,2}$/
-    if (value && !regex.test(value)) {
-      return 
+    
+    if (type === 'nfts') {
+      const regex = /^\d+[,]?\d{0,2}$/
+      if (value && !regex.test(value)) {
+        return 
+      }
+      const maxLength = currentTab === 'buy' ? onSaleNft.length : userNfts.length
+      value = value*1 > maxLength ? maxLength : value
     }
-    const maxLength = currentTab === 'buy' ? onSaleNft.length : userNfts.length
-    value = value*1 > maxLength ? maxLength : value
     setAmount(value)
   }
 
@@ -91,6 +116,12 @@ const TradeFormMarket = ({current, currentTab, currentOption, userBalances, init
     if (!network) {
       return
     }
+    OrderStruct.TOKEN.swap({
+      address: current.address,
+      amount: amount,
+      side: currentTab
+    })
+    return
     const total = getTotal()
     switch (currentTab) {
       case 'buy':
@@ -136,31 +167,37 @@ const TradeFormMarket = ({current, currentTab, currentOption, userBalances, init
     }
   }
 
+  console.log(current.symbol)
+
   return (
     <App.Flex column className={styles.form}>
       <App.Flex column sx={{marginBottom: 16}}>
         <TradeInput
           label="AMOUNT"
           value={amount}
-          currency={`NFT${amount > 1 ? `s` : ''}`}
+          currency={type === 'nfts' ? `NFT${amount > 1 ? `s` : ''}` : (currentTab === 'buy' ? 'USDT' : current.symbol)}
           onBlur={handleBlurAmount}
           onChange={handleChangeAmount} />
         <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto', marginTop: 5}}>NFTs available: {currentTab === 'buy' ? onSaleNft.length : userNfts.length}</App.Text>
       </App.Flex>
-      <App.Flex sx={{marginBottom: 24}}>
-        <App.RangeInput
-          value={amount*1}
-          min={0}
-          max={currentTab === 'buy' ? onSaleNft.length : userNfts.length}
-          onChange={handleChangeRange}
-          containerStyle={{width: '100%'}} />
-      </App.Flex>
+      {
+        type === 'nfts'
+          ? <App.Flex sx={{marginBottom: 24}}>
+              <App.RangeInput
+                value={amount*1}
+                min={0}
+                max={currentTab === 'buy' ? onSaleNft.length : userNfts.length}
+                onChange={handleChangeRange}
+                containerStyle={{width: '100%'}} />
+            </App.Flex>
+          : null
+      }
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
           label="TOTAL"
           currency={blockchain?.currency}
           readOnly={true}
-          value={getTotal()} />
+          value={type === 'nfts' ? getTotal() : totalPrice} />
         <App.Flex align="center" gap={4} className={styles.balance}>
           <App.Icon icon="wallet" />
           <App.Text color="#B9B8C5" size={10}>{ userBalances.native } { blockchain?.currency }</App.Text>
