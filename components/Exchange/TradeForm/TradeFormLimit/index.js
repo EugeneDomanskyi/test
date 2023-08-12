@@ -1,14 +1,8 @@
 import styles from './styles.module.scss'
-import { useState, useEffect, useRef, Fragment, forwardRef, useImperativeHandle, memo } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import Image from 'next/image'
-import { hashTypedData } from 'viem'
-import {
-  LimitOrderBuilder,
-  Web3ProviderConnector,
-  contractAddresses,
-} from '@1inch/limit-order-protocol-utils'
 
 import $app from '@/store/app'
 import $modal from '@/store/modal'
@@ -21,7 +15,7 @@ import TradeInput from '@/components/Exchange/TradeInput'
 
 const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, userBalances}) => {
   const dispatch = useDispatch()
-  const { wallet, connect, changeNetwork, walletClient } = useWalletConnect()
+  const { wallet, connect, changeNetwork } = useWalletConnect()
   const { getNftUser } = useTrade()
   
   const blockchain = useSelector($app.get.blockchainByCode(current?.blockchain))

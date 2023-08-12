@@ -137,6 +137,7 @@ const Exchange = () => {
     ]).then(([sales, orderBook]) => {
       if (sales) {
         dispatch($exchange.set.sales(sales))
+        dispatch($orders.set.trades({type: 'nfts', data: sales}))
       }
       dispatch($exchange.set.loading(false))
     })
@@ -215,7 +216,9 @@ const Exchange = () => {
                   <OrderBook
                     type="nfts"
                     onClickOrder={handleClickOrder} />
-                  <Sales onClickSale={handleClickOrder} />
+                  <Sales
+                    type="nfts"
+                    onClickSale={handleClickOrder} />
                 </App.Flex>
               </App.Flex>
 
@@ -279,7 +282,9 @@ const Exchange = () => {
                   <OrderBook
                     type="nfts"
                     onClickOrder={handleClickOrder} />
-                  <Sales onClickSale={handleClickOrder} />
+                  <Sales
+                    type="nfts"
+                    onClickSale={handleClickOrder} />
                 </App.Flex>
               </App.Flex>
             </App.Flex>

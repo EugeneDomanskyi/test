@@ -9,6 +9,7 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 import useOrders from '@/myhooks/useOrders'
 
 import $exchange from '@/store/exchange'
+import $orders from '@/store/orders'
 import $app from '@/store/app'
 import $token from '@/store/token'
 
@@ -75,6 +76,15 @@ const Tokens = () => {
   }, [blockchain.code, wallet])
 
   const getExchangeData = (tokenId, blockchain) => {
+    $orders.api.get.tokens.trades({
+      address: tokenId,
+      blockchain: blockchain,
+      sortBy: 'createDateTime',
+      statuses: '[3]',
+      limit: 500,
+    }).then(res => {
+      dispatch($orders.set.trades({type: 'tokens', data: res}))
+    })
     //dispatch($exchange.set.loading(true))
     /* Promise.all([
       $exchange.api.get.sales({
@@ -170,7 +180,9 @@ const Tokens = () => {
                   <OrderBook
                     type="tokens"
                     onClickOrder={handleClickOrder} />
-                  <Sales onClickSale={handleClickOrder} />
+                  <Sales
+                    type="tokens"
+                    onClickSale={handleClickOrder} />
                 </App.Flex>
               </App.Flex>
 
@@ -234,7 +246,9 @@ const Tokens = () => {
                   <OrderBook
                     type="tokens"
                     onClickOrder={handleClickOrder} />
-                  <Sales onClickSale={handleClickOrder} />
+                  <Sales
+                    type="tokens"
+                    onClickSale={handleClickOrder} />
                 </App.Flex>
               </App.Flex>
             </App.Flex>

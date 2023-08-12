@@ -168,7 +168,7 @@ const getters = {
   recentSales: (limit) => createSelector([
     state => state.$exchange.sales
   ], (sales) => {
-    return sales.slice(0, limit)
+    return sales.slice(0, limit).map(sale => ({...sale, priceFormatted: sale.price.amount.decimal}))
   }),
 
   orderBook: createSelector([

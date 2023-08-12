@@ -1,6 +1,11 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
+import { formatUnits } from 'viem'
+import numeral from 'numeral'
+import moment from 'moment'
+
 import { request } from './index'
 import Order from '@/libs/structs/Order'
+import { INCH_TOKENS, CHAINS } from '@/config'
 
 export const ordersSlice = createSlice({
   name: '$orders',
@@ -16,6 +21,10 @@ export const ordersSlice = createSlice({
         buy: [],
         sell: [],
       },
+    },
+    trades: {
+      nfts: [],
+      tokens: [],
     }
   },
 
@@ -28,6 +37,9 @@ export const ordersSlice = createSlice({
     },
     orderBook: (state, {payload}) => {
       state.orderBooks[payload.type] = payload.data
+    },
+    trades: (state, {payload}) => {
+      state.trades[payload.type] = payload.data
     }
   },
 })
@@ -54,7 +66,17 @@ const getters = {
       buy: orderBook.buy.slice(0, 10),
       sell: orderBook.sell.slice(0, 10),
     }
-  })
+  }),
+  recentTrades: (type, limit) => createSelector([
+    state => state.$orders.trades[type]
+  ], (trades) => {
+    return trades.slice(0, limit).map(sale => {
+      return {
+        ...sale,
+        priceFormatted: sale.priceFormatted ?? sale.price.amount.decimal,
+      }
+    })
+  }),
 }
 
 const api = {
@@ -96,7 +118,42 @@ api.get.tokens.orderBook = ({address, ...rest}) => {
   ]).then(([buy, sell]) => {
     return {buy: buy, sell: sell}
   })
-  
+}
+
+api.get.tokens.trades = ({address, blockchain, ...rest}) => {
+  const network = CHAINS.find(chain => chain.code === blockchain)
+  return Promise.all([
+    request('all', 'GET', {api: 'inch', takerAsset: address, makerAsset: network.usdtContract, blockchain, ...rest}),
+    request('all', 'GET', {api: 'inch', takerAsset: address, makerAsset: network.usdtContract, page: 2, blockchain, ...rest}),
+    request('all', 'GET', {api: 'inch', takerAsset: address, makerAsset: network.usdtContract, page: 3, blockchain, ...rest}),
+    request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, blockchain, ...rest}),
+    request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, page: 2, blockchain, ...rest}),
+    request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, page: 3, blockchain, ...rest}),
+  ]).then(([sell1, sell2, sell3, buy1, buy2, buy3]) => {
+    const addSide = (list, side) => list.map(item => {
+      const makerDecimals = INCH_TOKENS[item.data.makerAsset]?.decimals || 18
+      const takerDecimals = INCH_TOKENS[item.data.takerAsset]?.decimals || 18
+
+      const totalPrice = side === 'buy' ? formatUnits(item.data.makingAmount, makerDecimals) : formatUnits(item.data.takingAmount, takerDecimals)
+      const amount = side === 'buy' ? formatUnits(item.data.takingAmount, takerDecimals) : formatUnits(item.data.makingAmount, makerDecimals)
+      const timestamp = moment(item.createDateTime).unix()
+      return {
+        ...item,
+        side: side,
+        priceFormatted: numeral(totalPrice).divide(amount).format('0.[0000]'),
+        amount: amount,
+        timestamp: timestamp,
+      }
+    })
+    return [
+      addSide(sell1, 'sell'),
+      addSide(sell2, 'sell'),
+      addSide(sell3, 'sell'),
+      addSide(buy1, 'buy'),
+      addSide(buy2, 'buy'),
+      addSide(buy3, 'buy'),
+    ].flat().filter(order => order.orderInvalidReason === 'order filled')
+  })
 }
 
 export default {
