@@ -171,9 +171,22 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
           currency={type === 'nfts' ? `NFT${amount > 1 ? `s` : ''}` : (currentTab === 'buy' ? 'USDT' : current.symbol)}
           onBlur={handleBlurAmount}
           onChange={handleChangeAmount} />
-        <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto', marginTop: 5}}>
-          NFTs available: {currentTab === 'buy' ? onSaleNft.length : userNfts.length}
-        </App.Text>
+        {
+          type === 'nfts'
+            ?  <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto', marginTop: 5}}>
+                NFTs available: {currentTab === 'buy' ? onSaleNft.length : userNfts.length}
+              </App.Text>
+            : <App.Flex align="center" gap={4} className={styles.balance}>
+                <App.Icon icon="wallet" />
+                <App.Text color="#B9B8C5" size={10}>
+                  {
+                    currentTab === 'buy'
+                      ? `${userBalances.usdt} ${'USDT'}`
+                      : `${userBalances.token} ${current.symbol}`
+                  }
+                </App.Text>
+              </App.Flex>
+        }
       </App.Flex>
       {
         type === 'nfts'
@@ -195,7 +208,15 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
           value={totalPrice} />
         <App.Flex align="center" gap={4} className={styles.balance}>
           <App.Icon icon="wallet" />
-          <App.Text color="#B9B8C5" size={10}>{ userBalances.native } { blockchain?.currency }</App.Text>
+          <App.Text color="#B9B8C5" size={10}>
+            {
+              type === 'nfts'
+                ? `${userBalances.native} ${blockchain?.currency}`
+                : currentTab === 'buy'
+                  ? `${userBalances.token} ${current.symbol}`
+                  : `${userBalances.usdt} ${'USDT'}`
+            }
+          </App.Text>
         </App.Flex>
       </App.Flex>
       <App.Button

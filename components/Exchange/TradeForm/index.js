@@ -8,7 +8,6 @@ import $app from '@/store/app'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useTrade from '@/myhooks/trade'
 import { trackEvent } from '@/libs/analytics.lib'
-import Order from '@/libs/structs/Order'
 
 import App from '@/components/App'
 import Tabs from '@/components/Exchange/Tabs'
@@ -30,7 +29,7 @@ const TradeForm = forwardRef(({current, type}, ref) => {
 
   const [currentTab, setCurrentTab] = useState('buy')
   const [formType, setFormType] = useState('market')
-  const [userBalances, setUserBalances] = useState({native: 0, wrapped: 0, token: 0})
+  const [userBalances, setUserBalances] = useState({native: 0, wrapped: 0, token: 0, usdt: 0})
   const [limitForm, setLimitForm] = useState({price: '0', amount: '1', total: '0'})
   const [marketForm, setMarketForm] = useState({amount: '1'})
 
@@ -47,21 +46,33 @@ const TradeForm = forwardRef(({current, type}, ref) => {
   const [lowestSell] = orderBook.sell
 
   useEffect(() => {
-    const getBalances = () => {
+    const getUserBalances = () => {
       if (current?.address && wallet) {
-        getNftBalanceUser(current.address, wallet).then(res => {
-          setUserBalances(state => ({...state, token: res}))
-        })
-        getBalance().then(res => {
-          setUserBalances(state => ({...state, native: res}))
-        })
-        getBalance(blockchain.wrapped.contract).then(res => {
-          setUserBalances(state => ({...state, wrapped: res}))
-        })
+        switch (type) {
+          case 'nfts':
+            getNftBalanceUser(current.address, wallet).then(res => {
+              setUserBalances(state => ({...state, token: res}))
+            })
+            getBalance().then(res => {
+              setUserBalances(state => ({...state, native: res}))
+            })
+            getBalance(blockchain.wrapped.contract).then(res => {
+              setUserBalances(state => ({...state, wrapped: res}))
+            })
+            break
+          case 'tokens':
+            getBalance(current.address).then(res => {
+              setUserBalances(state => ({...state, token: res}))
+            })
+            getBalance(blockchain.usdtContract).then(res => {
+              setUserBalances(state => ({...state, usdt: res}))
+            })
+            break
+        }
       }
     }
-    getBalances()
-  }, [wallet, current?.address, blockchain])
+    getUserBalances()
+  }, [wallet, current?.address, blockchain, type])
 
   useEffect(() => {
     if (!loading && current?.address) {

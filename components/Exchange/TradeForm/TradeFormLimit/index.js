@@ -182,10 +182,18 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
   }
 
   const handleClickMultipler = (percentage) => () => {
-    if (currentTab === 'buy') {
-      handleChangeForm('total')(userBalances.wrapped * percentage)
+    if (type === 'nfts') {
+      if (currentTab === 'buy') {
+        handleChangeForm('total')(userBalances.wrapped * percentage)
+      } else {
+        handleChangeForm('amount')(userBalances.token * percentage)
+      }
     } else {
-      handleChangeForm('amount')(userBalances.token * percentage)
+      if (currentTab === 'buy') {
+        handleChangeForm('total')(userBalances.usdt * percentage)
+      } else {
+        handleChangeForm('amount')(userBalances.token * percentage)
+      }
     }
   }
 
@@ -196,9 +204,13 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
           <App.Icon icon="wallet" />
           <App.Text size={10} color="rgba(255,255,255,0.6)">
             {
-              currentTab === 'buy'
-                ? `${userBalances.wrapped} ${blockchain.wrapped.shortName}`
-                : `${userBalances.token} NFT`
+              type === 'nfts'
+                ? currentTab === 'buy'
+                  ? `${userBalances.wrapped} ${blockchain.wrapped.shortName}`
+                  : `${userBalances.token} NFT`
+                : currentTab === 'buy'
+                  ? `${userBalances.usdt} USDT`
+                  : `${userBalances.token} ${current.symbol}`
             }
           </App.Text>
         </App.Flex>
@@ -217,7 +229,7 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
           label="AT PRICE"
-          currency={blockchain.wrapped.shortName}
+          currency={type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'}
           value={form.price}
           onBlur={handleBlurPrice}
           onChange={handleChangeForm('price')}
@@ -227,7 +239,7 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
         <TradeInput
           label="AMOUNT"
           value={form.amount}
-          currency={`NFT${form.amount > 1 ? `s` : ''}`}
+          currency={type === 'nfts' ? `NFT${form.amount > 1 ? `s` : ''}` : current.symbol}
           onBlur={handleBlurAmount}
           onChange={handleChangeForm('amount')} />
         {
@@ -239,7 +251,7 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
           label="TOTAL"
-          currency={blockchain.wrapped.shortName}
+          currency={type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'}
           value={form.total}
           onBlur={handleTotalBlur}
           onChange={handleChangeForm('total')}
