@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react'
-import { parseUnits } from 'viem'
 import { useDispatch } from 'react-redux'
 
 import useTrade from '@/myhooks/trade'
@@ -40,7 +39,26 @@ const TradeBuyModal = ({data}) => {
   }
 
   const fulfillOrder = () => {
-    buyNft(data.items, null, progressHandler, onError)
+    switch (tokenType) {
+      case 'nfts':
+        Order.NFT.fulfill({
+          side: 'buy',
+          amount: data.amount,
+          address: current.address,
+        })
+        .then(onSuccessPlaced)
+        .catch(onError)
+        break
+      case 'tokens':
+        Order.TOKEN.swap({
+          address: current.address,
+          amount: data.amount,
+          side: 'sell',
+        })
+        .then(onSuccessPlaced)
+        .catch(onError)
+        break
+    }
   }
 
   const palceOrder = () => {

@@ -8,6 +8,7 @@ import $app from '@/store/app'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useTrade from '@/myhooks/trade'
 import { trackEvent } from '@/libs/analytics.lib'
+import Order from '@/libs/structs/Order'
 
 import App from '@/components/App'
 import Tabs from '@/components/Exchange/Tabs'

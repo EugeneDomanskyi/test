@@ -110,7 +110,9 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
                     {
                       order.image
                         ? <Image alt="" src={order.image} width={35} height={35} />
-                        : null
+                        : order.quoteCurrency
+                          ? <App.Text size={12} weight={600}>{ order.quoteCurrency }</App.Text>
+                          : null
                     }
                   </App.Flex>
                   <App.Flex column sx={{width: 60}} align="center" justify="center">

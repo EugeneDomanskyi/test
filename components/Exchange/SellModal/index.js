@@ -59,8 +59,27 @@ const SellModal = ({data}) => {
   }
 
   const fulfillOrder = () => {
-    const items = selectedTokens.map(token => ({token: `${current.address}:${token.id}`, quantity: token.amount}))
-    sellNft(items, null, progressHandler, onError)
+    switch (tokenType) {
+      case 'nfts':
+        Order.NFT.fulfill({
+          side: 'sell',
+          amount: data.amount,
+          address: current.address,
+          nfts: selectedTokens,
+        })
+        .then(onSuccessPlaced)
+        .catch(onError)
+        break
+      case 'tokens':
+        Order.TOKEN.swap({
+          address: current.address,
+          amount: amount,
+          side: 'sell',
+        })
+        .then(onSuccessPlaced)
+        .catch(onError)
+        break
+    }
   }
 
   const placeOrder = () => {
@@ -71,7 +90,9 @@ const SellModal = ({data}) => {
           address: current.address,
           price: data.price,
           nfts: selectedTokens,
-        }).then(onSuccessPlaced)
+        })
+        .then(onSuccessPlaced)
+        .catch(onError)
         break
       case 'tokens':
         Order.TOKEN.place({
@@ -79,7 +100,9 @@ const SellModal = ({data}) => {
           address: current.address,
           price: data.price,
           amount: data.amount,
-        }).then(onSuccessPlaced)
+        })
+        .then(onSuccessPlaced)
+        .catch(onError)
         break
     }
 

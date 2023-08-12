@@ -15,7 +15,7 @@ import TradeInput from '@/components/Exchange/TradeInput'
 
 const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances, initialForm}) => {
   const dispatch = useDispatch()
-  const { getNftPricesNative, getNftUser, getNftBids, sellPriceByAmount } = useTrade()
+  const { getNftPricesNative, getNftUser, getNftBids } = useTrade()
   const { wallet, connect, changeNetwork } = useWalletConnect()
 
   const blockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
@@ -24,14 +24,12 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
   const [totalPrice, setTotalPrice] = useState('0')
   const [userNfts, setUserNfts] = useState([])
   const [onSaleNft, setOnSaleNft] = useState([])
-  const [onBuyNft, setOnBuyNft] = useState([])
 
   const fetchTimeout = useRef(null)
 
-  const isDisabled = (!(amount*1) || (currentTab === 'buy' && !onSaleNft.length)) && type === 'nfts'
+  const isDisabled = false // (!(amount*1) || (currentTab === 'buy' && !onSaleNft.length)) && type === 'nfts'
 
   useEffect(() => {
-    // const maxLength = currentTab === 'buy' ? onSaleNft.length : userNfts.length
     setAmount(initialForm.amount)
   }, [initialForm.amount])
 
@@ -40,9 +38,7 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
       getNftPricesNative(current.address).then(res => {
         setOnSaleNft(res)
       })
-      getNftBids(current.address).then(res => {
-        setOnBuyNft(res)
-      })
+      
       if (wallet) {
         getNftUser(current.address, wallet).then(res => {
           setUserNfts(res)
@@ -56,37 +52,42 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
   }, [currentTab, current.address])
 
   useEffect(() => {
-    if (type === 'tokens' && current?.address) {
-      if (fetchTimeout.current) {
-        clearTimeout(fetchTimeout.current)
+    if (fetchTimeout.current) {
+      clearTimeout(fetchTimeout.current)
+    }
+    if (current?.address) {
+      if (type === 'tokens') {
+        fetchTimeout.current = setTimeout(() => {
+          OrderStruct.TOKEN.getQuote({
+            chainId: blockchain.id,
+            address: current.address,
+            amount: amount,
+            side: currentTab
+          }).then(res => {
+            setTotalPrice(res)
+          })
+        }, 1000)
+      } else {
+        fetchTimeout.current = setTimeout(() => {
+          OrderStruct.NFT.getQuote({
+            chainId: blockchain.id,
+            address: current.address,
+            amount: amount,
+            side: currentTab
+          }).then(res => {
+            setTotalPrice(res)
+          })
+        }, 1000)
       }
-      fetchTimeout.current = setTimeout(() => {
-        OrderStruct.TOKEN.getQuote({
-          chainId: blockchain.id,
-          address: current.address,
-          amount: amount,
-          side: currentTab
-        }).then(res => {
-          setTotalPrice(res)
-        })
-      }, 1000)
     }
   }, [amount, type, currentTab, blockchain?.id, current?.address])
 
-  const getTotal = () => {
-    if (currentTab === 'buy') {
-      return onSaleNft.slice(0, amount).reduce((acc, nft) => (acc + nft.price), 0)
-    }
-    return sellPriceByAmount(amount, onBuyNft)
-  }
-
   const handleChangeAmount = value => {
-    
+    const decimalRegExp = type === 'nfts' ? /^\d*(?:\.\d+)?$/ : /^(?=.*\d)\d*(?:\.\d*)?$/
+    if (!decimalRegExp.test(value) && value) {
+      return
+    }
     if (type === 'nfts') {
-      const regex = /^\d+[,]?\d{0,2}$/
-      if (value && !regex.test(value)) {
-        return 
-      }
       const maxLength = currentTab === 'buy' ? onSaleNft.length : userNfts.length
       value = value*1 > maxLength ? maxLength : value
     }
@@ -116,13 +117,6 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
     if (!network) {
       return
     }
-    OrderStruct.TOKEN.swap({
-      address: current.address,
-      amount: amount,
-      side: currentTab
-    })
-    return
-    const total = getTotal()
     switch (currentTab) {
       case 'buy':
         dispatch($modal.set.show({
@@ -135,10 +129,10 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
             data: {
               type: 'fulfill',
               amount: amount,
-              price: total / amount,
-              total: total,
-              items: onSaleNft.slice(0, amount).map(nft => ({token: `${current.address}:${nft.id}`, quantity: 1})),
-              collectionId: current.address,
+              price: totalPrice / amount,
+              total: totalPrice,
+              current: current,
+              tokenType: type,
               blockchain: blockchain,
             },
           }
@@ -156,9 +150,10 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
             data: {
               type: 'fulfill',
               amount: amount,
-              price: total / amount,
+              price: totalPrice / amount,
               tokens: userNfts,
-              collectionId: current.address,
+              current: current,
+              tokenType: type,
               blockchain: blockchain,
             },
           }
@@ -166,8 +161,6 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
         break
     }
   }
-
-  console.log(current.symbol)
 
   return (
     <App.Flex column className={styles.form}>
@@ -178,7 +171,9 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
           currency={type === 'nfts' ? `NFT${amount > 1 ? `s` : ''}` : (currentTab === 'buy' ? 'USDT' : current.symbol)}
           onBlur={handleBlurAmount}
           onChange={handleChangeAmount} />
-        <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto', marginTop: 5}}>NFTs available: {currentTab === 'buy' ? onSaleNft.length : userNfts.length}</App.Text>
+        <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto', marginTop: 5}}>
+          NFTs available: {currentTab === 'buy' ? onSaleNft.length : userNfts.length}
+        </App.Text>
       </App.Flex>
       {
         type === 'nfts'
@@ -195,9 +190,9 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
           label="TOTAL"
-          currency={blockchain?.currency}
+          currency={type === 'nfts' ? blockchain?.currency : (currentTab === 'buy' ? current.symbol : 'USDT')}
           readOnly={true}
-          value={type === 'nfts' ? getTotal() : totalPrice} />
+          value={totalPrice} />
         <App.Flex align="center" gap={4} className={styles.balance}>
           <App.Icon icon="wallet" />
           <App.Text color="#B9B8C5" size={10}>{ userBalances.native } { blockchain?.currency }</App.Text>

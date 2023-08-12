@@ -1,13 +1,16 @@
 import numeral from 'numeral'
 import { formatUnits, encodeFunctionData, parseUnits, hashTypedData } from 'viem'
 import { getClient } from '@reservoir0x/reservoir-sdk'
-import { getWalletClient, waitForTransaction, sendTransaction, signTypedData } from '@wagmi/core'
+import { getWalletClient, waitForTransaction, sendTransaction, signTypedData, readContract } from '@wagmi/core'
 import { LimitOrderProtocolFacade, LimitOrderBuilder } from '@1inch/limit-order-protocol-utils'
-import { FusionSDK, NetworkEnum } from '@1inch/fusion-sdk'
+import { FusionSDK, NetworkEnum, WebSocketApi } from '@1inch/fusion-sdk'
 import { toast } from 'react-toastify'
 
-import { CHAINS, INCH_CONTRACTS } from '@/config'
+import { CHAINS, INCH_CONTRACTS, INCH_TOKENS } from '@/config'
 import $orders from '@/store/orders'
+import $nft from '@/store/nft'
+
+const USDT_DECIMALS = 6
 
 class Order {
 
@@ -17,8 +20,32 @@ class Order {
 
   static getWalletData = async () => {
     const walletClient = await getWalletClient()
-    const chainId = await walletClient.getChainId()
-    return { walletClient, chainId }
+    if (walletClient) {
+      const chainId = await walletClient.getChainId()
+      return { walletClient, chainId }
+    }
+    return { walletClient: {account: null}, chainId: null }
+  }
+
+  static getDecimals = async (address) => {
+    const contractInfo = INCH_TOKENS[address]
+    if (contractInfo) {
+      return contractInfo.decimals
+    }
+    const abi = {
+      constant: true,
+      inputs: [],
+      name: 'decimals',
+      outputs: [{name: '', type: 'uint8'}],
+      payable: false,
+      stateMutability: 'view',
+      type: 'function'
+    }
+    const res = await readContract({
+      address: address,
+      abi: [abi],
+    })
+    return res
   }
 }
 
@@ -42,6 +69,90 @@ class NFT extends Order {
 
   get itemPrice () {
     return numeral(this.price).divide(this.quantity).value()
+  }
+
+  static getQuote = async ({chainId, address, amount, side}) => {
+    if (!amount) {
+      return 0
+    }
+    const { walletClient } = await Order.getWalletData()
+    const network = CHAINS.find(chain => chain.id === chainId)
+    if (side === 'buy') {
+      const response = await $nft.api.prices({blockchain: network.code, collection: address})
+      if (response.tokens) {
+        return Object.values(response.tokens).sort((a, b) => a - b).slice(0, amount).reduce((acc, price) => acc+price, 0)
+      }
+    } else {
+      let continuation = null
+      let result = []
+      do {
+        const response = await $nft.api.bids({
+          blockchain: network.code,
+          collection: address,
+          sortBy: 'price',
+          sortDirection: 'DESC',
+          limit: 50,
+          continuation,
+          status: 'active',
+        })
+        if (response && response?.orders) {
+          result = [...result, ...response.orders]
+        }
+        continuation = response?.continuation
+      } while (continuation)
+
+      return (
+        result
+          .filter(order => order.maker.toLowerCase() !== walletClient.account?.address?.toLowerCase())
+          .flatMap(order => (new Array(order.quantityRemaining).fill(order.price.amount.native)))
+          .slice(0, amount)
+          .reduce((acc, price) => acc + price, 0)
+      )
+    }
+    return 0
+  }
+
+  static fulfill = ({side, address, amount, nfts}) => {
+    return new Promise(async (resolve, reject) => {
+      const { walletClient, chainId } = await Order.getWalletData()
+      const network = CHAINS.find(chain => chain.id === chainId)
+
+      let completed = false
+
+      const onComplete = () => {
+        if (!completed) {
+          completed = true
+          resolve()
+          Order.showSuccessMessage('Order placed successfully')
+        }
+      }
+
+      if (side === 'buy') {
+        const response = await $nft.api.prices({blockchain: network.code, collection: address})
+        if (!response?.tokens) {
+          reject()
+          return
+        }
+        const nfts = Object.entries(response.tokens).sort((a,b) => a[1] - b[1]).slice(0, amount).map(([id]) => ({token: `${address}:${id}`, quantity: 1}))
+
+        getClient()?.actions.buyToken({
+          items: nfts,
+          wallet: walletClient,
+          options: {},
+          chainId: chainId,
+          onProgress: NFT.onProgress(onComplete),
+        }).catch(reject)
+        return
+      }
+      const items = nfts.map(token => ({token: `${address}:${token.id}`, quantity: token.amount}))
+      getClient()?.actions.acceptOffer({
+        items: items,
+        wallet: walletClient,
+        options: {},
+        chainId: chainId,
+        onProgress: NFT.onProgress(onComplete),
+      }).catch(reject)
+    })
   }
 
   static place = ({address, price, amount, nfts, type = 'buy'}) => {
@@ -130,18 +241,22 @@ class TOKEN extends Order {
   constructor(data) {
     super()
     this.rawData = data
+    console.log(INCH_TOKENS[data.data.makerAsset].decimals)
+    const makerToken = INCH_TOKENS[data.data.makerAsset]
+    const takerToken = INCH_TOKENS[data.data.takerAsset]
+    
     const network = CHAINS.find(chain => chain.code === data.network)
     this.id = data.signature
     this.side = network.usdtContract.toLowerCase() === data.data.makerAsset.toLowerCase() ? 'buy' : 'sell'
     const buyCurrency = this.side === 'buy' ? 'makingAmount' : 'takingAmount'
     const sellCurrency = this.side === 'sell' ? 'makingAmount' : 'takingAmount'
     this.baseCurrency = 'USDT'
-    this.quoteCurrency = 'Token'
+    this.quoteCurrency = this.side === 'sell' ? makerToken.symbol : takerToken.symbol
     this.contractAddress = this.side === 'buy' ? data.data.takerAsset.toLowerCase() : data.data.makerAsset.toLowerCase()
-    this.quantity = formatUnits(data.data[sellCurrency], 18)
-    this.quantityFilled = formatUnits(data.data.makingAmount - data.remainingMakerAmount, 6)
-    this.price = formatUnits(data.data[buyCurrency], 6)
-    // this.image = data.criteria.data.token?.image ?? data.criteria.data.collection?.image
+    this.quantity = numeral(formatUnits(data.data[sellCurrency], this.side === 'sell' ? makerToken.decimals : takerToken.decimals)).format('0.[0000]')
+    this.quantityFilled = numeral(formatUnits(data.data.makingAmount - data.remainingMakerAmount, USDT_DECIMALS)).format('0.[0000]')
+    this.price = numeral(formatUnits(data.data[buyCurrency], USDT_DECIMALS)).format('0.[0000]')
+    this.image = this.side === 'sell' ? makerToken.logoURI : takerToken.logoURI
   }
 
   get itemPrice () {
@@ -149,16 +264,21 @@ class TOKEN extends Order {
   }
 
   static getQuote = async ({chainId, address, amount, side}) => {
+    if (!amount) {
+      return 0
+    }
     const { walletClient } = await Order.getWalletData()
     const network = CHAINS.find(chain => chain.id === chainId)
     const sdk = new FusionSDK({url: 'https://fusion.1inch.io', network: chainId, blockchainProvider: walletClient})
+    const tokenDecimals = await Order.getDecimals(address)
+
     let fromToken = network.usdtContract
     let toToken = address
-    let amountFrom = parseUnits(`${amount}`, 6)
+    let amountFrom = parseUnits(`${amount}`, USDT_DECIMALS)
     if (side === 'sell') {
       fromToken = address
       toToken = network.usdtContract
-      amountFrom = parseUnits(`${amount}`, 18)
+      amountFrom = parseUnits(`${amount}`, tokenDecimals)
     }
     const params = {
       fromTokenAddress: fromToken,
@@ -167,32 +287,39 @@ class TOKEN extends Order {
       preset: 'maxReturnResult',
     }
     const quote = await sdk.getQuote(params)
-    return formatUnits(`${quote.toTokenAmount}`, side === 'buy' ? 18 : 6)
+    return formatUnits(`${quote.toTokenAmount}`, side === 'buy' ? tokenDecimals : USDT_DECIMALS)
   }
 
-  static swap = async ({address, amount, side}) => {
-    const { chainId, walletClient } = await Order.getWalletData()
-    const network = CHAINS.find(chain => chain.id === chainId)
-    walletClient.signTypedData = (address, typedData) => {
-      return signTypedData(typedData)
-    }
-    const sdk = new FusionSDK({url: 'https://fusion.1inch.io', network: chainId, blockchainProvider: walletClient})
+  static swap = ({address, amount, side}) => {
+    return new Promise(async (resolve, reject) => {
+      const { chainId, walletClient } = await Order.getWalletData()
+      const network = CHAINS.find(chain => chain.id === chainId)
+      const tokenDecimals = await Order.getDecimals(address)
 
-    let fromToken = network.usdtContract
-    let toToken = address
-    let amountFrom = parseUnits(`${amount}`, 6)
-    if (side === 'sell') {
-      fromToken = address
-      toToken = network.usdtContract
-      amountFrom = parseUnits(`${amount}`, 18)
-    }
+      walletClient.signTypedData = (address, typedData) => {
+        return signTypedData(typedData)
+      }
+      const sdk = new FusionSDK({url: 'https://fusion.1inch.io', network: chainId, blockchainProvider: walletClient})
 
-    sdk.placeOrder({
-      fromTokenAddress: fromToken,
-      toTokenAddress: toToken,
-      amount: amountFrom,
-      walletAddress: walletClient.account.address
-  }).then(console.log)
+      let fromToken = network.usdtContract
+      let toToken = address
+      let amountFrom = parseUnits(`${amount}`, USDT_DECIMALS)
+      if (side === 'sell') {
+        fromToken = address
+        toToken = network.usdtContract
+        amountFrom = parseUnits(`${amount}`, tokenDecimals)
+      }
+
+      sdk.placeOrder({
+        fromTokenAddress: fromToken,
+        toTokenAddress: toToken,
+        amount: amountFrom,
+        walletAddress: walletClient.account.address
+      }).then(res => {
+        console.log(res)
+        resolve()
+      }).catch(reject)
+    })
   }
 
   static place = ({address, price, amount, type = 'buy'}) => {
@@ -201,16 +328,17 @@ class TOKEN extends Order {
       const { walletClient, chainId } = await Order.getWalletData()
       const limitOrderBuilder = new LimitOrderBuilder(INCH_CONTRACTS[chainId], chainId, walletClient)
       const network = CHAINS.find(chain => chain.id === chainId)
+      const tokenDecimals = await Order.getDecimals(address)
 
       let sellAsset = network.usdtContract
       let buyAsset = address
-      let sellAmount = parseUnits(`${price}`, 6).toString()
-      let buyAmount = parseUnits(`${amount}`, 18).toString()
+      let sellAmount = parseUnits(`${price}`, USDT_DECIMALS).toString()
+      let buyAmount = parseUnits(`${amount}`, tokenDecimals).toString()
       if (type === 'sell') {
         sellAsset = address
         buyAsset = network.usdtContract
-        sellAmount = parseUnits(`${amount}`, 18).toString()
-        buyAmount = parseUnits(`${price}`, 6).toString()
+        sellAmount = parseUnits(`${amount}`, tokenDecimals).toString()
+        buyAmount = parseUnits(`${price}`, USDT_DECIMALS).toString()
       }
       
       const limitOrder = limitOrderBuilder.buildLimitOrder({
