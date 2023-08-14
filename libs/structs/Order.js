@@ -3,7 +3,7 @@ import { formatUnits, encodeFunctionData, parseUnits, hashTypedData } from 'viem
 import { getClient } from '@reservoir0x/reservoir-sdk'
 import { getWalletClient, waitForTransaction, sendTransaction, signTypedData, readContract } from '@wagmi/core'
 import { LimitOrderProtocolFacade, LimitOrderBuilder } from '@1inch/limit-order-protocol-utils'
-import { FusionSDK, NetworkEnum, WebSocketApi } from '@1inch/fusion-sdk'
+import { FusionSDK } from '@1inch/fusion-sdk'
 import { toast } from 'react-toastify'
 
 import { CHAINS, INCH_CONTRACTS, INCH_TOKENS } from '@/config'
@@ -241,7 +241,6 @@ class TOKEN extends Order {
   constructor(data) {
     super()
     this.rawData = data
-    console.log(INCH_TOKENS[data.data.makerAsset].decimals)
     const makerToken = INCH_TOKENS[data.data.makerAsset]
     const takerToken = INCH_TOKENS[data.data.takerAsset]
     
