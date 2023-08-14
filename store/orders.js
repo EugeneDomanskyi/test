@@ -70,7 +70,9 @@ const getters = {
   recentTrades: (type, limit) => createSelector([
     state => state.$orders.trades[type]
   ], (trades) => {
-    return trades.slice(0, limit).map(sale => {
+    return trades.slice(0, limit).filter(order => {
+      return order.orderInvalidReason === 'order filled' && order.priceFormatted !== 'NaN'
+    }).map(sale => {
       return {
         ...sale,
         priceFormatted: sale.priceFormatted ?? sale.price.amount.decimal,
@@ -149,7 +151,7 @@ api.get.tokens.trades = ({address, blockchain, ...rest}) => {
       return {
         ...item,
         side: side,
-        priceFormatted: numeral(price / amount).format('0.0[0000000]'),//numeral(price).divide(amount).format('0.0[000000]'),
+        priceFormatted: numeral(price / amount).format('0.0[0000000]'),
         amount: numeral(amount).format('0.[0000]'),
         timestamp: timestamp,
       }
@@ -161,10 +163,7 @@ api.get.tokens.trades = ({address, blockchain, ...rest}) => {
       addSide(sell1, 'sell'),
       addSide(sell2, 'sell'),
       addSide(sell3, 'sell'),
-      
-    ].flat().filter(order => {
-      return order.orderInvalidReason === 'order filled' && order.priceFormatted !== 'NaN'
-    })
+    ].flat()
   })
 }
 
