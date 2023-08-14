@@ -7,6 +7,7 @@ import $exchange from './exchange'
 import $collection from './collection'
 import $token from './token'
 import $nft from './nft'
+import $orders from './orders'
 import { CHAINS } from '@/config'
 
 const createStore = initialData => {
@@ -18,6 +19,7 @@ const createStore = initialData => {
       $collection: $collection.reducer,
       $token: $token.reducer,
       $nft: $nft.reducer,
+      $orders: $orders.reducer,
     },
 
     preloadedState: {
@@ -37,6 +39,7 @@ const ARBITRUM_URL = 'https://tokenlist.arbitrum.io'
 const QUICKSWAP_URL = 'https://unpkg.com/quickswap-default-token-list@1.2.2'
 const CELO_URL = 'https://celo-org.github.io'
 const BNB_URL = 'https://raw.githubusercontent.com'
+const INCH_URL = 'https://limit-orders.1inch.io/v3.0'
 
 export const request = async (uri, method = 'GET', {blockchain, api, ...data} = {}) => {
   const currentChain = CHAINS.find(chain => chain.code === blockchain)
@@ -45,6 +48,7 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
     method,
     headers: {
       'Accept': 'application/json',
+      'content-type': 'application/json',
     },
   }
 
@@ -86,6 +90,9 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
         break
       case 'bnb':
         base_url = BNB_URL
+        break
+      case 'inch':
+        base_url = `${INCH_URL}/${currentChain.id}`
         break
     }
   }

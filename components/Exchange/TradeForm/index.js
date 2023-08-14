@@ -19,18 +19,17 @@ const TAB_OPTIONS = [
   {key: 'sell', title: 'SELL', color: 'rgb(206, 22, 93)'},
 ]
 
-const TradeForm = forwardRef((_props, ref) => {
+const TradeForm = forwardRef(({current, type}, ref) => {
   const { wallet, getBalance } = useWalletConnect()
   const { getNftBalanceUser } = useTrade()
   
   const orderBook = useSelector($exchange.get.orderBook)
-  const currentCollection = useSelector(({$collection}) => $collection.current)
   const loading = useSelector(({$exchange}) => $exchange.loadingCollectionData)
-  const blockchain = useSelector($app.get.blockchainByCode(currentCollection?.blockchain))
+  const blockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
 
   const [currentTab, setCurrentTab] = useState('buy')
   const [formType, setFormType] = useState('market')
-  const [userBalances, setUserBalances] = useState({native: 0, wrapped: 0, token: 0})
+  const [userBalances, setUserBalances] = useState({native: 0, wrapped: 0, token: 0, usdt: 0})
   const [limitForm, setLimitForm] = useState({price: '0', amount: '1', total: '0'})
   const [marketForm, setMarketForm] = useState({amount: '1'})
 
@@ -47,31 +46,43 @@ const TradeForm = forwardRef((_props, ref) => {
   const [lowestSell] = orderBook.sell
 
   useEffect(() => {
-    const getBalances = () => {
-      if (currentCollection?.address && wallet) {
-        getNftBalanceUser(currentCollection.address, wallet).then(res => {
-          setUserBalances(state => ({...state, token: res}))
-        })
-        getBalance().then(res => {
-          setUserBalances(state => ({...state, native: res}))
-        })
-        getBalance(blockchain.wrapped.contract).then(res => {
-          setUserBalances(state => ({...state, wrapped: res}))
-        })
+    const getUserBalances = () => {
+      if (current?.address && wallet) {
+        switch (type) {
+          case 'nfts':
+            getNftBalanceUser(current.address, wallet).then(res => {
+              setUserBalances(state => ({...state, token: res}))
+            })
+            getBalance().then(res => {
+              setUserBalances(state => ({...state, native: res}))
+            })
+            getBalance(blockchain.wrapped.contract).then(res => {
+              setUserBalances(state => ({...state, wrapped: res}))
+            })
+            break
+          case 'tokens':
+            getBalance(current.address).then(res => {
+              setUserBalances(state => ({...state, token: res}))
+            })
+            getBalance(blockchain.usdtContract).then(res => {
+              setUserBalances(state => ({...state, usdt: res}))
+            })
+            break
+        }
       }
     }
-    getBalances()
-  }, [wallet, currentCollection?.address, blockchain])
+    getUserBalances()
+  }, [wallet, current?.address, blockchain, type])
 
   useEffect(() => {
-    if (!loading && currentCollection?.address) {
+    if (!loading && current?.address) {
       if (currentTab === 'buy') {
-        setInitialPrice(lowestBuy?.price || currentCollection?.price)
+        setInitialPrice(lowestBuy?.price || current?.price)
       } else {
-        setInitialPrice(lowestSell?.price || currentCollection?.price)
+        setInitialPrice(lowestSell?.price || current?.price)
       }
     }
-  }, [loading, currentCollection?.address])
+  }, [loading, current?.address])
 
   const setInitialPrice = price => {
     setLimitForm(state => ({
@@ -125,6 +136,8 @@ const TradeForm = forwardRef((_props, ref) => {
             case 'market':
               return (
                 <TradeFormMarket
+                  current={current}
+                  type={type}
                   initialForm={marketForm}
                   userBalances={userBalances}
                   currentTab={currentTab}
@@ -133,6 +146,8 @@ const TradeForm = forwardRef((_props, ref) => {
               case 'limit':
                 return (
                   <TradeFormLimit
+                    current={current}
+                    type={type}
                     currentTab={currentTab}
                     currentOption={currentOption}
                     userBalances={userBalances}
@@ -147,8 +162,8 @@ const TradeForm = forwardRef((_props, ref) => {
   )
 })
 
-const isEqual = () => {
-  return true
+const isEqual = (prev, next) => {
+  return JSON.stringify(prev.current) === JSON.stringify(next.current)
 }
 
 export default memo(TradeForm, isEqual)

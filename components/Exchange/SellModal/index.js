@@ -6,6 +6,7 @@ import $modal from '@/store/modal'
 import useTrade from '@/myhooks/trade'
 import useOrders from '@/myhooks/useOrders'
 import { trackEvent } from '@/libs/analytics.lib'
+import Order from '@/libs/structs/Order'
 
 import SellModalSelect from '@/components/Exchange/SellModal/SellModalSelect'
 import SellModalConfirm from '@/components/Exchange/SellModal/SellModalConfirm'
@@ -13,25 +14,28 @@ import SellModalConfirming from '@/components/Exchange/SellModal/SellModalConfir
 import SellModalComplete from '@/components/Exchange/SellModal/SellModalComplete'
 
 const SellModal = ({data}) => {
+
+  const { tokenType, current } = data
+
   const dispatch = useDispatch()
   const { placeAsk, sellNft, errorHandler } = useTrade()
   const [selectedTokens, setSelectedTokens] = useState([])
 
-  const [step, setStep] = useState('select')
-
-  const currentCollection = useSelector(({$collection}) => $collection.current)
+  const [step, setStep] = useState(tokenType === 'nfts' ? 'select' : 'confirm')
   
-  const { updateOrders } = useOrders({collectionId: currentCollection.address})
+  const { updateOrders } = useOrders({tokenAddress: current.address, type: tokenType})
 
   const loadingRef = useRef(false)
 
   const selectedAmount = selectedTokens.reduce((acc, token) => (acc + token.amount), 0)
 
+  let amount = tokenType === 'nfts' ? selectedAmount : data.amount
+
   const handleSelect = tokens => {
     setSelectedTokens(tokens)
     setStep('confirm')
     dispatch($modal.set.update({header: {
-      title: `Sell ${currentCollection.name} for ${data.type === 'place' ? data.blockchain.wrapped.shortName : data.blockchain.currency}`
+      title: `Sell ${current.name} for ${data.type === 'place' ? data.blockchain.wrapped.shortName : data.blockchain.currency}`
     }}))
   }
 
@@ -41,7 +45,7 @@ const SellModal = ({data}) => {
     dispatch($modal.set.update({
       header: {
         title: 'Approve Transfer',
-        subtitle: `Sell ${currentCollection.name} using ${data.type === 'place' ? data.blockchain.wrapped.shortName : data.blockchain.currency}`
+        subtitle: `Sell ${current.name} using ${data.type === 'place' ? data.blockchain.wrapped.shortName : data.blockchain.currency}`
       },
     }))
     switch (data.type) {
@@ -55,19 +59,53 @@ const SellModal = ({data}) => {
   }
 
   const fulfillOrder = () => {
-    const items = selectedTokens.map(token => ({token: `${data.collectionId}:${token.id}`, quantity: token.amount}))
-    sellNft(items, null, progressHandler, onError)
+    switch (tokenType) {
+      case 'nfts':
+        Order.NFT.fulfill({
+          side: 'sell',
+          amount: data.amount,
+          address: current.address,
+          nfts: selectedTokens,
+        })
+        .then(onSuccessPlaced)
+        .catch(onError)
+        break
+      case 'tokens':
+        Order.TOKEN.swap({
+          address: current.address,
+          amount: amount,
+          side: 'sell',
+        })
+        .then(onSuccessPlaced)
+        .catch(onError)
+        break
+    }
   }
 
   const placeOrder = () => {
-    const listing = selectedTokens.map((token) => ({
-      token: `${data.collectionId}:${token.id}`,
-      weiPrice: parseUnits(`${data.price}`, 18).toString(),
-      quantity: token.amount,
-      royaltyBps: 0,
-      currency: data.blockchain.wrapped.contract,
-    }))
-    placeAsk(listing, progressHandler, onError)
+    switch (tokenType) {
+      case 'nfts':
+        Order.NFT.place({
+          type: 'sell',
+          address: current.address,
+          price: data.price,
+          nfts: selectedTokens,
+        })
+        .then(onSuccessPlaced)
+        .catch(onError)
+        break
+      case 'tokens':
+        Order.TOKEN.place({
+          type: 'sell',
+          address: current.address,
+          price: data.price,
+          amount: data.amount,
+        })
+        .then(onSuccessPlaced)
+        .catch(onError)
+        break
+    }
+
     trackEvent('Create Order Submit', {
       'Wallet connect Status': 'Connected',
       'Network': data.blockchain.name,
@@ -76,7 +114,28 @@ const SellModal = ({data}) => {
       'Total': selectedAmount*data.price,
       'Side': 'Sell',
       'Base Currency': data.blockchain.currency,
-      'Quote Currency': currentCollection.name
+      'Quote Currency': current.name
+    })
+  }
+
+  const onSuccessPlaced = (res) => {
+    console.log('onSuccessPlaced', res)
+    dispatch($modal.set.update({
+      header: {
+        title: 'Success',
+        subtitle: `Sell ${current.name} using ${data.blockchain.wrapped.shortName}`
+      },
+    }))
+    setStep('complete')
+    trackEvent('Create Order Success', {
+      'Wallet connect Status': 'Connected',
+      'Network': data.blockchain.name,
+      'Price': data.price,
+      'Quantity': selectedAmount,
+      'Total': selectedAmount*data.price,
+      'Side': 'Sell',
+      'Base Currency': data.blockchain.currency,
+      'Quote Currency': current.name
     })
   }
 
@@ -87,7 +146,7 @@ const SellModal = ({data}) => {
       dispatch($modal.set.update({
         header: {
           title: 'Success',
-          subtitle: `Sell ${currentCollection.name} using ${data.blockchain.wrapped.shortName}`
+          subtitle: `Sell ${current.name} using ${data.blockchain.wrapped.shortName}`
         },
       }))
       setStep('complete')
@@ -99,7 +158,7 @@ const SellModal = ({data}) => {
         'Total': selectedAmount*data.price,
         'Side': 'Sell',
         'Base Currency': data.blockchain.currency,
-        'Quote Currency': currentCollection.name
+        'Quote Currency': current.name
       })
     }
   }
@@ -121,15 +180,15 @@ const SellModal = ({data}) => {
           <SellModalSelect
             amount={data.amount}
             nfts={data.tokens}
-            token={currentCollection}
+            token={current}
             onSelect={handleSelect} />
         )
       case 'confirm':
         return (
           <SellModalConfirm
             price={data.price}
-            amount={selectedAmount}
-            total={selectedAmount*data.price}
+            amount={amount}
+            total={amount*data.price}
             onConfirm={handleConfirm} />
         )
       case 'confirming':
@@ -140,11 +199,11 @@ const SellModal = ({data}) => {
         return (
           <SellModalComplete
             type={data.type}
-            currentCollection={currentCollection}
+            currentCollection={current}
             blockchain={data.blockchain}
             price={data.price}
-            amount={selectedAmount}
-            total={selectedAmount*data.price}
+            amount={amount}
+            total={amount*data.price}
             onComplete={handleComplete} />
         )
     }

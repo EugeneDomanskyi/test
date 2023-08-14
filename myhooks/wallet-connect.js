@@ -179,7 +179,6 @@ const useWalletConnect = () => {
           address: wallet,
           token,
         })
-
         return balance.formatted
       } catch (error) {
         return 0

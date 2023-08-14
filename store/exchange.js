@@ -1,6 +1,10 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
 import Moment from 'moment'
 import { extendMoment } from 'moment-range'
+import { formatUnits, parseUnits, formatEther } from 'viem'
+
+import APIInterface from '@/libs/api.interfaces.lib'
+
 const moment = extendMoment(Moment)
 
 import { request } from './index'
@@ -164,7 +168,7 @@ const getters = {
   recentSales: (limit) => createSelector([
     state => state.$exchange.sales
   ], (sales) => {
-    return sales.slice(0, limit)
+    return sales.slice(0, limit).map(sale => ({...sale, priceFormatted: sale.price.amount.decimal}))
   }),
 
   orderBook: createSelector([
@@ -183,10 +187,13 @@ const getters = {
   }),
 }
 
+// https://limit-orders.1inch.io/v3.0/137/all?page=1&limit=100&statuses=[1]&sortBy=takerRate
+
 const api = {
   get: {
     orderBook: (params) => {
       return Promise.all([
+        // APIInterface.Inch.request(`137/address/0xc2132d05d31c914a87c6611c10748aeb04b58e8f`, 'GET', {...params, statuses: [1,2], limit: 10, sortBy: 'makerRate'})
         request('orders/depth/v1', 'GET', {side: 'buy', ...params}),
         request('orders/depth/v1', 'GET', {side: 'sell', ...params}),
       ]).then(([buy, sell]) => {

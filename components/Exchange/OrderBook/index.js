@@ -3,13 +3,13 @@ import { memo } from 'react'
 import { useSelector } from 'react-redux'
 import cn from 'classnames'
 
-import $exchange from '@/store/exchange'
 import $app from '@/store/app'
+import $orders from '@/store/orders'
 
 import App from '@/components/App'
 
-const OrderBook = ({onClickOrder}) => {
-  const orderBook = useSelector($exchange.get.orderBook)
+const OrderBook = ({type, onClickOrder}) => {
+  const orderBook = useSelector($orders.get.orderBook(type))
   const blockchain = useSelector($app.get.blockchain)
 
   let prevBuyVolumeValue = 0

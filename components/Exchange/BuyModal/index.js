@@ -1,11 +1,11 @@
 import { useState, useRef } from 'react'
-import { parseUnits } from 'viem'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import useTrade from '@/myhooks/trade'
 import useOrders from '@/myhooks/useOrders'
 import $modal from '@/store/modal'
 import { trackEvent } from '@/libs/analytics.lib'
+import Order from '@/libs/structs/Order'
 
 import BuyModalConfirm from './BuyModalConfirm'
 import BuyModalConfirming from './BuyModalConfirming'
@@ -14,10 +14,10 @@ import BuyModalComplete from './BuyModalComplete'
 const TradeBuyModal = ({data}) => {
   const dispatch = useDispatch()
 
-  const currentCollection = useSelector(({$collection}) => $collection.current)
+  const { current, tokenType } = data
 
   const { placeBid, buyNft, errorHandler } = useTrade()
-  const { updateOrders } = useOrders({collectionId: currentCollection.address})
+  const { updateOrders } = useOrders({tokenAddress: current.address, type: tokenType})
 
   const [step, setStep] = useState('confirm')
 
@@ -39,28 +39,64 @@ const TradeBuyModal = ({data}) => {
   }
 
   const fulfillOrder = () => {
-    buyNft(data.items, null, progressHandler, onError)
+    switch (tokenType) {
+      case 'nfts':
+        Order.NFT.fulfill({
+          side: 'buy',
+          amount: data.amount,
+          address: current.address,
+        })
+        .then(onSuccessPlaced)
+        .catch(onError)
+        break
+      case 'tokens':
+        Order.TOKEN.swap({
+          address: current.address,
+          amount: data.amount,
+          side: 'sell',
+        })
+        .then(onSuccessPlaced)
+        .catch(onError)
+        break
+    }
   }
 
   const palceOrder = () => {
-    const bids = [{  
-      weiPrice: parseUnits(`${data.total*data.amount}`, 18).toString(),
-      collection: data.collectionId,
-      quantity: data.amount,
-      royaltyBps: 0,
-      currency: data.blockchain.wrapped.contract,
-      // currency: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
-      // orderbookApiKey: '895d629046a0458199e9e8639b63bb57',
-      // orderbook: 'opensea',
-    }]
+    switch (tokenType) {
+      case 'nfts':
+        Order.NFT.place({
+          address: current.address,
+          price: data.total*data.amount,
+          amount: data.amount,
+          type: 'buy',
+        }).then(onSuccessPlaced)
+        break
+      case 'tokens':
+        Order.TOKEN.place({
+          address: current.address,
+          price: data.total*data.amount,
+          amount: data.amount,
+          type: 'buy',
+        }).then(onSuccessPlaced)
+        break
+    }
     dispatch($modal.set.update({
       header: {
         title: 'Approve Transfer',
-        subtitle: `Buy ${currentCollection.name} using ${data.blockchain.wrapped.shortName}`
+        subtitle: `Buy ${current.name} using ${data.blockchain.wrapped.shortName}`
       },
     }))
-    placeBid(bids, progressHandler, onError)
-    trackEvent('Create Order Submit', {
+  }
+
+  const onSuccessPlaced = () => {
+    dispatch($modal.set.update({
+      header: {
+        title: 'Success',
+        subtitle: `Buy ${current.name} using USDT`
+      },
+    }))
+    setStep('complete')
+    trackEvent('Create Order Success', {
       'Wallet connect Status': 'Connected',
       'Network': data.blockchain.name,
       'Price': data.price,
@@ -68,7 +104,7 @@ const TradeBuyModal = ({data}) => {
       'Total': data.total*data.amount,
       'Side': 'Buy',
       'Base Currency': data.blockchain.currency,
-      'Quote Currency': currentCollection.name
+      'Quote Currency': current.name
     })
   }
 
@@ -84,7 +120,7 @@ const TradeBuyModal = ({data}) => {
       dispatch($modal.set.update({
         header: {
           title: 'Success',
-          subtitle: `Buy ${currentCollection.name} using USDT`
+          subtitle: `Buy ${current.name} using USDT`
         },
       }))
       setStep('complete')
@@ -96,7 +132,7 @@ const TradeBuyModal = ({data}) => {
         'Total': data.total*data.amount,
         'Side': 'Buy',
         'Base Currency': data.blockchain.currency,
-        'Quote Currency': currentCollection.name
+        'Quote Currency': current.name
       })
     }
   }
@@ -122,7 +158,7 @@ const TradeBuyModal = ({data}) => {
         return (
           <BuyModalComplete
             {...data}
-            currentCollection={currentCollection}
+            currentCollection={current}
             onComplete={handleComplete} />
         )
     }

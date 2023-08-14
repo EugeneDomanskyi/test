@@ -6,8 +6,10 @@ import dynamic from 'next/dynamic'
 import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
+import useOrders from '@/myhooks/useOrders'
 
 import $exchange from '@/store/exchange'
+import $orders from '@/store/orders'
 import $app from '@/store/app'
 import $token from '@/store/token'
 
@@ -33,6 +35,8 @@ const Tokens = () => {
   
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
+  const { updateOrders } = useOrders({tokenAddress: queryTokenId, type: 'tokens'})
+  // const socketConnected = useSelector(({$app}) => $app.socketConnected)
   
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -65,7 +69,22 @@ const Tokens = () => {
     }
   }, [queryTokenId, blockchain.code])
 
+  useEffect(() => {
+    if (wallet) {
+      updateOrders()
+    }
+  }, [blockchain.code, wallet])
+
   const getExchangeData = (tokenId, blockchain) => {
+    $orders.api.get.tokens.trades({
+      address: tokenId,
+      blockchain: blockchain,
+      sortBy: 'createDateTime',
+      statuses: '[3]',
+      limit: 500,
+    }).then(res => {
+      dispatch($orders.set.trades({type: 'tokens', data: res}))
+    })
     //dispatch($exchange.set.loading(true))
     /* Promise.all([
       $exchange.api.get.sales({
@@ -107,25 +126,8 @@ const Tokens = () => {
 
   const handleOrdersUpdated = useCallback(() => {
     if (wallet) {
-      $exchange.api.get.orders({
-        blockchain: blockchain.code,
-        maker: wallet,
-        includeCriteriaMetadata: true,
-      }).then(res => {
-        if (res) {
-          dispatch($exchange.set.orders(res))
-        }
-      })
+      updateOrders()
     }
-
-    $exchange.api.get.orderBook({
-      collection: queryTokenId,
-      blockchain: blockchain.code,
-    }).then(res => {
-      if (res) {
-        dispatch($exchange.set.orderBook(res))
-      }
-    })
   }, [wallet, queryTokenId, blockchain.code])
 
   const handleMobileTabChange = (tab) => {
@@ -175,17 +177,28 @@ const Tokens = () => {
                 <Chart />
 
                 <App.Flex gap={GRID_GAP}>
-                  <OrderBook onClickOrder={handleClickOrder} />
-                  <Sales onClickSale={handleClickOrder} />
+                  <OrderBook
+                    type="tokens"
+                    onClickOrder={handleClickOrder} />
+                  <Sales
+                    type="tokens"
+                    onClickSale={handleClickOrder} />
                 </App.Flex>
               </App.Flex>
 
               <App.Flex column gap={GRID_GAP}>
                 <App.Flex>
-                  <TradeForm ref={tradeForm} />
+                  <TradeForm
+                    ref={tradeForm}
+                    type="tokens"
+                    current={current} />
                 </App.Flex>
 
-                <Orders onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
+                <Orders
+                  current={current}
+                  type="tokens"
+                  onOrderCancelled={handleOrdersUpdated}
+                  onClickOrder={handleClickOrder} />
               </App.Flex>
             </App.Flex>
           </App.Flex>
@@ -230,19 +243,30 @@ const Tokens = () => {
 
               <App.Flex column flex={1} sx={{ position: 'relative' }}>
                 <App.Flex column gap={GRID_GAP} className={styles.tradesContent}>
-                  <OrderBook onClickOrder={handleClickOrder} />
-                  <Sales onClickSale={handleClickOrder} />
+                  <OrderBook
+                    type="tokens"
+                    onClickOrder={handleClickOrder} />
+                  <Sales
+                    type="tokens"
+                    onClickSale={handleClickOrder} />
                 </App.Flex>
               </App.Flex>
             </App.Flex>
           ) : null}
 
           {mobileTab == 'orders' ? (
-            <Orders onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
+            <Orders
+              current={current}
+              type="tokens"
+              onOrderCancelled={handleOrdersUpdated}
+              onClickOrder={handleClickOrder} />
           ) : null}
 
           {mobileTab == 'buy_sell' ? (
-            <TradeForm ref={tradeForm} />
+            <TradeForm
+              ref={tradeForm}
+              type="tokens"
+              current={current} />
           ) : null}
 
           <MobileTabsBar
