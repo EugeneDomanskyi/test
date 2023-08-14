@@ -36,7 +36,7 @@ class Order {
     return { walletClient: {account: null}, chainId: null }
   }
 
-  static getDecimals = async (address) => {
+  static getDecimals = async (address, chainId) => {
     const contractInfo = INCH_TOKENS[address]
     if (contractInfo) {
       return contractInfo.decimals
@@ -54,6 +54,7 @@ class Order {
       address: address,
       abi: [abi],
       functionName: 'decimals',
+      chainId: chainId,
     })
     return res
   }
@@ -279,7 +280,7 @@ class TOKEN extends Order {
     // const { walletClient } = await Order.getWalletData()
     const network = CHAINS.find(chain => chain.id === chainId)
     const sdk = new FusionSDK({url: 'https://fusion.1inch.io', network: chainId})
-    const tokenDecimals = await Order.getDecimals(address)
+    const tokenDecimals = await Order.getDecimals(address, chainId)
 
     let fromToken = network.usdtContract
     let toToken = address

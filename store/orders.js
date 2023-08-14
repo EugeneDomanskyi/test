@@ -130,28 +130,41 @@ api.get.tokens.trades = ({address, blockchain, ...rest}) => {
     request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, page: 2, blockchain, ...rest}),
     request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, page: 3, blockchain, ...rest}),
   ]).then(([sell1, sell2, sell3, buy1, buy2, buy3]) => {
-    const addSide = (list, side) => list.map(item => {
-      const makerDecimals = INCH_TOKENS[item.data.makerAsset]?.decimals || 18
-      const takerDecimals = INCH_TOKENS[item.data.takerAsset]?.decimals || 18
-      const totalPrice = side === 'buy' ? formatUnits(item.data.makingAmount, makerDecimals) : formatUnits(item.data.takingAmount, takerDecimals)
-      const amount = side === 'buy' ? formatUnits(item.data.takingAmount, takerDecimals) : formatUnits(item.data.makingAmount, makerDecimals)
+    const addSide = (list) => list.map(item => {
+      const makerAsset = INCH_TOKENS[item.data.makerAsset]
+      const takerAsset = INCH_TOKENS[item.data.takerAsset]
+
+      if (!makerAsset || !takerAsset) {
+        return {}
+      }
+      
+      const makingAssetFormatted = formatUnits(item.data.makingAmount, makerAsset.decimals)
+      const takingAssetFormatted = formatUnits(item.data.takingAmount, takerAsset.decimals)
+
+      const side = makerAsset.symbol === 'USDT' ? 'buy' : 'sell'
+
+      const price = side === 'buy' ? makingAssetFormatted : takingAssetFormatted
+      const amount = side === 'sell' ? makingAssetFormatted : takingAssetFormatted
       const timestamp = moment(item.createDateTime).unix()
       return {
         ...item,
         side: side,
-        priceFormatted: numeral(totalPrice).divide(amount).format('0.[0000]'),
-        amount: amount,
+        priceFormatted: numeral(price / amount).format('0.0[0000000]'),//numeral(price).divide(amount).format('0.0[000000]'),
+        amount: numeral(amount).format('0.[0000]'),
         timestamp: timestamp,
       }
     })
     return [
-      addSide(sell1, 'sell'),
-      addSide(sell2, 'sell'),
-      addSide(sell3, 'sell'),
       addSide(buy1, 'buy'),
       addSide(buy2, 'buy'),
       addSide(buy3, 'buy'),
-    ].flat().filter(order => order.orderInvalidReason === 'order filled')
+      addSide(sell1, 'sell'),
+      addSide(sell2, 'sell'),
+      addSide(sell3, 'sell'),
+      
+    ].flat().filter(order => {
+      return order.orderInvalidReason === 'order filled' && order.priceFormatted !== 'NaN'
+    })
   })
 }
 
