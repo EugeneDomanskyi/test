@@ -85,6 +85,7 @@ const HomeTable = () => {
     trackEvent('Dex Swap Clicked', {
       'Token': collection.name,
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Wallet Address': wallet || null,
     })
 
     const address = await connect()

@@ -46,7 +46,8 @@ const Orders = ({onOrderCancelled, onClickOrder}) => {
       'Total': order.price.amount.decimal,
       'Network': blockchain.name,
       'Wallet connect Status': wallet ? 'Connected' : 'Not connected',
-      'Order Type': 'Limit Order',
+      'Wallet Address': wallet || null,
+      'Order Type': 'Limit order',
     }
     trackEvent('Cancel Order Submit', eventPost)
     cancelOrder(order.id, handleCancelProgress(eventPost), errorHandler)
@@ -57,7 +58,6 @@ const Orders = ({onOrderCancelled, onClickOrder}) => {
   }
 
   const handleCancelProgress = (eventPost) => (steps) => {
-    console.log(eventPost)
     const isAllStepsComplete = steps.flatMap(step => step.items).every(step => step.status === 'complete')
     if (isAllStepsComplete && loadingRef.current) {
       toast.success('Order cancelled successfully')
