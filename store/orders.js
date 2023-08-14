@@ -133,7 +133,6 @@ api.get.tokens.trades = ({address, blockchain, ...rest}) => {
     const addSide = (list, side) => list.map(item => {
       const makerDecimals = INCH_TOKENS[item.data.makerAsset]?.decimals || 18
       const takerDecimals = INCH_TOKENS[item.data.takerAsset]?.decimals || 18
-
       const totalPrice = side === 'buy' ? formatUnits(item.data.makingAmount, makerDecimals) : formatUnits(item.data.takingAmount, takerDecimals)
       const amount = side === 'buy' ? formatUnits(item.data.takingAmount, takerDecimals) : formatUnits(item.data.makingAmount, makerDecimals)
       const timestamp = moment(item.createDateTime).unix()

@@ -285,7 +285,9 @@ class TOKEN extends Order {
       toTokenAddress: toToken,
       amount: amountFrom,
     }
-    const quote = await sdk.getQuote(params)
+    const quote = await sdk.getQuote(params).catch(error => {
+      return {toTokenAmount: side === 'sell' ? 1000000 : 1000000000000000000}
+    })
     return formatUnits(`${quote.toTokenAmount}`, side === 'buy' ? tokenDecimals : USDT_DECIMALS)
   }
 
@@ -360,7 +362,12 @@ class TOKEN extends Order {
         orderType: 'active',
         blockchain: network.code,
       }
-      $orders.api.create.token(post).then(resolve).catch(reject)
+      const res = await $orders.api.create.token(post)
+      if (res) {
+        resolve(res)
+        return
+      }
+      reject()
     })
   }
 

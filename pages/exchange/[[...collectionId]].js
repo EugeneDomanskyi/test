@@ -210,7 +210,7 @@ const Exchange = () => {
 
             <App.Flex gap={GRID_GAP}>
               <App.Flex flex={1} column gap={GRID_GAP}>
-                <Chart />
+                <Chart type="nfts" />
 
                 <App.Flex gap={GRID_GAP}>
                   <OrderBook
@@ -258,7 +258,7 @@ const Exchange = () => {
           ) : null}
 
           {mobileTab == 'charts' ? (
-            <Chart />
+            <Chart type="nfts" />
           ) : null}
 
           {mobileTab == 'trades' ? (
