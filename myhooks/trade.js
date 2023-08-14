@@ -11,7 +11,7 @@ const useTrade = () => {
   const { getPrice, network, usdt, walletClient } = useWalletConnect()
   const blockchain = useSelector($app.get.blockchain)
 
-  const chainId = network(blockchain.code)?.chainId
+  const chainId = network(blockchain.code)?.id
 
   const getNftPricesNative = async (collection) => {
     let result = []

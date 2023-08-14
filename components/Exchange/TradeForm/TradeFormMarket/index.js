@@ -107,7 +107,7 @@ const TradeFormMarket = ({currentTab, currentOption, userBalances, initialForm})
               amount: amount,
               price: total / amount,
               total: total,
-              items: onSaleNft.slice(0, amount).map(nft => ({token: `${currentCollection.address}:${nft.id}`})),
+              items: onSaleNft.slice(0, amount).map(nft => ({token: `${currentCollection.address}:${nft.id}`, quantity: 1})),
               collectionId: currentCollection.address,
               blockchain: blockchain,
             },
