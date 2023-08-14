@@ -66,11 +66,12 @@ const Tokens = () => {
 
   useEffect(() => {
     if (queryTokenId && blockchain.code) {
-      console.log(blockchain.code, activeInterval)
       $exchange.api.get.tokenChartData(queryTokenId, blockchain.code, activeInterval.seconds).then(res => {
         if (res) {
           dispatch($exchange.set.chartData({type: 'tokens', data: res.data}))
+          return
         }
+        dispatch($exchange.set.chartData({type: 'tokens', data: []}))
       })
     }
   }, [activeInterval, queryTokenId, blockchain.code])

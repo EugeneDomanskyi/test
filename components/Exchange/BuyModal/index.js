@@ -53,7 +53,7 @@ const TradeBuyModal = ({data}) => {
         Order.TOKEN.swap({
           address: current.address,
           amount: data.amount,
-          side: 'sell',
+          side: 'buy',
         })
         .then(onSuccessPlaced)
         .catch(onError)

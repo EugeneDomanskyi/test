@@ -229,12 +229,7 @@ const api = {
     tokenChartData: (buyAsset, blockchain, interval) => {
       const network = CHAINS.find(chain => chain.code === blockchain)
       return fetch(`https://charts.1inch.io/v1.0/chart/aggregated/candle/${buyAsset}/${network.usdtContract}/${interval}/${network.id}`)
-        .then(async (res) => {
-          if (res.ok) {
-            return await res.json()
-          }
-          return null
-        })
+        .then(async res => res.ok ? await res.json() : null)
     }
   },
   executeOrder: (params) => {

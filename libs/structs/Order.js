@@ -1,7 +1,7 @@
 import numeral from 'numeral'
 import { formatUnits, encodeFunctionData, parseUnits, hashTypedData } from 'viem'
 import { getClient } from '@reservoir0x/reservoir-sdk'
-import { getWalletClient, waitForTransaction, sendTransaction, signTypedData, readContract } from '@wagmi/core'
+import { getWalletClient, waitForTransaction, sendTransaction, signTypedData, readContract, fetchBalance } from '@wagmi/core'
 import { LimitOrderProtocolFacade, LimitOrderBuilder } from '@1inch/limit-order-protocol-utils'
 import { FusionSDK } from '@1inch/fusion-sdk'
 import { toast } from 'react-toastify'
@@ -16,6 +16,15 @@ class Order {
 
   static showSuccessMessage = (message) => {
     toast.success(message)
+  }
+
+  static showErrorMessage = message => {
+    toast.error(message)
+  }
+
+  static getBalance = async (wallet, address) => {
+    const res = await fetchBalance({address: wallet, ...(address ? {token: address} : null)})
+    return numeral(res.formatted).value()
   }
 
   static getWalletData = async () => {
@@ -311,6 +320,13 @@ class TOKEN extends Order {
         amountFrom = parseUnits(`${amount}`, tokenDecimals)
       }
 
+      const balance = await Order.getBalance(walletClient.account.address, fromToken)
+      if (balance < amount*1) {
+        Order.showErrorMessage('Insufficient balance')
+        reject()
+        return 
+      }
+
       sdk.placeOrder({
         fromTokenAddress: fromToken,
         toTokenAddress: toToken,
@@ -325,10 +341,10 @@ class TOKEN extends Order {
 
   static place = ({address, price, amount, type = 'buy'}) => {
     return new Promise(async (resolve, reject) => {
-      
       const { walletClient, chainId } = await Order.getWalletData()
       const limitOrderBuilder = new LimitOrderBuilder(INCH_CONTRACTS[chainId], chainId, walletClient)
       const network = CHAINS.find(chain => chain.id === chainId)
+
       const tokenDecimals = await Order.getDecimals(address)
 
       let sellAsset = network.usdtContract
@@ -340,6 +356,13 @@ class TOKEN extends Order {
         buyAsset = network.usdtContract
         sellAmount = parseUnits(`${amount}`, tokenDecimals).toString()
         buyAmount = parseUnits(`${price}`, USDT_DECIMALS).toString()
+      }
+
+      const balance = await Order.getBalance(walletClient.account.address, sellAsset)
+      if (balance < sellAmount*1) {
+        Order.showErrorMessage('Insufficient balance')
+        reject()
+        return 
       }
       
       const limitOrder = limitOrderBuilder.buildLimitOrder({
