@@ -8,7 +8,6 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
 import useOrders from '@/myhooks/useOrders'
 
-import $exchange from '@/store/exchange'
 import $orders from '@/store/orders'
 import $app from '@/store/app'
 import $token from '@/store/token'
@@ -85,29 +84,16 @@ const Tokens = () => {
     }).then(res => {
       dispatch($orders.set.trades({type: 'tokens', data: res}))
     })
-    //dispatch($exchange.set.loading(true))
-    /* Promise.all([
-      $exchange.api.get.sales({
-        collection: collectionId,
-        blockchain: blockchain,
-        includeDeleted: false,
-        includeTokenMetadata: false,
-        sortDirection: 'desc',
-        limit: 800,
-      }),
-      $exchange.api.get.orderBook({
-        collection: collectionId,
-        blockchain: blockchain,
-      })
-    ]).then(([sales, orderBook]) => {
-      if (sales) {
-        dispatch($exchange.set.sales(sales))
-      }
-      if (orderBook) {
-        dispatch($exchange.set.orderBook(orderBook))
-      }
-      dispatch($exchange.set.loading(false))
-    }) */
+
+    $orders.api.get.tokens.orderBook({
+      address: tokenId,
+      blockchain: blockchain,
+      sortBy: 'createDateTime',
+      statuses: '[3]',
+      limit: 10,
+    }).then(res => {
+      dispatch($orders.set.orderBook({type: 'tokens', data: res}))
+    })
   }
 
   /* useEffect(() => {
@@ -174,7 +160,7 @@ const Tokens = () => {
 
             <App.Flex gap={GRID_GAP}>
               <App.Flex flex={1} column gap={GRID_GAP}>
-                <Chart />
+                <Chart type="tokens" />
 
                 <App.Flex gap={GRID_GAP}>
                   <OrderBook
@@ -222,7 +208,7 @@ const Tokens = () => {
           ) : null}
 
           {mobileTab == 'charts' ? (
-            <Chart />
+            <Chart type="tokens" />
           ) : null}
 
           {mobileTab == 'trades' ? (

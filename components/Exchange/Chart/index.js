@@ -6,6 +6,7 @@ import cn from 'classnames'
 import * as LightweightCharts from 'lightweight-charts'
 
 import $exchange from '@/store/exchange'
+import $orders from '@/store/orders'
 
 import App from '@/components/App'
 
@@ -75,11 +76,11 @@ const INTERVALS = [
   {key: '1w', count: 1, unit: 'weeks'},
 ]
 
-const TradeChart = () => {
+const TradeChart = ({ type }) => {
   const dispatch = useDispatch()
   
   const activeInterval = useSelector(({$exchange}) => $exchange.interval)
-  const kLineData = useSelector($exchange.get.kLineData(activeInterval))
+  const kLineData = useSelector(type == 'tokens' ? $orders.get.kLineData(activeInterval) : $exchange.get.kLineData(activeInterval))
 
   const wrapperRef = useRef(null)
   const containerRef = useRef(null)
@@ -138,8 +139,8 @@ const TradeChart = () => {
   )
 }
 
-const isEqual = () => {
-  return true
+const isEqual = (prevProps, nextProps) => {
+  return prevProps.type == nextProps.type
 }
 
 export default memo(TradeChart, isEqual)

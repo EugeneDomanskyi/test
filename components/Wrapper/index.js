@@ -46,7 +46,7 @@ const Wrapper = ({ children }) => {
         </WrapperCollections>
       )}
 
-      {!isExchange ? (
+      {!isExchange && !isTokens ? (
         <Footer />
       ) : null}
     </>
