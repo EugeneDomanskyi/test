@@ -44,6 +44,7 @@ class Order {
     const res = await readContract({
       address: address,
       abi: [abi],
+      functionName: 'decimals',
     })
     return res
   }
@@ -266,9 +267,9 @@ class TOKEN extends Order {
     if (!amount) {
       return 0
     }
-    const { walletClient } = await Order.getWalletData()
+    // const { walletClient } = await Order.getWalletData()
     const network = CHAINS.find(chain => chain.id === chainId)
-    const sdk = new FusionSDK({url: 'https://fusion.1inch.io', network: chainId, blockchainProvider: walletClient})
+    const sdk = new FusionSDK({url: 'https://fusion.1inch.io', network: chainId})
     const tokenDecimals = await Order.getDecimals(address)
 
     let fromToken = network.usdtContract
@@ -283,7 +284,6 @@ class TOKEN extends Order {
       fromTokenAddress: fromToken,
       toTokenAddress: toToken,
       amount: amountFrom,
-      preset: 'maxReturnResult',
     }
     const quote = await sdk.getQuote(params)
     return formatUnits(`${quote.toTokenAmount}`, side === 'buy' ? tokenDecimals : USDT_DECIMALS)
