@@ -66,7 +66,9 @@ const Tokens = () => {
 
   useEffect(() => {
     if (queryTokenId && blockchain.code) {
+      dispatch($exchange.set.loading(true))
       $exchange.api.get.tokenChartData(queryTokenId, blockchain.code, activeInterval.seconds).then(res => {
+        dispatch($exchange.set.loading(false))
         if (res) {
           dispatch($exchange.set.chartData({type: 'tokens', data: res.data}))
           return
@@ -89,7 +91,6 @@ const Tokens = () => {
   }, [blockchain.code, wallet])
 
   const getExchangeData = (tokenId, blockchain) => {
-    
     $orders.api.get.tokens.trades({
       address: tokenId,
       blockchain: blockchain,
