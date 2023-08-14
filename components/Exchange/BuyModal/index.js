@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import useTrade from '@/myhooks/trade'
 import useOrders from '@/myhooks/useOrders'
+import useWalletConnect from '@/myhooks/wallet-connect'
 import $modal from '@/store/modal'
 import { trackEvent } from '@/libs/analytics.lib'
 
@@ -18,6 +19,7 @@ const TradeBuyModal = ({data}) => {
 
   const { placeBid, buyNft, errorHandler } = useTrade()
   const { updateOrders } = useOrders({collectionId: currentCollection.address})
+  const { wallet } = useWalletConnect()
 
   const [step, setStep] = useState('confirm')
 
@@ -39,7 +41,19 @@ const TradeBuyModal = ({data}) => {
   }
 
   const fulfillOrder = () => {
-    buyNft(data.items, null, progressHandler, onError)
+    buyNft(data.items, null, progressHandler('Market order'), onError)
+    trackEvent('Create Order Submit', {
+      'Wallet connect Status': 'Connected',
+      'Wallet Address': wallet || null,
+      'Order type': 'Market order',
+      'Network': data.blockchain.name,
+      'Price': data.price,
+      'Quantity': data.amount,
+      'Total': data.total*data.amount,
+      'Side': 'Buy',
+      'Base Currency': data.blockchain.currency,
+      'Quote Currency': currentCollection.name
+    })
   }
 
   const palceOrder = () => {
@@ -59,9 +73,11 @@ const TradeBuyModal = ({data}) => {
         subtitle: `Buy ${currentCollection.name} using ${data.blockchain.wrapped.shortName}`
       },
     }))
-    placeBid(bids, progressHandler, onError)
+    placeBid(bids, progressHandler('Limit order'), onError)
     trackEvent('Create Order Submit', {
       'Wallet connect Status': 'Connected',
+      'Wallet Address': wallet || null,
+      'Order type': 'Limit order',
       'Network': data.blockchain.name,
       'Price': data.price,
       'Quantity': data.amount,
@@ -77,7 +93,7 @@ const TradeBuyModal = ({data}) => {
     dispatch($modal.set.close())
   }
 
-  const progressHandler = steps => {
+  const progressHandler = (orderType) => steps => {
     const isAllStepsComplete = steps.flatMap(step => step.items).every(step => step.status === 'complete')
     if (isAllStepsComplete && loadingRef.current) {
       loadingRef.current = false
@@ -90,6 +106,8 @@ const TradeBuyModal = ({data}) => {
       setStep('complete')
       trackEvent('Create Order Success', {
         'Wallet connect Status': 'Connected',
+        'Wallet Address': wallet || null,
+        'Order type': orderType,
         'Network': data.blockchain.name,
         'Price': data.price,
         'Quantity': data.amount,

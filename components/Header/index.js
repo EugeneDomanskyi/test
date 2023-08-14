@@ -48,7 +48,8 @@ const Header = () => {
       const result = await connect()
       if (result) {
         trackEvent('Wallet Connected Successfully', {
-          'Wallet connected Status': 'Connected'
+          'Wallet connected Status': 'Connected',
+          'Wallet Address': result,
         })
       }
     }
@@ -68,7 +69,8 @@ const Header = () => {
 
   const handleDisconnect = () => {
     trackEvent('Wallet Disconnect Clicked', {
-      'Wallet connected Status': wallet ? 'Connected' : 'Not Connected'
+      'Wallet connected Status': wallet ? 'Connected' : 'Not Connected',
+      'Wallet Address': wallet || null,
     })
     disconnect()
     setMenuShow(false)

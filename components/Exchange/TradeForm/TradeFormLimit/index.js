@@ -159,6 +159,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
       'Quote Currency': currentCollection.name,
       'Total': form.total,
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Wallet Address': wallet || null,
       'Network': blockchain.name,
     })
   }
@@ -169,6 +170,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
       'Quote Currency': currentCollection.name,
       'Price': form.price,
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Wallet Address': wallet || null,
       'Network': blockchain.name,
     })
   }
@@ -179,6 +181,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
       'Quote Currency': currentCollection.name,
       'Amount': form.amount,
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Wallet Address': wallet || null,
       'Network': blockchain.name,
     })
   }
