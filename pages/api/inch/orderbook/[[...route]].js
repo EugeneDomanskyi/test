@@ -1,40 +1,27 @@
 import { CHAINS } from '@/config'
 
-const BASE_URL = 'https://api.1inch.dev/orderbook/v3.0'
+const BASE_URL = 'https://api.1inch.dev/orderbook'
 
 const handler = async (req, res) => {
   const { route, chainCode, statuses, ...params } = req.query
 
   const segments = (route || []).map(seg => `/${seg}`).join('')
-  
-  const currentChain = CHAINS.find(chain => chain.code === chainCode)
 
   const query = queryBuilder(params)
 
-  const result = await fetch(`${BASE_URL}/${currentChain.id}${segments}${query}`, {
+  const result = await fetch(`${BASE_URL}${segments}${query}`, {
     headers: {
-      'Authorization': `Bearer AMcNVNc01FRipWFywEwT258QUCFkHWnb`,
+      'Authorization': `Bearer r2tJonsQiCiVq8Dr0OznOV7XbuZP14Bq`,
       'Accept': 'application/json',
       'content-type': 'application/json',
     }
   })
-  // console.log(`${BASE_URL}/${currentChain.id}${segments}${query}`)
-  // const contentType = result.headers.get('content-type')
-  console.log(result.ok, result.status)
+
   if (result.ok) {
-    let data = await result.json()
-    res.status(result.status).json(data)
+    const json = await result.json()
+    res.status(result.status).json(json)
     return
   }
-  
-  // console.log('contentType', contentType)
-  // if (contentType.includes('application/json')) {
-  //   data = await result.json()
-  // } else {
-  //   data = await result.text()
-  // }
-  // const json = await result.json()
-  // console.log('json', result.ok, result)
   res.status(result.status).send(result.message)
 }
 

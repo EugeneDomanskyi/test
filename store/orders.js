@@ -83,9 +83,10 @@ const getters = {
 
 const api = {
   get: {
-    tokens: ({address, ...rest}) => {
-      return request(`address/${address}`, 'GET', {api: 'inch', ...rest}).then(res => {
-        return res.map(order => ({...order, network: rest.blockchain}))
+    tokens: ({address, blockchain}) => {
+      const network = CHAINS.find(chain => chain.code === blockchain)
+      return request(`orderbook/v3.0/${network.id}/address/${address}`, 'GET', {api: 'inch-private'}).then(res => {
+        return res.map(order => ({...order, network: blockchain}))
       })
     },
     nfts: (params) => {

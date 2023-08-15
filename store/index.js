@@ -94,12 +94,14 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
       case 'inch':
         base_url = `${INCH_URL}/${currentChain.id}`
         break
+      case 'inch-private':
+        base_url = `/api/inch`
+        console.log(base_url)
+        break
     }
   }
 
-  const response = await fetch(`${base_url}/${uri}${query}`, options).catch(error => {
-    console.error('Fetch error:', error)
-  })
+  const response = await fetch(`${base_url}/${uri}${query}`, options).catch(errorHandler)
 
   if (response?.ok) {
     return responseHandler(response)
