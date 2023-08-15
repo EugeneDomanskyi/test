@@ -8,6 +8,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
 import useOrders from '@/myhooks/useOrders'
 
+import $exchange from '@/store/exchange'
 import $orders from '@/store/orders'
 import $app from '@/store/app'
 import $token from '@/store/token'
@@ -40,6 +41,7 @@ const Tokens = () => {
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const exchangeLoading = useSelector(({$exchange}) => $exchange.loading)
+  const activeInterval = useSelector(({$exchange}) => $exchange.interval)
 
   const tokens = useSelector(({$token}) => $token.all)
   const searched = useSelector(({$token}) => $token.searched)
@@ -64,6 +66,17 @@ const Tokens = () => {
 
   useEffect(() => {
     if (queryTokenId && blockchain.code) {
+      console.log(blockchain.code, activeInterval)
+      $exchange.api.get.tokenChartData(queryTokenId, blockchain.code, activeInterval.seconds).then(res => {
+        if (res) {
+          dispatch($exchange.set.chartData({type: 'tokens', data: res.data}))
+        }
+      })
+    }
+  }, [activeInterval, queryTokenId, blockchain.code])
+
+  useEffect(() => {
+    if (queryTokenId && blockchain.code) {
       getExchangeData(queryTokenId, blockchain.code)
     }
   }, [queryTokenId, blockchain.code])
@@ -75,6 +88,7 @@ const Tokens = () => {
   }, [blockchain.code, wallet])
 
   const getExchangeData = (tokenId, blockchain) => {
+    
     $orders.api.get.tokens.trades({
       address: tokenId,
       blockchain: blockchain,

@@ -3,7 +3,7 @@ import { formatUnits, encodeFunctionData, parseUnits, hashTypedData } from 'viem
 import { getClient } from '@reservoir0x/reservoir-sdk'
 import { getWalletClient, waitForTransaction, sendTransaction, signTypedData, readContract } from '@wagmi/core'
 import { LimitOrderProtocolFacade, LimitOrderBuilder } from '@1inch/limit-order-protocol-utils'
-import { FusionSDK, NetworkEnum, WebSocketApi } from '@1inch/fusion-sdk'
+import { FusionSDK } from '@1inch/fusion-sdk'
 import { toast } from 'react-toastify'
 
 import { CHAINS, INCH_CONTRACTS, INCH_TOKENS } from '@/config'
@@ -44,6 +44,7 @@ class Order {
     const res = await readContract({
       address: address,
       abi: [abi],
+      functionName: 'decimals',
     })
     return res
   }
@@ -241,7 +242,6 @@ class TOKEN extends Order {
   constructor(data) {
     super()
     this.rawData = data
-    console.log(INCH_TOKENS[data.data.makerAsset].decimals)
     const makerToken = INCH_TOKENS[data.data.makerAsset]
     const takerToken = INCH_TOKENS[data.data.takerAsset]
     
@@ -267,9 +267,9 @@ class TOKEN extends Order {
     if (!amount) {
       return 0
     }
-    const { walletClient } = await Order.getWalletData()
+    // const { walletClient } = await Order.getWalletData()
     const network = CHAINS.find(chain => chain.id === chainId)
-    const sdk = new FusionSDK({url: 'https://fusion.1inch.io', network: chainId, blockchainProvider: walletClient})
+    const sdk = new FusionSDK({url: 'https://fusion.1inch.io', network: chainId})
     const tokenDecimals = await Order.getDecimals(address)
 
     let fromToken = network.usdtContract
@@ -284,9 +284,10 @@ class TOKEN extends Order {
       fromTokenAddress: fromToken,
       toTokenAddress: toToken,
       amount: amountFrom,
-      preset: 'maxReturnResult',
     }
-    const quote = await sdk.getQuote(params)
+    const quote = await sdk.getQuote(params).catch(error => {
+      return {toTokenAmount: side === 'sell' ? 1000000 : 1000000000000000000}
+    })
     return formatUnits(`${quote.toTokenAmount}`, side === 'buy' ? tokenDecimals : USDT_DECIMALS)
   }
 
@@ -361,7 +362,12 @@ class TOKEN extends Order {
         orderType: 'active',
         blockchain: network.code,
       }
-      $orders.api.create.token(post).then(resolve).catch(reject)
+      const res = await $orders.api.create.token(post)
+      if (res) {
+        resolve(res)
+        return
+      }
+      reject()
     })
   }
 

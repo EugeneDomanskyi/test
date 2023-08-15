@@ -77,7 +77,7 @@ const TradeBuyModal = ({data}) => {
           price: data.total*data.amount,
           amount: data.amount,
           type: 'buy',
-        }).then(onSuccessPlaced)
+        }).then(onSuccessPlaced).catch(onFailurePlaced)
         break
     }
     dispatch($modal.set.update({
@@ -88,7 +88,11 @@ const TradeBuyModal = ({data}) => {
     }))
   }
 
-  const onSuccessPlaced = () => {
+  const onFailurePlaced = () => {
+    dispatch($modal.set.close())
+  }
+
+  const onSuccessPlaced = (res) => {
     dispatch($modal.set.update({
       header: {
         title: 'Success',
