@@ -238,25 +238,6 @@ api.get.tokens.orderBook = ({address, ...rest}) => {
     request('all', 'GET', {api: 'inch', takerAsset: address, makerAsset: network.usdtContract, ...rest}),
     request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, ...rest}),
   ]).then(([buy, sell]) => {
-    // const addSide = (list, side) => list.map(item => {
-    //   const makerDecimals = INCH_TOKENS[item.data.makerAsset]?.decimals || 18
-    //   const takerDecimals = INCH_TOKENS[item.data.takerAsset]?.decimals || 18
-
-    //   const totalPrice = side === 'buy' ? formatUnits(item.data.makingAmount, makerDecimals) : formatUnits(item.data.takingAmount, takerDecimals)
-    //   const amount = side === 'buy' ? formatUnits(item.data.takingAmount, takerDecimals) : formatUnits(item.data.makingAmount, makerDecimals)
-    //   const timestamp = moment(item.createDateTime).unix()
-
-    //   return {
-    //     ...item,
-    //     side: side,
-    //     price: numeral(totalPrice).divide(amount).format('0.[0000]'),
-    //     priceFormatted: numeral(totalPrice).divide(amount).format('0.[0000]'),
-    //     amount: amount,
-    //     quantity: amount,
-    //     timestamp: timestamp,
-    //   }
-    // })
-
     return {buy: addSide(buy, 'buy'), sell: addSide(sell, 'sell')}
   })
 }

@@ -1,5 +1,3 @@
-import { CHAINS } from '@/config'
-
 const BASE_URL = 'https://api.1inch.dev/orderbook'
 
 const handler = async (req, res) => {
@@ -8,7 +6,7 @@ const handler = async (req, res) => {
   const segments = (route || []).map(seg => `/${seg}`).join('')
 
   const query = queryBuilder(params)
-
+  console.log(`${BASE_URL}${segments}${query}`)
   const result = await fetch(`${BASE_URL}${segments}${query}`, {
     headers: {
       'Authorization': `Bearer r2tJonsQiCiVq8Dr0OznOV7XbuZP14Bq`,

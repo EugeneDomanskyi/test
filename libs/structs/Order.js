@@ -243,7 +243,10 @@ class NFT extends Order {
         chainId,
         options: { orderKind: 'seaport-v1.5'},
         onProgress: NFT.onProgress(onComplete),
-      }).catch(reject)
+      }).catch((error) => {
+        Order.showErrorMessage(error.shortMessage)
+        reject(error)
+      })
     })
   }
 }
@@ -408,10 +411,15 @@ class TOKEN extends Order {
         chainId: chainId,
         to: INCH_CONTRACTS[chainId],
         data: callData,
+      }).catch((error) => {
+        Order.showErrorMessage(error.shortMessage)
+        reject(error)
       })
-      const txResult = await waitForTransaction(res)
-      resolve(txResult)
-      Order.showSuccessMessage('Order cancelled successfully')
+      if (res) {
+        const txResult = await waitForTransaction(res)
+        resolve(txResult)
+        Order.showSuccessMessage('Order cancelled successfully')
+      }
     })
   }
 }
