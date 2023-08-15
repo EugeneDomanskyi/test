@@ -96,10 +96,7 @@ const Exchange = () => {
 
   useEffect(() => {
     updateOrders()
-    // if (!wallet) {
-    //   dispatch($orders.set.nfts([]))
-    // }
-  }, [blockchain.code, wallet])
+  }, [blockchain.code, wallet, collectionId])
   
   useEffect(() => {
     if (socketConnected && collectionId) {

@@ -18,7 +18,7 @@ const useOrders = ({tokenAddress, type}) => {
         includeCriteriaMetadata: true,
         blockchain: blockchain.code,
         address: wallet,
-        // sortBy: 'createDateTime',
+        sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
         statuses: '[1,2]',
       }).then(res => {
         if (res) {
@@ -26,7 +26,6 @@ const useOrders = ({tokenAddress, type}) => {
         }
       })
     }
-    
     $orders.api.get[type].orderBook({
       collection: tokenAddress,
       address: tokenAddress,

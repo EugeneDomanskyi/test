@@ -11,6 +11,33 @@ const round = (date, duration, method) => {
   return moment(Math[method]((+date) / (+duration)) * (+duration))
 }
 
+const addSide = (list) => list.map(item => {
+  const makerAsset = INCH_TOKENS[item.data.makerAsset]
+  const takerAsset = INCH_TOKENS[item.data.takerAsset]
+
+  if (!makerAsset || !takerAsset) {
+    return {}
+  }
+  
+  const makingAssetFormatted = formatUnits(item.data.makingAmount, makerAsset.decimals)
+  const takingAssetFormatted = formatUnits(item.data.takingAmount, takerAsset.decimals)
+
+  const side = makerAsset.symbol === 'USDT' ? 'buy' : 'sell'
+
+  const price = side === 'buy' ? makingAssetFormatted : takingAssetFormatted
+  const amount = side === 'sell' ? makingAssetFormatted : takingAssetFormatted
+  const timestamp = moment(item.createDateTime).unix()
+  return {
+    ...item,
+    side: side,
+    price: numeral(price / amount).format('0.0[0000000]'),
+    priceFormatted: numeral(price / amount).format('0.0[0000000]'),
+    amount: numeral(amount).format('0.[0000]'),
+    quantity: numeral(amount).format('0.[0000]'),
+    timestamp: timestamp,
+  }
+})
+
 const generatePeriods = (from, to, closePrice, step) => {
   const start = moment(from)
   const end = moment(to)
@@ -206,28 +233,29 @@ api.get.nfts.orderBook = (params) => {
 }
 
 api.get.tokens.orderBook = ({address, ...rest}) => {
+  const network = CHAINS.find(chain => chain.code === rest.blockchain)
   return Promise.all([
-    request('all', 'GET', {api: 'inch', takerAsset: address, ...rest}),
-    request('all', 'GET', {api: 'inch', makerAsset: address, ...rest}),
+    request('all', 'GET', {api: 'inch', takerAsset: address, makerAsset: network.usdtContract, ...rest}),
+    request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, ...rest}),
   ]).then(([buy, sell]) => {
-    const addSide = (list, side) => list.map(item => {
-      const makerDecimals = INCH_TOKENS[item.data.makerAsset]?.decimals || 18
-      const takerDecimals = INCH_TOKENS[item.data.takerAsset]?.decimals || 18
+    // const addSide = (list, side) => list.map(item => {
+    //   const makerDecimals = INCH_TOKENS[item.data.makerAsset]?.decimals || 18
+    //   const takerDecimals = INCH_TOKENS[item.data.takerAsset]?.decimals || 18
 
-      const totalPrice = side === 'buy' ? formatUnits(item.data.makingAmount, makerDecimals) : formatUnits(item.data.takingAmount, takerDecimals)
-      const amount = side === 'buy' ? formatUnits(item.data.takingAmount, takerDecimals) : formatUnits(item.data.makingAmount, makerDecimals)
-      const timestamp = moment(item.createDateTime).unix()
+    //   const totalPrice = side === 'buy' ? formatUnits(item.data.makingAmount, makerDecimals) : formatUnits(item.data.takingAmount, takerDecimals)
+    //   const amount = side === 'buy' ? formatUnits(item.data.takingAmount, takerDecimals) : formatUnits(item.data.makingAmount, makerDecimals)
+    //   const timestamp = moment(item.createDateTime).unix()
 
-      return {
-        ...item,
-        side: side,
-        price: numeral(totalPrice).divide(amount).format('0.[0000]'),
-        priceFormatted: numeral(totalPrice).divide(amount).format('0.[0000]'),
-        amount: amount,
-        quantity: amount,
-        timestamp: timestamp,
-      }
-    })
+    //   return {
+    //     ...item,
+    //     side: side,
+    //     price: numeral(totalPrice).divide(amount).format('0.[0000]'),
+    //     priceFormatted: numeral(totalPrice).divide(amount).format('0.[0000]'),
+    //     amount: amount,
+    //     quantity: amount,
+    //     timestamp: timestamp,
+    //   }
+    // })
 
     return {buy: addSide(buy, 'buy'), sell: addSide(sell, 'sell')}
   })
@@ -237,43 +265,12 @@ api.get.tokens.trades = ({address, blockchain, ...rest}) => {
   const network = CHAINS.find(chain => chain.code === blockchain)
   return Promise.all([
     request('all', 'GET', {api: 'inch', takerAsset: address, makerAsset: network.usdtContract, blockchain, ...rest}),
-    request('all', 'GET', {api: 'inch', takerAsset: address, makerAsset: network.usdtContract, page: 2, blockchain, ...rest}),
-    request('all', 'GET', {api: 'inch', takerAsset: address, makerAsset: network.usdtContract, page: 3, blockchain, ...rest}),
     request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, blockchain, ...rest}),
-    request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, page: 2, blockchain, ...rest}),
-    request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, page: 3, blockchain, ...rest}),
-  ]).then(([sell1, sell2, sell3, buy1, buy2, buy3]) => {
-    const addSide = (list) => list.map(item => {
-      const makerAsset = INCH_TOKENS[item.data.makerAsset]
-      const takerAsset = INCH_TOKENS[item.data.takerAsset]
-
-      if (!makerAsset || !takerAsset) {
-        return {}
-      }
-      
-      const makingAssetFormatted = formatUnits(item.data.makingAmount, makerAsset.decimals)
-      const takingAssetFormatted = formatUnits(item.data.takingAmount, takerAsset.decimals)
-
-      const side = makerAsset.symbol === 'USDT' ? 'buy' : 'sell'
-
-      const price = side === 'buy' ? makingAssetFormatted : takingAssetFormatted
-      const amount = side === 'sell' ? makingAssetFormatted : takingAssetFormatted
-      const timestamp = moment(item.createDateTime).unix()
-      return {
-        ...item,
-        side: side,
-        priceFormatted: numeral(price / amount).format('0.0[0000000]'),
-        amount: numeral(amount).format('0.[0000]'),
-        timestamp: timestamp,
-      }
-    })
+  ]).then(([sell1, buy1]) => {
+    
     return [
       addSide(buy1, 'buy'),
-      addSide(buy2, 'buy'),
-      addSide(buy3, 'buy'),
       addSide(sell1, 'sell'),
-      addSide(sell2, 'sell'),
-      addSide(sell3, 'sell'),
     ].flat()
   })
 }

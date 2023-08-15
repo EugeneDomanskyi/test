@@ -85,9 +85,7 @@ const Tokens = () => {
   }, [queryTokenId, blockchain.code])
 
   useEffect(() => {
-    if (wallet) {
-      updateOrders()
-    }
+    updateOrders()
   }, [blockchain.code, wallet])
 
   const getExchangeData = (tokenId, blockchain) => {

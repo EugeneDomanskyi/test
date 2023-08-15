@@ -28,7 +28,7 @@ const Sales = ({onClickSale, type}) => {
         </App.Flex>
       </App.Flex>
       <App.Flex sx={{padding: '0 5px', height: 20}} justify="space-between" align="center">
-        <App.Text flex={1} size={10} color="#908F99" weight={600}>Price ({type === 'nfts' ? blockchain.currency : 'USDT'})</App.Text>
+        <App.Text flex={1} size={10} color="#908F99" weight={600}>Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
         <App.Text flex={1} size={10} color="#908F99" center weight={600}>Volume</App.Text>
         <App.Text flex={1} size={10} color="#908F99" right weight={600}>Time</App.Text>
       </App.Flex>
