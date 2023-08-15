@@ -85,7 +85,7 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
           modal: 'Exchange/BuyModal',
           props: {
             header: {
-              title: `Buy ${current.name} for ${blockchain.wrapped.shortName}`,
+              title: `Buy ${current.name} for ${type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'}`,
             },
             data: {
               ...form,
@@ -129,7 +129,7 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
           modal: 'Exchange/SellModal',
           props: {
             header: {
-              title: `Sell ${current.name} for ${blockchain.wrapped.shortName}`,
+              title: `Sell ${current.name} for USDT`,
             },
             data: {
               ...form,
@@ -261,7 +261,9 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
         className={styles.button}
         disabled={!form.total}
         onClick={handleSubmit}>
-        <App.Text color="#09051D" size={15} weight={700}>{ currentOption.title } {`${form.amount || 0} NFT${form.amount > 1 ? `s` : ''}` }</App.Text>
+        <App.Text color="#09051D" size={15} weight={700}>
+          { currentOption.title } {`${form.amount || 0}` } { type === 'nfts' ? `NFT${form.amount > 1 ? `s` : ''}` : current.symbol }
+        </App.Text>
         { current?.image ? <Image src={current?.image} width={32} height={32} alt="" /> : null }
       </App.Button>
     </App.Flex>

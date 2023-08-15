@@ -350,16 +350,17 @@ class TOKEN extends Order {
 
       let sellAsset = network.usdtContract
       let buyAsset = address
-      let sellAmount = parseUnits(`${price}`, USDT_DECIMALS).toString()
+      let sellAmount = price
       let buyAmount = parseUnits(`${amount}`, tokenDecimals).toString()
       if (type === 'sell') {
         sellAsset = address
         buyAsset = network.usdtContract
-        sellAmount = parseUnits(`${amount}`, tokenDecimals).toString()
+        sellAmount = amount
         buyAmount = parseUnits(`${price}`, USDT_DECIMALS).toString()
       }
 
       const balance = await Order.getBalance(walletClient.account.address, sellAsset)
+      console.log('balance', balance, sellAmount)
       if (balance < sellAmount*1) {
         Order.showErrorMessage('Insufficient balance')
         reject()
@@ -370,7 +371,7 @@ class TOKEN extends Order {
         makerAssetAddress: sellAsset,
         takerAssetAddress: buyAsset,
         makerAddress: walletClient.account.address,
-        makingAmount: sellAmount,
+        makingAmount: parseUnits(`${sellAmount}`, type === 'buy' ? USDT_DECIMALS : tokenDecimals).toString(),
         takingAmount: buyAmount,
       })
 

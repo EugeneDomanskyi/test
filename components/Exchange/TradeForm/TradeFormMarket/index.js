@@ -124,7 +124,7 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
           modal: 'Exchange/BuyModal',
           props: {
             header: {
-              title: `Buy ${current.name} for ${blockchain.currency}`,
+              title: `Buy ${current.name} for ${type === 'nfts' ? blockchain.currency : 'USDT'}`,
             },
             data: {
               type: 'fulfill',
@@ -144,8 +144,8 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
           modal: 'Exchange/SellModal',
           props: {
             header: {
-              title: `${userNfts.length} NFTs available`,
-              subtitle: `Choose the NFT collection you want to sell`
+              title: type === 'nfts' ? `${userNfts.length} NFTs available` : `Sell ${current.name} for USDT`,
+              subtitle: type === 'nfts' ? `Choose the NFT collection you want to sell` : ''
             },
             data: {
               type: 'fulfill',
@@ -224,7 +224,9 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
         className={styles.button}
         disabled={isDisabled}
         onClick={handleSubmit}>
-        <App.Text color="#09051D" size={15} weight={700}>{ currentOption.title } {`${amount || 0} NFT${amount > 1 ? `s` : ''}` }</App.Text>
+        <App.Text color="#09051D" size={15} weight={700}>
+          { currentOption.title } {`${amount || 0}` } { type === 'nfts' ? `NFT${amount > 1 ? `s` : ''}` : current.symbol }
+        </App.Text>
         { current?.image ? <Image src={current?.image} width={32} height={32} alt="" /> : null }
       </App.Button>
     </App.Flex>
