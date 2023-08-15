@@ -6,6 +6,7 @@ import cn from 'classnames'
 import * as LightweightCharts from 'lightweight-charts'
 
 import $exchange from '@/store/exchange'
+import $orders from '@/store/orders'
 
 import App from '@/components/App'
 
@@ -141,8 +142,8 @@ const TradeChart = ({type}) => {
   )
 }
 
-const isEqual = () => {
-  return true
+const isEqual = (prevProps, nextProps) => {
+  return prevProps.type == nextProps.type
 }
 
 export default memo(TradeChart, isEqual)

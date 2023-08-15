@@ -7,6 +7,30 @@ import { request } from './index'
 import Order from '@/libs/structs/Order'
 import { INCH_TOKENS, CHAINS } from '@/config'
 
+const round = (date, duration, method) => {
+  return moment(Math[method]((+date) / (+duration)) * (+duration))
+}
+
+const generatePeriods = (from, to, closePrice, step) => {
+  const start = moment(from)
+  const end = moment(to)
+  const range = moment.range(start, end)
+  const array = Array.from(range.by(step.unit, {step: step.count, excludeEnd: true})).slice(1)
+  return array.reduce((acc, time) => {
+    const roundedDate = time.format('DD-MM-YY HH:mm')
+    return {
+      ...acc,
+      [roundedDate]: [{
+        date: time,
+        roundedDate: roundedDate,
+        volume: 0,
+        price: closePrice,
+        timestamp: time.unix()*1000,
+      }]
+    }
+  }, {})
+}
+
 export const ordersSlice = createSlice({
   name: '$orders',
   initialState: {
@@ -79,6 +103,73 @@ const getters = {
       }
     })
   }),
+
+  kLineData: (interval) => createSelector([
+    state => state.$orders.trades.tokens,
+  ], (sales) => {
+    const groupedSales = sales.reduce((acc, sale) => {
+      const roundedDate = round(moment(sale.timestamp*1000), moment.duration(interval.count, interval.unit), 'ceil')
+      const intervalKey = roundedDate.unix()
+      const formattedData = {
+        price: sale.priceFormatted * 1,
+        timestamp:  sale.timestamp*1000,
+        volume: sale.amount*1,
+        roundedDate: roundedDate.format('DD-MM-YY HH:mm'),
+        date: roundedDate,
+      }
+      const list = acc[intervalKey] ? [...acc[intervalKey], formattedData] : [formattedData]
+      return {
+        ...acc,
+        [intervalKey]: list
+      }
+    }, {})
+
+    let previousRoundedDate = ''
+    let previousClosePrice = 0
+
+    const temp = Object.entries(groupedSales).reduce((acc, [time, sales]) => {
+      let emptyPeriods = {}
+      const isNext = !previousRoundedDate
+      if (!isNext) {
+        emptyPeriods = generatePeriods(time, previousRoundedDate, previousClosePrice, {count: interval.count, unit: interval.unit})
+      }
+      previousRoundedDate = time
+      previousClosePrice = sales.sort((a, b) => b.timestamp - a.timestamp)[0].price
+      return {
+        ...acc,
+        ...emptyPeriods,
+        [time]: sales,
+      }
+    }, {})
+
+    const result = Object.entries(temp).map(([intervalKey, sales]) => {
+      const { timestamps, prices, volume } = sales.reduce((acc, sale) => {
+        return {
+          timestamps: [...acc.timestamps, sale.timestamp],
+          prices: [...acc.prices, sale.price],
+          volume: acc.volume + sale.volume,
+        }
+      }, {timestamps: [], prices: [], volume: 0})
+      const openKey = Math.min(...timestamps)
+      const closeKey = Math.max(...timestamps)
+      const data = sales.reduce((acc, sale) => {
+        return {
+          ...acc,
+          [sale.timestamp]: sale,
+        }
+      }, {})
+
+      return {
+        open: data[openKey].price,
+        close: data[closeKey].price,
+        low: Math.min(...prices),
+        high: Math.max(...prices),
+        volume: volume,
+        time: sales[0].date.unix()*1000
+      }
+    })
+    return result.sort((a,b) => a.time - b.time)
+  }),
 }
 
 const api = {
@@ -119,7 +210,26 @@ api.get.tokens.orderBook = ({address, ...rest}) => {
     request('all', 'GET', {api: 'inch', takerAsset: address, ...rest}),
     request('all', 'GET', {api: 'inch', makerAsset: address, ...rest}),
   ]).then(([buy, sell]) => {
-    return {buy: buy, sell: sell}
+    const addSide = (list, side) => list.map(item => {
+      const makerDecimals = INCH_TOKENS[item.data.makerAsset]?.decimals || 18
+      const takerDecimals = INCH_TOKENS[item.data.takerAsset]?.decimals || 18
+
+      const totalPrice = side === 'buy' ? formatUnits(item.data.makingAmount, makerDecimals) : formatUnits(item.data.takingAmount, takerDecimals)
+      const amount = side === 'buy' ? formatUnits(item.data.takingAmount, takerDecimals) : formatUnits(item.data.makingAmount, makerDecimals)
+      const timestamp = moment(item.createDateTime).unix()
+
+      return {
+        ...item,
+        side: side,
+        price: numeral(totalPrice).divide(amount).format('0.[0000]'),
+        priceFormatted: numeral(totalPrice).divide(amount).format('0.[0000]'),
+        amount: amount,
+        quantity: amount,
+        timestamp: timestamp,
+      }
+    })
+
+    return {buy: addSide(buy, 'buy'), sell: addSide(sell, 'sell')}
   })
 }
 

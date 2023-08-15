@@ -72,7 +72,8 @@ const OrderBook = ({type, onClickOrder}) => {
 }
 
 const isEqual = (prev, next) => {
-  return prev.onClickOrder === next.onClickOrder
+  return prev.onClickOrder === next.onClickOrder &&
+  prev.type === next.type
 }
 
 export default memo(OrderBook, isEqual)
