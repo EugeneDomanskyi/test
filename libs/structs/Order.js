@@ -350,7 +350,6 @@ class TOKEN extends Order {
       const network = CHAINS.find(chain => chain.id === chainId)
 
       const tokenDecimals = await Order.getDecimals(address)
-
       let sellAsset = network.usdtContract
       let buyAsset = address
       let sellAmount = price
@@ -363,7 +362,6 @@ class TOKEN extends Order {
       }
 
       const balance = await Order.getBalance(walletClient.account.address, sellAsset)
-      console.log('balance', balance, sellAmount)
       if (balance < sellAmount*1) {
         Order.showErrorMessage('Insufficient balance')
         reject()
@@ -380,7 +378,14 @@ class TOKEN extends Order {
 
       const limitOrderTypedData = limitOrderBuilder.buildLimitOrderTypedData(limitOrder)
       const limitOrderHash = hashTypedData(limitOrderTypedData)
-      const signature = await walletClient.signTypedData(limitOrderTypedData)
+      const signature = await walletClient.signTypedData(limitOrderTypedData).catch(error => {
+        Order.showErrorMessage(error.shortMessage)
+        reject(error)
+      })
+
+      if (!signature) {
+        return
+      }
 
       const post = {
         orderHash: limitOrderHash,

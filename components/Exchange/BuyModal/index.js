@@ -16,7 +16,7 @@ const TradeBuyModal = ({data}) => {
 
   const { current, tokenType } = data
 
-  const { placeBid, buyNft, errorHandler } = useTrade()
+  const { errorHandler } = useTrade()
   const { updateOrders } = useOrders({tokenAddress: current.address, type: tokenType})
 
   const [step, setStep] = useState('confirm')
@@ -74,7 +74,7 @@ const TradeBuyModal = ({data}) => {
       case 'tokens':
         Order.TOKEN.place({
           address: current.address,
-          price: data.total*data.amount,
+          price: data.total,
           amount: data.amount,
           type: 'buy',
         }).then(onSuccessPlaced).catch(onFailurePlaced)
@@ -89,10 +89,12 @@ const TradeBuyModal = ({data}) => {
   }
 
   const onFailurePlaced = () => {
+    console.log('onFailurePlaced')
     dispatch($modal.set.close())
   }
 
   const onSuccessPlaced = (res) => {
+    console.log(res)
     dispatch($modal.set.update({
       header: {
         title: 'Success',

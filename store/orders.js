@@ -201,9 +201,9 @@ const getters = {
 
 const api = {
   get: {
-    tokens: ({address, blockchain}) => {
-      const network = CHAINS.find(chain => chain.code === blockchain)
-      return request(`orderbook/v3.0/${network.id}/address/${address}`, 'GET', {api: 'inch-private'}).then(res => {
+    tokens: ({address, blockchain, ...rest}) => {
+      // const network = CHAINS.find(chain => chain.code === blockchain)
+      return request(`address/${address}`, 'GET', {api: 'inch', blockchain, ...rest}).then(res => {
         return res.map(order => ({...order, network: blockchain}))
       })
     },
