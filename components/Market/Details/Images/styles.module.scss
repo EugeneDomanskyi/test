@@ -1,0 +1,23 @@
+.container {
+  gap: 32px;
+
+  .imageBlock {
+    flex: 1;
+    height: 192px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: yellow;
+  }
+}
+
+@media (max-width: 991px) {
+  .container {
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .imageBlock {
+      flex: unset;
+      width: 48%;
+    }
+  }
+}

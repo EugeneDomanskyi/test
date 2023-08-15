@@ -5,17 +5,17 @@ import App from '@/components/App'
 
 export default function Images() {
   return (
-    <App.Flex sx={{width: '100%'}} gap={32}>
-      <App.Flex sx={{flex: 1, height: 192, borderRadius: 12, ovefrlow: 'hidden', background: 'yellow'}}>
+    <App.Flex sx={{width: '100%'}} className={styles.container}>
+      <App.Flex className={styles.imageBlock}>
         {/* insert image here */}
       </App.Flex>
-      <App.Flex sx={{flex: 1, height: 192, borderRadius: 12, ovefrlow: 'hidden', background: 'yellow'}}>
+      <App.Flex className={styles.imageBlock}>
         {/* insert image here */}
       </App.Flex>
-      <App.Flex sx={{flex: 1, height: 192, borderRadius: 12, ovefrlow: 'hidden', background: 'yellow'}}>
+      <App.Flex className={styles.imageBlock}>
         {/* insert image here */}
       </App.Flex>
-      <App.Flex sx={{flex: 1, height: 192, borderRadius: 12, ovefrlow: 'hidden', background: 'yellow'}}>
+      <App.Flex className={styles.imageBlock}>
         {/* insert image here */}
       </App.Flex>
     </App.Flex>

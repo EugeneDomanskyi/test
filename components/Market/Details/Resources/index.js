@@ -2,13 +2,14 @@ import { useSelector } from 'react-redux'
 import styles from './styles.module.scss'
 
 import App from '@/components/App'
+import SectionTitle from '@/components/Market/SectionTitle'
 
 export default function Resources() {
   return (
     <App.Flex column sx={{width: '100%'}} gap={8}>
-      <App.Text size={28} weight={700}>Resources</App.Text>
+      <SectionTitle>Resources</SectionTitle>
 
-      <App.Flex gap={32}>
+      <App.Flex className={styles.container}>
         <App.Flex align="center">
           <App.Text size={16} weight={500} color="#4C69FF">Website</App.Text> 
           <App.Icon icon="link-arrow" />

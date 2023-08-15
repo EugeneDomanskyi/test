@@ -1,9 +1,36 @@
-.statBlock {
-  border-radius: 8px;
-  border: 1px solid #1D1937;
-  padding: 8px;
-  gap: 64px;
-  flex: .5;
+.container {
   justify-content: space-between;
-  align-items: center;
+  gap: 32px;
+
+  .statBlock {
+    border-radius: 8px;
+    border: 1px solid #1D1937;
+    padding: 8px;
+    gap: 64px;
+    flex: .5;
+    justify-content: space-between;
+    align-items: center;
+
+    .statInfo {
+      align-items: center;
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .container {
+    flex-direction: column;
+    gap: 16px;
+
+    .statBlock {
+      flex-direction: column;
+      gap: 8px;
+
+      .statInfo {
+        justify-content: space-between;
+        width: 100%;
+      }
+    }
+  }
+  
 }

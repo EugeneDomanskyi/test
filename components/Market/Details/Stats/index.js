@@ -1,71 +1,80 @@
 import { useSelector } from 'react-redux'
 import styles from './styles.module.scss'
 
+import { usePropsHelper } from '@/myhooks/props-helper'
+
 import App from '@/components/App'
+import SectionTitle from '@/components/Market/SectionTitle'
 
 export default function Stats() {
+  const { isMobile } = usePropsHelper()
+
   return (
     <App.Flex column sx={{width: '100%'}} gap={16}>
-      <App.Text size={28} weight={700}>MetaSaga Warriors Stats</App.Text>
+      <SectionTitle>MetaSaga Warriors Stats</SectionTitle>
       
-      <App.Flex column sx={{width: '100%'}} gap={32}>
-        <App.Flex sx={{width: '100%'}} justify="space-between" gap={32}>
+      <App.Flex column sx={{width: '100%'}} gap={isMobile ? 16 : 32}>
+        <App.Flex sx={{width: '100%'}} className={styles.container}>
           <App.Flex className={styles.statBlock}>
-            <App.Flex column>
-              <App.Text size={14} weight={500} color="#B9B8C5">Floor Price</App.Text>
-              <App.Text size={24} weight={700}>$0.59</App.Text>
-            </App.Flex>
-            
-            <App.Flex align="center" gap={8}>
+            <App.Flex className={styles.statInfo} gap={8}>
+              <App.Flex column>
+                <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Floor Price</App.Text>
+                <App.Text size={isMobile ? 20 : 24} weight={700}>$0.59</App.Text>
+              </App.Flex>
+
               <App.Text size={14} weight={400} color="#53F19C">
                 <App.Icon icon="caret-up-fill" /> 3.4%
               </App.Text>
-              <App.Flex sx={{width: 208, height: 62, background: "green"}} />
             </App.Flex>
+
+            <App.Flex sx={{width: isMobile ? '100%' : 208, height: 62, background: "green"}} />
           </App.Flex>
-          
+
           <App.Flex className={styles.statBlock}>
-            <App.Flex column>
-              <App.Text size={14} weight={500} color="#B9B8C5">24H Volume</App.Text>
-              <App.Text size={24} weight={700}>$1,350</App.Text>
-            </App.Flex>
-            
-            <App.Flex align="center" gap={8}>
+            <App.Flex className={styles.statInfo} gap={8}>
+              <App.Flex column>
+                <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">24H Volume</App.Text>
+                <App.Text size={isMobile ? 20 : 24} weight={700}>$1,350</App.Text>
+              </App.Flex>
+
               <App.Text size={14} weight={400} color="#53F19C">
                 <App.Icon icon="caret-up-fill" /> 3.4%
               </App.Text>
-              <App.Flex sx={{width: 208, height: 62, background: "green"}} />
             </App.Flex>
+
+            <App.Flex sx={{width: isMobile ? '100%' : 208, height: 62, background: "green"}} />
           </App.Flex>
         </App.Flex>
         
-        <App.Flex sx={{width: '100%'}} justify="space-between" gap={32}>
+        <App.Flex sx={{width: '100%'}} className={styles.container}>
           <App.Flex className={styles.statBlock}>
-            <App.Flex column>
-              <App.Text size={14} weight={500} color="#B9B8C5">Total Suppy</App.Text>
-              <App.Text size={24} weight={700}>10,000</App.Text>
-            </App.Flex>
-            
-            <App.Flex align="center" gap={8}>
+            <App.Flex className={styles.statInfo} gap={8}>
+              <App.Flex column>
+                <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Total Suppy</App.Text>
+                <App.Text size={isMobile ? 20 : 24} weight={700}>10,000</App.Text>
+              </App.Flex>
+
               <App.Text size={14} weight={400} color="#53F19C">
                 <App.Icon icon="caret-up-fill" /> 3.4%
               </App.Text>
-              <App.Flex sx={{width: 208, height: 62, background: "green"}} />
             </App.Flex>
+
+            <App.Flex sx={{width: isMobile ? '100%' : 208, height: 62, background: "green"}} />
           </App.Flex>
           
           <App.Flex className={styles.statBlock}>
-            <App.Flex column>
-              <App.Text size={14} weight={500} color="#B9B8C5">Market Cap</App.Text>
-              <App.Text size={24} weight={700}>$5,900</App.Text>
-            </App.Flex>
-            
-            <App.Flex align="center" gap={8}>
+            <App.Flex className={styles.statInfo} gap={8}>
+              <App.Flex column>
+                <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Market Cap</App.Text>
+                <App.Text size={isMobile ? 20 : 24} weight={700}>$5,900</App.Text>
+              </App.Flex>
+
               <App.Text size={14} weight={400} color="#53F19C">
                 <App.Icon icon="caret-up-fill" /> 3.4%
               </App.Text>
-              <App.Flex sx={{width: 208, height: 62, background: "green"}} />
             </App.Flex>
+
+            <App.Flex sx={{width: isMobile ? '100%' : 208, height: 62, background: "green"}} />
           </App.Flex>
         </App.Flex>
 

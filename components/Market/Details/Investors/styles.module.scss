@@ -1,0 +1,13 @@
+.container {
+  justify-content: center;
+  padding: 32px 0;
+  gap: 64px;
+}
+
+@media (max-width: 991px) {
+  .container {
+    justify-content: center;
+    padding: 32px 0;
+    gap: 8px;
+  }
+}

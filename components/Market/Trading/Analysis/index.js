@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import styles from './styles.module.scss'
 
 import App from '@/components/App'
+import SectionTitle from '@/components/Market/SectionTitle'
 
 export default function Analysis() {
   const tradeForm = useRef(null)
@@ -13,17 +14,17 @@ export default function Analysis() {
 
   return (
     <App.Flex column gap={16}>
-      <App.Text size={28} weight={700}>Tegro Analysis</App.Text>
+      <SectionTitle>Tegro Analysis</SectionTitle>
 
-      <App.Flex className={styles.container} gap={32}>
+      <App.Flex className={styles.container}>
         {
           Array.apply(null, {length: 4}).map(item => {
             return (
-              <App.Flex column className={styles.analysisBlock} gap={16}>
+              <App.Flex column className={styles.analysisBlock}>
                 <App.Flex className={styles.image}>
                 </App.Flex>
 
-                <App.Text size={16} weight={500} center>Introducing Tegro Earn</App.Text>
+                <App.Text className={styles.text}>Introducing Tegro Earn</App.Text>
               </App.Flex>
             )
           })

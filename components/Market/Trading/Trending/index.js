@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import styles from './styles.module.scss'
 
 import App from '@/components/App'
+import SectionTitle from '@/components/Market/SectionTitle'
 
 export default function Trending() {
   const tradeForm = useRef(null)
@@ -13,7 +14,7 @@ export default function Trending() {
 
   return (
     <App.Flex column gap={16}>
-      <App.Text size={28} weight={700}>Trending NFTs</App.Text>
+      <SectionTitle>Trending NFTs</SectionTitle>
 
       <App.Flex column gap={16}>
         {

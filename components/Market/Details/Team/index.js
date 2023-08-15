@@ -2,15 +2,16 @@ import { useSelector } from 'react-redux'
 import styles from './styles.module.scss'
 
 import App from '@/components/App'
+import SectionTitle from '@/components/Market/SectionTitle'
 
 export default function Team() {
   return (
     <App.Flex column sx={{width: '100%'}} gap={8}>
-      <App.Text size={28} weight={700}>Team</App.Text>
+      <SectionTitle>Team</SectionTitle>
       
-      <App.Flex justify="space-between" gap={32}>
-        <App.Flex column gap={16}>
-          <App.Flex sx={{width: 192, height: 192, borderRadius: '50%', overflow: 'hidden', background: 'grey'}}>
+      <App.Flex className={styles.container}>
+        <App.Flex className={styles.teamItem}>
+          <App.Flex className={styles.teamImage}>
             {/* IMAGE */}
           </App.Flex>
           
@@ -33,7 +34,7 @@ export default function Team() {
           </App.Flex>
         </App.Flex>
         
-        <App.Flex column gap={16}>
+        <App.Flex className={styles.teamItem}>
           <App.Flex sx={{width: 192, height: 192, borderRadius: '50%', overflow: 'hidden', background: 'grey'}}>
             {/* IMAGE */}
           </App.Flex>
@@ -57,7 +58,7 @@ export default function Team() {
           </App.Flex>
         </App.Flex>
 
-        <App.Flex column gap={16}>
+        <App.Flex className={styles.teamItem}>
           <App.Flex sx={{width: 192, height: 192, borderRadius: '50%', overflow: 'hidden', background: 'grey'}}>
             {/* IMAGE */}
           </App.Flex>
@@ -81,7 +82,7 @@ export default function Team() {
           </App.Flex>
         </App.Flex>
 
-        <App.Flex column gap={16}>
+        <App.Flex className={styles.teamItem}>
           <App.Flex sx={{width: 192, height: 192, borderRadius: '50%', overflow: 'hidden', background: 'grey'}}>
             {/* IMAGE */}
           </App.Flex>
