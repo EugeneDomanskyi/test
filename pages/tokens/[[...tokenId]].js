@@ -103,7 +103,7 @@ const Tokens = () => {
       address: tokenId,
       blockchain: blockchain,
       sortBy: 'createDateTime',
-      statuses: '[1,2]',
+      statuses: '[1]',
       limit: 500,
     }).then(res => {
       dispatch($orders.set.orderBook({type: 'tokens', data: res}))
