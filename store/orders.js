@@ -228,9 +228,11 @@ const getters = {
 const api = {
   get: {
     tokens: ({address, blockchain, ...rest}) => {
-      // const network = CHAINS.find(chain => chain.code === blockchain)
       return request(`address/${address}`, 'GET', {api: 'inch', blockchain, ...rest}).then(res => {
-        return res.map(order => ({...order, network: blockchain}))
+        if (res && Array.isArray(res)) {
+          return res.map(order => ({...order, network: blockchain}))
+        }
+        return []
       })
     },
     nfts: (params) => {
