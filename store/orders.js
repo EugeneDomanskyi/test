@@ -11,32 +11,37 @@ const round = (date, duration, method) => {
   return moment(Math[method]((+date) / (+duration)) * (+duration))
 }
 
-const addSide = (list) => list.map(item => {
-  const makerAsset = INCH_TOKENS[item.data.makerAsset]
-  const takerAsset = INCH_TOKENS[item.data.takerAsset]
-
-  if (!makerAsset || !takerAsset) {
-    return {}
+const addSide = (list) => {
+  if (list && Array.isArray(list)) {
+    return list.map(item => {
+      const makerAsset = INCH_TOKENS[item.data.makerAsset]
+      const takerAsset = INCH_TOKENS[item.data.takerAsset]
+    
+      if (!makerAsset || !takerAsset) {
+        return {}
+      }
+      
+      const makingAssetFormatted = formatUnits(item.data.makingAmount, makerAsset.decimals)
+      const takingAssetFormatted = formatUnits(item.data.takingAmount, takerAsset.decimals)
+    
+      const side = makerAsset.symbol === 'USDT' ? 'buy' : 'sell'
+    
+      const price = side === 'buy' ? makingAssetFormatted : takingAssetFormatted
+      const amount = side === 'sell' ? makingAssetFormatted : takingAssetFormatted
+      const timestamp = moment(item.createDateTime).unix()
+      return {
+        ...item,
+        side: side,
+        price: numeral(price / amount).format('0.0[0000000]'),
+        priceFormatted: numeral(price / amount).format('0.0[0000000]'),
+        amount: numeral(amount).format('0.[0000]'),
+        quantity: numeral(amount).format('0.[0000]'),
+        timestamp: timestamp,
+      }
+    })
   }
-  
-  const makingAssetFormatted = formatUnits(item.data.makingAmount, makerAsset.decimals)
-  const takingAssetFormatted = formatUnits(item.data.takingAmount, takerAsset.decimals)
-
-  const side = makerAsset.symbol === 'USDT' ? 'buy' : 'sell'
-
-  const price = side === 'buy' ? makingAssetFormatted : takingAssetFormatted
-  const amount = side === 'sell' ? makingAssetFormatted : takingAssetFormatted
-  const timestamp = moment(item.createDateTime).unix()
-  return {
-    ...item,
-    side: side,
-    price: numeral(price / amount).format('0.0[0000000]'),
-    priceFormatted: numeral(price / amount).format('0.0[0000000]'),
-    amount: numeral(amount).format('0.[0000]'),
-    quantity: numeral(amount).format('0.[0000]'),
-    timestamp: timestamp,
-  }
-})
+  return []
+}
 
 const groupByPrice = (data, sort = 'asc') => {
   const temp = {}

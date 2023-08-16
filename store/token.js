@@ -1,5 +1,6 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
 import { gql } from '@apollo/client'
+import numeral from 'numeral'
 
 import { request } from './index'
 
@@ -21,12 +22,12 @@ export const template = (item) => {
     name: overwrite?.name ?? item?.name,
     blockchain: overwrite?.blockchain ?? item?.blockchain,
     symbol: overwrite?.symbol ?? item?.symbol,
-    price: ((overwrite?.price ?? item?.price ?? 0) * 1).toFixed(4),
-    high: ((overwrite?.high ?? item?.high ?? 0) * 1).toFixed(4),
-    low: ((overwrite?.low ?? item?.low ?? 0) * 1).toFixed(4),
+    price: numeral(overwrite?.price ?? item?.price ?? 0).format('0.[0000]'),
+    high: numeral(overwrite?.high ?? item?.high ?? 0).format('0.[0000]'),
+    low: numeral(overwrite?.low ?? item?.low ?? 0).format('0.[0000]'),
     currency: currency,
-    volume: ((overwrite?.volume ?? item?.volume ?? 0) * 1).toFixed(4),
-    tvl: ((overwrite?.tvl ?? item?.tvl ?? 0) * 1).toFixed(4),
+    volume: numeral(overwrite?.volume ?? item?.volume ?? 0).format('0.[0000]'),
+    tvl: numeral(overwrite?.tvl ?? item?.tvl ?? 0).format('0.[0000]'),
     description: overwrite?.description ?? item?.description,
     tokenCount: overwrite?.tokenCount ?? item?.tokenCount ?? 0,
     onSaleCount: overwrite?.onSaleCount ?? item?.onSaleCount ?? 0,
