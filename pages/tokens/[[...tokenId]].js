@@ -94,7 +94,7 @@ const Tokens = () => {
       blockchain: blockchain,
       sortBy: 'createDateTime',
       statuses: '[3]',
-      limit: 500,
+      limit: 50,
     }).then(res => {
       dispatch($orders.set.trades({type: 'tokens', data: res}))
     })
