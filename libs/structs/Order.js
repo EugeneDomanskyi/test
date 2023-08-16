@@ -1,7 +1,7 @@
 import numeral from 'numeral'
 import { formatUnits, encodeFunctionData, parseUnits, hashTypedData } from 'viem'
 import { getClient } from '@reservoir0x/reservoir-sdk'
-import { getWalletClient, waitForTransaction, sendTransaction, signTypedData, readContract, fetchBalance } from '@wagmi/core'
+import { getWalletClient, waitForTransaction, sendTransaction, signTypedData, readContract, writeContract, fetchBalance } from '@wagmi/core'
 import { LimitOrderProtocolFacade, LimitOrderBuilder } from '@1inch/limit-order-protocol-utils'
 import { FusionSDK } from '@1inch/fusion-sdk'
 import { toast } from 'react-toastify'
@@ -57,6 +57,54 @@ class Order {
       chainId: chainId,
     })
     return res
+  }
+
+  static checkAllowance = async (chainId, walletAddress, tokenAddress, amount) => {
+    const abiAllowance = {
+      constant: true,
+      inputs: [{name: '_owner', type: 'address'}, {name: '_spender', type: 'address'}],
+      name: 'allowance',
+      outputs: [{name: 'remaining', type: 'uint256'}],
+      payable: false,
+      stateMutability: 'view',
+      type: 'function'
+    }
+    const abiApprove = {
+      constant: false,
+      inputs: [{name: '_spender', type: 'address'}, {name: '_value', type: 'uint256'}],
+      name: 'approve',
+      outputs: [],
+      payable: false,
+      stateMutability: 'nonpayable',
+      type: 'function'
+    }
+    const res = await readContract({
+      address: tokenAddress,
+      abi: [abiAllowance],
+      functionName: 'allowance',
+      chainId: chainId,
+      args: [walletAddress, tokenAddress]
+    })
+    const decimals = await Order.getDecimals(tokenAddress, chainId)
+    const weiAmount = parseUnits(amount.toString(), decimals)
+    const allowanceAmount = formatUnits(res, decimals)
+    if (allowanceAmount*1 < amount*1) {
+      const res = await writeContract({
+        address: tokenAddress,
+        abi: [abiApprove],
+        functionName: 'approve',
+        chainId: chainId,
+        args: [tokenAddress, weiAmount],
+      }).catch(error => {
+        return false
+      })
+      if (res) {
+        const txResult = await waitForTransaction(res)
+        return txResult
+      }
+      return false
+    }
+    return true
   }
 }
 
@@ -361,6 +409,11 @@ class TOKEN extends Order {
         buyAmount = parseUnits(`${price}`, USDT_DECIMALS).toString()
       }
 
+      // const allowance = await Order.checkAllowance(chainId, walletClient.account.address, sellAsset, sellAmount)
+      // if (!allowance) {
+      //   reject()
+      //   return
+      // }
       const balance = await Order.getBalance(walletClient.account.address, sellAsset)
       if (balance < sellAmount*1) {
         Order.showErrorMessage('Insufficient balance')
