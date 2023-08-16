@@ -409,11 +409,11 @@ class TOKEN extends Order {
         buyAmount = parseUnits(`${price}`, USDT_DECIMALS).toString()
       }
 
-      // const allowance = await Order.checkAllowance(chainId, walletClient.account.address, sellAsset, sellAmount)
-      // if (!allowance) {
-      //   reject()
-      //   return
-      // }
+      const allowance = await Order.checkAllowance(chainId, walletClient.account.address, sellAsset, sellAmount)
+      if (!allowance) {
+        reject()
+        return
+      }
       const balance = await Order.getBalance(walletClient.account.address, sellAsset)
       if (balance < sellAmount*1) {
         Order.showErrorMessage('Insufficient balance')
