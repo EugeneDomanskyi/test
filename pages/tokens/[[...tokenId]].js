@@ -103,26 +103,12 @@ const Tokens = () => {
       address: tokenId,
       blockchain: blockchain,
       sortBy: 'createDateTime',
-      statuses: '[3]',
-      limit: 10,
+      statuses: '[1,2]',
+      limit: 500,
     }).then(res => {
       dispatch($orders.set.orderBook({type: 'tokens', data: res}))
     })
   }
-
-  /* useEffect(() => {
-    if (blockchain.code && wallet) {
-      $exchange.api.get.orders({
-        blockchain: blockchain.code,
-        maker: wallet,
-        includeCriteriaMetadata: true,
-      }).then(res => {
-        if (res) {
-          dispatch($exchange.set.orders(res))
-        }
-      })
-    }
-  }, [blockchain.code, wallet]) */
 
   const handleOrdersUpdated = useCallback(() => {
     if (wallet) {
