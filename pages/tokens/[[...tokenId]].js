@@ -102,7 +102,6 @@ const Tokens = () => {
     $orders.api.get.tokens.orderBook({
       address: tokenId,
       blockchain: blockchain,
-      sortBy: 'createDateTime',
       statuses: '[1]',
       limit: 500,
     }).then(res => {

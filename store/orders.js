@@ -263,8 +263,8 @@ api.get.nfts.orderBook = (params) => {
 api.get.tokens.orderBook = ({address, ...rest}) => {
   const network = CHAINS.find(chain => chain.code === rest.blockchain)
   return Promise.all([
-    request('all', 'GET', {api: 'inch', takerAsset: address, makerAsset: network.usdtContract, ...rest}),
-    request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, ...rest}),
+    request('all', 'GET', {api: 'inch', takerAsset: address, makerAsset: network.usdtContract, sortBy: 'takerRate', ...rest}),
+    request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, sortBy: 'makerRate', ...rest}),
   ]).then(([buy, sell]) => {
     const sortedBuy = groupByPrice(addSide(buy, 'buy'), 'desc')
     const sortedSell = groupByPrice(addSide(sell, 'sell'), 'asc')
