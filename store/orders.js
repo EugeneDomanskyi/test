@@ -44,22 +44,26 @@ const addSide = (list) => {
 }
 
 const groupByPrice = (data, sort = 'asc') => {
-  const temp = {}
-  for (const item of data) {
-    if (!isNaN(item.priceFormatted)) {
-      if ( ! temp[item.priceFormatted]) {
-        temp[item.priceFormatted] = item
-      } else {
-        temp[item.priceFormatted] = {
-          ...temp[item.priceFormatted],
-          amount: (temp[item.priceFormatted].amount * 1 + item.amount * 1),
-          quantity: (temp[item.priceFormatted].quantity * 1 + item.quantity * 1),
-        }
-      }
-    }
-  }
+  // const temp = {}
+  // for (const item of data) {
+  //   if (!isNaN(item.priceFormatted)) {
+  //     if ( ! temp[item.priceFormatted]) {
+  //       temp[item.priceFormatted] = item
+  //     } else {
+  //       temp[item.priceFormatted] = {
+  //         ...temp[item.priceFormatted],
+  //         amount: (temp[item.priceFormatted].amount * 1 + item.amount * 1),
+  //         quantity: (temp[item.priceFormatted].quantity * 1 + item.quantity * 1),
+  //       }
+  //     }
+  //   }
+  // }
   
-  const array = Object.keys(temp).map(key => temp[key])
+  // const array = Object.keys(temp).map(key => temp[key])
+  // array.sort((a, b) => sort == 'asc' ? (a.price - b.price) : (b.price - a.price))
+  // return array
+
+  const array = [...data]
   array.sort((a, b) => sort == 'asc' ? (a.price - b.price) : (b.price - a.price))
   return array
 }

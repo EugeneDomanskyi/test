@@ -144,7 +144,7 @@ const WrapperCollections = ({ children }) => {
       }
     } else {
       defaultParams.minFloorAskPrice = '0.000001'
-      defaultParams.maxFloorAskPrice = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null
+      // defaultParams.maxFloorAskPrice = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null
     }
 
     let continuation = null
