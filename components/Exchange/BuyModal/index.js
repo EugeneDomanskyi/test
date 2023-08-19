@@ -51,7 +51,7 @@ const TradeBuyModal = ({data}) => {
         break
       case 'tokens':
         Order.TOKEN.fulfill({
-          address: '0xa1f102b004c8a5f4734e70bea7d62f829916d94c', //current.address,
+          address: current.address, //current.address,
           amount: data.amount,
           side: 'buy',
         })

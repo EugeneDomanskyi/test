@@ -61,8 +61,8 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
         fetchTimeout.current = setTimeout(() => {
           OrderStruct.TOKEN.getCheapest({
             chainId: blockchain.id,
-            takerAsset: currentTab === 'buy' ? blockchain.usdtContract : '0xa1f102b004c8a5f4734e70bea7d62f829916d94c', // current.address
-            makerAsset: currentTab === 'buy' ? '0xa1f102b004c8a5f4734e70bea7d62f829916d94c' : blockchain.usdtContract, // current.address
+            takerAsset: currentTab === 'buy' ? blockchain.usdtContract : current.address, // current.address
+            makerAsset: currentTab === 'buy' ? current.address : blockchain.usdtContract, // current.address
             amount: amount,
           }).then(res => {
             console.log(res)

@@ -11,6 +11,7 @@ import $orders from '@/store/orders'
 import $nft from '@/store/nft'
 
 const USDT_DECIMALS = 6
+const TEG_TOKEN = '0xa1f102b004c8a5f4734e70bea7d62f829916d94c'
 const TEGRO_CONTRACT = '0x3ED60aC43AdAe9b955bAC09d496D612e8E510A5A'
 const TEGRO_FILL_ORDERS_CONTRACTS = {
   1: '0xFf75311D031925a2f65A81654a35E61537ed3484',
