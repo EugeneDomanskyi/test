@@ -50,8 +50,8 @@ const TradeBuyModal = ({data}) => {
         .catch(onError)
         break
       case 'tokens':
-        Order.TOKEN.swap({
-          address: current.address,
+        Order.TOKEN.fulfill({
+          address: '0xa1f102b004c8a5f4734e70bea7d62f829916d94c', //current.address,
           amount: data.amount,
           side: 'buy',
         })

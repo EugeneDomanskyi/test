@@ -1,7 +1,7 @@
 import numeral from 'numeral'
 import { formatUnits, encodeFunctionData, parseUnits, hashTypedData } from 'viem'
 import { getClient } from '@reservoir0x/reservoir-sdk'
-import { getWalletClient, waitForTransaction, sendTransaction, signTypedData, readContract, writeContract, fetchBalance } from '@wagmi/core'
+import { getWalletClient, waitForTransaction, sendTransaction, signTypedData, readContract, writeContract, prepareWriteContract, prepareSendTransaction, fetchBalance } from '@wagmi/core'
 import { LimitOrderProtocolFacade, LimitOrderBuilder } from '@1inch/limit-order-protocol-utils'
 import { FusionSDK } from '@1inch/fusion-sdk'
 import { toast } from 'react-toastify'
@@ -11,6 +11,12 @@ import $orders from '@/store/orders'
 import $nft from '@/store/nft'
 
 const USDT_DECIMALS = 6
+const TEGRO_CONTRACT = '0x3ED60aC43AdAe9b955bAC09d496D612e8E510A5A'
+const TEGRO_FILL_ORDERS_CONTRACTS = {
+  1: '0xFf75311D031925a2f65A81654a35E61537ed3484',
+  137: '0x700533DB2a144c6d78eeF46932e47770D642EbFA',
+}
+const TEGRO_ABI = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"index","type":"uint256"}],"name":"OrderFailed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"maker","type":"address"},{"indexed":true,"internalType":"address","name":"taker","type":"address"},{"indexed":false,"internalType":"address","name":"makerAsset","type":"address"},{"indexed":false,"internalType":"address","name":"takerAsset","type":"address"},{"indexed":false,"internalType":"uint256","name":"makerAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"takerAmount","type":"uint256"},{"indexed":false,"internalType":"bytes32","name":"orderHash","type":"bytes32"}],"name":"TradeSuccessful","type":"event"},{"inputs":[],"name":"MAX_ORDERS","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"components":[{"components":[{"internalType":"uint256","name":"salt","type":"uint256"},{"internalType":"address","name":"makerAsset","type":"address"},{"internalType":"address","name":"takerAsset","type":"address"},{"internalType":"address","name":"maker","type":"address"},{"internalType":"address","name":"receiver","type":"address"},{"internalType":"address","name":"allowedSender","type":"address"},{"internalType":"uint256","name":"makingAmount","type":"uint256"},{"internalType":"uint256","name":"takingAmount","type":"uint256"},{"internalType":"uint256","name":"offsets","type":"uint256"},{"internalType":"bytes","name":"interactions","type":"bytes"}],"internalType":"struct ITradingContract.Order","name":"orderDetails","type":"tuple"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"bytes","name":"interaction","type":"bytes"},{"internalType":"uint256","name":"makingAmount","type":"uint256"},{"internalType":"uint256","name":"takingAmount","type":"uint256"},{"internalType":"uint256","name":"thresholdAmount","type":"uint256"}],"internalType":"struct MultiOrderRouter.OrderExecution[]","name":"orders","type":"tuple[]"},{"internalType":"uint256","name":"totalTakerAmount","type":"uint256"}],"name":"fillMultipleOrders","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"tradingContract","outputs":[{"internalType":"contract ITradingContract","name":"","type":"address"}],"stateMutability":"view","type":"function"}]
 
 class Order {
 
@@ -59,7 +65,7 @@ class Order {
     return res
   }
 
-  static checkAllowance = async (chainId, walletAddress, tokenAddress, amount) => {
+  static checkAllowance = async (chainId, spenderContract, walletAddress, tokenAddress, amount) => {
     const abiAllowance = {
       constant: true,
       inputs: [{name: '_owner', type: 'address'}, {name: '_spender', type: 'address'}],
@@ -83,21 +89,26 @@ class Order {
       abi: [abiAllowance],
       functionName: 'allowance',
       chainId: chainId,
-      args: [walletAddress, tokenAddress]
+      args: [walletAddress, spenderContract],
+      // args: [walletAddress, INCH_CONTRACTS[chainId]]
     })
+    
     const decimals = await Order.getDecimals(tokenAddress, chainId)
     const weiAmount = parseUnits(amount.toString(), decimals)
     const allowanceAmount = formatUnits(res, decimals)
+    // console.log('readContract', allowanceAmount*1, amount*1)
     if (allowanceAmount*1 < amount*1) {
       const res = await writeContract({
         address: tokenAddress,
         abi: [abiApprove],
         functionName: 'approve',
         chainId: chainId,
-        args: [tokenAddress, weiAmount],
+        args: [spenderContract, weiAmount],
+        // args: [INCH_CONTRACTS[chainId], weiAmount],
       }).catch(error => {
         return false
       })
+      console.log('writeContract', res)
       if (res) {
         const txResult = await waitForTransaction(res)
         return txResult
@@ -324,6 +335,47 @@ class TOKEN extends Order {
     return numeral(this.price).divide(this.quantity).format('0.0[000]')
   }
 
+  static getCheapest = async ({chainId, takerAsset, makerAsset, amount}) => {
+    const network = CHAINS.find(chain => chain.id === chainId)
+    const res = await $orders.api.get.tokens.byAssets({
+      makerAsset: makerAsset,
+      takerAsset: takerAsset,
+      blockchain:
+      network.code,
+      limit: 500,
+      statuses: '[1]',
+      sortBy: 'takerRate',
+    })
+    if (res && Array.isArray(res)) {
+      const takerDecimals = await Order.getDecimals(takerAsset, chainId)
+      const makerDecimals = await Order.getDecimals(makerAsset, chainId)
+
+      const temp = res.reduce((acc, order) => {
+        if (acc.totalTakerAmount <= 0) {
+          return acc
+        }
+        const remainingTakerAmount = order.remainingMakerAmount*order.data.takingAmount/order.data.makingAmount
+        
+        const left = acc.totalTakerAmount - remainingTakerAmount
+        if (left > 0) {
+          acc.orders = [...acc.orders, {...order, willSpendAmount: remainingTakerAmount, willTakeAmount: remainingTakerAmount*order.takerRate, price: order.makerRate}]
+          acc.totalTakerAmount = left
+        } else {
+          acc.orders = [...acc.orders, {...order, willSpendAmount: acc.totalTakerAmount, willTakeAmount: acc.totalTakerAmount*order.takerRate, price: order.makerRate}]
+          acc.totalTakerAmount = 0
+        }
+        return acc
+      }, {totalTakerAmount: Math.pow(10, takerDecimals)*amount, orders: []})
+      const totalAmount =  temp.orders.reduce((acc, order) => acc + Math.pow(10, -makerDecimals)*order.willTakeAmount, 0)
+      return {
+        orders: temp.orders,
+        totalAmount: numeral(totalAmount).format('0.0[0000]'),
+        avgPrice: (amount && totalAmount) ? numeral(amount / totalAmount).format('0.0[0000]') : 0,
+      }
+    }
+    return null
+  }
+
   static getQuote = async ({chainId, address, amount, side}) => {
     if (!amount) {
       return 0
@@ -391,6 +443,124 @@ class TOKEN extends Order {
     })
   }
 
+  static fulfill = ({address, amount, side}) => {
+    console.log('fulfill')
+    return new Promise(async (resolve, reject) => {
+      const { chainId, walletClient } = await Order.getWalletData()
+      const network = CHAINS.find(chain => chain.id === chainId)
+      let sellAsset = network.usdtContract
+      let buyAsset = address
+      if (side === 'sell') {
+        sellAsset = address
+        buyAsset = network.usdtContract
+      }
+      const {orders} = await TOKEN.getCheapest({chainId: chainId, takerAsset: sellAsset, makerAsset: buyAsset, amount: amount})
+      if (orders && Array.isArray(orders)) {
+        console.log(orders)
+        const allowance = await Order.checkAllowance(chainId, TEGRO_FILL_ORDERS_CONTRACTS[chainId], walletClient.account.address, sellAsset, amount)
+        if (!allowance) {
+          reject()
+          return
+        }
+        console.log(buyAsset)
+        const sellAssetDecimals = await Order.getDecimals(sellAsset, chainId)
+        const buyAssetDecimals = await Order.getDecimals(buyAsset, chainId)
+        // const amountSellAsset = parseUnits(amount, sellAssetDecimals) // usdt for buy
+        const amountSellAsset = orders.reduce((acc, order) => acc+order.willSpendAmount, 0)
+        const amountBuyAsset = orders.reduce((acc, order) => acc+order.willTakeAmount, 0)
+        // const amountBuyAsset = parseUnits(amount, buyAssetDecimals)
+
+        const list = orders.filter((_, i) => i < 10).map(order => {
+          return [
+            order.data,
+            order.signature,
+            '0x',
+            amountBuyAsset.toString(),
+            '0',
+            '0xde0b6b3a7640000',
+            // walletClient.account.address
+          ]
+        })
+
+        // console.log(TEGRO_ABI)
+
+        console.log(list)
+
+        console.log('amountSellAsset', amountSellAsset)
+
+        const config = await prepareWriteContract({
+          address: TEGRO_FILL_ORDERS_CONTRACTS[chainId],
+          abi: TEGRO_ABI,
+          functionName: 'fillMultipleOrders',
+          args: [list, amountSellAsset],
+        }).catch(error => {
+          console.log('prepareWriteContract', error)
+        })
+
+        console.log('config', config)
+
+        if (config.mode === 'prepared') {
+          const res = await writeContract(config)
+
+          console.log('write contract', res)
+
+          if (res) {
+            const txResult = await waitForTransaction(res)
+            console.log('txResult', txResult)
+            resolve()
+            Order.showSuccessMessage('Order filled successfully')
+          }
+        }
+
+        // const contractEncodeABI = async (abi, address, methodName, methodParams) => {
+        //   console.log('contractEncodeABI', methodParams)
+        // }
+
+        // const limitOrderProtocolFacade = new LimitOrderProtocolFacade(INCH_CONTRACTS[chainId], chainId, {contractEncodeABI})
+
+        // limitOrderProtocolFacade.fillLimitOrder({
+        //   order: orders[0].data,
+        //   signature: orders[0].signature,
+        //   makingAmount: amountBuyAsset,
+        //   takingAmount: '0',
+        //   thresholdAmount: amountBuyAsset,
+        // })
+
+        return
+        // const contractEncodeABI = async (abi, address, methodName, methodParams) => {
+        //   const config = await prepareWriteContract({
+        //     address: address,
+        //     abi: abi,
+        //     functionName: methodName,
+        //     args: methodParams,
+        //   }).catch(error => {
+        //     console.log('prepareWriteContract', error)
+        //   })
+        //   console.log(config)
+        //   if (config.mode === 'prepared') {
+        //     const res = await writeContract(config)
+        //     console.log(res)
+        //     if (res) {
+        //       const txResult = await waitForTransaction(res)
+        //       resolve(txResult)
+        //       Order.showSuccessMessage('Order filled successfully')
+        //     }
+        //   }
+        // }
+        // const limitOrderProtocolFacade = new LimitOrderProtocolFacade(INCH_CONTRACTS[chainId], chainId, {contractEncodeABI})
+        // console.log(amount, amountBuyAsset, buyAssetDecimals)
+        // limitOrderProtocolFacade.fillLimitOrder({
+        //   order: order.data,
+        //   signature: order.signature,
+        //   makingAmount: amountBuyAsset,
+        //   takingAmount: '0',
+        //   thresholdAmount: amountBuyAsset,
+        // })
+      }
+      reject('There is no order to fulfill')
+    })
+  }
+
   static place = ({address, price, amount, type = 'buy'}) => {
     return new Promise(async (resolve, reject) => {
       const { walletClient, chainId } = await Order.getWalletData()
@@ -409,11 +579,12 @@ class TOKEN extends Order {
         buyAmount = parseUnits(`${price}`, USDT_DECIMALS).toString()
       }
 
-      const allowance = await Order.checkAllowance(chainId, walletClient.account.address, sellAsset, sellAmount)
+      const allowance = await Order.checkAllowance(chainId, INCH_CONTRACTS[chainId], walletClient.account.address, sellAsset, sellAmount)
       if (!allowance) {
         reject()
         return
       }
+      console.log('allowance', allowance)
       const balance = await Order.getBalance(walletClient.account.address, sellAsset)
       if (balance < sellAmount*1) {
         Order.showErrorMessage('Insufficient balance')
@@ -480,6 +651,8 @@ class TOKEN extends Order {
       }
     })
   }
+
+  //0x30afa971c16cdcb27c4540ac9efa7701ffbcd862 multiple orders contract
 }
 
 export default { NFT, TOKEN, Order }

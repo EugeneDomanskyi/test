@@ -287,6 +287,10 @@ api.get.tokens.trades = ({address, blockchain, ...rest}) => {
   })
 }
 
+api.get.tokens.byAssets = ({makerAsset, takerAsset, blockchain, ...rest}) => {
+  return request('all', 'GET', {api: 'inch', takerAsset: takerAsset, makerAsset: makerAsset, blockchain, ...rest})
+}
+
 export default {
   reducer: ordersSlice.reducer,
   set: ordersSlice.actions,

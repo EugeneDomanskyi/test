@@ -22,6 +22,7 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
 
   const [amount, setAmount] = useState(initialForm.amount)
   const [totalPrice, setTotalPrice] = useState('0')
+  const [totalAmount, setTotalAmount] = useState('0')
   const [userNfts, setUserNfts] = useState([])
   const [onSaleNft, setOnSaleNft] = useState([])
 
@@ -58,13 +59,15 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
     if (current?.address) {
       if (type === 'tokens') {
         fetchTimeout.current = setTimeout(() => {
-          OrderStruct.TOKEN.getQuote({
+          OrderStruct.TOKEN.getCheapest({
             chainId: blockchain.id,
-            address: current.address,
+            takerAsset: currentTab === 'buy' ? blockchain.usdtContract : '0xa1f102b004c8a5f4734e70bea7d62f829916d94c', // current.address
+            makerAsset: currentTab === 'buy' ? '0xa1f102b004c8a5f4734e70bea7d62f829916d94c' : blockchain.usdtContract, // current.address
             amount: amount,
-            side: currentTab
           }).then(res => {
-            setTotalPrice(res)
+            console.log(res)
+            setTotalPrice(res.avgPrice)
+            setTotalAmount(res.totalAmount)
           })
         }, 1000)
       } else {
@@ -202,7 +205,7 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
       }
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
-          label="TOTAL"
+          label="MARKET PRICE"
           currency={type === 'nfts' ? blockchain?.currency : (currentTab === 'buy' ? current.symbol : 'USDT')}
           readOnly={true}
           value={totalPrice} />
@@ -225,7 +228,7 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
         disabled={isDisabled}
         onClick={handleSubmit}>
         <App.Text color="#09051D" size={15} weight={700}>
-          { currentOption.title } {`${amount || 0}` } { type === 'nfts' ? `NFT${amount > 1 ? `s` : ''}` : current.symbol }
+          { currentOption.title } {type === 'nfts' ? `${amount || 0}` : `${totalAmount}` } { type === 'nfts' ? `NFT${amount > 1 ? `s` : ''}` : current.symbol }
         </App.Text>
         { current?.image ? <Image src={current?.image} width={32} height={32} alt="" /> : null }
       </App.Button>
