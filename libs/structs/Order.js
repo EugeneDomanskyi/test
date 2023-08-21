@@ -358,11 +358,12 @@ class TOKEN extends Order {
         const remainingTakerAmount = order.remainingMakerAmount*order.data.takingAmount/order.data.makingAmount
         
         const left = acc.totalTakerAmount - remainingTakerAmount
+        const takerRate = Math.floor((order.takerRate*1 + Number.EPSILON) * 10000) / 10000
         if (left > 0) {
-          acc.orders = [...acc.orders, {...order, willSpendAmount: remainingTakerAmount, willTakeAmount: remainingTakerAmount*order.takerRate, price: order.makerRate}]
+          acc.orders = [...acc.orders, {...order, willSpendAmount: remainingTakerAmount, willTakeAmount: remainingTakerAmount*takerRate, price: order.makerRate}]
           acc.totalTakerAmount = left
         } else {
-          acc.orders = [...acc.orders, {...order, willSpendAmount: acc.totalTakerAmount, willTakeAmount: acc.totalTakerAmount*order.takerRate, price: order.makerRate}]
+          acc.orders = [...acc.orders, {...order, willSpendAmount: acc.totalTakerAmount, willTakeAmount: acc.totalTakerAmount*takerRate, price: order.makerRate}]
           acc.totalTakerAmount = 0
         }
         return acc
@@ -463,13 +464,8 @@ class TOKEN extends Order {
           reject()
           return
         }
-        console.log(buyAsset)
-        const sellAssetDecimals = await Order.getDecimals(sellAsset, chainId)
-        const buyAssetDecimals = await Order.getDecimals(buyAsset, chainId)
-        // const amountSellAsset = parseUnits(amount, sellAssetDecimals) // usdt for buy
         const amountSellAsset = orders.reduce((acc, order) => acc+order.willSpendAmount, 0)
         const amountBuyAsset = orders.reduce((acc, order) => acc+order.willTakeAmount, 0)
-        // const amountBuyAsset = parseUnits(amount, buyAssetDecimals)
 
         const list = orders.filter((_, i) => i < 10).map(order => {
           return [
@@ -483,17 +479,11 @@ class TOKEN extends Order {
           ]
         })
 
-        // console.log(TEGRO_ABI)
-
-        console.log(list)
-
-        console.log('amountSellAsset', amountSellAsset)
-
         const config = await prepareWriteContract({
           address: TEGRO_FILL_ORDERS_CONTRACTS[chainId],
           abi: TEGRO_ABI,
           functionName: 'fillMultipleOrders',
-          args: [list, amountSellAsset],
+          args: [list, (amountSellAsset*1.0001).toString()],
         }).catch(error => {
           console.log('prepareWriteContract', error)
         })
@@ -512,51 +502,6 @@ class TOKEN extends Order {
             Order.showSuccessMessage('Order filled successfully')
           }
         }
-
-        // const contractEncodeABI = async (abi, address, methodName, methodParams) => {
-        //   console.log('contractEncodeABI', methodParams)
-        // }
-
-        // const limitOrderProtocolFacade = new LimitOrderProtocolFacade(INCH_CONTRACTS[chainId], chainId, {contractEncodeABI})
-
-        // limitOrderProtocolFacade.fillLimitOrder({
-        //   order: orders[0].data,
-        //   signature: orders[0].signature,
-        //   makingAmount: amountBuyAsset,
-        //   takingAmount: '0',
-        //   thresholdAmount: amountBuyAsset,
-        // })
-
-        return
-        // const contractEncodeABI = async (abi, address, methodName, methodParams) => {
-        //   const config = await prepareWriteContract({
-        //     address: address,
-        //     abi: abi,
-        //     functionName: methodName,
-        //     args: methodParams,
-        //   }).catch(error => {
-        //     console.log('prepareWriteContract', error)
-        //   })
-        //   console.log(config)
-        //   if (config.mode === 'prepared') {
-        //     const res = await writeContract(config)
-        //     console.log(res)
-        //     if (res) {
-        //       const txResult = await waitForTransaction(res)
-        //       resolve(txResult)
-        //       Order.showSuccessMessage('Order filled successfully')
-        //     }
-        //   }
-        // }
-        // const limitOrderProtocolFacade = new LimitOrderProtocolFacade(INCH_CONTRACTS[chainId], chainId, {contractEncodeABI})
-        // console.log(amount, amountBuyAsset, buyAssetDecimals)
-        // limitOrderProtocolFacade.fillLimitOrder({
-        //   order: order.data,
-        //   signature: order.signature,
-        //   makingAmount: amountBuyAsset,
-        //   takingAmount: '0',
-        //   thresholdAmount: amountBuyAsset,
-        // })
       }
       reject('There is no order to fulfill')
     })
