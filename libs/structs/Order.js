@@ -469,7 +469,7 @@ class TOKEN extends Order {
 
         console.log('amountBuyAsset', amountBuyAsset)
 
-        const list = orders.filter((_, i) => i < 10).map(order => {
+        const list = orders.map(order => {
           return [
             order.data,
             order.signature,
@@ -480,12 +480,12 @@ class TOKEN extends Order {
             // walletClient.account.address
           ]
         })
-        console.log(list, (amountSellAsset*1.0001).toString())
+        // console.log(list, (amountSellAsset*1.0001).toString())
         const config = await prepareWriteContract({
           address: TEGRO_FILL_ORDERS_CONTRACTS[chainId],
           abi: TEGRO_ABI,
           functionName: 'fillMultipleOrders',
-          args: [list, (amountSellAsset*1.0001).toString()],
+          args: [list, amountSellAsset.toString()],
         }).catch(error => {
           console.log('prepareWriteContract', error)
         })
