@@ -350,7 +350,6 @@ class TOKEN extends Order {
     if (res && Array.isArray(res)) {
       const takerDecimals = await Order.getDecimals(takerAsset, chainId)
       const makerDecimals = await Order.getDecimals(makerAsset, chainId)
-
       const temp = res.reduce((acc, order) => {
         if (acc.totalTakerAmount <= 0) {
           return acc
@@ -358,12 +357,12 @@ class TOKEN extends Order {
         const remainingTakerAmount = order.remainingMakerAmount*order.data.takingAmount/order.data.makingAmount
         
         const left = acc.totalTakerAmount - remainingTakerAmount
-        const takerRate = Math.floor((order.takerRate*1 + Number.EPSILON) * 10000) / 10000
+        const takerRate = Math.floor((order.takerRate*1 + Number.EPSILON) * 1000000) / 1000000
         if (left > 0) {
-          acc.orders = [...acc.orders, {...order, willSpendAmount: remainingTakerAmount, willTakeAmount: remainingTakerAmount*takerRate, price: order.makerRate}]
+          acc.orders = [...acc.orders, {...order, willSpendAmount: remainingTakerAmount, willTakeAmount: Math.floor(remainingTakerAmount*takerRate), price: order.makerRate}]
           acc.totalTakerAmount = left
         } else {
-          acc.orders = [...acc.orders, {...order, willSpendAmount: acc.totalTakerAmount, willTakeAmount: acc.totalTakerAmount*takerRate, price: order.makerRate}]
+          acc.orders = [...acc.orders, {...order, willSpendAmount: acc.totalTakerAmount, willTakeAmount: Math.floor(acc.totalTakerAmount*takerRate), price: order.makerRate}]
           acc.totalTakerAmount = 0
         }
         return acc
@@ -458,14 +457,17 @@ class TOKEN extends Order {
       }
       const {orders} = await TOKEN.getCheapest({chainId: chainId, takerAsset: sellAsset, makerAsset: buyAsset, amount: amount})
       if (orders && Array.isArray(orders)) {
-        console.log(orders)
+        // console.log(orders)
         const allowance = await Order.checkAllowance(chainId, TEGRO_FILL_ORDERS_CONTRACTS[chainId], walletClient.account.address, sellAsset, amount)
         if (!allowance) {
           reject()
           return
         }
+        console.log(orders)
         const amountSellAsset = orders.reduce((acc, order) => acc+order.willSpendAmount, 0)
         const amountBuyAsset = orders.reduce((acc, order) => acc+order.willTakeAmount, 0)
+
+        console.log('amountBuyAsset', amountBuyAsset)
 
         const list = orders.filter((_, i) => i < 10).map(order => {
           return [
@@ -478,7 +480,7 @@ class TOKEN extends Order {
             // walletClient.account.address
           ]
         })
-
+        console.log(list, (amountSellAsset*1.0001).toString())
         const config = await prepareWriteContract({
           address: TEGRO_FILL_ORDERS_CONTRACTS[chainId],
           abi: TEGRO_ABI,
@@ -490,7 +492,7 @@ class TOKEN extends Order {
 
         console.log('config', config)
 
-        if (config.mode === 'prepared') {
+        if (config?.mode === 'prepared') {
           const res = await writeContract(config)
 
           console.log('write contract', res)
