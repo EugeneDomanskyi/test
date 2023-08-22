@@ -107,7 +107,7 @@ export const CHAINS = [
     pages: ['tokens'],
     usdtContract: '0xb020d981420744f6b0fedd22bb67cd37ce18a1d5',
     wrapped: {
-      contract: null,
+      contract: '0x3Ad443d769A07f287806874F8E5405cE3Ac902b9',
       name: 'Wrapped Celo',
       shortName: 'WCELO',
     },
@@ -123,7 +123,7 @@ export const CHAINS = [
     coingecko: 'binancecoin',
     platform: 'binance-smart-chain',
     pages: ['nfts', 'tokens'],
-    usdtContract: '0x55d398326f99059fF775485246999027B3197955',
+    usdtContract: '0x524bC91Dc82d6b90EF29F76A3ECAaBAffFD490Bc',
     wrapped: {
       contract: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
       name: 'Wrapped BNB',
@@ -143,7 +143,7 @@ export const CHAINS = [
     pages: ['nfts', 'tokens'],
     usdtContract: null,
     wrapped: {
-      contract: null,
+      contract: '0x4200000000000000000000000000000000000006',
       name: 'Wrapped Ether',
       shortName: 'WETH',
     },
@@ -159,7 +159,7 @@ export const CHAINS = [
     coingecko: 'avalanche-2',
     platform: 'avalanche',
     pages: ['nfts', 'tokens'],
-    usdtContract: '0xde3A24028580884448a5397872046a019649b084',
+    usdtContract: '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7',
     wrapped: {
       contract: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       name: 'Wrapped AVAX',
@@ -177,7 +177,7 @@ export const CHAINS = [
     coingecko: 'wrapped-ether-linea',
     platform: 'linea',
     pages: ['nfts'],
-    usdtContract: '0xa219439258ca9da29e9cc4ce5596924745e12b93',
+    usdtContract: '0xA219439258ca9da29E9Cc4cE5596924745e12B93',
     wrapped: {
       contract: '0xe5d7c2a44ffddf6b295a15c148167daaaf5cf34f',
       name: 'Wrapped Ether',
