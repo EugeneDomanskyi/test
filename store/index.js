@@ -20,7 +20,7 @@ const createStore = initialData => {
     preloadedState: {
       $app: {
         ...appSlice.getInitialState(),
-        code: initialData.blockchain || 'polygon',
+        code: initialData.blockchain || 'ethereum',
         isMobile: initialData.isMobile,
       }
     }
