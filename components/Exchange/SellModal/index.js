@@ -71,8 +71,8 @@ const SellModal = ({data}) => {
         .catch(onError)
         break
       case 'tokens':
-        Order.TOKEN.swap({
-          address: current.address,
+        Order.TOKEN.fulfill({
+          address: current.address, //current.address,
           amount: amount,
           side: 'sell',
         })
@@ -98,7 +98,7 @@ const SellModal = ({data}) => {
         Order.TOKEN.place({
           type: 'sell',
           address: current.address,
-          price: data.price,
+          price: data.total,
           amount: data.amount,
         })
         .then(onSuccessPlaced)

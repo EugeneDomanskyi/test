@@ -66,15 +66,15 @@ const Tokens = () => {
 
   useEffect(() => {
     if (queryTokenId && blockchain.code) {
-      dispatch($exchange.set.loading(true))
-      $exchange.api.get.tokenChartData(queryTokenId, blockchain.code, activeInterval.seconds).then(res => {
-        dispatch($exchange.set.loading(false))
-        if (res) {
-          dispatch($exchange.set.chartData({type: 'tokens', data: res.data}))
-          return
-        }
-        dispatch($exchange.set.chartData({type: 'tokens', data: []}))
-      })
+      // dispatch($exchange.set.loading(true))
+      // $exchange.api.get.tokenChartData(queryTokenId, blockchain.code, activeInterval.seconds).then(res => {
+      //   dispatch($exchange.set.loading(false))
+      //   if (res) {
+      //     dispatch($exchange.set.chartData({type: 'tokens', data: res.data}))
+      //     return
+      //   }
+      //   dispatch($exchange.set.chartData({type: 'tokens', data: []}))
+      // })
     }
   }, [activeInterval, queryTokenId, blockchain.code])
 
