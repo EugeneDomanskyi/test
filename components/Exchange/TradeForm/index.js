@@ -13,6 +13,7 @@ import App from '@/components/App'
 import Tabs from '@/components/Exchange/Tabs'
 import TradeFormLimit from '@/components/Exchange/TradeForm/TradeFormLimit'
 import TradeFormMarket from '@/components/Exchange/TradeForm/TradeFormMarket'
+import TradeFormTaker from '@/components/Exchange/TradeForm/TradeFormTaker'
 
 const TAB_OPTIONS = [
   {key: 'buy', title: 'BUY', color: 'rgb(13, 198, 109)'},
@@ -20,7 +21,7 @@ const TAB_OPTIONS = [
 ]
 
 const TradeForm = forwardRef(({current, type}, ref) => {
-  const { wallet, getBalance } = useWalletConnect()
+  const { wallet, getBalance, changeNetwork } = useWalletConnect()
   const { getNftBalanceUser } = useTrade()
   
   const orderBook = useSelector($exchange.get.orderBook)
@@ -46,8 +47,9 @@ const TradeForm = forwardRef(({current, type}, ref) => {
   const [lowestSell] = orderBook.sell
 
   useEffect(() => {
-    const getUserBalances = () => {
+    const getUserBalances = async () => {
       if (current?.address && wallet) {
+        await changeNetwork(current.blockchain)
         switch (type) {
           case 'nfts':
             getNftBalanceUser(current.address, wallet).then(res => {
@@ -119,7 +121,7 @@ const TradeForm = forwardRef(({current, type}, ref) => {
               ? <App.Icon icon="check" />
               : null
           }
-          <App.Text color={formType === 'market' ? '#fff' : '#5E5C6B'} weight={600} size={12}>Market Order</App.Text>
+          <App.Text color={formType === 'market' ? '#fff' : '#5E5C6B'} weight={600} size={12}>Taker Order</App.Text>
         </App.Button>
         <App.Button className={cn(styles.formTypeButton, {[styles.active]: formType === 'limit'})} onClick={handleChangeFormType('limit')}>
           {
@@ -127,7 +129,7 @@ const TradeForm = forwardRef(({current, type}, ref) => {
               ? <App.Icon icon="check" />
               : null
           }
-          <App.Text color={formType === 'limit' ? '#fff' : '#5E5C6B'} weight={600} size={12}>Limit Order</App.Text>
+          <App.Text color={formType === 'limit' ? '#fff' : '#5E5C6B'} weight={600} size={12}>Maker Order</App.Text>
         </App.Button>
       </App.Flex>
       {
@@ -135,13 +137,21 @@ const TradeForm = forwardRef(({current, type}, ref) => {
           switch (form) {
             case 'market':
               return (
-                <TradeFormMarket
-                  current={current}
-                  type={type}
-                  initialForm={marketForm}
-                  userBalances={userBalances}
-                  currentTab={currentTab}
-                  currentOption={currentOption} />
+                type === 'nfts'
+                  ? <TradeFormMarket
+                      current={current}
+                      type={type}
+                      initialForm={marketForm}
+                      userBalances={userBalances}
+                      currentTab={currentTab}
+                      currentOption={currentOption} />
+                  : <TradeFormTaker
+                      current={current}
+                      initialForm={marketForm}
+                      userBalances={userBalances}
+                      currentTab={currentTab}
+                      formOption={currentOption} />
+                
               )
               case 'limit':
                 return (

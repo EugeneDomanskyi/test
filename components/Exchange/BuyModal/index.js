@@ -53,6 +53,7 @@ const TradeBuyModal = ({data}) => {
         Order.TOKEN.fulfill({
           address: current.address, //current.address,
           amount: data.amount,
+          price: data.price,
           side: 'buy',
         })
         .then(onSuccessPlaced)
