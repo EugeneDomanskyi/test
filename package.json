@@ -21,6 +21,7 @@
     "@reduxjs/toolkit": "^1.9.5",
     "@reservoir0x/reservoir-sdk": "^1.1.15",
     "@uniswap/widgets": "^1.1.1",
+    "@wagmi/chains": "^1.7.0",
     "alchemy-sdk": "^2.9.0",
     "amplitude-js": "^8.21.9",
     "classnames": "^2.3.2",

@@ -17,7 +17,7 @@ const WrapperCollections = ({ children }) => {
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
-  const blockchains = useSelector(({ $app }) => $app.blockchains)
+  const pageBlockchains = useSelector($app.get.pageBlockchains('nfts'))
 
   const collections = useSelector(({ $collection }) => $collection.all)
   const searched = useSelector(({ $collection }) => $collection.searched)
@@ -32,6 +32,20 @@ const WrapperCollections = ({ children }) => {
   const searchRef = useRef(search)
   const pageRef = useRef(pages.current)
   const blockchainCode = useRef(blockchain.code)
+
+  useEffect(() => {
+    if ( ! pageBlockchains.map(item => item.code).includes(blockchain.code)) {
+      dispatch($app.set.code('ethereum'))
+    }
+  }, [])
+
+  useEffect(() => {
+    if (current?.blockchain && current?.blockchain != blockchain.code) {
+      dispatch($collection.set.searched([]))
+      dispatch($collection.set.all([]))
+      dispatch($collection.set.current({}))
+    }
+  }, [current?.blockchain])
 
   useEffect(() => {
     if (router.isReady && (fetching || ! isExchange)) {
@@ -92,10 +106,13 @@ const WrapperCollections = ({ children }) => {
         }
         
         const realCollectionId = queryCollectionId ?? tempCollectionId
-
-        if ( ! realCollectionId && ! current?.id && collections.length) {
-          const [first] = collections
-          router.replace(first.id, undefined, { scroll: false })
+        if ( ! realCollectionId && collections.length) {
+          let id = current?.id
+          if ( ! id) {
+            const [first] = collections
+            id = first.id
+          }
+          router.replace(id, undefined, { scroll: false })
           return
         }
 
@@ -182,7 +199,7 @@ const WrapperCollections = ({ children }) => {
           collection = template(current)
         } else {
           let collectionWasFound = false
-          for (const chain of blockchains) {
+          for (const chain of pageBlockchains) {
             if ( ! collectionWasFound && chain.code != blockchainCode.current) {
               const result = await $collection.api.all(queryParams(
                 chain.code,
@@ -215,6 +232,7 @@ const WrapperCollections = ({ children }) => {
   useEffect(() => {
     if (blockchain.code != blockchainCode.current) {
       blockchainCode.current = blockchain.code
+      dispatch($collection.set.current({}))
       dispatch($collection.set.fetching(true))
     }
   }, [blockchain.code])

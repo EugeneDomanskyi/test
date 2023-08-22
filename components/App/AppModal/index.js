@@ -6,7 +6,10 @@ import cn from 'classnames'
 
 import $modal from '@/store/modal'
 
-import App from '@/components/App'
+import AppFlex from '@/components/App/AppFlex'
+import AppText from '@/components/App/AppText'
+import AppIcon from '@/components/App/AppIcon'
+import AppLoaderBlock from '@/components/App/AppLoaderBlock'
 
 import styles from './styles.module.scss'
 
@@ -26,7 +29,7 @@ const AppModal = () => {
       (async () => {
         try {
           const temp = dynamic(() => import(`@/components/${modal}`), {
-            loading: () => <App.LoaderBlock height={300} />,
+            loading: () => <AppLoaderBlock height={300} />,
             ssr: false,
           })
           setComponent(temp)
@@ -79,46 +82,46 @@ const AppModal = () => {
             {props?.header ? (
               <div className={styles.header}>
                 <div className={styles.closeButton} onClick={handleClose}>
-                  <App.Icon icon="cross" color="#fff" />
+                  <AppIcon icon="cross" color="#fff" />
                 </div>
 
-                <App.Flex column gap={[16, 32]} className={styles.headerContent}>
+                <AppFlex column gap={[16, 32]} className={styles.headerContent}>
                   {props.header?.image ? (
-                    <App.Flex center>
+                    <AppFlex center>
                       <img src={props.header?.image} width={120} height={120} alt="" />
-                    </App.Flex>
+                    </AppFlex>
                   ) : (
                     <>
-                      <App.Flex column align={['center', 'flex-start']} gap={[16, 8]}>
+                      <AppFlex column align={['center', 'flex-start']} gap={[16, 8]}>
                         {props.header?.title ? (
-                          <App.Text center size={20} weight={700} height={1}>{props.header.title}</App.Text>
+                          <AppText center size={20} weight={700} height={1}>{props.header.title}</AppText>
                         ) : null}
 
                         {props.header?.subtitle ? (
-                          <App.Text center size={12} weight={400} height={1} color="#9996B1">{props.header.subtitle}</App.Text>
+                          <AppText center size={12} weight={400} height={1} color="#9996B1">{props.header.subtitle}</AppText>
                         ) : null}
-                      </App.Flex>
+                      </AppFlex>
                       
                       {props.header?.steps ? (
-                        <App.Flex row gap={8}>
+                        <AppFlex row gap={8}>
                           {props.header.steps.map((item, index) => (
-                            <App.Flex key={index} column flex={1} gap={2}>
-                              <App.Text size={10} center color={step >= item.step ? '#53F19C' : '#605884'}>{item.title}</App.Text>
+                            <AppFlex key={index} column flex={1} gap={2}>
+                              <AppText size={10} center color={step >= item.step ? '#53F19C' : '#605884'}>{item.title}</AppText>
                               <div className={cn(styles.progress, {[styles.active]: step >= item.step})} />
-                            </App.Flex>
+                            </AppFlex>
                           ))}
-                        </App.Flex>
+                        </AppFlex>
                       ) : null}
                     </>
                   )}
-                </App.Flex>
+                </AppFlex>
               </div>
             ) : null}
 
             {Component ? (
               <Component {...props} onClose={handleClose} onStep={handleStep} />
             ) : (
-              <App.LoaderBlock height={300} />
+              <AppLoaderBlock height={300} />
             )}
           </div>
         </div>
