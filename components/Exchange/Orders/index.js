@@ -55,7 +55,7 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
   }
 
   const handleClick = order => () => {
-    router.push(`${order.contract}`, undefined, {scroll: false})
+    router.push(`${order.contractAddress}`, undefined, {scroll: false})
     onClickOrder({
       quantity: order.quantity,
       price: order.itemPrice,
