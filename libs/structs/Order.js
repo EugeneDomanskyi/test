@@ -418,7 +418,7 @@ class TOKEN extends Order {
           takingAmountFormatted: formatUnits(takingAmount, takerDecimals),
         }
       })
-      
+
       const temp = filteredByPrice.reduce((acc, order) => {
         if (side === 'sell') {
           acc.totalToBuy = Math.floor(acc.totalToBuy*order.takerRate)
@@ -457,24 +457,31 @@ class TOKEN extends Order {
         }
       }, {totalToSell: amountInWei, totalToBuy: amountInWei, orders: []})
 
-      const rates = filteredByPrice.reduce((acc, order) => {
+      const rates = temp.orders.reduce((acc, order) => {
         return {
           makerRate: acc.makerRate + order.makerRate*1,
           takerRate: acc.takerRate + order.takerRate*1,
           totalAmountOnSell: acc.totalAmountOnSell + order.makingAmountFormatted*1,
           totalAmountToBuy: acc.totalAmountToBuy + order.takingAmountFormatted*1,
+          willSpendAmount: acc.willSpendAmount + order.willSpendTakingAmount,
+          willTakeAmount: acc.willTakeAmount + order.willTakeMakingAmount,
         }
       }, {
         makerRate: 0,
         takerRate: 0,
         totalAmountOnSell: 0,
-        totalAmountToBuy: 0
+        totalAmountToBuy: 0,
+        willSpendAmount: 0,
+        willTakeAmount: 0,
       })
+
       return {
         totalAmountOnSell: rates.totalAmountOnSell,
         totalAmountToBuy: rates.totalAmountToBuy,
         makerRate: rates.makerRate ? rates.makerRate / filteredByPrice.length : 0,
         takerRate: rates.takerRate  ? rates.takerRate / filteredByPrice.length : 0,
+        willSpendAmount: Math.pow(10, -takerDecimals)*rates.willSpendAmount,
+        willTakeAmount: Math.pow(10, -makerDecimals)*rates.willTakeAmount,
         orders: temp.orders,
       }
     }
