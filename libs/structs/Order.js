@@ -378,9 +378,6 @@ class TOKEN extends Order {
 
   static getOpenWithPriceLimitation = async ({chainId, takerAsset, makerAsset, amount, price, side}) => {
     const network = CHAINS.find(chain => chain.id === chainId)
-    // const makerToken = INCH_TOKENS[makerAsset.toLowerCase()]
-    // const takerToken = INCH_TOKENS[takerAsset.toLowerCase()]
-
     const res = await $orders.api.get.tokens.byAssets({
       makerAsset: makerAsset,
       takerAsset: takerAsset,
@@ -400,7 +397,17 @@ class TOKEN extends Order {
         sell: order => order.takerRate*1 >= price*1,
       }
 
-      const filteredByPrice = res.filter(filter[side]).map((order) => {
+      const fixRate = order => {
+        const makingValue = Math.pow(10, -makerDecimals)*order.data.makingAmount
+        const takingValue = Math.pow(10, -takerDecimals)*order.data.takingAmount
+        return {
+          ...order,
+          takerRate: makingValue/takingValue,
+          makerRate: takingValue/makingValue,
+        }
+      }
+
+      const filteredByPrice = res.map(fixRate).filter(filter[side]).map((order) => {
         const takingAmount = Math.floor(order.remainingMakerAmount * order.data.takingAmount / order.data.makingAmount)
         return {
           ...order,
@@ -578,7 +585,7 @@ class TOKEN extends Order {
             // walletClient.account.address
           ]
         })
-        
+
         console.log('params -> ', list, totalSpendAmount.toString())
         // console.log(list, (amountSellAsset*1.0001).toString())
         const config = await prepareWriteContract({
