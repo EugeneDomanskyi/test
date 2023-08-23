@@ -34,11 +34,16 @@ const TradeForm = forwardRef(({current, type}, ref) => {
   const [limitForm, setLimitForm] = useState({price: '0', amount: '1', total: '0'})
   const [marketForm, setMarketForm] = useState({amount: '1'})
 
+  const takerFormRef = useRef(null)
+
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
       handleChangeTab(data.side)
       setFormType(data.formType)
       setMarketForm({amount: data.amount.toString()})
+      if (takerFormRef.current) {
+        takerFormRef.current.setForm({amount: data.amount, price: data.price})
+      }
     }
   }))
 
@@ -146,8 +151,8 @@ const TradeForm = forwardRef(({current, type}, ref) => {
                       currentTab={currentTab}
                       currentOption={currentOption} />
                   : <TradeFormTaker
+                      ref={takerFormRef}
                       current={current}
-                      initialForm={marketForm}
                       userBalances={userBalances}
                       currentTab={currentTab}
                       formOption={currentOption} />

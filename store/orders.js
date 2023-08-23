@@ -21,8 +21,8 @@ const addSide = (list) => {
         return {}
       }
       
-      const makingAssetFormatted = formatUnits(item.data.makingAmount, makerAsset.decimals)
-      const takingAssetFormatted = formatUnits(item.data.takingAmount, takerAsset.decimals)
+      const makingAssetFormatted = Math.pow(10, -makerAsset.decimals)*item.data.makingAmount //formatUnits(item.data.makingAmount, makerAsset.decimals)
+      const takingAssetFormatted = Math.pow(10, -takerAsset.decimals)*item.data.takingAmount//formatUnits(item.data.takingAmount, takerAsset.decimals)
     
       const side = makerAsset.symbol === 'USDT' ? 'buy' : 'sell'
     

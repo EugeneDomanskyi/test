@@ -387,6 +387,7 @@ class TOKEN extends Order {
       sortBy: 'takerRate',
     })
     if (res && Array.isArray(res)) {
+      
       const makerDecimals = await Order.getDecimals(makerAsset, chainId)
       const takerDecimals = await Order.getDecimals(takerAsset, chainId)
 
@@ -417,6 +418,7 @@ class TOKEN extends Order {
           takingAmountFormatted: formatUnits(takingAmount, takerDecimals),
         }
       })
+      
       const temp = filteredByPrice.reduce((acc, order) => {
         if (side === 'sell') {
           acc.totalToBuy = Math.floor(acc.totalToBuy*order.takerRate)

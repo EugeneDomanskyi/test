@@ -1,5 +1,5 @@
 import styles from './styles.module.scss'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Image from 'next/image'
 import numeral from 'numeral'
@@ -14,8 +14,8 @@ import Order from '@/libs/structs/Order'
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
 
-const TradeFormTaker = ({current, currentTab, formOption, userBalances, initialForm}) => {
-  const { wallet, connect, changeNetwork } = useWalletConnect()
+const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalances}, ref) => {
+  const { changeNetwork } = useWalletConnect()
   const dispatch = useDispatch()
 
   const tokenBlockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
@@ -28,6 +28,18 @@ const TradeFormTaker = ({current, currentTab, formOption, userBalances, initialF
   const previousForm = useRef({amount: '1', price: '0'})
 
   const isDisabled = (currentTab === 'buy' && !abilities.totalAmountOnSell) || (currentTab === 'sell' && !abilities.totalAmountToBuy) || loading
+
+  useImperativeHandle(ref, () => ({
+    setForm: (data) => {
+      setForm(data)
+    }
+  }))
+
+  // useEffect(() => {
+  //   if (initialForm.amount*1 && initialForm.price*1) {
+  //     setForm(initialForm)
+  //   }
+  // }, [initialForm.amount, initialForm.price])
 
   useEffect(() => {
     if (fetchTimeout.current) {
@@ -170,6 +182,6 @@ const TradeFormTaker = ({current, currentTab, formOption, userBalances, initialF
       </App.Button>
     </App.Flex>
   )
-}
+})
 
 export default TradeFormTaker

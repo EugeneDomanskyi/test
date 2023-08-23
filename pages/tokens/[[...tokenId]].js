@@ -122,7 +122,7 @@ const Tokens = () => {
   }
 
   const handleClickOrder = useCallback(order => {
-    tradeForm.current.setForm({formType: 'market', amount: order.quantity, side: order.side})
+    tradeForm.current.setForm({formType: 'market', amount: order.quantity, price: order.price, side: order.side})
   }, [])
 
   const handleSort = useCallback((value) => {
