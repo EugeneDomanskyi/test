@@ -392,7 +392,7 @@ class TOKEN extends Order {
       const takerDecimals = await Order.getDecimals(takerAsset, chainId)
 
       const amountInWei = Math.pow(10,  side === 'buy' ? makerDecimals : takerDecimals)*amount
-      
+
       const filter = {
         buy: order => order.makerRate*1 <= price*1,
         sell: order => order.takerRate*1 >= price*1,
@@ -403,8 +403,8 @@ class TOKEN extends Order {
         const takingValue = Math.pow(10, -takerDecimals)*order.data.takingAmount
         return {
           ...order,
-          takerRate: makingValue/takingValue,
-          makerRate: takingValue/makingValue,
+          takerPrice: makingValue/takingValue,
+          makerPrice: takingValue/makingValue,
         }
       }
 
@@ -433,6 +433,7 @@ class TOKEN extends Order {
           // can fill in this order
           willTakeMakingAmount = acc.totalToBuy
           willSpendTakingAmount = side === 'buy' ? Math.floor(acc.totalToBuy*order.makerRate) : Math.floor(willTakeMakingAmount/order.takerRate)
+          
           acc.totalToBuy = 0
         } else {
           // need next order
@@ -442,6 +443,7 @@ class TOKEN extends Order {
         }
         const willTakeMakingAmountFormatted = formatUnits(willTakeMakingAmount, side === 'buy' ? makerDecimals : takerDecimals)
         const willSpendTakingAmountFormatted = formatUnits(willSpendTakingAmount, side === 'sell' ? makerDecimals : takerDecimals)
+        
         return {
           ...acc,
           orders: [
@@ -480,8 +482,8 @@ class TOKEN extends Order {
         totalAmountToBuy: rates.totalAmountToBuy,
         makerRate: rates.makerRate ? rates.makerRate / filteredByPrice.length : 0,
         takerRate: rates.takerRate  ? rates.takerRate / filteredByPrice.length : 0,
-        willSpendAmount: Math.pow(10, -takerDecimals)*rates.willSpendAmount,
-        willTakeAmount: Math.pow(10, -makerDecimals)*rates.willTakeAmount,
+        willSpendAmount: Math.pow(10, -(takerDecimals))*rates.willSpendAmount,
+        willTakeAmount: Math.pow(10, -(makerDecimals))*rates.willTakeAmount,
         orders: temp.orders,
       }
     }
