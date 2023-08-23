@@ -21,19 +21,22 @@ const addSide = (list) => {
         return {}
       }
       
-      const makingAssetFormatted = Math.pow(10, -makerAsset.decimals)*item.data.makingAmount //formatUnits(item.data.makingAmount, makerAsset.decimals)
-      const takingAssetFormatted = Math.pow(10, -takerAsset.decimals)*item.data.takingAmount//formatUnits(item.data.takingAmount, takerAsset.decimals)
+      const makingAmountFormatted = Math.pow(10, -makerAsset.decimals)*item.data.makingAmount //formatUnits(item.data.makingAmount, makerAsset.decimals)
+      const takingAmountFormatted = Math.pow(10, -takerAsset.decimals)*item.data.takingAmount//formatUnits(item.data.takingAmount, takerAsset.decimals)
     
       const side = makerAsset.symbol === 'USDT' ? 'buy' : 'sell'
     
-      const price = side === 'buy' ? makingAssetFormatted : takingAssetFormatted
-      const amount = side === 'sell' ? makingAssetFormatted : takingAssetFormatted
+      const price = side === 'buy' ? makingAmountFormatted : takingAmountFormatted
+      const amount = side === 'sell' ? makingAmountFormatted : takingAmountFormatted
+
+      const priceFormatted = side === 'buy' ? item.makerRate : item.takerRate
+
       const timestamp = moment(item.createDateTime).unix()
       return {
         ...item,
         side: side,
         price: numeral(price / amount).format('0.0[0000000]'),
-        priceFormatted: numeral(price / amount).format('0.0[0000000]'),
+        priceFormatted: numeral(priceFormatted).format('0.0[0000000]'),
         amount: numeral(amount).format('0.[0000]'),
         quantity: numeral(amount).format('0.[0000]'),
         timestamp: timestamp,

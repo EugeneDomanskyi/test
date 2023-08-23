@@ -394,8 +394,8 @@ class TOKEN extends Order {
       const amountInWei = Math.pow(10,  side === 'buy' ? makerDecimals : takerDecimals)*amount
 
       const filter = {
-        buy: order => order.makerRate*1 <= price*1,
-        sell: order => order.takerRate*1 >= price*1,
+        buy: order => order.makerPrice*1 <= price*1,
+        sell: order => order.takerPrice*1 >= price*1,
       }
 
       const fixRate = order => {
