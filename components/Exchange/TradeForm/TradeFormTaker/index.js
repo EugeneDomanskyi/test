@@ -1,5 +1,5 @@
 import styles from './styles.module.scss'
-import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle, Fragment } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Image from 'next/image'
 import numeral from 'numeral'
@@ -22,24 +22,22 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
 
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({amount: '1', price: '0'})
-  const [abilities, setAbilities] = useState({totalAmountOnSell: 0, totalAmountToBuy: 0, makerRate: 0, takerRate: 0, willSpendAmount: 0})
+  const [abilities, setAbilities] = useState({totalAmountOnSell: 0, totalAmountToSell: 0, willSpendAmount: 0})
 
   const fetchTimeout = useRef(null)
   const previousForm = useRef({amount: '1', price: '0'})
 
-  const isDisabled = (currentTab === 'buy' && !abilities.totalAmountOnSell) || (currentTab === 'sell' && !abilities.totalAmountToBuy) || loading
+  const isDisabled = loading
+                    || (currentTab === 'buy' && !abilities.totalAmountOnSell)
+                    || (currentTab === 'buy' && form.amount > abilities.totalAmountOnSell)
+                    || (currentTab === 'sell' && !abilities.totalAmountToSell)
+                    || (currentTab === 'sell' && form.amount > abilities.totalAmountToSell) 
 
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
       setForm(data)
     }
   }))
-
-  // useEffect(() => {
-  //   if (initialForm.amount*1 && initialForm.price*1) {
-  //     setForm(initialForm)
-  //   }
-  // }, [initialForm.amount, initialForm.price])
 
   useEffect(() => {
     if (fetchTimeout.current) {
@@ -63,6 +61,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
       side: currentTab,
     })
     const { orders, ...rest} = res
+    // console.log(rest)
     console.log(orders)
     setAbilities(rest)
     setLoading(false)
@@ -143,10 +142,6 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
           currency={'USDT'}
           onBlur={handleBlurAmount}
           onChange={handleChangeForm('price')} />
-        <App.Flex align="center" gap={4} className={styles.balance}>
-          <App.Icon icon="wallet" />
-          <App.Text color="#B9B8C5" size={10}>{userBalances.usdt} USDT</App.Text>
-        </App.Flex>
       </App.Flex>
       <App.Flex column sx={{marginBottom: 16}}>
         <TradeInput
@@ -156,10 +151,18 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
           onBlur={handleBlurAmount}
           onChange={handleChangeForm('amount')} />
         <App.Flex align="center" gap={4} className={styles.balance}>
-          <App.Icon icon="wallet" />
-          <App.Text color="#B9B8C5" size={10}>{numeral(userBalances.token).format('0.[0000]')} {current.symbol}</App.Text>
+          {
+            currentTab === 'sell'
+              ? <Fragment>
+                  <App.Icon icon="wallet" />
+                  <App.Text color="#B9B8C5" size={10}>{numeral(userBalances.token).format('0.[0000]')} {current.symbol}</App.Text>
+                </Fragment>
+              : null
+          }
+          
           <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto'}}>
-            Available: {numeral(currentTab === 'buy' ? abilities.totalAmountOnSell : abilities.totalAmountToBuy).format('0.[0000]')} {current.symbol}
+            { currentTab === 'buy' ? 'Available on sale: ' : 'Available to sell: ' }
+            {numeral(currentTab === 'buy' ? abilities.totalAmountOnSell : abilities.totalAmountToSell).format('0.[000000]')} {current.symbol}
           </App.Text>
         </App.Flex>
       </App.Flex>
@@ -169,6 +172,14 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
           currency="USDT"
           readOnly={true}
           value={abilities.willSpendAmount} />
+        {
+          currentTab === 'buy'
+            ? <App.Flex align="center" gap={4} className={styles.balance}>
+                <App.Icon icon="wallet" />
+                <App.Text color="#B9B8C5" size={10}>{userBalances.usdt} USDT</App.Text>
+              </App.Flex>
+            : <App.Flex align="center" gap={4} className={styles.balance} />
+        }
       </App.Flex>
       <App.Button
         sx={{backgroundColor: formOption.color, opacity: isDisabled ? 0.5 : 1, cursor: isDisabled ? 'default' : 'pointer'}}

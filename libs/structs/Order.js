@@ -407,9 +407,8 @@ class TOKEN extends Order {
           makerPrice: takingValue/makingValue,
         }
       }
-
       const filteredByPrice = res.map(fixRate).filter(filter[side]).map((order) => {
-        const takingAmount = Math.floor(order.remainingMakerAmount * order.data.takingAmount / order.data.makingAmount)
+        const takingAmount = BigInt(order.remainingMakerAmount) * BigInt(order.data.takingAmount) / BigInt(order.data.makingAmount)
         return {
           ...order,
           makingAmount: order.remainingMakerAmount,
@@ -459,29 +458,23 @@ class TOKEN extends Order {
         }
       }, {totalToSell: amountInWei, totalToBuy: amountInWei, orders: []})
 
+      const stats = filteredByPrice.reduce((acc, order) => {
+        return {
+          totalAmountOnSell: acc.totalAmountOnSell + order.makingAmount*1,
+          totalAmountToSell: acc.totalAmountToSell + order.takingAmount,
+        }
+      }, {totalAmountOnSell: 0, totalAmountToSell: BigInt(0)})
+
       const rates = temp.orders.reduce((acc, order) => {
         return {
-          makerRate: acc.makerRate + order.makerRate*1,
-          takerRate: acc.takerRate + order.takerRate*1,
-          totalAmountOnSell: acc.totalAmountOnSell + order.makingAmountFormatted*1,
-          totalAmountToBuy: acc.totalAmountToBuy + order.takingAmountFormatted*1,
-          willSpendAmount: acc.willSpendAmount + order.willSpendTakingAmount,
-          willTakeAmount: acc.willTakeAmount + order.willTakeMakingAmount,
+          willSpendAmount: acc.willSpendAmount + order.willSpendTakingAmount*1,
+          willTakeAmount: acc.willTakeAmount + order.willTakeMakingAmount*1,
         }
-      }, {
-        makerRate: 0,
-        takerRate: 0,
-        totalAmountOnSell: 0,
-        totalAmountToBuy: 0,
-        willSpendAmount: 0,
-        willTakeAmount: 0,
-      })
+      }, {willSpendAmount: 0, willTakeAmount: 0})
 
       return {
-        totalAmountOnSell: rates.totalAmountOnSell,
-        totalAmountToBuy: rates.totalAmountToBuy,
-        makerRate: rates.makerRate ? rates.makerRate / filteredByPrice.length : 0,
-        takerRate: rates.takerRate  ? rates.takerRate / filteredByPrice.length : 0,
+        totalAmountOnSell: Math.pow(10, -(makerDecimals))*stats.totalAmountOnSell,
+        totalAmountToSell: formatUnits(stats.totalAmountToSell, takerDecimals),
         willSpendAmount: Math.pow(10, -(takerDecimals))*rates.willSpendAmount,
         willTakeAmount: Math.pow(10, -(makerDecimals))*rates.willTakeAmount,
         orders: temp.orders,
@@ -598,7 +591,7 @@ class TOKEN extends Order {
         })
 
         console.log('params -> ', list, totalSpendAmount.toString())
-        // console.log(list, (amountSellAsset*1.0001).toString())
+        
         const config = await prepareWriteContract({
           address: TEGRO_FILL_ORDERS_CONTRACTS[chainId],
           abi: TEGRO_ABI,
