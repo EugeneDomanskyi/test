@@ -36,7 +36,7 @@ const addSide = (list) => {
       return {
         ...item,
         side: side,
-        price: numeral(side === 'buy' ? makerPrice : takerPrice).format('0.0[00000]'),
+        price: side === 'buy' ? makerPrice : takerPrice,
         priceFormatted: numeral(side === 'buy' ? makerPrice : takerPrice).format('0.0[00000]'),
         amount: side === 'buy' ? takerAmount : makerAmount,
         quantity: side === 'buy' ? takerAmount : makerAmount,
@@ -144,8 +144,8 @@ const getters = {
     state => state.$orders.orderBooks[type]
   ], (orderBook) => {
     return {
-      buy: orderBook.buy.slice(0, 10),
-      sell: orderBook.sell.slice(0, 10),
+      buy: orderBook.buy.slice(0, 10).map(item => ({...item, priceFormatted: item.priceFormatted ?? item.price})),
+      sell: orderBook.sell.slice(0, 10).map(item => ({...item, priceFormatted: item.priceFormatted ?? item.price})),
     }
   }),
   recentTrades: (type, limit) => createSelector([

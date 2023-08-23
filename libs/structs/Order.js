@@ -397,7 +397,7 @@ class TOKEN extends Order {
         buy: order => order.makerPrice*1 <= price*1,
         sell: order => order.takerPrice*1 >= price*1,
       }
-
+      
       const fixRate = order => {
         const makingValue = Math.pow(10, -makerDecimals)*order.data.makingAmount
         const takingValue = Math.pow(10, -takerDecimals)*order.data.takingAmount
@@ -407,6 +407,7 @@ class TOKEN extends Order {
           makerPrice: takingValue/makingValue,
         }
       }
+      
       const filteredByPrice = res.map(fixRate).filter(filter[side]).map((order) => {
         const takingAmount = BigInt(order.remainingMakerAmount) * BigInt(order.data.takingAmount) / BigInt(order.data.makingAmount)
         return {
@@ -417,7 +418,7 @@ class TOKEN extends Order {
           takingAmountFormatted: formatUnits(takingAmount, takerDecimals),
         }
       })
-
+      
       const temp = filteredByPrice.reduce((acc, order) => {
         if (side === 'sell') {
           acc.totalToBuy = Math.floor(acc.totalToBuy*order.takerRate)
@@ -591,7 +592,7 @@ class TOKEN extends Order {
         })
 
         console.log('params -> ', list, totalSpendAmount.toString())
-        
+
         const config = await prepareWriteContract({
           address: TEGRO_FILL_ORDERS_CONTRACTS[chainId],
           abi: TEGRO_ABI,
