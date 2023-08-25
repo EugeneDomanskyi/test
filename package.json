@@ -14,7 +14,7 @@
     "@apollo/client": "^3.7.15",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@magiclabs/wagmi-connector": "^1.1.1",
+    "@everipedia/wagmi-magic-connector": "^1.0.2",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.5",
     "@rainbow-me/rainbowkit": "^1.0.9",
