@@ -5,6 +5,7 @@ import { parseUnits } from 'viem'
 import $modal from '@/store/modal'
 import useTrade from '@/myhooks/trade'
 import useOrders from '@/myhooks/useOrders'
+import useWalletConnect from '@/myhooks/wallet-connect'
 import { trackEvent } from '@/libs/analytics.lib'
 
 import SellModalSelect from '@/components/Exchange/SellModal/SellModalSelect'
@@ -22,6 +23,7 @@ const SellModal = ({data}) => {
   const currentCollection = useSelector(({$collection}) => $collection.current)
   
   const { updateOrders } = useOrders({collectionId: currentCollection.address})
+  const { wallet }  = useWalletConnect()
 
   const loadingRef = useRef(false)
 
@@ -56,20 +58,11 @@ const SellModal = ({data}) => {
 
   const fulfillOrder = () => {
     const items = selectedTokens.map(token => ({token: `${data.collectionId}:${token.id}`, quantity: token.amount}))
-    sellNft(items, null, progressHandler, onError)
-  }
-
-  const placeOrder = () => {
-    const listing = selectedTokens.map((token) => ({
-      token: `${data.collectionId}:${token.id}`,
-      weiPrice: parseUnits(`${data.price}`, 18).toString(),
-      quantity: token.amount,
-      royaltyBps: 0,
-      currency: data.blockchain.wrapped.contract,
-    }))
-    placeAsk(listing, progressHandler, onError)
+    sellNft(items, null, progressHandler('Market order'), onError)
     trackEvent('Create Order Submit', {
       'Wallet connect Status': 'Connected',
+      'Wallet Address': wallet || null,
+      'Order Type': 'Market order',
       'Network': data.blockchain.name,
       'Price': data.price,
       'Quantity': selectedAmount,
@@ -80,7 +73,30 @@ const SellModal = ({data}) => {
     })
   }
 
-  const progressHandler = (steps) => {
+  const placeOrder = () => {
+    const listing = selectedTokens.map((token) => ({
+      token: `${data.collectionId}:${token.id}`,
+      weiPrice: parseUnits(`${data.price}`, 18).toString(),
+      quantity: token.amount,
+      royaltyBps: 0,
+      currency: data.blockchain.wrapped.contract,
+    }))
+    placeAsk(listing, progressHandler('Limit order'), onError)
+    trackEvent('Create Order Submit', {
+      'Wallet connect Status': 'Connected',
+      'Wallet Address': wallet || null,
+      'Order Type': 'Limit order',
+      'Network': data.blockchain.name,
+      'Price': data.price,
+      'Quantity': selectedAmount,
+      'Total': selectedAmount*data.price,
+      'Side': 'Sell',
+      'Base Currency': data.blockchain.currency,
+      'Quote Currency': currentCollection.name
+    })
+  }
+
+  const progressHandler = orderType => (steps) => {
     const isAllStepsComplete = steps.flatMap(step => step.items).every(step => step.status === 'complete')
     if (isAllStepsComplete && loadingRef.current) {
       loadingRef.current = false
@@ -93,6 +109,8 @@ const SellModal = ({data}) => {
       setStep('complete')
       trackEvent('Create Order Success', {
         'Wallet connect Status': 'Connected',
+        'Wallet Address': wallet || null,
+        'Order type': orderType,
         'Network': data.blockchain.name,
         'Price': data.price,
         'Quantity': selectedAmount,

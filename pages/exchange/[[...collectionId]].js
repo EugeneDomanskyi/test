@@ -46,6 +46,7 @@ const Exchange = () => {
     trackEvent('Exchange Clicked', {
       'Network': blockchain.code.toUpperCase(),
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Wallet Address': wallet || null,
     })
   }, [])
 
