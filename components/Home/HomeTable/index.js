@@ -54,7 +54,7 @@ const HomeTable = () => {
   const handleSwap = (collection) => async (e) => {
     e.stopPropagation()
 
-    trackEvent('Dex Swap Clicked', {
+    trackEvent('Swap Clicked', {
       'Token': collection.name,
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
     })

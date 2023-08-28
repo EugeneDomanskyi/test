@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAccount, useNetwork, useWalletClient } from 'wagmi'
-import { signMessage, disconnect as wagmiDisconnect, getNetwork, getAccount, switchNetwork, fetchBalance } from '@wagmi/core'
+import { signMessage, disconnect as wagmiDisconnect, getNetwork, getAccount, switchNetwork, fetchBalance, fetchToken } from '@wagmi/core'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 
 import { CHAINS } from '@/config'
@@ -106,69 +106,6 @@ const useWalletConnect = () => {
 
   const network = (currentChain) => {
     return CHAINS.find(chain => chain.code === currentChain)
-    // switch (currentChain) {
-    //   case 'goerli': return {
-    //     name: 'Goerli',
-    //     server: 'eth-goerli',
-    //     connect: 'goerli',
-    //     alchemy: 'ETH_GOERLI',
-    //     coingecko: 'ethereum',
-    //     currency: 'ETH',
-    //     gasLimit: 60000,
-    //     scanDomain: 'https://goerli.etherscan.io/',
-    //     color: '#617DEA',
-    //     chainId: 5,
-    //   }
-    //   case 'ethereum': return {
-    //     name: 'Ethereum',
-    //     server: 'eth-mainet',
-    //     connect: 'homestead',
-    //     alchemy: 'ETH_MAINNET',
-    //     coingecko: 'ethereum',
-    //     currency: 'ETH',
-    //     gasLimit: 60000,
-    //     scanDomain: 'https://etherscan.io/',
-    //     color: '#617DEA',
-    //     chainId: 1,
-    //   }
-    //   case 'mumbai': return {
-    //     name: 'Mumbai',
-    //     server: 'polygon-testnet',
-    //     connect: 'maticmum',
-    //     alchemy: 'MATIC_MUMBAI',
-    //     coingecko: 'matic-network',
-    //     currency: 'MATIC',
-    //     gasLimit: 250000,
-    //     scanDomain: 'https://mumbai.polygonscan.com/',
-    //     color: '#8247e5',
-    //     chainId: 80001,
-    //   }
-    //   case 'polygon': return {
-    //     name: 'Polygon',
-    //     server: 'matic-mainet',
-    //     connect: 'matic',
-    //     alchemy: 'MATIC_MAINNET',
-    //     coingecko: 'matic-network',
-    //     currency: 'MATIC',
-    //     gasLimit: 250000,
-    //     scanDomain: 'https://polygonscan.com/',
-    //     color: '#8247e5',
-    //     chainId: 137,
-    //   }
-    //   case 'bnb': return {
-    //     name: 'BSC',
-    //     server: 'bsc',
-    //     connect: 'bsc',
-    //     alchemy: 'BSC',
-    //     coingecko: 'binancecoin',
-    //     currency: 'BSC',
-    //     gasLimit: 250000,
-    //     scanDomain: 'https://bscscan.com/',
-    //     color: '#FBDA3C',
-    //     chainId: 56,
-    //   }
-    //   default: return null
-    // }
   }
 
   const getBalance = async (token) => {
@@ -250,6 +187,11 @@ const useWalletConnect = () => {
     return false
   }
 
+  const getBasicInfo = async (address) => {
+    const result = await fetchToken({ address })
+    console.log(result)
+  }
+
   const debugMessage = (key, msg) => {
     if (debugMode) {
       console.log(key, msg)
@@ -271,6 +213,7 @@ const useWalletConnect = () => {
     scanUrl,
     usdt,
     jsonRpcEndpoints,
+    getBasicInfo,
   }
 }
 

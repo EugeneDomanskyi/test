@@ -15,6 +15,13 @@
   .secondaryText {
     color: #5E5C6B;
   }
+
+  .emptyImage {
+    width: 72px;
+    height: 72px;
+    border-radius: 4px;
+    background: linear-gradient(0deg, #311B9200, #311B92);
+  }
   
   &:hover,
   &.active {
@@ -22,6 +29,10 @@
 
     .secondaryText {
       color: #B9B8C5;
+    }
+
+    .emptyImage {
+      background: #16132C;
     }
   }
 

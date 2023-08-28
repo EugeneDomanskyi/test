@@ -22,7 +22,7 @@ const WrapperTokens = ({ children }) => {
   const router = useRouter()
   const [queryBlockchainCode, queryTokenId] = router.query.segments || []
 
-  const { network } = useWalletConnect()
+  const { getBasicInfo } = useWalletConnect()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -142,9 +142,11 @@ const WrapperTokens = ({ children }) => {
       if (searchText == '') {
         dispatch($token.set.searched([]))
         dispatch($token.set.all(tempAll))
+        dispatch($token.set.searchEmpty(false))
       } else {
         dispatch($token.set.searched(tempAll))
         dispatch($token.set.searching(true))
+        dispatch($token.set.searchEmpty(!tempAll.length))
       }
 
       if (! current?.id) {
@@ -243,12 +245,14 @@ const WrapperTokens = ({ children }) => {
       }
     }
 
-    if (token && ! token.isFull) {
-      const address = (token?.id ?? token?.basic?.id).toLowerCase()
-      const full = await $token.api.coingecko.full({ platform: blockchain.platform, address })
-      token = {
-        ...token,
-        full,
+    if (token) {
+      if (! token.isFull) {
+        const address = (token?.id ?? token?.basic?.id).toLowerCase()
+        const full = await $token.api.coingecko.full({ platform: blockchain.platform, address })
+        token = {
+          ...token,
+          full,
+        }
       }
     }
 

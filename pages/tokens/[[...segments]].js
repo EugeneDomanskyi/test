@@ -50,6 +50,7 @@ const Tokens = () => {
   const sort = useSelector(({$token}) => $token.sort)
   const search = useSelector(({$token}) => $token.search)
   const searching = useSelector(({$token}) => $token.searching)
+  const searchEmpty = useSelector(({$token}) => $token.searchEmpty)
   const pages = useSelector($token.get.pages)
 
   const [mobileTab, setMobileTab] = useState('markets')
@@ -148,6 +149,7 @@ const Tokens = () => {
             sort={sort}
             search={search}
             searching={searching}
+            searchEmpty={searchEmpty}
             pages={pages}
             loading={tokenLoading}
             onSort={handleSort}
