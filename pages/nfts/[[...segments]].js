@@ -29,7 +29,7 @@ const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 
 const GRID_GAP = 6
 
-const Exchange = () => {
+const Nfts = () => {
   const router = useRouter()
   const [collectionId] = router.query.collectionId || []
 
@@ -313,4 +313,4 @@ const Exchange = () => {
   )
 }
 
-export default Exchange
+export default Nfts

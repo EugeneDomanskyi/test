@@ -13,7 +13,7 @@ import styles from './styles.module.scss'
 
 const SidebarItem = ({ item, isActive, withArrow, searching, onClick, onClose }) => {
   const router = useRouter()
-  const isExchange = router.pathname.includes('/exchange')
+  const isNfts = router.pathname.includes('/nfts')
 
   const blockchain = useSelector($app.get.blockchain)
 
@@ -33,7 +33,7 @@ const SidebarItem = ({ item, isActive, withArrow, searching, onClick, onClose })
         })
       }
 
-      router.push(`/${isExchange ? 'exchange' : 'tokens'}/${blockchain.code}/${item.address}`, undefined, { scroll: false })
+      router.push(`/${isNfts ? 'nfts' : 'tokens'}/${blockchain.code}/${item.address}`, undefined, { scroll: false })
 
       if (onClose) {
         onClose()
