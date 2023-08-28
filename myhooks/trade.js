@@ -107,7 +107,7 @@ const useTrade = () => {
           ...response.orders
         ]
 
-        continuation = response.continuation
+        continuation = response.continuation !== continuation ? response.continuation : null
       }
     } while (continuation)
 

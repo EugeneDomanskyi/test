@@ -2,14 +2,15 @@ import styles from './styles.module.scss'
 import { memo } from 'react'
 import { useSelector } from 'react-redux'
 import cn from 'classnames'
+import numeral from 'numeral'
 
-import $exchange from '@/store/exchange'
 import $app from '@/store/app'
+import $orders from '@/store/orders'
 
 import App from '@/components/App'
 
-const OrderBook = ({onClickOrder}) => {
-  const orderBook = useSelector($exchange.get.orderBook)
+const OrderBook = ({type, onClickOrder}) => {
+  const orderBook = useSelector($orders.get.orderBook(type))
   const blockchain = useSelector($app.get.blockchain)
 
   let prevBuyVolumeValue = 0
@@ -30,7 +31,7 @@ const OrderBook = ({onClickOrder}) => {
       <App.Flex gap={3}>
         <App.Flex column flex={1}>
           <App.Flex justify="space-between" align="center" sx={{padding: '0 8px', height: 20}}>
-            <App.Text size={10} color="#908F99" weight={600}>Buy Price ({blockchain.currency})</App.Text>
+            <App.Text size={10} color="#908F99" weight={600}>Buy Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
             <App.Text size={10} color="#908F99" weight={600}>Volume</App.Text>
           </App.Flex>
           {
@@ -40,8 +41,8 @@ const OrderBook = ({onClickOrder}) => {
               return (
                 <App.Flex key={i} justify="space-between" align="center" className={styles.row} onClick={handleClick({...order, quantity: prevBuyVolumeValue, side: 'sell'})}>
                   <div className={cn(styles.fill, styles.buy)} style={{width}} />
-                  <App.Text size={12} sx={{position: 'relative'}} weight={600} color="#53f19c">{ order.price }</App.Text>
-                  <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600} sx={{position: 'relative'}}>{ prevBuyVolumeValue }</App.Text>
+                  <App.Text size={12} sx={{position: 'relative'}} weight={600} color="#53f19c">{ order.priceFormatted }</App.Text>
+                  <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600} sx={{position: 'relative'}}>{ numeral(prevBuyVolumeValue).format('0.[0000]') }</App.Text>
                 </App.Flex>
               )
             })
@@ -50,7 +51,7 @@ const OrderBook = ({onClickOrder}) => {
         <App.Flex column flex={1}>
           <App.Flex justify="space-between" align="center" sx={{padding: '0 8px', height: 20}}>
             <App.Text size={10} color="#908F99" weight={600}>Volume</App.Text>
-            <App.Text size={10} color="#908F99" weight={600}>Sell Price ({blockchain.currency})</App.Text>
+            <App.Text size={10} color="#908F99" weight={600}>Sell Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
           </App.Flex>
           {
             orderBook.sell.map((order, i) => {
@@ -59,8 +60,8 @@ const OrderBook = ({onClickOrder}) => {
               return (
                 <App.Flex key={i} justify="space-between" align="center" className={styles.row} onClick={handleClick({...order, quantity: prevSellVolumeValue, side: 'buy'})}>
                   <div className={cn(styles.fill, styles.sell)} style={{width}} />
-                  <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600} sx={{position: 'relative'}}>{ prevSellVolumeValue }</App.Text>
-                  <App.Text size={12} sx={{position: 'relative'}} weight={600} color="#eb3169">{ order.price }</App.Text>
+                  <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600} sx={{position: 'relative'}}>{ numeral(prevSellVolumeValue).format('0.[0000]') }</App.Text>
+                  <App.Text size={12} sx={{position: 'relative'}} weight={600} color="#eb3169">{ order.priceFormatted }</App.Text>
                 </App.Flex>
               )
             })
@@ -72,7 +73,8 @@ const OrderBook = ({onClickOrder}) => {
 }
 
 const isEqual = (prev, next) => {
-  return prev.onClickOrder === next.onClickOrder
+  return prev.onClickOrder === next.onClickOrder &&
+  prev.type === next.type
 }
 
 export default memo(OrderBook, isEqual)

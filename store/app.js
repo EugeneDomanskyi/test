@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSelector, createSlice } from '@reduxjs/toolkit'
 import { setCookie } from 'nookies'
 import { CHAINS } from '@/config'
 
@@ -29,9 +29,16 @@ export const get = {
   blockchain: ({ $app }) => {
     return $app.blockchains.find(item => item.code == $app.code)
   },
+
   blockchainByCode: (code) => ({ $app }) => {
     return $app.blockchains.find(item => item.code == code)
-  }
+  },
+
+  pageBlockchains: (page) => createSelector([
+    (state) => state.$app.blockchains,
+  ], (blockchains) => {
+    return blockchains.filter(item => item.pages.some(el => el == page))
+  }),
 }
 
 export default {

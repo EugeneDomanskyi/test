@@ -1,4 +1,5 @@
-import App from '@/components/App'
+import AppFlex from '@/components/App/AppFlex'
+import AppLoader from '@/components/App/AppLoader'
 
 const AppLoaderBlock = ({ height = 300, width = '100%', backgroundColor = 'rgba(0,0,0,0.3)', blur = 1, size = 40, color = '#fff', fixed = false }) => {
   const styles = {
@@ -8,9 +9,9 @@ const AppLoaderBlock = ({ height = 300, width = '100%', backgroundColor = 'rgba(
     zIndex: 10,
   }
   return (
-    <App.Flex center height={height} width={width} sx={styles}>
-      <App.Loader size={size} color={color} />
-    </App.Flex>
+    <AppFlex center height={height} width={width} sx={styles}>
+      <AppLoader size={size} color={color} />
+    </AppFlex>
   )
 }
 

@@ -5,18 +5,21 @@ import dynamic from 'next/dynamic'
 
 import $exchange from '@/store/exchange'
 import $app from '@/store/app'
+import $collection from '@/store/collection'
+import $orders from '@/store/orders'
 import Stream from '@/libs/stream.lib'
 import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
+import useOrders from '@/myhooks/useOrders'
 
 import App from '@/components/App'
-import CollectionList from '@/components/Exchange/CollectionList'
-import CollectionListMobile from '@/components/Exchange/CollectionList/CollectionListMobile'
+import Sidebar from '@/components/Exchange/Sidebar'
+import SidebarMobile from '@/components/Exchange/Sidebar/SidebarMobile'
 import OrderBook from '@/components/Exchange/OrderBook'
 import Sales from '@/components/Exchange/Sales'
 import TradeForm from '@/components/Exchange/TradeForm'
-import CollectionInfo from '@/components/Exchange/CollectionInfo'
+import CollectionInfo from '@/components/Exchange/Info'
 import Orders from '@/components/Exchange/Orders'
 import MobileTabsBar from '@/components/Exchange/MobileTabsBar'
 
@@ -28,14 +31,25 @@ const GRID_GAP = 6
 
 const Exchange = () => {
   const router = useRouter()
-  const dispatch = useDispatch()
   const [collectionId] = router.query.collectionId || []
 
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
+
+  const dispatch = useDispatch()
   const socketConnected = useSelector(({$app}) => $app.socketConnected)
   const blockchain = useSelector($app.get.blockchain)
-  const loadingCollectionData = useSelector(({$exchange}) => $exchange.loadingCollectionData)
+  const exchangeLoading = useSelector(({$exchange}) => $exchange.loading)
+
+  const collections = useSelector(({$collection}) => $collection.all)
+  const searched = useSelector(({$collection}) => $collection.searched)
+  const current = useSelector(({$collection}) => $collection.current)
+  const collectionLoading = useSelector(({$collection}) => $collection.loading)
+  const sort = useSelector(({$collection}) => $collection.sort)
+  const search = useSelector(({$collection}) => $collection.search)
+  const searching = useSelector(({$collection}) => $collection.searching)
+  const pages = useSelector($collection.get.pages)
+  const { updateOrders } = useOrders({tokenAddress: collectionId, type: 'nfts'})
 
   const [mobileTab, setMobileTab] = useState('markets')
   const [mobileTabTrade, setMobileTabTrade] = useState(false)
@@ -82,20 +96,8 @@ const Exchange = () => {
   }, [collectionId, blockchain.code])
 
   useEffect(() => {
-    if (blockchain.code && wallet) {
-      $exchange.api.get.orders({
-        blockchain: blockchain.code,
-        maker: wallet,
-        includeCriteriaMetadata: true,
-      }).then(res => {
-        if (res) {
-          dispatch($exchange.set.orders(res))
-        }
-      })
-    } else if (!wallet) {
-      dispatch($exchange.set.orders([]))
-    }
-  }, [blockchain.code, wallet])
+    updateOrders()
+  }, [blockchain.code, wallet, collectionId])
   
   useEffect(() => {
     if (socketConnected && collectionId) {
@@ -120,7 +122,7 @@ const Exchange = () => {
   }, [socketConnected, collectionId, wallet])
 
   const initCollection = (collectionId, blockchain) => {
-    dispatch($exchange.set.loadingCollectionData(true))
+    dispatch($exchange.set.loading(true))
     Promise.all([
       $exchange.api.get.sales({
         collection: collectionId,
@@ -130,50 +132,39 @@ const Exchange = () => {
         sortDirection: 'desc',
         limit: 800,
       }),
-      $exchange.api.get.orderBook({
-        collection: collectionId,
-        blockchain: blockchain,
-      })
     ]).then(([sales, orderBook]) => {
       if (sales) {
         dispatch($exchange.set.sales(sales))
+        dispatch($orders.set.trades({type: 'nfts', data: sales}))
       }
-      if (orderBook) {
-        dispatch($exchange.set.orderBook(orderBook))
-      }
-      dispatch($exchange.set.loadingCollectionData(false))
+      dispatch($exchange.set.loading(false))
     })
   }
 
   const handleOrdersUpdated = useCallback(() => {
     if (wallet) {
-      $exchange.api.get.orders({
+      $orders.api.get.nfts({
         blockchain: blockchain.code,
         maker: wallet,
         includeCriteriaMetadata: true,
       }).then(res => {
         if (res) {
-          dispatch($exchange.set.orders(res))
+          dispatch($orders.set.nfts(res))
         }
       })
     }
 
-    $exchange.api.get.orderBook({
+    $orders.api.get.nfts.orderBook({
       collection: collectionId,
       blockchain: blockchain.code,
     }).then(res => {
       if (res) {
-        dispatch($exchange.set.orderBook(res))
+        dispatch($orders.set.orderBook({type: 'nfts', data: res}))
       }
     })
   }, [wallet, collectionId, blockchain.code])
 
   const handleMobileTabChange = (tab) => {
-    // if (tab === 'buy_sell') {
-    //   setMobileTabTrade(!mobileTabTrade)
-    //   return
-    // }
-
     setMobileTabTrade(false)
     setMobileTab(tab)
   }
@@ -182,31 +173,66 @@ const Exchange = () => {
     tradeForm.current.setForm({formType: 'market', amount: order.quantity, side: order.side})
   }, [])
 
+  const handleSort = useCallback((value) => {
+    dispatch($collection.set.sort(value))
+  }, [])
+
+  const handleSearch = useCallback((value) => {
+    dispatch($collection.set.search(value))
+  }, [])
+
+  const handlePage = useCallback((value) => {
+    dispatch($collection.set.pages({current: value ?? 1}))
+  }, [])
+
   return (
     <App.Flex gap={GRID_GAP} className={styles.container}>
       {!isMobile ? (
         <>
-          <CollectionList />
+          <Sidebar
+            items={collections}
+            searched={searched}
+            current={current}
+            sort={sort}
+            search={search}
+            searching={searching}
+            pages={pages}
+            loading={collectionLoading}
+            onSort={handleSort}
+            onSearch={handleSearch}
+            onPage={handlePage}
+          />
 
           <App.Flex column flex={1} gap={GRID_GAP}>
-            <CollectionInfo />
+            <CollectionInfo current={current} />
 
             <App.Flex gap={GRID_GAP}>
               <App.Flex flex={1} column gap={GRID_GAP}>
-                <Chart />
+                <Chart type="nfts" />
 
                 <App.Flex gap={GRID_GAP}>
-                  <OrderBook onClickOrder={handleClickOrder} />
-                  <Sales onClickSale={handleClickOrder} />
+                  <OrderBook
+                    type="nfts"
+                    onClickOrder={handleClickOrder} />
+                  <Sales
+                    type="nfts"
+                    onClickSale={handleClickOrder} />
                 </App.Flex>
               </App.Flex>
 
               <App.Flex column gap={GRID_GAP}>
                 <App.Flex>
-                  <TradeForm ref={tradeForm} />
+                  <TradeForm
+                    ref={tradeForm}
+                    type="nfts"
+                    current={current} />
                 </App.Flex>
 
-                <Orders onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
+                <Orders
+                  current={current}
+                  type="nfts"
+                  onOrderCancelled={handleOrdersUpdated}
+                  onClickOrder={handleClickOrder} />
               </App.Flex>
             </App.Flex>
           </App.Flex>
@@ -214,21 +240,49 @@ const Exchange = () => {
       ) : (
         <>
           {mobileTab == 'markets' ? (
-            <CollectionList />
+            <Sidebar
+              items={collections}
+              searched={searched}
+              current={current}
+              sort={sort}
+              search={search}
+              searching={searching}
+              pages={pages}
+              loading={collectionLoading}
+              onSort={handleSort}
+              onSearch={handleSearch}
+              onPage={handlePage}
+            />
           ) : null}
 
           {mobileTab == 'charts' ? (
-            <Chart />
+            <Chart type="nfts" />
           ) : null}
 
           {mobileTab == 'trades' ? (
             <App.Flex column gap={GRID_GAP} width="100%">
-              <CollectionListMobile />
+              <SidebarMobile
+                items={collections}
+                searched={searched}
+                current={current}
+                sort={sort}
+                search={search}
+                searching={searching}
+                pages={pages}
+                loading={collectionLoading}
+                onSort={handleSort}
+                onSearch={handleSearch}
+                onPage={handlePage}
+              />
 
               <App.Flex column flex={1} sx={{ position: 'relative' }}>
                 <App.Flex column gap={GRID_GAP} className={styles.tradesContent}>
-                  <OrderBook onClickOrder={handleClickOrder} />
-                  <Sales onClickSale={handleClickOrder} />
+                  <OrderBook
+                    type="nfts"
+                    onClickOrder={handleClickOrder} />
+                  <Sales
+                    type="nfts"
+                    onClickSale={handleClickOrder} />
                 </App.Flex>
               </App.Flex>
             </App.Flex>
@@ -239,7 +293,10 @@ const Exchange = () => {
           ) : null}
 
           {mobileTab == 'buy_sell' ? (
-            <TradeForm ref={tradeForm} />
+            <TradeForm
+              ref={tradeForm}
+              type="nfts"
+              current={current} />
           ) : null}
 
           <MobileTabsBar
@@ -249,11 +306,10 @@ const Exchange = () => {
           />
         </>
       )}
-      {
-        loadingCollectionData
-          ? <App.LoaderBlock size={100} color="#7204FF" fixed height="100%" />
-          : null
-      }
+
+      {exchangeLoading ? (
+        <App.LoaderBlock size={100} color="#7204FF" fixed height="100%" />
+      ) : null}
     </App.Flex>
   )
 }
