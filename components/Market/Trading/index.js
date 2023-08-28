@@ -18,8 +18,8 @@ export default function Trading() {
   return (
     <App.Flex column justify="center" sx={{paddingTop: 64}} gap={96}>
       <App.Flex column gap={16}>
-        <TradeForm ref={tradeForm} fullWidth />
-        <OrderBook onClickOrder={handleClickOrder} />
+        {/* <TradeForm ref={tradeForm} fullWidth /> */}
+        {/* <OrderBook onClickOrder={handleClickOrder} /> */}
       </App.Flex>
       <Trending />
       <Analysis />

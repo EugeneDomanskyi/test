@@ -27,10 +27,11 @@ const token = 'fc873434915ecf9e639339b325338f768e1f5b81fc88e3e4299641a3f87de70fc
 export default function Markets() {
   const router = useRouter()
   const { isMobile } = usePropsHelper()
+  const [queryBlockchainCode, queryMarketId] = router.query.segments || []
 
-  const [marketId] = router.query.marketId || []
+  console.log('queryBlockchainCode', queryBlockchainCode);
+  console.log('queryMarketId', queryMarketId);
   const { loading } = useSelector(({ $collection }) => $collection)
-  console.log('marketId', marketId);
 
   useEffect(() => {
     fetch('https://strapi.tegro.com/api/markets', {method: 'GET', headers: { Authorization: `Bearer ${token}` }})
@@ -39,7 +40,7 @@ export default function Markets() {
         console.log('data', data);
         const [currentMarket] = data.filter(item => {
           console.log('item.attributes.token_metadata[0].contract_address', item.attributes.token_metadata[0].contract_address);
-          return item.attributes.token_metadata[0].contract_address === marketId
+          return item.attributes.token_metadata[0].contract_address === queryMarketId
         })
 
         console.log('currentMarket', currentMarket.attributes);
@@ -62,7 +63,13 @@ export default function Markets() {
               </>
             : <App.Flex column sx={{paddingTop: 32, width: '100%'}} gap={48}>
                 <Info />
-                <TradeForm />
+                {/* <TradeForm
+                  ref={takerFormRef}
+                  current={current}
+                  userBalances={userBalances}
+                  currentTab={currentTab}
+                  formOption={currentOption} 
+                /> */}
                 <OrderBook />
                 <LivePrice />
                 <Stats />
