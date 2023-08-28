@@ -20,12 +20,10 @@ const TAB_OPTIONS = [
 ]
 
 // const TradeForm = forwardRef((_props, ref) => {
-const TradeForm = forwardRef(({fullWidth, ...props}, ref) => {
+const TradeForm = forwardRef(({fullWidth = null, ...props}, ref) => {
   const { wallet, getBalance } = useWalletConnect()
   const { getNftBalanceUser } = useTrade()
 
-  console.log('fullWidth', fullWidth);
-  
   const orderBook = useSelector($exchange.get.orderBook)
   const currentCollection = useSelector(({$collection}) => $collection.current)
   const loadingCollectionData = useSelector(({$exchange}) => $exchange.loadingCollectionData)

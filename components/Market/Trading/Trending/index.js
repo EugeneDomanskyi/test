@@ -18,9 +18,9 @@ export default function Trending() {
 
       <App.Flex column gap={16}>
         {
-          Array.apply(null, {length: 5}).map(item => {
+          Array.apply(null, {length: 5}).map((item, index) => {
             return (
-              <App.Flex justify="space-between" align="center" gap={16}>
+              <App.Flex key={index} justify="space-between" align="center" gap={16}>
                 <App.Flex align="center" gap={16}>
                   <App.Flex className={styles.image}>
                   </App.Flex>
