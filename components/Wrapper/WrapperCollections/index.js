@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 
@@ -10,7 +10,7 @@ import $collection, { template } from '@/store/collection'
 
 const WrapperCollections = ({ children }) => {
   const router = useRouter()
-  const [queryCollectionId] = router.query.collectionId || []
+  const [queryBlockchainCode, queryCollectionId] = router.query.segments || []
   const isExchange = router.pathname.includes('/exchange')
 
   const { network, isContractAddress } = useWalletConnect()
@@ -28,37 +28,41 @@ const WrapperCollections = ({ children }) => {
   const search = useSelector(({ $collection }) => $collection.search)
   const pages = useSelector(({ $collection }) => $collection.pages)
 
+  const [isBlockchain, setIsBlockchain] = useState(false)
+
   const sortRef = useRef(sort)
   const searchRef = useRef(search)
   const pageRef = useRef(pages.current)
   const blockchainCode = useRef(blockchain.code)
 
   useEffect(() => {
-    if ( ! pageBlockchains.map(item => item.code).includes(blockchain.code)) {
-      dispatch($app.set.code('ethereum'))
+    if (router.isReady) {
+      if (queryBlockchainCode) {
+        if ( ! pageBlockchains.map(item => item.code).includes(queryBlockchainCode)) {
+          dispatch($app.set.code('ethereum'))
+        } else {
+          if (queryBlockchainCode != blockchain.code) {
+            dispatch($app.set.code(queryBlockchainCode))
+          }
+        }
+      }
+
+      setIsBlockchain(true)
     }
-  }, [])
+  }, [router.isReady, queryBlockchainCode])
 
   useEffect(() => {
-    if (current?.blockchain && current?.blockchain != blockchain.code) {
-      dispatch($collection.set.searched([]))
-      dispatch($collection.set.all([]))
-      dispatch($collection.set.current({}))
-    }
-  }, [current?.blockchain])
-
-  useEffect(() => {
-    if (router.isReady && (fetching || ! isExchange)) {
+    if (router.isReady && isBlockchain && (fetching || ! isExchange)) {
       getCollectionList()
       dispatch($collection.set.fetching(false))
     }
-  }, [router.isReady, fetching])
+  }, [router.isReady, fetching, isBlockchain])
 
   const getCollectionList = async () => {
     dispatch($collection.set.loading(true))
 
     const result = await $collection.api.all(queryParams(
-      blockchainCode.current,
+      blockchain.code,
       pages.current,
       sort,
       search
@@ -72,8 +76,8 @@ const WrapperCollections = ({ children }) => {
       const tempAll = tempCollections.map(item => {
         return {
           ...item,
-          blockchain: blockchainCode.current,
-          currency: network(blockchainCode.current)?.currency,
+          blockchain: blockchain.code,
+          currency: network(blockchain.code)?.currency,
         }
       })
 
@@ -87,10 +91,10 @@ const WrapperCollections = ({ children }) => {
 
       if (isExchange && ! current?.id) {
         const [first] = tempCollections
-        router.replace(first.id, undefined, { scroll: false })
+        router.replace(`/exchange/${blockchain.code}/${first.id}`, undefined, { scroll: false })
       }
 
-      initWSConnection(blockchainCode.current, tempCollections)
+      initWSConnection(blockchain.code, tempCollections)
     }
 
     dispatch($collection.set.loading(false))
@@ -100,9 +104,9 @@ const WrapperCollections = ({ children }) => {
     (async () => {
       if (router.isReady && isExchange) {
         let tempCollectionId = null
-        const temp = window.location.pathname.split('exchange')
-        if (temp.length > 1) {
-          tempCollectionId = temp[1].replace(/^\/|\/$/g, '') || null
+        const temp = window.location.pathname.split('/')
+        if (temp.length == 4) {
+          tempCollectionId = temp.pop().replace(/^\/|\/$/g, '') || null
         }
         
         const realCollectionId = queryCollectionId ?? tempCollectionId
@@ -112,7 +116,7 @@ const WrapperCollections = ({ children }) => {
             const [first] = collections
             id = first.id
           }
-          router.replace(id, undefined, { scroll: false })
+          router.replace(`/exchange/${blockchain.code}/${id}`, undefined, { scroll: false })
           return
         }
 
@@ -184,7 +188,7 @@ const WrapperCollections = ({ children }) => {
 
     if ( ! collection) {
       const result = await $collection.api.all(queryParams(
-        blockchainCode.current,
+        blockchain.code,
         null,
         sort,
         '',
@@ -194,34 +198,11 @@ const WrapperCollections = ({ children }) => {
       if (result && result.hasOwnProperty('collections')) {
         if (result.collections.length) {
           const [current] = result.collections
-          current.blockchain = blockchainCode.current
-          current.currency = network(blockchainCode.current)?.currency
+          current.blockchain = blockchain.code
+          current.currency = network(blockchain.code)?.currency
           collection = template(current)
         } else {
-          let collectionWasFound = false
-          for (const chain of pageBlockchains) {
-            if ( ! collectionWasFound && chain.code != blockchainCode.current) {
-              const result = await $collection.api.all(queryParams(
-                chain.code,
-                null,
-                sort,
-                '',
-                { id: address, limit: 1 }
-              ))
-
-              if (result && result.hasOwnProperty('collections') && result.collections.length) {
-                blockchainCode.current = chain.code
-                dispatch($app.set.code(chain.code))
-
-                collectionWasFound = true
-
-                const [current] = result.collections
-                current.currency = network(chain.code)?.currency
-                current.blockchain = chain.code
-                collection = template(current)
-              }
-            }
-          }
+          console.log('Collection was not found in current blockchain')
         }
       }
     }

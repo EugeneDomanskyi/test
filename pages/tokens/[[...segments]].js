@@ -31,8 +31,8 @@ const GRID_GAP = 6
 
 const Tokens = () => {
   const router = useRouter()
-  const [queryTokenId] = router.query.tokenId || []
-  
+  const [queryBlockchainCode, queryTokenId] = router.query.segments || []
+
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
   const { updateOrders } = useOrders({tokenAddress: queryTokenId, type: 'tokens'})
@@ -86,7 +86,7 @@ const Tokens = () => {
 
   useEffect(() => {
     updateOrders()
-  }, [blockchain.code, wallet])
+  }, [blockchain.code, wallet, queryTokenId])
 
   const getExchangeData = (tokenId, blockchain) => {
     $orders.api.get.tokens.trades({
@@ -99,14 +99,15 @@ const Tokens = () => {
       dispatch($orders.set.trades({type: 'tokens', data: res}))
     })
 
-    $orders.api.get.tokens.orderBook({
-      address: tokenId,
-      blockchain: blockchain,
-      statuses: '[1]',
-      limit: 500,
-    }).then(res => {
-      dispatch($orders.set.orderBook({type: 'tokens', data: res}))
-    })
+    // $orders.api.get.tokens.orderBook({
+    //   address: tokenId,
+    //   blockchain: blockchain,
+    //   sortBy: 'createDateTime',
+    //   statuses: '[1]',
+    //   limit: 500,
+    // }).then(res => {
+    //   dispatch($orders.set.orderBook({type: 'tokens', data: res}))
+    // })
   }
 
   const handleOrdersUpdated = useCallback(() => {
@@ -121,7 +122,7 @@ const Tokens = () => {
   }
 
   const handleClickOrder = useCallback(order => {
-    tradeForm.current.setForm({formType: 'market', amount: order.quantity, side: order.side})
+    tradeForm.current.setForm({formType: 'market', amount: order.quantity, price: order.price, side: order.side})
   }, [])
 
   const handleSort = useCallback((value) => {

@@ -41,7 +41,7 @@ const OrderBook = ({type, onClickOrder}) => {
               return (
                 <App.Flex key={i} justify="space-between" align="center" className={styles.row} onClick={handleClick({...order, quantity: prevBuyVolumeValue, side: 'sell'})}>
                   <div className={cn(styles.fill, styles.buy)} style={{width}} />
-                  <App.Text size={12} sx={{position: 'relative'}} weight={600} color="#53f19c">{ order.price }</App.Text>
+                  <App.Text size={12} sx={{position: 'relative'}} weight={600} color="#53f19c">{ order.priceFormatted }</App.Text>
                   <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600} sx={{position: 'relative'}}>{ numeral(prevBuyVolumeValue).format('0.[0000]') }</App.Text>
                 </App.Flex>
               )
@@ -61,7 +61,7 @@ const OrderBook = ({type, onClickOrder}) => {
                 <App.Flex key={i} justify="space-between" align="center" className={styles.row} onClick={handleClick({...order, quantity: prevSellVolumeValue, side: 'buy'})}>
                   <div className={cn(styles.fill, styles.sell)} style={{width}} />
                   <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600} sx={{position: 'relative'}}>{ numeral(prevSellVolumeValue).format('0.[0000]') }</App.Text>
-                  <App.Text size={12} sx={{position: 'relative'}} weight={600} color="#eb3169">{ order.price }</App.Text>
+                  <App.Text size={12} sx={{position: 'relative'}} weight={600} color="#eb3169">{ order.priceFormatted }</App.Text>
                 </App.Flex>
               )
             })

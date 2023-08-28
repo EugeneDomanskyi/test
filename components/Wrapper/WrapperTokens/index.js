@@ -20,7 +20,7 @@ const getApolloClient = (chain) => {
 
 const WrapperTokens = ({ children }) => {
   const router = useRouter()
-  const [queryTokenId] = router.query.tokenId || []
+  const [queryBlockchainCode, queryTokenId] = router.query.segments || []
 
   const { network } = useWalletConnect()
 
@@ -39,19 +39,16 @@ const WrapperTokens = ({ children }) => {
 
   const [isReady, setIsReady] = useState(false)
   const [isList, setIsList] = useState(false)
+  const [isBlockchain, setIsBlockchain] = useState(false)
 
   const sortRef = useRef(sort)
   const searchRef = useRef(search)
   const pageRef = useRef(pages.current)
   const blockchainCode = useRef(blockchain.code)
-  let apollo = getApolloClient(blockchain)
+  const apollo = useRef(getApolloClient(blockchain))
 
   useEffect(() => {
     (async () => {
-      if ( ! pageBlockchains.map(item => item.code).includes(blockchain.code)) {
-        dispatch($app.set.code('ethereum'))
-      }
-
       const tempList = await $token.api.coingecko.list({ include_platform: true })
       if (tempList) {
         const platforms = pageBlockchains.map(item => item.platform)
@@ -65,18 +62,35 @@ const WrapperTokens = ({ children }) => {
   }, [])
 
   useEffect(() => {
-    if (current?.blockchain && current?.blockchain != blockchain.code) {
-      dispatch($token.set.searched([]))
-      dispatch($token.set.all([]))
-      dispatch($token.set.current({}))
+    if (router.isReady) {
+      if (queryBlockchainCode) {
+        if ( ! pageBlockchains.map(item => item.code).includes(queryBlockchainCode)) {
+          dispatch($app.set.code('ethereum'))
+        } else {
+          if (queryBlockchainCode != blockchain.code) {
+            dispatch($app.set.code(queryBlockchainCode))
+          }
+        }
+      }
+
+      setIsBlockchain(true)
     }
-  }, [current?.blockchain])
+  }, [router.isReady, queryBlockchainCode])
 
   useEffect(() => {
-    if (router.isReady && isList) {
+    if (router.isReady && isList && isBlockchain) {
       setIsReady(true)
     }
-  }, [router.isReady, isList])
+  }, [router.isReady, isList, isBlockchain])
+
+  useEffect(() => {
+    if (blockchain.code != blockchainCode.current) {
+      blockchainCode.current = blockchain.code
+      apollo.current = getApolloClient(blockchain)
+      dispatch($token.set.current({}))
+      dispatch($token.set.fetching(true))
+    }
+  }, [blockchain.code])
 
   useEffect(() => {
     if (isReady && fetching) {
@@ -100,7 +114,7 @@ const WrapperTokens = ({ children }) => {
       orderBy = 'derivedETH'
     }
 
-    const result = await apollo.query({
+    const result = await apollo.current.query({
       query: $token.query.tokens,
       variables: {
         skip: searchText != '' ? 0 : (page - 1) * 10,
@@ -120,7 +134,7 @@ const WrapperTokens = ({ children }) => {
       const tempAll = tempTokens.map(item => {
         return {
           basic: item,
-          blockchain: blockchainCode.current,
+          blockchain: blockchain.code,
           info: info.find(el => el.address.toLowerCase() == item.id.toLowerCase()),
         }
       })
@@ -135,7 +149,7 @@ const WrapperTokens = ({ children }) => {
 
       if (! current?.id) {
         const [first] = tempTokens
-        router.replace(first.id, undefined, { scroll: false })
+        router.replace(`/tokens/${blockchain.code}/${first.id}`, undefined, { scroll: false })
       }
     }
 
@@ -143,7 +157,7 @@ const WrapperTokens = ({ children }) => {
   }
 
   const getInfo = async (tokens) => {
-    const platform = network(blockchainCode.current)?.platform
+    const platform = blockchain.platform
     const addresses = tokens.map(item => item.id.toLowerCase())
 
     const idToAddressList = addresses.map(address => {
@@ -176,11 +190,11 @@ const WrapperTokens = ({ children }) => {
     (async () => {
       if (isReady) {
         let tempTokenId = null
-        const temp = window.location.pathname.split('tokens')
-        if (temp.length > 1) {
-          tempTokenId = temp[1].replace(/^\/|\/$/g, '') || null
+        const temp = window.location.pathname.split('/')
+        if (temp.length == 4) {
+          tempTokenId = temp.pop().replace(/^\/|\/$/g, '') || null
         }
-        
+
         const realTokenId = queryTokenId ?? tempTokenId
         if ( ! realTokenId && tokens.length) {
           let id = current?.id
@@ -188,7 +202,7 @@ const WrapperTokens = ({ children }) => {
             const [first] = tokens
             id = first.id
           }
-          router.replace(id, undefined, { scroll: false })
+          router.replace(`/tokens/${blockchain.code}/${id}`, undefined, { scroll: false })
           return
         }
 
@@ -212,7 +226,7 @@ const WrapperTokens = ({ children }) => {
     }
 
     if ( ! token) {
-      const result = await apollo.query({
+      const result = await apollo.current.query({
         query: $token.query.token,
         variables: {
           id,
@@ -222,39 +236,16 @@ const WrapperTokens = ({ children }) => {
       if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('token') && result.data.token != null) {
         token = {
           basic: result.data.token,
-          blockchain: blockchainCode.current,
+          blockchain: blockchain.code,
         }
       } else {
-        let tokenWasFound = false
-        for (const chain of pageBlockchains) {
-          if ( ! tokenWasFound && chain.code != blockchainCode.current) {
-            apollo = getApolloClient(chain)
-            const result = await apollo.query({
-              query: $token.query.token,
-              variables: {
-                id,
-              },
-            })
-
-            if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('token')) {
-              blockchainCode.current = chain.code
-              dispatch($app.set.code(chain.code))
-              tokenWasFound = true
-
-              token = {
-                basic: result.data.token,
-                blockchain: chain.code,
-              }
-            }
-          }
-        }
+        console.log('Token was not found in current blockchain')
       }
     }
 
     if (token && ! token.isFull) {
-      console.log(token)
       const address = (token?.id ?? token?.basic?.id).toLowerCase()
-      const full = await $token.api.coingecko.full({ platform: network(blockchainCode.current)?.platform, address })
+      const full = await $token.api.coingecko.full({ platform: blockchain.platform, address })
       token = {
         ...token,
         full,
@@ -263,15 +254,6 @@ const WrapperTokens = ({ children }) => {
 
     return template(token ?? {})
   }
-
-  useEffect(() => {
-    if (blockchain.code != blockchainCode.current) {
-      blockchainCode.current = blockchain.code
-      apollo = getApolloClient(blockchain)
-      dispatch($token.set.current({}))
-      dispatch($token.set.fetching(true))
-    }
-  }, [blockchain.code])
 
   useEffect(() => {
     if (sort != sortRef.current) {
