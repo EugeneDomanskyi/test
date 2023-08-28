@@ -84,9 +84,11 @@ const WrapperCollections = ({ children }) => {
       if (search == '') {
         dispatch($collection.set.searched([]))
         dispatch($collection.set.all(tempAll))
+        dispatch($collection.set.searchEmpty(false))
       } else {
         dispatch($collection.set.searched(tempAll))
         dispatch($collection.set.searching(true))
+        dispatch($collection.set.searchEmpty(!tempAll.length))
       }
 
       if (isNfts && ! current?.id) {

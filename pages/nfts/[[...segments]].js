@@ -48,6 +48,7 @@ const Nfts = () => {
   const sort = useSelector(({$collection}) => $collection.sort)
   const search = useSelector(({$collection}) => $collection.search)
   const searching = useSelector(({$collection}) => $collection.searching)
+  const searchEmpty = useSelector(({$token}) => $token.searchEmpty)
   const pages = useSelector($collection.get.pages)
   const { updateOrders } = useOrders({tokenAddress: collectionId, type: 'nfts'})
 
@@ -195,6 +196,7 @@ const Nfts = () => {
             sort={sort}
             search={search}
             searching={searching}
+            searchEmpty={searchEmpty}
             pages={pages}
             loading={collectionLoading}
             onSort={handleSort}
@@ -246,6 +248,7 @@ const Nfts = () => {
               sort={sort}
               search={search}
               searching={searching}
+              searchEmpty={searchEmpty}
               pages={pages}
               loading={collectionLoading}
               onSort={handleSort}
@@ -267,6 +270,7 @@ const Nfts = () => {
                 sort={sort}
                 search={search}
                 searching={searching}
+                searchEmpty={searchEmpty}
                 pages={pages}
                 loading={collectionLoading}
                 onSort={handleSort}

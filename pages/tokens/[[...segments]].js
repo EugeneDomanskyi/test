@@ -201,6 +201,7 @@ const Tokens = () => {
               sort={sort}
               search={search}
               searching={searching}
+              searchEmpty={searchEmpty}
               pages={pages}
               loading={tokenLoading}
               onSort={handleSort}
@@ -222,6 +223,7 @@ const Tokens = () => {
                 sort={sort}
                 search={search}
                 searching={searching}
+                searchEmpty={searchEmpty}
                 pages={pages}
                 loading={tokenLoading}
                 onSort={handleSort}

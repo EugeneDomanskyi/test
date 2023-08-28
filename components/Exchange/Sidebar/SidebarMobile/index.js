@@ -7,7 +7,7 @@ import SidebarItem from '@/components/Exchange/Sidebar/SidebarItem'
 
 import styles from '@/components/App/AppModal/styles.module.scss'
 
-const SidebarMobile = ({ items, searched, current, sort, search, searching, pages, loading, onSort, onSearch, onPage }) => {
+const SidebarMobile = ({ items, searched, current, sort, search, searching, searchEmpty, pages, loading, onSort, onSearch, onPage }) => {
   const [show, setShow] = useState(false)
 
   const layout = useRef(null)
@@ -68,6 +68,7 @@ const SidebarMobile = ({ items, searched, current, sort, search, searching, page
                   sort={sort}
                   search={search}
                   searching={searching}
+                  searchEmpty={searchEmpty}
                   pages={pages}
                   loading={loading}
                   onSort={onSort}
@@ -92,6 +93,7 @@ const isEqual = (prevProps, nextProps) => {
     prevProps.sort == nextProps.sort &&
     prevProps.search == nextProps.search &&
     prevProps.searching == nextProps.searching &&
+    prevProps.searchEmpty == nextProps.searchEmpty &&
     JSON.stringify(prevProps.pages) == JSON.stringify(nextProps.pages) &&
     prevProps.loading == nextProps.loading &&
     prevProps.className == nextProps.className
