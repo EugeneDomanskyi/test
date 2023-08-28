@@ -161,7 +161,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
           }
           
           <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto'}}>
-            { currentTab === 'buy' ? 'Available on sale: ' : 'Available to sell: ' }
+            Available in Market: 
             {numeral(currentTab === 'buy' ? abilities.totalAmountOnSell : abilities.totalAmountToSell).format('0.[000000]')} {current.symbol}
           </App.Text>
         </App.Flex>

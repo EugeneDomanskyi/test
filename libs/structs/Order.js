@@ -569,7 +569,6 @@ class TOKEN extends Order {
         price: price,
       })
       if (orders && Array.isArray(orders)) {
-        // console.log(orders)
         const allowance = await Order.checkAllowance(chainId, TEGRO_FILL_ORDERS_CONTRACTS[chainId], walletClient.account.address, sellAsset, amount)
         if (!allowance) {
           reject()
