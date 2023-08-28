@@ -11,7 +11,7 @@ import $collection, { template } from '@/store/collection'
 const WrapperCollections = ({ children }) => {
   const router = useRouter()
   const [queryBlockchainCode, queryCollectionId] = router.query.segments || []
-  const isExchange = router.pathname.includes('/exchange')
+  const isNfts = router.pathname.includes('/nfts')
 
   const { network, isContractAddress } = useWalletConnect()
 
@@ -52,7 +52,7 @@ const WrapperCollections = ({ children }) => {
   }, [router.isReady, queryBlockchainCode])
 
   useEffect(() => {
-    if (router.isReady && isBlockchain && (fetching || ! isExchange)) {
+    if (router.isReady && isBlockchain && (fetching || ! isNfts)) {
       getCollectionList()
       dispatch($collection.set.fetching(false))
     }
@@ -89,9 +89,9 @@ const WrapperCollections = ({ children }) => {
         dispatch($collection.set.searching(true))
       }
 
-      if (isExchange && ! current?.id) {
+      if (isNfts && ! current?.id) {
         const [first] = tempCollections
-        router.replace(`/exchange/${blockchain.code}/${first.id}`, undefined, { scroll: false })
+        router.replace(`/nfts/${blockchain.code}/${first.id}`, undefined, { scroll: false })
       }
 
       initWSConnection(blockchain.code, tempCollections)
@@ -102,7 +102,7 @@ const WrapperCollections = ({ children }) => {
 
   useEffect(() => {
     (async () => {
-      if (router.isReady && isExchange) {
+      if (router.isReady && isNfts) {
         let tempCollectionId = null
         const temp = window.location.pathname.split('/')
         if (temp.length == 4) {
@@ -116,7 +116,7 @@ const WrapperCollections = ({ children }) => {
             const [first] = collections
             id = first.id
           }
-          router.replace(`/exchange/${blockchain.code}/${id}`, undefined, { scroll: false })
+          router.replace(`/nfts/${blockchain.code}/${id}`, undefined, { scroll: false })
           return
         }
 
@@ -130,7 +130,7 @@ const WrapperCollections = ({ children }) => {
         }
       }
     })()
-  }, [router.isReady, isExchange, queryCollectionId])
+  }, [router.isReady, isNfts, queryCollectionId])
 
   const queryParams = (blockchainCode, page, sortType, searchQuery, customParams) => {
     const [sortBy] = sortType.split(':')

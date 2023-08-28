@@ -5,7 +5,7 @@ const middleware = async (req) => {
   const { pathname } = req.nextUrl
   const segments = pathname.split('/').filter(segment => segment !== '')
   if (!segments.length) {
-    url.pathname = `/exchange`
+    url.pathname = `/nfts`
     return NextResponse.redirect(url)
   }
 }
