@@ -11,6 +11,8 @@ import App from '@/components/App'
 export default function Trading() {
   const tradeForm = useRef(null)
 
+  const current = useSelector(({$collection}) => $collection.current)
+
   const handleClickOrder = useCallback(order => {
     tradeForm.current.setForm({formType: 'market', amount: order.quantity, side: order.side})
   }, [])
@@ -18,8 +20,8 @@ export default function Trading() {
   return (
     <App.Flex column justify="center" sx={{paddingTop: 64}} gap={96}>
       <App.Flex column gap={16}>
-        {/* <TradeForm ref={tradeForm} fullWidth /> */}
-        {/* <OrderBook onClickOrder={handleClickOrder} /> */}
+        <TradeForm ref={tradeForm} type="nfts" current={current} fullWidth />
+        <OrderBook type="nfts" onClickOrder={handleClickOrder} />
       </App.Flex>
       <Trending />
       <Analysis />

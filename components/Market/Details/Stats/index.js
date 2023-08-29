@@ -9,9 +9,13 @@ import SectionTitle from '@/components/Market/SectionTitle'
 export default function Stats() {
   const { isMobile } = usePropsHelper()
 
+  const { current, currentMarketSeoInfo } = useSelector(({$collection}) => $collection)
+
+  const market = currentMarketSeoInfo?.token_metadata?.length ? currentMarketSeoInfo?.token_metadata[0] : null
+
   return (
     <App.Flex column sx={{width: '100%'}} gap={16}>
-      <SectionTitle>MetaSaga Warriors Stats</SectionTitle>
+      <SectionTitle>{ current.name } Stats</SectionTitle>
       
       <App.Flex column sx={{width: '100%'}} gap={isMobile ? 16 : 32}>
         <App.Flex sx={{width: '100%'}} className={styles.container}>
@@ -19,7 +23,7 @@ export default function Stats() {
             <App.Flex className={styles.statInfo} gap={8}>
               <App.Flex column>
                 <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Floor Price</App.Text>
-                <App.Text size={isMobile ? 20 : 24} weight={700}>$0.59</App.Text>
+                <App.Text size={isMobile ? 20 : 24} weight={700}>${ current.price }</App.Text>
               </App.Flex>
 
               <App.Text size={14} weight={400} color="#53F19C">
@@ -34,7 +38,7 @@ export default function Stats() {
             <App.Flex className={styles.statInfo} gap={8}>
               <App.Flex column>
                 <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">24H Volume</App.Text>
-                <App.Text size={isMobile ? 20 : 24} weight={700}>$1,350</App.Text>
+                <App.Text size={isMobile ? 20 : 24} weight={700}>${ current.volume }</App.Text>
               </App.Flex>
 
               <App.Text size={14} weight={400} color="#53F19C">
@@ -50,8 +54,8 @@ export default function Stats() {
           <App.Flex className={styles.statBlock}>
             <App.Flex className={styles.statInfo} gap={8}>
               <App.Flex column>
-                <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Total Suppy</App.Text>
-                <App.Text size={isMobile ? 20 : 24} weight={700}>10,000</App.Text>
+                <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Total Supply</App.Text>
+                <App.Text size={isMobile ? 20 : 24} weight={700}>{ current.tokenCount }</App.Text>
               </App.Flex>
 
               <App.Text size={14} weight={400} color="#53F19C">
@@ -66,7 +70,7 @@ export default function Stats() {
             <App.Flex className={styles.statInfo} gap={8}>
               <App.Flex column>
                 <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Market Cap</App.Text>
-                <App.Text size={isMobile ? 20 : 24} weight={700}>$5,900</App.Text>
+                <App.Text size={isMobile ? 20 : 24} weight={700}>${ current.marketCap }</App.Text>
               </App.Flex>
 
               <App.Text size={14} weight={400} color="#53F19C">

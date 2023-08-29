@@ -1,28 +1,37 @@
 import { useSelector } from 'react-redux'
 import styles from './styles.module.scss'
+import dynamic from 'next/dynamic'
 
 import App from '@/components/App'
-import Chart from '@/components/Market/Details/Chart'
+const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
+// import Chart from '@/components/Market/Details/Chart'
 
 export default function Info() {
+  const { current, currentMarketSeoInfo } = useSelector(({$collection}) => $collection)
+
+  const market = currentMarketSeoInfo?.token_metadata?.length ? currentMarketSeoInfo?.token_metadata[0] : null
+
+  console.log('current', current);
+  console.log('currentMarketSeoInfo', currentMarketSeoInfo);
+
   return (
     <App.Flex column sx={{width: '100%'}} gap={16}>
       <App.Flex className={styles.container}>
         <App.Flex column gap={22}>
           <App.Flex className={styles.infoContainer} gap={10}>
             <App.Flex className={styles.imageBlock}>
-            
+              <img src={current.image} alt="" />
             </App.Flex>
             
             <App.Flex column gap={10} className={styles.nameBlock}>
               <div className={styles.nameTitle}>
-                MetaSaga Warriors
+                { current.name }
               </div>
               <div className={styles.nameSubTitle}>
-                WARRIORS
+                { market?.project_name.toUpperCase() }
               </div>
               <div className={styles.nameSubTitle}>
-                MS_WARR
+                { market?.short_code }
               </div>
             </App.Flex>
           </App.Flex>
@@ -34,7 +43,7 @@ export default function Info() {
               Collection
             </App.Text>
             <App.Text size={16} weight={500}>
-              MetaSaga
+              { market?.parent_collection_name }
             </App.Text>
           </App.Flex>
           
@@ -43,7 +52,7 @@ export default function Info() {
               Project
             </App.Text>
             <App.Text size={16} weight={500}>
-              MetaGaming Guild (MGG)
+              { market?.project_name }
             </App.Text>
           </App.Flex>
         </App.Flex>
@@ -51,14 +60,16 @@ export default function Info() {
 
       <App.Flex gap={16} align="center">
         <App.Text size={28} weight={700}>
-          $21,939.98
+          ${ current.marketCap }
         </App.Text>
         <App.Text size={16} weight={500} color="#53F19C">
           <App.Icon icon="caret-up-fill" /> 2.33%
         </App.Text>
       </App.Flex>
 
-      <Chart />
+      <App.Flex sx={{height: 443}}>
+        <Chart type="nfts" />
+      </App.Flex>
     </App.Flex>
   )
 }

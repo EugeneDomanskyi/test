@@ -67,6 +67,7 @@ export const collectionSlice = createSlice({
       history: ['init'],
       current: 'init',
     },
+    currentMarketSeoInfo: {},
   },
 
   reducers: {
@@ -88,6 +89,10 @@ export const collectionSlice = createSlice({
 
     current: (state, { payload }) => {
       state.current = payload
+    },
+
+    currentMarketSeoInfo: (state, { payload }) => {
+      state.currentMarketSeoInfo = payload
     },
 
     update: (state, { payload }) => {
