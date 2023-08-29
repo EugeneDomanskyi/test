@@ -65,12 +65,13 @@ const TradeBuyModal = ({data}) => {
   const palceOrder = () => {
     switch (tokenType) {
       case 'nfts':
+        console.log('data', data)
         Order.NFT.place({
           address: current.address,
-          price: data.total*data.amount,
+          price: data.total,
           amount: data.amount,
           type: 'buy',
-        }).then(onSuccessPlaced)
+        }).then(onSuccessPlaced).catch(onFailurePlaced)
         break
       case 'tokens':
         Order.TOKEN.place({
@@ -89,8 +90,8 @@ const TradeBuyModal = ({data}) => {
     }))
   }
 
-  const onFailurePlaced = () => {
-    console.log('onFailurePlaced')
+  const onFailurePlaced = (error) => {
+    console.log('onFailurePlaced', error)
     dispatch($modal.set.close())
   }
 

@@ -75,6 +75,7 @@ const SellModal = ({data}) => {
           address: current.address, //current.address,
           amount: amount,
           side: 'sell',
+          price: data.price,
         })
         .then(onSuccessPlaced)
         .catch(onError)
