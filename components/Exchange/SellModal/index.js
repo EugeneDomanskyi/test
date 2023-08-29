@@ -64,7 +64,7 @@ const SellModal = ({data}) => {
           address: current.address,
           nfts: selectedTokens,
         })
-        .then(onSuccessPlaced)
+        .then(onSuccess('Taker order'))
         .catch(onError)
         break
       case 'tokens':
@@ -74,10 +74,22 @@ const SellModal = ({data}) => {
           side: 'sell',
           price: data.price,
         })
-        .then(onSuccessPlaced)
+        .then(onSuccess('Taker order'))
         .catch(onError)
         break
     }
+
+    trackEvent('Create Order Submit', {
+      'Wallet connect Status': 'Connected',
+      'Order Type': 'Taker order',
+      'Network': data.blockchain.name,
+      'Price': data.price,
+      'Quantity': tokenType === 'nfts' ? selectedAmount : data.amount,
+      'Total': tokenType === 'nfts' ? selectedAmount*data.price : data.amount*data.price,
+      'Side': 'Sell',
+      'Base Currency': tokenType === 'nfts' ? data.blockchain.currency : 'USDT',
+      'Quote Currency': current.name
+    })
   }
 
   const placeOrder = () => {
@@ -89,7 +101,7 @@ const SellModal = ({data}) => {
           price: data.price,
           nfts: selectedTokens,
         })
-        .then(onSuccessPlaced)
+        .then(onSuccess('Maker order'))
         .catch(onError)
         break
       case 'tokens':
@@ -99,26 +111,25 @@ const SellModal = ({data}) => {
           price: data.total,
           amount: data.amount,
         })
-        .then(onSuccessPlaced)
+        .then(onSuccess('Maker order'))
         .catch(onError)
         break
     }
 
     trackEvent('Create Order Submit', {
       'Wallet connect Status': 'Connected',
-      // 'Wallet Address': wallet || null,
-      'Order Type': 'Market order',
+      'Order Type': 'Maker order',
       'Network': data.blockchain.name,
       'Price': data.price,
-      'Quantity': selectedAmount,
-      'Total': selectedAmount*data.price,
+      'Quantity': tokenType === 'nfts' ? selectedAmount : data.amount,
+      'Total': tokenType === 'nfts' ? selectedAmount*data.price : data.amount*data.price,
       'Side': 'Sell',
-      'Base Currency': data.blockchain.currency,
+      'Base Currency': tokenType === 'nfts' ? data.blockchain.currency : 'USDT',
       'Quote Currency': current.name
     })
   }
 
-  const onSuccessPlaced = (res) => {
+  const onSuccess = orderType => () => {
     dispatch($modal.set.update({
       header: {
         title: 'Success',
@@ -128,17 +139,18 @@ const SellModal = ({data}) => {
     setStep('complete')
     trackEvent('Create Order Success', {
       'Wallet connect Status': 'Connected',
+      'Order Type': orderType,
       'Network': data.blockchain.name,
       'Price': data.price,
-      'Quantity': selectedAmount,
-      'Total': selectedAmount*data.price,
+      'Quantity': tokenType === 'nfts' ? selectedAmount : data.amount,
+      'Total': tokenType === 'nfts' ? selectedAmount*data.price : data.amount*data.price,
       'Side': 'Sell',
-      'Base Currency': data.blockchain.currency,
+      'Base Currency': tokenType === 'nfts' ? data.blockchain.currency : 'USDT',
       'Quote Currency': current.name
     })
   }
 
-  const onError = (error) => {
+  const onError = () => {
     dispatch($modal.set.close())
   }
 
