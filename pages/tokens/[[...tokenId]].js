@@ -92,7 +92,7 @@ const Tokens = () => {
     $orders.api.get.tokens.trades({
       address: tokenId,
       blockchain: blockchain,
-      sortBy: 'createDateTime',
+      sortBy: '',
       statuses: '[3]',
       limit: 50,
     }).then(res => {
