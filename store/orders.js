@@ -156,11 +156,11 @@ const getters = {
     state => state.$orders.trades[type]
   ], (trades) => {
     return trades.slice(0, limit).filter(order => {
-      return order.orderInvalidReason === 'order filled' && order.priceFormatted !== 'NaN'
+      return order.priceFormatted !== 'NaN' && (order.orderInvalidReason === 'order filled' || type === 'nfts')
     }).map(sale => {
       return {
         ...sale,
-        priceFormatted: sale.priceFormatted ?? sale.price.amount.decimal,
+        priceFormatted: sale.priceFormatted ?? sale.price.amount.native,
       }
     })
   }),
