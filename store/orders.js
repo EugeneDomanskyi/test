@@ -160,7 +160,7 @@ const getters = {
     }).map(sale => {
       return {
         ...sale,
-        priceFormatted: sale.priceFormatted ?? sale.price.amount.decimal,
+        priceFormatted: sale.priceFormatted ?? sale.price.amount.native,
       }
     })
   }),

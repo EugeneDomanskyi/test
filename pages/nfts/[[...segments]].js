@@ -122,17 +122,20 @@ const Nfts = () => {
     }
   }, [socketConnected, collectionId, wallet])
 
-  const initCollection = (collectionId, blockchain) => {
+  const initCollection = (collectionId) => {
     dispatch($exchange.set.loading(true))
     $exchange.api.get.sales({
       collection: collectionId,
-      blockchain: blockchain,
+      blockchain: blockchain.code,
       includeDeleted: false,
       includeTokenMetadata: false,
       sortDirection: 'desc',
       limit: 800,
     }).then(sales => {
       if (sales) {
+        // sales.forEach(sale => {
+        //   console.log(sale.price.currency.symbol)
+        // })
         dispatch($exchange.set.sales(sales))
         dispatch($orders.set.trades({type: 'nfts', data: sales}))
       }
