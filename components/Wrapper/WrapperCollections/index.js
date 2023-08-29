@@ -167,7 +167,7 @@ const WrapperCollections = ({ children }) => {
       }
     } else {
       defaultParams.minFloorAskPrice = '0.000001'
-      defaultParams.maxFloorAskPrice = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null
+      // defaultParams.maxFloorAskPrice = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null
     }
 
     let continuation = null
@@ -271,10 +271,10 @@ const WrapperCollections = ({ children }) => {
     await Stream.connect(blockchain)
     dispatch($app.set.socketConnected(true))
 
-    /* Stream.subscribe('collection.updated', resultCollections.map(c => c.id))
+   Stream.subscribe('collection.updated', resultCollections.map(c => c.id))
     Stream.on('collection.updated', (data) => {
       console.log('collection.updated', data)
-    }) */
+    })
   }
 
   return children
