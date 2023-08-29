@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux'
 
 import useTrade from '@/myhooks/trade'
 import useOrders from '@/myhooks/useOrders'
+import useWalletConnect from '@/myhooks/wallet-connect'
 import $modal from '@/store/modal'
 import { trackEvent } from '@/libs/analytics.lib'
 import Order from '@/libs/structs/Order'
@@ -106,6 +107,8 @@ const TradeBuyModal = ({data}) => {
     setStep('complete')
     trackEvent('Create Order Success', {
       'Wallet connect Status': 'Connected',
+      'Wallet Address': wallet || null,
+      'Order type': 'Limit order',
       'Network': data.blockchain.name,
       'Price': data.price,
       'Quantity': data.amount,
@@ -121,7 +124,7 @@ const TradeBuyModal = ({data}) => {
     dispatch($modal.set.close())
   }
 
-  const progressHandler = steps => {
+  const progressHandler = (orderType) => steps => {
     const isAllStepsComplete = steps.flatMap(step => step.items).every(step => step.status === 'complete')
     if (isAllStepsComplete && loadingRef.current) {
       loadingRef.current = false
@@ -134,6 +137,8 @@ const TradeBuyModal = ({data}) => {
       setStep('complete')
       trackEvent('Create Order Success', {
         'Wallet connect Status': 'Connected',
+        'Wallet Address': wallet || null,
+        'Order type': orderType,
         'Network': data.blockchain.name,
         'Price': data.price,
         'Quantity': data.amount,

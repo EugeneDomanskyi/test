@@ -103,6 +103,7 @@ const TradeFormMarket = ({current, currentTab, type, currentOption, userBalances
       'Quote Currency': current.name,
       'Amount': amount,
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Wallet Address': wallet || null,
       'Network': blockchain.name,
     })
   }

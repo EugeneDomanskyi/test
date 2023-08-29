@@ -40,7 +40,8 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
       'Total': order.price,
       'Network': blockchain.name,
       'Wallet connect Status': wallet ? 'Connected' : 'Not connected',
-      'Order Type': 'Limit Order',
+      'Wallet Address': wallet || null,
+      'Order Type': 'Limit order',
     }
     trackEvent('Cancel Order Submit', eventPost)
     setCancellingOrders(state => {

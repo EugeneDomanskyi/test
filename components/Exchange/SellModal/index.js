@@ -5,6 +5,7 @@ import { parseUnits } from 'viem'
 import $modal from '@/store/modal'
 import useTrade from '@/myhooks/trade'
 import useOrders from '@/myhooks/useOrders'
+import useWalletConnect from '@/myhooks/wallet-connect'
 import { trackEvent } from '@/libs/analytics.lib'
 import Order from '@/libs/structs/Order'
 
@@ -109,6 +110,8 @@ const SellModal = ({data}) => {
 
     trackEvent('Create Order Submit', {
       'Wallet connect Status': 'Connected',
+      'Wallet Address': wallet || null,
+      'Order Type': 'Market order',
       'Network': data.blockchain.name,
       'Price': data.price,
       'Quantity': selectedAmount,
@@ -140,7 +143,7 @@ const SellModal = ({data}) => {
     })
   }
 
-  const progressHandler = (steps) => {
+  const progressHandler = orderType => (steps) => {
     const isAllStepsComplete = steps.flatMap(step => step.items).every(step => step.status === 'complete')
     if (isAllStepsComplete && loadingRef.current) {
       loadingRef.current = false
@@ -153,6 +156,8 @@ const SellModal = ({data}) => {
       setStep('complete')
       trackEvent('Create Order Success', {
         'Wallet connect Status': 'Connected',
+        'Wallet Address': wallet || null,
+        'Order type': orderType,
         'Network': data.blockchain.name,
         'Price': data.price,
         'Quantity': selectedAmount,
