@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react'
 import { useDispatch } from 'react-redux'
 
-import useTrade from '@/myhooks/trade'
 import useOrders from '@/myhooks/useOrders'
 import $modal from '@/store/modal'
 import { trackEvent } from '@/libs/analytics.lib'
@@ -15,8 +14,6 @@ const TradeBuyModal = ({data}) => {
   const dispatch = useDispatch()
 
   const { current, tokenType } = data
-
-  const { errorHandler } = useTrade()
   const { updateOrders } = useOrders({tokenAddress: current.address, type: tokenType})
 
   const [step, setStep] = useState('confirm')
@@ -28,7 +25,7 @@ const TradeBuyModal = ({data}) => {
     setStep('confirming')
     switch (data.type) {
       case 'place':
-        palceOrder()
+        placeOrder()
         break
       case 'fulfill':
         fulfillOrder()
@@ -62,16 +59,17 @@ const TradeBuyModal = ({data}) => {
     }
   }
 
-  const palceOrder = () => {
+  const placeOrder = () => {
     switch (tokenType) {
       case 'nfts':
-        console.log('data', data)
         Order.NFT.place({
           address: current.address,
           price: data.total,
           amount: data.amount,
           type: 'buy',
-        }).then(onSuccessPlaced).catch(onFailurePlaced)
+        })
+        .then(onSuccessPlaced)
+        .catch(onError)
         break
       case 'tokens':
         Order.TOKEN.place({
@@ -79,7 +77,9 @@ const TradeBuyModal = ({data}) => {
           price: data.total,
           amount: data.amount,
           type: 'buy',
-        }).then(onSuccessPlaced).catch(onFailurePlaced)
+        })
+        .then(onSuccessPlaced)
+        .catch(onError)
         break
     }
     dispatch($modal.set.update({
@@ -88,11 +88,6 @@ const TradeBuyModal = ({data}) => {
         subtitle: `Buy ${current.name} using ${data.blockchain.wrapped.shortName}`
       },
     }))
-  }
-
-  const onFailurePlaced = (error) => {
-    console.log('onFailurePlaced', error)
-    dispatch($modal.set.close())
   }
 
   const onSuccessPlaced = (res) => {
@@ -106,6 +101,8 @@ const TradeBuyModal = ({data}) => {
     setStep('complete')
     trackEvent('Create Order Success', {
       'Wallet connect Status': 'Connected',
+      'Wallet Address': wallet || null,
+      'Order type': 'Limit order',
       'Network': data.blockchain.name,
       'Price': data.price,
       'Quantity': data.amount,
@@ -117,32 +114,7 @@ const TradeBuyModal = ({data}) => {
   }
 
   const onError = (error) => {
-    errorHandler(error)
     dispatch($modal.set.close())
-  }
-
-  const progressHandler = steps => {
-    const isAllStepsComplete = steps.flatMap(step => step.items).every(step => step.status === 'complete')
-    if (isAllStepsComplete && loadingRef.current) {
-      loadingRef.current = false
-      dispatch($modal.set.update({
-        header: {
-          title: 'Success',
-          subtitle: `Buy ${current.name} using USDT`
-        },
-      }))
-      setStep('complete')
-      trackEvent('Create Order Success', {
-        'Wallet connect Status': 'Connected',
-        'Network': data.blockchain.name,
-        'Price': data.price,
-        'Quantity': data.amount,
-        'Total': data.total*data.amount,
-        'Side': 'Buy',
-        'Base Currency': data.blockchain.currency,
-        'Quote Currency': current.name
-      })
-    }
   }
 
   const handleComplete = () => {
@@ -150,27 +122,25 @@ const TradeBuyModal = ({data}) => {
     updateOrders()
   }
 
-  return (() => {
-    switch (step) {
-      case 'confirm':
-        return (
-          <BuyModalConfirm
-            {...data}
-            onConfirm={handleConfirm} />
-        )
-      case 'confirming':
-        return (
-          <BuyModalConfirming />
-        )
-      case 'complete':
-        return (
-          <BuyModalComplete
-            {...data}
-            currentCollection={current}
-            onComplete={handleComplete} />
-        )
-    }
-  })()
+  switch (step) {
+    case 'confirm':
+      return (
+        <BuyModalConfirm
+          {...data}
+          onConfirm={handleConfirm} />
+      )
+    case 'confirming':
+      return (
+        <BuyModalConfirming />
+      )
+    case 'complete':
+      return (
+        <BuyModalComplete
+          {...data}
+          currentCollection={current}
+          onComplete={handleComplete} />
+      )
+  }
 }
 
 export default TradeBuyModal

@@ -1,9 +1,7 @@
 import { useState, useRef } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { parseUnits } from 'viem'
+import { useDispatch } from 'react-redux'
 
 import $modal from '@/store/modal'
-import useTrade from '@/myhooks/trade'
 import useOrders from '@/myhooks/useOrders'
 import { trackEvent } from '@/libs/analytics.lib'
 import Order from '@/libs/structs/Order'
@@ -18,7 +16,6 @@ const SellModal = ({data}) => {
   const { tokenType, current } = data
 
   const dispatch = useDispatch()
-  const { placeAsk, sellNft, errorHandler } = useTrade()
   const [selectedTokens, setSelectedTokens] = useState([])
 
   const [step, setStep] = useState(tokenType === 'nfts' ? 'select' : 'confirm')
@@ -109,6 +106,8 @@ const SellModal = ({data}) => {
 
     trackEvent('Create Order Submit', {
       'Wallet connect Status': 'Connected',
+      // 'Wallet Address': wallet || null,
+      'Order Type': 'Market order',
       'Network': data.blockchain.name,
       'Price': data.price,
       'Quantity': selectedAmount,
@@ -120,7 +119,6 @@ const SellModal = ({data}) => {
   }
 
   const onSuccessPlaced = (res) => {
-    console.log('onSuccessPlaced', res)
     dispatch($modal.set.update({
       header: {
         title: 'Success',
@@ -140,32 +138,7 @@ const SellModal = ({data}) => {
     })
   }
 
-  const progressHandler = (steps) => {
-    const isAllStepsComplete = steps.flatMap(step => step.items).every(step => step.status === 'complete')
-    if (isAllStepsComplete && loadingRef.current) {
-      loadingRef.current = false
-      dispatch($modal.set.update({
-        header: {
-          title: 'Success',
-          subtitle: `Sell ${current.name} using ${data.blockchain.wrapped.shortName}`
-        },
-      }))
-      setStep('complete')
-      trackEvent('Create Order Success', {
-        'Wallet connect Status': 'Connected',
-        'Network': data.blockchain.name,
-        'Price': data.price,
-        'Quantity': selectedAmount,
-        'Total': selectedAmount*data.price,
-        'Side': 'Sell',
-        'Base Currency': data.blockchain.currency,
-        'Quote Currency': current.name
-      })
-    }
-  }
-
   const onError = (error) => {
-    errorHandler(error)
     dispatch($modal.set.close())
   }
 
@@ -174,41 +147,39 @@ const SellModal = ({data}) => {
     updateOrders()
   }
 
-  return (() => {
-    switch (step) {
-      case 'select':
-        return (
-          <SellModalSelect
-            amount={data.amount}
-            nfts={data.tokens}
-            token={current}
-            onSelect={handleSelect} />
-        )
-      case 'confirm':
-        return (
-          <SellModalConfirm
-            price={data.price}
-            amount={amount}
-            total={amount*data.price}
-            onConfirm={handleConfirm} />
-        )
-      case 'confirming':
-        return (
-          <SellModalConfirming />
-        )
-      case 'complete':
-        return (
-          <SellModalComplete
-            type={data.type}
-            currentCollection={current}
-            blockchain={data.blockchain}
-            price={data.price}
-            amount={amount}
-            total={amount*data.price}
-            onComplete={handleComplete} />
-        )
-    }
-  })()
+  switch (step) {
+    case 'select':
+      return (
+        <SellModalSelect
+          amount={data.amount}
+          nfts={data.tokens}
+          token={current}
+          onSelect={handleSelect} />
+      )
+    case 'confirm':
+      return (
+        <SellModalConfirm
+          price={data.price}
+          amount={amount}
+          total={amount*data.price}
+          onConfirm={handleConfirm} />
+      )
+    case 'confirming':
+      return (
+        <SellModalConfirming />
+      )
+    case 'complete':
+      return (
+        <SellModalComplete
+          type={data.type}
+          currentCollection={current}
+          blockchain={data.blockchain}
+          price={data.price}
+          amount={amount}
+          total={amount*data.price}
+          onComplete={handleComplete} />
+      )
+  }
 }
 
 export default SellModal
