@@ -162,7 +162,7 @@ const getters = {
     const from = moment().subtract(interval.count, interval.unit)
     const prices = sales
       .filter(sale => moment(sale.updatedAt).isAfter(from) && moment(sale.updatedAt).isBefore(now))
-      .map((sale) => sale.price.amount.decimal)
+      .map((sale) => sale.price.amount.native)
     return {
       low: prices.length ? Math.min(...prices) : 0,
       high: prices.length ? Math.max(...prices) : 0,
