@@ -712,8 +712,10 @@ class TOKEN extends Order {
       })
       if (res) {
         const txResult = await waitForTransaction(res)
-        resolve(txResult)
-        Order.showSuccessMessage('Order cancelled successfully')
+        setTimeout(() => {
+          Order.showSuccessMessage('Order cancelled successfully')
+          resolve(txResult)
+        }, 2000)
       }
     })
   }
