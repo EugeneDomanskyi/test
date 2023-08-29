@@ -31,7 +31,7 @@ const GRID_GAP = 6
 
 const Nfts = () => {
   const router = useRouter()
-  const [collectionId] = router.query.collectionId || []
+  const [_, collectionId] = router.query.segments || []
 
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
@@ -124,16 +124,14 @@ const Nfts = () => {
 
   const initCollection = (collectionId, blockchain) => {
     dispatch($exchange.set.loading(true))
-    Promise.all([
-      $exchange.api.get.sales({
-        collection: collectionId,
-        blockchain: blockchain,
-        includeDeleted: false,
-        includeTokenMetadata: false,
-        sortDirection: 'desc',
-        limit: 800,
-      }),
-    ]).then(([sales, orderBook]) => {
+    $exchange.api.get.sales({
+      collection: collectionId,
+      blockchain: blockchain,
+      includeDeleted: false,
+      includeTokenMetadata: false,
+      sortDirection: 'desc',
+      limit: 800,
+    }).then(sales => {
       if (sales) {
         dispatch($exchange.set.sales(sales))
         dispatch($orders.set.trades({type: 'nfts', data: sales}))

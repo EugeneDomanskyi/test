@@ -66,9 +66,9 @@ const Tokens = () => {
   }, [])
 
   useEffect(() => {
-    if (queryTokenId && blockchain.code) {
+    if (queryTokenId && queryBlockchainCode) {
       dispatch($exchange.set.loading(true))
-      $exchange.api.get.tokenChartData(queryTokenId, blockchain.code, activeInterval.seconds).then(res => {
+      $exchange.api.get.tokenChartData(queryTokenId, queryBlockchainCode, activeInterval.seconds).then(res => {
         dispatch($exchange.set.loading(false))
         if (res) {
           dispatch($exchange.set.chartData({type: 'tokens', data: res.data}))
@@ -77,17 +77,17 @@ const Tokens = () => {
         dispatch($exchange.set.chartData({type: 'tokens', data: []}))
       })
     }
-  }, [activeInterval, queryTokenId, blockchain.code])
+  }, [activeInterval, queryTokenId, queryBlockchainCode])
 
   useEffect(() => {
-    if (queryTokenId && blockchain.code) {
-      getExchangeData(queryTokenId, blockchain.code)
+    if (queryTokenId && queryBlockchainCode) {
+      getExchangeData(queryTokenId, queryBlockchainCode)
     }
-  }, [queryTokenId, blockchain.code])
+  }, [queryTokenId, queryBlockchainCode])
 
   useEffect(() => {
     updateOrders()
-  }, [blockchain.code, wallet, queryTokenId])
+  }, [queryBlockchainCode, wallet, queryTokenId])
 
   const getExchangeData = (tokenId, blockchain) => {
     $orders.api.get.tokens.trades({
@@ -99,23 +99,13 @@ const Tokens = () => {
     }).then(res => {
       dispatch($orders.set.trades({type: 'tokens', data: res}))
     })
-
-    // $orders.api.get.tokens.orderBook({
-    //   address: tokenId,
-    //   blockchain: blockchain,
-    //   sortBy: 'createDateTime',
-    //   statuses: '[1]',
-    //   limit: 500,
-    // }).then(res => {
-    //   dispatch($orders.set.orderBook({type: 'tokens', data: res}))
-    // })
   }
 
   const handleOrdersUpdated = useCallback(() => {
     if (wallet) {
       updateOrders()
     }
-  }, [wallet, queryTokenId, blockchain.code])
+  }, [wallet, queryTokenId, queryBlockchainCode])
 
   const handleMobileTabChange = (tab) => {
     setMobileTabTrade(false)
