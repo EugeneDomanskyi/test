@@ -43,7 +43,7 @@ const TradeBuyModal = ({data}) => {
           amount: data.amount,
           address: current.address,
         })
-        .then(onSuccessPlaced)
+        .then(onSuccess('Taker order'))
         .catch(onError)
         break
       case 'tokens':
@@ -53,10 +53,22 @@ const TradeBuyModal = ({data}) => {
           price: data.price,
           side: 'buy',
         })
-        .then(onSuccessPlaced)
+        .then(onSuccess('Taker order'))
         .catch(onError)
         break
     }
+
+    trackEvent('Create Order Submit', {
+      'Wallet connect Status': 'Connected',
+      'Order type': 'Taker order',
+      'Network': data.blockchain.name,
+      'Price': data.price,
+      'Quantity': data.amount,
+      'Total': data.total,
+      'Side': 'Buy',
+      'Base Currency': tokenType === 'nfts' ? data.blockchain.currency : 'USDT',
+      'Quote Currency': current.name
+    })
   }
 
   const placeOrder = () => {
@@ -68,7 +80,7 @@ const TradeBuyModal = ({data}) => {
           amount: data.amount,
           type: 'buy',
         })
-        .then(onSuccessPlaced)
+        .then(onSuccess('Maker order'))
         .catch(onError)
         break
       case 'tokens':
@@ -78,7 +90,7 @@ const TradeBuyModal = ({data}) => {
           amount: data.amount,
           type: 'buy',
         })
-        .then(onSuccessPlaced)
+        .then(onSuccess('Maker order'))
         .catch(onError)
         break
     }
@@ -88,10 +100,21 @@ const TradeBuyModal = ({data}) => {
         subtitle: `Buy ${current.name} using ${data.blockchain.wrapped.shortName}`
       },
     }))
+
+    trackEvent('Create Order Submit', {
+      'Wallet connect Status': 'Connected',
+      'Order type': 'Maker order',
+      'Network': data.blockchain.name,
+      'Price': data.price,
+      'Quantity': data.amount,
+      'Total': data.total,
+      'Side': 'Buy',
+      'Base Currency': tokenType === 'nfts' ? data.blockchain.currency : 'USDT',
+      'Quote Currency': current.name
+    })
   }
 
-  const onSuccessPlaced = (res) => {
-    console.log(res)
+  const onSuccess = orderType => () => {
     dispatch($modal.set.update({
       header: {
         title: 'Success',
@@ -101,14 +124,13 @@ const TradeBuyModal = ({data}) => {
     setStep('complete')
     trackEvent('Create Order Success', {
       'Wallet connect Status': 'Connected',
-      'Wallet Address': wallet || null,
-      'Order type': 'Limit order',
+      'Order type': orderType,
       'Network': data.blockchain.name,
       'Price': data.price,
       'Quantity': data.amount,
-      'Total': data.total*data.amount,
+      'Total': data.total,
       'Side': 'Buy',
-      'Base Currency': data.blockchain.currency,
+      'Base Currency': tokenType === 'nfts' ? data.blockchain.currency : 'USDT',
       'Quote Currency': current.name
     })
   }
