@@ -204,6 +204,7 @@ class NFT extends Order {
           reject()
           return
         }
+        console.log(address)
         const nfts = Object.entries(response.tokens).sort((a,b) => a[1] - b[1]).slice(0, amount).map(([id]) => ({token: `${address}:${id}`, quantity: 1}))
 
         getClient()?.actions.buyToken({
@@ -242,6 +243,12 @@ class NFT extends Order {
       }
 
       if (type === 'buy') {
+        const balance = await Order.getBalance(walletClient.account.address, blockchain.wrapped.contract)
+        if (balance < price*1) {
+          Order.showErrorMessage('Insufficient balance')
+          reject()
+          return 
+        }
         const bids = [{
           weiPrice: parseUnits(`${price}`, 18).toString(),
           collection: address,

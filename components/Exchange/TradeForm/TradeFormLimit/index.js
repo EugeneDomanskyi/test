@@ -180,7 +180,7 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
       if (currentTab === 'buy') {
         handleChangeForm('total')(userBalances.wrapped * percentage)
       } else {
-        handleChangeForm('amount')(userBalances.token * percentage)
+        handleChangeForm('amount')(Math.round(userBalances.token * percentage))
       }
     } else {
       if (currentTab === 'buy') {

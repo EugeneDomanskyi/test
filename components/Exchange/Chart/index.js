@@ -95,7 +95,7 @@ const TradeChart = ({type}) => {
   }, [])
 
   useEffect(() => {
-    if (chartData.length) {
+    if (chartData) {
       updateChart()
     }
   }, [chartData])
