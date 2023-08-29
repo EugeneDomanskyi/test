@@ -36,6 +36,12 @@ const WrapperCollections = ({ children }) => {
   const blockchainCode = useRef(blockchain.code)
 
   useEffect(() => {
+    Stream.on('collection.updated', (eventName, eventData) => {
+      console.log('collection.updated', eventData)
+    })
+  }, [])
+
+  useEffect(() => {
     if (router.isReady) {
       if (queryBlockchainCode) {
         if ( ! pageBlockchains.map(item => item.code).includes(queryBlockchainCode)) {
@@ -270,11 +276,7 @@ const WrapperCollections = ({ children }) => {
     dispatch($app.set.socketConnected(false))
     await Stream.connect(blockchain)
     dispatch($app.set.socketConnected(true))
-
-   Stream.subscribe('collection.updated', resultCollections.map(c => c.id))
-    Stream.on('collection.updated', (data) => {
-      console.log('collection.updated', data)
-    })
+    Stream.subscribe('collection.updated', resultCollections.map(c => c.id))
   }
 
   return children
