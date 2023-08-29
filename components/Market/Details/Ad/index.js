@@ -14,7 +14,7 @@ export default function Ad() {
 
   return (
     <App.Flex className={styles.container} justify="center" align="center">
-      <img src={market.banner_image} className={styles.backgroundImage} alt="" />
+      <img src={market?.banner_image} className={styles.backgroundImage} alt="" />
 
       <App.Text size={isMobile ? 20 : 28} className={styles.text} center weight={700}>
         Trade { current.name } on Tegro! (Ad)
