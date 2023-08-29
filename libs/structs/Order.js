@@ -322,8 +322,8 @@ class TOKEN extends Order {
   constructor(data) {
     super()
     this.rawData = data
-    const makerToken = INCH_TOKENS[data.data.makerAsset]
-    const takerToken = INCH_TOKENS[data.data.takerAsset]
+    const makerToken = INCH_TOKENS[data.data.makerAsset] || {symbol: '', decimals: 18, logoURI: ''}
+    const takerToken = INCH_TOKENS[data.data.takerAsset] || {symbol: '', decimals: 18, logoURI: ''}
     
     const network = CHAINS.find(chain => chain.code === data.network)
     this.id = data.signature
