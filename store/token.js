@@ -36,7 +36,7 @@ export const template = (item) => {
     twitterUrl: overwrite?.twitterUrl ?? item?.twitterUrl,
     openseaVerificationStatus: null,
     ticker: {
-      value: overwrite?.ticker?.value ?? item?.ticker?.value,
+      value: overwrite?.ticker?.value ?? item?.ticker?.value ?? 0,
       type: overwrite?.ticker?.type ?? item?.ticker?.type,
     },
     isFull: overwrite?.isFull ?? item?.isFull,
