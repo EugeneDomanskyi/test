@@ -63,6 +63,7 @@ export const collectionSlice = createSlice({
     sort: 'VOLUME:DESC',
     search: '',
     searching: false,
+    searchEmpty: false,
     pages: {
       history: ['init'],
       current: 'init',
@@ -113,6 +114,10 @@ export const collectionSlice = createSlice({
 
     searching: (state, { payload }) => {
       state.searching = payload
+    },
+
+    searchEmpty: (state, { payload }) => {
+      state.searchEmpty = payload
     },
 
     pages: (state, { payload }) => {

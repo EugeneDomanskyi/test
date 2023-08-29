@@ -40,7 +40,7 @@ const Info = ({ current }) => {
                         alt=""
                         className={styles.image}
                         src={current?.image} />
-                    : null
+                    : <div className={styles.emptyImage} />
                 }
               </App.Flex>
               

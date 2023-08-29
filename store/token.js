@@ -122,6 +122,7 @@ export const tokenSlice = createSlice({
     sort: 'VOLUME:DESC',
     search: '',
     searching: false,
+    searchEmpty: false,
     pages: {
       history: [1],
       current: 1,
@@ -173,6 +174,10 @@ export const tokenSlice = createSlice({
 
     searching: (state, { payload }) => {
       state.searching = payload
+    },
+
+    searchEmpty: (state, { payload }) => {
+      state.searchEmpty = payload
     },
 
     pages: (state, { payload }) => {

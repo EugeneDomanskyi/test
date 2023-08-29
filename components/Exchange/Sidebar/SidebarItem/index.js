@@ -13,7 +13,7 @@ import styles from './styles.module.scss'
 
 const SidebarItem = ({ item, isActive, withArrow, searching, onClick, onClose }) => {
   const router = useRouter()
-  const isExchange = router.pathname.includes('/exchange')
+  const isNfts = router.pathname.includes('/nfts')
 
   const blockchain = useSelector($app.get.blockchain)
 
@@ -33,7 +33,7 @@ const SidebarItem = ({ item, isActive, withArrow, searching, onClick, onClose })
         })
       }
 
-      router.push(`/${isExchange ? 'exchange' : 'tokens'}/${item.address}`, undefined, { scroll: false })
+      router.push(`/${isNfts ? 'nfts' : 'tokens'}/${blockchain.code}/${item.address}`, undefined, { scroll: false })
 
       if (onClose) {
         onClose()
@@ -53,7 +53,7 @@ const SidebarItem = ({ item, isActive, withArrow, searching, onClick, onClose })
         {item.image ? (
           <Image src={item.image} priority width={72} height={72} className={styles.image} alt="" />
         ) : (
-          <div style={{width: 72, height: 72}} />
+          <div className={styles.emptyImage} />
         )}
 
         <App.Flex column sx={{ maxWidth: 170 }}>

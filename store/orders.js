@@ -48,22 +48,26 @@ const addSide = (list) => {
 }
 
 const groupByPrice = (data, sort = 'asc') => {
-  const temp = {}
-  for (const item of data) {
-    if (!isNaN(item.priceFormatted)) {
-      if ( ! temp[item.priceFormatted]) {
-        temp[item.priceFormatted] = item
-      } else {
-        temp[item.priceFormatted] = {
-          ...temp[item.priceFormatted],
-          amount: (temp[item.priceFormatted].amount * 1 + item.amount * 1),
-          quantity: (temp[item.priceFormatted].quantity * 1 + item.quantity * 1),
-        }
-      }
-    }
-  }
+  // const temp = {}
+  // for (const item of data) {
+  //   if (!isNaN(item.priceFormatted)) {
+  //     if ( ! temp[item.priceFormatted]) {
+  //       temp[item.priceFormatted] = item
+  //     } else {
+  //       temp[item.priceFormatted] = {
+  //         ...temp[item.priceFormatted],
+  //         amount: (temp[item.priceFormatted].amount * 1 + item.amount * 1),
+  //         quantity: (temp[item.priceFormatted].quantity * 1 + item.quantity * 1),
+  //       }
+  //     }
+  //   }
+  // }
   
-  const array = Object.keys(temp).map(key => temp[key])
+  // const array = Object.keys(temp).map(key => temp[key])
+  // array.sort((a, b) => sort == 'asc' ? (a.price - b.price) : (b.price - a.price))
+  // return array
+
+  const array = [...data]
   array.sort((a, b) => sort == 'asc' ? (a.price - b.price) : (b.price - a.price))
   return array
 }
@@ -267,8 +271,8 @@ api.get.nfts.orderBook = (params) => {
 api.get.tokens.orderBook = ({address, ...rest}) => {
   const network = CHAINS.find(chain => chain.code === rest.blockchain)
   return Promise.all([
-    request('all', 'GET', {api: 'inch', takerAsset: address, makerAsset: network.usdtContract, ...rest}),
-    request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, ...rest}),
+    request('all', 'GET', {api: 'inch', takerAsset: address, makerAsset: network.usdtContract, sortBy: 'takerRate', ...rest}),
+    request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, sortBy: 'makerRate', ...rest}),
   ]).then(([buy, sell]) => {
     const sortedBuy = groupByPrice(addSide(buy, 'buy'), 'desc')
     const sortedSell = groupByPrice(addSide(sell, 'sell'), 'asc')

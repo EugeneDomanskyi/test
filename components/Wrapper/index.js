@@ -14,7 +14,7 @@ import WrapperCollections from '@/components/Wrapper/WrapperCollections'
 
 const Wrapper = ({ children }) => {
   const router = useRouter()
-  const isExchange = router.pathname.includes('/exchange')
+  const isNfts = router.pathname.includes('/nfts')
   const isTokens = router.pathname.includes('/tokens')
 
   const {address, isConnected} = useAccount()
@@ -58,7 +58,7 @@ const Wrapper = ({ children }) => {
         </WrapperCollections>
       )}
 
-      {!isExchange && !isTokens ? (
+      {!isNfts && !isTokens ? (
         <Footer />
       ) : null}
     </>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
 import Image from 'next/image'
 import cn from 'classnames'
 
@@ -7,15 +8,19 @@ import { trackEvent } from '@/libs/analytics.lib'
 
 import $app from '@/store/app'
 import $collection from '@/store/collection'
+import $token from '@/store/token'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
+  const router = useRouter()
+  const isTokens = router.pathname.includes('/tokens')
+
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
-  const { blockchains } = useSelector(({ $app }) => $app)
+  const pageBlockchains = useSelector($app.get.pageBlockchains(isTokens ? 'tokens' : 'nfts'))
 
   const [menuShow, setMenuShow] = useState(false)
 
@@ -44,6 +49,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
     
     dispatch($app.set.code(val))
     dispatch($collection.set.pagesClear())
+    dispatch($token.set.pagesClear())
     setMenuShow(false)
 
     if (onMobileMenuClose) {
@@ -61,7 +67,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
 
       <div className={cn(styles.menu, {[styles.active]: menuShow})}>
         <App.Flex column>
-          {blockchains.map(item => (
+          {pageBlockchains.map(item => (
             <App.Flex row gap={8} key={item.id} align="center" className={styles.item} onClick={handleBlockchainChange(item.code)}>
               <Image src={`/images/icon-${item.code}.png`} width={28} height={28} alt="" />
               <App.Text nowrap size={16} weight={700} height={1}>{ item.name }</App.Text>
