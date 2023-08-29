@@ -22,7 +22,7 @@ const WrapperTokens = ({ children }) => {
   const router = useRouter()
   const [queryBlockchainCode, queryTokenId] = router.query.segments || []
 
-  const { getBasicInfo } = useWalletConnect()
+  const { getBasicInfo, isContractAddress } = useWalletConnect()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -125,7 +125,17 @@ const WrapperTokens = ({ children }) => {
     })
 
     if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('tokens')) {
-      const tempTokens = result.data.tokens
+      let tempTokens = result.data.tokens
+      if (!tempTokens.length && searchText != '' && isContractAddress(searchText)) {
+        const scanData = await getBasicInfo(searchText, blockchain.id)
+        if (scanData) {
+          tempTokens = [{
+            ...scanData,
+            id: scanData.address,
+            totalSupply: scanData.totalSupply.formatted,
+          }]
+        }
+      }
 
       const info = await getInfo(tempTokens)
 
@@ -241,7 +251,19 @@ const WrapperTokens = ({ children }) => {
           blockchain: blockchain.code,
         }
       } else {
-        console.log('Token was not found in current blockchain')
+        const scanData = await getBasicInfo(id, blockchain.id)
+        if (scanData) {
+          token = {
+            basic: {
+              ...scanData,
+              id: scanData.address,
+              totalSupply: scanData.totalSupply.formatted,
+            },
+            blockchain: blockchain.code,
+          }
+        } else {
+          console.log('Token was not found in current blockchain')
+        }
       }
     }
 

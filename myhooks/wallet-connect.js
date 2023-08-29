@@ -187,9 +187,13 @@ const useWalletConnect = () => {
     return false
   }
 
-  const getBasicInfo = async (address) => {
-    const result = await fetchToken({ address })
-    console.log(result)
+  const getBasicInfo = async (address, chainId) => {
+    try {
+      const result = await fetchToken({ address, chainId })
+      return result
+    } catch (error) {
+      return null
+    }
   }
 
   const debugMessage = (key, msg) => {
