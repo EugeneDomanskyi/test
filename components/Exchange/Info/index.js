@@ -20,7 +20,7 @@ const Info = ({ current }) => {
   const scanLink = scanUrl(current.address, 'address', blockchain)
 
   const handleClickLink = (type) => () => {
-    trackEvent(`Click NFT ${type} Redirect`, {
+    trackEvent(`Click ${type} Redirect`, {
       Markets: current.name,
     })
   }

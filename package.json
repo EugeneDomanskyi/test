@@ -20,6 +20,7 @@
     "@rainbow-me/rainbowkit": "^1.0.9",
     "@reduxjs/toolkit": "^1.9.5",
     "@reservoir0x/reservoir-sdk": "^1.1.15",
+    "@sentry/nextjs": "^7.43.0",
     "@uniswap/widgets": "^1.1.1",
     "@wagmi/chains": "^1.7.0",
     "alchemy-sdk": "^2.9.0",

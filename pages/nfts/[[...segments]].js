@@ -58,7 +58,7 @@ const Nfts = () => {
   const tradeForm = useRef(null)
 
   useEffect(() => {
-    trackEvent('Exchange Clicked', {
+    trackEvent(`NFT's Clicked`, {
       'Network': blockchain.code.toUpperCase(),
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
       'Wallet Address': wallet || null,
