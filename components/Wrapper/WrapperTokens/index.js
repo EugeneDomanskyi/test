@@ -149,6 +149,12 @@ const WrapperTokens = ({ children }) => {
         }
       })
 
+      if (current?.id && pages.current == 1 && search == '') {
+        if (!tempAll.some(item => item.basic.id.toLowerCase() == current.id.toLowerCase())) {
+          tempAll.unshift(current)
+        }
+      }
+
       if (searchText == '') {
         dispatch($token.set.searched([]))
         dispatch($token.set.all(tempAll))
@@ -222,6 +228,12 @@ const WrapperTokens = ({ children }) => {
           const currentToken = await getToken(realTokenId)
           dispatch($token.set.current(currentToken))
           dispatch($token.set.update(currentToken))
+
+          if (tokens.length && pages.current == 1 && search == '') {
+            if (!tokens.some(item => item.id == currentToken.id)) {
+              tokens.unshift(currentToken)
+            }
+          }
         }
 
         if ( ! tokens.length) {
