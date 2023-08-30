@@ -295,6 +295,7 @@ const WrapperTokens = ({ children }) => {
         dispatch($token.set.fetching(true))
       } else {
         dispatch($token.set.searching(false))
+        dispatch($token.set.searchEmpty(false))
       }
     }
   }, [search])
