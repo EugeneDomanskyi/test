@@ -91,6 +91,22 @@ export const collectionSlice = createSlice({
       state.current = payload
     },
 
+    updateItem: (state, { payload }) => {
+      const newAll = state.all.map(item => {
+        return item.id.toLowerCase() == payload.id.toLowerCase() ? template(payload) : item
+      })
+      state.all = newAll
+
+      const newSearched = state.searched.map(item => {
+        return item.id.toLowerCase() == payload.id.toLowerCase() ? template(payload) : item
+      })
+      state.searched = newSearched
+
+      if (state.current.id.toLowerCase() == payload.id.toLowerCase()) {
+        state.current = template(payload)
+      }
+    },
+
     update: (state, { payload }) => {
       state[payload.key] = payload.value
     },

@@ -48,7 +48,7 @@ const Nfts = () => {
   const sort = useSelector(({$collection}) => $collection.sort)
   const search = useSelector(({$collection}) => $collection.search)
   const searching = useSelector(({$collection}) => $collection.searching)
-  const searchEmpty = useSelector(({$token}) => $token.searchEmpty)
+  const searchEmpty = useSelector(({$collection}) => $collection.searchEmpty)
   const pages = useSelector($collection.get.pages)
   const { updateOrders } = useOrders({tokenAddress: collectionId, type: 'nfts'})
 

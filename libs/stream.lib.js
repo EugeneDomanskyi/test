@@ -2,6 +2,7 @@ import { CHAINS } from '@/config'
 
 let socket = null
 let connectResolver = null
+let currentChain = null
 const callbacks = {
   'collection.created': [],
   'collection.updated': [],
@@ -39,6 +40,11 @@ const Stream = () => {
 
   return {
     connect: (blockchain) => {
+      if (currentChain == blockchain) {
+        return true
+      }
+
+      currentChain = blockchain
       return new Promise(resolve => {
         const network = CHAINS.find(chain => chain.code === blockchain)
         if (!network.wsReservoirUrl) {
