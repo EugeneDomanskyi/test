@@ -93,9 +93,9 @@ const Tokens = () => {
     $orders.api.get.tokens.trades({
       address: tokenId,
       blockchain: blockchain,
-      sortBy: '',
+      sortBy: 'createDateTime',
       statuses: '[3]',
-      limit: 50,
+      limit: 100,
     }).then(res => {
       dispatch($orders.set.trades({type: 'tokens', data: res}))
     })
