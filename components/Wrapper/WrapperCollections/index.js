@@ -36,11 +36,8 @@ const WrapperCollections = ({ children }) => {
   const blockchainCode = useRef(blockchain.code)
   const wsCollectionIds = useRef([])
 
-  const initWSConnection = async (code) => {
-    dispatch($app.set.socketConnected(false))
-    await Stream.connect(code)
-    dispatch($app.set.socketConnected(true))
-
+  const initWSConnection = (code) => {
+    Stream.connect(code)
     Stream.on('collection.updated', (eventName, eventData) => {
       dispatch($collection.set.updateItem({
         ...eventData,
@@ -128,7 +125,6 @@ const WrapperCollections = ({ children }) => {
         router.replace(`/nfts/${blockchain.code}/${first.id}`, undefined, { scroll: false })
       }
 
-      await initWSConnection(blockchain.code)
       wsSubscribe(tempAll.map(item => item.id))
     }
 
@@ -159,7 +155,6 @@ const WrapperCollections = ({ children }) => {
           const currentCollection = await getCollection(realCollectionId)
           dispatch($collection.set.current(currentCollection))
 
-          await initWSConnection(blockchain.code)
           wsSubscribe([currentCollection.id])
         }
 
@@ -253,6 +248,8 @@ const WrapperCollections = ({ children }) => {
       blockchainCode.current = blockchain.code
       dispatch($collection.set.current({}))
       dispatch($collection.set.fetching(true))
+
+      initWSConnection(blockchain.code)
     }
   }, [blockchain.code])
 

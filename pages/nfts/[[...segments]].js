@@ -101,17 +101,17 @@ const Nfts = () => {
   }, [blockchain.code, wallet, collectionId])
   
   useEffect(() => {
-    if (socketConnected && collectionId) {
+    if (collectionId) {
       Stream.subscribe('sale.*', [collectionId])
     }
 
     return () => {
       Stream.unsubscribe('sale.*')
     }
-  }, [socketConnected, collectionId])
+  }, [collectionId])
 
   useEffect(() => {
-    if (socketConnected && collectionId && wallet) {
+    if (collectionId && wallet) {
       Stream.subscribe('bid.*', [collectionId], {maker: wallet})
       Stream.subscribe('ask.*', [collectionId], {maker: wallet})
     }
@@ -120,7 +120,7 @@ const Nfts = () => {
       Stream.unsubscribe('bid.*')
       Stream.unsubscribe('ask.*')
     }
-  }, [socketConnected, collectionId, wallet])
+  }, [collectionId, wallet])
 
   const initCollection = (collectionId) => {
     dispatch($exchange.set.loading(true))

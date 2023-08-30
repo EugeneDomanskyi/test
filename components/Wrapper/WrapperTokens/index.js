@@ -222,6 +222,8 @@ const WrapperTokens = ({ children }) => {
           const currentToken = await getToken(realTokenId)
           dispatch($token.set.current(currentToken))
           dispatch($token.set.update(currentToken))
+
+          
         }
 
         if ( ! tokens.length) {

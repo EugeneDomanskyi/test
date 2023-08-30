@@ -3,6 +3,7 @@ import { CHAINS } from '@/config'
 let socket = null
 let connectResolver = null
 let currentChain = null
+let subscribeList = []
 const callbacks = {
   'collection.created': [],
   'collection.updated': [],
@@ -24,6 +25,10 @@ const Stream = () => {
     const json = JSON.parse(string)
     switch (json.type) {
       case 'connection':
+        subscribeList.forEach(post => {
+          socket.send(JSON.stringify(post))
+        })
+        subscribeList = []
         connectResolver(json.status)
         break
       case 'subscribe':
@@ -80,7 +85,12 @@ const Stream = () => {
           ...params,
         }
       }
-      socket.send(JSON.stringify(post))
+
+      if (!socket || socket.readyState !== WebSocket.OPEN) {
+        subscribeList.push(post)
+      } else {
+        socket.send(JSON.stringify(post))
+      }
     },
     unsubscribe: (event) => {
       if (!socket || socket.readyState !== WebSocket.OPEN) {
