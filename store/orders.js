@@ -37,7 +37,7 @@ const addSide = (list) => {
         ...item,
         side: side,
         price: side === 'buy' ? makerPrice : takerPrice,
-        priceFormatted: numeral(side === 'buy' ? makerPrice : takerPrice).format('0.0[00000]'),
+        priceFormatted: numeral(side === 'buy' ? makerPrice : takerPrice).format('0.0[0000000]'),
         amount: side === 'buy' ? takerAmount : makerAmount,
         quantity: side === 'buy' ? takerAmount : makerAmount,
         timestamp: timestamp,
@@ -48,28 +48,28 @@ const addSide = (list) => {
 }
 
 const groupByPrice = (data, sort = 'asc') => {
-  // const temp = {}
-  // for (const item of data) {
-  //   if (!isNaN(item.priceFormatted)) {
-  //     if ( ! temp[item.priceFormatted]) {
-  //       temp[item.priceFormatted] = item
-  //     } else {
-  //       temp[item.priceFormatted] = {
-  //         ...temp[item.priceFormatted],
-  //         amount: (temp[item.priceFormatted].amount * 1 + item.amount * 1),
-  //         quantity: (temp[item.priceFormatted].quantity * 1 + item.quantity * 1),
-  //       }
-  //     }
-  //   }
-  // }
+  const temp = {}
+  for (const item of data) {
+    if (!isNaN(item.priceFormatted)) {
+      if ( ! temp[item.priceFormatted]) {
+        temp[item.priceFormatted] = item
+      } else {
+        temp[item.priceFormatted] = {
+          ...temp[item.priceFormatted],
+          amount: (temp[item.priceFormatted].amount * 1 + item.amount * 1),
+          quantity: (temp[item.priceFormatted].quantity * 1 + item.quantity * 1),
+        }
+      }
+    }
+  }
   
-  // const array = Object.keys(temp).map(key => temp[key])
-  // array.sort((a, b) => sort == 'asc' ? (a.price - b.price) : (b.price - a.price))
-  // return array
-
-  const array = [...data]
+  const array = Object.keys(temp).map(key => temp[key])
   array.sort((a, b) => sort == 'asc' ? (a.price - b.price) : (b.price - a.price))
   return array
+
+  // const array = [...data]
+  // array.sort((a, b) => sort == 'asc' ? (a.price - b.price) : (b.price - a.price))
+  // return array
 }
 
 const generatePeriods = (from, to, closePrice, step) => {
