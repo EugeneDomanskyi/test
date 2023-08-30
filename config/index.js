@@ -1,4 +1,25 @@
-import { arbitrum, mainnet, polygon, goerli, optimism, celo, bsc, base, avalanche, linea } from '@wagmi/chains'
+import { arbitrum, mainnet, polygon, goerli, optimism, celo, bsc, base, avalanche, linea, polygonMumbai } from '@wagmi/chains'
+
+// {
+//     ...polygonMumbai,
+//     code: 'mumbai',
+//     currency: polygonMumbai.nativeCurrency.symbol,
+//     decimals: polygonMumbai.nativeCurrency.decimals,
+//     baseApiUrl: 'https://api-mumbai.reservoir.tools',
+//     wsReservoirUrl: '',
+//     baseUniswapUrl: null,
+//     scanUrl: polygonMumbai.blockExplorers.etherscan.url,
+//     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
+//     coingecko: '',
+//     platform: '',
+//     pages: ['tokens'],
+//     usdtContract: '0xA02f6adc7926efeBBd59Fd43A84f4E0c0c91e832',
+//     wrapped: {
+//         contract: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
+//         name: 'Wrapped Matic',
+//         shortName: 'WMATIC',
+//     },
+// },
 
 const TEST_NETWORK = {
   ...goerli,

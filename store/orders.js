@@ -1,5 +1,4 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
-import { formatUnits } from 'viem'
 import numeral from 'numeral'
 import moment from 'moment'
 
@@ -30,14 +29,14 @@ const addSide = (list) => {
       const takerPrice = takingAmountFormatted / makingAmountFormatted
       
       const makerAmount = Math.pow(10, -makerAsset.decimals)*item.remainingMakerAmount //side === 'sell' ? makingAmountFormatted : takingAmountFormatted
-      const takerAmount = Math.pow(10, -takerAsset.decimals)*(item.remainingMakerAmount*item.data.takingAmount/item.data.makingAmount)
+      const takerAmount = Math.pow(10, -takerAsset.decimals)*Math.round(item.remainingMakerAmount*item.data.takingAmount/item.data.makingAmount)
 
       const timestamp = moment(item.createDateTime).unix()
       return {
         ...item,
         side: side,
         price: side === 'buy' ? makerPrice : takerPrice,
-        priceFormatted: numeral(side === 'buy' ? makerPrice : takerPrice).format('0.0[0000000]'),
+        priceFormatted: numeral(side === 'buy' ? makerPrice : takerPrice).format('0.0[00000]'),
         amount: side === 'buy' ? takerAmount : makerAmount,
         quantity: side === 'buy' ? takerAmount : makerAmount,
         timestamp: timestamp,
