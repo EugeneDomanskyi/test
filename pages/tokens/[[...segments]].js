@@ -9,7 +9,6 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 import useOrders from '@/myhooks/useOrders'
 
 import $exchange from '@/store/exchange'
-import $orders from '@/store/orders'
 import $app from '@/store/app'
 import $token from '@/store/token'
 
@@ -36,7 +35,6 @@ const Tokens = () => {
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
   const { updateOrders } = useOrders({tokenAddress: queryTokenId, type: 'tokens'})
-  // const socketConnected = useSelector(({$app}) => $app.socketConnected)
   
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -80,26 +78,8 @@ const Tokens = () => {
   }, [activeInterval, queryTokenId, queryBlockchainCode])
 
   useEffect(() => {
-    if (queryTokenId && queryBlockchainCode) {
-      getExchangeData(queryTokenId, queryBlockchainCode)
-    }
-  }, [queryTokenId, queryBlockchainCode])
-
-  useEffect(() => {
     updateOrders()
   }, [queryBlockchainCode, wallet, queryTokenId])
-
-  const getExchangeData = (tokenId, blockchain) => {
-    $orders.api.get.tokens.trades({
-      address: tokenId,
-      blockchain: blockchain,
-      sortBy: 'createDateTime',
-      statuses: '[3]',
-      limit: 100,
-    }).then(res => {
-      dispatch($orders.set.trades({type: 'tokens', data: res}))
-    })
-  }
 
   const handleOrdersUpdated = useCallback(() => {
     if (wallet) {

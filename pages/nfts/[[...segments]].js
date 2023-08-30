@@ -133,9 +133,6 @@ const Nfts = () => {
       limit: 800,
     }).then(sales => {
       if (sales) {
-        // sales.forEach(sale => {
-        //   console.log(sale.price.currency.symbol)
-        // })
         dispatch($exchange.set.sales(sales))
         dispatch($orders.set.trades({type: 'nfts', data: sales}))
       }

@@ -190,11 +190,9 @@ const getters = {
   recentTrades: (type, limit) => createSelector([
     state => state.$orders.trades[type]
   ], (trades) => {
-    
     return trades.filter(order => {
       return (order.priceFormatted !== 'NaN') && (order.orderInvalidReason === 'order filled' || type === 'nfts')
     }).map(sale => {
-      console.log(sale)
       return {
         ...sale,
         priceFormatted: sale.priceFormatted ?? sale.price.amount.native,

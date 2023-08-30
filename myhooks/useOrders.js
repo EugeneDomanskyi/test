@@ -37,6 +37,17 @@ const useOrders = ({tokenAddress, type}) => {
       }).then(res => {
         dispatch($orders.set.orderBook({type: type, data: res}))
       })
+      if (type === 'tokens') {
+        $orders.api.get.tokens.trades({
+          address: tokenAddress,
+          blockchain: blockchain.code,
+          // sortBy: 'createDateTime',
+          statuses: '[3]',
+          limit: 100,
+        }).then(res => {
+          dispatch($orders.set.trades({type: 'tokens', data: res}))
+        })
+      }
     }
   }
 

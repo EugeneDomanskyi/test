@@ -66,7 +66,8 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
   }
 
   const handleClick = order => () => {
-    router.push(`${order.contractAddress}`, undefined, {scroll: false})
+    const [_, _seg1, seg2] = router.asPath.split('/')
+    router.push(`${[seg2, order.contractAddress].join('/')}`, undefined, {scroll: false})
     onClickOrder({
       quantity: order.quantity,
       price: order.itemPrice,
