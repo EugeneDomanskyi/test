@@ -446,7 +446,7 @@ class TOKEN extends Order {
           acc.totalToBuy = 0
         } else {
           // need next order
-          willTakeMakingAmount = order.makingAmount
+          willTakeMakingAmount = order.makingAmount*1
           willSpendTakingAmount = side === 'buy' ? Math.ceil(order.makingAmount*order.makerRate) : Math.ceil(willTakeMakingAmount/order.takerRate)
           acc.totalToBuy = side === 'sell' ? diff*-1 / order.takerRate : diff*-1
         }
@@ -466,7 +466,7 @@ class TOKEN extends Order {
             }
           ]
         }
-      }, {totalToSell: amountInWei, totalToBuy: amountInWei, orders: []})
+      }, {totalToBuy: amountInWei, orders: []})
 
       const stats = filteredByPrice.reduce((acc, order) => {
         return {
@@ -601,7 +601,7 @@ class TOKEN extends Order {
             order.data,
             order.signature,
             '0x',
-            totalTakeAmount.toString(),
+            order.willTakeMakingAmount.toString(),
             '0',
             '0xde0b6b3a7640000',
             // walletClient.account.address
