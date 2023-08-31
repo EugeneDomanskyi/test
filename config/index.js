@@ -74,8 +74,12 @@ export const CHAINS = [
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'matic-network',
     platform: 'polygon-pos',
+<<<<<<< Updated upstream
     pages: ['nfts', 'tokens'],
     usdtContract: '0x10aA2652D633bAAB582aDFE59665E68F588ddB98',
+=======
+    usdtContract: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F41',
+>>>>>>> Stashed changes
     wrapped: {
       contract: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
       name: 'Wrapped Matic',
@@ -21738,7 +21742,7 @@ export const INCH_TOKENS = {
     "0xc2132d05d31c914a87c6611c10748aeb04b58e8f": {
         "symbol": "USDT",
         "name": "Tether USD",
-        "address": "0x10aA2652D633bAAB582aDFE59665E68F588ddB98",
+        "address": "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
         "decimals": 6,
         "logoURI": "https://tokens.1inch.io/0xdac17f958d2ee523a2206206994597c13d831ec7.png",
         "providers": [

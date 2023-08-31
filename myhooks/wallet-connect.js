@@ -20,7 +20,7 @@ const useWalletConnect = () => {
   const [callback, setCallback] = useState({ success: null, failed: null })
 
   const usdt = {
-    polygon: '0x10aA2652D633bAAB582aDFE59665E68F588ddB98',
+    polygon: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
     ethereum: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     goerli: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     arbitrum: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
