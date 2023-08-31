@@ -81,19 +81,21 @@ const WrapperCollections = ({ children }) => {
         }
       })
 
-      tempAll.map(async item => {
-        const data = staticTemplate(item)
+      // console.log('tempAll', tempAll);
 
-        try {
-          await fetch('/api/prisma', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-          })
-        } catch (error) {
-          console.error(error)
-        }
-      })
+      // tempAll.map(async item => {
+      //   const data = staticTemplate(item)
+
+      //   try {
+      //     await fetch('/api/prisma', {
+      //       method: 'POST',
+      //       headers: { 'Content-Type': 'application/json' },
+      //       body: JSON.stringify(data),
+      //     })
+      //   } catch (error) {
+      //     console.error(error)
+      //   }
+      // })
 
       if (search == '') {
         dispatch($collection.set.searched([]))

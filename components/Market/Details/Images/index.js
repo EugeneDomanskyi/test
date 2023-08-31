@@ -4,14 +4,20 @@ import styles from './styles.module.scss'
 import App from '@/components/App'
 
 export default function Images() {
-  const { current, currentMarketSeoInfo } = useSelector(({$collection}) => $collection)
+  const { marketInfo } = useSelector(({$collection}) => $collection)
 
-  const market = currentMarketSeoInfo?.token_metadata?.length ? currentMarketSeoInfo?.token_metadata[0] : null
+  
+  // const images = []
+  
+  const images = marketInfo?.sampleImages.split(',')
+  console.log('marketInfo.sampleImages', marketInfo.sampleImages);
+  console.log('images', images);
+
 
   return (
     <App.Flex sx={{width: '100%'}} className={styles.container}>
       {
-        market && Object.values(market.nft_gallery).map(image => {
+        images && Object.values(images).map(image => {
           return (
             <App.Flex className={styles.imageBlock}>
               <img src={image} alt="" />

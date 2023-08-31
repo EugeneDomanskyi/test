@@ -3,21 +3,47 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 const handler = async (req, res) => {
+  let result = 'ok'
   const data = req.body
 
-  const market = await prisma.market.findFirst({
-    where: {
-      address: data?.address,
+  if (req.method === "POST") {
+
+    const market = await prisma.market.findFirst({
+      where: {
+        address: data?.address,
+      }
+    });
+
+
+    if (! market) {
+      data.tokenCount = data.tokenCount.toString()
+      result = await prisma.market.create({
+        data,
+      })
     }
-  });
+  }
 
-  let result = 'ok'
+  if (req.method === "GET") {
+    try {
+      const markets = await prisma.market.findMany({
+        where: {
+          type: 'token',
+        },
+        select: {
+          address: true
+        }
+      })
 
-  // if (! market) {
-  //   result = await prisma.market.create({
-  //     data,
-  //   })
-  // }
+      return res.status(200).json(markets);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+    
+
+    // return markets
+  }
+  
   res.json(result)
 }
 

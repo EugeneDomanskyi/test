@@ -7,12 +7,10 @@ const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 // import Chart from '@/components/Market/Details/Chart'
 
 export default function Info() {
-  const { current, currentMarketSeoInfo } = useSelector(({$collection}) => $collection)
-
-  const market = currentMarketSeoInfo?.token_metadata?.length ? currentMarketSeoInfo?.token_metadata[0] : null
+  const { current, marketInfo } = useSelector(({$collection}) => $collection)
 
   console.log('current', current);
-  console.log('currentMarketSeoInfo', currentMarketSeoInfo);
+  console.log('marketInfo', marketInfo);
 
   return (
     <App.Flex column sx={{width: '100%'}} gap={16}>
@@ -25,13 +23,13 @@ export default function Info() {
             
             <App.Flex column gap={10} className={styles.nameBlock}>
               <div className={styles.nameTitle}>
-                { current.name }
+                { marketInfo.name }
               </div>
               <div className={styles.nameSubTitle}>
-                { market?.project_name.toUpperCase() }
+                { marketInfo?.project_name?.toUpperCase() }
               </div>
               <div className={styles.nameSubTitle}>
-                { market?.short_code }
+                { marketInfo?.symbol || marketInfo.currency }
               </div>
             </App.Flex>
           </App.Flex>
@@ -43,7 +41,7 @@ export default function Info() {
               Collection
             </App.Text>
             <App.Text size={16} weight={500}>
-              { market?.parent_collection_name }
+              { marketInfo?.parent_collection_name }
             </App.Text>
           </App.Flex>
           
@@ -52,7 +50,7 @@ export default function Info() {
               Project
             </App.Text>
             <App.Text size={16} weight={500}>
-              { market?.project_name }
+              { marketInfo?.project_name }
             </App.Text>
           </App.Flex>
         </App.Flex>

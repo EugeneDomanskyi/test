@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
+import { PrismaClient } from '@prisma/client'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
 import $collection, { template } from '@/store/collection'
@@ -26,7 +27,9 @@ import FAQ from '@/components/Market/Details/FAQ'
 
 const token = 'fc873434915ecf9e639339b325338f768e1f5b81fc88e3e4299641a3f87de70fcf93c09316c0d1e5146fa36171076ead7c5797f1d1882f35a9f60aaf5ec065ad7757b0615886847a307d3b25dbaadb42b98d63c59a39744667ff3f5438393a87f3b63ce948bfb260ac0041c44dbe0a10e1646dfa8f8d2c85abd18e45c0bb02c6'
 
-export default function Markets({marketData, marketSales, marketOrders}) {
+const prisma = new PrismaClient()
+
+export default function Markets({marketData, marketSales, marketOrders, marketInfo}) {
   const router = useRouter()
   const dispatch = useDispatch()
   const { isMobile } = usePropsHelper()
@@ -37,6 +40,7 @@ export default function Markets({marketData, marketSales, marketOrders}) {
 
   useEffect(() => {
     if (marketData) {
+      console.log('marketData', marketData);
       dispatch($collection.set.current(marketData))
     }
 
@@ -48,7 +52,11 @@ export default function Markets({marketData, marketSales, marketOrders}) {
     if (marketOrders) {
       dispatch($orders.set.orderBook({type: 'nfts', data: marketOrders}))
     }
-  }, [marketData, marketSales, marketOrders])
+
+    if (marketInfo) {
+      dispatch($collection.set.currentMarketSeoInfo(marketInfo))
+    }
+  }, [marketData, marketSales, marketOrders, marketInfo])
 
   useEffect(() => {
     const id = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
@@ -179,13 +187,24 @@ export async function getServerSideProps(context) {
     }
   }
 
+  const marketInfo = await prisma.market.findFirst({
+    where: {
+      address: address,
+    }
+  });
+
+  marketInfo.createdAt = marketInfo.createdAt.toString()
+  marketInfo.updatedAt = marketInfo.updatedAt.toString()
+
+  console.log('marketInfo', marketInfo);
+
   const marketSales = await $exchange.api.get.sales({
     collection: address,
     blockchain: blockchainCode,
     includeDeleted: false,
     includeTokenMetadata: false,
     sortDirection: 'desc',
-    limit: 800,
+    limit: 100,
   })
 
   const marketOrders = await $orders.api.get.nfts.orderBook({
@@ -196,6 +215,7 @@ export async function getServerSideProps(context) {
   return {
     props: {
       marketData,
+      marketInfo,
       marketSales,
       marketOrders
     },

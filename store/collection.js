@@ -33,7 +33,7 @@ export const template = (item) => {
 
 export const staticTemplate = (item) => {
   return {
-    cgId: '',
+    cgId: item.cgId ?? '',
     blockchain: item.blockchain,
     type: item.contractKind ? (item.contractKind === 'erc20' ? 'token' : 'nft') : '',
     name: item.name ?? '',
@@ -48,8 +48,8 @@ export const staticTemplate = (item) => {
     twitterUrl: item.twitterUsername ? `https://twitter.com/${item.twitterUsername}` : '',
     openseaVerificationStatus: item.openseaVerificationStatus === 'verified',
     sampleImages: item.sampleImages ? item.sampleImages.join() : '',
-    decimals: '',
-    symbol: '',
+    decimals: item.decimals ?? '',
+    symbol: item.symbol ?? '',
   }
 }
 
@@ -89,7 +89,7 @@ export const collectionSlice = createSlice({
       history: ['init'],
       current: 'init',
     },
-    currentMarketSeoInfo: {},
+    marketInfo: {},
   },
 
   reducers: {
@@ -114,7 +114,7 @@ export const collectionSlice = createSlice({
     },
 
     currentMarketSeoInfo: (state, { payload }) => {
-      state.currentMarketSeoInfo = payload
+      state.marketInfo = payload
     },
 
     update: (state, { payload }) => {

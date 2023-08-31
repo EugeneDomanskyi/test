@@ -8,13 +8,11 @@ import App from '@/components/App'
 export default function Ad() {
   const { isMobile } = usePropsHelper()
 
-  const { current, currentMarketSeoInfo } = useSelector(({$collection}) => $collection)
-
-  const market = currentMarketSeoInfo?.token_metadata?.length ? currentMarketSeoInfo?.token_metadata[0] : null
+  const { current, marketInfo } = useSelector(({$collection}) => $collection)
 
   return (
     <App.Flex className={styles.container} justify="center" align="center">
-      <img src={market?.banner_image} className={styles.backgroundImage} alt="" />
+      <img src={marketInfo?.banner} className={styles.backgroundImage} alt="" />
 
       <App.Text size={isMobile ? 20 : 28} className={styles.text} center weight={700}>
         Trade { current.name } on Tegro! (Ad)
