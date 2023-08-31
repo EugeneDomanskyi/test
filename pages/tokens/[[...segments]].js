@@ -9,7 +9,6 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 import useOrders from '@/myhooks/useOrders'
 
 import $exchange from '@/store/exchange'
-import $orders from '@/store/orders'
 import $app from '@/store/app'
 import $token from '@/store/token'
 
@@ -76,27 +75,9 @@ const Tokens = () => {
 
   useEffect(() => {
     if (queryTokenId && queryBlockchainCode) {
-      getExchangeData(queryTokenId, queryBlockchainCode)
-    }
-  }, [queryTokenId, queryBlockchainCode])
-
-  useEffect(() => {
-    if (queryTokenId && queryBlockchainCode) {
       updateOrders()
     }
   }, [queryBlockchainCode, wallet, queryTokenId])
-
-  const getExchangeData = (tokenId, blockchain) => {
-    $orders.api.get.tokens.trades({
-      address: tokenId,
-      blockchain: blockchain,
-      sortBy: '',
-      statuses: '[3]',
-      limit: 50,
-    }).then(res => {
-      dispatch($orders.set.trades({type: 'tokens', data: res}))
-    })
-  }
 
   const handleOrdersUpdated = useCallback(() => {
     if (wallet) {

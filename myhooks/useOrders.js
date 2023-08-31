@@ -26,16 +26,29 @@ const useOrders = ({tokenAddress, type}) => {
         }
       })
     }
-    
-    $orders.api.get[type].orderBook({
-      collection: tokenAddress,
-      address: tokenAddress,
-      blockchain: blockchain.code,
-      statuses: '[1]',
-      sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
-    }).then(res => {
-      dispatch($orders.set.orderBook({type: type, data: res}))
-    })
+
+    if (tokenAddress) {
+      $orders.api.get[type].orderBook({
+        collection: tokenAddress,
+        address: tokenAddress,
+        blockchain: blockchain.code,
+        sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
+        ...(type === 'nfts' ? {} : {statuses: '[1]'})
+      }).then(res => {
+        dispatch($orders.set.orderBook({type: type, data: res}))
+      })
+      if (type === 'tokens') {
+        $orders.api.get.tokens.trades({
+          address: tokenAddress,
+          blockchain: blockchain.code,
+          // sortBy: 'createDateTime',
+          statuses: '[3]',
+          limit: 100,
+        }).then(res => {
+          dispatch($orders.set.trades({type: 'tokens', data: res}))
+        })
+      }
+    }
   }
 
   return {
