@@ -582,10 +582,19 @@ class TOKEN extends Order {
           reject()
           return
         }
-        console.log(orders)
+        
         const totalSpendAmount = orders.reduce((acc, order) => acc+order.willSpendTakingAmount, 0)
         const totalTakeAmount = orders.reduce((acc, order) => acc+order.willTakeMakingAmount, 0)
+        
+        const balance = await Order.getBalance(walletClient.account.address, sellAsset)
+        const totalSpendFormatted = orders.reduce((acc, order) => acc+order.willSpendTakingAmountFormatted*1, 0)
 
+        if (totalSpendFormatted > balance*1) {
+          Order.showErrorMessage('Insufficient balance')
+          reject()
+          return 
+        }
+        
         const list = orders.map(order => {
           return [
             order.data,
@@ -612,7 +621,9 @@ class TOKEN extends Order {
         console.log('config', config)
 
         if (config?.mode === 'prepared') {
-          const res = await writeContract(config)
+          const res = await writeContract(config).catch(error => {
+            reject(error)
+          })
 
           console.log('write contract', res)
 
