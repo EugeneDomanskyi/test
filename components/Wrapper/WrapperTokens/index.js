@@ -49,13 +49,16 @@ const WrapperTokens = ({ children }) => {
 
   useEffect(() => {
     (async () => {
-      const tempList = await $token.api.coingecko.list({ include_platform: true })
-      if (tempList) {
-        const platforms = pageBlockchains.map(item => item.platform)
-        dispatch($token.set.list(tempList.filter(item => {
-          return platforms.some(el => item.platforms.hasOwnProperty(el))
-        })))
-      }
+      // const tempList = await $token.api.coingecko.list({ include_platform: true })
+      // if (tempList) {
+      //   const platforms = pageBlockchains.map(item => item.platform)
+      //   dispatch($token.set.list(tempList.filter(item => {
+      //     return platforms.some(el => item.platforms.hasOwnProperty(el))
+      //   })))
+      // }
+
+      const tempList = await $token.api.coingecko.local()
+      dispatch($token.set.list(tempList))
 
       setIsList(true)
     })()

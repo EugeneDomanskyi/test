@@ -70,6 +70,9 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
   let base_url = currentChain?.baseApiUrl
   if (api) {
     switch (api) {
+      case 'local':
+        base_url = ''
+        break
       case 'coingecko':
         base_url = COINGECKO_URL
         break
