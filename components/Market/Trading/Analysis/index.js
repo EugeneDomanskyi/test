@@ -18,9 +18,9 @@ export default function Analysis() {
 
       <App.Flex className={styles.container}>
         {
-          Array.apply(null, {length: 4}).map(item => {
+          Array.apply(null, {length: 4}).map((item, index) => {
             return (
-              <App.Flex column className={styles.analysisBlock}>
+              <App.Flex key={index} column className={styles.analysisBlock}>
                 <App.Flex className={styles.image}>
                 </App.Flex>
 

@@ -17,9 +17,9 @@ export default function Images() {
   return (
     <App.Flex sx={{width: '100%'}} className={styles.container}>
       {
-        images && Object.values(images).map(image => {
+        images && Object.values(images).map((image, index) => {
           return (
-            <App.Flex className={styles.imageBlock}>
+            <App.Flex key={index} className={styles.imageBlock}>
               <img src={image} alt="" />
             </App.Flex>
           )

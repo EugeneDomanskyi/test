@@ -15,9 +15,9 @@ export default function Team() {
       
       <App.Flex className={styles.container}>
         {
-          team && Object.values(team).map(item => {
+          team && Object.values(team).map((item, index) => {
             return (
-              <App.Flex className={styles.teamItem}>
+              <App.Flex key={index} className={styles.teamItem}>
                 <App.Flex className={styles.teamImage}>
                   <img src={item.pfp} alt="" />
                 </App.Flex>
