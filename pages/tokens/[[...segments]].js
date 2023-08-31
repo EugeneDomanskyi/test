@@ -36,7 +36,6 @@ const Tokens = () => {
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
   const { updateOrders } = useOrders({tokenAddress: queryTokenId, type: 'tokens'})
-  // const socketConnected = useSelector(({$app}) => $app.socketConnected)
   
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -69,12 +68,8 @@ const Tokens = () => {
     if (queryTokenId && queryBlockchainCode) {
       dispatch($exchange.set.loading(true))
       $exchange.api.get.tokenChartData(queryTokenId, queryBlockchainCode, activeInterval.seconds).then(res => {
+        dispatch($exchange.set.chartData({type: 'tokens', data: res?.data ?? []}))
         dispatch($exchange.set.loading(false))
-        if (res) {
-          dispatch($exchange.set.chartData({type: 'tokens', data: res.data}))
-          return
-        }
-        dispatch($exchange.set.chartData({type: 'tokens', data: []}))
       })
     }
   }, [activeInterval, queryTokenId, queryBlockchainCode])
@@ -86,7 +81,9 @@ const Tokens = () => {
   }, [queryTokenId, queryBlockchainCode])
 
   useEffect(() => {
-    updateOrders()
+    if (queryTokenId && queryBlockchainCode) {
+      updateOrders()
+    }
   }, [queryBlockchainCode, wallet, queryTokenId])
 
   const getExchangeData = (tokenId, blockchain) => {

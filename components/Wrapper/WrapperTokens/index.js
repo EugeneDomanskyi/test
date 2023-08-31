@@ -237,6 +237,10 @@ const WrapperTokens = ({ children }) => {
               tokens.unshift(currentToken)
             }
           }
+
+          const fullToken = await getTokenFull(currentToken)
+          dispatch($token.set.current(fullToken))
+          dispatch($token.set.update(fullToken))
         }
 
         if ( ! tokens.length) {
@@ -282,18 +286,19 @@ const WrapperTokens = ({ children }) => {
       }
     }
 
-    if (token) {
-      if (! token.isFull) {
-        const address = (token?.id ?? token?.basic?.id).toLowerCase()
-        const full = await $token.api.coingecko.full({ platform: blockchain.platform, address })
-        token = {
-          ...token,
-          full,
-        }
-      }
+    return template(token ?? {})
+  }
+
+  const getTokenFull = async (token) => {
+    let fullToken = {...token}
+
+    if (token?.id && ! token.isFull) {
+      const address = token.id.toLowerCase()
+      const full = await $token.api.coingecko.full({ platform: blockchain.platform, address })
+      fullToken.full = full
     }
 
-    return template(token ?? {})
+    return template(fullToken)
   }
 
   useEffect(() => {
