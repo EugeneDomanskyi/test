@@ -9,7 +9,6 @@ import $orders from '@/store/orders'
 
 import App from '@/components/App'
 import Market from '@/components/Market'
-
 import TradeForm from '@/components/Exchange/TradeForm'
 import OrderBook from '@/components/Exchange/OrderBook'
 import Trending from '@/components/Market/Trading/Trending'

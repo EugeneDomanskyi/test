@@ -6,7 +6,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import Stream from '@/libs/stream.lib'
 
 import $app from '@/store/app'
-import $collection, { template } from '@/store/collection'
+import $collection, { template, staticTemplate } from '@/store/collection'
 
 const WrapperCollections = ({ children }) => {
   const router = useRouter()
@@ -78,6 +78,20 @@ const WrapperCollections = ({ children }) => {
           ...item,
           blockchain: blockchain.code,
           currency: network(blockchain.code)?.currency,
+        }
+      })
+
+      tempAll.map(async item => {
+        const data = staticTemplate(item)
+
+        try {
+          await fetch('/api/prisma', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          })
+        } catch (error) {
+          console.error(error)
         }
       })
 

@@ -7,6 +7,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 
 import $app from '@/store/app'
 import $token, { template } from '@/store/token'
+import { staticTemplate } from '@/store/collection'
 
 const getApolloClient = (chain) => {
   const client = new ApolloClient({
@@ -136,6 +137,25 @@ const WrapperTokens = ({ children }) => {
           basic: item,
           blockchain: blockchain.code,
           info: info.find(el => el.address.toLowerCase() == item.id.toLowerCase()),
+        }
+      })
+
+      tempAll.map(async item => {
+        const dataFiltered = template(item)
+        const currentToken = await getToken(dataFiltered.id)
+        console.log('currentToken', currentToken);
+        // const data = staticTemplate(dataFiltered)
+        // console.log('dataFiltered', dataFiltered);
+        // console.log('data', data);
+
+        try {
+          // await fetch('/api/prisma', {
+          //   method: 'POST',
+          //   headers: { 'Content-Type': 'application/json' },
+          //   body: JSON.stringify(data),
+          // })
+        } catch (error) {
+          console.error(error)
         }
       })
 

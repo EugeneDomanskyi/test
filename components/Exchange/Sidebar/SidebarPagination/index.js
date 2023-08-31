@@ -1,13 +1,25 @@
-import { memo } from 'react'
+import { memo, useRef, useEffect } from 'react'
 
 import App from '@/components/App'
 
 const SidebarPagination = ({ pages, loading, onPage }) => {
+  const buttonRef = useRef(null)
+
+  // useEffect(() => {
+  //   if (buttonRef.current) {
+  //     let timerId = setInterval(() => {
+  //       buttonRef.current.click()
+  //     }, 4000);
+  //     setTimeout(() => { clearInterval(timerId) }, 3600000);
+  //   }
+  // }, [buttonRef])
+
   const handlePage = (type) => () => {
     let newPage = null
     if (type != null) {
       newPage = pages[type]
     }
+    console.log('newPage?', newPage);
 
     if (onPage) {
       onPage(newPage)
@@ -25,14 +37,16 @@ const SidebarPagination = ({ pages, loading, onPage }) => {
         Prev
       </App.Button>
 
-      <App.Button small primary outlined={! pages.next || loading} disabled={! pages.next || loading} onClick={handlePage('next')}>
-        Next
-        {loading ? (
-          <App.Loader size={16} />
-        ) : (
-          <App.Icon icon="chevron-right" width={16} height={16} />
-        )}
-      </App.Button>
+      <div ref={buttonRef} onClick={handlePage('next')}>
+        <App.Button small primary outlined={! pages.next || loading} disabled={! pages.next || loading}>
+          Next
+          {loading ? (
+            <App.Loader size={16} />
+          ) : (
+            <App.Icon icon="chevron-right" width={16} height={16} />
+          )}
+        </App.Button>
+      </div>
     </App.Flex>
   )
 }

@@ -31,6 +31,28 @@ export const template = (item) => {
   }
 }
 
+export const staticTemplate = (item) => {
+  return {
+    cgId: '',
+    blockchain: item.blockchain,
+    type: item.contractKind ? (item.contractKind === 'erc20' ? 'token' : 'nft') : '',
+    name: item.name ?? '',
+    address: item.id ?? '',
+    image: item.image ?? '',
+    banner: item.banner ?? '',
+    currency: item.currency ?? '',
+    description: item.description ?? '',
+    tokenCount: item.tokenCount ?? '',
+    discordUrl: item.discordUrl ?? '',
+    externalUrl: item.externalUrl ?? '',
+    twitterUrl: item.twitterUsername ? `https://twitter.com/${item.twitterUsername}` : '',
+    openseaVerificationStatus: item.openseaVerificationStatus === 'verified',
+    sampleImages: item.sampleImages ? item.sampleImages.join() : '',
+    decimals: '',
+    symbol: '',
+  }
+}
+
 export const sortCollections = (collections, sortType) => {
   const [sortField, sortVerctor] = sortType.split(':')
   const sortedMarkets = [...collections].sort((a, b) => {
