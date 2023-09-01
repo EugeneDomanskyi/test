@@ -14,18 +14,11 @@ import WrapperCollections from '@/components/Wrapper/WrapperCollections'
 
 const Wrapper = ({ children }) => {
   const router = useRouter()
+  const isNfts = router.pathname.includes('/nfts')
+  const isTokens = router.pathname.includes('/tokens')
   const [collectionId] = router.query.collectionId || []
   const isExchange = router.pathname.includes('/exchange')
   const {address, isConnected} = useAccount()
-
-  const { usdt, network } = useWalletConnect()
-  const dispatch = useDispatch()
-  const blockchain = useSelector($app.get.blockchain)
-  const { blockchains } = useSelector(({ $app }) => $app)
-  const { fetching, page, current: collection } = useSelector(({ $collection }) => $collection)
-  const { collections, searched } = useSelector($collection.get.all)
-
-  const blockchainCode = useRef(blockchain.code)
 
   useEffect(() => {
     if (isConnected && address) {

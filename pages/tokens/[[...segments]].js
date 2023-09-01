@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import dynamic from 'next/dynamic'
+import { PrismaClient } from '@prisma/client'
 
 import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -25,11 +26,14 @@ import MobileTabsBar from '@/components/Exchange/MobileTabsBar'
 
 import styles from './styles.module.scss'
 
+const prisma = new PrismaClient()
+
 const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 
 const GRID_GAP = 6
 
-const Tokens = () => {
+const Tokens = ({marketInfo}) => {
+  console.log('marketInfo in Tokens!', marketInfo);
   const router = useRouter()
   const [queryBlockchainCode, queryTokenId] = router.query.segments || []
 
@@ -268,6 +272,28 @@ const Tokens = () => {
       ) : null}
     </App.Flex>
   )
+}
+
+export async function getServerSideProps(context) {
+  let marketInfo = []
+  if (context.params) {
+    const [blockchainCode, address] = context.params.segments
+
+    marketInfo = await prisma.market.findFirst({
+      where: {
+        address: address,
+      }
+    })
+
+    marketInfo.createdAt = marketInfo.createdAt.toString()
+    marketInfo.updatedAt = marketInfo.updatedAt.toString()
+  }
+
+  return {
+    props: {
+      marketInfo,
+    },
+  }
 }
 
 export default Tokens

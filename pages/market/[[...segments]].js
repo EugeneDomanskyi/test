@@ -186,7 +186,7 @@ export async function getServerSideProps(context) {
     includeDeleted: false,
     includeTokenMetadata: false,
     sortDirection: 'desc',
-    limit: 100,
+    limit: 80,
   })
 
   const marketOrders = await $orders.api.get.nfts.orderBook({
