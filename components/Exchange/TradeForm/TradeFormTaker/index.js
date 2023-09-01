@@ -29,7 +29,12 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
                     || (currentTab === 'buy' && !abilities.totalAmountOnSell)
                     || (currentTab === 'buy' && form.amount > abilities.totalAmountOnSell)
                     || (currentTab === 'sell' && !abilities.totalAmountToSell)
-                    || (currentTab === 'sell' && form.amount > abilities.totalAmountToSell) 
+                    || (currentTab === 'sell' && form.amount > abilities.totalAmountToSell)
+
+  const errors = {
+    amount: (currentTab === 'buy' && (form.amount > abilities.totalAmountOnSell) || (currentTab === 'sell' && (form.amount > abilities.totalAmountToSell))),
+    balance: (currentTab === 'buy' && abilities.willSpendAmount > userBalances.usdt*1) || (currentTab === 'sell' && (form.amount*1 > userBalances.token*1)),
+  }
 
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
@@ -83,16 +88,27 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
   }
 
   const handleSubmit = async () => {
-    // const address = await connect()
-    // if (!address) {
-    //   return
-    // }
     const network = await changeNetwork(tokenBlockchain.code)
     if (!network) {
       return
     }
     switch (currentTab) {
       case 'buy':
+        // dispatch($modal.set.show({
+        //   show: true,
+        //   modal: 'Exchange/FillOrder',
+        //   props: {
+        //     data: {
+        //       side: 'buy',
+        //       makerAsset: tokenBlockchain.usdtContract,
+        //       takerAsset: current.address,
+        //       amount: form.amount,
+        //       price: form.price,
+        //       current: current,
+        //       blockchain: tokenBlockchain,
+        //     },
+        //   }
+        // }))
         dispatch($modal.set.show({
           show: true,
           modal: 'Exchange/BuyModal',
@@ -139,48 +155,57 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
     <App.Flex column className={styles.form}>
       <App.Flex column sx={{marginBottom: 16}}>
         <TradeInput
-          label="PRICE"
+          label="AT PRICE"
           value={form.price}
           currency={'USDT'}
           onBlur={handleBlurAmount}
           onChange={handleChangeForm('price')} />
       </App.Flex>
-      <App.Flex column sx={{marginBottom: 16}}>
+      <App.Flex column>
         <TradeInput
           label="AMOUNT"
           value={form.amount}
+          error={errors.amount}
           currency={current.symbol}
           onBlur={handleBlurAmount}
           onChange={handleChangeForm('amount')} />
         <App.Flex align="center" gap={4} className={styles.balance}>
           {
-            currentTab === 'sell'
-              ? <Fragment>
-                  <App.Icon icon="wallet" />
-                  <App.Text color="#B9B8C5" size={10}>{numeral(userBalances.token).format('0.[0000]')} {current.symbol}</App.Text>
-                </Fragment>
-              : null
+            errors.amount
+              ? <App.Text color="#FF1D61" size={10} weight={500}>Amount higher than market availability</App.Text>
+              : currentTab === 'sell'
+                ? <Fragment>
+                    <App.Icon icon="wallet" color={errors.balance ? '#FF1D61' : '#B9B8C5'} />
+                    <App.Text color={errors.balance ? '#FF1D61' : '#B9B8C5'} size={10}>{numeral(userBalances.token).format('0.[0000]')} {current.symbol}</App.Text>
+                  </Fragment>
+                : null
           }
-          
           <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto'}}>
-            Available in Market: 
+            Available to {currentTab}:&nbsp;
             {numeral(currentTab === 'buy' ? abilities.totalAmountOnSell : abilities.totalAmountToSell).format('0.[000000]')} {current.symbol}
           </App.Text>
         </App.Flex>
       </App.Flex>
-      <App.Flex column sx={{marginBottom: 16}}>
-        <TradeInput
-          label="TOTAL"
-          currency="USDT"
-          readOnly={true}
-          value={currentTab === 'buy' ? abilities.willSpendAmount : abilities.willTakeAmount} />
+      <App.Flex flex={1} column align="center" justify="center">
+        <App.Flex align="center" gap={6}>
+          <App.Flex column>
+            <App.Text color="#B9B8C5" size={10} weight={500} right>TOTAL</App.Text>
+            <App.Text size={10} weight={700} right>USDT</App.Text>
+          </App.Flex>
+          <App.Text size={36} weight={600}>{numeral(currentTab === 'buy' ? abilities.willSpendAmount : abilities.willTakeAmount).format('0.0[00000]')}</App.Text>
+        </App.Flex>
         {
           currentTab === 'buy'
-            ? <App.Flex align="center" gap={4} className={styles.balance}>
-                <App.Icon icon="wallet" />
-                <App.Text color="#B9B8C5" size={10}>{userBalances.usdt} USDT</App.Text>
+            ? <App.Flex align="center" gap={4}>
+                <App.Icon icon="wallet" color={errors.balance ? '#FF1D61' : '#B9B8C5'} />
+                <App.Text color={errors.balance ? '#FF1D61' : '#B9B8C5'} size={10}>{userBalances.usdt} USDT</App.Text>
               </App.Flex>
-            : <App.Flex align="center" gap={4} className={styles.balance} />
+            : null
+        }
+        {
+          errors.balance
+            ? <App.Text color="#FF1D61" size={10} weight={500}>Insufficient funds in your wallet to make this purchase</App.Text>
+            : null
         }
       </App.Flex>
       <App.Button

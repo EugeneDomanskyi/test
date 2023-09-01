@@ -3,6 +3,10 @@ const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
 
+  serverRuntimeConfig: {
+    PROJECT_ROOT: __dirname
+  },
+
   webpack: config => {
     config.resolve.fallback = { fs: false, net: false, tls: false };
     return config;

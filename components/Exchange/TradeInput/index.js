@@ -4,7 +4,7 @@ import cn from 'classnames'
 
 import App from '@/components/App'
 
-const TradeInput = ({label, currency, onChange, onBlur, ...props}) => {
+const TradeInput = ({label, currency, onChange, onBlur, error, ...props}) => {
 
   const [focused, setFocused] = useState(false)
 
@@ -20,7 +20,7 @@ const TradeInput = ({label, currency, onChange, onBlur, ...props}) => {
   }
 
   return (
-    <div className={cn(styles.container, {[styles.focused]: focused})}>
+    <div className={cn(styles.container, {[styles.focused]: focused, [styles.error]: error})}>
       <App.Flex column className={styles.labelContainer} align="flex-end" justify="center">
         <App.Text center color="#B9B8C5" size={10} weight={500}>{ label }</App.Text>
         <App.Text center color="#B9B8C5" size={10} weight={700}>{ currency }</App.Text>
