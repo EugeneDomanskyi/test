@@ -569,7 +569,7 @@ class TOKEN extends Order {
         sellAsset = address
         buyAsset = network.usdtContract
       }
-      const { orders } = await TOKEN.getOpenWithPriceLimitation({
+      const { orders, willSpendAmount, } = await TOKEN.getOpenWithPriceLimitation({
         chainId: chainId,
         takerAsset: sellAsset,
         makerAsset: buyAsset,
@@ -585,12 +585,11 @@ class TOKEN extends Order {
         }
         
         const totalSpendAmount = orders.reduce((acc, order) => acc+order.willSpendTakingAmount, 0)
-        const totalTakeAmount = orders.reduce((acc, order) => acc+order.willTakeMakingAmount, 0)
+        // const totalTakeAmount = orders.reduce((acc, order) => acc+order.willTakeMakingAmount, 0)
         
         const balance = await Order.getBalance(walletClient.account.address, sellAsset)
-        const totalSpendFormatted = orders.reduce((acc, order) => acc+order.willSpendTakingAmountFormatted*1, 0)
-
-        if (totalSpendFormatted > balance*1) {
+        // const totalSpendFormatted = orders.reduce((acc, order) => acc+order.willSpendTakingAmountFormatted*1, 0)
+        if (willSpendAmount > balance*1) {
           Order.showErrorMessage('Insufficient balance')
           reject()
           return 
@@ -633,6 +632,7 @@ class TOKEN extends Order {
             console.log('txResult', txResult)
             resolve()
             Order.showSuccessMessage('Order filled successfully')
+            return
           }
         }
       }

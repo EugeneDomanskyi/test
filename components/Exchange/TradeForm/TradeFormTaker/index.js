@@ -65,7 +65,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
     })
     const { orders, ...rest} = res
     // console.log(rest)
-    console.log(orders)
+    console.log(orders, rest)
     setAbilities(rest)
     setLoading(false)
   }
