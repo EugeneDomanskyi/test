@@ -10,8 +10,8 @@ import $collection, { template, staticTemplate } from '@/store/collection'
 
 const WrapperCollections = ({ children }) => {
   const router = useRouter()
-  const [queryBlockchainCode, queryCollectionId] = router.query.segments.slice(-2) || []
-  const isNfts = router.pathname.includes('/nfts') || router.query.segments.includes('nfts')
+  const [queryBlockchainCode, queryCollectionId] = router.query.segments?.slice(-2) || []
+  const isNfts = router.pathname.includes('/nfts') || router.query.segments?.includes('nfts')
 
   const { network, isContractAddress } = useWalletConnect()
 
