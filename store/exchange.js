@@ -1,9 +1,11 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
 import Moment from 'moment'
 import { extendMoment } from 'moment-range'
+
 const moment = extendMoment(Moment)
 
 import { request } from './index'
+import { CHAINS } from '@/config'
 
 const round = (date, duration, method) => {
   return moment(Math[method]((+date) / (+duration)) * (+duration))
@@ -38,9 +40,12 @@ export const exchangeSlice = createSlice({
     },
     sales: [],
     orders: [],
-    interval: {key: '6h', count: 6, unit: 'hours'},
+    interval: {key: '4h', count: 4, unit: 'hours', seconds: 4*60*60},
     sortType: 'VOLUME:DESC',
-    loadingCollectionData: false,
+    loading: false,
+    chartData: {
+      tokens: [],
+    }
   },
 
   reducers: {
@@ -73,8 +78,11 @@ export const exchangeSlice = createSlice({
     sortType: (state, {payload}) => {
       state.sortType = payload
     },
-    loadingCollectionData: (state, {payload}) => {
-      state.loadingCollectionData = payload
+    loading: (state, {payload}) => {
+      state.loading = payload
+    },
+    chartData: (state, {payload}) => {
+      state.chartData[payload.type] = payload.data
     }
   },
 })
@@ -87,7 +95,7 @@ const getters = {
       const roundedDate = round(moment(sale.timestamp*1000), moment.duration(interval.count, interval.unit), 'ceil')
       const intervalKey = roundedDate.format('DD-MM-YY HH:mm')
       const formattedData = {
-        price: sale.price.amount.decimal,
+        price: sale.price.amount.native,
         timestamp:  sale.timestamp*1000,
         volume: sale.amount*1,
         roundedDate: roundedDate.format('DD-MM-YY HH:mm'),
@@ -146,6 +154,7 @@ const getters = {
     })
     return result.sort((a,b) => a.time - b.time)
   }),
+
   highLow: (interval) => createSelector([
     state => state.$exchange.sales
   ], (sales) => {
@@ -153,17 +162,19 @@ const getters = {
     const from = moment().subtract(interval.count, interval.unit)
     const prices = sales
       .filter(sale => moment(sale.updatedAt).isAfter(from) && moment(sale.updatedAt).isBefore(now))
-      .map((sale) => sale.price.amount.decimal)
+      .map((sale) => sale.price.amount.native)
     return {
       low: prices.length ? Math.min(...prices) : 0,
       high: prices.length ? Math.max(...prices) : 0,
     }
   }),
+
   recentSales: (limit) => createSelector([
     state => state.$exchange.sales
   ], (sales) => {
-    return sales.slice(0, limit)
+    return sales.slice(0, limit).map(sale => ({...sale, priceFormatted: sale.price.amount.native}))
   }),
+
   orderBook: createSelector([
     state => state.$exchange.orderBook
   ], (orderBook) => {
@@ -172,17 +183,27 @@ const getters = {
       sell: orderBook.sell.slice(0, 10),
     }
   }),
+
   orders: createSelector([
     state => state.$exchange.orders
   ], (orders) => {
     return orders.filter(order => order.status !== 'cancelled').sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  }),
+
+  chartData: createSelector([
+    state => state.$exchange.chartData.tokens
+  ], (chartData) => {
+    return chartData.map((item) => ({...item, time: item.time*1000}))
   })
 }
+
+// https://limit-orders.1inch.io/v3.0/137/all?page=1&limit=100&statuses=[1]&sortBy=takerRate
 
 const api = {
   get: {
     orderBook: (params) => {
       return Promise.all([
+        // APIInterface.Inch.request(`137/address/0xc2132d05d31c914a87c6611c10748aeb04b58e8f`, 'GET', {...params, statuses: [1,2], limit: 10, sortBy: 'makerRate'})
         request('orders/depth/v1', 'GET', {side: 'buy', ...params}),
         request('orders/depth/v1', 'GET', {side: 'sell', ...params}),
       ]).then(([buy, sell]) => {
@@ -190,7 +211,7 @@ const api = {
       })
     },
     sales: (params) => {
-      return request('sales/v5', 'GET', params).then(res => res.sales)
+      return request('sales/v6', 'GET', params).then(res => res.sales)
     },
     orders: (params) => {
       return Promise.all([
@@ -205,6 +226,11 @@ const api = {
         return res.orders
       })
     },
+    tokenChartData: (buyAsset, blockchain, interval) => {
+      const network = CHAINS.find(chain => chain.code === blockchain)
+      return fetch(`https://charts.1inch.io/v1.0/chart/aggregated/candle/${buyAsset}/${network.usdtContract}/${interval}/${network.id}`)
+        .then(async res => res.ok ? await res.json() : null)
+    }
   },
   executeOrder: (params) => {
     return request('execute/bid/v5', 'POST', params)

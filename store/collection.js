@@ -4,6 +4,7 @@ import { request } from './index'
 
 export const template = (item) => {
   return {
+    id: item.id,
     address: item.id,
     image: item.image,
     name: item.name,
@@ -15,6 +16,7 @@ export const template = (item) => {
     currency: item.currency,
     volume: item.volume['1day'],
     tvl: item.volume['allTime'],
+    marketCap: item.tokenCount * (item.floorAsk?.price?.amount?.native ?? 0),
     description: item.description,
     tokenCount: item.tokenCount,
     onSaleCount: item.onSaleCount,
@@ -58,7 +60,10 @@ export const collectionSlice = createSlice({
     searched: [],
     current: {},
     loading: true,
-    page: 'init',
+    sort: 'VOLUME:DESC',
+    search: '',
+    searching: false,
+    searchEmpty: false,
     pages: {
       history: ['init'],
       current: 'init',
@@ -86,6 +91,26 @@ export const collectionSlice = createSlice({
       state.current = payload
     },
 
+    updateItem: (state, { payload }) => {
+      const newAll = state.all.map(item => {
+        return item.id.toLowerCase() == payload.id.toLowerCase() ? template(payload) : item
+      })
+      state.all = newAll
+
+      const newSearched = state.searched.map(item => {
+        return item.id.toLowerCase() == payload.id.toLowerCase() ? template(payload) : item
+      })
+      state.searched = newSearched
+
+      if (state.current.id.toLowerCase() == payload.id.toLowerCase()) {
+        state.current = template(payload)
+      }
+    },
+
+    update: (state, { payload }) => {
+      state[payload.key] = payload.value
+    },
+
     add: (state, { payload }) => {
       if ( ! state.all.find(item => item.address == payload.address)) {
         state.all = [
@@ -95,15 +120,30 @@ export const collectionSlice = createSlice({
       }
     },
 
-    page: (state, { payload }) => {
-      state.page = payload
+    sort: (state, { payload }) => {
+      state.sort = payload
+    },
+
+    search: (state, { payload }) => {
+      state.search = payload
+    },
+
+    searching: (state, { payload }) => {
+      state.searching = payload
+    },
+
+    searchEmpty: (state, { payload }) => {
+      state.searchEmpty = payload
     },
 
     pages: (state, { payload }) => {
-      const current = state.pages.history.find(item => item == state.page) ?? 'init'
-      const currentIndex = state.pages.history.indexOf(state.page)
+      const current = payload.current ?? state.pages.history.find(item => item == state.pages.current) ?? 'init'
+      const currentIndex = state.pages.history.indexOf(current)
       const history = currentIndex > 0 ? state.pages.history.slice(0, currentIndex + 1) : ['init']
-      history.push(payload)
+
+      if (payload.next) {
+        history.push(payload.next)
+      }
 
       state.pages = {
         current,
@@ -111,42 +151,20 @@ export const collectionSlice = createSlice({
       }
     },
 
-    pagesClear: (state) => {
-      state.page = 'init'
+    clear: (state) => {
       state.pages = {
         current: 'init',
         history: ['init'],
       }
+
+      state.search = ''
+      state.searching = false
+      state.searchEmpty = false
     },
   },
 })
 
 const getters = {
-  all: createSelector([
-    (state) => state.$collection.all,
-    (state) => state.$collection.searched,
-    (state) => state.$collection.loading,
-    (state) => state.$exchange.sortType,
-  ], (all, searched, loading, sortType) => {
-    return {
-      collections: sortCollections(all, sortType),
-      searched: sortCollections(searched, sortType),
-      isLoading: loading,
-    }
-  }),
-  
-  collection: (key, value) => createSelector([
-    (state) => state.$collection.all,
-    (state) => state.$collection.searched,
-  ], (all, searched) => {
-    let collection = all.find(c => c[key] === value)
-    if (!collection) {
-      collection = searched.find(c => c[key] === value)
-    }
-
-    return collection
-  }),
-
   pages: createSelector([
     (state) => state.$collection.pages.history,
     (state) => state.$collection.pages.current,
@@ -154,7 +172,8 @@ const getters = {
     const currentIndex = history.indexOf(current)
     const prev = history.find((_, index) => (currentIndex > 0) ? index === (currentIndex - 1) : null) ?? null
     const next = history.find((_, index) => (currentIndex >= 0 && currentIndex < history.length - 1) ? index === (currentIndex + 1) : null) ?? null
-    return { prev, next }
+
+    return { prev, current, next }
   }),
 }
 

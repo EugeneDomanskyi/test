@@ -1,39 +1,54 @@
-import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import $exchange from '@/store/exchange'
+import $orders from '@/store/orders'
 import $app from '@/store/app'
 import useWalletConnect from './wallet-connect'
 
-const useOrders = ({collectionId}) => {
+const useOrders = ({tokenAddress, type}) => {
   const dispatch = useDispatch()
-
-  
 
   const blockchain = useSelector($app.get.blockchain)
   const { wallet } = useWalletConnect()
 
-  console.log('collectionId', collectionId, blockchain.code)
-
   const updateOrders = () => {
     if (wallet) {
-      $exchange.api.get.orders({
+      $orders.api.get[type]({
         blockchain: blockchain.code,
         maker: wallet,
         includeCriteriaMetadata: true,
+        blockchain: blockchain.code,
+        address: wallet,
+        sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
+        statuses: '[1,2]',
       }).then(res => {
         if (res) {
-          dispatch($exchange.set.orders(res))
+          dispatch($orders.set[type](res))
         }
       })
     }
-    
-    $exchange.api.get.orderBook({
-      collection: collectionId,
-      blockchain: blockchain.code,
-    }).then(res => {
-      dispatch($exchange.set.orderBook(res))
-    })
+
+    if (tokenAddress) {
+      $orders.api.get[type].orderBook({
+        collection: tokenAddress,
+        address: tokenAddress,
+        blockchain: blockchain.code,
+        sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
+        ...(type === 'nfts' ? {} : {statuses: '[1]'})
+      }).then(res => {
+        dispatch($orders.set.orderBook({type: type, data: res}))
+      })
+      if (type === 'tokens') {
+        $orders.api.get.tokens.trades({
+          address: tokenAddress,
+          blockchain: blockchain.code,
+          // sortBy: 'createDateTime',
+          statuses: '[3]',
+          limit: 100,
+        }).then(res => {
+          dispatch($orders.set.trades({type: 'tokens', data: res}))
+        })
+      }
+    }
   }
 
   return {

@@ -12,6 +12,13 @@
     overflow: hidden;
   }
 
+  .emptyImage {
+    width: 162px;
+    height: 162px;
+    border-radius: 4px;
+    background: linear-gradient(0deg, #311B9200, #311B92);
+  }
+
   .description {
     display: -webkit-box;
     -webkit-line-clamp: 2;

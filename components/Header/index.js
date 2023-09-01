@@ -103,9 +103,15 @@ const Header = () => {
           </Link>
 
           <App.Flex row height="100%" align="center" className={styles.navItems}>
-            <Link href="/exchange" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/exchange')})}>
+            <Link href="/tokens" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/tokens')})}>
               <App.Flex center height="100%">
-                <App.Text size={18} weight={700}>EXCHANGE</App.Text>
+                <App.Text size={18} weight={700}>TOKENS</App.Text>
+              </App.Flex>
+            </Link>
+
+            <Link href="/nfts" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/nfts')})}>
+              <App.Flex center height="100%">
+                <App.Text size={18} weight={700}>NFTS</App.Text>
               </App.Flex>
             </Link>
 
@@ -158,12 +164,21 @@ const Header = () => {
 
               <div className={styles.line} />
 
-              <Link href="/exchange" className={cn(styles.link, {[styles.active]: router.pathname.includes('/exchange')})}>
+              <Link href="/tokens" className={cn(styles.link, {[styles.active]: router.pathname.includes('/tokens')})}>
+                <App.Flex align="center" height="100%" gap={16} onClick={handleMobileMenuClick}>
+                  <App.Flex center width={29}>
+                    <App.Icon icon="trade" color="#fff" />
+                  </App.Flex>
+                  <App.Text size={18} weight={700}>TOKENS</App.Text>
+                </App.Flex>
+              </Link>
+
+              <Link href="/nfts" className={cn(styles.link, {[styles.active]: router.pathname.includes('/nfts')})}>
                 <App.Flex align="center" height="100%" gap={16} onClick={handleMobileMenuClick}>
                   <App.Flex center width={29}>
                     <App.Icon icon="exchange" color="#fff" />
                   </App.Flex>
-                  <App.Text size={18} weight={700}>EXCHANGE</App.Text>
+                  <App.Text size={18} weight={700}>NFTS</App.Text>
                 </App.Flex>
               </Link>
 

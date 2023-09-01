@@ -1,12 +1,10 @@
 import { useState, useRef } from 'react'
-import { parseUnits } from 'viem'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
-import useTrade from '@/myhooks/trade'
 import useOrders from '@/myhooks/useOrders'
-import useWalletConnect from '@/myhooks/wallet-connect'
 import $modal from '@/store/modal'
 import { trackEvent } from '@/libs/analytics.lib'
+import Order from '@/libs/structs/Order'
 
 import BuyModalConfirm from './BuyModalConfirm'
 import BuyModalConfirming from './BuyModalConfirming'
@@ -15,11 +13,8 @@ import BuyModalComplete from './BuyModalComplete'
 const TradeBuyModal = ({data}) => {
   const dispatch = useDispatch()
 
-  const currentCollection = useSelector(({$collection}) => $collection.current)
-
-  const { placeBid, buyNft, errorHandler } = useTrade()
-  const { updateOrders } = useOrders({collectionId: currentCollection.address})
-  const { wallet } = useWalletConnect()
+  const { current, tokenType } = data
+  const { updateOrders } = useOrders({tokenAddress: current.address, type: tokenType})
 
   const [step, setStep] = useState('confirm')
 
@@ -30,7 +25,7 @@ const TradeBuyModal = ({data}) => {
     setStep('confirming')
     switch (data.type) {
       case 'place':
-        palceOrder()
+        placeOrder()
         break
       case 'fulfill':
         fulfillOrder()
@@ -41,82 +36,107 @@ const TradeBuyModal = ({data}) => {
   }
 
   const fulfillOrder = () => {
-    buyNft(data.items, null, progressHandler('Market order'), onError)
+    switch (tokenType) {
+      case 'nfts':
+        Order.NFT.fulfill({
+          side: 'buy',
+          amount: data.amount,
+          address: current.address,
+        })
+        .then(onSuccess('Taker order'))
+        .catch(onError)
+        break
+      case 'tokens':
+        Order.TOKEN.fulfill({
+          address: current.address, //current.address,
+          amount: data.amount,
+          price: data.price,
+          side: 'buy',
+        })
+        .then(onSuccess('Taker order'))
+        .catch(onError)
+        break
+    }
+
     trackEvent('Create Order Submit', {
       'Wallet connect Status': 'Connected',
-      'Wallet Address': wallet || null,
-      'Order type': 'Market order',
+      'Order type': 'Taker order',
       'Network': data.blockchain.name,
       'Price': data.price,
       'Quantity': data.amount,
-      'Total': data.total*data.amount,
+      'Total': data.total,
       'Side': 'Buy',
-      'Base Currency': data.blockchain.currency,
-      'Quote Currency': currentCollection.name
+      'Base Currency': tokenType === 'nfts' ? data.blockchain.currency : 'USDT',
+      'Quote Currency': current.name
     })
   }
 
-  const palceOrder = () => {
-    const bids = [{  
-      weiPrice: parseUnits(`${data.total*data.amount}`, 18).toString(),
-      collection: data.collectionId,
-      quantity: data.amount,
-      royaltyBps: 0,
-      currency: data.blockchain.wrapped.contract,
-      // currency: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
-      // orderbookApiKey: '895d629046a0458199e9e8639b63bb57',
-      // orderbook: 'opensea',
-    }]
+  const placeOrder = () => {
+    switch (tokenType) {
+      case 'nfts':
+        Order.NFT.place({
+          address: current.address,
+          price: data.total,
+          amount: data.amount,
+          type: 'buy',
+        })
+        .then(onSuccess('Maker order'))
+        .catch(onError)
+        break
+      case 'tokens':
+        Order.TOKEN.place({
+          address: current.address,
+          price: data.total,
+          amount: data.amount,
+          type: 'buy',
+        })
+        .then(onSuccess('Maker order'))
+        .catch(onError)
+        break
+    }
     dispatch($modal.set.update({
       header: {
         title: 'Approve Transfer',
-        subtitle: `Buy ${currentCollection.name} using ${data.blockchain.wrapped.shortName}`
+        subtitle: `Buy ${current.name} using ${data.blockchain.wrapped.shortName}`
       },
     }))
-    placeBid(bids, progressHandler('Limit order'), onError)
+
     trackEvent('Create Order Submit', {
       'Wallet connect Status': 'Connected',
-      'Wallet Address': wallet || null,
-      'Order type': 'Limit order',
+      'Order type': 'Maker order',
       'Network': data.blockchain.name,
       'Price': data.price,
       'Quantity': data.amount,
-      'Total': data.total*data.amount,
+      'Total': data.total,
       'Side': 'Buy',
-      'Base Currency': data.blockchain.currency,
-      'Quote Currency': currentCollection.name
+      'Base Currency': tokenType === 'nfts' ? data.blockchain.currency : 'USDT',
+      'Quote Currency': current.name
+    })
+  }
+
+  const onSuccess = orderType => () => {
+    dispatch($modal.set.update({
+      header: {
+        title: 'Success',
+        subtitle: `Buy ${current.name} using USDT`
+      },
+    }))
+    setStep('complete')
+    trackEvent('Create Order Success', {
+      'Wallet connect Status': 'Connected',
+      'Order type': orderType,
+      'Network': data.blockchain.name,
+      'Price': data.price,
+      'Quantity': data.amount,
+      'Total': data.total,
+      'Side': 'Buy',
+      'Base Currency': tokenType === 'nfts' ? data.blockchain.currency : 'USDT',
+      'Quote Currency': current.name
     })
   }
 
   const onError = (error) => {
-    errorHandler(error)
     dispatch($modal.set.close())
-  }
-
-  const progressHandler = (orderType) => steps => {
-    const isAllStepsComplete = steps.flatMap(step => step.items).every(step => step.status === 'complete')
-    if (isAllStepsComplete && loadingRef.current) {
-      loadingRef.current = false
-      dispatch($modal.set.update({
-        header: {
-          title: 'Success',
-          subtitle: `Buy ${currentCollection.name} using USDT`
-        },
-      }))
-      setStep('complete')
-      trackEvent('Create Order Success', {
-        'Wallet connect Status': 'Connected',
-        'Wallet Address': wallet || null,
-        'Order type': orderType,
-        'Network': data.blockchain.name,
-        'Price': data.price,
-        'Quantity': data.amount,
-        'Total': data.total*data.amount,
-        'Side': 'Buy',
-        'Base Currency': data.blockchain.currency,
-        'Quote Currency': currentCollection.name
-      })
-    }
   }
 
   const handleComplete = () => {
@@ -124,27 +144,25 @@ const TradeBuyModal = ({data}) => {
     updateOrders()
   }
 
-  return (() => {
-    switch (step) {
-      case 'confirm':
-        return (
-          <BuyModalConfirm
-            {...data}
-            onConfirm={handleConfirm} />
-        )
-      case 'confirming':
-        return (
-          <BuyModalConfirming />
-        )
-      case 'complete':
-        return (
-          <BuyModalComplete
-            {...data}
-            currentCollection={currentCollection}
-            onComplete={handleComplete} />
-        )
-    }
-  })()
+  switch (step) {
+    case 'confirm':
+      return (
+        <BuyModalConfirm
+          {...data}
+          onConfirm={handleConfirm} />
+      )
+    case 'confirming':
+      return (
+        <BuyModalConfirming />
+      )
+    case 'complete':
+      return (
+        <BuyModalComplete
+          {...data}
+          currentCollection={current}
+          onComplete={handleComplete} />
+      )
+  }
 }
 
 export default TradeBuyModal

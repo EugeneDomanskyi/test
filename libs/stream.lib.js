@@ -1,11 +1,9 @@
-const BLOCKCHAIN_URL = {
-  polygon: 'wss://ws-polygon.reservoir.tools',
-  ethereum: 'wss://ws.reservoir.tools',
-  goerli: 'wss://ws.dev.reservoir.tools',
-}
+import { CHAINS } from '@/config'
 
 let socket = null
 let connectResolver = null
+let currentChain = null
+let subscribeList = []
 const callbacks = {
   'collection.created': [],
   'collection.updated': [],
@@ -27,6 +25,10 @@ const Stream = () => {
     const json = JSON.parse(string)
     switch (json.type) {
       case 'connection':
+        subscribeList.forEach(post => {
+          socket.send(JSON.stringify(post))
+        })
+        subscribeList = []
         connectResolver(json.status)
         break
       case 'subscribe':
@@ -43,12 +45,18 @@ const Stream = () => {
 
   return {
     connect: (blockchain) => {
+      if (currentChain == blockchain) {
+        return true
+      }
+
+      currentChain = blockchain
       return new Promise(resolve => {
-        if (!BLOCKCHAIN_URL[blockchain]) {
+        const network = CHAINS.find(chain => chain.code === blockchain)
+        if (!network.wsReservoirUrl) {
           return
         }
         connectResolver = resolve
-        socket = new WebSocket(`${BLOCKCHAIN_URL[blockchain]}?api_key=${process.env.NEXT_PUBLIC_RESERVOIR_API_KEY}`)
+        socket = new WebSocket(`${network.wsReservoirUrl}?api_key=${process.env.NEXT_PUBLIC_RESERVOIR_API_KEY}`)
         socket.onmessage = messageHandler
       })
     },
@@ -77,7 +85,12 @@ const Stream = () => {
           ...params,
         }
       }
-      socket.send(JSON.stringify(post))
+
+      if (!socket || socket.readyState !== WebSocket.OPEN) {
+        subscribeList.push(post)
+      } else {
+        socket.send(JSON.stringify(post))
+      }
     },
     unsubscribe: (event) => {
       if (!socket || socket.readyState !== WebSocket.OPEN) {

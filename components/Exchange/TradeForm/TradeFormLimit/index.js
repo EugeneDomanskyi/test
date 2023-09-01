@@ -1,12 +1,10 @@
 import styles from './styles.module.scss'
-import { useState, useEffect, useRef, Fragment, forwardRef, useImperativeHandle, memo } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import Image from 'next/image'
-import { parseUnits } from 'viem'
 
 import $app from '@/store/app'
-import $exchange from '@/store/exchange'
 import $modal from '@/store/modal'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useTrade from '@/myhooks/trade'
@@ -15,13 +13,12 @@ import { trackEvent } from '@/libs/analytics.lib'
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
 
-const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) => {
+const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, userBalances}) => {
   const dispatch = useDispatch()
   const { wallet, connect, changeNetwork } = useWalletConnect()
   const { getNftUser } = useTrade()
   
-  const currentCollection = useSelector(({$collection}) => $collection.current)
-  const blockchain = useSelector($app.get.blockchainByCode(currentCollection?.blockchain))
+  const blockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
 
   const [form, setForm] = useState(initialForm)
 
@@ -36,6 +33,10 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
   }, [initialForm])
 
   const handleChangeForm = field => value => {
+    const decimalRegExp = /^(?=.*\d)\d*(?:\.\d*)?$/
+    if (!decimalRegExp.test(value) && value) {
+      return
+    }
     switch (field) {
       case 'price':
         setForm(state => ({
@@ -45,9 +46,11 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
         }))
         return
       case 'amount':
-        const regex = /^\d+[,]?\d{0,2}$/
-        if (value && !regex.test(value)) {
-          return 
+        if (type === 'nfts') {
+          const regex = /^\d+[,]?\d{0,2}$/
+          if (value && !regex.test(value)) {
+            return 
+          }
         }
         setForm(state => ({
           ...state,
@@ -73,7 +76,6 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
     if (!address) {
       return
     }
-    console.log('handleSubmit')
     const network = await changeNetwork(blockchain.code)
     if (!network) {
       return
@@ -82,54 +84,48 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
     loadingRef.current = true
     switch (currentTab) {
       case 'buy':
-        // $exchange.api.executeOrder({
-        //   maker: wallet,
-        //   blockchain: blockchain.code,
-        //   params: [{
-        //     collection: currentCollection.address,
-        //     weiPrice: parseUnits(`${form.total*form.amount}`, 18).toString()
-        //   }],
-        // }).then(async ({steps}) => {
-        //   const currentStep = steps.filter(step => step.items.length).find(step => {
-        //     const [action] = step.items
-        //     return action.status !== 'complete'
-        //   })
-        //   if (currentStep) {
-        //     switch (currentStep.kind) {
-        //       case 'signature':
-        //         const [step] = currentStep.items
-        //         const needToSign = step.data.sign
-        //         console.log(needToSign)
-        //         const signature = await walletClient.signTypedData({
-        //           ...needToSign,
-        //           message: needToSign.value,
-        //         })
-        //         console.log('signature', signature)
-        //         break
-        //     }
-        //   }
-        // })
-        // return
         dispatch($modal.set.show({
           show: true,
           modal: 'Exchange/BuyModal',
           props: {
             header: {
-              title: `Buy ${currentCollection.name} for ${blockchain.wrapped.shortName}`,
+              title: `Buy ${current.name} for ${type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'}`,
             },
             data: {
               ...form,
               type: 'place',
-              collectionId: currentCollection.address,
               blockchain: blockchain,
+              current: current,
+              tokenType: type,
             },
           }
         }))
         return
       case 'sell':
-        const tokenIds = await getNftUser(currentCollection.address, wallet)
-        if (tokenIds.length < form.amount) {
-          toast.error(`You don't have enough NFTs`)
+        if (type === 'nfts') {
+          const tokenIds = await getNftUser(current.address, wallet)
+          if (tokenIds.length < form.amount) {
+            toast.error(`You don't have enough NFTs`)
+            return
+          }
+          dispatch($modal.set.show({
+            show: true,
+            modal: 'Exchange/SellModal',
+            props: {
+              header: {
+                title: `${tokenIds.length} NFTs available`,
+                subtitle: `Choose the NFT collection you want to sell`
+              },
+              data: {
+                ...form,
+                type: 'place',
+                tokens: tokenIds,
+                current: current,
+                blockchain: blockchain,
+                tokenType: type,
+              },
+            }
+          }))
           return
         }
         dispatch($modal.set.show({
@@ -137,15 +133,15 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
           modal: 'Exchange/SellModal',
           props: {
             header: {
-              title: `${tokenIds.length} NFTs available`,
-              subtitle: `Choose the NFT collection you want to sell`
+              title: `Sell ${current.name} for USDT`,
             },
             data: {
               ...form,
               type: 'place',
-              tokens: tokenIds,
-              collectionId: currentCollection.address,
+              current: current,
               blockchain: blockchain,
+              tokenType: type,
+              tokens: [],
             },
           }
         }))
@@ -156,7 +152,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
     handleChangeForm('price')(form.total/form.amount)
     trackEvent('Add Total', {
       'Base Currency': blockchain.currency,
-      'Quote Currency': currentCollection.name,
+      'Quote Currency': current.name,
       'Total': form.total,
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
       'Wallet Address': wallet || null,
@@ -167,7 +163,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
   const handleBlurPrice = () => {
     trackEvent('Add Price', {
       'Base Currency': blockchain.currency,
-      'Quote Currency': currentCollection.name,
+      'Quote Currency': current.name,
       'Price': form.price,
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
       'Wallet Address': wallet || null,
@@ -178,7 +174,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
   const handleBlurAmount = () => {
     trackEvent('Add Amount', {
       'Base Currency': blockchain.currency,
-      'Quote Currency': currentCollection.name,
+      'Quote Currency': current.name,
       'Amount': form.amount,
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
       'Wallet Address': wallet || null,
@@ -187,10 +183,18 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
   }
 
   const handleClickMultipler = (percentage) => () => {
-    if (currentTab === 'buy') {
-      handleChangeForm('total')(userBalances.wrapped * percentage)
+    if (type === 'nfts') {
+      if (currentTab === 'buy') {
+        handleChangeForm('total')(userBalances.wrapped * percentage)
+      } else {
+        handleChangeForm('amount')(Math.round(userBalances.token * percentage))
+      }
     } else {
-      handleChangeForm('amount')(userBalances.token * percentage)
+      if (currentTab === 'buy') {
+        handleChangeForm('total')(userBalances.usdt * percentage)
+      } else {
+        handleChangeForm('amount')(userBalances.token * percentage)
+      }
     }
   }
 
@@ -201,9 +205,13 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
           <App.Icon icon="wallet" />
           <App.Text size={10} color="rgba(255,255,255,0.6)">
             {
-              currentTab === 'buy'
-                ? `${userBalances.wrapped} ${blockchain.wrapped.shortName}`
-                : `${userBalances.token} NFT`
+              type === 'nfts'
+                ? currentTab === 'buy'
+                  ? `${userBalances.wrapped} ${blockchain.wrapped.shortName}`
+                  : `${userBalances.token} NFT`
+                : currentTab === 'buy'
+                  ? `${userBalances.usdt} USDT`
+                  : `${userBalances.token} ${current.symbol}`
             }
           </App.Text>
         </App.Flex>
@@ -222,7 +230,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
           label="AT PRICE"
-          currency={blockchain.wrapped.shortName}
+          currency={type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'}
           value={form.price}
           onBlur={handleBlurPrice}
           onChange={handleChangeForm('price')}
@@ -232,7 +240,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
         <TradeInput
           label="AMOUNT"
           value={form.amount}
-          currency={`NFT${form.amount > 1 ? `s` : ''}`}
+          currency={type === 'nfts' ? `NFT${form.amount > 1 ? `s` : ''}` : current.symbol}
           onBlur={handleBlurAmount}
           onChange={handleChangeForm('amount')} />
         {
@@ -244,7 +252,7 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
           label="TOTAL"
-          currency={blockchain.wrapped.shortName}
+          currency={type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'}
           value={form.total}
           onBlur={handleTotalBlur}
           onChange={handleChangeForm('total')}
@@ -260,8 +268,10 @@ const TradeFormLimit = ({initialForm, currentTab, currentOption, userBalances}) 
         className={styles.button}
         disabled={!form.total}
         onClick={handleSubmit}>
-        <App.Text color="#09051D" size={15} weight={700}>{ currentOption.title } {`${form.amount || 0} NFT${form.amount > 1 ? `s` : ''}` }</App.Text>
-        { currentCollection?.image ? <Image src={currentCollection?.image} width={32} height={32} alt="" /> : null }
+        <App.Text color="#09051D" size={15} weight={700}>
+          { currentOption.title } {`${form.amount || 0}` } { type === 'nfts' ? `NFT${form.amount > 1 ? `s` : ''}` : current.symbol }
+        </App.Text>
+        { current?.image ? <Image src={current?.image} width={32} height={32} alt="" /> : null }
       </App.Button>
     </App.Flex>
   )
