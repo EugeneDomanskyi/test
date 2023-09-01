@@ -124,6 +124,7 @@ const WrapperTokens = ({ children }) => {
         orderBy,
         orderDirection,
         searchText,
+        usdt: blockchain.usdtContract.toLowerCase(),
       },
     })
 
