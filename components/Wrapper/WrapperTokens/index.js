@@ -21,7 +21,11 @@ const getApolloClient = (chain) => {
 
 const WrapperTokens = ({ children }) => {
   const router = useRouter()
-  const [queryBlockchainCode, queryTokenId] = router.query.segments || []
+  // const [queryBlockchainCode, queryTokenId] = router.query.segments || []
+  const [queryBlockchainCode, queryTokenId] = router.query.segments.slice(-2) || []
+
+  console.log('router.query.segments', router.query.segments);
+  console.log('queryTokenId', queryTokenId);
 
   const { network } = useWalletConnect()
 
@@ -143,7 +147,6 @@ const WrapperTokens = ({ children }) => {
       tempAll.map(async item => {
         const dataFiltered = template(item)
         const currentToken = await getToken(dataFiltered.id)
-        console.log('currentToken', currentToken);
         // const data = staticTemplate(dataFiltered)
         // console.log('dataFiltered', dataFiltered);
         // console.log('data', data);

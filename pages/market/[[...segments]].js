@@ -198,8 +198,8 @@ export async function getServerSideProps(context) {
     props: {
       marketData,
       marketInfo,
-      marketSales,
-      marketOrders
+      // marketSales,
+      // marketOrders
     },
   };
 }

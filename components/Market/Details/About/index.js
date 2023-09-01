@@ -16,7 +16,8 @@ export default function About() {
       <SectionTitle>About { current.name }</SectionTitle>
       
       <App.Text size={isMobile ? 14 : 16} weight={500} color="#B9B8C5">
-        <div dangerouslySetInnerHTML={{ __html: marketInfo?.description }} />
+        {/* <div dangerouslySetInnerHTML={{ __html: marketInfo?.description }} /> */}
+        { marketInfo?.description }
       </App.Text>
     </App.Flex>
   )

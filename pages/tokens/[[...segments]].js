@@ -276,7 +276,7 @@ const Tokens = ({marketInfo}) => {
 
 export async function getServerSideProps(context) {
   let marketInfo = []
-  if (context.params) {
+  if (context.params?.segments) {
     const [blockchainCode, address] = context.params.segments
 
     marketInfo = await prisma.market.findFirst({

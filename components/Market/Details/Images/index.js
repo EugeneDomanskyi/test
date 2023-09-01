@@ -6,12 +6,7 @@ import App from '@/components/App'
 export default function Images() {
   const { marketInfo } = useSelector(({$collection}) => $collection)
 
-  
-  // const images = []
-  
   const images = marketInfo?.sampleImages?.split(',')
-  console.log('images', images);
-
 
   return (
     <App.Flex sx={{width: '100%'}} className={styles.container}>
