@@ -27,9 +27,9 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
 
   const isDisabled = loading
                     || (currentTab === 'buy' && !abilities.totalAmountOnSell)
-                    || (currentTab === 'buy' && form.amount > abilities.totalAmountOnSell)
+                    || (currentTab === 'buy' && form.amount*1 > abilities.totalAmountOnSell*1)
                     || (currentTab === 'sell' && !abilities.totalAmountToSell)
-                    || (currentTab === 'sell' && form.amount > abilities.totalAmountToSell)
+                    || (currentTab === 'sell' && form.amount*1 > abilities.totalAmountToSell*1)
 
   const errors = {
     amount: (currentTab === 'buy' && (form.amount > abilities.totalAmountOnSell) || (currentTab === 'sell' && (form.amount*1 > abilities.totalAmountToSell*1))),
