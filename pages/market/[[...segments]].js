@@ -58,24 +58,6 @@ export default function Markets({marketData, marketSales, marketOrders, marketIn
     }
   }, [marketData, marketSales, marketOrders, marketInfo])
 
-  useEffect(() => {
-    const id = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
-    fetch('https://strapi.tegro.com/api/markets/?filters[contract_address][$eq]='+id, {method: 'GET', headers: { Authorization: `Bearer ${token}` }})
-    // fetch('https://strapi.tegro.com/api/markets', {method: 'GET', headers: { Authorization: `Bearer ${token}` }})
-      .then((res) => res.json())
-      .then(({data}) => {
-        console.log('data', data);
-        // const [currentMarket] = data.filter(item => {
-        //   return item.attributes.token_metadata[0].contract_address === queryMarketId
-        // })
-
-        // if (currentMarket.attributes) {
-        //   dispatch($collection.set.currentMarketSeoInfo(currentMarket.attributes))
-        // }
-        // console.log('currentMarket', currentMarket.attributes);
-      })
-  }, [])
-
   return (
     <App.Container>
       <App.Flex sx={{ paddingBottom: 48, paddingTop: 64, overflow: 'hidden' }} gap={32}>
