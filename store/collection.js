@@ -151,11 +151,15 @@ export const collectionSlice = createSlice({
       }
     },
 
-    pagesClear: (state) => {
+    clear: (state) => {
       state.pages = {
         current: 'init',
         history: ['init'],
       }
+
+      state.search = ''
+      state.searching = false
+      state.searchEmpty = false
     },
   },
 })

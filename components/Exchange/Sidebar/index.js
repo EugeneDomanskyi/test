@@ -54,6 +54,7 @@ const isEqual = (prevProps, nextProps) => {
   return JSON.stringify(prevProps.items) == JSON.stringify(nextProps.items) &&
     JSON.stringify(prevProps.searched) == JSON.stringify(nextProps.searched) &&
     JSON.stringify(prevProps.current) == JSON.stringify(nextProps.current) &&
+    prevProps.search == nextProps.search &&
     prevProps.searching == nextProps.searching &&
     prevProps.searchEmpty == nextProps.searchEmpty &&
     prevProps.loading == nextProps.loading &&

@@ -152,11 +152,17 @@ function MyApp({ Component, pageProps, initialData }) {
 
 MyApp.getInitialProps = async ({ctx}) => {
   const cookies = nookies.get(ctx)
-  const res = getSelectorsByUserAgent(ctx.req?.headers?.['user-agent'])
+  
+  let isMobile = false
+  if (ctx.req?.headers?.['user-agent']) {
+    const res = getSelectorsByUserAgent(ctx.req?.headers?.['user-agent'])
+    isMobile = res?.isMobile
+  }
+
   return {
     initialData: {
       blockchain: cookies.blockchain,
-      isMobile: res?.isMobile,
+      isMobile,
     }
   }
 }

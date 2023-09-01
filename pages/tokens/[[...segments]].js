@@ -67,18 +67,16 @@ const Tokens = () => {
     if (queryTokenId && queryBlockchainCode) {
       dispatch($exchange.set.loading(true))
       $exchange.api.get.tokenChartData(queryTokenId, queryBlockchainCode, activeInterval.seconds).then(res => {
+        dispatch($exchange.set.chartData({type: 'tokens', data: res?.data ?? []}))
         dispatch($exchange.set.loading(false))
-        if (res) {
-          dispatch($exchange.set.chartData({type: 'tokens', data: res.data}))
-          return
-        }
-        dispatch($exchange.set.chartData({type: 'tokens', data: []}))
       })
     }
   }, [activeInterval, queryTokenId, queryBlockchainCode])
 
   useEffect(() => {
-    updateOrders()
+    if (queryTokenId && queryBlockchainCode) {
+      updateOrders()
+    }
   }, [queryBlockchainCode, wallet, queryTokenId])
 
   const handleOrdersUpdated = useCallback(() => {

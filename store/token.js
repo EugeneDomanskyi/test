@@ -195,11 +195,15 @@ export const tokenSlice = createSlice({
       }
     },
 
-    pagesClear: (state) => {
+    clear: (state) => {
       state.pages = {
         current: 1,
         history: [1],
       }
+
+      state.search = ''
+      state.searching = false
+      state.searchEmpty = false
     },
   },
 })
@@ -220,6 +224,10 @@ const api = {
   coingecko: {
     list: (params) => {
       return request('coins/list', 'GET', {api: 'coingecko', ...params})
+    },
+
+    local: () => {
+      return request('files/coingecko-tokens.json', 'GET', {api: 'local'})
     },
 
     info: (params) => {

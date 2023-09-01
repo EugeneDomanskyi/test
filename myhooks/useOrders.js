@@ -26,7 +26,7 @@ const useOrders = ({tokenAddress, type}) => {
         }
       })
     }
-    
+
     if (tokenAddress) {
       $orders.api.get[type].orderBook({
         collection: tokenAddress,

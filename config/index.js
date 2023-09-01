@@ -112,7 +112,7 @@ export const CHAINS = [
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'optimism',
     platform: 'optimistic-ethereum',
-    pages: ['nfts', 'tokens'],
+    pages: ['nfts'],
     usdtContract: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58',
     wrapped: {
       contract: '0x4200000000000000000000000000000000000006',
