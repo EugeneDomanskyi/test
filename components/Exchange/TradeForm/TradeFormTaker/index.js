@@ -20,7 +20,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
 
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({amount: '1', price: '0'})
-  const [abilities, setAbilities] = useState({totalAmountOnSell: 0, totalAmountToSell: 0, willSpendAmount: 0})
+  const [abilities, setAbilities] = useState({totalAmountOnSell: 0, totalAmountToSell: 0, willSpendAmount: 0, willTakeAmount: 0})
 
   const fetchTimeout = useRef(null)
   const previousForm = useRef({amount: '1', price: '0'})
@@ -173,7 +173,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
           label="TOTAL"
           currency="USDT"
           readOnly={true}
-          value={abilities.willSpendAmount} />
+          value={currentTab === 'buy' ? abilities.willSpendAmount : abilities.willTakeAmount} />
         {
           currentTab === 'buy'
             ? <App.Flex align="center" gap={4} className={styles.balance}>
