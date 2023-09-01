@@ -127,7 +127,7 @@ const TradeForm = forwardRef(({current, type}, ref) => {
               ? <App.Icon icon="check" />
               : null
           }
-          <App.Text color={formType === 'limit' ? '#fff' : '#5E5C6B'} weight={600} size={12}>Maker Order</App.Text>
+          <App.Text color={formType === 'limit' ? '#fff' : '#5E5C6B'} weight={600} size={12}>Place Order</App.Text>
         </App.Button>
         <App.Button className={cn(styles.formTypeButton, {[styles.active]: formType === 'market'})} onClick={handleChangeFormType('market')}>
           {
@@ -135,7 +135,7 @@ const TradeForm = forwardRef(({current, type}, ref) => {
               ? <App.Icon icon="check" />
               : null
           }
-          <App.Text color={formType === 'market' ? '#fff' : '#5E5C6B'} weight={600} size={12}>Taker Order</App.Text>
+          <App.Text color={formType === 'market' ? '#fff' : '#5E5C6B'} weight={600} size={12}>{currentTab === 'buy' ? 'Buy ' : 'Sell ' }Now</App.Text>
         </App.Button>
       </App.Flex>
       {

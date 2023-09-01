@@ -18,6 +18,10 @@
     border-color: rgb(90, 72, 167);
   }
 
+  &.error {
+    border-color: #FF1D61;
+  }
+
   .divider {
     width: 1px;
     height: 100%;
