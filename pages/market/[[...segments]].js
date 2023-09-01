@@ -44,14 +44,14 @@ export default function Markets({marketData, marketSales, marketOrders, marketIn
       dispatch($collection.set.current(marketData))
     }
 
-    if (marketSales) {
-      dispatch($exchange.set.sales(marketSales))
-      dispatch($orders.set.trades({type: 'nfts', data: marketSales}))
-    }
+    // if (marketSales) {
+    //   dispatch($exchange.set.sales(marketSales))
+    //   dispatch($orders.set.trades({type: 'nfts', data: marketSales}))
+    // }
 
-    if (marketOrders) {
-      dispatch($orders.set.orderBook({type: 'nfts', data: marketOrders}))
-    }
+    // if (marketOrders) {
+    //   dispatch($orders.set.orderBook({type: 'nfts', data: marketOrders}))
+    // }
 
     if (marketInfo) {
       dispatch($collection.set.currentMarketSeoInfo(marketInfo))
