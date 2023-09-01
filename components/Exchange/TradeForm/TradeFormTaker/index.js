@@ -83,10 +83,6 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
   }
 
   const handleSubmit = async () => {
-    // const address = await connect()
-    // if (!address) {
-    //   return
-    // }
     const network = await changeNetwork(tokenBlockchain.code)
     if (!network) {
       return
@@ -95,18 +91,15 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
       case 'buy':
         dispatch($modal.set.show({
           show: true,
-          modal: 'Exchange/BuyModal',
+          modal: 'Exchange/FillOrder',
           props: {
-            header: {
-              title: `Buy ${current.name} for USDT`,
-            },
             data: {
-              type: 'fulfill',
+              side: 'buy',
+              makerAsset: tokenBlockchain.usdtContract,
+              takerAsset: current.address,
               amount: form.amount,
               price: form.price,
-              total: form.amount*form.price,
               current: current,
-              tokenType: 'tokens',
               blockchain: tokenBlockchain,
             },
           }
