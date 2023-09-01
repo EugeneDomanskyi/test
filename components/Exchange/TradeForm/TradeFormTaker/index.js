@@ -32,7 +32,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
                     || (currentTab === 'sell' && form.amount > abilities.totalAmountToSell)
 
   const errors = {
-    amount: (currentTab === 'buy' && (form.amount > abilities.totalAmountOnSell) || (currentTab === 'sell' && (form.amount > abilities.totalAmountToSell))),
+    amount: (currentTab === 'buy' && (form.amount > abilities.totalAmountOnSell) || (currentTab === 'sell' && (form.amount*1 > abilities.totalAmountToSell*1))),
     balance: (currentTab === 'buy' && abilities.willSpendAmount > userBalances.usdt*1) || (currentTab === 'sell' && (form.amount*1 > userBalances.token*1)),
   }
 

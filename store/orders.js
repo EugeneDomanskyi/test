@@ -1,6 +1,7 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
 import numeral from 'numeral'
 import moment from 'moment'
+import { formatUnits } from 'viem'
 
 import { request } from './index'
 import Order from '@/libs/structs/Order'
@@ -29,8 +30,8 @@ const addSide = (list) => {
       const takerPrice = takingAmountFormatted / makingAmountFormatted
       
       const makerAmount = Math.pow(10, -makerAsset.decimals)*item.remainingMakerAmount //side === 'sell' ? makingAmountFormatted : takingAmountFormatted
-      const takerAmount = Math.pow(10, -takerAsset.decimals)*(item.remainingMakerAmount*item.data.takingAmount/item.data.makingAmount)
-
+      const takerAmount = formatUnits(BigInt(item.remainingMakerAmount)*BigInt(item.data.takingAmount)/BigInt(item.data.makingAmount), takerAsset.decimals)  //Math.pow(10, -takerAsset.decimals)*(item.remainingMakerAmount*item.data.takingAmount/item.data.makingAmount)
+      
       const timestamp = moment(item.createDateTime).unix()
       return {
         ...item,
@@ -311,7 +312,6 @@ api.get.tokens.orderBook = ({address, ...rest}) => {
   ]).then(([buy, sell]) => {
     const sortedBuy = groupByPrice(addSide(buy, 'buy'), 'desc')
     const sortedSell = groupByPrice(addSide(sell, 'sell'), 'asc')
-
     return {buy: sortedBuy, sell: sortedSell}
   })
 }
