@@ -1,4 +1,4 @@
-import { memo, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { trackEvent } from '@/libs/analytics.lib'
@@ -13,6 +13,12 @@ const SidebarSearch = ({ search, loading, onSearch, ...props }) => {
   const [localSearch, setLocalSearch] = useState(search)
 
   let timeoutId = useRef(null)
+
+  useEffect(() => {
+    if (search == '') {
+      setLocalSearch('')
+    }
+  }, [search])
 
   const handleSearchChange = (value) => {
     if ( ! loading) {
@@ -64,8 +70,8 @@ const SidebarSearch = ({ search, loading, onSearch, ...props }) => {
 
 const isEqual = (prevProps, nextProps) => {
   return prevProps.search == nextProps.search &&
-  prevProps.loading == nextProps.loading &&
-  prevProps.onSearch == nextProps.onSearch
+    prevProps.loading == nextProps.loading &&
+    prevProps.onSearch == nextProps.onSearch
 }
 
 export default memo(SidebarSearch, isEqual)

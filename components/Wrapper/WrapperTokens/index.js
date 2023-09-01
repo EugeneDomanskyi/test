@@ -27,7 +27,7 @@ const WrapperTokens = ({ children }) => {
   console.log('router.query.segments', router.query.segments);
   console.log('queryTokenId', queryTokenId);
 
-  const { network } = useWalletConnect()
+  const { getBasicInfo, isContractAddress } = useWalletConnect()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -54,13 +54,16 @@ const WrapperTokens = ({ children }) => {
 
   useEffect(() => {
     (async () => {
-      const tempList = await $token.api.coingecko.list({ include_platform: true })
-      if (tempList) {
-        const platforms = pageBlockchains.map(item => item.platform)
-        dispatch($token.set.list(tempList.filter(item => {
-          return platforms.some(el => item.platforms.hasOwnProperty(el))
-        })))
-      }
+      // const tempList = await $token.api.coingecko.list({ include_platform: true })
+      // if (tempList) {
+      //   const platforms = pageBlockchains.map(item => item.platform)
+      //   dispatch($token.set.list(tempList.filter(item => {
+      //     return platforms.some(el => item.platforms.hasOwnProperty(el))
+      //   })))
+      // }
+
+      const tempList = await $token.api.coingecko.local()
+      dispatch($token.set.list(tempList))
 
       setIsList(true)
     })()
@@ -130,7 +133,17 @@ const WrapperTokens = ({ children }) => {
     })
 
     if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('tokens')) {
-      const tempTokens = result.data.tokens
+      let tempTokens = result.data.tokens
+      if (!tempTokens.length && searchText != '' && isContractAddress(searchText)) {
+        const scanData = await getBasicInfo(searchText, blockchain.id)
+        if (scanData) {
+          tempTokens = [{
+            ...scanData,
+            id: scanData.address,
+            totalSupply: scanData.totalSupply.formatted,
+          }]
+        }
+      }
 
       const info = await getInfo(tempTokens)
 
@@ -144,30 +157,38 @@ const WrapperTokens = ({ children }) => {
         }
       })
 
-      tempAll.map(async item => {
-        const dataFiltered = template(item)
-        const currentToken = await getToken(dataFiltered.id)
-        // const data = staticTemplate(dataFiltered)
-        // console.log('dataFiltered', dataFiltered);
-        // console.log('data', data);
+      // tempAll.map(async item => {
+      //   const dataFiltered = template(item)
+      //   const currentToken = await getToken(dataFiltered.id)
+      //   // const data = staticTemplate(dataFiltered)
+      //   // console.log('dataFiltered', dataFiltered);
+      //   // console.log('data', data);
 
-        try {
-          // await fetch('/api/prisma', {
-          //   method: 'POST',
-          //   headers: { 'Content-Type': 'application/json' },
-          //   body: JSON.stringify(data),
-          // })
-        } catch (error) {
-          console.error(error)
+      //   try {
+      //     // await fetch('/api/prisma', {
+      //     //   method: 'POST',
+      //     //   headers: { 'Content-Type': 'application/json' },
+      //     //   body: JSON.stringify(data),
+      //     // })
+      //   } catch (error) {
+      //     console.error(error)
+      //   }
+      // })
+
+      if (current?.id && pages.current == 1 && search == '') {
+        if (!tempAll.some(item => item.basic.id.toLowerCase() == current.id.toLowerCase())) {
+          tempAll.unshift(current)
         }
-      })
+      }
 
       if (searchText == '') {
         dispatch($token.set.searched([]))
         dispatch($token.set.all(tempAll))
+        dispatch($token.set.searchEmpty(false))
       } else {
         dispatch($token.set.searched(tempAll))
         dispatch($token.set.searching(true))
+        dispatch($token.set.searchEmpty(!tempAll.length))
       }
 
       if (! current?.id) {
@@ -233,6 +254,16 @@ const WrapperTokens = ({ children }) => {
           const currentToken = await getToken(realTokenId)
           dispatch($token.set.current(currentToken))
           dispatch($token.set.update(currentToken))
+
+          if (tokens.length && pages.current == 1 && search == '') {
+            if (!tokens.some(item => item.id == currentToken.id)) {
+              tokens.unshift(currentToken)
+            }
+          }
+
+          const fullToken = await getTokenFull(currentToken)
+          dispatch($token.set.current(fullToken))
+          dispatch($token.set.update(fullToken))
         }
 
         if ( ! tokens.length) {
@@ -262,20 +293,35 @@ const WrapperTokens = ({ children }) => {
           blockchain: blockchain.code,
         }
       } else {
-        console.log('Token was not found in current blockchain')
-      }
-    }
-
-    if (token && ! token.isFull) {
-      const address = (token?.id ?? token?.basic?.id).toLowerCase()
-      const full = await $token.api.coingecko.full({ platform: blockchain.platform, address })
-      token = {
-        ...token,
-        full,
+        const scanData = await getBasicInfo(id, blockchain.id)
+        if (scanData) {
+          token = {
+            basic: {
+              ...scanData,
+              id: scanData.address,
+              totalSupply: scanData.totalSupply.formatted,
+            },
+            blockchain: blockchain.code,
+          }
+        } else {
+          console.log('Token was not found in current blockchain')
+        }
       }
     }
 
     return template(token ?? {})
+  }
+
+  const getTokenFull = async (token) => {
+    let fullToken = {...token}
+
+    if (token?.id && ! token.isFull) {
+      const address = token.id.toLowerCase()
+      const full = await $token.api.coingecko.full({ platform: blockchain.platform, address })
+      fullToken.full = full
+    }
+
+    return template(fullToken)
   }
 
   useEffect(() => {
@@ -292,6 +338,7 @@ const WrapperTokens = ({ children }) => {
         dispatch($token.set.fetching(true))
       } else {
         dispatch($token.set.searching(false))
+        dispatch($token.set.searchEmpty(false))
       }
     }
   }, [search])

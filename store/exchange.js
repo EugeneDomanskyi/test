@@ -95,7 +95,7 @@ const getters = {
       const roundedDate = round(moment(sale.timestamp*1000), moment.duration(interval.count, interval.unit), 'ceil')
       const intervalKey = roundedDate.format('DD-MM-YY HH:mm')
       const formattedData = {
-        price: sale.price.amount.decimal,
+        price: sale.price.amount.native,
         timestamp:  sale.timestamp*1000,
         volume: sale.amount*1,
         roundedDate: roundedDate.format('DD-MM-YY HH:mm'),
@@ -162,7 +162,7 @@ const getters = {
     const from = moment().subtract(interval.count, interval.unit)
     const prices = sales
       .filter(sale => moment(sale.updatedAt).isAfter(from) && moment(sale.updatedAt).isBefore(now))
-      .map((sale) => sale.price.amount.decimal)
+      .map((sale) => sale.price.amount.native)
     return {
       low: prices.length ? Math.min(...prices) : 0,
       high: prices.length ? Math.max(...prices) : 0,
@@ -172,7 +172,7 @@ const getters = {
   recentSales: (limit) => createSelector([
     state => state.$exchange.sales
   ], (sales) => {
-    return sales.slice(0, limit).map(sale => ({...sale, priceFormatted: sale.price.amount.decimal}))
+    return sales.slice(0, limit).map(sale => ({...sale, priceFormatted: sale.price.amount.native}))
   }),
 
   orderBook: createSelector([
@@ -211,7 +211,7 @@ const api = {
       })
     },
     sales: (params) => {
-      return request('sales/v5', 'GET', params).then(res => res.sales)
+      return request('sales/v6', 'GET', params).then(res => res.sales)
     },
     orders: (params) => {
       return Promise.all([

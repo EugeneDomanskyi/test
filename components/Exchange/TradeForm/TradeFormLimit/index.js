@@ -33,6 +33,10 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
   }, [initialForm])
 
   const handleChangeForm = field => value => {
+    const decimalRegExp = /^(?=.*\d)\d*(?:\.\d*)?$/
+    if (!decimalRegExp.test(value) && value) {
+      return
+    }
     switch (field) {
       case 'price':
         setForm(state => ({
@@ -183,7 +187,7 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
       if (currentTab === 'buy') {
         handleChangeForm('total')(userBalances.wrapped * percentage)
       } else {
-        handleChangeForm('amount')(userBalances.token * percentage)
+        handleChangeForm('amount')(Math.round(userBalances.token * percentage))
       }
     } else {
       if (currentTab === 'buy') {

@@ -36,7 +36,7 @@ export const template = (item) => {
     twitterUrl: overwrite?.twitterUrl ?? item?.twitterUrl,
     openseaVerificationStatus: null,
     ticker: {
-      value: overwrite?.ticker?.value ?? item?.ticker?.value,
+      value: overwrite?.ticker?.value ?? item?.ticker?.value ?? 0,
       type: overwrite?.ticker?.type ?? item?.ticker?.type,
     },
     isFull: overwrite?.isFull ?? item?.isFull,
@@ -122,6 +122,7 @@ export const tokenSlice = createSlice({
     sort: 'VOLUME:DESC',
     search: '',
     searching: false,
+    searchEmpty: false,
     pages: {
       history: [1],
       current: 1,
@@ -175,6 +176,10 @@ export const tokenSlice = createSlice({
       state.searching = payload
     },
 
+    searchEmpty: (state, { payload }) => {
+      state.searchEmpty = payload
+    },
+
     pages: (state, { payload }) => {
       const current = payload.current ?? state.pages.history.find(item => item == state.pages.current) ?? 1
       const currentIndex = state.pages.history.indexOf(current)
@@ -190,11 +195,15 @@ export const tokenSlice = createSlice({
       }
     },
 
-    pagesClear: (state) => {
+    clear: (state) => {
       state.pages = {
         current: 1,
         history: [1],
       }
+
+      state.search = ''
+      state.searching = false
+      state.searchEmpty = false
     },
   },
 })
@@ -215,6 +224,10 @@ const api = {
   coingecko: {
     list: (params) => {
       return request('coins/list', 'GET', {api: 'coingecko', ...params})
+    },
+
+    local: () => {
+      return request('files/coingecko-tokens.json', 'GET', {api: 'local'})
     },
 
     info: (params) => {

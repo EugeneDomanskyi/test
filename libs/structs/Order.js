@@ -12,12 +12,14 @@ import $nft from '@/store/nft'
 
 const USDT_DECIMALS = 6
 const TEG_TOKEN = '0xa1f102b004c8a5f4734e70bea7d62f829916d94c'
-const TEGRO_CONTRACT = '0x3ED60aC43AdAe9b955bAC09d496D612e8E510A5A'
 const TEGRO_FILL_ORDERS_CONTRACTS = {
-  1: '0xFf75311D031925a2f65A81654a35E61537ed3484',
-  137: '0x700533DB2a144c6d78eeF46932e47770D642EbFA',
+  1: '0x9c11f816f0a8A235B3c3674C8EFD89C805546457',
+  137: '0xf360BD82C74c6613C55C3441281113ce196D629D',
+  80001: '0xB34Cb747e09d6d07B8419fE4c66D008456962eA5',
 }
-const TEGRO_ABI = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"index","type":"uint256"}],"name":"OrderFailed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"maker","type":"address"},{"indexed":true,"internalType":"address","name":"taker","type":"address"},{"indexed":false,"internalType":"address","name":"makerAsset","type":"address"},{"indexed":false,"internalType":"address","name":"takerAsset","type":"address"},{"indexed":false,"internalType":"uint256","name":"makerAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"takerAmount","type":"uint256"},{"indexed":false,"internalType":"bytes32","name":"orderHash","type":"bytes32"}],"name":"TradeSuccessful","type":"event"},{"inputs":[],"name":"MAX_ORDERS","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"components":[{"components":[{"internalType":"uint256","name":"salt","type":"uint256"},{"internalType":"address","name":"makerAsset","type":"address"},{"internalType":"address","name":"takerAsset","type":"address"},{"internalType":"address","name":"maker","type":"address"},{"internalType":"address","name":"receiver","type":"address"},{"internalType":"address","name":"allowedSender","type":"address"},{"internalType":"uint256","name":"makingAmount","type":"uint256"},{"internalType":"uint256","name":"takingAmount","type":"uint256"},{"internalType":"uint256","name":"offsets","type":"uint256"},{"internalType":"bytes","name":"interactions","type":"bytes"}],"internalType":"struct ITradingContract.Order","name":"orderDetails","type":"tuple"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"bytes","name":"interaction","type":"bytes"},{"internalType":"uint256","name":"makingAmount","type":"uint256"},{"internalType":"uint256","name":"takingAmount","type":"uint256"},{"internalType":"uint256","name":"thresholdAmount","type":"uint256"}],"internalType":"struct MultiOrderRouter.OrderExecution[]","name":"orders","type":"tuple[]"},{"internalType":"uint256","name":"totalTakerAmount","type":"uint256"}],"name":"fillMultipleOrders","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"tradingContract","outputs":[{"internalType":"contract ITradingContract","name":"","type":"address"}],"stateMutability":"view","type":"function"}]
+
+// const TEGRO_ABI = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"index","type":"uint256"}],"name":"OrderFailed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"maker","type":"address"},{"indexed":true,"internalType":"address","name":"taker","type":"address"},{"indexed":false,"internalType":"address","name":"makerAsset","type":"address"},{"indexed":false,"internalType":"address","name":"takerAsset","type":"address"},{"indexed":false,"internalType":"uint256","name":"makerAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"takerAmount","type":"uint256"},{"indexed":false,"internalType":"bytes32","name":"orderHash","type":"bytes32"}],"name":"TradeSuccessful","type":"event"},{"inputs":[],"name":"MAX_ORDERS","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"components":[{"components":[{"internalType":"uint256","name":"salt","type":"uint256"},{"internalType":"address","name":"makerAsset","type":"address"},{"internalType":"address","name":"takerAsset","type":"address"},{"internalType":"address","name":"maker","type":"address"},{"internalType":"address","name":"receiver","type":"address"},{"internalType":"address","name":"allowedSender","type":"address"},{"internalType":"uint256","name":"makingAmount","type":"uint256"},{"internalType":"uint256","name":"takingAmount","type":"uint256"},{"internalType":"uint256","name":"offsets","type":"uint256"},{"internalType":"bytes","name":"interactions","type":"bytes"}],"internalType":"struct ITradingContract.Order","name":"orderDetails","type":"tuple"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"bytes","name":"interaction","type":"bytes"},{"internalType":"uint256","name":"makingAmount","type":"uint256"},{"internalType":"uint256","name":"takingAmount","type":"uint256"},{"internalType":"uint256","name":"thresholdAmount","type":"uint256"}],"internalType":"struct MultiOrderRouter.OrderExecution[]","name":"orders","type":"tuple[]"},{"internalType":"uint256","name":"totalTakerAmount","type":"uint256"}],"name":"fillMultipleOrders","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"tradingContract","outputs":[{"internalType":"contract ITradingContract","name":"","type":"address"}],"stateMutability":"view","type":"function"}]
+const TEGRO_ABI = [{"inputs":[{"internalType":"address","name":"_tradingContract","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"index","type":"uint256"}],"name":"OrderFailed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"maker","type":"address"},{"indexed":true,"internalType":"address","name":"taker","type":"address"},{"indexed":false,"internalType":"address","name":"makerAsset","type":"address"},{"indexed":false,"internalType":"address","name":"takerAsset","type":"address"},{"indexed":false,"internalType":"uint256","name":"makerAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"takerAmount","type":"uint256"},{"indexed":false,"internalType":"bytes32","name":"orderHash","type":"bytes32"}],"name":"TradeSuccessful","type":"event"},{"inputs":[{"components":[{"components":[{"internalType":"uint256","name":"salt","type":"uint256"},{"internalType":"address","name":"makerAsset","type":"address"},{"internalType":"address","name":"takerAsset","type":"address"},{"internalType":"address","name":"maker","type":"address"},{"internalType":"address","name":"receiver","type":"address"},{"internalType":"address","name":"allowedSender","type":"address"},{"internalType":"uint256","name":"makingAmount","type":"uint256"},{"internalType":"uint256","name":"takingAmount","type":"uint256"},{"internalType":"uint256","name":"offsets","type":"uint256"},{"internalType":"bytes","name":"interactions","type":"bytes"}],"internalType":"struct ITradingContract.Order","name":"orderDetails","type":"tuple"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"bytes","name":"interaction","type":"bytes"},{"internalType":"uint256","name":"makingAmount","type":"uint256"},{"internalType":"uint256","name":"takingAmount","type":"uint256"},{"internalType":"uint256","name":"thresholdAmount","type":"uint256"}],"internalType":"struct MultiOrderRouter.OrderExecution[]","name":"orders","type":"tuple[]"},{"internalType":"uint256","name":"totalTakerAmount","type":"uint256"}],"name":"fillMultipleOrders","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"tradingContract","outputs":[{"internalType":"contract ITradingContract","name":"","type":"address"}],"stateMutability":"view","type":"function"}]
 
 class Order {
 
@@ -204,6 +206,7 @@ class NFT extends Order {
           reject()
           return
         }
+        console.log(address)
         const nfts = Object.entries(response.tokens).sort((a,b) => a[1] - b[1]).slice(0, amount).map(([id]) => ({token: `${address}:${id}`, quantity: 1}))
 
         getClient()?.actions.buyToken({
@@ -242,6 +245,12 @@ class NFT extends Order {
       }
 
       if (type === 'buy') {
+        const balance = await Order.getBalance(walletClient.account.address, blockchain.wrapped.contract)
+        if (balance < price*1) {
+          Order.showErrorMessage('Insufficient balance')
+          reject()
+          return 
+        }
         const bids = [{
           weiPrice: parseUnits(`${price}`, 18).toString(),
           collection: address,
@@ -315,8 +324,8 @@ class TOKEN extends Order {
   constructor(data) {
     super()
     this.rawData = data
-    const makerToken = INCH_TOKENS[data.data.makerAsset]
-    const takerToken = INCH_TOKENS[data.data.takerAsset]
+    const makerToken = INCH_TOKENS[data.data.makerAsset] || {symbol: '', decimals: 18, logoURI: ''}
+    const takerToken = INCH_TOKENS[data.data.takerAsset] || {symbol: '', decimals: 18, logoURI: ''}
     
     const network = CHAINS.find(chain => chain.code === data.network)
     this.id = data.signature
@@ -432,13 +441,13 @@ class TOKEN extends Order {
         if (diff >= 0) {
           // can fill in this order
           willTakeMakingAmount = acc.totalToBuy
-          willSpendTakingAmount = side === 'buy' ? Math.floor(acc.totalToBuy*order.makerRate) : Math.floor(willTakeMakingAmount/order.takerRate)
+          willSpendTakingAmount = side === 'buy' ? Math.ceil(acc.totalToBuy*order.makerRate) : Math.ceil(willTakeMakingAmount/order.takerRate)
           
           acc.totalToBuy = 0
         } else {
           // need next order
-          willTakeMakingAmount = order.makingAmount
-          willSpendTakingAmount = side === 'buy' ? Math.floor(order.makingAmount*order.makerRate) : Math.floor(willTakeMakingAmount/order.takerRate)
+          willTakeMakingAmount = order.makingAmount*1
+          willSpendTakingAmount = side === 'buy' ? Math.ceil(order.makingAmount*order.makerRate) : Math.ceil(willTakeMakingAmount/order.takerRate)
           acc.totalToBuy = side === 'sell' ? diff*-1 / order.takerRate : diff*-1
         }
         const willTakeMakingAmountFormatted = formatUnits(willTakeMakingAmount, side === 'buy' ? makerDecimals : takerDecimals)
@@ -457,7 +466,7 @@ class TOKEN extends Order {
             }
           ]
         }
-      }, {totalToSell: amountInWei, totalToBuy: amountInWei, orders: []})
+      }, {totalToBuy: amountInWei, orders: []})
 
       const stats = filteredByPrice.reduce((acc, order) => {
         return {
@@ -574,16 +583,25 @@ class TOKEN extends Order {
           reject()
           return
         }
-        console.log(orders)
+        
         const totalSpendAmount = orders.reduce((acc, order) => acc+order.willSpendTakingAmount, 0)
         const totalTakeAmount = orders.reduce((acc, order) => acc+order.willTakeMakingAmount, 0)
+        
+        const balance = await Order.getBalance(walletClient.account.address, sellAsset)
+        const totalSpendFormatted = orders.reduce((acc, order) => acc+order.willSpendTakingAmountFormatted*1, 0)
 
+        if (totalSpendFormatted > balance*1) {
+          Order.showErrorMessage('Insufficient balance')
+          reject()
+          return 
+        }
+        
         const list = orders.map(order => {
           return [
             order.data,
             order.signature,
             '0x',
-            totalTakeAmount.toString(),
+            order.willTakeMakingAmount.toString(),
             '0',
             '0xde0b6b3a7640000',
             // walletClient.account.address
@@ -604,7 +622,9 @@ class TOKEN extends Order {
         console.log('config', config)
 
         if (config?.mode === 'prepared') {
-          const res = await writeContract(config)
+          const res = await writeContract(config).catch(error => {
+            reject(error)
+          })
 
           console.log('write contract', res)
 
@@ -705,8 +725,10 @@ class TOKEN extends Order {
       })
       if (res) {
         const txResult = await waitForTransaction(res)
-        resolve(txResult)
-        Order.showSuccessMessage('Order cancelled successfully')
+        setTimeout(() => {
+          Order.showSuccessMessage('Order cancelled successfully')
+          resolve(txResult)
+        }, 2000)
       }
     })
   }

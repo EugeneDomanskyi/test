@@ -53,7 +53,7 @@ const SidebarItem = ({ item, isActive, withArrow, searching, onClick, onClose })
         {item.image ? (
           <Image src={item.image} priority width={72} height={72} className={styles.image} alt="" />
         ) : (
-          <div style={{width: 72, height: 72}} />
+          <div className={styles.emptyImage} />
         )}
 
         <App.Flex column sx={{ maxWidth: 170 }}>

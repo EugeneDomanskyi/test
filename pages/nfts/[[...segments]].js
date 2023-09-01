@@ -31,7 +31,7 @@ const GRID_GAP = 6
 
 const Nfts = () => {
   const router = useRouter()
-  const [collectionId] = router.query.collectionId || []
+  const [_, collectionId] = router.query.segments || []
 
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
@@ -48,6 +48,7 @@ const Nfts = () => {
   const sort = useSelector(({$collection}) => $collection.sort)
   const search = useSelector(({$collection}) => $collection.search)
   const searching = useSelector(({$collection}) => $collection.searching)
+  const searchEmpty = useSelector(({$collection}) => $collection.searchEmpty)
   const pages = useSelector($collection.get.pages)
   const { updateOrders } = useOrders({tokenAddress: collectionId, type: 'nfts'})
 
@@ -57,7 +58,7 @@ const Nfts = () => {
   const tradeForm = useRef(null)
 
   useEffect(() => {
-    trackEvent('Exchange Clicked', {
+    trackEvent(`NFT's Clicked`, {
       'Network': blockchain.code.toUpperCase(),
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
       'Wallet Address': wallet || null,
@@ -100,17 +101,17 @@ const Nfts = () => {
   }, [blockchain.code, wallet, collectionId])
   
   useEffect(() => {
-    if (socketConnected && collectionId) {
+    if (collectionId) {
       Stream.subscribe('sale.*', [collectionId])
     }
 
     return () => {
       Stream.unsubscribe('sale.*')
     }
-  }, [socketConnected, collectionId])
+  }, [collectionId])
 
   useEffect(() => {
-    if (socketConnected && collectionId && wallet) {
+    if (collectionId && wallet) {
       Stream.subscribe('bid.*', [collectionId], {maker: wallet})
       Stream.subscribe('ask.*', [collectionId], {maker: wallet})
     }
@@ -119,20 +120,18 @@ const Nfts = () => {
       Stream.unsubscribe('bid.*')
       Stream.unsubscribe('ask.*')
     }
-  }, [socketConnected, collectionId, wallet])
+  }, [collectionId, wallet])
 
-  const initCollection = (collectionId, blockchain) => {
+  const initCollection = (collectionId) => {
     dispatch($exchange.set.loading(true))
-    Promise.all([
-      $exchange.api.get.sales({
-        collection: collectionId,
-        blockchain: blockchain,
-        includeDeleted: false,
-        includeTokenMetadata: false,
-        sortDirection: 'desc',
-        limit: 800,
-      }),
-    ]).then(([sales, orderBook]) => {
+    $exchange.api.get.sales({
+      collection: collectionId,
+      blockchain: blockchain.code,
+      includeDeleted: false,
+      includeTokenMetadata: false,
+      sortDirection: 'desc',
+      limit: 800,
+    }).then(sales => {
       if (sales) {
         dispatch($exchange.set.sales(sales))
         dispatch($orders.set.trades({type: 'nfts', data: sales}))
@@ -196,6 +195,7 @@ const Nfts = () => {
             sort={sort}
             search={search}
             searching={searching}
+            searchEmpty={searchEmpty}
             pages={pages}
             loading={collectionLoading}
             onSort={handleSort}
@@ -247,6 +247,7 @@ const Nfts = () => {
               sort={sort}
               search={search}
               searching={searching}
+              searchEmpty={searchEmpty}
               pages={pages}
               loading={collectionLoading}
               onSort={handleSort}
@@ -268,6 +269,7 @@ const Nfts = () => {
                 sort={sort}
                 search={search}
                 searching={searching}
+                searchEmpty={searchEmpty}
                 pages={pages}
                 loading={collectionLoading}
                 onSort={handleSort}

@@ -51,7 +51,7 @@ const Sales = ({onClickSale, type}) => {
 
             previousPrice = price * 1
             return (
-              <App.Flex key={index + previousPrice} column>
+              <App.Flex key={sale.id || sale.signature} column>
                 <App.Flex  justify="space-between" align="center" className={styles.sale} sx={{backgroundColor: color.row}} onClick={handleClick({...sale, side: color.side})}>
                   <App.Text flex={1} size={12} weight={500} color={color.price}>{ price }</App.Text>
                   <App.Text flex={1} size={12} weight={600} color="rgba(255,255,255,0.8)" center>{ sale.amount }</App.Text>

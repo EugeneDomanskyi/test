@@ -9,7 +9,7 @@ import SidebarPagination from '@/components/Exchange/Sidebar/SidebarPagination'
 
 import styles from './styles.module.scss'
 
-const Sidebar = ({ items, searched, current, sort, search, searching, pages, loading, onSort, onSearch, onPage, onClose, className }) => {
+const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpty, pages, loading, onSort, onSearch, onPage, onClose, className }) => {
   const list = (searching) ? searched : items
 
   return (
@@ -21,17 +21,25 @@ const Sidebar = ({ items, searched, current, sort, search, searching, pages, loa
 
       <div className={styles.cardBox}>
         <div className={styles.cardBoxContent}>
-          {list.map((item) => {
-            return (
-              <SidebarItem
-                key={item.address}
-                item={item}
-                searching={searching}
-                isActive={current.address === item.address}
-                onClose={onClose}
-              />
-            )
-          })}
+          {loading ? (
+            <App.LoaderBlock height={500} />
+          ) : (
+            <>
+              {searchEmpty ? (
+                <App.Text center>No results were found for your search</App.Text>
+              ) : list.map((item) => {
+                return (
+                  <SidebarItem
+                    key={item.address}
+                    item={item}
+                    searching={searching}
+                    isActive={current.address === item.address}
+                    onClose={onClose}
+                  />
+                )
+              })}
+            </>
+          )}
         </div>
       </div>
 
@@ -46,7 +54,9 @@ const isEqual = (prevProps, nextProps) => {
   return JSON.stringify(prevProps.items) == JSON.stringify(nextProps.items) &&
     JSON.stringify(prevProps.searched) == JSON.stringify(nextProps.searched) &&
     JSON.stringify(prevProps.current) == JSON.stringify(nextProps.current) &&
+    prevProps.search == nextProps.search &&
     prevProps.searching == nextProps.searching &&
+    prevProps.searchEmpty == nextProps.searchEmpty &&
     prevProps.loading == nextProps.loading &&
     prevProps.className == nextProps.className
 }

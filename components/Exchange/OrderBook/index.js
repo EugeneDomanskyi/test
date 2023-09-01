@@ -31,8 +31,8 @@ const OrderBook = ({type, onClickOrder}) => {
       <App.Flex gap={3}>
         <App.Flex column flex={1}>
           <App.Flex justify="space-between" align="center" sx={{padding: '0 8px', height: 20}}>
-            <App.Text size={10} color="#908F99" weight={600}>Buy Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
             <App.Text size={10} color="#908F99" weight={600}>Volume</App.Text>
+            <App.Text size={10} color="#908F99" weight={600}>Buy Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
           </App.Flex>
           {
             orderBook.buy.map((order, i) => {
@@ -41,8 +41,8 @@ const OrderBook = ({type, onClickOrder}) => {
               return (
                 <App.Flex key={i} justify="space-between" align="center" className={styles.row} onClick={handleClick({...order, quantity: prevBuyVolumeValue, side: 'sell'})}>
                   <div className={cn(styles.fill, styles.buy)} style={{width}} />
-                  <App.Text size={12} sx={{position: 'relative'}} weight={600} color="#53f19c">{ order.priceFormatted }</App.Text>
-                  <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600} sx={{position: 'relative'}}>{ numeral(prevBuyVolumeValue).format('0.[0000]') }</App.Text>
+                  <App.Text size={12}  color="#53f19c" weight={600} sx={{position: 'relative'}}>{ numeral(prevBuyVolumeValue).format('0.[0000]') }</App.Text>
+                  <App.Text size={12} sx={{position: 'relative'}} weight={600} color="rgba(255,255,255,0.8)">{ order.priceFormatted }</App.Text>
                 </App.Flex>
               )
             })
@@ -50,8 +50,8 @@ const OrderBook = ({type, onClickOrder}) => {
         </App.Flex>
         <App.Flex column flex={1}>
           <App.Flex justify="space-between" align="center" sx={{padding: '0 8px', height: 20}}>
-            <App.Text size={10} color="#908F99" weight={600}>Volume</App.Text>
             <App.Text size={10} color="#908F99" weight={600}>Sell Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
+            <App.Text size={10} color="#908F99" weight={600}>Volume</App.Text>
           </App.Flex>
           {
             orderBook.sell.map((order, i) => {
@@ -60,8 +60,8 @@ const OrderBook = ({type, onClickOrder}) => {
               return (
                 <App.Flex key={i} justify="space-between" align="center" className={styles.row} onClick={handleClick({...order, quantity: prevSellVolumeValue, side: 'buy'})}>
                   <div className={cn(styles.fill, styles.sell)} style={{width}} />
-                  <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600} sx={{position: 'relative'}}>{ numeral(prevSellVolumeValue).format('0.[0000]') }</App.Text>
-                  <App.Text size={12} sx={{position: 'relative'}} weight={600} color="#eb3169">{ order.priceFormatted }</App.Text>
+                  <App.Text size={12} sx={{position: 'relative'}} weight={600} color="rgba(255,255,255,0.8)">{ order.priceFormatted }</App.Text>
+                  <App.Text size={12} color="#eb3169" weight={600} sx={{position: 'relative'}}>{ numeral(prevSellVolumeValue).format('0.[0000]') }</App.Text>
                 </App.Flex>
               )
             })

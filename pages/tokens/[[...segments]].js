@@ -10,7 +10,6 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 import useOrders from '@/myhooks/useOrders'
 
 import $exchange from '@/store/exchange'
-import $orders from '@/store/orders'
 import $app from '@/store/app'
 import $token from '@/store/token'
 
@@ -40,7 +39,6 @@ const Tokens = ({marketInfo}) => {
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
   const { updateOrders } = useOrders({tokenAddress: queryTokenId, type: 'tokens'})
-  // const socketConnected = useSelector(({$app}) => $app.socketConnected)
   
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -54,6 +52,7 @@ const Tokens = ({marketInfo}) => {
   const sort = useSelector(({$token}) => $token.sort)
   const search = useSelector(({$token}) => $token.search)
   const searching = useSelector(({$token}) => $token.searching)
+  const searchEmpty = useSelector(({$token}) => $token.searchEmpty)
   const pages = useSelector($token.get.pages)
 
   const [mobileTab, setMobileTab] = useState('markets')
@@ -69,56 +68,26 @@ const Tokens = ({marketInfo}) => {
   }, [])
 
   useEffect(() => {
-    if (queryTokenId && blockchain.code) {
+    if (queryTokenId && queryBlockchainCode) {
       dispatch($exchange.set.loading(true))
-      $exchange.api.get.tokenChartData(queryTokenId, blockchain.code, activeInterval.seconds).then(res => {
+      $exchange.api.get.tokenChartData(queryTokenId, queryBlockchainCode, activeInterval.seconds).then(res => {
+        dispatch($exchange.set.chartData({type: 'tokens', data: res?.data ?? []}))
         dispatch($exchange.set.loading(false))
-        if (res) {
-          dispatch($exchange.set.chartData({type: 'tokens', data: res.data}))
-          return
-        }
-        dispatch($exchange.set.chartData({type: 'tokens', data: []}))
       })
     }
-  }, [activeInterval, queryTokenId, blockchain.code])
+  }, [activeInterval, queryTokenId, queryBlockchainCode])
 
   useEffect(() => {
-    if (queryTokenId && blockchain.code) {
-      getExchangeData(queryTokenId, blockchain.code)
+    if (queryTokenId && queryBlockchainCode) {
+      updateOrders()
     }
-  }, [queryTokenId, blockchain.code])
-
-  useEffect(() => {
-    updateOrders()
-  }, [blockchain.code, wallet, queryTokenId])
-
-  const getExchangeData = (tokenId, blockchain) => {
-    $orders.api.get.tokens.trades({
-      address: tokenId,
-      blockchain: blockchain,
-      sortBy: 'createDateTime',
-      statuses: '[3]',
-      limit: 50,
-    }).then(res => {
-      dispatch($orders.set.trades({type: 'tokens', data: res}))
-    })
-
-    // $orders.api.get.tokens.orderBook({
-    //   address: tokenId,
-    //   blockchain: blockchain,
-    //   sortBy: 'createDateTime',
-    //   statuses: '[1]',
-    //   limit: 500,
-    // }).then(res => {
-    //   dispatch($orders.set.orderBook({type: 'tokens', data: res}))
-    // })
-  }
+  }, [queryBlockchainCode, wallet, queryTokenId])
 
   const handleOrdersUpdated = useCallback(() => {
     if (wallet) {
       updateOrders()
     }
-  }, [wallet, queryTokenId, blockchain.code])
+  }, [wallet, queryTokenId, queryBlockchainCode])
 
   const handleMobileTabChange = (tab) => {
     setMobileTabTrade(false)
@@ -152,6 +121,7 @@ const Tokens = ({marketInfo}) => {
             sort={sort}
             search={search}
             searching={searching}
+            searchEmpty={searchEmpty}
             pages={pages}
             loading={tokenLoading}
             onSort={handleSort}
@@ -203,6 +173,7 @@ const Tokens = ({marketInfo}) => {
               sort={sort}
               search={search}
               searching={searching}
+              searchEmpty={searchEmpty}
               pages={pages}
               loading={tokenLoading}
               onSort={handleSort}
@@ -224,6 +195,7 @@ const Tokens = ({marketInfo}) => {
                 sort={sort}
                 search={search}
                 searching={searching}
+                searchEmpty={searchEmpty}
                 pages={pages}
                 loading={tokenLoading}
                 onSort={handleSort}

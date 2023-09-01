@@ -85,6 +85,7 @@ export const collectionSlice = createSlice({
     sort: 'VOLUME:DESC',
     search: '',
     searching: false,
+    searchEmpty: false,
     pages: {
       history: ['init'],
       current: 'init',
@@ -116,6 +117,22 @@ export const collectionSlice = createSlice({
     currentMarketSeoInfo: (state, { payload }) => {
       state.marketInfo = payload
     },
+    
+    updateItem: (state, { payload }) => {
+      const newAll = state.all.map(item => {
+        return item.id.toLowerCase() == payload.id.toLowerCase() ? template(payload) : item
+      })
+      state.all = newAll
+
+      const newSearched = state.searched.map(item => {
+        return item.id.toLowerCase() == payload.id.toLowerCase() ? template(payload) : item
+      })
+      state.searched = newSearched
+
+      if (state.current.id.toLowerCase() == payload.id.toLowerCase()) {
+        state.current = template(payload)
+      }
+    },
 
     update: (state, { payload }) => {
       state[payload.key] = payload.value
@@ -142,6 +159,10 @@ export const collectionSlice = createSlice({
       state.searching = payload
     },
 
+    searchEmpty: (state, { payload }) => {
+      state.searchEmpty = payload
+    },
+
     pages: (state, { payload }) => {
       const current = payload.current ?? state.pages.history.find(item => item == state.pages.current) ?? 'init'
       const currentIndex = state.pages.history.indexOf(current)
@@ -157,11 +178,15 @@ export const collectionSlice = createSlice({
       }
     },
 
-    pagesClear: (state) => {
+    clear: (state) => {
       state.pages = {
         current: 'init',
         history: ['init'],
       }
+
+      state.search = ''
+      state.searching = false
+      state.searchEmpty = false
     },
   },
 })

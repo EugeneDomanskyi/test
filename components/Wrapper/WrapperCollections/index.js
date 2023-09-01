@@ -34,6 +34,33 @@ const WrapperCollections = ({ children }) => {
   const searchRef = useRef(search)
   const pageRef = useRef(pages.current)
   const blockchainCode = useRef(blockchain.code)
+  const wsCollectionIds = useRef([])
+
+  const initWSConnection = (code) => {
+    Stream.connect(code)
+    Stream.on('collection.updated', (eventName, eventData) => {
+      dispatch($collection.set.updateItem({
+        ...eventData,
+        blockchain: blockchain.code,
+        currency: blockchain.currency,
+      }))
+    })
+  }
+
+  const wsSubscribe = (ids) => {
+    const newIds = ids.filter(id => {
+      if (!wsCollectionIds.current.includes(id)) {
+        wsCollectionIds.current.push(id)
+        return true
+      }
+
+      return false
+    })
+
+    if (newIds.length) {
+      Stream.subscribe('collection.updated', newIds)
+    }
+  }
 
   useEffect(() => {
     if (router.isReady) {
@@ -53,6 +80,7 @@ const WrapperCollections = ({ children }) => {
 
   useEffect(() => {
     if (router.isReady && isBlockchain && (fetching || ! isNfts)) {
+      initWSConnection(blockchain.code)
       getCollectionList()
       dispatch($collection.set.fetching(false))
     }
@@ -100,9 +128,12 @@ const WrapperCollections = ({ children }) => {
       if (search == '') {
         dispatch($collection.set.searched([]))
         dispatch($collection.set.all(tempAll))
+        dispatch($collection.set.searchEmpty(false))
+        
       } else {
         dispatch($collection.set.searched(tempAll))
         dispatch($collection.set.searching(true))
+        dispatch($collection.set.searchEmpty(!tempAll.length))
       }
 
       if (isNfts && ! current?.id) {
@@ -110,7 +141,7 @@ const WrapperCollections = ({ children }) => {
         router.replace(`/nfts/${blockchain.code}/${first.id}`, undefined, { scroll: false })
       }
 
-      initWSConnection(blockchain.code, tempCollections)
+      wsSubscribe(tempAll.map(item => item.id))
     }
 
     dispatch($collection.set.loading(false))
@@ -139,6 +170,8 @@ const WrapperCollections = ({ children }) => {
         if (realCollectionId) {
           const currentCollection = await getCollection(realCollectionId)
           dispatch($collection.set.current(currentCollection))
+
+          wsSubscribe([currentCollection.id])
         }
 
         if ( ! collections.length) {
@@ -181,7 +214,7 @@ const WrapperCollections = ({ children }) => {
       }
     } else {
       defaultParams.minFloorAskPrice = '0.000001'
-      // defaultParams.maxFloorAskPrice = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null
+      //defaultParams.maxFloorAskPrice = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null
     }
 
     let continuation = null
@@ -231,6 +264,8 @@ const WrapperCollections = ({ children }) => {
       blockchainCode.current = blockchain.code
       dispatch($collection.set.current({}))
       dispatch($collection.set.fetching(true))
+
+      initWSConnection(blockchain.code)
     }
   }, [blockchain.code])
 
@@ -269,6 +304,7 @@ const WrapperCollections = ({ children }) => {
         dispatch($collection.set.fetching(true))
       } else {
         dispatch($collection.set.searching(false))
+        dispatch($collection.set.searchEmpty(false))
       }
     }
   }, [search])
@@ -279,17 +315,6 @@ const WrapperCollections = ({ children }) => {
       dispatch($collection.set.fetching(true))
     }
   }, [pages])
-
-  const initWSConnection = async (blockchain, resultCollections) => {
-    dispatch($app.set.socketConnected(false))
-    await Stream.connect(blockchain)
-    dispatch($app.set.socketConnected(true))
-
-    /* Stream.subscribe('collection.updated', resultCollections.map(c => c.id))
-    Stream.on('collection.updated', (data) => {
-      console.log('collection.updated', data)
-    }) */
-  }
 
   return children
 }

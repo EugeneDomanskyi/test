@@ -1,5 +1,4 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
-import { formatUnits } from 'viem'
 import numeral from 'numeral'
 import moment from 'moment'
 
@@ -47,29 +46,65 @@ const addSide = (list) => {
   return []
 }
 
-const groupByPrice = (data, sort = 'asc') => {
-  // const temp = {}
-  // for (const item of data) {
-  //   if (!isNaN(item.priceFormatted)) {
-  //     if ( ! temp[item.priceFormatted]) {
-  //       temp[item.priceFormatted] = item
-  //     } else {
-  //       temp[item.priceFormatted] = {
-  //         ...temp[item.priceFormatted],
-  //         amount: (temp[item.priceFormatted].amount * 1 + item.amount * 1),
-  //         quantity: (temp[item.priceFormatted].quantity * 1 + item.quantity * 1),
-  //       }
-  //     }
-  //   }
-  // }
-  
-  // const array = Object.keys(temp).map(key => temp[key])
-  // array.sort((a, b) => sort == 'asc' ? (a.price - b.price) : (b.price - a.price))
-  // return array
+const tradeFormatter = list => {
+  if (list && Array.isArray(list)) {
+    return list.map(item => {
+      const makerAsset = INCH_TOKENS[item.data.makerAsset]
+      const takerAsset = INCH_TOKENS[item.data.takerAsset]
+    
+      if (!makerAsset || !takerAsset) {
+        return {}
+      }
+      
+      const makingAmountFormatted = Math.pow(10, -makerAsset.decimals)*item.data.makingAmount //formatUnits(item.data.makingAmount, makerAsset.decimals)
+      const takingAmountFormatted = Math.pow(10, -takerAsset.decimals)*item.data.takingAmount//formatUnits(item.data.takingAmount, takerAsset.decimals)
+      
+      const side = makerAsset.symbol === 'USDT' ? 'buy' : 'sell'
 
-  const array = [...data]
+      const makerPrice = makingAmountFormatted / takingAmountFormatted
+      const takerPrice = takingAmountFormatted / makingAmountFormatted
+      
+      const makerAmount = Math.pow(10, -makerAsset.decimals)*item.data.makingAmount //side === 'sell' ? makingAmountFormatted : takingAmountFormatted
+      const takerAmount = Math.pow(10, -takerAsset.decimals)*item.data.takingAmount
+
+      const timestamp = moment(item.createDateTime).unix()
+      return {
+        ...item,
+        side: side,
+        price: side === 'buy' ? makerPrice : takerPrice,
+        priceFormatted: numeral(side === 'buy' ? makerPrice : takerPrice).format('0.0[00000]'),
+        amount: numeral(side === 'buy' ? takerAmount : makerAmount).format('0.0[00000]'),
+        quantity: numeral(side === 'buy' ? takerAmount : makerAmount).format('0.0[00000]'),
+        timestamp: timestamp,
+      }
+    })
+  }
+  return []
+}
+
+const groupByPrice = (data, sort = 'asc') => {
+  const temp = {}
+  for (const item of data) {
+    if (!isNaN(item.priceFormatted)) {
+      if ( ! temp[item.priceFormatted]) {
+        temp[item.priceFormatted] = item
+      } else {
+        temp[item.priceFormatted] = {
+          ...temp[item.priceFormatted],
+          amount: (temp[item.priceFormatted].amount * 1 + item.amount * 1),
+          quantity: (temp[item.priceFormatted].quantity * 1 + item.quantity * 1),
+        }
+      }
+    }
+  }
+  
+  const array = Object.keys(temp).map(key => temp[key])
   array.sort((a, b) => sort == 'asc' ? (a.price - b.price) : (b.price - a.price))
   return array
+
+  // const array = [...data]
+  // array.sort((a, b) => sort == 'asc' ? (a.price - b.price) : (b.price - a.price))
+  // return array
 }
 
 const generatePeriods = (from, to, closePrice, step) => {
@@ -155,14 +190,14 @@ const getters = {
   recentTrades: (type, limit) => createSelector([
     state => state.$orders.trades[type]
   ], (trades) => {
-    return trades.slice(0, limit).filter(order => {
-      return order.orderInvalidReason === 'order filled' && order.priceFormatted !== 'NaN'
+    return trades.filter(order => {
+      return (order.priceFormatted !== 'NaN') && (order.orderInvalidReason === 'order filled' || type === 'nfts')
     }).map(sale => {
       return {
         ...sale,
-        priceFormatted: sale.priceFormatted ?? sale.price.amount.decimal,
+        priceFormatted: sale.priceFormatted ?? sale.price.amount.native,
       }
-    })
+    }).slice(0, limit)
   }),
 
   kLineData: (interval) => createSelector([
@@ -287,10 +322,9 @@ api.get.tokens.trades = ({address, blockchain, ...rest}) => {
     request('all', 'GET', {api: 'inch', takerAsset: address, makerAsset: network.usdtContract, blockchain, ...rest}),
     request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, blockchain, ...rest}),
   ]).then(([sell1, buy1]) => {
-    
     return [
-      addSide(buy1, 'buy'),
-      addSide(sell1, 'sell'),
+      tradeFormatter(buy1),
+      tradeFormatter(sell1),
     ].flat()
   })
 }

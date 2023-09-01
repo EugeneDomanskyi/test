@@ -18,6 +18,7 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
   const { wallet, connect, changeNetwork } = useWalletConnect()
   
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
+  const [cancellingOrders, setCancellingOrders] = useState([])
 
   const handlePressCancel = (order) => async (e) => {
     e.stopPropagation()
@@ -39,14 +40,24 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
       'Total': order.price,
       'Network': blockchain.name,
       'Wallet connect Status': wallet ? 'Connected' : 'Not connected',
-      'Order Type': 'Limit Order',
+      'Wallet Address': wallet || null,
+      'Order Type': 'Limit order',
     }
     trackEvent('Cancel Order Submit', eventPost)
+    setCancellingOrders(state => {
+      return [...state, order.id]
+    })
     order.cancel().then(() => {
       trackEvent('Cancel Order Success', eventPost)
       onOrderCancelled()
+      setCancellingOrders(state => {
+        return state.filter(id => id !== order.id)
+      })
     }).catch(error => {
       console.log('order cancel error', error)
+      setCancellingOrders(state => {
+        return state.filter(id => id !== order.id)
+      })
     })
   }
 
@@ -55,7 +66,8 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
   }
 
   const handleClick = order => () => {
-    router.push(`${order.contractAddress}`, undefined, {scroll: false})
+    const [_, _seg1, seg2] = router.asPath.split('/')
+    router.push(`${[seg2, order.contractAddress].join('/')}`, undefined, {scroll: false})
     onClickOrder({
       quantity: order.quantity,
       price: order.itemPrice,
@@ -103,7 +115,7 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
         {
           orders.filter(order => !showCollectionOrders || (order.contractAddress === current.address)).map((order) => {
             return (
-              <App.Flex key={order.id} column>
+              <App.Flex key={order.id} column sx={{position: 'relative'}}>
                 <App.Flex align="center" className={styles.order} onClick={handleClick(order)}>
                   <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
                   <App.Flex column align="center" justify="center" sx={{width: 60}}>
@@ -129,6 +141,13 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
                     </App.Flex>
                   </App.Flex>
                 </App.Flex>
+                {
+                  cancellingOrders.includes(order.id)
+                    ? <App.Flex sx={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0}} align="center" justify="center">
+                        <App.Loader />
+                      </App.Flex>
+                    : null
+                }
               </App.Flex>
             )
           })
