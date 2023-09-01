@@ -9,8 +9,7 @@ export default function Images() {
   
   // const images = []
   
-  const images = marketInfo?.sampleImages.split(',')
-  console.log('marketInfo.sampleImages', marketInfo.sampleImages);
+  const images = marketInfo?.sampleImages?.split(',')
   console.log('images', images);
 
 
