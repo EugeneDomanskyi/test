@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { loadIntercom } from 'next-intercom'
 import { v4 as uuid } from 'uuid'
+import { useAccount } from 'wagmi'
+import amplitude from 'amplitude-js'
 
 import { trackEvent } from '@/libs/analytics.lib'
 
@@ -12,8 +14,26 @@ import WrapperCollections from '@/components/Wrapper/WrapperCollections'
 
 const Wrapper = ({ children }) => {
   const router = useRouter()
-  const isNfts = router.pathname.includes('/nfts')
-  const isTokens = router.pathname.includes('/tokens')
+  const [collectionId] = router.query.collectionId || []
+  const isExchange = router.pathname.includes('/exchange')
+  const {address, isConnected} = useAccount()
+
+  const { usdt, network } = useWalletConnect()
+  const dispatch = useDispatch()
+  const blockchain = useSelector($app.get.blockchain)
+  const { blockchains } = useSelector(({ $app }) => $app)
+  const { fetching, page, current: collection } = useSelector(({ $collection }) => $collection)
+  const { collections, searched } = useSelector($collection.get.all)
+
+  const blockchainCode = useRef(blockchain.code)
+
+  useEffect(() => {
+    if (isConnected && address) {
+      const identifyObj = new amplitude.Identify()
+      identifyObj.set('wallet', address)
+      amplitude.identify(identifyObj)
+    }
+  }, [address, isConnected])
 
   useEffect(() => {
     const deviceId = localStorage.getItem('device_id')
