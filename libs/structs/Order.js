@@ -5,6 +5,7 @@ import { getWalletClient, waitForTransaction, sendTransaction, signTypedData, re
 import { LimitOrderProtocolFacade, LimitOrderBuilder } from '@1inch/limit-order-protocol-utils'
 import { FusionSDK } from '@1inch/fusion-sdk'
 import { toast } from 'react-toastify'
+import BigNumber from 'bignumber.js'
 
 import { CHAINS, INCH_CONTRACTS, INCH_TOKENS } from '@/config'
 import $orders from '@/store/orders'
@@ -345,6 +346,24 @@ class TOKEN extends Order {
     return numeral(this.price).divide(this.quantity).format('0.0[000]')
   }
 
+  static formatter = async (order, makerDecimals, takerDecimals) => {
+    const makingAmount = new BigNumber(order.remainingMakerAmount)
+    const takingAmount = makingAmount.multipliedBy(new BigNumber(order.data.takingAmount)).dividedBy(new BigNumber(order.data.makingAmount))
+    const makingAmountFormatted = formatUnits(makingAmount.toNumber(), makerDecimals)*1
+    const takingAmountFormatted = formatUnits(takingAmount.toNumber(), takerDecimals)*1
+    return {
+      ...order,
+      makingAmount: makingAmount,
+      takingAmount: takingAmount,
+      makingAmountFormatted: makingAmountFormatted,
+      takingAmountFormatted: takingAmountFormatted,
+      makerPrice: takingAmountFormatted/makingAmountFormatted,
+      takerPrice: makingAmountFormatted/takingAmountFormatted,
+      takerRate: new BigNumber(order.takerRate),
+      makerRate: new BigNumber(order.makerRate),
+    }
+  }
+
   static getCheapest = async ({chainId, takerAsset, makerAsset, amount}) => {
     const network = CHAINS.find(chain => chain.id === chainId)
     const res = await $orders.api.get.tokens.byAssets({
@@ -400,58 +419,68 @@ class TOKEN extends Order {
       const makerDecimals = await Order.getDecimals(makerAsset, chainId)
       const takerDecimals = await Order.getDecimals(takerAsset, chainId)
 
-      const amountInWei = Math.pow(10,  side === 'buy' ? makerDecimals : takerDecimals)*amount
+      let list = []
+      for (const order of res) {
+        const orderObj =  await TOKEN.formatter(order, makerDecimals, takerDecimals)
+        list.push(orderObj)
+      }
+
+      // const amountInWei = Math.pow(10,  side === 'buy' ? makerDecimals : takerDecimals)*amount
+      const amountInWei = new BigNumber(parseUnits(amount, side === 'buy' ? makerDecimals : takerDecimals))
+
+      // console.log('list', list)
 
       const filter = {
         buy: order => order.makerPrice <= price*1,
         sell: order => order.takerPrice >= price*1,
       }
       
-      const fixRate = order => {
-        const makingValue = Math.pow(10, -makerDecimals)*order.data.makingAmount
-        const takingValue = Math.pow(10, -takerDecimals)*order.data.takingAmount
-        return {
-          ...order,
-          takerPrice: makingValue/takingValue,
-          makerPrice: takingValue/makingValue,
-        }
-      }
+      // const fixRate = order => {
+      //   const makingValue = Math.pow(10, -makerDecimals)*order.data.makingAmount
+      //   const takingValue = Math.pow(10, -takerDecimals)*order.data.takingAmount
+      //   return {
+      //     ...order,
+      //     takerPrice: makingValue/takingValue,
+      //     makerPrice: takingValue/makingValue,
+      //   }
+      // }
       
-      const filteredByPrice = res.map(fixRate).filter(filter[side]).map((order) => {
-        const takingAmount = BigInt(order.remainingMakerAmount) * BigInt(order.data.takingAmount) / BigInt(order.data.makingAmount)
-        return {
-          ...order,
-          makingAmount: order.remainingMakerAmount,
-          takingAmount: takingAmount,
-          makingAmountFormatted: formatUnits(order.remainingMakerAmount, makerDecimals),
-          takingAmountFormatted: formatUnits(takingAmount, takerDecimals),
-        }
-      })
+      const filteredByPrice = list.filter(filter[side])
+      // .map((order) => {
+      //   const takingAmount = BigInt(order.remainingMakerAmount) * BigInt(order.data.takingAmount) / BigInt(order.data.makingAmount)
+      //   return {
+      //     ...order,
+      //     makingAmount: order.remainingMakerAmount,
+      //     takingAmount: takingAmount,
+      //     makingAmountFormatted: formatUnits(order.remainingMakerAmount, makerDecimals),
+      //     takingAmountFormatted: formatUnits(takingAmount, takerDecimals),
+      //   }
+      // })
       
       const temp = filteredByPrice.reduce((acc, order) => {
         if (side === 'sell') {
           acc.totalToBuy = Math.floor(acc.totalToBuy*order.takerRate)
         }
-        if (acc.totalToBuy <= 0) {
+        if (acc.totalToBuy.isZero()) {
           return acc
         }
-        const diff = order.makingAmount - acc.totalToBuy
+        const diff = order.makingAmount.minus(acc.totalToBuy)
         let willTakeMakingAmount = 0
         let willSpendTakingAmount = 0
-        if (diff >= 0) {
+        if (diff.isPositive() || diff.isZero()) {
           // can fill in this order
           willTakeMakingAmount = acc.totalToBuy
-          willSpendTakingAmount = side === 'buy' ? Math.ceil(acc.totalToBuy*order.makerRate) : Math.ceil(willTakeMakingAmount/order.takerRate)
+          willSpendTakingAmount = side === 'buy' ? acc.totalToBuy.multipliedBy(order.makerRate) : willTakeMakingAmount.dividedBy(order.takerRate)
           
-          acc.totalToBuy = 0
+          acc.totalToBuy = new BigNumber(0)
         } else {
           // need next order
-          willTakeMakingAmount = order.makingAmount*1
-          willSpendTakingAmount = side === 'buy' ? Math.ceil(order.makingAmount*order.makerRate) : Math.ceil(willTakeMakingAmount/order.takerRate)
-          acc.totalToBuy = side === 'sell' ? diff*-1 / order.takerRate : diff*-1
+          willTakeMakingAmount = order.makingAmount
+          willSpendTakingAmount = side === 'buy' ? order.makingAmount.multipliedBy(order.makerRate) : willTakeMakingAmount.dividedBy(order.takerRate)
+          acc.totalToBuy = side === 'sell' ? diff.multipliedBy(-1).dividedBy(order.takerRate) : diff.multipliedBy(-1)
         }
-        const willTakeMakingAmountFormatted = formatUnits(willTakeMakingAmount, side === 'buy' ? makerDecimals : takerDecimals)
-        const willSpendTakingAmountFormatted = formatUnits(willSpendTakingAmount, side === 'sell' ? makerDecimals : takerDecimals)
+        const willTakeMakingAmountFormatted = formatUnits(willTakeMakingAmount.toNumber(), side === 'buy' ? makerDecimals : takerDecimals)
+        const willSpendTakingAmountFormatted = formatUnits(willSpendTakingAmount.toFixed(0), side === 'sell' ? makerDecimals : takerDecimals)
         
         return {
           ...acc,
@@ -470,23 +499,23 @@ class TOKEN extends Order {
 
       const stats = filteredByPrice.reduce((acc, order) => {
         return {
-          totalAmountOnSell: acc.totalAmountOnSell + order.makingAmount*1,
-          totalAmountToSell: acc.totalAmountToSell + order.takingAmount,
+          totalAmountOnSell: acc.totalAmountOnSell.plus(order.makingAmount),
+          totalAmountToSell: acc.totalAmountToSell.plus(order.takingAmount),
         }
-      }, {totalAmountOnSell: 0, totalAmountToSell: BigInt(0)})
+      }, {totalAmountOnSell: new BigNumber(0), totalAmountToSell: new BigNumber(0)})
 
       const rates = temp.orders.reduce((acc, order) => {
         return {
-          willSpendAmount: acc.willSpendAmount + order.willSpendTakingAmount*1,
-          willTakeAmount: acc.willTakeAmount + order.willTakeMakingAmount*1,
+          willSpendAmount: acc.willSpendAmount.plus(order.willSpendTakingAmount),
+          willTakeAmount: acc.willTakeAmount.plus(order.willTakeMakingAmount),
         }
-      }, {willSpendAmount: 0, willTakeAmount: 0})
+      }, {willSpendAmount: new BigNumber(0), willTakeAmount: new BigNumber(0)})
 
       return {
-        totalAmountOnSell: Math.pow(10, -(makerDecimals))*stats.totalAmountOnSell,
+        totalAmountOnSell: formatUnits(stats.totalAmountOnSell, makerDecimals),
         totalAmountToSell: formatUnits(stats.totalAmountToSell, takerDecimals),
-        willSpendAmount: Math.pow(10, -(takerDecimals))*rates.willSpendAmount,
-        willTakeAmount: Math.pow(10, -(makerDecimals))*rates.willTakeAmount,
+        willSpendAmount: formatUnits(rates.willSpendAmount.toFixed(0), takerDecimals),
+        willTakeAmount: formatUnits(rates.willTakeAmount.toFixed(0), makerDecimals),
         orders: temp.orders,
       }
     }
@@ -569,7 +598,7 @@ class TOKEN extends Order {
         sellAsset = address
         buyAsset = network.usdtContract
       }
-      const { orders, willSpendAmount, } = await TOKEN.getOpenWithPriceLimitation({
+      const { orders, willSpendAmount } = await TOKEN.getOpenWithPriceLimitation({
         chainId: chainId,
         takerAsset: sellAsset,
         makerAsset: buyAsset,
@@ -584,12 +613,12 @@ class TOKEN extends Order {
           return
         }
         
-        const totalSpendAmount = orders.reduce((acc, order) => acc+order.willSpendTakingAmount, 0)
+        const totalSpendAmount = orders.reduce((acc, order) => acc.plus(order.willSpendTakingAmount), new BigNumber(0))
         // const totalTakeAmount = orders.reduce((acc, order) => acc+order.willTakeMakingAmount, 0)
         
         const balance = await Order.getBalance(walletClient.account.address, sellAsset)
         // const totalSpendFormatted = orders.reduce((acc, order) => acc+order.willSpendTakingAmountFormatted*1, 0)
-        if (willSpendAmount > balance*1) {
+        if (willSpendAmount*1 > balance*1) {
           Order.showErrorMessage('Insufficient balance')
           reject()
           return 
@@ -600,20 +629,20 @@ class TOKEN extends Order {
             order.data,
             order.signature,
             '0x',
-            order.willTakeMakingAmount.toString(),
+            order.willTakeMakingAmount.valueOf(),
             '0',
             '0xde0b6b3a7640000',
             // walletClient.account.address
           ]
         })
 
-        console.log('params -> ', list, totalSpendAmount.toString())
+        console.log('params -> ', list, totalSpendAmount.toFixed(0))
 
         const config = await prepareWriteContract({
           address: TEGRO_FILL_ORDERS_CONTRACTS[chainId],
           abi: TEGRO_ABI,
           functionName: 'fillMultipleOrders',
-          args: [list, totalSpendAmount.toString()],
+          args: [list, totalSpendAmount.toFixed(0)],
         }).catch(error => {
           console.log('prepareWriteContract', error)
         })
