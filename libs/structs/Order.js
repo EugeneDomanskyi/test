@@ -459,7 +459,7 @@ class TOKEN extends Order {
       
       const temp = filteredByPrice.reduce((acc, order) => {
         if (side === 'sell') {
-          acc.totalToBuy = Math.floor(acc.totalToBuy*order.takerRate)
+          acc.totalToBuy = acc.totalToBuy.multipliedBy(order.takerRate)
         }
         if (acc.totalToBuy.isZero()) {
           return acc
