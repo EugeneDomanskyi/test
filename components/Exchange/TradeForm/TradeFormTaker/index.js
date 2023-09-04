@@ -67,7 +67,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
     })
     const { orders, ...rest} = res
     // console.log(rest)
-    console.log(orders, rest)
+    // console.log(orders, rest)
     setAbilities(rest)
     setLoading(false)
   }
@@ -107,8 +107,8 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
           props: {
             data: {
               side: 'buy',
-              makerAsset: usdtFormatted,
-              takerAsset: current,
+              makerAsset: current,
+              takerAsset: usdtFormatted,
               amount: form.amount,
               price: form.price,
               blockchain: tokenBlockchain,
@@ -141,8 +141,8 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
           props: {
             data: {
               side: 'sell',
-              makerAsset: current,
-              takerAsset: usdtFormatted,
+              makerAsset: usdtFormatted,
+              takerAsset: current,
               amount: form.amount,
               price: form.price,
               blockchain: tokenBlockchain,

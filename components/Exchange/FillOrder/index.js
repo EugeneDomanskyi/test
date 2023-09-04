@@ -35,8 +35,6 @@ const FillOrder = ({data, onClose}) => {
   const handleConfirm = () => {
 
   }
-
-  console.log(abilities.orders)
   return (
     <App.Flex column className={styles.container}>
       <App.Flex className={styles.header} align="center" justify="space-between">
@@ -85,13 +83,13 @@ const FillOrder = ({data, onClose}) => {
                       </App.Flex>
                       <App.Flex justify="space-between">
                         <App.Flex align="center">
-                          <Image width={25} height={25} src={data.makerAsset.image} style={{marginRight: 8}} />
-                          <App.Text size={12} weight={600}>{ numeral(abilities.willSpendAmount).format('0.[00000]') } {data.makerAsset.symbol}</App.Text>
+                          <Image width={25} height={25} src={data.takerAsset.image} style={{marginRight: 8}} />
+                          <App.Text size={12} weight={600}>{ abilities.willSpendAmount } {data.takerAsset.symbol}</App.Text>
                         </App.Flex>
                         <App.Icon icon="arrow-right" />
                         <App.Flex align="center">
-                          <Image width={25} height={25} src={data.takerAsset.image} style={{marginRight: 8}} />
-                          <App.Text size={12} weight={600}>{ numeral(abilities.willTakeAmount).format('0.[00000]') } {data.takerAsset.symbol}</App.Text>
+                          <Image width={25} height={25} src={data.makerAsset.image} style={{marginRight: 8}} />
+                          <App.Text size={12} weight={600}>{ numeral(abilities.willTakeAmount).format('0.[00000]') } {data.makerAsset.symbol}</App.Text>
                         </App.Flex>
                       </App.Flex>
                     </App.Flex>
