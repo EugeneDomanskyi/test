@@ -479,7 +479,7 @@ class TOKEN extends Order {
           willSpendTakingAmount = side === 'buy' ? order.makingAmount.multipliedBy(order.makerRate) : willTakeMakingAmount.dividedBy(order.takerRate)
           acc.totalToBuy = side === 'sell' ? diff.multipliedBy(-1).dividedBy(order.takerRate) : diff.multipliedBy(-1)
         }
-        const willTakeMakingAmountFormatted = formatUnits(willTakeMakingAmount.toNumber(), side === 'buy' ? makerDecimals : takerDecimals)
+        const willTakeMakingAmountFormatted = formatUnits(willTakeMakingAmount.toFixed(0), side === 'buy' ? makerDecimals : takerDecimals)
         const willSpendTakingAmountFormatted = formatUnits(willSpendTakingAmount.toFixed(0), side === 'sell' ? makerDecimals : takerDecimals)
         
         return {
