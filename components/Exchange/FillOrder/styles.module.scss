@@ -1,6 +1,6 @@
 .container {
   background-color: #08051C;
-  padding-bottom: 16px;
+  
 
   .header {
     height: 37px;
@@ -10,10 +10,19 @@
 
   .content {
     padding: 0 16px;
+    padding-bottom: 16px;
+
+    .border {
+      border-bottom: 1px solid #5E5C6B;
+      padding-bottom: 16px;
+      margin-bottom: 8px;
+    }
+
     .steps {
       height: 25px;
       width: 100%;
       gap: 6px;
+      margin-bottom: 8px;
 
       .line {
         width: 100%;
@@ -22,5 +31,34 @@
         border-radius: 3px;
       }
     }
+
+    .detailsIcon {
+      transition: transform .2s;
+    }
+
+    .details {
+      margin-bottom: 8px;
+      overflow: hidden;
+      transition: max-height .2s;
+    }
+
+    .button {
+      height: 56px;
+      border-radius: 8px;
+      background-color: #53F19C;
+      width: 100%;
+      cursor: pointer;
+  
+      &:hover {
+        filter: brightness(1.2);
+      }
+    }
+  }
+
+  .banner {
+    background-color: #06382F;
+    border: 1px solid #53F19C;
+    padding: 8px;
+    border-radius: 12px;
   }
 }

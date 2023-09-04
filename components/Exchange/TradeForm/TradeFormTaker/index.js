@@ -6,8 +6,10 @@ import numeral from 'numeral'
 
 import $app from '@/store/app'
 import $modal from '@/store/modal'
+import $token, { template } from '@/store/token'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import Order from '@/libs/structs/Order'
+import { INCH_TOKENS } from '@/config'
 
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
@@ -92,61 +94,79 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
     if (!network) {
       return
     }
+    const usdtAsset = INCH_TOKENS[tokenBlockchain.usdtContract.toLowerCase()]
+    const usdtFormatted = {
+      ...usdtAsset,
+      image: usdtAsset.logoURI,
+    }
     switch (currentTab) {
       case 'buy':
+        dispatch($modal.set.show({
+          show: true,
+          modal: 'Exchange/FillOrder',
+          props: {
+            data: {
+              side: 'buy',
+              makerAsset: usdtFormatted,
+              takerAsset: current,
+              amount: form.amount,
+              price: form.price,
+              blockchain: tokenBlockchain,
+            },
+          }
+        }))
         // dispatch($modal.set.show({
         //   show: true,
-        //   modal: 'Exchange/FillOrder',
+        //   modal: 'Exchange/BuyModal',
         //   props: {
+        //     header: {
+        //       title: `Buy ${current.name} for USDT`,
+        //     },
         //     data: {
-        //       side: 'buy',
-        //       makerAsset: tokenBlockchain.usdtContract,
-        //       takerAsset: current.address,
+        //       type: 'fulfill',
         //       amount: form.amount,
         //       price: form.price,
+        //       total: form.amount*form.price,
         //       current: current,
+        //       tokenType: 'tokens',
         //       blockchain: tokenBlockchain,
         //     },
         //   }
         // }))
-        dispatch($modal.set.show({
-          show: true,
-          modal: 'Exchange/BuyModal',
-          props: {
-            header: {
-              title: `Buy ${current.name} for USDT`,
-            },
-            data: {
-              type: 'fulfill',
-              amount: form.amount,
-              price: form.price,
-              total: form.amount*form.price,
-              current: current,
-              tokenType: 'tokens',
-              blockchain: tokenBlockchain,
-            },
-          }
-        }))
         break
       case 'sell':
         dispatch($modal.set.show({
           show: true,
-          modal: 'Exchange/SellModal',
+          modal: 'Exchange/FillOrder',
           props: {
-            header: {
-              title: `Sell ${current.name} for USDT`,
-            },
             data: {
-              type: 'fulfill',
+              side: 'sell',
+              makerAsset: current,
+              takerAsset: usdtFormatted,
               amount: form.amount,
               price: form.price,
-              tokens: [],
-              current: current,
-              tokenType: 'tokens',
               blockchain: tokenBlockchain,
             },
           }
         }))
+        // dispatch($modal.set.show({
+        //   show: true,
+        //   modal: 'Exchange/SellModal',
+        //   props: {
+        //     header: {
+        //       title: `Sell ${current.name} for USDT`,
+        //     },
+        //     data: {
+        //       type: 'fulfill',
+        //       amount: form.amount,
+        //       price: form.price,
+        //       tokens: [],
+        //       current: current,
+        //       tokenType: 'tokens',
+        //       blockchain: tokenBlockchain,
+        //     },
+        //   }
+        // }))
         break
     }
   }
