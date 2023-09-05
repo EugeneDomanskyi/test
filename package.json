@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "prisma generate && next dev",
-    "build": "prisma generate && next build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -26,6 +26,7 @@
     "@wagmi/chains": "^1.7.0",
     "alchemy-sdk": "^2.9.0",
     "amplitude-js": "^8.21.9",
+    "aws-sdk": "^2.1450.0",
     "classnames": "^2.3.2",
     "ethers": "^5.7.2",
     "graphql": "^16.6.0",

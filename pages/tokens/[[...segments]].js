@@ -32,7 +32,6 @@ const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 const GRID_GAP = 6
 
 const Tokens = ({marketInfo}) => {
-  console.log('marketInfo in Tokens!', marketInfo);
   const router = useRouter()
   const [queryBlockchainCode, queryTokenId] = router.query.segments || []
 

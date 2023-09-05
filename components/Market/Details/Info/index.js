@@ -9,9 +9,6 @@ const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 export default function Info() {
   const { current, marketInfo } = useSelector(({$collection}) => $collection)
 
-  console.log('current', current);
-  console.log('marketInfo', marketInfo);
-
   return (
     <App.Flex column sx={{width: '100%'}} gap={16}>
       <App.Flex className={styles.container}>

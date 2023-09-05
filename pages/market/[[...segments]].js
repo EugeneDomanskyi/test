@@ -25,6 +25,8 @@ import Investors from '@/components/Market/Details/Investors'
 import Resources from '@/components/Market/Details/Resources'
 import FAQ from '@/components/Market/Details/FAQ'
 
+import { getAssetsFile, putAssetsFile } from '@/libs/aws.lib'
+
 const token = 'fc873434915ecf9e639339b325338f768e1f5b81fc88e3e4299641a3f87de70fcf93c09316c0d1e5146fa36171076ead7c5797f1d1882f35a9f60aaf5ec065ad7757b0615886847a307d3b25dbaadb42b98d63c59a39744667ff3f5438393a87f3b63ce948bfb260ac0041c44dbe0a10e1646dfa8f8d2c85abd18e45c0bb02c6'
 
 const prisma = new PrismaClient()
@@ -40,9 +42,28 @@ export default function Markets({marketData, marketSales, marketOrders, marketIn
 
   useEffect(() => {
     if (marketData) {
-      console.log('marketData', marketData);
+      // console.log('marketData', marketData);
       dispatch($collection.set.current(marketData))
     }
+
+    const obj = [{
+      "id": "0x5d843fa9495d23de997c394296ac7b4d721e841c",
+      "cgId": "relay-token",
+      "address": "0x5d843fa9495d23de997c394296ac7b4d721e841c",
+      "decimals": 18,
+      "image": "https://assets.coingecko.com/coins/images/17816/large/relay-logo-200.png?1629339288",
+      "symbol": "RELAY",
+      "currency": "USD",
+      "description": "RELAY is a multi cross-chain platform developed to bring BaaS (Bridging as a Service) to help the often fragmented DeFi liquidity space. What is really unique to our bridge is that when a new ecosystem is created, our bridge connects that asset and ecosystem to all the other ones we support. At launch we currently support bridging to Ethereum, BSC, Avalanche, Polygon (Matic), and Heco — with more coming soon. Relay's bridges were first to introduce the bridge gas token faucet to Defi where the bridge itself airdrops the native gas token to new users to reduce friction for people starting out on new chains.\r\n\r\nOur goal at Relay Chain is simple, \"\"Have the best and safest bridge\"\". We will provide value to our token holders by giving them native gas tokens for providing liquidity instead of our native project token (RELAY). By doing this we eliminate all sell pressure to Relay and we can give the highest APY's to Relay Liquidity Providers. This allows us to have a token that provides value, and it's deflationary (via buyback and burns) which is doing with a portion of the gas token profits from bridge transactional volume. The brings the positive feedback loops and true ecosystem synergy into the Relay Chain ecosystem where all partners provide utility to the end users of our platform.",
+      "tokenCount": 8823406,
+      "discordUrl": null,
+      "externalUrl": "https://www.relaychain.com/",
+      "twitterUrl": "https://twitter.com/relay_chain",
+      "openseaVerificationStatus": null
+    }]
+
+    // putAssetsFile(obj)
+    getAssetsFile()
 
     // if (marketSales) {
     //   dispatch($exchange.set.sales(marketSales))
@@ -169,35 +190,35 @@ export async function getServerSideProps(context) {
     }
   }
 
-  const marketInfo = await prisma.market.findFirst({
-    where: {
-      address: address,
-    }
-  });
+  // const marketInfo = await prisma.market.findFirst({
+  //   where: {
+  //     address: address,
+  //   }
+  // });
 
-  marketInfo.createdAt = marketInfo.createdAt.toString()
-  marketInfo.updatedAt = marketInfo.updatedAt.toString()
+  // marketInfo.createdAt = marketInfo.createdAt.toString()
+  // marketInfo.updatedAt = marketInfo.updatedAt.toString()
 
-  console.log('marketInfo', marketInfo);
+  // console.log('marketInfo', marketInfo);
 
-  const marketSales = await $exchange.api.get.sales({
-    collection: address,
-    blockchain: blockchainCode,
-    includeDeleted: false,
-    includeTokenMetadata: false,
-    sortDirection: 'desc',
-    limit: 80,
-  })
+  // const marketSales = await $exchange.api.get.sales({
+  //   collection: address,
+  //   blockchain: blockchainCode,
+  //   includeDeleted: false,
+  //   includeTokenMetadata: false,
+  //   sortDirection: 'desc',
+  //   limit: 80,
+  // })
 
-  const marketOrders = await $orders.api.get.nfts.orderBook({
-    collection: address,
-    blockchain: blockchainCode,
-  })
+  // const marketOrders = await $orders.api.get.nfts.orderBook({
+  //   collection: address,
+  //   blockchain: blockchainCode,
+  // })
 
   return {
     props: {
       marketData,
-      marketInfo,
+      // marketInfo,
       // marketSales,
       // marketOrders
     },
