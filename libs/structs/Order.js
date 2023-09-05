@@ -1,7 +1,7 @@
 import numeral from 'numeral'
 import { formatUnits, encodeFunctionData, parseUnits, hashTypedData } from 'viem'
 import { getClient } from '@reservoir0x/reservoir-sdk'
-import { getWalletClient, waitForTransaction, sendTransaction, signTypedData, readContract, writeContract, prepareWriteContract, prepareSendTransaction, fetchBalance } from '@wagmi/core'
+import { getWalletClient, waitForTransaction, sendTransaction, signTypedData, readContract, writeContract, prepareWriteContract, prepareSendTransaction, fetchBalance, watchContractEvent } from '@wagmi/core'
 import { LimitOrderProtocolFacade, LimitOrderBuilder } from '@1inch/limit-order-protocol-utils'
 import { FusionSDK } from '@1inch/fusion-sdk'
 import { toast } from 'react-toastify'
@@ -346,11 +346,23 @@ class TOKEN extends Order {
     return numeral(this.price).divide(this.quantity).format('0.0[000]')
   }
 
-  static formatter = async (order, makerDecimals, takerDecimals) => {
+  static listenContract = (events, params, callback) => {
+    const eventHandler = (eventName, event) => {
+      callback(eventName, event)
+    }
+    const subsribers = events.map((eventName) => {
+      return watchContractEvent({...params, eventName: eventName}, (event) => eventHandler(eventName, event))
+    })
+    return () => {
+      subsribers.forEach(fn => fn())
+    }
+  }
+
+  static formatter = (order, makerDecimals, takerDecimals) => {
     const makingAmount = new BigNumber(order.remainingMakerAmount)
     const takingAmount = makingAmount.multipliedBy(new BigNumber(order.data.takingAmount)).dividedBy(new BigNumber(order.data.makingAmount))
     const makingAmountFormatted = formatUnits(makingAmount.toNumber(), makerDecimals)*1
-    const takingAmountFormatted = formatUnits(takingAmount.toNumber(), takerDecimals)*1
+    const takingAmountFormatted = formatUnits(takingAmount.toFixed(0), takerDecimals)*1
     return {
       ...order,
       makingAmount: makingAmount,
@@ -419,11 +431,11 @@ class TOKEN extends Order {
       const makerDecimals = await Order.getDecimals(makerAsset, chainId)
       const takerDecimals = await Order.getDecimals(takerAsset, chainId)
 
-      let list = []
-      for (const order of res) {
-        const orderObj =  await TOKEN.formatter(order, makerDecimals, takerDecimals)
-        list.push(orderObj)
-      }
+      const list = res.map(order => TOKEN.formatter(order, makerDecimals, takerDecimals))
+      // for (const order of res) {
+      //   const orderObj = TOKEN.formatter(order, makerDecimals, takerDecimals)
+      //   list.push(orderObj)
+      // }
 
       // const amountInWei = Math.pow(10,  side === 'buy' ? makerDecimals : takerDecimals)*amount
       const amountInWei = new BigNumber(parseUnits(amount, side === 'buy' ? makerDecimals : takerDecimals))
@@ -513,7 +525,7 @@ class TOKEN extends Order {
 
       return {
         totalAmountOnSell: formatUnits(stats.totalAmountOnSell, makerDecimals),
-        totalAmountToSell: formatUnits(stats.totalAmountToSell, takerDecimals),
+        totalAmountToSell: formatUnits(stats.totalAmountToSell.toFixed(0), takerDecimals),
         willSpendAmount: formatUnits(rates.willSpendAmount.toFixed(0), takerDecimals),
         willTakeAmount: formatUnits(rates.willTakeAmount.toFixed(0), makerDecimals),
         orders: temp.orders,
@@ -588,7 +600,7 @@ class TOKEN extends Order {
     })
   }
 
-  static fulfill = ({address, amount, price, side}) => {
+  static fulfill = ({address, amount, price, side}, callback) => {
     return new Promise(async (resolve, reject) => {
       const { chainId, walletClient } = await Order.getWalletData()
       const network = CHAINS.find(chain => chain.id === chainId)
@@ -612,7 +624,7 @@ class TOKEN extends Order {
           reject()
           return
         }
-        
+        callback('allowance', {success: true})
         const totalSpendAmount = orders.reduce((acc, order) => acc.plus(order.willSpendTakingAmount), new BigNumber(0))
         // const totalTakeAmount = orders.reduce((acc, order) => acc+order.willTakeMakingAmount, 0)
         
@@ -629,7 +641,7 @@ class TOKEN extends Order {
             order.data,
             order.signature,
             '0x',
-            order.willTakeMakingAmount.valueOf(),
+            order.willTakeMakingAmount.toFixed(0).toString(),
             '0',
             '0xde0b6b3a7640000',
             // walletClient.account.address
@@ -650,15 +662,22 @@ class TOKEN extends Order {
         console.log('config', config)
 
         if (config?.mode === 'prepared') {
+          const unwatch = TOKEN.listenContract(['TradeSuccessful'], {address: TEGRO_FILL_ORDERS_CONTRACTS[chainId], abi: TEGRO_ABI}, (eventName, eventData) => {
+            callback(`contract_${eventName}`, eventData)
+          })
+
           const res = await writeContract(config).catch(error => {
             reject(error)
           })
-
+          
           console.log('write contract', res)
 
           if (res) {
+            callback('transaction', {success: true})
+            
             const txResult = await waitForTransaction(res)
             console.log('txResult', txResult)
+            callback('blockchain', {success: true})
             resolve()
             Order.showSuccessMessage('Order filled successfully')
             return

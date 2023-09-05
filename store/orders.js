@@ -11,7 +11,23 @@ const round = (date, duration, method) => {
   return moment(Math[method]((+date) / (+duration)) * (+duration))
 }
 
-const addSide = (list) => {
+const toFixed = (value, precision, direction) => {
+  let str = value.toString()
+  if (str.indexOf('.') == -1) {
+    str += '.0'
+  }
+  let [num, dec] = str.split('.')
+  if (direction === 'down') {
+    dec = dec.substring(0, precision)
+    return `${num}.${dec}`
+  } else {
+    const multipler = Math.pow(10, precision)
+    const formatted = `${Math.ceil((value*1) * multipler) / multipler}`
+    return formatted
+  }
+}
+
+const addSide = (list, side) => {
   if (list && Array.isArray(list)) {
     return list.map(item => {
       const makerAsset = INCH_TOKENS[item.data.makerAsset]
@@ -20,27 +36,22 @@ const addSide = (list) => {
       if (!makerAsset || !takerAsset) {
         return {}
       }
+      const order = Order.TOKEN.formatter(item, makerAsset.decimals, takerAsset.decimals)
       
-      const makingAmountFormatted = Math.pow(10, -makerAsset.decimals)*item.data.makingAmount //formatUnits(item.data.makingAmount, makerAsset.decimals)
-      const takingAmountFormatted = Math.pow(10, -takerAsset.decimals)*item.data.takingAmount//formatUnits(item.data.takingAmount, takerAsset.decimals)
+      const makerPrice = order.makingAmountFormatted / order.takingAmountFormatted
+      const takerPrice = order.takingAmountFormatted / order.makingAmountFormatted
       
-      const side = makerAsset.symbol === 'USDT' ? 'buy' : 'sell'
-
-      const makerPrice = makingAmountFormatted / takingAmountFormatted
-      const takerPrice = takingAmountFormatted / makingAmountFormatted
-      
-      const makerAmount = Math.pow(10, -makerAsset.decimals)*item.remainingMakerAmount //side === 'sell' ? makingAmountFormatted : takingAmountFormatted
-      const takerAmount = formatUnits(BigInt(item.remainingMakerAmount)*BigInt(item.data.takingAmount)/BigInt(item.data.makingAmount), takerAsset.decimals)  //Math.pow(10, -takerAsset.decimals)*(item.remainingMakerAmount*item.data.takingAmount/item.data.makingAmount)
-      
-      const timestamp = moment(item.createDateTime).unix()
+      const price = side === 'buy' ? makerPrice : takerPrice
+      const amount = side === 'buy' ? order.takingAmountFormatted : order.makingAmountFormatted
+      const priceFormatted = toFixed(price, 6, side === 'sell' ? 'up' : 'down')
       return {
         ...item,
         side: side,
-        price: side === 'buy' ? makerPrice : takerPrice,
-        priceFormatted: numeral(side === 'buy' ? makerPrice : takerPrice).format('0.0[00000]'),
-        amount: side === 'buy' ? takerAmount : makerAmount,
-        quantity: side === 'buy' ? takerAmount : makerAmount,
-        timestamp: timestamp,
+        price: price,
+        priceFormatted: priceFormatted,
+        amount: amount,
+        quantity: amount,
+        timestamp: moment(item.createDateTime).unix(),
       }
     })
   }

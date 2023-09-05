@@ -3,10 +3,10 @@ import { useState, useEffect, useRef, forwardRef, useImperativeHandle, Fragment 
 import { useSelector, useDispatch } from 'react-redux'
 import Image from 'next/image'
 import numeral from 'numeral'
+import BigNumber from 'bignumber.js'
 
 import $app from '@/store/app'
 import $modal from '@/store/modal'
-import $token, { template } from '@/store/token'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import Order from '@/libs/structs/Order'
 import { INCH_TOKENS } from '@/config'
@@ -27,20 +27,22 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
   const fetchTimeout = useRef(null)
   const previousForm = useRef({amount: '1', price: '0'})
 
-  const isDisabled = loading
-                    || (currentTab === 'buy' && !abilities.totalAmountOnSell)
-                    || (currentTab === 'buy' && form.amount*1 > abilities.totalAmountOnSell*1)
-                    || (currentTab === 'sell' && !abilities.totalAmountToSell)
-                    || (currentTab === 'sell' && form.amount*1 > abilities.totalAmountToSell*1)
-
   const errors = {
-    amount: (currentTab === 'buy' && (form.amount > abilities.totalAmountOnSell) || (currentTab === 'sell' && (form.amount*1 > abilities.totalAmountToSell*1))),
+    amount: (currentTab === 'buy' && (form.amount*1 > abilities.totalAmountOnSell*1) || (currentTab === 'sell' && (form.amount*1 > abilities.totalAmountToSell*1))),
     balance: (currentTab === 'buy' && abilities.willSpendAmount > userBalances.usdt*1) || (currentTab === 'sell' && (form.amount*1 > userBalances.token*1)),
   }
 
+  const isDisabled = loading
+                    || (currentTab === 'buy' && !abilities.totalAmountOnSell)
+                    || (currentTab === 'sell' && !abilities.totalAmountToSell)
+                    || errors.balance
+                    || errors.amount
+
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
-      setForm(data)
+      handleChangeForm('price')(data.price.toString())
+      handleChangeForm('amount')(data.amount.toString())
+      // setForm(data)
     }
   }))
 
@@ -66,8 +68,6 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
       side: currentTab,
     })
     const { orders, ...rest} = res
-    // console.log(rest)
-    // console.log(orders, rest)
     setAbilities(rest)
     setLoading(false)
   }
@@ -80,6 +80,9 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
     const decimalRegExp = /^(?=.*\d)\d*(?:\.\d*)?$/
     if (!decimalRegExp.test(value) && value) {
       return
+    }
+    if (field === 'price') {
+      value = value.substring(0, value.indexOf('.') + 7)
     }
     setForm(state => {
       return {
@@ -202,7 +205,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
           }
           <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto'}}>
             Available to {currentTab}:&nbsp;
-            {numeral(currentTab === 'buy' ? abilities.totalAmountOnSell : abilities.totalAmountToSell).format('0.[000000]')} {current.symbol}
+            {numeral(new BigNumber(currentTab === 'buy' ? abilities.totalAmountOnSell : abilities.totalAmountToSell).toFixed(8)).format('0.[00000000]')} {current.symbol}
           </App.Text>
         </App.Flex>
       </App.Flex>
@@ -212,7 +215,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
             <App.Text color="#B9B8C5" size={10} weight={500} right>TOTAL</App.Text>
             <App.Text size={10} weight={700} right>USDT</App.Text>
           </App.Flex>
-          <App.Text size={36} weight={600}>{numeral(currentTab === 'buy' ? abilities.willSpendAmount : abilities.willTakeAmount).format('0.0[00000]')}</App.Text>
+          <App.Text size={36} weight={600}>{new BigNumber(currentTab === 'buy' ? abilities.willSpendAmount : abilities.willTakeAmount).toFixed()}</App.Text>
         </App.Flex>
         {
           currentTab === 'buy'
