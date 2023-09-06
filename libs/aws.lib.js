@@ -43,7 +43,6 @@ export const getAssetsFile = async () => {
         reject(err)
       } else {
         const jsonObject = JSON.parse(data.Body.toString('utf-8'))
-        console.log('jsonObject', jsonObject);
         resolve(jsonObject)
       }
     })

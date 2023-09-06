@@ -64,7 +64,6 @@ const WrapperTokens = ({ children }) => {
       dispatch($token.set.infoList(infoList))
 
       const tempList = await getAssetsFile()
-      console.log('tempList', tempList);
       if (tempList.length) {
         dispatch($token.set.list(tempList))
       }
@@ -247,8 +246,6 @@ const WrapperTokens = ({ children }) => {
               tokens.unshift(currentToken)
             }
           }
-
-          console.log('list', list);
 
           const existingToken = list.length ?  list.find(item => item.id === currentToken.id) : null
 
