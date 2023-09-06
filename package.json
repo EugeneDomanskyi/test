@@ -17,7 +17,6 @@
     "@everipedia/wagmi-magic-connector": "^1.0.2",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.5",
-    "@prisma/client": "^5.2.0",
     "@rainbow-me/rainbowkit": "^1.0.9",
     "@reduxjs/toolkit": "^1.9.5",
     "@reservoir0x/reservoir-sdk": "^1.1.15",
