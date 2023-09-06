@@ -361,7 +361,7 @@ class TOKEN extends Order {
   static formatter = (order, makerDecimals, takerDecimals) => {
     const makingAmount = new BigNumber(order.remainingMakerAmount)
     const takingAmount = makingAmount.multipliedBy(new BigNumber(order.data.takingAmount)).dividedBy(new BigNumber(order.data.makingAmount))
-    const makingAmountFormatted = formatUnits(makingAmount.toNumber(), makerDecimals)*1
+    const makingAmountFormatted = formatUnits(makingAmount.toFixed(0), makerDecimals)*1
     const takingAmountFormatted = formatUnits(takingAmount.toFixed(0), takerDecimals)*1
     return {
       ...order,
@@ -432,42 +432,14 @@ class TOKEN extends Order {
       const takerDecimals = await Order.getDecimals(takerAsset, chainId)
 
       const list = res.map(order => TOKEN.formatter(order, makerDecimals, takerDecimals))
-      // for (const order of res) {
-      //   const orderObj = TOKEN.formatter(order, makerDecimals, takerDecimals)
-      //   list.push(orderObj)
-      // }
-
-      // const amountInWei = Math.pow(10,  side === 'buy' ? makerDecimals : takerDecimals)*amount
       const amountInWei = new BigNumber(parseUnits(amount, side === 'buy' ? makerDecimals : takerDecimals))
 
-      // console.log('list', list)
-
       const filter = {
-        buy: order => order.makerPrice <= price*1,
-        sell: order => order.takerPrice >= price*1,
+        buy: order => order.makerPrice*1 <= price*1,
+        sell: order => order.takerPrice*1 >= price*1,
       }
       
-      // const fixRate = order => {
-      //   const makingValue = Math.pow(10, -makerDecimals)*order.data.makingAmount
-      //   const takingValue = Math.pow(10, -takerDecimals)*order.data.takingAmount
-      //   return {
-      //     ...order,
-      //     takerPrice: makingValue/takingValue,
-      //     makerPrice: takingValue/makingValue,
-      //   }
-      // }
-      
       const filteredByPrice = list.filter(filter[side])
-      // .map((order) => {
-      //   const takingAmount = BigInt(order.remainingMakerAmount) * BigInt(order.data.takingAmount) / BigInt(order.data.makingAmount)
-      //   return {
-      //     ...order,
-      //     makingAmount: order.remainingMakerAmount,
-      //     takingAmount: takingAmount,
-      //     makingAmountFormatted: formatUnits(order.remainingMakerAmount, makerDecimals),
-      //     takingAmountFormatted: formatUnits(takingAmount, takerDecimals),
-      //   }
-      // })
       
       const temp = filteredByPrice.reduce((acc, order) => {
         if (side === 'sell') {
@@ -482,17 +454,17 @@ class TOKEN extends Order {
         if (diff.isPositive() || diff.isZero()) {
           // can fill in this order
           willTakeMakingAmount = acc.totalToBuy
-          willSpendTakingAmount = side === 'buy' ? acc.totalToBuy.multipliedBy(order.makerRate) : willTakeMakingAmount.dividedBy(order.takerRate)
+          willSpendTakingAmount = side === 'buy' ? willTakeMakingAmount.multipliedBy(order.makerRate) : willTakeMakingAmount.dividedBy(order.takerRate)
           
           acc.totalToBuy = new BigNumber(0)
         } else {
           // need next order
           willTakeMakingAmount = order.makingAmount
-          willSpendTakingAmount = side === 'buy' ? order.makingAmount.multipliedBy(order.makerRate) : willTakeMakingAmount.dividedBy(order.takerRate)
+          willSpendTakingAmount = side === 'buy' ? willTakeMakingAmount.multipliedBy(order.makerRate) : willTakeMakingAmount.dividedBy(order.takerRate)
           acc.totalToBuy = side === 'sell' ? diff.multipliedBy(-1).dividedBy(order.takerRate) : diff.multipliedBy(-1)
         }
-        const willTakeMakingAmountFormatted = formatUnits(willTakeMakingAmount.toFixed(0), side === 'buy' ? makerDecimals : takerDecimals)
-        const willSpendTakingAmountFormatted = formatUnits(willSpendTakingAmount.toFixed(0), side === 'sell' ? makerDecimals : takerDecimals)
+        const willTakeMakingAmountFormatted = formatUnits(willTakeMakingAmount.toFixed(0), makerDecimals)
+        const willSpendTakingAmountFormatted = formatUnits(willSpendTakingAmount.toFixed(0), takerDecimals)
         
         return {
           ...acc,
@@ -524,7 +496,7 @@ class TOKEN extends Order {
       }, {willSpendAmount: new BigNumber(0), willTakeAmount: new BigNumber(0)})
 
       return {
-        totalAmountOnSell: formatUnits(stats.totalAmountOnSell, makerDecimals),
+        totalAmountOnSell: formatUnits(stats.totalAmountOnSell.toFixed(0), makerDecimals),
         totalAmountToSell: formatUnits(stats.totalAmountToSell.toFixed(0), takerDecimals),
         willSpendAmount: formatUnits(rates.willSpendAmount.toFixed(0), takerDecimals),
         willTakeAmount: formatUnits(rates.willTakeAmount.toFixed(0), makerDecimals),
@@ -662,7 +634,7 @@ class TOKEN extends Order {
         console.log('config', config)
 
         if (config?.mode === 'prepared') {
-          const unwatch = TOKEN.listenContract(['TradeSuccessful'], {address: TEGRO_FILL_ORDERS_CONTRACTS[chainId], abi: TEGRO_ABI}, (eventName, eventData) => {
+          TOKEN.listenContract(['TradeSuccessful'], {address: TEGRO_FILL_ORDERS_CONTRACTS[chainId], abi: TEGRO_ABI}, (eventName, eventData) => {
             callback(`contract_${eventName}`, eventData)
           })
 

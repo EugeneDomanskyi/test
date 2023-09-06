@@ -7,6 +7,7 @@ import { request } from './index'
 import Order from '@/libs/structs/Order'
 import { INCH_TOKENS, CHAINS } from '@/config'
 
+
 const round = (date, duration, method) => {
   return moment(Math[method]((+date) / (+duration)) * (+duration))
 }
@@ -20,6 +21,9 @@ const toFixed = (value, precision, direction) => {
   if (direction === 'down') {
     dec = dec.substring(0, precision)
     return `${num}.${dec}`
+    // const multipler = Math.pow(10, precision)
+    // const formatted = `${Math.floor((value*1) * multipler) / multipler}`
+    // return formatted
   } else {
     const multipler = Math.pow(10, precision)
     const formatted = `${Math.ceil((value*1) * multipler) / multipler}`
@@ -43,7 +47,8 @@ const addSide = (list, side) => {
       
       const price = side === 'buy' ? makerPrice : takerPrice
       const amount = side === 'buy' ? order.takingAmountFormatted : order.makingAmountFormatted
-      const priceFormatted = toFixed(price, 6, side === 'sell' ? 'up' : 'down')
+      // const amountFormatted = toFixed(side === 'buy' ? order.takingAmountFormatted : order.makingAmountFormatted, 6, 'up')
+      const priceFormatted = numeral(toFixed(price, 6, side === 'sell' ? 'up' : 'down')).format('0.0[00000]')
       return {
         ...item,
         side: side,
@@ -97,7 +102,7 @@ const tradeFormatter = list => {
 const groupByPrice = (data, sort = 'asc') => {
   const temp = {}
   for (const item of data) {
-    if (!isNaN(item.priceFormatted)) {
+    if (!isNaN(item.priceFormatted) && item.price) {
       if ( ! temp[item.priceFormatted]) {
         temp[item.priceFormatted] = item
       } else {

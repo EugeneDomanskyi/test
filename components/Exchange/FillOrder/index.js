@@ -249,7 +249,9 @@ const FillOrder = ({data, onClose}) => {
                         {
                           completePercentage*1 >= 100
                             ? 'Completely filled'
-                            : 'Partially Filled'
+                            : completePercentage*1 <= 0
+                              ? 'Not filled'
+                              : 'Partially Filled'
                         }
                       </App.Text>
                     </App.Flex>

@@ -4,9 +4,11 @@ import { useSelector, useDispatch } from 'react-redux'
 import Image from 'next/image'
 import numeral from 'numeral'
 import BigNumber from 'bignumber.js'
+import { useRouter } from 'next/router'
 
 import $app from '@/store/app'
 import $modal from '@/store/modal'
+import $orders from '@/store/orders'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import Order from '@/libs/structs/Order'
 import { INCH_TOKENS } from '@/config'
@@ -14,11 +16,26 @@ import { INCH_TOKENS } from '@/config'
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
 
+const fmt = {
+  prefix: '',
+  decimalSeparator: '.',
+  groupSeparator: '',
+  groupSize: 3,
+  secondaryGroupSize: 0,
+  fractionGroupSeparator: ' ',
+  fractionGroupSize: 0,
+  suffix: ''
+}
+
+BigNumber.config({ FORMAT: fmt })
+
 const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalances}, ref) => {
   const { changeNetwork } = useWalletConnect()
   const dispatch = useDispatch()
+  const router = useRouter()
 
   const tokenBlockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
+  const orderBook = useSelector($orders.get.orderBook('tokens'))
 
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({amount: '1', price: '0'})
@@ -42,7 +59,6 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
     setForm: (data) => {
       handleChangeForm('price')(data.price.toString())
       handleChangeForm('amount')(data.amount.toString())
-      // setForm(data)
     }
   }))
 
@@ -57,6 +73,17 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
     }
   }, [form.price, form.amount, current?.address, tokenBlockchain?.id, currentTab])
 
+  useEffect(() => {
+    if (current?.address && router.query?.segments?.[1] === current?.address) {
+      if (currentTab === 'buy' && orderBook.sell.length) {
+        handleSetPrice()
+      }
+      if (currentTab === 'sell' && orderBook.buy.length) {
+        handleSetPrice()
+      }
+    }
+  }, [orderBook.buy.length, orderBook.sell.length, current?.address, router.query?.segments])
+
   const fetchAbilities = async () => {
     setLoading(true)
     const res = await Order.TOKEN.getOpenWithPriceLimitation({
@@ -67,13 +94,14 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
       price: form.price,
       side: currentTab,
     })
-    const { orders, ...rest} = res
+    const { orders, ...rest } = res
+    console.log(orders, rest)
     setAbilities(rest)
     setLoading(false)
   }
 
   const handleBlurAmount = () => {
-
+    
   }
 
   const handleChangeForm = (field) => (value) => {
@@ -90,6 +118,21 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
         [field]: value,
       }
     })
+  }
+
+  const handleSetPrice = () => {
+    switch (currentTab) {
+      case 'buy':
+        const [cheapestOrder] = orderBook.sell
+        handleChangeForm('price')(cheapestOrder.priceFormatted.toString())
+        handleChangeForm('amount')(cheapestOrder.amount.toString())
+        break
+      case 'sell':
+        const [expensiveOrder] = orderBook.buy
+        handleChangeForm('price')(expensiveOrder.priceFormatted.toString())
+        handleChangeForm('amount')(expensiveOrder.amount.toString())
+        break
+    }
   }
 
   const handleSubmit = async () => {
@@ -118,24 +161,6 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
             },
           }
         }))
-        // dispatch($modal.set.show({
-        //   show: true,
-        //   modal: 'Exchange/BuyModal',
-        //   props: {
-        //     header: {
-        //       title: `Buy ${current.name} for USDT`,
-        //     },
-        //     data: {
-        //       type: 'fulfill',
-        //       amount: form.amount,
-        //       price: form.price,
-        //       total: form.amount*form.price,
-        //       current: current,
-        //       tokenType: 'tokens',
-        //       blockchain: tokenBlockchain,
-        //     },
-        //   }
-        // }))
         break
       case 'sell':
         dispatch($modal.set.show({
@@ -152,37 +177,24 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
             },
           }
         }))
-        // dispatch($modal.set.show({
-        //   show: true,
-        //   modal: 'Exchange/SellModal',
-        //   props: {
-        //     header: {
-        //       title: `Sell ${current.name} for USDT`,
-        //     },
-        //     data: {
-        //       type: 'fulfill',
-        //       amount: form.amount,
-        //       price: form.price,
-        //       tokens: [],
-        //       current: current,
-        //       tokenType: 'tokens',
-        //       blockchain: tokenBlockchain,
-        //     },
-        //   }
-        // }))
         break
     }
   }
   
   return (
     <App.Flex column className={styles.form}>
-      <App.Flex column sx={{marginBottom: 16}}>
+      <App.Flex column sx={{marginBottom: 16, position: 'relative'}} justify="center">
         <TradeInput
           label="AT PRICE"
           value={form.price}
           currency={'USDT'}
           onBlur={handleBlurAmount}
           onChange={handleChangeForm('price')} />
+        <App.Flex className={styles.priceSetter} onClick={handleSetPrice}>
+          <App.Text size={12} weight={600} color={currentTab === 'buy' ? '#53F19C' : '#FF1D61'}>
+            { currentTab === 'buy' ? 'LOWEST PRICE' : 'HIGHEST PRICE' }
+          </App.Text>
+        </App.Flex>
       </App.Flex>
       <App.Flex column>
         <TradeInput
@@ -205,7 +217,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
           }
           <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto'}}>
             Available to {currentTab}:&nbsp;
-            {numeral(new BigNumber(currentTab === 'buy' ? abilities.totalAmountOnSell : abilities.totalAmountToSell).toFixed(8)).format('0.[00000000]')} {current.symbol}
+            {new BigNumber(currentTab === 'buy' ? abilities.totalAmountOnSell : abilities.totalAmountToSell).toFormat()} {current.symbol}
           </App.Text>
         </App.Flex>
       </App.Flex>
