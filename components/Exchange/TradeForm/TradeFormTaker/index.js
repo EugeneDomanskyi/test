@@ -70,6 +70,8 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
       const delay = previousForm.current.price !== form.price || previousForm.current.amount !== form.amount ? 1000 : 0
       fetchTimeout.current = setTimeout(fetchAbilities, delay)
       previousForm.current = form
+    } else if (!(form.price*1) || !(form.amount*1)) {
+      setAbilities({totalAmountOnSell: 0, totalAmountToSell: 0, willSpendAmount: 0, willTakeAmount: 0})
     }
   }, [form.price, form.amount, current?.address, tokenBlockchain?.id, currentTab])
 
