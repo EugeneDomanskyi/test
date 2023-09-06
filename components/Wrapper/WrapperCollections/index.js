@@ -6,7 +6,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import Stream from '@/libs/stream.lib'
 
 import $app from '@/store/app'
-import $collection, { template, staticTemplate } from '@/store/collection'
+import $collection, { template } from '@/store/collection'
 
 const WrapperCollections = ({ children }) => {
   const router = useRouter()
@@ -109,22 +109,23 @@ const WrapperCollections = ({ children }) => {
         }
       })
 
-      // console.log('tempAll', tempAll);
-
+      // let tempAssets = []
+      // console.log('assetsList', assetsList);
       // tempAll.map(async item => {
-      //   const data = staticTemplate(item)
-
-      //   try {
-      //     await fetch('/api/prisma', {
-      //       method: 'POST',
-      //       headers: { 'Content-Type': 'application/json' },
-      //       body: JSON.stringify(data),
-      //     })
-      //   } catch (error) {
-      //     console.error(error)
+      //   const isExist = assetsList.find(asset => asset.address === item.id)
+      //   console.log('isExist', isExist);
+      //   if (! isExist) {
+      //     const data = staticTemplate(item)
+      //     tempAssets = [...tempAssets, data]
       //   }
       // })
 
+      // if (tempAssets.length) {
+      //   const mergedList = [...assetsList, ...tempAssets]
+      //   putAssetsFile(mergedList)
+      //   dispatch($app.set.assetsList(mergedList))
+      // }
+      
       if (search == '') {
         dispatch($collection.set.searched([]))
         dispatch($collection.set.all(tempAll))

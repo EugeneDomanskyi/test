@@ -10,8 +10,6 @@ export const template = (item) => {
     name: item.name,
     blockchain: item.blockchain,
     slug: item.slug,
-    // price: item.floorAsk?.price?.amount?.decimal ?? 0,
-    // currency: item.floorAsk?.price?.currency?.symbol ?? '',
     price: item.floorAsk?.price?.amount?.native ?? 0,
     currency: item.currency,
     volume: item.volume['1day'],
@@ -28,28 +26,6 @@ export const template = (item) => {
       value: (item.floorSaleChange['1day'] && item.floorSaleChange['1day'] != 0 ? Math.abs(1 - item.floorSaleChange['1day']) : 0).toFixed(2),
       type: ((item.floorSaleChange['1day'] >= 1 || item.floorSaleChange['1day'] == 0) ? 'plus' : 'minus'),
     },
-  }
-}
-
-export const staticTemplate = (item) => {
-  return {
-    cgId: item.cgId ?? '',
-    blockchain: item.blockchain,
-    type: item.contractKind ? (item.contractKind === 'erc20' ? 'token' : 'nft') : '',
-    name: item.name ?? '',
-    address: item.id ?? '',
-    image: item.image ?? '',
-    banner: item.banner ?? '',
-    currency: item.currency ?? '',
-    description: item.description ?? '',
-    tokenCount: item.tokenCount ?? '',
-    discordUrl: item.discordUrl ?? '',
-    externalUrl: item.externalUrl ?? '',
-    twitterUrl: item.twitterUsername ? `https://twitter.com/${item.twitterUsername}` : '',
-    openseaVerificationStatus: item.openseaVerificationStatus === 'verified',
-    sampleImages: item.sampleImages ? item.sampleImages.join() : '',
-    decimals: item.decimals ?? '',
-    symbol: item.symbol ?? '',
   }
 }
 

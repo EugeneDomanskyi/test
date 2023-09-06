@@ -31,7 +31,7 @@ const GRID_GAP = 6
 
 const Nfts = () => {
   const router = useRouter()
-  const [_, collectionId] = router.query.segments || []
+  const [_, collectionId] = router.query?.segments || []
 
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
