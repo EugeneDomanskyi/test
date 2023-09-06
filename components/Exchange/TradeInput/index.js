@@ -27,7 +27,7 @@ const TradeInput = ({label, currency, onChange, onBlur, error, ...props}) => {
       </App.Flex>
       <div className={styles.divider} />
       <input
-        className={styles.input}
+        className={cn(styles.input, {[styles.error]: error})}
         onChange={handleChange}
         onWheel={e => e.target.blur()}
         onFocus={() => setFocused(true)}

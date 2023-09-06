@@ -39,6 +39,10 @@
     font-family: Gilroy;
     -moz-appearance: textfield;
 
+    &.error {
+      color: #FF1D61;
+    }
+
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
       -webkit-appearance: none;

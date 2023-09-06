@@ -3,6 +3,7 @@ import { memo } from 'react'
 import { useSelector } from 'react-redux'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import $exchange from '@/store/exchange'
 import $app from '@/store/app'
@@ -14,8 +15,11 @@ import { WebIcon, TwitterIcon, DiscordIcon } from '@/components/Icons/exchange'
 
 const Info = ({ current }) => {
   const { scanUrl } = useWalletConnect()
+  const router = useRouter()
   const blockchain = useSelector($app.get.blockchain)
   const { high, low } = useSelector($exchange.get.highLow({count: 24, unit: 'hours'}))
+
+  const [_, type] = router.asPath.split('/')
 
   const scanLink = scanUrl(current.address, 'address', blockchain)
 
@@ -100,7 +104,7 @@ const Info = ({ current }) => {
                     <App.Flex column className={styles.card}>
                       <App.Flex align="center" gap={4}>
                         <App.Text color="#B9B8C5" size={10} weight={400}>24h Volume</App.Text>
-                        <App.Tooltip placement="bottom" text={<App.Text center color="#B9B8C5">A measure of how much NFTs was traded in the last 24 hours </App.Text>}>
+                        <App.Tooltip placement="bottom" text={<App.Text center color="#B9B8C5">A measure of how much {type === 'tokens' ? 'tokens' : 'NFTs'} was traded in the last 24 hours </App.Text>}>
                           <App.Icon icon="info" width={12} height={12} />
                         </App.Tooltip>
                       </App.Flex>
@@ -117,7 +121,7 @@ const Info = ({ current }) => {
                     <App.Flex column className={styles.card}>
                       <App.Flex align="center" gap={4}>
                         <App.Text color="#B9B8C5" size={10} weight={400}>Total Supply</App.Text>
-                        <App.Tooltip placement="bottom-start" text={<App.Text center color="#B9B8C5">The maximum amount of NFTs there will ever exist in its lifetime. The total number of NFTs available</App.Text>}>
+                        <App.Tooltip placement="bottom-start" text={<App.Text center color="#B9B8C5">The maximum amount of {type === 'tokens' ? 'tokens' : 'NFTs'} there will ever exist in its lifetime. The total number of {type === 'tokens' ? 'tokens' : 'NFTs'} available</App.Text>}>
                           <App.Icon icon="info" width={12} height={12} />
                         </App.Tooltip>
                       </App.Flex>
