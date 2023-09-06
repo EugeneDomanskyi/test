@@ -109,17 +109,17 @@ const Header = () => {
               </App.Flex>
             </Link>
 
-            {/* <Link href="/nfts" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/nfts')})}>
+            <Link href="/nfts" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/nfts')})}>
               <App.Flex center height="100%">
                 <App.Text size={18} weight={700}>NFTS</App.Text>
               </App.Flex>
-            </Link> */}
+            </Link>
 
-            {/* <Link href="/swap" className={cn(styles.navbarItem, {[styles.active]: router.pathname == '/swap'})}>
+            <Link href="/swap" className={cn(styles.navbarItem, {[styles.active]: router.pathname == '/swap'})}>
               <App.Flex center  height="100%">
                 <App.Text size={18} weight={700}>SWAP</App.Text>
               </App.Flex>
-            </Link> */}
+            </Link>
           </App.Flex>
         </App.Flex>
 
@@ -173,23 +173,23 @@ const Header = () => {
                 </App.Flex>
               </Link>
 
-              {/* <Link href="/nfts" className={cn(styles.link, {[styles.active]: router.pathname.includes('/nfts')})}>
+              <Link href="/nfts" className={cn(styles.link, {[styles.active]: router.pathname.includes('/nfts')})}>
                 <App.Flex align="center" height="100%" gap={16} onClick={handleMobileMenuClick}>
                   <App.Flex center width={29}>
                     <App.Icon icon="exchange" color="#fff" />
                   </App.Flex>
                   <App.Text size={18} weight={700}>NFTS</App.Text>
                 </App.Flex>
-              </Link> */}
+              </Link>
 
-              {/* <Link href="/" className={cn(styles.link, {[styles.active]: router.pathname == '/'})}>
+              <Link href="/" className={cn(styles.link, {[styles.active]: router.pathname == '/'})}>
                 <App.Flex align="center" height="100%" gap={16} onClick={handleMobileMenuClick}>
                   <App.Flex center width={29}>
                     <App.Icon icon="arrow-refresh" width={24} height={24} color="#fff" />
                   </App.Flex>
                   <App.Text size={18} weight={700}>SWAP</App.Text>
                 </App.Flex>
-              </Link> */}
+              </Link>
             </div>
           </div>
         </App.Flex>
