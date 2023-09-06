@@ -615,7 +615,8 @@ class TOKEN extends Order {
             '0x',
             order.willTakeMakingAmount.toFixed(0).toString(),
             '0',
-            '0xde0b6b3a7640000',
+            order.willSpendTakingAmount.multipliedBy(2).toFixed(0).toString(),
+            // '0xde0b6b3a7640000',
             // walletClient.account.address
           ]
         })
