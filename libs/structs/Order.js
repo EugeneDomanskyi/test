@@ -419,7 +419,10 @@ class TOKEN extends Order {
 
   static getOpenWithPriceLimitation = async ({chainId, takerAsset, makerAsset, amount, price, side}) => {
     const network = CHAINS.find(chain => chain.id === chainId)
-    // fetch(`/api/tokens/abilities/${chainId}/${makerAsset}/${takerAsset}/${price}/${amount}/${side}`)
+    // fetch(`/api/tokens/abilities/${chainId}/${makerAsset}/${takerAsset}/${price}/${amount}/${side}`).then(async res => {
+    //   const json = await res.json()
+    //   console.log('res -> ', json)
+    // })
     
     const res = await $orders.api.get.tokens.byAssets({
       makerAsset: makerAsset,
@@ -430,7 +433,6 @@ class TOKEN extends Order {
       sortBy: 'takerRate',
     })
     if (res && Array.isArray(res)) {
-      
       const makerDecimals = await Order.getDecimals(makerAsset, chainId)
       const takerDecimals = await Order.getDecimals(takerAsset, chainId)
 
@@ -497,7 +499,7 @@ class TOKEN extends Order {
           willTakeAmount: acc.willTakeAmount.plus(order.willTakeMakingAmount),
         }
       }, {willSpendAmount: new BigNumber(0), willTakeAmount: new BigNumber(0)})
-
+      
       return {
         totalAmountOnSell: formatUnits(stats.totalAmountOnSell.toFixed(0), makerDecimals),
         totalAmountToSell: formatUnits(stats.totalAmountToSell.toFixed(0), takerDecimals),

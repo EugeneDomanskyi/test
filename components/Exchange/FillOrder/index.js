@@ -276,7 +276,7 @@ const FillOrder = ({data, onClose}) => {
                     <App.Flex justify="space-between">
                       <App.Text color="#5E5C6B" size={10} weight={600}>Amount / Filled</App.Text>
                       <App.Text color="#B9B8C5" size={10} weight={600}>
-                        { data.side === 'buy' ? stats.tookAmount : stats.spendedAmount } / { data.side === 'buy' ? abilities.willTakeAmount : abilities.willSpendAmount }
+                        { data.side === 'buy' ? stats.tookAmount : stats.spendedAmount } { data.makerAsset.symbol } / { data.side === 'buy' ? abilities.willTakeAmount : abilities.willSpendAmount } { data.makerAsset.symbol }
                       </App.Text>
                     </App.Flex>
                   </App.Flex>
