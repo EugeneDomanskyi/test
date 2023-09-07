@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+import { DuneClient } from '@cowprotocol/ts-dune-client'
 import Image from 'next/image'
 import cn from 'classnames'
 
@@ -9,6 +11,37 @@ import styles from './styles.module.scss'
 
 const LandingHead = () => {
   const { isMobile } = usePropsHelper()
+
+  const [volume, setVolume] = useState()
+
+  const duneClient = new DuneClient(process.env.NEXT_PUBLIC_DUNE_API_KEY ?? '')
+  const queryId = '2985827'
+
+
+  useEffect(() => {
+    getLifetimeVolume()
+  }, [])
+
+  const getLifetimeVolume = () => {
+    const [lsVolume, lsTime] = JSON.parse(localStorage.getItem('duneData') ?? JSON.stringify([347.7, 0]))
+    setVolume(lsVolume)
+
+    const currentTime = new Date().getTime()
+    const diff = currentTime - lsTime
+
+    if (diff >= (30 * 60 * 1000)) {
+      duneClient.refresh(queryId, []).then((executionResult) => {
+        if (executionResult.result?.rows && executionResult.result.rows.length) {
+          const lastRow = executionResult.result.rows[0]
+          setVolume(lastRow.Cumulative_Combined_USDT_volume)
+
+          const timestamp = new Date().getTime()
+          const newVolume = lastRow.Cumulative_Combined_USDT_volume
+          localStorage.setItem('duneData', JSON.stringify([newVolume, timestamp]))
+        }
+      })
+    }
+  }
 
   const handleXClick = () => {
     window.open('https://x.tegro.com', '_blank')
@@ -49,7 +82,7 @@ const LandingHead = () => {
 
             <App.Flex column center gap={8} className={styles.bannerContent}>
               <App.Text center size={[14, 12]} weight={600} color="#B9B8C5" height={1}>ALL TIME TRADING VOLUME</App.Text>
-              <App.Text center size={[40, 24]} weight={600} height={1}>$123.96B</App.Text>
+              <App.Text center size={[40, 24]} weight={600} height={1}>${volume}</App.Text>
             </App.Flex>
           </App.Flex>
         </App.Flex>
