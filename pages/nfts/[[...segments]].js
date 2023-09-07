@@ -309,9 +309,9 @@ const Nfts = () => {
         </>
       )}
 
-      {exchangeLoading ? (
+      {/* {exchangeLoading ? (
         <App.LoaderBlock size={100} color="#7204FF" fixed height="100%" />
-      ) : null}
+      ) : null} */}
     </App.Flex>
   )
 }
