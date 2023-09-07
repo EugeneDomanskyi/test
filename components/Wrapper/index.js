@@ -16,7 +16,9 @@ import WrapperCollections from '@/components/Wrapper/WrapperCollections'
 const Wrapper = ({ children }) => {
   const router = useRouter()
   const isNfts = router.pathname.includes('/nfts')
+  const isSwap = router.pathname.includes('/swap')
   const isTokens = router.pathname.includes('/tokens')
+  const isLanding = router.pathname.includes('/landing')
 
   const { address, isConnected } = useAccount()
 
@@ -54,19 +56,27 @@ const Wrapper = ({ children }) => {
 
   return (
     <>
-      <Header />
+      {!isLanding ? (
+        <Header />
+      ) : null}
 
       {isTokens ? (
         <WrapperTokens>
           {children}
         </WrapperTokens>
-      ) : (
+      ) : null}
+
+      {isNfts || isSwap ? (
         <WrapperCollections>
           {children}
         </WrapperCollections>
-      )}
+      ) : null}
 
-      {!isNfts && !isTokens ? (
+      {!isNfts && !isSwap && !isTokens ? (
+        children
+      ) : null}
+
+      {!isNfts && !isTokens && !isLanding ? (
         <Footer />
       ) : null}
     </>

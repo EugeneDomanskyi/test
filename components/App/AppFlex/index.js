@@ -4,7 +4,7 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 
 import styles from './styles.module.scss'
 
-const AppFlex = ({ children, row, column, direction, center, align, justify, gap, flex, width, height, order, className, sx = {}, ...props }) => {
+const AppFlex = ({ children, row, column, direction, center, align, justify, gap, flex, width, height, fullWidth, fullHeight, full, order, className, wrap, sx = {}, ...props }) => {
   const { propValue } = usePropsHelper()
 
   const classes = () => {
@@ -13,6 +13,7 @@ const AppFlex = ({ children, row, column, direction, center, align, justify, gap
       {[styles.row]: row && ! direction},
       {[styles.column]: column && ! direction},
       {[styles.center]: propValue(center) && ! align && ! justify},
+      {[styles.wrap]: wrap},
       className
     )
   }
@@ -46,6 +47,19 @@ const AppFlex = ({ children, row, column, direction, center, align, justify, gap
 
     if (height) {
       result.height = propValue(height)
+    }
+
+    if (fullWidth) {
+      result.width = propValue(fullWidth) ? '100%' : 'auto'
+    }
+
+    if (fullHeight) {
+      result.height = propValue(fullHeight) ? '100%' : 'auto'
+    }
+
+    if (full) {
+      result.width = propValue(full) ? '100%' : 'auto'
+      result.height = propValue(full) ? '100%' : 'auto'
     }
 
     if (order) {

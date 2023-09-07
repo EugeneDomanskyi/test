@@ -1,0 +1,129 @@
+.container {
+  height: 64px;
+  position: fixed;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  background: rgba(9, 5, 29, 0.60);
+  border-bottom: 1px solid #2E1C8C;
+  backdrop-filter: blur(6px);
+
+  .logo {
+    position: relative;
+    padding-top: 11px;
+
+    .badge {
+      position: absolute;
+      background-color: #77E9D4;
+      border-radius: 2px;
+      color: #231D4C;
+      text-align: center;
+      font-family: 'Gilroy';
+      font-style: italic;
+      font-weight: 800;
+      font-size: 8.72504px;
+      line-height: 11px;
+      line-height: 1;
+      padding: 2px 6px 0px 6px;
+      right: 0;
+      top: 0;
+    }
+  }
+
+  .navbarItem {
+    position: relative;
+    padding: 0 16px;
+    transition: all .3s ease 0s;
+    cursor: pointer;
+    border-left: 1px solid #252236;
+    display: block;
+    height: 100%;
+    min-width: 140px;
+    
+    &:last-child {
+      border-right: 1px solid #252236;
+    }
+
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      z-index: 0;
+      height: 4px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0;
+      background: linear-gradient(90deg, #BD16F1 0%, #D94AD2 26.35%, #F8AE93 50.31%, #FCEE65 74.79%, #FACC7E 100%);;
+      transition: all .3s ease 0s;
+    }
+
+    &:hover {
+      background-color: #130A3A;
+    }
+
+    &.active {
+      background: #130A3A;
+
+      &:after {
+        opacity: 1;
+      }
+    }
+  }
+
+  .link {
+    transition: all .2s ease 0s;
+    
+    &:hover {
+      opacity: .6;
+    }
+  }
+
+  .menu {
+    position: absolute;
+    border-radius: 4px;
+    left: 0;
+    top: 64px;
+    padding: 16px;
+    visibility: hidden;
+    opacity: 0;
+    min-width: 380px;
+    background: rgba(9, 5, 29, 0.60);
+    border: 1px solid #2E1C8C;
+    backdrop-filter: blur(6px);
+    transition: all .2s ease 0s;
+
+    &.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .hr {
+      height: 1px;
+      width: 100%;
+      background: #2E1C8C;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    .navbarItem {
+      padding: 0 8px;
+      min-width: 100px;
+    }
+
+    .hiddenOnMobile {
+      display: none;
+    }
+
+    .menu {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      padding: 16px;
+      min-width: none;
+    }
+  }
+}

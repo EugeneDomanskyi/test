@@ -1,0 +1,38 @@
+.container {
+  position: relative;
+  z-index: 1;
+
+  .slider {
+    overflow: hidden;
+    position: relative;
+    z-index: 0;
+    height: 514px;
+
+    .slide {
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: all .3s ease 0s;
+
+      &.active {
+        opacity: 1;
+      }
+    }
+  }
+
+  .circle {
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    .slider {
+      height: 290px;
+    }
+  }
+}
