@@ -178,14 +178,18 @@ const getters = {
   nfts: createSelector([
     state => state.$orders.nfts,
   ], (orders) => {
-    return orders.map(order => {
-      return new Order.NFT(order)
-    })
+    return {
+      open: orders.map(order => new Order.NFT(order)),
+      closed: [],
+    }
   }),
   tokens: createSelector([
     state => state.$orders.tokens
   ], (orders) => {
-    return orders.map(order => new Order.TOKEN(order))
+    return {
+      open: orders.map(order => new Order.TOKEN(order)).filter(order => order.status === 'open'),
+      closed: orders.map(order => new Order.TOKEN(order)).filter(order => order.status === 'completed' || order.status === 'cancelled')
+    }
   }),
   orderBook: (type) => createSelector([
     state => state.$orders.orderBooks[type],

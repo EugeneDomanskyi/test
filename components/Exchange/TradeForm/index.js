@@ -157,7 +157,6 @@ const TradeForm = forwardRef(({current, type}, ref) => {
                       userBalances={userBalances}
                       currentTab={currentTab}
                       formOption={currentOption} />
-                
               )
               case 'limit':
                 return (
@@ -179,7 +178,7 @@ const TradeForm = forwardRef(({current, type}, ref) => {
 })
 
 const isEqual = (prev, next) => {
-  return JSON.stringify(prev.current) === JSON.stringify(next.current)
+  return prev.current.address === next.current.address
 }
 
 export default memo(TradeForm, isEqual)

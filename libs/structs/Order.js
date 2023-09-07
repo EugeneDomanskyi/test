@@ -340,6 +340,7 @@ class TOKEN extends Order {
     this.quantityFilled = numeral(formatUnits(data.data.makingAmount - data.remainingMakerAmount, USDT_DECIMALS)).format('0.[0000]')
     this.price = numeral(formatUnits(data.data[buyCurrency], USDT_DECIMALS)).format('0.[0000]')
     this.image = this.side === 'sell' ? makerToken.logoURI : takerToken.logoURI
+    this.status = !data.orderInvalidReason ? 'open' : (data.orderInvalidReason === 'order filled' ? 'completed' : (data.orderInvalidReason === 'order cancelled' ? 'cancelled' : null))
   }
 
   get itemPrice () {
@@ -418,6 +419,8 @@ class TOKEN extends Order {
 
   static getOpenWithPriceLimitation = async ({chainId, takerAsset, makerAsset, amount, price, side}) => {
     const network = CHAINS.find(chain => chain.id === chainId)
+    // fetch(`/api/tokens/abilities/${chainId}/${makerAsset}/${takerAsset}/${price}/${amount}/${side}`)
+    
     const res = await $orders.api.get.tokens.byAssets({
       makerAsset: makerAsset,
       takerAsset: takerAsset,

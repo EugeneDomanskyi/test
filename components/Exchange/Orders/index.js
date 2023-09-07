@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { useState, memo } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import cn from 'classnames'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
@@ -16,12 +17,16 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
   const orders = useSelector($orders.get[type])
   const blockchain = useSelector($app.get.blockchain)
   const { wallet, changeNetwork } = useWalletConnect()
-  
+
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
   const [cancellingOrders, setCancellingOrders] = useState([])
+  const [ordersType, setOrderTypes] = useState('open')
 
   const handlePressCancel = (order) => async (e) => {
     e.stopPropagation()
+    if (order.status === 'completed' || order.status === 'cancelled') {
+      return
+    }
     const network = await changeNetwork(blockchain.code)
     if (!network) {
       return
@@ -44,8 +49,7 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
     order.cancel().then(() => {
       trackEvent('Cancel Order Success', eventPost)
       onOrderCancelled()
-      setCancellingOrders(state => state.filter(id => id !== order.id))
-    }).catch(() => {
+    }).finally(() => {
       setCancellingOrders(state => state.filter(id => id !== order.id))
     })
   }
@@ -63,6 +67,12 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
       side: order.side,
     })
   }
+
+  const handleChangeOrdersType = type => () => {
+    setOrderTypes(type)
+  }
+
+  console.log(orders)
 
   return (
     <App.Flex column className={styles.container}>
@@ -86,6 +96,19 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
           <App.Text>Orders</App.Text>
         </App.Flex>
       </App.Flex>
+      {
+        type === 'tokens'
+          ? <App.Flex sx={{height: 30, position: 'relative', marginBottom: 8}}>
+              <App.Flex flex={1} justify="center" align="center" sx={{cursor: 'pointer'}} onClick={handleChangeOrdersType('open')}>
+                <App.Text size={12} color={ordersType === 'open' ? '#fff' : 'rgba(185, 184, 197, 0.8)'}>Open</App.Text>
+              </App.Flex>
+              <App.Flex flex={1} justify="center" align="center" sx={{cursor: 'pointer'}} onClick={handleChangeOrdersType('closed')}>
+                <App.Text size={12} color={ordersType === 'closed' ? '#fff' : 'rgba(185, 184, 197, 0.8)'}>Completed</App.Text>
+              </App.Flex>
+              <div className={styles.badge} style={{transform: `translateX(${ordersType === 'open' ? 0 : 100}%)`}} />
+            </App.Flex>
+          : null
+      }
       <App.Flex align="center" sx={{height: 20, borderBottom: '1px solid rgba(94, 92, 107, 0.3)'}}>
         <App.Flex column sx={{width: 60}} align="center">
           <App.Text size={10} weight={600} color="#B9B8C5" center>Asset</App.Text>
@@ -102,10 +125,10 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
       </App.Flex>
       <App.Flex column flex={1} sx={{overflow: 'auto'}}>
         {
-          orders.filter(order => !showCollectionOrders || (order.contractAddress === current.address)).map((order) => {
+          orders[ordersType].filter(order => !showCollectionOrders || (order.contractAddress === current.address)).map((order) => {
             return (
               <App.Flex key={order.id} column sx={{position: 'relative'}}>
-                <App.Flex align="center" className={styles.order} onClick={handleClick(order)}>
+                <App.Flex align="center" className={cn(styles.order, {[styles.disabled]: order.status === 'completed' || order.status === 'cancelled'})} onClick={handleClick(order)}>
                   <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
                   <App.Flex column align="center" justify="center" sx={{width: 60}}>
                     {
@@ -125,8 +148,12 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
                   </App.Flex>
                   <App.Flex flex={1} column align="center" justify="center" sx={{position: 'relative', height: '100%', overflow: 'hidden'}}>
                     <App.Text size={12} weight={600}>{ order.price } { order.baseCurrency }</App.Text>
-                    <App.Flex className={styles.cancelButton} onClick={handlePressCancel(order)}>
-                      <App.Text size={12} color="rgb(235, 49, 105)">Cancel order</App.Text>
+                    <App.Flex className={styles.cancelButton} sx={{backgroundColor: order.status === 'completed' ? '#063834' : 'rgb(77, 14, 39)'}} onClick={handlePressCancel(order)}>
+                      <App.Text size={12} color={order.status === 'completed' ? 'rgb(83, 241, 156)' : 'rgb(235, 49, 105)'} className={styles.statusText}>
+                        {
+                          (order.status === 'completed' || order.status === 'cancelled') ? order.status : 'Cancel order'
+                        }
+                      </App.Text>
                     </App.Flex>
                   </App.Flex>
                 </App.Flex>

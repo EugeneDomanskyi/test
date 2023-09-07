@@ -30,7 +30,7 @@ const fmt = {
 BigNumber.config({ FORMAT: fmt })
 
 const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalances}, ref) => {
-  const { changeNetwork } = useWalletConnect()
+  const { changeNetwork, wallet } = useWalletConnect()
   const dispatch = useDispatch()
   const router = useRouter()
 
@@ -142,6 +142,9 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
     if (!network) {
       return
     }
+    if (isDisabled) {
+      return
+    }
     const usdtAsset = INCH_TOKENS[tokenBlockchain.usdtContract.toLowerCase()]
     const usdtFormatted = {
       ...usdtAsset,
@@ -208,14 +211,16 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
           onChange={handleChangeForm('amount')} />
         <App.Flex align="center" gap={4} className={styles.balance}>
           {
-            errors.amount
-              ? <App.Text color="#FF1D61" size={10} weight={500}>Amount higher than market availability</App.Text>
-              : currentTab === 'sell'
-                ? <Fragment>
-                    <App.Icon icon="wallet" color={errors.balance ? '#FF1D61' : '#B9B8C5'} />
-                    <App.Text color={errors.balance ? '#FF1D61' : '#B9B8C5'} size={10}>{numeral(userBalances.token).format('0.[0000]')} {current.symbol}</App.Text>
-                  </Fragment>
-                : null
+            loading
+              ? <App.Loader size={15} />
+              : errors.amount
+                ? <App.Text color="#FF1D61" size={10} weight={500}>Amount higher than market availability</App.Text>
+                : currentTab === 'sell'
+                  ? <Fragment>
+                      <App.Icon icon="wallet" color={errors.balance ? '#FF1D61' : '#B9B8C5'} />
+                      <App.Text color={errors.balance ? '#FF1D61' : '#B9B8C5'} size={10}>{numeral(userBalances.token).format('0.[0000]')} {current.symbol}</App.Text>
+                    </Fragment>
+                  : null
           }
           <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto'}}>
             Available to {currentTab}:&nbsp;
@@ -246,14 +251,19 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
         }
       </App.Flex>
       <App.Button
-        sx={{backgroundColor: formOption.color, opacity: isDisabled ? 0.5 : 1, cursor: isDisabled ? 'default' : 'pointer'}}
+        sx={{backgroundColor: formOption.color, opacity: isDisabled && wallet ? 0.5 : 1, cursor: isDisabled && wallet ? 'default' : 'pointer'}}
         className={styles.button}
-        disabled={isDisabled}
+        disabled={isDisabled && wallet}
         onClick={handleSubmit}>
         <App.Text color="#09051D" size={15} weight={700}>
           { formOption.title } { form.amount } { current.symbol }
         </App.Text>
         { current?.image ? <Image src={current?.image} width={32} height={32} alt="" /> : null }
+        {
+          loading
+            ? <App.Loader size={30} sx={{position: 'absolute'}} />
+            : null
+        }
       </App.Button>
     </App.Flex>
   )

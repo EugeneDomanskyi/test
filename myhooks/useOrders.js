@@ -19,7 +19,7 @@ const useOrders = ({tokenAddress, type}) => {
         blockchain: blockchain.code,
         address: wallet,
         sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
-        statuses: '[1,2]',
+        statuses: '[1,2,3]',
       }).then(res => {
         if (res) {
           dispatch($orders.set[type](res))
