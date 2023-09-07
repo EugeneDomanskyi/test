@@ -197,8 +197,8 @@ const getters = {
   ], (orderBook, currentToken) => {
     if (type === 'tokens') {
       return {
-        buy: groupByPrice(orderBookFormatter(orderBook.buy, currentToken), 'desc'),
-        sell: groupByPrice(orderBookFormatter(orderBook.sell, currentToken), 'asc'),
+        buy: groupByPrice(orderBookFormatter(orderBook.buy, currentToken), 'desc').slice(0, 10),
+        sell: groupByPrice(orderBookFormatter(orderBook.sell, currentToken), 'asc').slice(0, 10),
       }
     }
     return {
