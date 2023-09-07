@@ -64,8 +64,6 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
     })
   }
 
-  console.log('RENDER', current.address)
-
   return (
     <App.Flex column className={styles.container}>
       <App.Flex column>

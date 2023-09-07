@@ -28,7 +28,7 @@ import '@uniswap/widgets/fonts.css'
 import '@/styles/globals.css'
 
 Sentry.init({
-  dsn: "https://a48fc91863a08075997f5355b49858cc@o4505192627830784.ingest.sentry.io/4505793143242752",
+  dsn: 'https://a48fc91863a08075997f5355b49858cc@o4505192627830784.ingest.sentry.io/4505793143242752',
   // integrations: [
   //   new Sentry.BrowserTracing(),
   //   new Sentry.Replay(),
@@ -45,14 +45,8 @@ createClient({
   source: "tegro.com"
 })
 
-//const initialChain = process.env.NEXT_PUBLIC_APP_ENV == 'production' ? [mainnet, polygon] : [goerli, polygonMumbai]
-const initialChain = CHAINS
-// if (process.env.NEXT_PUBLIC_APP_ENV == 'local') {
-//   initialChain.push(goerli)
-// }
-
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  initialChain, [
+  CHAINS, [
     alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }),
     infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_ID }),
     publicProvider(),
@@ -97,7 +91,7 @@ const { wallets: [popularWallets] } = getDefaultWallets({
 const connectors = connectorsForWallets([
   {
     groupName: 'Recommended',
-    wallets: [rainbowMagicConnector({ chains: initialChain })],
+    wallets: [rainbowMagicConnector({ chains: CHAINS })],
   },
   popularWallets
 ])

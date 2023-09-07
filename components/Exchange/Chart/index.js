@@ -6,7 +6,6 @@ import cn from 'classnames'
 import * as LightweightCharts from 'lightweight-charts'
 
 import $exchange from '@/store/exchange'
-import $orders from '@/store/orders'
 
 import App from '@/components/App'
 
@@ -69,7 +68,6 @@ const CHART_CONFIG = {
 const INTERVALS = [
   {key: '5m', count: 5, unit: 'minutes', seconds: 5*60},
   {key: '15m', count: 15, unit: 'minutes', seconds: 15*60},
-  // {key: '30m', count: 30, unit: 'minutes', seconds: 30*60},
   {key: '1h', count: 1, unit: 'hours', seconds: 60*60},
   {key: '4h', count: 4, unit: 'hours', seconds: 4*60*60},
   {key: '1d', count: 1, unit: 'days', seconds: 24*60*60},
@@ -143,7 +141,7 @@ const TradeChart = ({type}) => {
 }
 
 const isEqual = (prevProps, nextProps) => {
-  return prevProps.type == nextProps.type
+  return prevProps.type === nextProps.type
 }
 
 export default memo(TradeChart, isEqual)

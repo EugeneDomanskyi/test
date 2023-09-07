@@ -197,8 +197,6 @@ const getters = {
   })
 }
 
-// https://limit-orders.1inch.io/v3.0/137/all?page=1&limit=100&statuses=[1]&sortBy=takerRate
-
 const api = {
   get: {
     orderBook: (params) => {
