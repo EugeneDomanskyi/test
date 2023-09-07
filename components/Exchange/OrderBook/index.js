@@ -26,7 +26,7 @@ const OrderBook = ({type, onClickOrder}) => {
   const handleClick = (order, volume) => () => {
     onClickOrder({...order, price: order.priceFormatted, quantity: toLowerFixed(volume)})
   }
-  
+
   return (
     <App.Flex column flex={[1, null]} className={styles.card}>
       <App.Flex className={styles.header} align="center">
@@ -79,8 +79,7 @@ const OrderBook = ({type, onClickOrder}) => {
 }
 
 const isEqual = (prev, next) => {
-  return prev.onClickOrder === next.onClickOrder &&
-  prev.type === next.type
+  return prev.onClickOrder === next.onClickOrder && prev.type === next.type
 }
 
 export default memo(OrderBook, isEqual)

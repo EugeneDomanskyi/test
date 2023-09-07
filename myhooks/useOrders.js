@@ -41,7 +41,7 @@ const useOrders = ({tokenAddress, type}) => {
         $orders.api.get.tokens.trades({
           address: tokenAddress,
           blockchain: blockchain.code,
-          // sortBy: 'createDateTime',
+          sortBy: 'createDateTime',
           statuses: '[3]',
           limit: 100,
         }).then(res => {

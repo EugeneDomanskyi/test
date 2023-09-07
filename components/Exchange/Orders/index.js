@@ -15,17 +15,13 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
   const router = useRouter()
   const orders = useSelector($orders.get[type])
   const blockchain = useSelector($app.get.blockchain)
-  const { wallet, connect, changeNetwork } = useWalletConnect()
+  const { wallet, changeNetwork } = useWalletConnect()
   
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
   const [cancellingOrders, setCancellingOrders] = useState([])
 
   const handlePressCancel = (order) => async (e) => {
     e.stopPropagation()
-    const address = await connect()
-    if (!address) {
-      return
-    }
     const network = await changeNetwork(blockchain.code)
     if (!network) {
       return
@@ -44,20 +40,13 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
       'Order Type': 'Limit order',
     }
     trackEvent('Cancel Order Submit', eventPost)
-    setCancellingOrders(state => {
-      return [...state, order.id]
-    })
+    setCancellingOrders(state => [...state, order.id])
     order.cancel().then(() => {
       trackEvent('Cancel Order Success', eventPost)
       onOrderCancelled()
-      setCancellingOrders(state => {
-        return state.filter(id => id !== order.id)
-      })
-    }).catch(error => {
-      console.log('order cancel error', error)
-      setCancellingOrders(state => {
-        return state.filter(id => id !== order.id)
-      })
+      setCancellingOrders(state => state.filter(id => id !== order.id))
+    }).catch(() => {
+      setCancellingOrders(state => state.filter(id => id !== order.id))
     })
   }
 
@@ -74,6 +63,8 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
       side: order.side,
     })
   }
+
+  console.log('RENDER', current.address)
 
   return (
     <App.Flex column className={styles.container}>
@@ -160,7 +151,7 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
 const isEqual = (prev, next) => {
   return prev.onClickOrder === next.onClickOrder
     && prev.onOrderCancelled === next.onOrderCancelled
-    && JSON.stringify(prev.current) === JSON.stringify(next.current)
+    && prev.current.address === next.current.address
     && prev.type === next.type
 }
 

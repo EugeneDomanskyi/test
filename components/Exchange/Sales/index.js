@@ -3,14 +3,12 @@ import { useSelector } from 'react-redux'
 import moment from 'moment'
 import styles from './styles.module.scss'
 
-// import $exchange from '@/store/exchange'
 import $orders from '@/store/orders'
 import $app from '@/store/app'
 
 import App from '@/components/App'
 
 const Sales = ({onClickSale, type}) => {
-  // const sales = useSelector($exchange.get.recentSales(50))
   const trades = useSelector($orders.get.recentTrades(type, 50))
   const blockchain = useSelector($app.get.blockchain)
 
@@ -34,7 +32,7 @@ const Sales = ({onClickSale, type}) => {
       </App.Flex>
       <App.Flex flex={1} column sx={{overflow: 'auto'}}>
         {
-          trades.map((sale, index) => {
+          trades.map(sale => {
             const price = sale.priceFormatted
             let color = {
               price: '#53F19C',

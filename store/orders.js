@@ -1,12 +1,10 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
 import numeral from 'numeral'
 import moment from 'moment'
-import { formatUnits } from 'viem'
 
 import { request } from './index'
 import Order from '@/libs/structs/Order'
 import { INCH_TOKENS, CHAINS } from '@/config'
-
 
 const round = (date, duration, method) => {
   return moment(Math[method]((+date) / (+duration)) * (+duration))
@@ -31,27 +29,23 @@ const toFixed = (value, precision, direction) => {
   }
 }
 
-const addSide = (list, side) => {
+const orderBookFormatter = (list, currentToken) => {
   if (list && Array.isArray(list)) {
     return list.map(item => {
-      const makerAsset = INCH_TOKENS[item.data.makerAsset]
-      const takerAsset = INCH_TOKENS[item.data.takerAsset]
+      const makerAsset = INCH_TOKENS[item.data.makerAsset] || currentToken
+      const takerAsset = INCH_TOKENS[item.data.takerAsset] || currentToken
     
-      if (!makerAsset || !takerAsset) {
-        return {}
-      }
       const order = Order.TOKEN.formatter(item, makerAsset.decimals, takerAsset.decimals)
       
       const makerPrice = order.makingAmountFormatted / order.takingAmountFormatted
       const takerPrice = order.takingAmountFormatted / order.makingAmountFormatted
       
-      const price = side === 'buy' ? makerPrice : takerPrice
-      const amount = side === 'buy' ? order.takingAmountFormatted : order.makingAmountFormatted
+      const price = item.side === 'buy' ? makerPrice : takerPrice
+      const amount = item.side === 'buy' ? order.takingAmountFormatted : order.makingAmountFormatted
       // const amountFormatted = toFixed(side === 'buy' ? order.takingAmountFormatted : order.makingAmountFormatted, 6, 'up')
-      const priceFormatted = numeral(toFixed(price, 6, side === 'sell' ? 'up' : 'down')).format('0.0[00000]')
+      const priceFormatted = numeral(toFixed(price, 6, item.side === 'sell' ? 'up' : 'down')).format('0.0[00000]')
       return {
         ...item,
-        side: side,
         price: price,
         priceFormatted: priceFormatted,
         amount: amount,
@@ -84,7 +78,6 @@ const tradeFormatter = list => {
       const makerAmount = Math.pow(10, -makerAsset.decimals)*item.data.makingAmount //side === 'sell' ? makingAmountFormatted : takingAmountFormatted
       const takerAmount = Math.pow(10, -takerAsset.decimals)*item.data.takingAmount
 
-      const timestamp = moment(item.createDateTime).unix()
       return {
         ...item,
         side: side,
@@ -92,7 +85,7 @@ const tradeFormatter = list => {
         priceFormatted: numeral(side === 'buy' ? makerPrice : takerPrice).format('0.0[00000]'),
         amount: numeral(side === 'buy' ? takerAmount : makerAmount).format('0.0[00000]'),
         quantity: numeral(side === 'buy' ? takerAmount : makerAmount).format('0.0[00000]'),
-        timestamp: timestamp,
+        timestamp: moment(item.createDateTime).unix(),
       }
     })
   }
@@ -192,13 +185,18 @@ const getters = {
   tokens: createSelector([
     state => state.$orders.tokens
   ], (orders) => {
-    return orders.map(order => {
-      return new Order.TOKEN(order)
-    })
+    return orders.map(order => new Order.TOKEN(order))
   }),
   orderBook: (type) => createSelector([
-    state => state.$orders.orderBooks[type]
-  ], (orderBook) => {
+    state => state.$orders.orderBooks[type],
+    state => state.$token.current,
+  ], (orderBook, currentToken) => {
+    if (type === 'tokens') {
+      return {
+        buy: groupByPrice(orderBookFormatter(orderBook.buy, currentToken), 'desc'),
+        sell: groupByPrice(orderBookFormatter(orderBook.sell, currentToken), 'asc'),
+      }
+    }
     return {
       buy: orderBook.buy.slice(0, 10).map(item => ({...item, priceFormatted: item.priceFormatted ?? item.price})),
       sell: orderBook.sell.slice(0, 10).map(item => ({...item, priceFormatted: item.priceFormatted ?? item.price})),
@@ -326,9 +324,10 @@ api.get.tokens.orderBook = ({address, ...rest}) => {
     request('all', 'GET', {api: 'inch', takerAsset: address, makerAsset: network.usdtContract, sortBy: 'takerRate', ...rest}),
     request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, sortBy: 'makerRate', ...rest}),
   ]).then(([buy, sell]) => {
-    const sortedBuy = groupByPrice(addSide(buy, 'buy'), 'desc')
-    const sortedSell = groupByPrice(addSide(sell, 'sell'), 'asc')
-    return {buy: sortedBuy, sell: sortedSell}
+    return {
+      buy: buy.map(order => ({...order, side: 'buy'})),
+      sell: sell.map(order => ({...order, side: 'sell'}))
+    }
   })
 }
 

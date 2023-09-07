@@ -204,7 +204,9 @@ const Nfts = () => {
           />
 
           <App.Flex column flex={1} gap={GRID_GAP}>
-            <CollectionInfo current={current} />
+            <CollectionInfo
+              current={current}
+              location={router.asPath} />
 
             <App.Flex gap={GRID_GAP}>
               <App.Flex flex={1} column gap={GRID_GAP}>

@@ -3,25 +3,21 @@ import { memo } from 'react'
 import { useSelector } from 'react-redux'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 
 import $exchange from '@/store/exchange'
 import $app from '@/store/app'
-import useWalletConnect from '@/myhooks/wallet-connect'
 import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 import { WebIcon, TwitterIcon, DiscordIcon } from '@/components/Icons/exchange'
 
-const Info = ({ current }) => {
-  const { scanUrl } = useWalletConnect()
-  const router = useRouter()
+const Info = ({ current, location }) => {
   const blockchain = useSelector($app.get.blockchain)
   const { high, low } = useSelector($exchange.get.highLow({count: 24, unit: 'hours'}))
 
-  const [_, type] = router.asPath.split('/')
+  const [_, type] = location.split('/')
 
-  const scanLink = scanUrl(current.address, 'address', blockchain)
+  const scanLink = `${blockchain.scanUrl}/address/${current.address}`
 
   const handleClickLink = (type) => () => {
     trackEvent(`Click ${type} Redirect`, {
@@ -138,7 +134,7 @@ const Info = ({ current }) => {
 }
 
 const isEqual = (prevProps, nextProps) => {
-  return JSON.stringify(prevProps.current) == JSON.stringify(nextProps.current)
+  return prevProps.current === nextProps.current && prevProps.location === nextProps.location
 }
 
 export default memo(Info, isEqual)
