@@ -10,8 +10,8 @@ import $collection, { template } from '@/store/collection'
 
 const WrapperCollections = ({ children }) => {
   const router = useRouter()
-  const [queryBlockchainCode, queryCollectionId] = router.query.segments || []
-  const isNfts = router.pathname.includes('/nfts')
+  const [queryBlockchainCode, queryCollectionId] = router.query.segments?.slice(-2) || []
+  const isNfts = router.pathname.includes('/nfts') || router.query.segments?.includes('nfts')
 
   const { network, isContractAddress } = useWalletConnect()
 
@@ -109,6 +109,23 @@ const WrapperCollections = ({ children }) => {
         }
       })
 
+      // let tempAssets = []
+      // console.log('assetsList', assetsList);
+      // tempAll.map(async item => {
+      //   const isExist = assetsList.find(asset => asset.address === item.id)
+      //   console.log('isExist', isExist);
+      //   if (! isExist) {
+      //     const data = staticTemplate(item)
+      //     tempAssets = [...tempAssets, data]
+      //   }
+      // })
+
+      // if (tempAssets.length) {
+      //   const mergedList = [...assetsList, ...tempAssets]
+      //   putAssetsFile(mergedList)
+      //   dispatch($app.set.assetsList(mergedList))
+      // }
+      
       if (search == '') {
         dispatch($collection.set.searched([]))
         dispatch($collection.set.all(tempAll))

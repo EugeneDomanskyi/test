@@ -2,6 +2,8 @@ import fs from 'fs'
 import path from 'path'
 import getConfig from 'next/config'
 
+import { getAssetsFile, putAssetsFile } from '@/libs/aws.lib'
+
 const handler = async (req, res) => {
   const payload = JSON.parse(req.body)
   const { serverRuntimeConfig } = getConfig()

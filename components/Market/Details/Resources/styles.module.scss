@@ -1,0 +1,10 @@
+.container {
+  flex-wrap: wrap;
+  gap: 32px;
+}
+
+@media (max-width: 991px) {
+  .container {
+    gap: 16px;
+  }
+}

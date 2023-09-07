@@ -31,7 +31,7 @@ const GRID_GAP = 6
 
 const Nfts = () => {
   const router = useRouter()
-  const [_, collectionId] = router.query.segments || []
+  const [_, collectionId] = router.query?.segments || []
 
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
@@ -309,9 +309,9 @@ const Nfts = () => {
         </>
       )}
 
-      {exchangeLoading ? (
+      {/* {exchangeLoading ? (
         <App.LoaderBlock size={100} color="#7204FF" fixed height="100%" />
-      ) : null}
+      ) : null} */}
     </App.Flex>
   )
 }

@@ -5,8 +5,10 @@ import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 
+import { putAssetsFile, getAssetsFile } from '@/libs/aws.lib'
+
 import $app from '@/store/app'
-import $token, { template } from '@/store/token'
+import $token, { template, staticTemplate } from '@/store/token'
 
 const getApolloClient = (chain) => {
   const client = new ApolloClient({
@@ -20,7 +22,7 @@ const getApolloClient = (chain) => {
 
 const WrapperTokens = ({ children }) => {
   const router = useRouter()
-  const [queryBlockchainCode, queryTokenId] = router.query.segments || []
+  const [queryBlockchainCode, queryTokenId] = router.query?.segments?.slice(-2) || []
 
   const { getBasicInfo, isContractAddress } = useWalletConnect()
 
@@ -33,6 +35,7 @@ const WrapperTokens = ({ children }) => {
   const fetching = useSelector(({ $token }) => $token.fetching)
   const current = useSelector(({ $token }) => $token.current)
   const list = useSelector(({ $token }) => $token.list)
+  const infoList = useSelector(({ $token }) => $token.infoList)
   const sort = useSelector(({ $token }) => $token.sort)
   const search = useSelector(({ $token }) => $token.search)
   const pages = useSelector($token.get.pages)
@@ -57,8 +60,13 @@ const WrapperTokens = ({ children }) => {
       //   })))
       // }
 
-      const tempList = await $token.api.coingecko.local()
-      dispatch($token.set.list(tempList))
+      const infoList = await $token.api.coingecko.local()
+      dispatch($token.set.infoList(infoList))
+
+      const tempList = await getAssetsFile()
+      if (tempList.length) {
+        dispatch($token.set.list(tempList))
+      }
 
       setIsList(true)
     })()
@@ -183,7 +191,7 @@ const WrapperTokens = ({ children }) => {
     const addresses = tokens.map(item => item.id.toLowerCase())
 
     const idToAddressList = addresses.map(address => {
-      const foundItem = list.find(item => {
+      const foundItem = infoList.find(item => {
         return item.platforms.hasOwnProperty(platform) && item.platforms[platform].toLowerCase() == address
       })
       
@@ -239,9 +247,22 @@ const WrapperTokens = ({ children }) => {
             }
           }
 
-          const fullToken = await getTokenFull(currentToken)
-          dispatch($token.set.current(fullToken))
-          dispatch($token.set.update(fullToken))
+          const existingToken = list.length ?  list.find(item => item.id === currentToken.id) : null
+
+          if (! existingToken) {
+            const fullToken = await getTokenFull(currentToken)
+            dispatch($token.set.current(fullToken))
+            dispatch($token.set.update(fullToken))
+
+            const staticData = staticTemplate(fullToken)
+            const mergedData = list.length ? [...list, staticData] : [staticData]
+            putAssetsFile(mergedData)
+            dispatch($token.set.list(mergedData))
+          } else {
+            const mergedData = {...currentToken, ...existingToken}
+            dispatch($token.set.current(mergedData))
+            dispatch($token.set.update(mergedData))
+          }
         }
 
         if ( ! tokens.length) {
