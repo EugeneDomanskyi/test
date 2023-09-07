@@ -123,7 +123,7 @@ const LandingHeader = () => {
               </div>
             </App.Flex>
 
-            <a href="/nfts" target="_blank" rel="noreferrer" className={styles.navbarItem}>
+            <a href="/" target="_blank" rel="noreferrer" className={styles.navbarItem}>
               <App.Flex center gap={8} height="100%">
                 <App.Text size={[18, 14]} weight={700}>DOCS</App.Text>
                 <App.Icon icon="arrow-45" className={styles.hiddenOnMobile}/>
