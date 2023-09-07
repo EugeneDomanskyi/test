@@ -1,0 +1,38 @@
+.container {
+  justify-content: space-between;
+  gap: 32px;
+
+  .statBlock {
+    border-radius: 8px;
+    border: 1px solid #1D1937;
+    padding: 8px;
+    gap: 16px;
+    flex: .5;
+    justify-content: space-between;
+    align-items: center;
+
+    .statInfo {
+      flex: 1;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .container {
+    flex-direction: column;
+    gap: 16px;
+
+    .statBlock {
+      flex-direction: column;
+      gap: 8px;
+
+      .statInfo {
+        justify-content: space-between;
+        width: 100%;
+      }
+    }
+  }
+  
+}

@@ -10,8 +10,6 @@ export const template = (item) => {
     name: item.name,
     blockchain: item.blockchain,
     slug: item.slug,
-    // price: item.floorAsk?.price?.amount?.decimal ?? 0,
-    // currency: item.floorAsk?.price?.currency?.symbol ?? '',
     price: item.floorAsk?.price?.amount?.native ?? 0,
     currency: item.currency,
     volume: item.volume['1day'],
@@ -68,6 +66,7 @@ export const collectionSlice = createSlice({
       history: ['init'],
       current: 'init',
     },
+    marketInfo: {},
   },
 
   reducers: {
@@ -91,6 +90,10 @@ export const collectionSlice = createSlice({
       state.current = payload
     },
 
+    currentMarketSeoInfo: (state, { payload }) => {
+      state.marketInfo = payload
+    },
+    
     updateItem: (state, { payload }) => {
       const newAll = state.all.map(item => {
         return item.id.toLowerCase() == payload.id.toLowerCase() ? template(payload) : item

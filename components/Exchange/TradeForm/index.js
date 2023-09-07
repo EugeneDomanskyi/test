@@ -20,7 +20,7 @@ const TAB_OPTIONS = [
   {key: 'sell', title: 'SELL', color: 'rgb(206, 22, 93)'},
 ]
 
-const TradeForm = forwardRef(({current, type}, ref) => {
+const TradeForm = forwardRef(({current, type, fullWidth = null}, ref) => {
   const { wallet, getBalance, changeNetwork } = useWalletConnect()
   const { getNftBalanceUser } = useTrade()
   
@@ -112,7 +112,7 @@ const TradeForm = forwardRef(({current, type}, ref) => {
   }
 
   return (
-    <App.Flex className={styles.container} column>
+    <App.Flex className={styles.container} sx={{width: fullWidth ? '100%' : 366}} column>
       <App.Flex column>
         <Tabs
           options={TAB_OPTIONS}

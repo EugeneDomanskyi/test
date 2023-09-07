@@ -43,6 +43,28 @@ export const template = (item) => {
   }
 }
 
+export const staticTemplate = (item) => {
+  const currency = 'USD'
+
+  return {
+    id: item?.id,
+    cgId: item?.cgId,
+    address: item?.address,
+    decimals: item?.decimals,
+    image: item?.image,
+    name: item?.name,
+    blockchain: item?.blockchain,
+    symbol: item?.symbol,
+    currency: currency,
+    description: item?.description,
+    tokenCount: item?.tokenCount ?? 0,
+    discordUrl: item?.discordUrl,
+    externalUrl: item?.externalUrl,
+    twitterUrl: item?.twitterUrl,
+    openseaVerificationStatus: item?.openseaVerificationStatus === 'verified',
+  }
+}
+
 const basicToTemplate = (item) => {
   if (item) {
     return {
@@ -117,6 +139,7 @@ export const tokenSlice = createSlice({
     all: [],
     searched: [],
     list: [],
+    infoList: [],
     current: {},
     loading: true,
     sort: 'VOLUME:DESC',
@@ -148,6 +171,10 @@ export const tokenSlice = createSlice({
 
     list: (state, { payload }) => {
       state.list = payload
+    },
+
+    infoList: (state, { payload }) => {
+      state.infoList = payload
     },
 
     current: (state, { payload }) => {
