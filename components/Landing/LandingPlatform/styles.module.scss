@@ -46,6 +46,25 @@
     cursor: pointer;
     background: url('/images/landing/social-box.png') center no-repeat;
     background-size: cover;
+    opacity: .7;
+    transition: .2s all;
+
+    &:hover {
+      opacity: 1;
+      transform: scale(1.2);
+      filter: brightness(1.3);
+    }
+  }
+
+  .press {
+    opacity: .7;
+    transition: .2s all;
+
+    &:hover {
+      opacity: 1;
+      transform: scale(1.2);
+      filter: brightness(1.3);
+    }
   }
 }
 

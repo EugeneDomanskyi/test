@@ -36,7 +36,7 @@ const LandingFooter = () => {
                 </App.Flex>
               </App.Flex>
 
-              <App.Flex column gap={16} flex={1}>
+              <App.Flex column gap={[16, 8]} flex={1}>
                 <App.Text size={[20, 16]} weight={700}>Resources</App.Text>
 
                 <App.Flex column gap={8}>
@@ -58,7 +58,7 @@ const LandingFooter = () => {
                 </App.Flex>
               </App.Flex>
 
-              <App.Flex column gap={16} flex={1}>
+              <App.Flex column gap={[16, 8]} flex={1}>
                 <App.Text size={[20, 16]} weight={700}>Contact</App.Text>
 
                 <App.Flex column gap={8}>

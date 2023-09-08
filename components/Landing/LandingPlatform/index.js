@@ -93,31 +93,31 @@ const LandingPlatform = () => {
                 <App.Flex column gap={4}>
                   <App.Flex row center gap={[24, 4]} wrap>
                     <App.Flex center flex={[null, 1]}>
-                      <a href="https://www.moneycontrol.com/europe/?url=https://www.moneycontrol.com/news/business/web3-games-asset-marketplace-tegro-crosses-100k-signups-8951881.html" target="_blank" rel="noreferrer">
+                      <a href="https://www.moneycontrol.com/europe/?url=https://www.moneycontrol.com/news/business/web3-games-asset-marketplace-tegro-crosses-100k-signups-8951881.html" target="_blank" rel="noreferrer" className={styles.press}>
                         <Image src="/images/landing/press-1.png" width={107} height={25} alt="" />
                       </a>
                     </App.Flex>
 
                     <App.Flex center flex={[null, 1]}>
-                      <a href="https://cointelegraph.com/press-releases/wazirx-co-founder-and-supergaming-announce-tegro-a-web3-games-marketplace" target="_blank" rel="noreferrer">
+                      <a href="https://cointelegraph.com/press-releases/wazirx-co-founder-and-supergaming-announce-tegro-a-web3-games-marketplace" target="_blank" rel="noreferrer" className={styles.press}>
                         <Image src="/images/landing/press-2.png" width={116} height={27} alt="" />
                       </a>
                     </App.Flex>
 
                     <App.Flex center flex={[null, 1]}>
-                      <a href="https://coinmarketcap.com/uk/currencies/tegro/" target="_blank" rel="noreferrer">
+                      <a href="https://coinmarketcap.com/uk/currencies/tegro/" target="_blank" rel="noreferrer" className={styles.press}>
                         <Image src="/images/landing/press-3.png" width={113} height={32} alt="" />
                       </a>
                     </App.Flex>
 
                     <App.Flex center flex={[null, 1]}>
-                      <a href="https://www.financialexpress.com/business/brandwagon-wazirx-co-founder-siddharth-menon-and-supergaming-launch-tegro-a-web3-games-ecosystem-marketplace-2435783/" target="_blank" rel="noreferrer">
+                      <a href="https://www.financialexpress.com/business/brandwagon-wazirx-co-founder-siddharth-menon-and-supergaming-launch-tegro-a-web3-games-ecosystem-marketplace-2435783/" target="_blank" rel="noreferrer" className={styles.press}>
                         <Image src="/images/landing/press-4.png" width={141} height={18} alt="" />
                       </a>
                     </App.Flex>
                   </App.Flex>
 
-                  <App.Flex row center gap={16} sx={{ cursor: 'pointer' }} onClick={handleSocialClick('press')}>
+                  <App.Flex row center gap={16} sx={{ cursor: 'pointer' }} onClick={handleSocialClick('press')} className={styles.press}>
                     <App.Text style="italic" gradient="linear-gradient(90deg, rgba(255, 255, 255, 0.58) 0.16%, rgba(255, 255, 255, 0.29) 100%)">Press Kit</App.Text>
                     <Image src="/images/landing/button-with-arrow-2.png" width={70} height={23} alt="" />
                   </App.Flex>

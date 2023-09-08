@@ -59,11 +59,11 @@
     }
 
     &:hover {
-      background-color: #130A3A;
+      background-color: #311b92;
     }
 
     &.active {
-      background: #130A3A;
+      background: #311b92;
 
       &:after {
         opacity: 1;
@@ -84,7 +84,6 @@
     border-radius: 4px;
     left: 0;
     top: 64px;
-    padding: 16px;
     visibility: hidden;
     min-width: 180px;
     opacity: 0;
@@ -92,6 +91,17 @@
     border: 1px solid #2E1C8C;
     backdrop-filter: blur(6px);
     transition: all .2s ease 0s;
+
+    .menuItem {
+      display: flex;
+      padding: 16px;
+      cursor: pointer;
+      transition: .3s all;
+
+      &:hover {
+        background-color: #1d173f;
+      }
+    }
 
     &.menuLong {
       min-width: 380px;
