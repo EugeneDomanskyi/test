@@ -69,7 +69,7 @@ const LandingHead = () => {
 
                 <App.Flex column gap={8}>
                   <App.Text size={[14, 12]} weight={600} color="#B9B8C5" height={1}>FOR TRADERS</App.Text>
-                  <App.Text size={[18, 12]} height={1.2}>Tegro X : A decentralized exchange place for tokens and assets.</App.Text>
+                  <App.Text size={[18, 12]} height={1.2}>Use Tegro: The CEX-DEX to trade Tokens and NFTs efficiently across chains.</App.Text>
                 </App.Flex>
               </App.Flex>
 

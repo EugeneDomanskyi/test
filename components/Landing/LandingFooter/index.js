@@ -22,10 +22,6 @@ const LandingFooter = () => {
                 <App.Text size={[20, 16]} weight={700}>General</App.Text>
 
                 <App.Flex column gap={8}>
-                  <a href="https://blog.tegro.com/" target="_blank" rel="noreferrer">
-                    <App.Text inline size={[16, 12]} color="#4C69FF">Blog</App.Text>
-                  </a>
-
                   <a href="https://blog.tegro.com/career" target="_blank" rel="noreferrer">
                     <App.Text inline size={[16, 12]} color="#4C69FF">Careers</App.Text>
                   </a>
@@ -44,6 +40,10 @@ const LandingFooter = () => {
                 <App.Text size={[20, 16]} weight={700}>Resources</App.Text>
 
                 <App.Flex column gap={8}>
+                  <a href="https://blog.tegro.com/" target="_blank" rel="noreferrer">
+                    <App.Text inline size={[16, 12]} color="#4C69FF">Blog</App.Text>
+                  </a>
+
                   <a href="https://blog.tegro.com/tegronomics" target="_blank" rel="noreferrer">
                     <App.Text inline size={[16, 12]} color="#4C69FF">Tegronomics</App.Text>
                   </a>
@@ -52,7 +52,7 @@ const LandingFooter = () => {
                     <App.Text inline size={[16, 12]} color="#4C69FF">Press Kit</App.Text>
                   </a>
 
-                  <a href="https://nft20-1.gitbook.io/nft-20.org/" target="_blank" rel="noreferrer">
+                  <a href="https://x-by-tegro.gitbook.io/x-by-tegro/" target="_blank" rel="noreferrer">
                     <App.Text inline size={[16, 12]} color="#4C69FF">Gitbook</App.Text>
                   </a>
                 </App.Flex>
