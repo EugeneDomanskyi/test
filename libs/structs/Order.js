@@ -667,43 +667,35 @@ class TOKEN extends Order {
     })
   }
 
-  static place = ({address, price, amount, type = 'buy'}) => {
+  static place = ({makerAsset, takerAsset, price, amount, type = 'buy'}, callback) => {
     return new Promise(async (resolve, reject) => {
       const { walletClient, chainId } = await Order.getWalletData()
       const limitOrderBuilder = new LimitOrderBuilder(INCH_CONTRACTS[chainId], chainId, walletClient)
       const network = CHAINS.find(chain => chain.id === chainId)
 
-      const tokenDecimals = await Order.getDecimals(address)
-      let sellAsset = network.usdtContract
-      let buyAsset = address
-      let sellAmount = price
-      let buyAmount = parseUnits(`${amount}`, tokenDecimals).toString()
-      if (type === 'sell') {
-        sellAsset = address
-        buyAsset = network.usdtContract
-        sellAmount = amount
-        buyAmount = parseUnits(`${price}`, USDT_DECIMALS).toString()
-      }
-
-      const allowance = await Order.checkAllowance(chainId, INCH_CONTRACTS[chainId], walletClient.account.address, sellAsset, sellAmount)
+      const spendAmount = type === 'buy' ? price*amount : amount*1
+      const receiveAmount = type === 'buy' ? amount : price*amount
+      
+      const allowance = await Order.checkAllowance(chainId, INCH_CONTRACTS[chainId], walletClient.account.address, makerAsset.address, spendAmount)
       if (!allowance) {
         reject()
         return
       }
-      console.log('allowance', allowance)
-      const balance = await Order.getBalance(walletClient.account.address, sellAsset)
-      if (balance < sellAmount*1) {
+      callback('allowance', {success: true})
+      const balance = await Order.getBalance(walletClient.account.address, makerAsset.address)
+      
+      if (balance < spendAmount) {
         Order.showErrorMessage('Insufficient balance')
         reject()
         return 
       }
-      
+
       const limitOrder = limitOrderBuilder.buildLimitOrder({
-        makerAssetAddress: sellAsset,
-        takerAssetAddress: buyAsset,
+        makerAssetAddress: makerAsset.address,
+        takerAssetAddress: takerAsset.address,
         makerAddress: walletClient.account.address,
-        makingAmount: parseUnits(`${sellAmount}`, type === 'buy' ? USDT_DECIMALS : tokenDecimals).toString(),
-        takingAmount: buyAmount,
+        makingAmount: parseUnits(`${spendAmount}`, makerAsset.decimals).toString(),
+        takingAmount: parseUnits(`${receiveAmount}`, takerAsset.decimals).toString(),
       })
 
       const limitOrderTypedData = limitOrderBuilder.buildLimitOrderTypedData(limitOrder)
@@ -716,7 +708,7 @@ class TOKEN extends Order {
       if (!signature) {
         return
       }
-
+      callback('transaction', {success: true})
       const post = {
         orderHash: limitOrderHash,
         signature: signature,

@@ -9,6 +9,7 @@ import $modal from '@/store/modal'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useTrade from '@/myhooks/trade'
 import { trackEvent } from '@/libs/analytics.lib'
+import { INCH_TOKENS } from '@/config'
 
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
@@ -82,25 +83,48 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
     }
     
     loadingRef.current = true
+
+    const usdtAsset = INCH_TOKENS[blockchain.usdtContract.toLowerCase()]
+    const usdtFormatted = {
+      ...usdtAsset,
+      image: usdtAsset.logoURI,
+    }
     switch (currentTab) {
       case 'buy':
+        if (type === 'nfts') {
+          dispatch($modal.set.show({
+            show: true,
+            modal: 'Exchange/BuyModal',
+            props: {
+              header: {
+                title: `Buy ${current.name} for ${type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'}`,
+              },
+              data: {
+                ...form,
+                type: 'place',
+                blockchain: blockchain,
+                current: current,
+                tokenType: type,
+              },
+            }
+          }))
+          return
+        }
         dispatch($modal.set.show({
           show: true,
-          modal: 'Exchange/BuyModal',
+          modal: 'Exchange/PlaceOrder',
           props: {
-            header: {
-              title: `Buy ${current.name} for ${type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'}`,
-            },
             data: {
-              ...form,
-              type: 'place',
+              side: 'buy',
+              makerAsset: usdtFormatted,
+              takerAsset: current,
+              amount: form.amount,
+              price: form.price,
               blockchain: blockchain,
-              current: current,
-              tokenType: type,
             },
           }
         }))
-        return
+        break
       case 'sell':
         if (type === 'nfts') {
           const tokenIds = await getNftUser(current.address, wallet)
@@ -130,21 +154,35 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
         }
         dispatch($modal.set.show({
           show: true,
-          modal: 'Exchange/SellModal',
+          modal: 'Exchange/PlaceOrder',
           props: {
-            header: {
-              title: `Sell ${current.name} for USDT`,
-            },
             data: {
-              ...form,
-              type: 'place',
-              current: current,
+              side: 'sell',
+              makerAsset: current,
+              takerAsset: usdtFormatted,
+              amount: form.amount,
+              price: form.price,
               blockchain: blockchain,
-              tokenType: type,
-              tokens: [],
             },
           }
         }))
+        // dispatch($modal.set.show({
+        //   show: true,
+        //   modal: 'Exchange/SellModal',
+        //   props: {
+        //     header: {
+        //       title: `Sell ${current.name} for USDT`,
+        //     },
+        //     data: {
+        //       ...form,
+        //       type: 'place',
+        //       current: current,
+        //       blockchain: blockchain,
+        //       tokenType: type,
+        //       tokens: [],
+        //     },
+        //   }
+        // }))
     }
   }
 
