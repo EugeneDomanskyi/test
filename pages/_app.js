@@ -122,14 +122,30 @@ const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
 
 amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
 
-function MyApp({ Component, pageProps, initialData }) {
+function MyApp({ Component, pageProps, initialData, currentPage }) {
   const storeRef = useRef(store(initialData)).current
+
+  const getTitle = () => {
+    switch (currentPage) {
+      case 'landing': return 'Tegro: The CEX-DEX to trade Tokens & NFTs efficiently across chains'
+      default : 'TEGRO | NFT Trading Platform'
+    }
+  }
+
+  const getDescription = () => {
+    switch (currentPage) {
+      case 'landing': return 'Use Tegro: The CEX-DEX to trade Tokens & NFTs easily across chains. Enjoy CEX-like Orderbook Trading in a DEX. Trade tokens like ETH, PEPE, SHIB, USDT and more!'
+      default : 'TEGRO | NFT Trading Platform'
+    }
+  }
+  
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
         <Provider store={storeRef}>
           <Head>
-            <title>TEGRO | NFT Trading Platform</title>
+            <title>{getTitle()}</title>
+            <meta content={getDescription()} property="description" key="description" />
           </Head>
 
           <Wrapper>
@@ -153,11 +169,15 @@ MyApp.getInitialProps = async ({ctx}) => {
     isMobile = res?.isMobile
   }
 
+  const { req } = ctx
+  const currentPage = req.url.split('/')[1]
+
   return {
     initialData: {
       blockchain: cookies.blockchain,
       isMobile,
-    }
+    },
+    currentPage,
   }
 }
 
