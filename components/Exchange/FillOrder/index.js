@@ -41,6 +41,8 @@ const FillOrder = ({data, onClose}) => {
     }
   }, {spendedAmount: 0, tookAmount: 0})
 
+  const avgPrice = data.side === 'buy' ? abilities.willSpendAmount / data.amount : abilities.willTakeAmount / data.amount
+
   const completePercentage = numeral(stats.tookAmount*100/abilities.willTakeAmount).format('0')
 
   useEffect(() => {
@@ -165,12 +167,24 @@ const FillOrder = ({data, onClose}) => {
                     <App.Flex column className={styles.border} gap={8}>
                       <App.Flex justify="space-between">
                         <App.Text color="#5E5C6B" size={12} weight={600}>Type</App.Text>
-                        <App.Text color="#B9B8C5" size={12} weight={600}>Taker</App.Text>
+                        <App.Text color="#B9B8C5" size={12} weight={600} capitalize>{data.side} now</App.Text>
                       </App.Flex>
                       <App.Flex justify="space-between">
-                        <App.Text color="#5E5C6B" size={12} weight={600}>Limit Price</App.Text>
+                        <App.Text color="#5E5C6B" size={12} weight={600}>At Price</App.Text>
                         <App.Text color="#5E5C6B" size={12} weight={600}>
-                          { data.price } { data.side === 'buy' ? data.makerAsset.symbol : data.takerAsset.symbol }
+                          { avgPrice } { data.side === 'buy' ? data.takerAsset.symbol : data.makerAsset.symbol }
+                        </App.Text>
+                      </App.Flex>
+                      <App.Flex justify="space-between">
+                        <App.Text color="#5E5C6B" size={12} weight={600}>Amount</App.Text>
+                        <App.Text color="#5E5C6B" size={12} weight={600}>
+                          { data.amount } { data.side === 'buy' ? data.makerAsset.symbol : data.takerAsset.symbol }
+                        </App.Text>
+                      </App.Flex>
+                      <App.Flex justify="space-between">
+                        <App.Text color="#5E5C6B" size={12} weight={600}>Total</App.Text>
+                        <App.Text color="#5E5C6B" size={12} weight={600}>
+                          { data.side === 'buy' ? abilities.willSpendAmount : abilities.willTakeAmount } { data.side === 'buy' ? data.takerAsset.symbol : data.makerAsset.symbol }
                         </App.Text>
                       </App.Flex>
                     </App.Flex>
