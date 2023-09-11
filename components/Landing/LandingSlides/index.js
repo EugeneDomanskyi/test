@@ -52,7 +52,7 @@ const LandingSlides = () => {
                 </App.Flex>
 
                 <App.Flex center sx={{ margin: '65px -30px 0 0' }}>
-                  <Image src="/images/landing/slide-orderbook.png" width={441} height={449} alt="" />
+                  <Image src="/images/landing/slide-orderbook.png" width={463} height={407} alt="" />
                 </App.Flex>
               </App.Flex>
 
@@ -82,10 +82,10 @@ const LandingSlides = () => {
 
               <App.Flex row flex={1}>
                 <App.Flex center sx={{ marginTop: 70 }}>
-                  <Image src="/images/landing/slide-order.png" width={292} height={250} alt="" />
+                  <Image src="/images/landing/slide-order.png" width={292} height={226} alt="" />
                 </App.Flex>
 
-                <App.Flex column gap={8} width={250} sx={{ margin: "165px 0 0 30px" }}>
+                <App.Flex column gap={8} width={250} sx={{ margin: "180px 0 0 30px" }}>
                   <App.Text size={20} weight={600} height={1.2}>Gasless Orders</App.Text>
                   <App.Text color="#B9B8C5" style="italic">Trade with confidence! Create orders without ever having to worry about incurring gas fees.</App.Text>
                 </App.Flex>
@@ -132,13 +132,13 @@ const LandingSlides = () => {
         ) : (
           <App.Flex row fullWidth className={styles.slider}>
             <App.Flex row className={cn(styles.slide, {[styles.active]: slide == 0})}>
-              <App.Flex column align="flex-end" gap={8} width={150} sx={{ margin: "55px -30px 0 0" }}>
+              <App.Flex column align="flex-end" gap={8} width={150} sx={{ margin: "75px -15px 0 0" }}>
                 <App.Text right size={12} weight={600} height={1.2}>Orderbooks</App.Text>
                 <App.Text right size={10} color="#B9B8C5" style="italic">Leverage market depth in real-time. Take advantage of Token and NFT support and resistance points instantly.</App.Text>
               </App.Flex>
 
-              <App.Flex center sx={{ marginRight: -10 }}>
-                <Image src="/images/landing/slide-orderbook.png" width={254} height={289} alt="" />
+              <App.Flex center sx={{ marginRight: '-10px' }}>
+                <Image src="/images/landing/slide-orderbook.png" width={224} height={197} alt="" />
               </App.Flex>
             </App.Flex>
 
@@ -166,10 +166,10 @@ const LandingSlides = () => {
 
             <App.Flex row className={cn(styles.slide, {[styles.active]: slide == 3})}>
               <App.Flex center>
-                <Image src="/images/landing/slide-order.png" width={204} height={174} alt="" />
+                <Image src="/images/landing/slide-order.png" width={204} height={158} alt="" />
               </App.Flex>
 
-              <App.Flex column gap={8} width={150} sx={{ margin: "60px 0 0 10px" }}>
+              <App.Flex column gap={8} width={150} sx={{ margin: "65px 0 0 10px" }}>
                 <App.Text size={12} weight={600} height={1.2}>Gasless Orders</App.Text>
                 <App.Text size={10} color="#B9B8C5" style="italic">Trade with confidence! Create orders without ever having to worry about incurring gas fees.</App.Text>
               </App.Flex>
