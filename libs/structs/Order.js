@@ -419,10 +419,11 @@ class TOKEN extends Order {
 
   static getOpenWithPriceLimitation = async ({chainId, takerAsset, makerAsset, amount, price, side}) => {
     const network = CHAINS.find(chain => chain.id === chainId)
-    // fetch(`/api/tokens/abilities/${chainId}/${makerAsset}/${takerAsset}/${price}/${amount}/${side}`).then(async res => {
+    // const tmp = await fetch(`/api/tokens/abilities/${chainId}/${makerAsset}/${takerAsset}/${price}/${amount}/${side}`).then(async res => {
     //   const json = await res.json()
-    //   console.log('res -> ', json)
+    //   return json
     // })
+    // console.log('tmp', tmp)
     
     const res = await $orders.api.get.tokens.byAssets({
       makerAsset: makerAsset,

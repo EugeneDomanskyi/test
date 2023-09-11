@@ -94,7 +94,7 @@ const handler = async (req, res) => {
           // need next order
           willTakeMakingAmount = order.makingAmount
           willSpendTakingAmount = side === 'buy' ? willTakeMakingAmount * order.makerRate : willTakeMakingAmount / order.takerRate
-          acc.totalToBuy =  acc.totalToBuy - willTakeMakingAmount //side === 'sell' ? diff.multipliedBy(-1).dividedBy(order.takerRate) : diff.multipliedBy(-1)
+          acc.totalToBuy = side === 'sell' ? (diff * -1) / order.takerRate : diff * -1
         }
         const willTakeMakingAmountFormatted = formatUnits(willTakeMakingAmount.toFixed(), makerDecimals)
         const willSpendTakingAmountFormatted = formatUnits(willSpendTakingAmount.toFixed(), takerDecimals)
