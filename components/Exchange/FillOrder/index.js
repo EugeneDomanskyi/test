@@ -7,8 +7,11 @@ import cn from 'classnames'
 
 import App from '@/components/App'
 import Order from '@/libs/structs/Order'
+import useOrders from '@/myhooks/useOrders'
 
 const FillOrder = ({data, onClose}) => {
+  const { updateOrders } = useOrders({tokenAddress: data.side === 'buy' ? data.makerAsset.address : data.takerAsset.address, type: 'tokens'})
+  
   const [currentStep, setCurrentStep] = useState('confirming')
   const [signSteps, setSignSteps] = useState({
     allowance: {
@@ -101,6 +104,8 @@ const FillOrder = ({data, onClose}) => {
     }, eventHandler).catch(error => {
       console.log('error', error)
       setCurrentStep('sign_error')
+    }).then(() => {
+      updateOrders()
     })
   }
 
