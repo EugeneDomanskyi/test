@@ -128,14 +128,14 @@ function MyApp({ Component, pageProps, initialData, currentPage }) {
   const getTitle = () => {
     switch (currentPage) {
       case 'landing': return 'Tegro: The CEX-DEX to trade Tokens & NFTs efficiently across chains'
-      default : 'TEGRO | NFT Trading Platform'
+      default: return 'TEGRO | NFT Trading Platform'
     }
   }
 
   const getDescription = () => {
     switch (currentPage) {
       case 'landing': return 'Use Tegro: The CEX-DEX to trade Tokens & NFTs easily across chains. Enjoy CEX-like Orderbook Trading in a DEX. Trade tokens like ETH, PEPE, SHIB, USDT and more!'
-      default : 'TEGRO | NFT Trading Platform'
+      default: return 'TEGRO | NFT Trading Platform'
     }
   }
   
@@ -168,9 +168,11 @@ MyApp.getInitialProps = async ({ctx}) => {
     const res = getSelectorsByUserAgent(ctx.req?.headers?.['user-agent'])
     isMobile = res?.isMobile
   }
-
-  const { req } = ctx
-  const currentPage = req.url.split('/')[1]
+  let currentPage = ''
+  if (ctx?.req) {
+    currentPage = ctx.req.url.split('/')[1]
+  }
+  
 
   return {
     initialData: {

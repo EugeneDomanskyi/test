@@ -604,10 +604,9 @@ class TOKEN extends Order {
         }
         callback('allowance', {success: true})
         const totalSpendAmount = orders.reduce((acc, order) => acc.plus(order.willSpendTakingAmount), new BigNumber(0))
-        // const totalTakeAmount = orders.reduce((acc, order) => acc+order.willTakeMakingAmount, 0)
         
         const balance = await Order.getBalance(walletClient.account.address, sellAsset)
-        // const totalSpendFormatted = orders.reduce((acc, order) => acc+order.willSpendTakingAmountFormatted*1, 0)
+        
         if (willSpendAmount*1 > balance*1) {
           Order.showErrorMessage('Insufficient balance')
           reject()
@@ -621,7 +620,7 @@ class TOKEN extends Order {
             '0x',
             order.willTakeMakingAmount.toFixed(0).toString(),
             '0',
-            order.willSpendTakingAmount.multipliedBy(1.01).toFixed(0).toString(),
+            order.willSpendTakingAmount.multipliedBy(2).toFixed(0).toString(),
             // '0xde0b6b3a7640000',
             // walletClient.account.address
           ]
