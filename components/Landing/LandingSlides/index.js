@@ -15,7 +15,7 @@ const LandingSlides = () => {
 
   const timer = useRef()
 
-  const slideCount = isMobile ? 7 : 4
+  const slideCount = isMobile ? 6 : 3
 
   useEffect(() => {
     setSlide(0)
@@ -115,19 +115,6 @@ const LandingSlides = () => {
                 </App.Flex>
               </App.Flex>
             </App.Flex>
-
-            <App.Flex row className={cn(styles.slide, {[styles.active]: slide == 3})}>
-              <App.Flex row gap={20} justify="center" flex={1}>
-                <App.Flex column align="flex-end" gap={8} width={260} sx={{ margin: "110px 0 0 0" }}>
-                  <App.Text right size={20} weight={600} height={1.2}>Access Global Liquidity</App.Text>
-                  <App.Text right color="#B9B8C5" style="italic">The entire market’s liquidity at your fingertips! Enjoy deep liquidity for any Token and NFT out there.</App.Text>
-                </App.Flex>
-
-                <App.Flex center>
-                  <Image src="/images/landing/slide-orderbook-full.png" width={379} height={322} alt="" />
-                </App.Flex>
-              </App.Flex>
-            </App.Flex>
           </App.Flex>
         ) : (
           <App.Flex row fullWidth className={styles.slider}>
@@ -194,17 +181,6 @@ const LandingSlides = () => {
               <App.Flex column gap={8} width={150} sx={{ margin: "55px 0 0 10px" }}>
                 <App.Text size={12} weight={600} height={1.2}>Multichain Support</App.Text>
                 <App.Text size={10} color="#B9B8C5" style="italic">Any chain, we support it. One-stop-shop to trade tokens and NFTs efficiently across any blockchain.</App.Text>
-              </App.Flex>
-            </App.Flex>
-
-            <App.Flex row className={cn(styles.slide, {[styles.active]: slide == 6})}>
-              <App.Flex column align="flex-end" gap={8} width={150} sx={{ margin: "70px 0 0 0" }}>
-                <App.Text right size={12} weight={600} height={1.2}>Access Global Liquidity</App.Text>
-                <App.Text right size={10} color="#B9B8C5" style="italic">The entire market’s liquidity at your fingertips! Enjoy deep liquidity for any Token and NFT out there.</App.Text>
-              </App.Flex>
-
-              <App.Flex center>
-                <Image src="/images/landing/slide-orderbook-full.png" width={204} height={173} alt="" />
               </App.Flex>
             </App.Flex>
           </App.Flex>

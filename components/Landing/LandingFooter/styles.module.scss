@@ -27,12 +27,12 @@
 @media (max-width: 768px) {
   .container {
     .parent {
-      // padding-top: 80px;
-      padding-top: 0;
+      padding-top: 80px;
+      // padding-top: 0;
   
       .video {
-        // top: -50px;
-        display: none;
+        top: -50px;
+        // display: none;
       }
     }
   }

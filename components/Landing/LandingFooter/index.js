@@ -10,9 +10,15 @@ const LandingFooter = () => {
     <App.Flex className={styles.container}>
       <App.Container>
         <App.Flex column gap={32} className={styles.parent}>
-          <video autoPlay loop muted className={styles.video}>
-            <source src="/images/landing/protocol.webm" type="video/webm" />
-          </video>
+          {isMobile ? (
+            <video autoPlay loop muted className={styles.video}>
+              <source src="/images/landing/protocol-mobile.webm" type="video/webm" />
+            </video>
+          ) : (
+            <video autoPlay loop muted className={styles.video}>
+              <source src="/images/landing/protocol.webm" type="video/webm" />
+            </video>
+          )}
 
           <App.Flex direction={['row', 'column']} justify="space-between" gap={16}>
             <App.Icon icon="tegro" width={isMobile ? 82 : 198} height={isMobile ? 17 : 42} />

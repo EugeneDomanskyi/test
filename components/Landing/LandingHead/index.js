@@ -51,7 +51,10 @@ const LandingHead = () => {
     <App.Container className={styles.container}>
       <App.Flex column align="center" gap={24} fullWidth>
         {isMobile ? (
-          <img src="/images/landing/header.png" alt="" className={styles.image} />
+          // <img src="/images/landing/header.png" alt="" className={styles.image} />
+          <video autoPlay loop muted className={styles.video}>
+            <source src="/images/landing/header-mobile.webm" type="video/webm" />
+          </video>
         ) : (
           <video autoPlay loop muted className={styles.video}>
             <source src="/images/landing/header.webm" type="video/webm" />

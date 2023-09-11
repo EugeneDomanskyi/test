@@ -1,10 +1,14 @@
 import Image from 'next/image'
 
+import { usePropsHelper } from '@/myhooks/props-helper'
+
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const LandingPlatform = () => {
+  const { isMobile } = usePropsHelper()
+
   const handleSocialClick = (social) => () => {
     let url = ''
 
@@ -37,9 +41,15 @@ const LandingPlatform = () => {
 
   return (
     <App.Flex className={styles.container}>
-      <video autoPlay loop muted>
-        <source src="/images/landing/reveal.webm" type="video/webm" />
-      </video>
+      {isMobile ? (
+        <video autoPlay loop muted>
+          <source src="/images/landing/reveal-mobile.webm" type="video/webm" />
+        </video>
+      ) : (
+        <video autoPlay loop muted>
+          <source src="/images/landing/reveal.webm" type="video/webm" />
+        </video>
+      )}
 
       <App.Container>
         <App.Flex column center gap={[36, 8]} sx={[{ padding: '70px 0' }, { padding: '50px 0' }]}>
