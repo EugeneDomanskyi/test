@@ -18,6 +18,7 @@ import { MagicConnectConnector } from '@everipedia/wagmi-magic-connector'
 
 import { CHAINS } from '@/config'
 import store from '@/store'
+import $token from '@/store/token'
 
 import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
@@ -122,20 +123,26 @@ const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
 
 amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
 
-function MyApp({ Component, pageProps, initialData, currentPage }) {
+function MyApp({ Component, pageProps, initialData, currentPage, currentAddress, currentSymbol }) {
   const storeRef = useRef(store(initialData)).current
 
   const getTitle = () => {
     switch (currentPage) {
       case 'landing': return 'Tegro: The CEX-DEX to trade Tokens & NFTs efficiently across chains'
-      default: return 'TEGRO | NFT Trading Platform'
+      case 'tokens':
+        return `${currentSymbol}/USDT Trading and Charts | Tegro: The CEX-DEX`
+      default:
+        return 'TEGRO | NFT Trading Platform'
     }
   }
 
   const getDescription = () => {
     switch (currentPage) {
       case 'landing': return 'Use Tegro: The CEX-DEX to trade Tokens & NFTs easily across chains. Enjoy CEX-like Orderbook Trading in a DEX. Trade tokens like ETH, PEPE, SHIB, USDT and more!'
-      default: return 'TEGRO | NFT Trading Platform'
+      case 'tokens':
+        return `Buy, sell, and trade ${currentSymbol}/USDT instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${currentSymbol} at the best prices.`
+      default:
+        return 'TEGRO | NFT Trading Platform'
     }
   }
   
@@ -169,8 +176,20 @@ MyApp.getInitialProps = async ({ctx}) => {
     isMobile = res?.isMobile
   }
   let currentPage = ''
+  let currentAddress = ''
+  let currentSymbol = ''
   if (ctx?.req) {
-    currentPage = ctx.req.url.split('/')[1]
+    const [_, page, blockchain, address] = ctx.req.url.split('/')
+    
+    currentPage = page
+    currentAddress = address
+    if (blockchain && address) {
+      const network = CHAINS.find(chain => chain.code === blockchain)
+      const res = await $token.api.coingecko.full({platform: network.platform, address: address})
+      if (res) {
+        currentSymbol = res.symbol.toUpperCase()
+      }
+    }
   }
   
 
@@ -180,6 +199,8 @@ MyApp.getInitialProps = async ({ctx}) => {
       isMobile,
     },
     currentPage,
+    currentAddress,
+    currentSymbol,
   }
 }
 
