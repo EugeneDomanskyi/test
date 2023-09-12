@@ -190,9 +190,11 @@ MyApp.getInitialProps = async ({ctx}) => {
     currentAddress = address
     if (blockchain && address) {
       const network = CHAINS.find(chain => chain.code === blockchain)
-      const res = await $token.api.coingecko.full({platform: network.platform, address: address})
-      if (res) {
-        currentSymbol = res.symbol.toUpperCase()
+      if (network) {
+        const res = await $token.api.coingecko.full({platform: network.platform, address: address})
+        if (res) {
+          currentSymbol = res.symbol.toUpperCase()
+        }
       }
     }
   }
