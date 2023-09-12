@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import Head from 'next/head'
 import { ToastContainer } from 'react-toastify'
@@ -7,6 +7,7 @@ import nookies from 'nookies'
 import { getSelectorsByUserAgent } from 'react-device-detect'
 import amplitude from 'amplitude-js'
 import * as Sentry from '@sentry/nextjs'
+import Smartlook from 'smartlook-client'
 
 import { getDefaultWallets, RainbowKitProvider, darkTheme, connectorsForWallets } from '@rainbow-me/rainbowkit'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
@@ -125,6 +126,10 @@ amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
 
 function MyApp({ Component, pageProps, initialData, currentPage, currentAddress, currentSymbol }) {
   const storeRef = useRef(store(initialData)).current
+
+  useEffect(() => {
+    Smartlook.init('cf71ed516173943775e4d8cc10245b95b9ed7de0')
+  }, [])
 
   const getTitle = () => {
     switch (currentPage) {
