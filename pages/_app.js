@@ -20,6 +20,7 @@ import { MagicConnectConnector } from '@everipedia/wagmi-magic-connector'
 import { CHAINS } from '@/config'
 import store from '@/store'
 import $token from '@/store/token'
+import $collection from '@/store/collection'
 
 import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
@@ -132,11 +133,13 @@ function MyApp({ Component, pageProps, initialData, currentPage, currentAddress,
   }, [])
 
   const getTitle = () => {
+    if (!currentSymbol) {
+      return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'
+    }
     switch (currentPage) {
+      case 'nfts':
+        return `${currentSymbol} Trading and Charts | Tegro: The CEX-DEX`
       case 'tokens':
-        if (!currentSymbol) {
-          return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'
-        }
         return `${currentSymbol}/USDT Trading and Charts | Tegro: The CEX-DEX`
       default:
         return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'
@@ -144,12 +147,13 @@ function MyApp({ Component, pageProps, initialData, currentPage, currentAddress,
   }
 
   const getDescription = () => {
-    
+    if (!currentSymbol) {
+      return 'Buy, sell, and trade Tokens or NFTs instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade Tokens and NFTs at the best prices.'
+    }
     switch (currentPage) {
+      case 'nfts':
+        return `Buy, sell, and trade ${currentSymbol} instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${currentSymbol} at the best prices.`
       case 'tokens':
-        if (!currentSymbol) {
-          return 'Buy, sell, and trade Tokens or NFTs instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade Tokens and NFTs at the best prices.'
-        }
         return `Buy, sell, and trade ${currentSymbol}/USDT instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${currentSymbol} at the best prices.`
       default:
         return 'Buy, sell, and trade Tokens or NFTs instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade Tokens and NFTs at the best prices.'
@@ -193,13 +197,21 @@ MyApp.getInitialProps = async ({ctx}) => {
     
     currentPage = page
     currentAddress = address
-    if (blockchain && address) {
-      const network = CHAINS.find(chain => chain.code === blockchain)
-      if (network) {
-        const res = await $token.api.coingecko.full({platform: network.platform, address: address})
-        if (res) {
-          currentSymbol = res.symbol.toUpperCase()
+    if (currentPage === 'tokens') {
+      if (blockchain && address) {
+        const network = CHAINS.find(chain => chain.code === blockchain)
+        if (network) {
+          const res = await $token.api.coingecko.full({platform: network.platform, address: address})
+          if (res) {
+            currentSymbol = res.symbol.toUpperCase()
+          }
         }
+      }
+    } else if (currentPage === 'nfts') {
+      const res = await $collection.api.all({ id: address, limit: 1, blockchain: blockchain })
+      if (res && Array.isArray(res?.collections)) {
+        const [current] = res.collections
+        currentSymbol = current.name
       }
     }
   }
