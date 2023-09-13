@@ -8,7 +8,6 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
 import useOrders from '@/myhooks/useOrders'
 
-import $exchange from '@/store/exchange'
 import $app from '@/store/app'
 import $token from '@/store/token'
 
@@ -39,7 +38,6 @@ const Tokens = () => {
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const exchangeLoading = useSelector(({$exchange}) => $exchange.loading)
-  const activeInterval = useSelector(({$exchange}) => $exchange.interval)
 
   const tokens = useSelector(({$token}) => $token.all)
   const searched = useSelector(({$token}) => $token.searched)
@@ -62,22 +60,6 @@ const Tokens = () => {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
     })
   }, [])
-
-  useEffect(() => {
-    if (queryTokenId && queryBlockchainCode) {
-      dispatch($exchange.set.loading(true))
-      $exchange.api.get.tokenChartData(queryTokenId, queryBlockchainCode, activeInterval.seconds).then(res => {
-        dispatch($exchange.set.chartData({type: 'tokens', data: res?.data ?? []}))
-        dispatch($exchange.set.loading(false))
-      })
-    }
-  }, [activeInterval, queryTokenId, queryBlockchainCode])
-
-  useEffect(() => {
-    if (queryTokenId && queryBlockchainCode) {
-      updateOrders()
-    }
-  }, [queryBlockchainCode, wallet, queryTokenId])
 
   const handleOrdersUpdated = useCallback(() => {
     if (wallet) {

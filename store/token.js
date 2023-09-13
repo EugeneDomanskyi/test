@@ -40,6 +40,7 @@ export const template = (item) => {
       type: overwrite?.ticker?.type ?? item?.ticker?.type,
     },
     isFull: overwrite?.isFull ?? item?.isFull,
+    createdAt: overwrite?.genesis_date ?? item?.genesis_date,
   }
 }
 
@@ -98,6 +99,7 @@ const infoToTemplate = (item) => {
         value: Math.abs(item.price_change_percentage_24h ?? 0).toFixed(2),
         type: ((item.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
       },
+      
     }
   }
 
@@ -125,6 +127,7 @@ const fullToTemplate = (item) => {
         value: Math.abs(item.market_data?.price_change_percentage_24h ?? 0).toFixed(2),
         type: ((item.market_data?.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
       },
+      genesis_date: item?.genesis_date,
     }
   }
 

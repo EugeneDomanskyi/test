@@ -1,0 +1,15 @@
+.indicator {
+  color: #53F19C;
+
+  &.negative {
+    color: #FF1D61;
+
+    & svg {
+      transform: rotate(180deg);
+
+      path {
+        fill: #FF1D61;
+      }
+    }
+  }
+}
