@@ -133,21 +133,26 @@ function MyApp({ Component, pageProps, initialData, currentPage, currentAddress,
 
   const getTitle = () => {
     switch (currentPage) {
-      case 'landing': return 'Tegro: The CEX-DEX to trade Tokens & NFTs efficiently across chains'
       case 'tokens':
+        if (!currentSymbol) {
+          return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'
+        }
         return `${currentSymbol}/USDT Trading and Charts | Tegro: The CEX-DEX`
       default:
-        return 'TEGRO | NFT Trading Platform'
+        return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'
     }
   }
 
   const getDescription = () => {
+    
     switch (currentPage) {
-      case 'landing': return 'Use Tegro: The CEX-DEX to trade Tokens & NFTs easily across chains. Enjoy CEX-like Orderbook Trading in a DEX. Trade tokens like ETH, PEPE, SHIB, USDT and more!'
       case 'tokens':
+        if (!currentSymbol) {
+          return 'Buy, sell, and trade Tokens or NFTs instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade Tokens and NFTs at the best prices.'
+        }
         return `Buy, sell, and trade ${currentSymbol}/USDT instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${currentSymbol} at the best prices.`
       default:
-        return 'TEGRO | NFT Trading Platform'
+        return 'Buy, sell, and trade Tokens or NFTs instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade Tokens and NFTs at the best prices.'
     }
   }
   
