@@ -42,46 +42,7 @@ const TEST_NETWORK = {
   },
 }
 
-export const CHAINS = [
-  {
-    ...mainnet,
-    code: 'ethereum',
-    currency: mainnet.nativeCurrency.symbol,
-    decimals: mainnet.nativeCurrency.decimals,
-    baseApiUrl: 'https://api.reservoir.tools',
-    wsReservoirUrl: 'wss://ws-polygon.reservoir.tools',
-    baseUniswapUrl: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3',
-    scanUrl: mainnet.blockExplorers.etherscan.url,
-    apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
-    coingecko: 'ethereum',
-    platform: 'ethereum',
-    pages: ['nfts', 'tokens'],
-    usdtContract: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-    wrapped: {
-      contract: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-      name: 'Wrapped Ether',
-      shortName: 'WETH',
-    },
-  }, {
-    ...polygon,
-    code: 'polygon',
-    currency: polygon.nativeCurrency.symbol,
-    decimals: polygon.nativeCurrency.decimals,
-    baseApiUrl: 'https://api-polygon.reservoir.tools',
-    wsReservoirUrl: 'wss://ws.reservoir.tools',
-    baseUniswapUrl: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-polygon',
-    scanUrl: polygon.blockExplorers.etherscan.url,
-    apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
-    coingecko: 'matic-network',
-    platform: 'polygon-pos',
-    pages: ['nfts', 'tokens'],
-    usdtContract: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-    wrapped: {
-      contract: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
-      name: 'Wrapped Matic',
-      shortName: 'WMATIC',
-    },
-  }, {
+const ADDITIONAL_NETWORKS = [{
     ...arbitrum,
     code: 'arbitrum',
     currency: arbitrum.nativeCurrency.symbol,
@@ -215,6 +176,48 @@ export const CHAINS = [
       shortName: 'WETH',
     },
   },
+]
+
+export const CHAINS = [
+  {
+    ...mainnet,
+    code: 'ethereum',
+    currency: mainnet.nativeCurrency.symbol,
+    decimals: mainnet.nativeCurrency.decimals,
+    baseApiUrl: 'https://api.reservoir.tools',
+    wsReservoirUrl: 'wss://ws-polygon.reservoir.tools',
+    baseUniswapUrl: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3',
+    scanUrl: mainnet.blockExplorers.etherscan.url,
+    apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
+    coingecko: 'ethereum',
+    platform: 'ethereum',
+    pages: ['nfts', 'tokens'],
+    usdtContract: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    wrapped: {
+      contract: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+      name: 'Wrapped Ether',
+      shortName: 'WETH',
+    },
+  }, {
+    ...polygon,
+    code: 'polygon',
+    currency: polygon.nativeCurrency.symbol,
+    decimals: polygon.nativeCurrency.decimals,
+    baseApiUrl: 'https://api-polygon.reservoir.tools',
+    wsReservoirUrl: 'wss://ws.reservoir.tools',
+    baseUniswapUrl: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-polygon',
+    scanUrl: polygon.blockExplorers.etherscan.url,
+    apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
+    coingecko: 'matic-network',
+    platform: 'polygon-pos',
+    pages: ['nfts', 'tokens'],
+    usdtContract: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+    wrapped: {
+      contract: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+      name: 'Wrapped Matic',
+      shortName: 'WMATIC',
+    },
+  }, 
   ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? [TEST_NETWORK] : [])
 ]
 
