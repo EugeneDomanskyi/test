@@ -189,7 +189,7 @@ const api = {
   },
 
   top: (params) => {
-    return request('collections/top-selling/v1', 'GET', params)
+    return request('collections/top-selling/v2', 'GET', params)
   },
 }
 

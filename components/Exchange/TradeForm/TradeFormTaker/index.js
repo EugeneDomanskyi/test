@@ -112,7 +112,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
       return
     }
     if (field === 'price') {
-      value = value.substring(0, value.indexOf('.') + 7)
+      value = value?.substring(0, value.indexOf('.') + 7)
     }
     setForm(state => {
       return {
@@ -126,8 +126,8 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
     switch (currentTab) {
       case 'buy':
         const [cheapestOrder] = orderBook.sell
-        handleChangeForm('price')(cheapestOrder.priceFormatted.toString())
-        handleChangeForm('amount')(cheapestOrder.amount.toString())
+        handleChangeForm('price')(cheapestOrder?.priceFormatted.toString())
+        handleChangeForm('amount')(cheapestOrder?.amount.toString())
         break
       case 'sell':
         const [expensiveOrder] = orderBook.buy

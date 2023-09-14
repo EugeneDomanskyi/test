@@ -70,6 +70,7 @@ const WrapperTokens = ({ children }) => {
 
   useEffect(() => {
     if (queryTokenId && queryBlockchainCode) {
+      
       dispatch($exchange.set.loading(true))
       $exchange.api.get.tokenChartData(queryTokenId, queryBlockchainCode, activeInterval.seconds).then(res => {
         dispatch($exchange.set.chartData({type: 'tokens', data: res?.data ?? []}))
@@ -251,6 +252,7 @@ const WrapperTokens = ({ children }) => {
         if (realTokenId) {
           const currentToken = await getToken(realTokenId)
           dispatch($token.set.current(currentToken))
+          dispatch($app.set.marketInfo(currentToken))
           dispatch($token.set.update(currentToken))
 
           if (tokens.length && pages.current == 1 && search == '') {
@@ -261,9 +263,10 @@ const WrapperTokens = ({ children }) => {
 
           const existingToken = list.length ? list.find(item => item.id === currentToken.id) : null
 
-          if (! existingToken || ! existingToken?.price) {
+          if (! existingToken || ! existingToken?.price || ! existingToken?.marketCap) {
             const fullToken = await getTokenFull(currentToken)
             dispatch($token.set.current(fullToken))
+            dispatch($app.set.marketInfo(fullToken))
             dispatch($token.set.update(fullToken))
 
             const staticData = staticTemplate(fullToken)
@@ -273,6 +276,7 @@ const WrapperTokens = ({ children }) => {
           } else {
             const mergedData = {...currentToken, ...existingToken}
             dispatch($token.set.current(mergedData))
+            dispatch($app.set.marketInfo(mergedData))
             dispatch($token.set.update(mergedData))
           }
         }

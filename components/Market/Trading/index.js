@@ -1,5 +1,4 @@
 import { useRef, useCallback } from 'react'
-import { useSelector } from 'react-redux'
 
 import TradeForm from '@/components/Exchange/TradeForm'
 import OrderBook from '@/components/Exchange/OrderBook'
@@ -8,10 +7,8 @@ import Analysis from '@/components/Market/Trading/Analysis'
 
 import App from '@/components/App'
 
-export default function Trading({type}) {
+export default function Trading({type, marketInfo}) {
   const tradeForm = useRef(null)
-
-  const marketInfo = useSelector(({$app}) => $app.marketInfo)
 
   const handleClickOrder = useCallback(order => {
     tradeForm.current.setForm({formType: 'market', amount: order.quantity, side: order.side})
@@ -23,6 +20,7 @@ export default function Trading({type}) {
         <TradeForm ref={tradeForm} type={type} current={marketInfo} fullWidth />
         <OrderBook type={type} onClickOrder={handleClickOrder} />
       </App.Flex>
+
       <Trending />
       <Analysis />
     </App.Flex>

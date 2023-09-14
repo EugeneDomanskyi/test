@@ -23,7 +23,7 @@ const TAB_OPTIONS = [
 const TradeForm = forwardRef(({current, type, fullWidth = null}, ref) => {
   const { wallet, getBalance, changeNetwork } = useWalletConnect()
   const { getNftBalanceUser } = useTrade()
-  
+
   const orderBook = useSelector($exchange.get.orderBook)
   const loading = useSelector(({$exchange}) => $exchange.loadingCollectionData)
   const blockchain = useSelector($app.get.blockchainByCode(current?.blockchain))

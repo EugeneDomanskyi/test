@@ -15,16 +15,16 @@ export default function Info({type}) {
         <App.Flex column gap={22}>
           <App.Flex className={styles.infoContainer} gap={10}>
             <App.Flex className={styles.imageBlock}>
-              <img src={marketInfo.image} alt="" />
+              <img src={marketInfo?.image} alt="" />
             </App.Flex>
             
             <App.Flex column gap={10} className={styles.nameBlock}>
               <div className={styles.nameTitle}>
-                { marketInfo.name }
+                { marketInfo?.name }
               </div>
 
               <div className={styles.nameSubTitle}>
-                { marketInfo?.symbol || marketInfo.currency }
+                { marketInfo?.symbol || marketInfo?.currency }
               </div>
 
               <div className={styles.nameSubTitle}>
@@ -66,15 +66,15 @@ export default function Info({type}) {
       </App.Flex>
 
       {
-         marketInfo.price
+         marketInfo?.price
           ? <App.Flex gap={16} align="center">
               <App.Text size={28} weight={700}>
-                ${ marketInfo.price }
+                ${ marketInfo?.price }
               </App.Text>
 
               {
-                marketInfo.ticker
-                  ? <DifferenceIndicator ticker={marketInfo.ticker} />
+                marketInfo?.ticker
+                  ? <DifferenceIndicator ticker={marketInfo?.ticker} />
                   : null
               }
             </App.Flex>

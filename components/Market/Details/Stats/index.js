@@ -17,72 +17,30 @@ export default function Stats() {
       
       <App.Flex column sx={{width: '100%'}} gap={isMobile ? 16 : 32}>
         <App.Flex sx={{width: '100%'}} className={styles.container}>
-          <App.Flex className={styles.statBlock}>
-            <App.Flex className={styles.statInfo} gap={8}>
-              <App.Flex column>
-                <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Floor Price</App.Text>
-                <App.Text size={isMobile ? 20 : 24} weight={700}>${ marketInfo.price }</App.Text>
-              </App.Flex>
-
-              <App.Text size={14} weight={400} color="#53F19C">
-                <App.Icon icon="caret-up-fill" /> 3.4%
-              </App.Text>
-            </App.Flex>
-
-            <App.Flex sx={{width: isMobile ? '100%' : 208, height: 62, background: "green"}} />
+          <App.Flex className={styles.statBlock} column>
+            <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Floor Price</App.Text>
+            <App.Text size={isMobile ? 20 : 24} weight={700}>${ marketInfo.price }</App.Text>
           </App.Flex>
 
-          <App.Flex className={styles.statBlock}>
-            <App.Flex className={styles.statInfo} gap={8}>
-              <App.Flex column>
-                <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">24H Volume</App.Text>
-                <App.Text size={isMobile ? 20 : 24} weight={700}>${ marketInfo.volume }</App.Text>
-              </App.Flex>
-
-              <App.Text size={14} weight={400} color="#53F19C">
-                <App.Icon icon="caret-up-fill" /> 3.4%
-              </App.Text>
-            </App.Flex>
-
-            <App.Flex sx={{width: isMobile ? '100%' : 208, height: 62, background: "green"}} />
+          <App.Flex className={styles.statBlock} column>
+            <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">24H Volume</App.Text>
+            <App.Text size={isMobile ? 20 : 24} weight={700}>${ marketInfo.volume }</App.Text>
           </App.Flex>
-        </App.Flex>
-        
-        <App.Flex sx={{width: '100%'}} className={styles.container}>
-          <App.Flex className={styles.statBlock}>
-            <App.Flex className={styles.statInfo} gap={8}>
-              <App.Flex column>
-                <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Total Supply</App.Text>
-                <App.Text size={isMobile ? 20 : 24} weight={700}>{ marketInfo.tokenCount }</App.Text>
-              </App.Flex>
 
-              <App.Text size={14} weight={400} color="#53F19C">
-                <App.Icon icon="caret-up-fill" /> 3.4%
-              </App.Text>
-            </App.Flex>
-
-            <App.Flex sx={{width: isMobile ? '100%' : 208, height: 62, background: "green"}} />
+          <App.Flex className={styles.statBlock} column>
+            <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Total Supply</App.Text>
+            <App.Text size={isMobile ? 20 : 24} weight={700}>{ marketInfo.tokenCount }</App.Text>
           </App.Flex>
-          
-          <App.Flex className={styles.statBlock}>
-            <App.Flex className={styles.statInfo} gap={8}>
-              <App.Flex column>
-                <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Market Cap</App.Text>
-                <App.Text size={isMobile ? 20 : 24} weight={700}>${ marketInfo.marketCap }</App.Text>
-              </App.Flex>
 
-              <App.Text size={14} weight={400} color="#53F19C">
-                <App.Icon icon="caret-up-fill" /> 3.4%
-              </App.Text>
-            </App.Flex>
-
-            <App.Flex sx={{width: isMobile ? '100%' : 208, height: 62, background: "green"}} />
+          <App.Flex className={styles.statBlock} column>
+            <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Market Cap</App.Text>
+            <App.Text size={isMobile ? 20 : 24} weight={700}>${ marketInfo.marketCap }</App.Text>
           </App.Flex>
         </App.Flex>
 
-        <App.Flex justify="flex-end">
+        {/* <App.Flex justify="flex-end">
           <App.Text size={10} weight={500} color="#908F99">3 hours ago (08:30 AM, UTC+05:30, 15 Feb 2023)</App.Text>
-        </App.Flex>
+        </App.Flex> */}
       </App.Flex>
     </App.Flex>
   )

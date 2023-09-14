@@ -235,6 +235,7 @@ const WrapperCollections = ({ children }) => {
         if (realCollectionId) {
           const currentCollection = await getCollection(realCollectionId)
           dispatch($collection.set.current(currentCollection))
+          dispatch($app.set.marketInfo(currentCollection))
 
           wsSubscribe([currentCollection.id])
         }

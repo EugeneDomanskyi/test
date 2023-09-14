@@ -19,19 +19,19 @@ export default function Details({marketInfo, type}) {
       <About />
 
       {
-        marketInfo.sampleImages
+        marketInfo?.sampleImages
           ? <Images />
           : null
       }
       
       <Ad />
       {
-        marketInfo.team
+        marketInfo?.team
           ? <Team />
           : null
       }
       {
-        marketInfo.investors
+        marketInfo?.investors
           ? <Investors />
           : null
       }      

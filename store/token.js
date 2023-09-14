@@ -41,6 +41,7 @@ export const template = (item) => {
     },
     isFull: overwrite?.isFull ?? item?.isFull,
     createdAt: overwrite?.genesis_date ?? item?.genesis_date,
+    marketCap: overwrite?.marketCap ?? item.marketCap,
   }
 }
 
@@ -128,6 +129,7 @@ const fullToTemplate = (item) => {
         type: ((item.market_data?.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
       },
       genesis_date: item?.genesis_date,
+      marketCap: item.market_data?.total_supply * (item.market_data?.current_price?.usd ?? 0),
     }
   }
 
@@ -266,6 +268,10 @@ const api = {
 
     full: ({platform, address, ...params}) => {
       return request(`coins/${platform}/contract/${address}`, 'GET', {api: 'coingecko', ...params})
+    },
+
+    top: (params) => {
+      return request('search/trending', 'GET', {api: 'coingecko', ...params})
     },
   },
 }
