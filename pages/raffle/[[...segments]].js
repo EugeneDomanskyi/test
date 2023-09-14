@@ -7,6 +7,7 @@ const RafflePage = () => {
   return (
     <App.Flex column className={styles.container}>
       <Raffle.Top />
+      {/* <Raffle.Roulette /> */}
       <Raffle.List />
     </App.Flex>
   )
