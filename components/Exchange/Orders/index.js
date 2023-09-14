@@ -72,8 +72,6 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
     setOrderTypes(type)
   }
 
-  console.log(orders)
-
   return (
     <App.Flex column className={styles.container}>
       <App.Flex column>

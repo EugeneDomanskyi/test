@@ -7,8 +7,11 @@ import cn from 'classnames'
 
 import App from '@/components/App'
 import Order from '@/libs/structs/Order'
+import useOrders from '@/myhooks/useOrders'
 
 const FillOrder = ({data, onClose}) => {
+  const { updateOrders } = useOrders({tokenAddress: data.side === 'buy' ? data.makerAsset.address : data.takerAsset.address, type: 'tokens'})
+  
   const [currentStep, setCurrentStep] = useState('confirming')
   const [signSteps, setSignSteps] = useState({
     allowance: {
@@ -40,6 +43,8 @@ const FillOrder = ({data, onClose}) => {
       tookAmount: acc.tookAmount + order.willTakeMakingAmountFormatted*1,
     }
   }, {spendedAmount: 0, tookAmount: 0})
+
+  const avgPrice = data.side === 'buy' ? abilities.willSpendAmount / data.amount : abilities.willTakeAmount / data.amount
 
   const completePercentage = numeral(stats.tookAmount*100/abilities.willTakeAmount).format('0')
 
@@ -99,6 +104,8 @@ const FillOrder = ({data, onClose}) => {
     }, eventHandler).catch(error => {
       console.log('error', error)
       setCurrentStep('sign_error')
+    }).then(() => {
+      updateOrders()
     })
   }
 
@@ -165,12 +172,24 @@ const FillOrder = ({data, onClose}) => {
                     <App.Flex column className={styles.border} gap={8}>
                       <App.Flex justify="space-between">
                         <App.Text color="#5E5C6B" size={12} weight={600}>Type</App.Text>
-                        <App.Text color="#B9B8C5" size={12} weight={600}>Taker</App.Text>
+                        <App.Text color="#B9B8C5" size={12} weight={600} capitalize>{data.side} now</App.Text>
                       </App.Flex>
                       <App.Flex justify="space-between">
-                        <App.Text color="#5E5C6B" size={12} weight={600}>Limit Price</App.Text>
+                        <App.Text color="#5E5C6B" size={12} weight={600}>At Price</App.Text>
                         <App.Text color="#5E5C6B" size={12} weight={600}>
-                          { data.price } { data.side === 'buy' ? data.makerAsset.symbol : data.takerAsset.symbol }
+                          { avgPrice } { data.side === 'buy' ? data.takerAsset.symbol : data.makerAsset.symbol }
+                        </App.Text>
+                      </App.Flex>
+                      <App.Flex justify="space-between">
+                        <App.Text color="#5E5C6B" size={12} weight={600}>Amount</App.Text>
+                        <App.Text color="#5E5C6B" size={12} weight={600}>
+                          { data.amount } { data.side === 'buy' ? data.makerAsset.symbol : data.takerAsset.symbol }
+                        </App.Text>
+                      </App.Flex>
+                      <App.Flex justify="space-between">
+                        <App.Text color="#5E5C6B" size={12} weight={600}>Total</App.Text>
+                        <App.Text color="#5E5C6B" size={12} weight={600}>
+                          { data.side === 'buy' ? abilities.willSpendAmount : abilities.willTakeAmount } { data.side === 'buy' ? data.takerAsset.symbol : data.makerAsset.symbol }
                         </App.Text>
                       </App.Flex>
                     </App.Flex>
@@ -276,7 +295,7 @@ const FillOrder = ({data, onClose}) => {
                     <App.Flex justify="space-between">
                       <App.Text color="#5E5C6B" size={10} weight={600}>Amount / Filled</App.Text>
                       <App.Text color="#B9B8C5" size={10} weight={600}>
-                        { data.side === 'buy' ? stats.tookAmount : stats.spendedAmount } / { data.side === 'buy' ? abilities.willTakeAmount : abilities.willSpendAmount }
+                        { data.side === 'buy' ? stats.tookAmount : stats.spendedAmount } { data.makerAsset.symbol } / { data.side === 'buy' ? abilities.willTakeAmount : abilities.willSpendAmount } { data.makerAsset.symbol }
                       </App.Text>
                     </App.Flex>
                   </App.Flex>

@@ -1,5 +1,5 @@
 import styles from './styles.module.scss'
-import { useState, useEffect, useRef, forwardRef, useImperativeHandle, Fragment } from 'react'
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Image from 'next/image'
 import numeral from 'numeral'
@@ -97,7 +97,6 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
       side: currentTab,
     })
     const { orders, ...rest } = res
-    console.log(orders, rest)
     setAbilities(rest)
     setLoading(false)
   }
@@ -133,6 +132,17 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
         const [expensiveOrder] = orderBook.buy
         handleChangeForm('price')(expensiveOrder.priceFormatted.toString())
         handleChangeForm('amount')(expensiveOrder.amount.toString())
+        break
+    }
+  }
+
+  const handleMultiply = percentage => () => {
+    switch (currentTab) {
+      case 'buy':
+        handleChangeForm('amount')((abilities.totalAmountOnSell*percentage).toString())
+        break
+      case 'sell':
+        handleChangeForm('amount')((userBalances.token*percentage).toString())
         break
     }
   }
@@ -209,18 +219,37 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
           currency={current.symbol}
           onBlur={handleBlurAmount}
           onChange={handleChangeForm('amount')} />
-        <App.Flex align="center" gap={4} className={styles.balance}>
+        <App.Flex className={styles.multiplerContainer}>
+          {
+            currentTab === 'sell'
+              ? <App.Flex flex={1} align="center" className={styles.balance}>
+                  <App.Icon icon="wallet" color={errors.balance ? '#FF1D61' : '#B9B8C5'} style={{marginLeft: 8, marginRight: 5}} />
+                  <App.Text color={errors.balance ? '#FF1D61' : '#B9B8C5'} size={10}>{numeral(userBalances.token).format('0.[0000]')} {current.symbol}</App.Text>
+                </App.Flex>
+              : <App.Flex flex={1} />
+          }
+          <App.Flex flex={1} className={styles.multipler}>
+            <App.Flex flex={1} align="center" justify="center" sx={{cursor: 'pointer'}} onClick={handleMultiply(0.25)}>
+              <App.Text color="#B9B8C5" size={10} weight={600}>25%</App.Text>
+            </App.Flex>
+            <App.Flex flex={1} align="center" justify="center" sx={{cursor: 'pointer'}} onClick={handleMultiply(0.5)}>
+              <App.Text color="#B9B8C5" size={10} weight={600}>50%</App.Text>
+            </App.Flex>
+            <App.Flex flex={1} align="center" justify="center" sx={{cursor: 'pointer'}} onClick={handleMultiply(0.75)}>
+              <App.Text color="#B9B8C5" size={10} weight={600}>75%</App.Text>
+            </App.Flex>
+            <App.Flex flex={1} align="center" justify="center" sx={{cursor: 'pointer'}} onClick={handleMultiply(1)}>
+              <App.Text color="#B9B8C5" size={10} weight={600}>100%</App.Text>
+            </App.Flex>
+          </App.Flex>
+        </App.Flex>
+        <App.Flex align="center" gap={4} className={{}}>
           {
             loading
               ? <App.Loader size={15} />
               : errors.amount
                 ? <App.Text color="#FF1D61" size={10} weight={500}>Amount higher than market availability</App.Text>
-                : currentTab === 'sell'
-                  ? <Fragment>
-                      <App.Icon icon="wallet" color={errors.balance ? '#FF1D61' : '#B9B8C5'} />
-                      <App.Text color={errors.balance ? '#FF1D61' : '#B9B8C5'} size={10}>{numeral(userBalances.token).format('0.[0000]')} {current.symbol}</App.Text>
-                    </Fragment>
-                  : null
+                : null
           }
           <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto'}}>
             Available to {currentTab}:&nbsp;

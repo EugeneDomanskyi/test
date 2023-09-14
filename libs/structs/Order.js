@@ -419,7 +419,11 @@ class TOKEN extends Order {
 
   static getOpenWithPriceLimitation = async ({chainId, takerAsset, makerAsset, amount, price, side}) => {
     const network = CHAINS.find(chain => chain.id === chainId)
-    // fetch(`/api/tokens/abilities/${chainId}/${makerAsset}/${takerAsset}/${price}/${amount}/${side}`)
+    // const tmp = await fetch(`/api/tokens/abilities/${chainId}/${makerAsset}/${takerAsset}/${price}/${amount}/${side}`).then(async res => {
+    //   const json = await res.json()
+    //   return json
+    // })
+    // console.log('tmp', tmp)
     
     const res = await $orders.api.get.tokens.byAssets({
       makerAsset: makerAsset,
@@ -430,7 +434,6 @@ class TOKEN extends Order {
       sortBy: 'takerRate',
     })
     if (res && Array.isArray(res)) {
-      
       const makerDecimals = await Order.getDecimals(makerAsset, chainId)
       const takerDecimals = await Order.getDecimals(takerAsset, chainId)
 
@@ -497,7 +500,7 @@ class TOKEN extends Order {
           willTakeAmount: acc.willTakeAmount.plus(order.willTakeMakingAmount),
         }
       }, {willSpendAmount: new BigNumber(0), willTakeAmount: new BigNumber(0)})
-
+      
       return {
         totalAmountOnSell: formatUnits(stats.totalAmountOnSell.toFixed(0), makerDecimals),
         totalAmountToSell: formatUnits(stats.totalAmountToSell.toFixed(0), takerDecimals),
@@ -601,10 +604,9 @@ class TOKEN extends Order {
         }
         callback('allowance', {success: true})
         const totalSpendAmount = orders.reduce((acc, order) => acc.plus(order.willSpendTakingAmount), new BigNumber(0))
-        // const totalTakeAmount = orders.reduce((acc, order) => acc+order.willTakeMakingAmount, 0)
         
         const balance = await Order.getBalance(walletClient.account.address, sellAsset)
-        // const totalSpendFormatted = orders.reduce((acc, order) => acc+order.willSpendTakingAmountFormatted*1, 0)
+        
         if (willSpendAmount*1 > balance*1) {
           Order.showErrorMessage('Insufficient balance')
           reject()
@@ -618,7 +620,7 @@ class TOKEN extends Order {
             '0x',
             order.willTakeMakingAmount.toFixed(0).toString(),
             '0',
-            order.willSpendTakingAmount.multipliedBy(1.01).toFixed(0).toString(),
+            order.willSpendTakingAmount.multipliedBy(2).toFixed(0).toString(),
             // '0xde0b6b3a7640000',
             // walletClient.account.address
           ]
@@ -664,43 +666,35 @@ class TOKEN extends Order {
     })
   }
 
-  static place = ({address, price, amount, type = 'buy'}) => {
+  static place = ({makerAsset, takerAsset, price, amount, type = 'buy'}, callback) => {
     return new Promise(async (resolve, reject) => {
       const { walletClient, chainId } = await Order.getWalletData()
       const limitOrderBuilder = new LimitOrderBuilder(INCH_CONTRACTS[chainId], chainId, walletClient)
       const network = CHAINS.find(chain => chain.id === chainId)
 
-      const tokenDecimals = await Order.getDecimals(address)
-      let sellAsset = network.usdtContract
-      let buyAsset = address
-      let sellAmount = price
-      let buyAmount = parseUnits(`${amount}`, tokenDecimals).toString()
-      if (type === 'sell') {
-        sellAsset = address
-        buyAsset = network.usdtContract
-        sellAmount = amount
-        buyAmount = parseUnits(`${price}`, USDT_DECIMALS).toString()
-      }
-
-      const allowance = await Order.checkAllowance(chainId, INCH_CONTRACTS[chainId], walletClient.account.address, sellAsset, sellAmount)
+      const spendAmount = type === 'buy' ? price*amount : amount*1
+      const receiveAmount = type === 'buy' ? amount : price*amount
+      
+      const allowance = await Order.checkAllowance(chainId, INCH_CONTRACTS[chainId], walletClient.account.address, makerAsset.address, spendAmount)
       if (!allowance) {
         reject()
         return
       }
-      console.log('allowance', allowance)
-      const balance = await Order.getBalance(walletClient.account.address, sellAsset)
-      if (balance < sellAmount*1) {
+      callback('allowance', {success: true})
+      const balance = await Order.getBalance(walletClient.account.address, makerAsset.address)
+      
+      if (balance < spendAmount) {
         Order.showErrorMessage('Insufficient balance')
         reject()
         return 
       }
-      
+
       const limitOrder = limitOrderBuilder.buildLimitOrder({
-        makerAssetAddress: sellAsset,
-        takerAssetAddress: buyAsset,
+        makerAssetAddress: makerAsset.address,
+        takerAssetAddress: takerAsset.address,
         makerAddress: walletClient.account.address,
-        makingAmount: parseUnits(`${sellAmount}`, type === 'buy' ? USDT_DECIMALS : tokenDecimals).toString(),
-        takingAmount: buyAmount,
+        makingAmount: parseUnits(`${spendAmount}`, makerAsset.decimals).toString(),
+        takingAmount: parseUnits(`${receiveAmount}`, takerAsset.decimals).toString(),
       })
 
       const limitOrderTypedData = limitOrderBuilder.buildLimitOrderTypedData(limitOrder)
@@ -713,7 +707,7 @@ class TOKEN extends Order {
       if (!signature) {
         return
       }
-
+      callback('transaction', {success: true})
       const post = {
         orderHash: limitOrderHash,
         signature: signature,
