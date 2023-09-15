@@ -249,17 +249,27 @@ const WrapperTokens = ({ children }) => {
 
           const existingToken = list.length ? list.find(item => item.id === currentToken.id) : null
 
-          if (! existingToken || ! existingToken.price) {
+          if (! existingToken) {
             const fullToken = await getTokenFull(currentToken)
             dispatch($token.set.current(fullToken))
             dispatch($token.set.update(fullToken))
 
             const staticData = staticTemplate(fullToken)
-            const mergedData = list.length ? [...list, staticData] : [staticData]
+            const preUpdateList = list.filter(item => item.address !== currentToken.address)
+            const mergedData = preUpdateList.length ? [...preUpdateList, staticData] : [staticData]
             putAssetsFile(mergedData)
             dispatch($token.set.list(mergedData))
           } else {
-            const mergedData = {...currentToken, ...existingToken}
+            let mergedData = {}
+            const tokenPrices = tokens.find(item => item.address === existingToken.address)
+            
+            if (tokenPrices) {
+              mergedData = {...tokenPrices, ...existingToken}
+            } else {
+              const [priceInfo] = await getInfo([existingToken])
+              const priceTemplate = template({info: priceInfo})
+              mergedData = {...priceTemplate, ...existingToken}
+            }
             dispatch($token.set.current(mergedData))
             dispatch($token.set.update(mergedData))
           }
