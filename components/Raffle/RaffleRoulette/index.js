@@ -59,7 +59,7 @@ const RaffleRoulette = () => {
   }
 
   return (
-    <App.Flex column gap={16}>
+    <App.Flex column gap={16} width="100%">
       <RoulettePro
         prizes={prizeList}
         prizeIndex={prizeIndex}
@@ -70,7 +70,9 @@ const RaffleRoulette = () => {
         // transitionFunction={'ease-out'}
         transitionFunction={'cubic-bezier(0.1, 0.1, 0.2, 1)'}
       />
-      <App.Button onClick={handleStart}>Start</App.Button>
+      <App.Flex justify="center">
+        <App.Button sx={{width: 210}} onClick={handleStart}>Start</App.Button>
+      </App.Flex>
     </App.Flex>
   )
 }

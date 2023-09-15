@@ -13,9 +13,7 @@ const RaffleInfoModal = ({}) => {
 
   return (
     <App.Flex column gap={32} align="center" className={styles.content}>
-      <App.Flex column gap={4}>
-        <Raffle.Roulette />
-      </App.Flex>
+      <Raffle.Roulette />
     </App.Flex>
   )
 }
