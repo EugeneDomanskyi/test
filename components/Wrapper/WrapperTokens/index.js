@@ -247,9 +247,9 @@ const WrapperTokens = ({ children }) => {
             }
           }
 
-          const existingToken = list.length ?  list.find(item => item.id === currentToken.id) : null
+          const existingToken = list.length ? list.find(item => item.id === currentToken.id) : null
 
-          if (! existingToken) {
+          if (! existingToken || ! existingToken.price) {
             const fullToken = await getTokenFull(currentToken)
             dispatch($token.set.current(fullToken))
             dispatch($token.set.update(fullToken))
