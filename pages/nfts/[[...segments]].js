@@ -163,10 +163,10 @@ const Nfts = () => {
     })
   }, [wallet, collectionId, blockchain.code])
 
-  const handleMobileTabChange = (tab) => {
+  const handleMobileTabChange = useCallback((tab) => {
     setMobileTabTrade(false)
     setMobileTab(tab)
-  }
+  }, [])
 
   const handleClickOrder = useCallback(order => {
     tradeForm.current.setForm({formType: 'market', amount: order.quantity, side: order.side})
@@ -304,6 +304,7 @@ const Nfts = () => {
           ) : null}
 
           <MobileTabsBar
+            isConnected={Boolean(wallet)}
             active={mobileTab}
             actvieTrade={mobileTabTrade}
             onTabChange={handleMobileTabChange}
