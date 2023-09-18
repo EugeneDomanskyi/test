@@ -25,6 +25,8 @@ const useOrders = ({tokenAddress, type}) => {
           dispatch($orders.set[type](res))
         }
       })
+    } else {
+      dispatch($orders.set[type]([]))
     }
 
     if (tokenAddress) {
