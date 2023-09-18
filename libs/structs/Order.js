@@ -102,7 +102,7 @@ class Order {
     const allowanceAmount = formatUnits(res, decimals)
     console.log('allowance -> ', allowanceAmount*1, 'amount -> ', amount, tokenAddress)
     if (allowanceAmount*1 < amount*1 || true) {
-      const res = await writeContract({
+      const config = await prepareWriteContract({
         address: tokenAddress,
         abi: [abiApprove],
         functionName: 'approve',
@@ -110,12 +110,17 @@ class Order {
         args: [spenderContract, weiAmount],
         // args: [INCH_CONTRACTS[chainId], weiAmount],
       }).catch(error => {
-        return false
+        console.log('approve prepareWriteContract', error)
       })
-      console.log('writeContract', res)
-      if (res) {
-        const txResult = await waitForTransaction(res)
-        return txResult
+      if (config?.mode === 'prepared') {
+        const res = await writeContract(config).catch(error => {
+          return false
+        })
+        console.log('writeContract', res)
+        if (res) {
+          const txResult = await waitForTransaction(res)
+          return txResult
+        }
       }
       return false
     }
