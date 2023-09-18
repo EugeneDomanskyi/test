@@ -119,9 +119,10 @@ class Order {
     const decimals = await Order.getDecimals(tokenAddress, chainId)
     const weiAmount = parseUnits(amount.toString(), decimals)
     const allowanceAmount = formatUnits(res, decimals)
+    const isEthereumUsdt = tokenAddress.toLowerCase() === '0xdac17f958d2ee523a2206206994597c13d831ec7'
 
-    if (allowanceAmount*1 < amount*1 || true) {
-      if (tokenAddress.toLowerCase() === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
+    if (allowanceAmount*1 < amount*1) {
+      if (isEthereumUsdt) {
         console.log('ethereum USDT')
         await Order.writeContract({
           address: tokenAddress,
@@ -136,32 +137,9 @@ class Order {
         abi: [abiApprove],
         functionName: 'approve',
         chainId: chainId,
-        args: [spenderContract, parseUnits(Number.MAX_SAFE_INTEGER.toString(), decimals)],
+        args: [spenderContract, parseUnits(isEthereumUsdt ? Number.MAX_SAFE_INTEGER.toString() : weiAmount, decimals)],
       })
       return writeContractResult
-      // const config = await prepareWriteContract({
-      //   address: tokenAddress,
-      //   abi: [abiApprove],
-      //   functionName: 'approve',
-      //   chainId: chainId,
-      //   args: [spenderContract, weiAmount],
-      //   // args: [INCH_CONTRACTS[chainId], weiAmount],
-      // }).catch(error => {
-      //   console.log('approve prepareWriteContract', error)
-      //   return error
-      // })
-      // console.log('config approve', config)
-      // if (config?.mode === 'prepared') {
-      //   const res = await writeContract(config).catch(error => {
-      //     return {success: false}
-      //   })
-      //   console.log('writeContract', res)
-      //   if (res) {
-      //     const txResult = await waitForTransaction(res)
-      //     return {success: true, data: txResult}
-      //   }
-      // }
-      // return {success: false}
     }
     return {success: true}
   }
@@ -644,7 +622,7 @@ class TOKEN extends Order {
         const allowance = await Order.checkAllowance(chainId, TEGRO_FILL_ORDERS_CONTRACTS[chainId], walletClient.account.address, sellAsset, willSpendAmount*1)
         console.log('allowance')
         if (!allowance.success) {
-          reject()
+          reject(allowance.error)
           return
         }
         callback('allowance', {success: true})
