@@ -100,7 +100,7 @@ class Order {
     const decimals = await Order.getDecimals(tokenAddress, chainId)
     const weiAmount = parseUnits(amount.toString(), decimals)
     const allowanceAmount = formatUnits(res, decimals)
-    console.log('allowance -> ', allowanceAmount*1, 'amount -> ', amount)
+    console.log('allowance -> ', allowanceAmount*1, 'amount -> ', amount, tokenAddress)
     if (allowanceAmount*1 < amount*1) {
       const res = await writeContract({
         address: tokenAddress,
@@ -597,7 +597,7 @@ class TOKEN extends Order {
         price: price,
       })
       if (orders && Array.isArray(orders)) {
-        const allowance = await Order.checkAllowance(chainId, TEGRO_FILL_ORDERS_CONTRACTS[chainId], walletClient.account.address, sellAsset, amount)
+        const allowance = await Order.checkAllowance(chainId, TEGRO_FILL_ORDERS_CONTRACTS[chainId], walletClient.account.address, sellAsset, willSpendAmount*1)
         if (!allowance) {
           reject()
           return
