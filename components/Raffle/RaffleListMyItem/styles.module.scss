@@ -1,0 +1,39 @@
+.imagePlaceholder {
+  background: linear-gradient(180deg, #401698 0%, #29015B 100%);
+}
+
+.timeBadge {
+  padding: 12px;
+  border-radius: 100px;
+  background: rgba(6, 56, 47, 0.60);
+  backdrop-filter: blur(2px);
+  width: 110px;
+
+  .dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #53F19C3D;
+
+    &:before {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #53F19C;
+    }
+  }
+
+  &.closed {
+    background: rgba(77, 14, 39, 0.60);
+
+    .dot {
+      background: #FF1D613D;
+
+      &:before {
+        background: #FF1D61;
+      }
+    }
+  }
+}

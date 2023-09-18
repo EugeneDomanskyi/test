@@ -1,6 +1,8 @@
 
 import { configureStore } from '@reduxjs/toolkit'
 
+import { CHAINS } from '@/config'
+
 import $modal from './modal'
 import $app, { appSlice } from './app'
 import $exchange from './exchange'
@@ -8,7 +10,7 @@ import $collection from './collection'
 import $token from './token'
 import $nft from './nft'
 import $orders from './orders'
-import { CHAINS } from '@/config'
+import $raffle from './raffle'
 
 const createStore = initialData => {
   return configureStore({
@@ -20,6 +22,7 @@ const createStore = initialData => {
       $token: $token.reducer,
       $nft: $nft.reducer,
       $orders: $orders.reducer,
+      $raffle: $raffle.reducer,
     },
 
     preloadedState: {

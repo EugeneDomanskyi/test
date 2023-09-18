@@ -1,0 +1,53 @@
+.container {
+  position: relative;
+  z-index: 2;
+  height: 52px;
+
+  .sort {
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 150px;
+    border-radius: 26px;
+    border: 1px solid #332D52;
+    background-color: rgba(9, 5, 29, 0.8);
+    cursor: pointer;
+    transition: all .3s ease 0s;
+    overflow: hidden;
+
+    .text {
+      padding: 16px;
+    }
+
+    .dropdown {
+      width: 100%;
+      overflow: hidden;
+      max-height: 0;
+      transition: all .2s ease 0s;
+
+      .option {
+        padding: 8px 16px;
+        cursor: pointer;
+        transition: all .2s ease 0s;
+
+        &:hover,
+        &.active {
+          background-color: rgba(9, 5, 29, 0.8);
+        }
+      }
+    }
+
+    &:hover {
+      background-color: #130A3A;
+    }
+  
+    &.active {
+      background-color: #130A3A;
+  
+      .dropdown {
+        max-height: 110px;
+      }
+    }
+  }
+}
