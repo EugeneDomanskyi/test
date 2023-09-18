@@ -245,6 +245,27 @@ const getters = {
     const next = history.find((_, index) => (currentIndex >= 0 && currentIndex < history.length - 1) ? index === (currentIndex + 1) : null) ?? null
     return { prev, current, next }
   }),
+  data: createSelector([
+    state => state.$token.all,
+    state => state.$token.searched,
+    state => state.$token.current,
+    state => state.$token.loading,
+    state => state.$token.sort,
+    state => state.$token.search,
+    state => state.$token.searching,
+    state => state.$token.searchEmpty,
+  ], (tokens, searched, current, tokenLoading, sort, search, searching, searchEmpty) => {
+    return {
+      tokens,
+      searched,
+      current,
+      tokenLoading,
+      sort,
+      search,
+      searching,
+      searchEmpty,
+    }
+  })
 }
 
 const api = {

@@ -50,16 +50,7 @@ const Tokens = () => {
     search,
     searching,
     searchEmpty
-  } = useSelector(({$token}) => ({
-    tokens: $token.all,
-    searched: $token.searched,
-    current: $token.current,
-    tokenLoading: $token.loading,
-    sort: $token.sort,
-    search: $token.search,
-    searching: $token.searching,
-    searchEmpty: $token.searchEmpty,
-  }))
+  } = useSelector($token.get.data)
 
   const pages = useSelector($token.get.pages)
 

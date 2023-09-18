@@ -632,7 +632,7 @@ class TOKEN extends Order {
           address: TEGRO_FILL_ORDERS_CONTRACTS[chainId],
           abi: TEGRO_ABI,
           functionName: 'fillMultipleOrders',
-          args: [list, totalSpendAmount.multipliedBy(side === 'buy' ? 1.000001 : 1).toFixed(0)],
+          args: [list, totalSpendAmount.multipliedBy(side === 'buy' ? 1.00001 : 1).toFixed(0)],
         }).catch(error => {
           console.log('prepareWriteContract', error)
         })
