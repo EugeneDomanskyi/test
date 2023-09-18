@@ -38,6 +38,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
   const orderBook = useSelector($orders.get.orderBook('tokens'))
 
   const [loading, setLoading] = useState(false)
+  const [showErrors, setShowErrors] = useState(false)
   const [form, setForm] = useState({amount: '1', price: '0'})
   const [abilities, setAbilities] = useState({totalAmountOnSell: 0, totalAmountToSell: 0, willSpendAmount: 0, willTakeAmount: 0})
 
@@ -61,6 +62,10 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
       handleChangeForm('amount')(data.amount.toString())
     }
   }))
+
+  useEffect(() => {
+    setShowErrors(false)
+  }, [current?.address])
 
   useEffect(() => {
     if (fetchTimeout.current) {
@@ -102,7 +107,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
   }
 
   const handleBlurAmount = () => {
-    
+    setShowErrors(true)
   }
 
   const handleChangeForm = (field) => (value) => {
@@ -215,7 +220,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
         <TradeInput
           label="AMOUNT"
           value={form.amount}
-          error={errors.amount}
+          error={errors.amount && showErrors}
           currency={current.symbol}
           onBlur={handleBlurAmount}
           onChange={handleChangeForm('amount')} />
@@ -247,7 +252,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
           {
             loading
               ? <App.Loader size={15} />
-              : errors.amount
+              : errors.amount && showErrors
                 ? <App.Text color="#FF1D61" size={10} weight={500}>Amount higher than market availability</App.Text>
                 : null
           }
@@ -268,13 +273,13 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
         {
           currentTab === 'buy'
             ? <App.Flex align="center" gap={4}>
-                <App.Icon icon="wallet" color={errors.balance ? '#FF1D61' : '#B9B8C5'} />
-                <App.Text color={errors.balance ? '#FF1D61' : '#B9B8C5'} size={10}>{userBalances.usdt} USDT</App.Text>
+                <App.Icon icon="wallet" color={errors.balance && showErrors ? '#FF1D61' : '#B9B8C5'} />
+                <App.Text color={errors.balance && showErrors ? '#FF1D61' : '#B9B8C5'} size={10}>{userBalances.usdt} USDT</App.Text>
               </App.Flex>
             : null
         }
         {
-          errors.balance
+          errors.balance && showErrors
             ? <App.Text color="#FF1D61" size={10} weight={500}>Insufficient funds in your wallet to make this purchase</App.Text>
             : null
         }

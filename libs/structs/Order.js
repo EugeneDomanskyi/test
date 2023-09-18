@@ -100,7 +100,7 @@ class Order {
     const decimals = await Order.getDecimals(tokenAddress, chainId)
     const weiAmount = parseUnits(amount.toString(), decimals)
     const allowanceAmount = formatUnits(res, decimals)
-    // console.log('readContract', allowanceAmount*1, amount*1)
+    console.log('allowance -> ', allowanceAmount*1, 'amount -> ', amount)
     if (allowanceAmount*1 < amount*1) {
       const res = await writeContract({
         address: tokenAddress,
@@ -606,7 +606,7 @@ class TOKEN extends Order {
         const totalSpendAmount = orders.reduce((acc, order) => acc.plus(order.willSpendTakingAmount), new BigNumber(0))
         
         const balance = await Order.getBalance(walletClient.account.address, sellAsset)
-        
+        console.log('balance -> ', balance*1, 'will spend -> ', willSpendAmount*1)
         if (willSpendAmount*1 > balance*1) {
           Order.showErrorMessage('Insufficient balance')
           reject()
