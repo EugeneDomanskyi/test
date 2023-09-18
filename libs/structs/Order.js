@@ -32,6 +32,26 @@ class Order {
     toast.error(message)
   }
 
+  static writeContract = async (params) => {
+    const config = await prepareWriteContract(params).catch(error => {
+      console.log('prepare contract error -> ', error)
+      return error
+    })
+    console.log('config contract -> ', config)
+    if (config?.mode === 'prepared') {
+      const res = await writeContract(config).catch(error => {
+        return error
+      })
+      console.log('write contract res -> ', res)
+      if (res) {
+        const txResult = await waitForTransaction(res)
+        return {success: true, data: txResult}
+      }
+      return {success: false, error: res}
+    }
+    return {success: false, error: config}
+  }
+
   static getBalance = async (wallet, address) => {
     const res = await fetchBalance({address: wallet, ...(address ? {token: address} : null)})
     return numeral(res.formatted).value()
@@ -100,32 +120,41 @@ class Order {
     const decimals = await Order.getDecimals(tokenAddress, chainId)
     const weiAmount = parseUnits(amount.toString(), decimals)
     const allowanceAmount = formatUnits(res, decimals)
-    console.log('allowance -> ', allowanceAmount*1, 'amount -> ', amount, tokenAddress)
+    
     if (allowanceAmount*1 < amount*1 || true) {
-      const config = await prepareWriteContract({
+      const writeContractResult = await Order.writeContract({
         address: tokenAddress,
         abi: [abiApprove],
         functionName: 'approve',
         chainId: chainId,
         args: [spenderContract, weiAmount],
-        // args: [INCH_CONTRACTS[chainId], weiAmount],
-      }).catch(error => {
-        console.log('approve prepareWriteContract', error)
       })
-      console.log('config approve', config)
-      if (config?.mode === 'prepared') {
-        const res = await writeContract(config).catch(error => {
-          return false
-        })
-        console.log('writeContract', res)
-        if (res) {
-          const txResult = await waitForTransaction(res)
-          return txResult
-        }
-      }
-      return false
+      return writeContractResult
+      // const config = await prepareWriteContract({
+      //   address: tokenAddress,
+      //   abi: [abiApprove],
+      //   functionName: 'approve',
+      //   chainId: chainId,
+      //   args: [spenderContract, weiAmount],
+      //   // args: [INCH_CONTRACTS[chainId], weiAmount],
+      // }).catch(error => {
+      //   console.log('approve prepareWriteContract', error)
+      //   return error
+      // })
+      // console.log('config approve', config)
+      // if (config?.mode === 'prepared') {
+      //   const res = await writeContract(config).catch(error => {
+      //     return {success: false}
+      //   })
+      //   console.log('writeContract', res)
+      //   if (res) {
+      //     const txResult = await waitForTransaction(res)
+      //     return {success: true, data: txResult}
+      //   }
+      // }
+      // return {success: false}
     }
-    return true
+    return {success: true}
   }
 }
 
@@ -604,7 +633,7 @@ class TOKEN extends Order {
       })
       if (orders && Array.isArray(orders)) {
         const allowance = await Order.checkAllowance(chainId, TEGRO_FILL_ORDERS_CONTRACTS[chainId], walletClient.account.address, sellAsset, willSpendAmount*1)
-        if (!allowance) {
+        if (!allowance.success) {
           reject()
           return
         }
@@ -684,7 +713,7 @@ class TOKEN extends Order {
       const receiveAmount = type === 'buy' ? amount : price*amount
       
       const allowance = await Order.checkAllowance(chainId, INCH_CONTRACTS[chainId], walletClient.account.address, makerAsset.address, spendAmount)
-      if (!allowance) {
+      if (!allowance.success) {
         reject()
         return
       }
