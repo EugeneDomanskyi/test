@@ -101,7 +101,7 @@ class Order {
     const weiAmount = parseUnits(amount.toString(), decimals)
     const allowanceAmount = formatUnits(res, decimals)
     console.log('allowance -> ', allowanceAmount*1, 'amount -> ', amount, tokenAddress)
-    if (allowanceAmount*1 < amount*1) {
+    if (allowanceAmount*1 < amount*1 || true) {
       const res = await writeContract({
         address: tokenAddress,
         abi: [abiApprove],
