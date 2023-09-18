@@ -1,7 +1,7 @@
 import numeral from 'numeral'
 import { formatUnits, encodeFunctionData, parseUnits, hashTypedData } from 'viem'
 import { getClient } from '@reservoir0x/reservoir-sdk'
-import { getWalletClient, waitForTransaction, sendTransaction, signTypedData, readContract, writeContract, prepareWriteContract, prepareSendTransaction, fetchBalance, watchContractEvent } from '@wagmi/core'
+import { getWalletClient, waitForTransaction, sendTransaction, signTypedData, readContract, writeContract, prepareWriteContract, multicall, fetchBalance, watchContractEvent } from '@wagmi/core'
 import { LimitOrderProtocolFacade, LimitOrderBuilder } from '@1inch/limit-order-protocol-utils'
 import { FusionSDK } from '@1inch/fusion-sdk'
 import { toast } from 'react-toastify'
@@ -43,7 +43,7 @@ class Order {
         return error
       })
       console.log('write contract res -> ', res)
-      if (res) {
+      if (res?.hash) {
         const txResult = await waitForTransaction(res)
         return {success: true, data: txResult}
       }
@@ -114,20 +114,29 @@ class Order {
       functionName: 'allowance',
       chainId: chainId,
       args: [walletAddress, spenderContract],
-      // args: [walletAddress, INCH_CONTRACTS[chainId]]
     })
     
     const decimals = await Order.getDecimals(tokenAddress, chainId)
     const weiAmount = parseUnits(amount.toString(), decimals)
     const allowanceAmount = formatUnits(res, decimals)
-    
+
     if (allowanceAmount*1 < amount*1 || true) {
+      if (tokenAddress.toLowerCase() === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
+        console.log('ethereum USDT')
+        await Order.writeContract({
+          address: tokenAddress,
+          abi: [abiApprove],
+          functionName: 'approve',
+          chainId: chainId,
+          args: [spenderContract, parseUnits('0', decimals)],
+        })
+      }
       const writeContractResult = await Order.writeContract({
         address: tokenAddress,
         abi: [abiApprove],
         functionName: 'approve',
         chainId: chainId,
-        args: [spenderContract, weiAmount],
+        args: [spenderContract, parseUnits(Number.MAX_SAFE_INTEGER.toString(), decimals)],
       })
       return writeContractResult
       // const config = await prepareWriteContract({
@@ -633,6 +642,7 @@ class TOKEN extends Order {
       })
       if (orders && Array.isArray(orders)) {
         const allowance = await Order.checkAllowance(chainId, TEGRO_FILL_ORDERS_CONTRACTS[chainId], walletClient.account.address, sellAsset, willSpendAmount*1)
+        console.log('allowance')
         if (!allowance.success) {
           reject()
           return
