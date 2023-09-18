@@ -192,6 +192,7 @@ export const CHAINS = [
     coingecko: 'ethereum',
     platform: 'ethereum',
     pages: ['nfts', 'tokens'],
+    gasLimit: 60000,
     usdtContract: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     wrapped: {
       contract: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
@@ -211,6 +212,7 @@ export const CHAINS = [
     coingecko: 'matic-network',
     platform: 'polygon-pos',
     pages: ['nfts', 'tokens'],
+    gasLimit: 250000,
     usdtContract: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
     wrapped: {
       contract: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',

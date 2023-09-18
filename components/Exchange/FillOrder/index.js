@@ -17,7 +17,7 @@ const FillOrder = ({data, onClose}) => {
     allowance: {
       complete: false,
       title: 'Spending Approval',
-      description: `Enable spending of ${data.side === 'buy' ? data.takerAsset.symbol : data.makerAsset.symbol} on Tegro`,
+      description: `Enable spending of ${data.takerAsset.symbol} on Tegro`,
     },
     transaction: {
       complete: false,

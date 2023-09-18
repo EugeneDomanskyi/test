@@ -504,7 +504,7 @@ class TOKEN extends Order {
       return {
         totalAmountOnSell: formatUnits(stats.totalAmountOnSell.toFixed(0), makerDecimals),
         totalAmountToSell: formatUnits(stats.totalAmountToSell.toFixed(0), takerDecimals),
-        willSpendAmount: formatUnits(rates.willSpendAmount.toFixed(0), takerDecimals),
+        willSpendAmount: formatUnits(rates.willSpendAmount.multipliedBy(side === 'buy' ? 1.000001 : 1).toFixed(0), takerDecimals),
         willTakeAmount: formatUnits(rates.willTakeAmount.toFixed(0), makerDecimals),
         orders: temp.orders,
       }
@@ -625,21 +625,23 @@ class TOKEN extends Order {
             // walletClient.account.address
           ]
         })
-
+        console.log('orders -> ', orders)
         console.log('params -> ', list, totalSpendAmount.toFixed(0))
 
         const config = await prepareWriteContract({
           address: TEGRO_FILL_ORDERS_CONTRACTS[chainId],
           abi: TEGRO_ABI,
           functionName: 'fillMultipleOrders',
-          args: [list, totalSpendAmount.toFixed(0)],
+          args: [list, totalSpendAmount.multipliedBy(side === 'buy' ? 1.00001 : 1).toFixed(0)],
         }).catch(error => {
           console.log('prepareWriteContract', error)
         })
 
-        console.log('config', config)
-
         if (config?.mode === 'prepared') {
+          // if (!config.request.gas) {
+          //   config.request.gas = network.gasLimit
+          // }
+          console.log('config', config)
           TOKEN.listenContract(['TradeSuccessful'], {address: TEGRO_FILL_ORDERS_CONTRACTS[chainId], abi: TEGRO_ABI}, (eventName, eventData) => {
             callback(`contract_${eventName}`, eventData)
           })
