@@ -39,12 +39,16 @@
           color: rgba(255, 255, 255, 0.5);
           transition: all .3s ease 0s;
 
-          &:hover {
-            color: rgba(255, 255, 255, 0.8);
-          }
-
           &.active {
             color: #fff;
+          }
+        }
+      }
+
+      &:not(.disabled):not(.active):hover {
+        .optionInner {
+          .optionText {
+            color: rgba(255, 255, 255, 0.8);
           }
         }
       }
@@ -52,6 +56,10 @@
       &.standard {
         flex: 0;
         min-width: 150px;
+
+        @media (max-width: 768px) {
+          flex: 1;
+        }
       }
 
       &.classic {

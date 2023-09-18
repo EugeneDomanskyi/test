@@ -90,6 +90,14 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
       )
     }
 
+    if (icon == 'chevron-down') {
+      return (
+        <svg width={width ?? 16} height={width ?? 17} viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.5" d="M13.28 6.036l-4.347 4.347a1.324 1.324 0 01-1.866 0L2.72 6.036" />
+        </svg>
+      )
+    }
+
     if (icon === 'check') {
       return (
         <svg width={width ?? 14} height={height ?? 11} fill="none" {...props}>
