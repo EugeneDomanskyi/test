@@ -12,9 +12,21 @@ const RaffleInfoModal = ({}) => {
   const blockchain = useSelector($app.get.blockchain)
 
   return (
-    <App.Flex column gap={32} align="center" className={styles.content}>
-      <Raffle.Roulette />
-    </App.Flex>
+    <>
+      <App.Flex className={styles.top}>
+        <App.Flex justify="space-between">
+          
+        </App.Flex>
+        
+        <App.Flex justify="space-between">
+
+        </App.Flex>
+      </App.Flex>
+
+      <App.Flex column gap={32} align="center" className={styles.content}>
+      {/* <Raffle.Roulette /> */}
+      </App.Flex>
+    </>
   )
 }
 
