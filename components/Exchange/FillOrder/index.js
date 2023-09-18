@@ -9,10 +9,6 @@ import App from '@/components/App'
 import Order from '@/libs/structs/Order'
 import useOrders from '@/myhooks/useOrders'
 
-const ERROR_MESSAGES = {
-  'User rejected the request.': 'Looks like you have rejected signing through your wallet. Please restart the process '
-}
-
 const getErrorMessage = (message) => {
   switch (message) {
     case 'User rejected the request.':

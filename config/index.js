@@ -21,6 +21,20 @@ import { arbitrum, mainnet, polygon, goerli, optimism, celo, bsc, base, avalanch
 //     },
 // },
 
+export const TEG_TOKEN = '0xa1f102b004c8a5f4734e70bea7d62f829916d94c'
+
+export const TEGRO_FILL_ORDERS_CONTRACTS = {
+  1: '0x9c11f816f0a8A235B3c3674C8EFD89C805546457', // mainnet
+  137: '0xf360BD82C74c6613C55C3441281113ce196D629D', // polygon
+  80001: '0xB34Cb747e09d6d07B8419fE4c66D008456962eA5', // mumbai
+  42161: '0x4d0c3BC9ad8f0796186Fd3314ae520d43436d87e', // arbitrum
+  10: '0xaD929B0848DF4Aa7c071C16010D073dAC89f6AC3', // optimism
+  56: '0x64E7d3759D6fD46a49f8e768003559B684a88B6A', // bnb
+  8453: '0xaD929B0848DF4Aa7c071C16010D073dAC89f6AC3', // base
+  43114: '0x08fEA5882FABD20fF8067A14B134E937d9b4220D', // avalanche
+
+}
+
 const TEST_NETWORK = {
   ...goerli,
   code: 'goerli',
@@ -220,7 +234,8 @@ export const CHAINS = [
       shortName: 'WMATIC',
     },
   }, 
-  ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? [TEST_NETWORK] : [])
+  ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? [TEST_NETWORK] : []),
+  ...ADDITIONAL_NETWORKS.filter(chain => TEGRO_FILL_ORDERS_CONTRACTS[chain.id]),
 ]
 
 export const INCH_CONTRACTS = {
