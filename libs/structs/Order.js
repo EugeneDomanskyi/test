@@ -112,6 +112,7 @@ class Order {
       }).catch(error => {
         console.log('approve prepareWriteContract', error)
       })
+      console.log('config approve', config)
       if (config?.mode === 'prepared') {
         const res = await writeContract(config).catch(error => {
           return false
