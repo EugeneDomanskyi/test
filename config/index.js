@@ -164,7 +164,7 @@ const ADDITIONAL_NETWORKS = [{
     coingecko: 'avalanche-2',
     platform: 'avalanche',
     pages: ['nfts', 'tokens'],
-    usdtContract: '0xc7198437980c041c805a1edcba50c1ce5db95118',
+    usdtContract: '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7',
     wrapped: {
       contract: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       name: 'Wrapped AVAX',
