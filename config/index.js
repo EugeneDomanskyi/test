@@ -280,6 +280,19 @@ export const INCH_TOKENS = {
             "tokens"
         ]
     },
+    "0x55d398326f99059ff775485246999027b3197955": {
+        "symbol": "USDT",
+        "name": "Tether USD",
+        "address": "0x55d398326f99059ff775485246999027b3197955",
+        "decimals": 18,
+        "logoURI": "https://assets.coingecko.com/coins/images/325/large/Tether.png?1668148663",
+        "providers": [
+            "1inch"
+        ],
+        "tags": [
+            "tokens"
+        ]
+    },
     "0x8700daec35af8ff88c16bdf0418774cb3d7599b4": {
         "symbol": "SNX",
         "name": "Synthetix",
