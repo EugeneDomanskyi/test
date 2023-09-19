@@ -115,9 +115,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
     if (!decimalRegExp.test(value) && value) {
       return
     }
-    if (field === 'price') {
-      value = value.substring(0, value.indexOf('.') + 7)
-    }
+    value = value.substring(0, value.indexOf('.') + 7)
     setForm(state => {
       return {
         ...state,
