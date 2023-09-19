@@ -73,10 +73,10 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
   }
 
   const handleSubmit = async () => {
-    const address = await connect()
-    if (!address) {
-      return
-    }
+    // const address = await connect()
+    // if (!address) {
+    //   return
+    // }
     const network = await changeNetwork(blockchain.code)
     if (!network) {
       return

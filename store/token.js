@@ -183,7 +183,7 @@ export const tokenSlice = createSlice({
 
     update: (state, { payload }) => {
       state.all = state.all.map(item => {
-        if (item.id.toLowerCase() == payload.id.toLowerCase()) {
+        if (item.id.toLowerCase() == payload.id?.toLowerCase()) {
           return payload
         } else {
           return item
