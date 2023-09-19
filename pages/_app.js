@@ -32,7 +32,7 @@ import '@/styles/globals.css'
 
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
-    dsn: 'https://a48fc91863a08075997f5355b49858cc@o4505192627830784.ingest.sentry.io/4505793143242752',
+    dsn: 'https://b6059579615abe9ca86108562cbeb308@o1399663.ingest.sentry.io/4505906094538752',
     // integrations: [
     //   new Sentry.BrowserTracing(),
     //   new Sentry.Replay(),
