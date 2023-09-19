@@ -1,5 +1,6 @@
 import numeral from 'numeral'
-import { formatUnits, encodeFunctionData, parseUnits, hashTypedData } from 'viem'
+import { formatUnits, encodeFunctionData, parseUnits, hashTypedData, createPublicClient, http } from 'viem'
+import { privateKeyToAccount, generatePrivateKey } from 'viem/accounts'
 import { getClient } from '@reservoir0x/reservoir-sdk'
 import { getWalletClient, waitForTransaction, sendTransaction, signTypedData, readContract, writeContract, prepareWriteContract, multicall, fetchBalance, watchContractEvent } from '@wagmi/core'
 import { LimitOrderProtocolFacade, LimitOrderBuilder } from '@1inch/limit-order-protocol-utils'
@@ -375,8 +376,8 @@ class TOKEN extends Order {
   static formatter = (order, makerDecimals, takerDecimals) => {
     const makingAmount = new BigNumber(order.remainingMakerAmount)
     const takingAmount = makingAmount.multipliedBy(new BigNumber(order.data.takingAmount)).dividedBy(new BigNumber(order.data.makingAmount))
-    const makingAmountFormatted = formatUnits(makingAmount.toFixed(0), makerDecimals)*1
-    const takingAmountFormatted = formatUnits(takingAmount.toFixed(0), takerDecimals)*1
+    const makingAmountFormatted = formatUnits(makingAmount.toFixed(), makerDecimals)*1
+    const takingAmountFormatted = formatUnits(takingAmount.toFixed(), takerDecimals)*1
     return {
       ...order,
       makingAmount: makingAmount,
@@ -663,6 +664,7 @@ class TOKEN extends Order {
           })
 
           if (res) {
+            console.log('res -> ', res)
             callback('transaction', {success: true})
             const txResult = await waitForTransaction(res)
             callback('blockchain', {success: true})
