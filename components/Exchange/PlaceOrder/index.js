@@ -156,7 +156,7 @@ const PlaceOrder = ({data, onClose}) => {
             case 'result':
               return (
                 <App.Flex column align="center" sx={{paddingTop: 40, paddingBottom: 40}} gap={16} className={styles.content}>
-                  <App.Icon secondaryColor="#08051C" icon="check-circle-fill" />
+                  <App.Icon icon="check-circle-fill" />
                   <App.Text size={20} weight={700} center>Order In Progress</App.Text>
                   <App.Text size={14} weight={500} center>We will inform you once the order is filled completely. Meanwhile you can keep track through the ongoing order list</App.Text>
                   <App.Flex column className={styles.border} sx={{width: '100%'}}>

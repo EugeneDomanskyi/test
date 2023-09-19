@@ -25,18 +25,24 @@ class Order {
     toast.error(message)
   }
 
-  static writeContract = async (params) => {
+  static writeContract = async (params, callback) => {
     const config = await prepareWriteContract(params).catch(error => {
       console.log('prepare contract error -> ', error)
       return error
     })
     console.log('config contract -> ', config)
     if (config?.mode === 'prepared') {
+      if (callback) {
+        callback('signing', config)
+      }
       const res = await writeContract(config).catch(error => {
         return error
       })
       console.log('write contract res -> ', res)
       if (res?.hash) {
+        if (callback) {
+          callback('waiting', res)
+        }
         const txResult = await waitForTransaction(res)
         return {success: true, data: txResult}
       }
@@ -110,12 +116,11 @@ class Order {
     })
     
     const decimals = await Order.getDecimals(tokenAddress, chainId)
-    // const weiAmount = parseUnits(amount.toString(), decimals)
     const allowanceAmount = formatUnits(res, decimals)
     const isEthereumUsdt = tokenAddress.toLowerCase() === '0xdac17f958d2ee523a2206206994597c13d831ec7'
+    console.log('allowanceAmount -> ', allowanceAmount)
     if (allowanceAmount*1 < amount*1) {
       if (isEthereumUsdt) {
-        console.log('ethereum USDT')
         await Order.writeContract({
           address: tokenAddress,
           abi: [abiApprove],
@@ -129,7 +134,7 @@ class Order {
         abi: [abiApprove],
         functionName: 'approve',
         chainId: chainId,
-        args: [spenderContract, parseUnits(isEthereumUsdt ? Number.MAX_SAFE_INTEGER.toString() : amount.toString(), decimals)],
+        args: [spenderContract, parseUnits(Number.MAX_SAFE_INTEGER.toString(), decimals)],
       })
       return writeContractResult
     }
@@ -391,45 +396,45 @@ class TOKEN extends Order {
     }
   }
 
-  static getCheapest = async ({chainId, takerAsset, makerAsset, amount}) => {
-    const network = CHAINS.find(chain => chain.id === chainId)
-    const res = await $orders.api.get.tokens.byAssets({
-      makerAsset: makerAsset,
-      takerAsset: takerAsset,
-      blockchain: network.code,
-      limit: 500,
-      statuses: '[1]',
-      sortBy: 'takerRate',
-    })
-    if (res && Array.isArray(res)) {
-      const takerDecimals = await Order.getDecimals(takerAsset, chainId)
-      const makerDecimals = await Order.getDecimals(makerAsset, chainId)
-      const temp = res.reduce((acc, order) => {
-        if (acc.totalTakerAmount <= 0) {
-          return acc
-        }
-        const remainingTakerAmount = order.remainingMakerAmount*order.data.takingAmount/order.data.makingAmount
+  // static getCheapest = async ({chainId, takerAsset, makerAsset, amount}) => {
+  //   const network = CHAINS.find(chain => chain.id === chainId)
+  //   const res = await $orders.api.get.tokens.byAssets({
+  //     makerAsset: makerAsset,
+  //     takerAsset: takerAsset,
+  //     blockchain: network.code,
+  //     limit: 500,
+  //     statuses: '[1]',
+  //     sortBy: 'takerRate',
+  //   })
+  //   if (res && Array.isArray(res)) {
+  //     const takerDecimals = await Order.getDecimals(takerAsset, chainId)
+  //     const makerDecimals = await Order.getDecimals(makerAsset, chainId)
+  //     const temp = res.reduce((acc, order) => {
+  //       if (acc.totalTakerAmount <= 0) {
+  //         return acc
+  //       }
+  //       const remainingTakerAmount = order.remainingMakerAmount*order.data.takingAmount/order.data.makingAmount
         
-        const left = acc.totalTakerAmount - remainingTakerAmount
-        const takerRate = Math.floor((order.takerRate*1 + Number.EPSILON) * 1000000) / 1000000
-        if (left > 0) {
-          acc.orders = [...acc.orders, {...order, willSpendAmount: remainingTakerAmount, willTakeAmount: Math.floor(remainingTakerAmount*takerRate), price: order.makerRate}]
-          acc.totalTakerAmount = left
-        } else {
-          acc.orders = [...acc.orders, {...order, willSpendAmount: acc.totalTakerAmount, willTakeAmount: Math.floor(acc.totalTakerAmount*takerRate), price: order.makerRate}]
-          acc.totalTakerAmount = 0
-        }
-        return acc
-      }, {totalTakerAmount: Math.pow(10, takerDecimals)*amount, orders: []})
-      const totalAmount =  temp.orders.reduce((acc, order) => acc + Math.pow(10, -makerDecimals)*order.willTakeAmount, 0)
-      return {
-        orders: temp.orders,
-        totalAmount: numeral(totalAmount).format('0.0[0000]'),
-        avgPrice: (amount && totalAmount) ? numeral(amount / totalAmount).format('0.0[0000]') : 0,
-      }
-    }
-    return null
-  }
+  //       const left = acc.totalTakerAmount - remainingTakerAmount
+  //       const takerRate = Math.floor((order.takerRate*1 + Number.EPSILON) * 1000000) / 1000000
+  //       if (left > 0) {
+  //         acc.orders = [...acc.orders, {...order, willSpendAmount: remainingTakerAmount, willTakeAmount: Math.floor(remainingTakerAmount*takerRate), price: order.makerRate}]
+  //         acc.totalTakerAmount = left
+  //       } else {
+  //         acc.orders = [...acc.orders, {...order, willSpendAmount: acc.totalTakerAmount, willTakeAmount: Math.floor(acc.totalTakerAmount*takerRate), price: order.makerRate}]
+  //         acc.totalTakerAmount = 0
+  //       }
+  //       return acc
+  //     }, {totalTakerAmount: Math.pow(10, takerDecimals)*amount, orders: []})
+  //     const totalAmount =  temp.orders.reduce((acc, order) => acc + Math.pow(10, -makerDecimals)*order.willTakeAmount, 0)
+  //     return {
+  //       orders: temp.orders,
+  //       totalAmount: numeral(totalAmount).format('0.0[0000]'),
+  //       avgPrice: (amount && totalAmount) ? numeral(amount / totalAmount).format('0.0[0000]') : 0,
+  //     }
+  //   }
+  //   return null
+  // }
 
   static getOpenWithPriceLimitation = async ({chainId, takerAsset, makerAsset, amount, price, side}) => {
     const network = CHAINS.find(chain => chain.id === chainId)
@@ -525,72 +530,72 @@ class TOKEN extends Order {
     }
   }
 
-  static getQuote = async ({chainId, address, amount, side}) => {
-    if (!amount) {
-      return 0
-    }
-    // const { walletClient } = await Order.getWalletData()
-    const network = CHAINS.find(chain => chain.id === chainId)
-    const sdk = new FusionSDK({url: 'https://fusion.1inch.io', network: chainId})
-    const tokenDecimals = await Order.getDecimals(address, chainId)
+  // static getQuote = async ({chainId, address, amount, side}) => {
+  //   if (!amount) {
+  //     return 0
+  //   }
+  //   // const { walletClient } = await Order.getWalletData()
+  //   const network = CHAINS.find(chain => chain.id === chainId)
+  //   const sdk = new FusionSDK({url: 'https://fusion.1inch.io', network: chainId})
+  //   const tokenDecimals = await Order.getDecimals(address, chainId)
 
-    let fromToken = network.usdtContract
-    let toToken = address
-    let amountFrom = parseUnits(`${amount}`, USDT_DECIMALS)
-    if (side === 'sell') {
-      fromToken = address
-      toToken = network.usdtContract
-      amountFrom = parseUnits(`${amount}`, tokenDecimals)
-    }
-    const params = {
-      fromTokenAddress: fromToken,
-      toTokenAddress: toToken,
-      amount: amountFrom,
-    }
-    const quote = await sdk.getQuote(params).catch(error => {
-      return {toTokenAmount: side === 'sell' ? 1000000 : 1000000000000000000}
-    })
-    return formatUnits(`${quote.toTokenAmount}`, side === 'buy' ? tokenDecimals : USDT_DECIMALS)
-  }
+  //   let fromToken = network.usdtContract
+  //   let toToken = address
+  //   let amountFrom = parseUnits(`${amount}`, USDT_DECIMALS)
+  //   if (side === 'sell') {
+  //     fromToken = address
+  //     toToken = network.usdtContract
+  //     amountFrom = parseUnits(`${amount}`, tokenDecimals)
+  //   }
+  //   const params = {
+  //     fromTokenAddress: fromToken,
+  //     toTokenAddress: toToken,
+  //     amount: amountFrom,
+  //   }
+  //   const quote = await sdk.getQuote(params).catch(error => {
+  //     return {toTokenAmount: side === 'sell' ? 1000000 : 1000000000000000000}
+  //   })
+  //   return formatUnits(`${quote.toTokenAmount}`, side === 'buy' ? tokenDecimals : USDT_DECIMALS)
+  // }
 
-  static swap = ({address, amount, side}) => {
-    return new Promise(async (resolve, reject) => {
-      const { chainId, walletClient } = await Order.getWalletData()
-      const network = CHAINS.find(chain => chain.id === chainId)
-      const tokenDecimals = await Order.getDecimals(address)
+  // static swap = ({address, amount, side}) => {
+  //   return new Promise(async (resolve, reject) => {
+  //     const { chainId, walletClient } = await Order.getWalletData()
+  //     const network = CHAINS.find(chain => chain.id === chainId)
+  //     const tokenDecimals = await Order.getDecimals(address)
 
-      walletClient.signTypedData = (address, typedData) => {
-        return signTypedData(typedData)
-      }
-      const sdk = new FusionSDK({url: 'https://fusion.1inch.io', network: chainId, blockchainProvider: walletClient})
+  //     walletClient.signTypedData = (address, typedData) => {
+  //       return signTypedData(typedData)
+  //     }
+  //     const sdk = new FusionSDK({url: 'https://fusion.1inch.io', network: chainId, blockchainProvider: walletClient})
 
-      let fromToken = network.usdtContract
-      let toToken = address
-      let amountFrom = parseUnits(`${amount}`, USDT_DECIMALS)
-      if (side === 'sell') {
-        fromToken = address
-        toToken = network.usdtContract
-        amountFrom = parseUnits(`${amount}`, tokenDecimals)
-      }
+  //     let fromToken = network.usdtContract
+  //     let toToken = address
+  //     let amountFrom = parseUnits(`${amount}`, USDT_DECIMALS)
+  //     if (side === 'sell') {
+  //       fromToken = address
+  //       toToken = network.usdtContract
+  //       amountFrom = parseUnits(`${amount}`, tokenDecimals)
+  //     }
 
-      const balance = await Order.getBalance(walletClient.account.address, fromToken)
-      if (balance < amount*1) {
-        Order.showErrorMessage('Insufficient balance')
-        reject()
-        return 
-      }
+  //     const balance = await Order.getBalance(walletClient.account.address, fromToken)
+  //     if (balance < amount*1) {
+  //       Order.showErrorMessage('Insufficient balance')
+  //       reject()
+  //       return 
+  //     }
 
-      sdk.placeOrder({
-        fromTokenAddress: fromToken,
-        toTokenAddress: toToken,
-        amount: amountFrom,
-        walletAddress: walletClient.account.address
-      }).then(res => {
-        console.log(res)
-        resolve()
-      }).catch(reject)
-    })
-  }
+  //     sdk.placeOrder({
+  //       fromTokenAddress: fromToken,
+  //       toTokenAddress: toToken,
+  //       amount: amountFrom,
+  //       walletAddress: walletClient.account.address
+  //     }).then(res => {
+  //       console.log(res)
+  //       resolve()
+  //     }).catch(reject)
+  //   })
+  // }
 
   static fulfill = ({address, amount, price, side}, callback) => {
     return new Promise(async (resolve, reject) => {
@@ -631,48 +636,37 @@ class TOKEN extends Order {
             order.data,
             order.signature,
             '0x',
-            order.willTakeMakingAmount.toFixed(0).toString(),
+            order.willTakeMakingAmount.dividedBy(side === 'sell' ? 1.000001 : 1).toFixed(0).toString(),
             '0',
             order.willSpendTakingAmount.multipliedBy(2).toFixed(0).toString(),
-            // '0xde0b6b3a7640000',
-            // walletClient.account.address
           ]
         })
-        console.log('orders -> ', orders)
-        console.log('params -> ', list, totalSpendAmount.toFixed(0))
 
-        const config = await prepareWriteContract({
+        console.log('params -> ', list, totalSpendAmount.multipliedBy(side === 'buy' ? 1.00001 : 1).toFixed(0))
+
+        TOKEN.listenContract(['TradeSuccessful'], {address: TEGRO_FILL_ORDERS_CONTRACTS[chainId], abi: TEGRO_ABI}, (eventName, eventData) => {
+          callback(`contract_${eventName}`, eventData)
+        })
+
+        const result = await Order.writeContract({
           address: TEGRO_FILL_ORDERS_CONTRACTS[chainId],
           abi: TEGRO_ABI,
           functionName: 'fillMultipleOrders',
           args: [list, totalSpendAmount.multipliedBy(side === 'buy' ? 1.00001 : 1).toFixed(0)],
-        }).catch(error => {
-          console.log('prepareWriteContract', error)
+        }, (eventName) => {
+          if (eventName === 'waiting') {
+            callback('transaction', {success: true})
+          }
         })
 
-        if (config?.mode === 'prepared') {
-          // if (!config.request.gas) {
-          //   config.request.gas = network.gasLimit
-          // }
-          console.log('config', config)
-          TOKEN.listenContract(['TradeSuccessful'], {address: TEGRO_FILL_ORDERS_CONTRACTS[chainId], abi: TEGRO_ABI}, (eventName, eventData) => {
-            callback(`contract_${eventName}`, eventData)
-          })
-
-          const res = await writeContract(config).catch(error => {
-            reject(error)
-          })
-
-          if (res) {
-            console.log('res -> ', res)
-            callback('transaction', {success: true})
-            const txResult = await waitForTransaction(res)
-            callback('blockchain', {success: true})
-            resolve()
-            Order.showSuccessMessage('Order filled successfully')
-            return
-          }
+        if (result.success) {
+          callback('blockchain', {success: true})
+          resolve()
+          // Order.showSuccessMessage('Order filled successfully')
+          return
         }
+
+        reject(result.error)
       }
       reject('There is no order to fulfill')
     })

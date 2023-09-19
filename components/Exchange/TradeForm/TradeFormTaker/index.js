@@ -154,9 +154,9 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
     if (!network) {
       return
     }
-    if (isDisabled) {
-      return
-    }
+    // if (isDisabled) {
+    //   return
+    // }
     const usdtAsset = INCH_TOKENS[tokenBlockchain.usdtContract.toLowerCase()]
     const usdtFormatted = {
       ...usdtAsset,
@@ -286,7 +286,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
       <App.Button
         sx={{backgroundColor: formOption.color, opacity: isDisabled && wallet ? 0.5 : 1, cursor: isDisabled && wallet ? 'default' : 'pointer'}}
         className={styles.button}
-        disabled={isDisabled && wallet}
+        disabled={false}
         onClick={handleSubmit}>
         <App.Text color="#09051D" size={15} weight={700}>
           { formOption.title } { form.amount } { current.symbol }
