@@ -1,5 +1,6 @@
 import { INCH_TOKENS } from '@/config'
 import { formatUnits, parseUnits } from 'viem'
+import * as math from 'mathjs'
 
 const INCH_URL = 'https://limit-orders.1inch.io/v3.0'
 
@@ -32,19 +33,19 @@ const getDecimals = address => {
 }
 
 const formatter = (order, makerDecimals, takerDecimals) => {
-  const makingAmount = Number(order.remainingMakerAmount)
-  const takingAmount = makingAmount * order.data.takingAmount / order.data.makingAmount
+  const makingAmount = order.remainingMakerAmount
+  const takingAmount = math.chain(makingAmount).multiply(order.data.takingAmount).divide(order.data.makingAmount).done()
   const makingAmountFormatted = formatUnits(makingAmount, makerDecimals)*1
-  const takingAmountFormatted = formatUnits(takingAmount.toFixed(), takerDecimals)*1
-  console.log(makingAmount, order.remainingMakerAmount)
+  const takingAmountFormatted = formatUnits(takingAmount, takerDecimals)*1
   return {
     ...order,
     makingAmount: makingAmount,
-    takingAmount: takingAmount,
+    // takingAmount: takingAmount,
+    takingAmount: math.chain(makingAmount).multiply(order.data.takingAmount).divide(order.data.makingAmount).done(),
     makingAmountFormatted: makingAmountFormatted,
     takingAmountFormatted: takingAmountFormatted,
-    makerPrice: takingAmountFormatted/makingAmountFormatted,
-    takerPrice: makingAmountFormatted/takingAmountFormatted,
+    makerPrice: math.chain(takingAmountFormatted).divide(makingAmountFormatted).done(),
+    takerPrice: math.chain(makingAmountFormatted).divide(takingAmountFormatted).done(),
   }
 }
 
@@ -75,29 +76,29 @@ const handler = async (req, res) => {
 
       const temp = filteredByPrice.reduce((acc, order) => {
         if (side === 'sell') {
-          acc.totalToBuy = acc.totalToBuy * order.takerRate
+          acc.totalToBuy = math.chain(acc.totalToBuy).multiply(order.takerRate).done()
         }
         if (acc.totalToBuy <= 0) {
           return acc
         }
-        const diff = order.makingAmount - acc.totalToBuy
+        const diff = math.chain(order.makingAmount).subtract(acc.totalToBuy).done()
         let willTakeMakingAmount = 0
         let willSpendTakingAmount = 0
 
         if (diff >= 0) {
           // can fill in this order
-          willTakeMakingAmount = acc.totalToBuy
-          willSpendTakingAmount = side === 'buy' ? willTakeMakingAmount * order.makerRate : willTakeMakingAmount / order.takerRate
+          willTakeMakingAmount = math.chain(acc.totalToBuy).done()
+          willSpendTakingAmount = side === 'buy' ? math.chain(willTakeMakingAmount).multiply(order.makerRate).round().done() : math.chain(willTakeMakingAmount).divide(order.takerRate).round().done()
           
           acc.totalToBuy = 0
         } else {
           // need next order
-          willTakeMakingAmount = order.makingAmount
-          willSpendTakingAmount = side === 'buy' ? willTakeMakingAmount * order.makerRate : willTakeMakingAmount / order.takerRate
-          acc.totalToBuy = side === 'sell' ? (diff * -1) / order.takerRate : diff * -1
+          willTakeMakingAmount = math.chain(order.makingAmount).done()
+          willSpendTakingAmount = side === 'buy' ? math.chain(willTakeMakingAmount).multiply(order.makerRate).done() : math.chain(willTakeMakingAmount).divide(order.takerRate).done()
+          acc.totalToBuy = side === 'sell' ? math.chain(diff).multiply(-1).divide(order.takerRate).done() : math.chain(diff).multiply(-1).done()
         }
-        const willTakeMakingAmountFormatted = formatUnits(willTakeMakingAmount.toFixed(), makerDecimals)
-        const willSpendTakingAmountFormatted = formatUnits(willSpendTakingAmount.toFixed(), takerDecimals)
+        const willTakeMakingAmountFormatted = formatUnits(willTakeMakingAmount, makerDecimals)
+        const willSpendTakingAmountFormatted = formatUnits(willSpendTakingAmount, takerDecimals)
         
         return {
           ...acc,
@@ -115,20 +116,22 @@ const handler = async (req, res) => {
       }, {totalToBuy: amountInWei, orders: []})
 
       const stats = filteredByPrice.reduce((acc, order) => ({
-        totalAmountOnSell: acc.totalAmountOnSell + order.makingAmount,
-        totalAmountToSell: acc.totalAmountToSell + order.takingAmount,
+        totalAmountOnSell: math.chain(acc.totalAmountOnSell).add(order.makingAmount).done(),
+        totalAmountToSell: math.chain(acc.totalAmountToSell).add(order.takingAmount).done(),
       }), {totalAmountOnSell: 0, totalAmountToSell: 0})
 
       const rates = temp.orders.reduce((acc, order) => ({
-        willSpendAmount: acc.willSpendAmount + order.willSpendTakingAmount,
-        willTakeAmount: acc.willTakeAmount + order.willTakeMakingAmount,
+        willSpendAmount: math.chain(acc.willSpendAmount).add(order.willSpendTakingAmount).done(),
+        willTakeAmount: math.chain(acc.willTakeAmount).add(order.willTakeMakingAmount).done(),
       }), {willSpendAmount: 0, willTakeAmount: 0})
       
       res.status(200).json({
-        totalAmountOnSell: formatUnits(stats.totalAmountOnSell.toFixed(), makerDecimals),
-        totalAmountToSell: formatUnits(stats.totalAmountToSell.toFixed(), takerDecimals),
+        totalAmountOnSell: formatUnits(stats.totalAmountOnSell, makerDecimals),
+        totalAmountToSell: formatUnits(stats.totalAmountToSell, takerDecimals),
         willSpendAmount: formatUnits(rates.willSpendAmount.toFixed(), takerDecimals),
+        willSpendAmountValue: rates.willSpendAmount.toFixed(),
         willTakeAmount: formatUnits(rates.willTakeAmount.toFixed(), makerDecimals),
+        willTakeAmountValue: rates.willTakeAmount.toFixed(),
         orders: temp.orders,
       })
       return
