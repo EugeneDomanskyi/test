@@ -612,7 +612,6 @@ class TOKEN extends Order {
       })
       if (orders && Array.isArray(orders)) {
         const allowance = await Order.checkAllowance(chainId, TEGRO_FILL_ORDERS_CONTRACTS[chainId], walletClient.account.address, sellAsset, willSpendAmount*1)
-        console.log('allowance')
         if (!allowance.success) {
           reject(allowance.error)
           return
@@ -621,7 +620,6 @@ class TOKEN extends Order {
         const totalSpendAmount = orders.reduce((acc, order) => acc.plus(order.willSpendTakingAmount), new BigNumber(0))
         
         const balance = await Order.getBalance(walletClient.account.address, sellAsset)
-        console.log('balance -> ', balance*1, 'will spend -> ', willSpendAmount*1)
         if (willSpendAmount*1 > balance*1) {
           Order.showErrorMessage('Insufficient balance')
           reject()
@@ -664,14 +662,10 @@ class TOKEN extends Order {
           const res = await writeContract(config).catch(error => {
             reject(error)
           })
-          
-          console.log('write contract', res)
 
           if (res) {
             callback('transaction', {success: true})
-            
             const txResult = await waitForTransaction(res)
-            console.log('txResult', txResult)
             callback('blockchain', {success: true})
             resolve()
             Order.showSuccessMessage('Order filled successfully')

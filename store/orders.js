@@ -329,8 +329,8 @@ api.get.tokens.orderBook = ({address, ...rest}) => {
     request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, sortBy: 'makerRate', ...rest}),
   ]).then(([buy, sell]) => {
     return {
-      buy: buy.map(order => ({...order, side: 'buy'})),
-      sell: sell.map(order => ({...order, side: 'sell'}))
+      buy: buy && Array.isArray(buy) ? buy.map(order => ({...order, side: 'buy'})) : [],
+      sell: sell && Array.isArray(sell) ? sell.map(order => ({...order, side: 'sell'})) : [],
     }
   })
 }
