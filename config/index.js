@@ -144,8 +144,8 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'base',
     platform: 'base',
-    pages: ['nfts'],
-    usdtContract: '',
+    pages: ['nfts', 'tokens'],
+    usdtContract: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
     wrapped: {
       contract: '0x4200000000000000000000000000000000000006',
       name: 'Wrapped Ether',
@@ -264,6 +264,19 @@ export const INCH_TOKENS = {
         ],
         "tags": [
             "native"
+        ]
+    },
+    "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913": {
+        "symbol": "USDC",
+        "name": "USD Coin",
+        "address": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "decimals": 6,
+        "logoURI": "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png?1547042389",
+        "providers": [
+            "1inch"
+        ],
+        "tags": [
+            "tokens"
         ]
     },
     "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7": {
