@@ -126,7 +126,7 @@ const ADDITIONAL_NETWORKS = [{
     coingecko: 'binancecoin',
     platform: 'binance-smart-chain',
     pages: ['nfts', 'tokens'],
-    usdtContract: '0x524bC91Dc82d6b90EF29F76A3ECAaBAffFD490Bc',
+    usdtContract: '0x55d398326f99059ff775485246999027b3197955',
     wrapped: {
       contract: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
       name: 'Wrapped BNB',
@@ -144,8 +144,8 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'base',
     platform: 'base',
-    pages: ['nfts', 'tokens'],
-    usdtContract: null,
+    pages: ['nfts'],
+    usdtContract: '',
     wrapped: {
       contract: '0x4200000000000000000000000000000000000006',
       name: 'Wrapped Ether',

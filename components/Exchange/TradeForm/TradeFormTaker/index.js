@@ -268,7 +268,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
             <App.Text color="#B9B8C5" size={10} weight={500} right>TOTAL</App.Text>
             <App.Text size={10} weight={700} right>USDT</App.Text>
           </App.Flex>
-          <App.Text size={36} weight={600}>{new BigNumber(currentTab === 'buy' ? abilities.willSpendAmount : abilities.willTakeAmount).toFixed()}</App.Text>
+          <App.Text size={36} weight={600}>{new BigNumber(currentTab === 'buy' ? abilities.willSpendAmount : abilities.willTakeAmount).toFixed(5)}</App.Text>
         </App.Flex>
         {
           currentTab === 'buy'

@@ -144,7 +144,7 @@ const FillOrder = ({data, onClose}) => {
         break
     }
   }
-
+  
   return (
     <App.Flex column className={styles.container}>
       <App.Flex className={styles.header} align="center" justify="space-between">
