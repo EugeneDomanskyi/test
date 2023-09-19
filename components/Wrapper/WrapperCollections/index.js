@@ -6,6 +6,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import Stream from '@/libs/stream.lib'
 
 import $app from '@/store/app'
+import $token from '@/store/token'
 import $collection, { template } from '@/store/collection'
 
 const WrapperCollections = ({ children }) => {
@@ -265,8 +266,9 @@ const WrapperCollections = ({ children }) => {
       blockchainCode.current = blockchain.code
       dispatch($collection.set.current({}))
       dispatch($collection.set.fetching(true))
-
       initWSConnection(blockchain.code)
+      dispatch($token.set.all([]))
+      dispatch($token.set.current({}))
     }
   }, [blockchain.code])
 

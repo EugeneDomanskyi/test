@@ -8,6 +8,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import { putAssetsFile, getAssetsFile } from '@/libs/aws.lib'
 
 import $app from '@/store/app'
+import $collection from '@/store/collection'
 import $token, { template, staticTemplate } from '@/store/token'
 
 const getApolloClient = (chain) => {
@@ -100,6 +101,8 @@ const WrapperTokens = ({ children }) => {
       apollo.current = getApolloClient(blockchain)
       dispatch($token.set.current({}))
       dispatch($token.set.fetching(true))
+      dispatch($collection.set.all([]))
+      dispatch($collection.set.current({}))
     }
   }, [blockchain.code])
 
