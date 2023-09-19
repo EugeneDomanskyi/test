@@ -279,10 +279,10 @@ export const INCH_TOKENS = {
             "tokens"
         ]
     },
-    "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7": {
+    "0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7": {
         "symbol": "USDT",
         "name": "Tether USD",
-        "address": "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
+        "address": "0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7",
         "decimals": 6,
         "logoURI": "https://assets.coingecko.com/coins/images/325/large/Tether.png?1668148663",
         "providers": [
