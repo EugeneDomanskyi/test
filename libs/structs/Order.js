@@ -109,10 +109,9 @@ class Order {
     })
     
     const decimals = await Order.getDecimals(tokenAddress, chainId)
-    const weiAmount = parseUnits(amount.toString(), decimals)
+    // const weiAmount = parseUnits(amount.toString(), decimals)
     const allowanceAmount = formatUnits(res, decimals)
     const isEthereumUsdt = tokenAddress.toLowerCase() === '0xdac17f958d2ee523a2206206994597c13d831ec7'
-
     if (allowanceAmount*1 < amount*1) {
       if (isEthereumUsdt) {
         console.log('ethereum USDT')
@@ -129,7 +128,7 @@ class Order {
         abi: [abiApprove],
         functionName: 'approve',
         chainId: chainId,
-        args: [spenderContract, parseUnits(isEthereumUsdt ? Number.MAX_SAFE_INTEGER.toString() : weiAmount, decimals)],
+        args: [spenderContract, parseUnits(isEthereumUsdt ? Number.MAX_SAFE_INTEGER.toString() : amount.toString(), decimals)],
       })
       return writeContractResult
     }

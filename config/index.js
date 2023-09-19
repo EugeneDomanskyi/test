@@ -164,7 +164,7 @@ const ADDITIONAL_NETWORKS = [{
     coingecko: 'avalanche-2',
     platform: 'avalanche',
     pages: ['nfts', 'tokens'],
-    usdtContract: '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7',
+    usdtContract: '0xc7198437980c041c805a1edcba50c1ce5db95118',
     wrapped: {
       contract: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       name: 'Wrapped AVAX',
@@ -284,6 +284,19 @@ export const INCH_TOKENS = {
         "symbol": "USDT",
         "name": "Tether USD",
         "address": "0x55d398326f99059ff775485246999027b3197955",
+        "decimals": 18,
+        "logoURI": "https://assets.coingecko.com/coins/images/325/large/Tether.png?1668148663",
+        "providers": [
+            "1inch"
+        ],
+        "tags": [
+            "tokens"
+        ]
+    },
+    "0xc7198437980c041c805a1edcba50c1ce5db95118": {
+        "symbol": "USDT",
+        "name": "Tether USD",
+        "address": "0xc7198437980c041c805a1edcba50c1ce5db95118",
         "decimals": 18,
         "logoURI": "https://assets.coingecko.com/coins/images/325/large/Tether.png?1668148663",
         "providers": [
