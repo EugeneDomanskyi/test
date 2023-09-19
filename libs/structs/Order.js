@@ -7,6 +7,7 @@ import { LimitOrderProtocolFacade, LimitOrderBuilder } from '@1inch/limit-order-
 import { FusionSDK } from '@1inch/fusion-sdk'
 import { toast } from 'react-toastify'
 import BigNumber from 'bignumber.js'
+import * as math from 'mathjs'
 
 import { CHAINS, INCH_CONTRACTS, INCH_TOKENS, TEGRO_FILL_ORDERS_CONTRACTS } from '@/config'
 import $orders from '@/store/orders'
@@ -438,11 +439,12 @@ class TOKEN extends Order {
 
   static getOpenWithPriceLimitation = async ({chainId, takerAsset, makerAsset, amount, price, side}) => {
     const network = CHAINS.find(chain => chain.id === chainId)
-    // const tmp = await fetch(`/api/tokens/abilities/${chainId}/${makerAsset}/${takerAsset}/${price}/${amount}/${side}`).then(async res => {
-    //   const json = await res.json()
-    //   return json
-    // })
-    // console.log('tmp', tmp)
+    const tmp = await fetch(`/api/tokens/abilities/${chainId}/${makerAsset}/${takerAsset}/${price}/${amount}/${side}`).then(async res => {
+      const json = await res.json()
+      return json
+    })
+    console.log('tmp', tmp)
+    return tmp
     
     const res = await $orders.api.get.tokens.byAssets({
       makerAsset: makerAsset,
@@ -607,7 +609,7 @@ class TOKEN extends Order {
         sellAsset = address
         buyAsset = network.usdtContract
       }
-      const { orders, willSpendAmount } = await TOKEN.getOpenWithPriceLimitation({
+      const { orders, willSpendAmount, willSpendAmountValue } = await TOKEN.getOpenWithPriceLimitation({
         chainId: chainId,
         takerAsset: sellAsset,
         makerAsset: buyAsset,
@@ -636,13 +638,13 @@ class TOKEN extends Order {
             order.data,
             order.signature,
             '0x',
-            order.willTakeMakingAmount.dividedBy(side === 'sell' ? 1.000001 : 1).toFixed(0).toString(),
+            math.chain(order.willTakeMakingAmount).divide(side === 'sell' ? 1.000001 : 1).round().done(), // order.willTakeMakingAmount.dividedBy(side === 'sell' ? 1.000001 : 1).toFixed(0).toString(),
             '0',
-            order.willSpendTakingAmount.multipliedBy(2).toFixed(0).toString(),
+            math.chain(order.willSpendTakingAmount).multiply(1.1).round().done(), // order.willSpendTakingAmount.multipliedBy(2).toFixed(0).toString(),
           ]
         })
 
-        console.log('params -> ', list, totalSpendAmount.multipliedBy(side === 'buy' ? 1.00001 : 1).toFixed(0))
+        console.log('params -> ', list, math.chain(willSpendAmountValue).multiply(side === 'buy' ? 1.00001 : 1).round().done())
 
         TOKEN.listenContract(['TradeSuccessful'], {address: TEGRO_FILL_ORDERS_CONTRACTS[chainId], abi: TEGRO_ABI}, (eventName, eventData) => {
           callback(`contract_${eventName}`, eventData)
@@ -652,7 +654,7 @@ class TOKEN extends Order {
           address: TEGRO_FILL_ORDERS_CONTRACTS[chainId],
           abi: TEGRO_ABI,
           functionName: 'fillMultipleOrders',
-          args: [list, totalSpendAmount.multipliedBy(side === 'buy' ? 1.00001 : 1).toFixed(0)],
+          args: [list, math.chain(willSpendAmountValue).multiply(side === 'buy' ? 1.00001 : 1).round().done()],
         }, (eventName) => {
           if (eventName === 'waiting') {
             callback('transaction', {success: true})
