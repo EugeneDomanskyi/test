@@ -35,9 +35,14 @@
       position: relative;
       z-index: 0;
       overflow: hidden;
+      margin: auto;
 
       &.small {
         width: 360px;
+      }
+
+      &.large {
+        width: 650px;
       }
 
       .header {

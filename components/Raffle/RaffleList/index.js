@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 
+import $modal from '@/store/modal'
+
 import App from '@/components/App'
 import Raffle from '@/components/Raffle'
-import { TRUE } from 'sass'
 
 const RaffleList = () => {
+  const dispatch = useDispatch()
   const { wallet } = useWalletConnect()
   const [tab, setTab] = useState('browse')
 
@@ -44,8 +47,16 @@ const RaffleList = () => {
     console.log('Participate', hash)
   }
 
-  const handleClaim = (hash) => {
-    console.log('Claim', hash)
+  const handleClick = (item) => {
+    console.log('Click', item)
+
+    dispatch($modal.set.show({modal: 'Raffle/RaffleInfoModal', props: {
+      size: 'large',
+      item: item,
+      header: {
+        title: `Win your prize!`,
+      },
+    }}))
   }
 
   const handleShare = (hash) => {
@@ -63,7 +74,7 @@ const RaffleList = () => {
         </App.Flex>
 
         {tab == 'browse' ? (
-          <Raffle.ListBrowse all={all} onParticipate={handleParticipate} onClaim={handleClaim} onShare={handleShare} />
+          <Raffle.ListBrowse all={all} onParticipate={handleParticipate} onClick={handleClick} onShare={handleShare} />
         ) : (
           <Raffle.ListMy all={all} onParticipate={handleParticipate} onClaim={handleClaim} onShare={handleShare} />
         )}

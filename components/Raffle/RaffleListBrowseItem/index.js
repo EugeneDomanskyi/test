@@ -7,7 +7,7 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const RaffleListBrowseItem = ({ item }) => {
+const RaffleListBrowseItem = ({ item, onClick }) => {
   const { propValue } = usePropsHelper()
 
   return (
@@ -45,7 +45,7 @@ const RaffleListBrowseItem = ({ item }) => {
         </App.Flex>
 
         {item.status != 'closed' ? (
-          <App.Button primary>Participate</App.Button>
+          <App.Button primary onClick={() => onClick(item)}>Participate</App.Button>
         ) : null}
       </App.Flex>
     </App.Flex>

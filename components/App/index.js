@@ -16,6 +16,7 @@ import AppText from '@/components/App/AppText'
 import AppTextField from '@/components/App/AppTextField'
 import AppRangeInput from '@/components/App/AppRangeInput'
 import AppTooltip from '@/components/App/AppTooltip'
+import AppShadowText from '@/components/App/AppShadowText'
 
 export default {
   Address: AppAddress,
@@ -37,4 +38,5 @@ export default {
   Switch: AppSwitch,
   RangeInput: AppRangeInput,
   Tooltip: AppTooltip,
+  ShadowText: AppShadowText,
 }

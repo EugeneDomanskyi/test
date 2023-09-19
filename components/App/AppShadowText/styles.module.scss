@@ -1,0 +1,24 @@
+.textWrapper {
+  position: relative;
+
+  .text {
+    &.shadowText {
+      position: absolute;
+      z-index: -1;
+      top: 0px;
+      left: 0px;
+      color: transparent;
+      transform: translate(1.5px, 1.5px);
+    }
+  }
+}
+
+@media (max-width: 470px) {
+  .textWrapper {
+    .text {
+      &.shadowText {
+        transform: translate(1px, 1px);
+      }
+    }
+  }
+}

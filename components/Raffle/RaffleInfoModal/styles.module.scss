@@ -5,14 +5,89 @@
   overflow: hidden;
   background: no-repeat center bottom url('/images/raffle/modal-top-bg.png');
   background-size: cover;
-  height: 121px;
+  padding: 16px;
+
+  .timeBadge {
+    padding: 8px;
+    border-radius: 100px;
+    background: rgba(6, 56, 47, 0.60);
+    backdrop-filter: blur(2px);
+    height: 24.5px;
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #53F19C3D;
+
+      &:before {
+        content: '';
+        display: block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #53F19C;
+      }
+    }
+
+    &.closed {
+      background: rgba(77, 14, 39, 0.60);
+
+      .dot {
+        background: #FF1D613D;
+  
+        &:before {
+          background: #FF1D61;
+        }
+      }
+    }
+  }
+}
+
+.tkeyBadge {
+  padding: 5px 8px;
+  border-radius: 100px;
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.08) 100%), rgba(8, 5, 28, 0.80);
+  backdrop-filter: blur(2px);
+  height: 24.5px;
 }
 
 .content {
-  padding: 64px 0;
+  padding: 32px;
   background-color: #08051C;
   position: relative;
   z-index: 0;
+
+  .titleBlock {
+    max-width: 250px;
+    padding: 16px;
+    gap: 16px;
+    border-radius: 12px;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, rgba(64, 22, 152, 0.40) 0%, rgba(41, 1, 91, 0.40) 100%);
+  }
+
+  .rewardsContainer {
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    .rewardBlock {
+      width: 156px;
+      position: relative;
+      z-index: 0;
+      overflow: hidden;
+      background: no-repeat center bottom url('/images/raffle/reward-block-bg.png');
+      background-size: contain;
+      padding: 8px;
+
+      @media (max-width: 768px) {
+        padding: 8px;
+      }
+    }
+  }
+
 }
 
 .imgRound {
