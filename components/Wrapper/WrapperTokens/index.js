@@ -267,11 +267,12 @@ const WrapperTokens = ({ children }) => {
             const tokenPrices = tokens.find(item => item.address === existingToken.address)
             
             if (tokenPrices) {
-              mergedData = {...tokenPrices, ...existingToken}
+              mergedData = {...existingToken, ...tokenPrices}
             } else {
               const [priceInfo] = await getInfo([existingToken])
               const priceTemplate = template({info: priceInfo})
-              mergedData = {...priceTemplate, ...existingToken}
+              mergedData = {...existingToken, ...priceTemplate}
+
             }
             dispatch($token.set.current(mergedData))
             dispatch($token.set.update(mergedData))

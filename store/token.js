@@ -5,7 +5,7 @@ import numeral from 'numeral'
 import { request } from './index'
 
 export const template = (item) => {
-  const currency = 'USD'
+  const currency = 'USDT'
 
   const overwrite = {
     ...basicToTemplate(item?.basic),
@@ -44,7 +44,7 @@ export const template = (item) => {
 }
 
 export const staticTemplate = (item) => {
-  const currency = 'USD'
+  const currency = 'USDT'
 
   return {
     id: item?.id,
