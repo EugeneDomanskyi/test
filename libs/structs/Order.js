@@ -438,98 +438,9 @@ class TOKEN extends Order {
   // }
 
   static getOpenWithPriceLimitation = async ({chainId, takerAsset, makerAsset, amount, price, side}) => {
-    const network = CHAINS.find(chain => chain.id === chainId)
-    const tmp = await fetch(`/api/tokens/abilities/${chainId}/${makerAsset}/${takerAsset}/${price}/${amount}/${side}`).then(async res => {
-      const json = await res.json()
-      return json
-    })
-    console.log('tmp', tmp)
-    return tmp
-    
-    const res = await $orders.api.get.tokens.byAssets({
-      makerAsset: makerAsset,
-      takerAsset: takerAsset,
-      blockchain: network.code,
-      limit: 500,
-      statuses: '[1]',
-      sortBy: 'takerRate',
-    })
-    if (res && Array.isArray(res)) {
-      const makerDecimals = await Order.getDecimals(makerAsset, chainId)
-      const takerDecimals = await Order.getDecimals(takerAsset, chainId)
-
-      const list = res.map(order => TOKEN.formatter(order, makerDecimals, takerDecimals))
-      const amountInWei = new BigNumber(parseUnits(amount, side === 'buy' ? makerDecimals : takerDecimals))
-
-      const filter = {
-        buy: order => order.makerPrice*1 <= price*1,
-        sell: order => order.takerPrice*1 >= price*1,
-      }
-      
-      const filteredByPrice = list.filter(filter[side])
-      
-      const temp = filteredByPrice.reduce((acc, order) => {
-        if (side === 'sell') {
-          acc.totalToBuy = acc.totalToBuy.multipliedBy(order.takerRate)
-        }
-        if (acc.totalToBuy.isZero()) {
-          return acc
-        }
-        const diff = order.makingAmount.minus(acc.totalToBuy)
-        let willTakeMakingAmount = 0
-        let willSpendTakingAmount = 0
-        if (diff.isPositive() || diff.isZero()) {
-          // can fill in this order
-          willTakeMakingAmount = acc.totalToBuy
-          willSpendTakingAmount = side === 'buy' ? willTakeMakingAmount.multipliedBy(order.makerRate) : willTakeMakingAmount.dividedBy(order.takerRate)
-          
-          acc.totalToBuy = new BigNumber(0)
-        } else {
-          // need next order
-          willTakeMakingAmount = order.makingAmount
-          willSpendTakingAmount = side === 'buy' ? willTakeMakingAmount.multipliedBy(order.makerRate) : willTakeMakingAmount.dividedBy(order.takerRate)
-          acc.totalToBuy = side === 'sell' ? diff.multipliedBy(-1).dividedBy(order.takerRate) : diff.multipliedBy(-1)
-        }
-        const willTakeMakingAmountFormatted = formatUnits(willTakeMakingAmount.toFixed(0), makerDecimals)
-        const willSpendTakingAmountFormatted = formatUnits(willSpendTakingAmount.toFixed(0), takerDecimals)
-        
-        return {
-          ...acc,
-          orders: [
-            ...acc.orders,
-            {
-              ...order,
-              willTakeMakingAmount,
-              willTakeMakingAmountFormatted,
-              willSpendTakingAmount,
-              willSpendTakingAmountFormatted,
-            }
-          ]
-        }
-      }, {totalToBuy: amountInWei, orders: []})
-
-      const stats = filteredByPrice.reduce((acc, order) => {
-        return {
-          totalAmountOnSell: acc.totalAmountOnSell.plus(order.makingAmount),
-          totalAmountToSell: acc.totalAmountToSell.plus(order.takingAmount),
-        }
-      }, {totalAmountOnSell: new BigNumber(0), totalAmountToSell: new BigNumber(0)})
-
-      const rates = temp.orders.reduce((acc, order) => {
-        return {
-          willSpendAmount: acc.willSpendAmount.plus(order.willSpendTakingAmount),
-          willTakeAmount: acc.willTakeAmount.plus(order.willTakeMakingAmount),
-        }
-      }, {willSpendAmount: new BigNumber(0), willTakeAmount: new BigNumber(0)})
-      
-      return {
-        totalAmountOnSell: formatUnits(stats.totalAmountOnSell.toFixed(0), makerDecimals),
-        totalAmountToSell: formatUnits(stats.totalAmountToSell.toFixed(0), takerDecimals),
-        willSpendAmount: formatUnits(rates.willSpendAmount.multipliedBy(side === 'buy' ? 1.000001 : 1).toFixed(0), takerDecimals),
-        willTakeAmount: formatUnits(rates.willTakeAmount.toFixed(0), makerDecimals),
-        orders: temp.orders,
-      }
-    }
+    const res = await fetch(`/api/tokens/abilities/${chainId}/${makerAsset}/${takerAsset}/${price}/${amount}/${side}`)
+    const json = await res.json()
+    return json
   }
 
   // static getQuote = async ({chainId, address, amount, side}) => {
@@ -624,7 +535,7 @@ class TOKEN extends Order {
           return
         }
         callback('allowance', {success: true})
-        const totalSpendAmount = orders.reduce((acc, order) => acc.plus(order.willSpendTakingAmount), new BigNumber(0))
+        // const totalSpendAmount = orders.reduce((acc, order) => acc.plus(order.willSpendTakingAmount), new BigNumber(0))
         
         const balance = await Order.getBalance(walletClient.account.address, sellAsset)
         if (willSpendAmount*1 > balance*1) {
@@ -758,8 +669,6 @@ class TOKEN extends Order {
       }
     })
   }
-
-  //0x30afa971c16cdcb27c4540ac9efa7701ffbcd862 multiple orders contract
 }
 
 export default { NFT, TOKEN, Order }

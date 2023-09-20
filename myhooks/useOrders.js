@@ -37,6 +37,7 @@ const useOrders = ({tokenAddress, type}) => {
         sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
         ...(type === 'nfts' ? {} : {statuses: '[1]'})
       }).then(res => {
+        console.log(res)
         dispatch($orders.set.orderBook({type: type, data: res}))
       })
       if (type === 'tokens') {

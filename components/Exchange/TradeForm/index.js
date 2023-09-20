@@ -178,7 +178,7 @@ const TradeForm = forwardRef(({current, type, fullWidth = null}, ref) => {
 })
 
 const isEqual = (prev, next) => {
-  return prev.current.address === next.current.address
+  return JSON.stringify(prev.current) === JSON.stringify(next.current)
 }
 
 export default memo(TradeForm, isEqual)

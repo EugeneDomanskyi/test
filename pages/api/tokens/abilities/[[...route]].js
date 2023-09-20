@@ -1,6 +1,7 @@
 import { INCH_TOKENS } from '@/config'
-import { formatUnits, parseUnits } from 'viem'
+import { formatUnits } from 'viem'
 import * as math from 'mathjs'
+import numeral from 'numeral'
 
 const INCH_URL = 'https://limit-orders.1inch.io/v3.0'
 
@@ -34,18 +35,20 @@ const getDecimals = address => {
 
 const formatter = (order, makerDecimals, takerDecimals) => {
   const makingAmount = order.remainingMakerAmount
-  const takingAmount = math.chain(makingAmount).multiply(order.data.takingAmount).divide(order.data.makingAmount).done()
+  const takingAmount = math.chain(makingAmount).multiply(order.data.takingAmount).divide(order.data.makingAmount).round().done()
   const makingAmountFormatted = formatUnits(makingAmount, makerDecimals)*1
   const takingAmountFormatted = formatUnits(takingAmount, takerDecimals)*1
+
+  const makerPrice = math.chain(takingAmountFormatted).divide(makingAmountFormatted).done()
+  const takerPrice = math.chain(makingAmountFormatted).divide(takingAmountFormatted).done()
   return {
     ...order,
     makingAmount: makingAmount,
-    // takingAmount: takingAmount,
-    takingAmount: math.chain(makingAmount).multiply(order.data.takingAmount).divide(order.data.makingAmount).done(),
+    takingAmount: takingAmount,
     makingAmountFormatted: makingAmountFormatted,
     takingAmountFormatted: takingAmountFormatted,
-    makerPrice: math.chain(takingAmountFormatted).divide(makingAmountFormatted).done(),
-    takerPrice: math.chain(makingAmountFormatted).divide(takingAmountFormatted).done(),
+    makerPrice: math.round(takerPrice, 5),
+    takerPrice: math.round(makerPrice, 5),
   }
 }
 
@@ -54,7 +57,7 @@ const handler = async (req, res) => {
   const query = queryBuilder({
     makerAsset,
     takerAsset,
-    limit: 500,
+    limit: 100,
     statuses: '[1]',
     sortBy: 'takerRate',
   })
@@ -68,8 +71,12 @@ const handler = async (req, res) => {
       const list = json.map(order => formatter(order, makerDecimals, takerDecimals))
 
       const filter = {
-        buy: order => order.makerPrice*1 <= price*1,
-        sell: order => order.takerPrice*1 >= price*1,
+        buy: order => {
+          return order.takerPrice <= price*1
+        },
+        sell: order => {
+          return order.makerPrice >= price*1
+        },
       }
 
       const filteredByPrice = list.filter(filter[side])
@@ -116,8 +123,8 @@ const handler = async (req, res) => {
       }, {totalToBuy: amountInWei, orders: []})
 
       const stats = filteredByPrice.reduce((acc, order) => ({
-        totalAmountOnSell: math.chain(acc.totalAmountOnSell).add(order.makingAmount).done(),
-        totalAmountToSell: math.chain(acc.totalAmountToSell).add(order.takingAmount).done(),
+        totalAmountOnSell: math.chain(acc.totalAmountOnSell).add(formatUnits(order.makingAmount, makerDecimals)).done(),
+        totalAmountToSell: math.chain(acc.totalAmountToSell).add(formatUnits(order.takingAmount, takerDecimals)).done(),
       }), {totalAmountOnSell: 0, totalAmountToSell: 0})
 
       const rates = temp.orders.reduce((acc, order) => ({
@@ -126,13 +133,14 @@ const handler = async (req, res) => {
       }), {willSpendAmount: 0, willTakeAmount: 0})
       
       res.status(200).json({
-        totalAmountOnSell: formatUnits(stats.totalAmountOnSell, makerDecimals),
-        totalAmountToSell: formatUnits(stats.totalAmountToSell, takerDecimals),
+        totalAmountOnSell: numeral(stats.totalAmountOnSell).format('0.0[00000]'),
+        totalAmountToSell: numeral(stats.totalAmountToSell).format('0.0[00000]'),
         willSpendAmount: formatUnits(rates.willSpendAmount.toFixed(), takerDecimals),
         willSpendAmountValue: rates.willSpendAmount.toFixed(),
         willTakeAmount: formatUnits(rates.willTakeAmount.toFixed(), makerDecimals),
         willTakeAmountValue: rates.willTakeAmount.toFixed(),
         orders: temp.orders,
+        filteredByPrice: filteredByPrice,
       })
       return
     }

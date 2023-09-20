@@ -102,6 +102,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
       side: currentTab,
     })
     const { orders, ...rest } = res
+    // console.log(orders, rest)
     setAbilities(rest)
     setLoading(false)
   }
@@ -127,13 +128,17 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
     switch (currentTab) {
       case 'buy':
         const [cheapestOrder] = orderBook.sell
-        handleChangeForm('price')(cheapestOrder.priceFormatted.toString())
-        handleChangeForm('amount')(cheapestOrder.amount.toString())
+        if (cheapestOrder) {
+          handleChangeForm('price')(cheapestOrder.priceFormatted.toString())
+          handleChangeForm('amount')(cheapestOrder.amount.toString())
+        }
         break
       case 'sell':
         const [expensiveOrder] = orderBook.buy
-        handleChangeForm('price')(expensiveOrder.priceFormatted.toString())
-        handleChangeForm('amount')(expensiveOrder.amount.toString())
+        if (expensiveOrder) {
+          handleChangeForm('price')(expensiveOrder.priceFormatted.toString())
+          handleChangeForm('amount')(expensiveOrder.amount.toString())
+        }
         break
     }
   }
@@ -255,7 +260,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
           }
           <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto'}}>
             Available to {currentTab}:&nbsp;
-            {new BigNumber(currentTab === 'buy' ? abilities.totalAmountOnSell : abilities.totalAmountToSell).toFormat()} {current.symbol}
+            { currentTab === 'buy' ? abilities.totalAmountOnSell : abilities.totalAmountToSell } {current.symbol}
           </App.Text>
         </App.Flex>
       </App.Flex>
@@ -266,7 +271,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
             <App.Text size={10} weight={700} right>USDT</App.Text>
           </App.Flex>
           <App.Text size={36} weight={600}>
-            { numeral(new BigNumber(currentTab === 'buy' ? abilities.willSpendAmount : abilities.willTakeAmount).toFixed(5)).format('0.0[0000]') }
+            { currentTab === 'buy' ? abilities.willSpendAmount : abilities.willTakeAmount }
           </App.Text>
         </App.Flex>
         {
