@@ -95,7 +95,18 @@ const AppModal = () => {
                       <AppFlex column align={['center', 'flex-start']} gap={[16, 8]}>
                         {props.header?.title ? (
                           <AppText center size={20} weight={700} height={1}>{props.header.title}</AppText>
-                        ) : null}
+                        ) : props.header?.steps
+                              ? <AppFlex row gap={8}>
+                                  {props.header.steps.map((item, index) => (
+                                    step === item.step
+                                      ? <AppFlex key={index} column flex={1} gap={2}>
+                                          <AppText center size={20} weight={700} height={1}>{item.title}</AppText>
+                                        </AppFlex>
+                                      : null
+                                  ))}
+                                </AppFlex>
+                              : null
+                        }
 
                         {props.header?.subtitle ? (
                           <AppText center size={12} weight={400} height={1} color="#9996B1">{props.header.subtitle}</AppText>
@@ -106,7 +117,7 @@ const AppModal = () => {
                         <AppFlex row gap={8}>
                           {props.header.steps.map((item, index) => (
                             <AppFlex key={index} column flex={1} gap={2}>
-                              <AppText size={10} center color={step >= item.step ? '#53F19C' : '#605884'}>{item.title}</AppText>
+                              {/* <AppText size={10} center color={step >= item.step ? '#53F19C' : '#605884'}>{item.title}</AppText> */}
                               <div className={cn(styles.progress, {[styles.active]: step >= item.step})} />
                             </AppFlex>
                           ))}

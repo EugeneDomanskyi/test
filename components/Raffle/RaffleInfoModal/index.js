@@ -15,24 +15,23 @@ const RaffleInfoModal = ({item}) => {
   const { propValue } = usePropsHelper()
 
   const handleClick = (item) => {
-    console.log('Click', item)
-    // dispatch($modal.set.close())
+    // console.log('Click', item)
 
     dispatch($modal.set.show({modal: 'Raffle/RaffleClaimModal', props: {
       item: item,
+      size: 'small',
       header: {
-        title: 'Approve Contract',
         steps: [
           {
-            step: 1,
+            step: 0,
             title: 'Approve Contract',
           },
           {
-            step: 2,
+            step: 1,
             title: 'Deposit TKeys',
           },
           {
-            step: 3,
+            step: 2,
             title: 'Claim Mystery Box',
           },
         ],

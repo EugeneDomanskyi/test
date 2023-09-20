@@ -29,6 +29,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import '@rainbow-me/rainbowkit/styles.css'
 import '@uniswap/widgets/fonts.css'
 import '@/styles/globals.css'
+import '@/styles/roulette_design.css'
 
 Sentry.init({
   dsn: 'https://a48fc91863a08075997f5355b49858cc@o4505192627830784.ingest.sentry.io/4505793143242752',

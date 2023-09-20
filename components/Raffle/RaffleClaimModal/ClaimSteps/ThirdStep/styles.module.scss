@@ -1,0 +1,29 @@
+.rouletteWrapper {
+  top: -16px;
+  position: relative;
+  width: 100%;
+
+  &::before {
+    content: '';
+    position: absolute;
+    z-index: 3;
+    width: 100px;
+    left: -24px;
+    top: 0;
+    bottom: 0;
+    background: rgb(9,5,29);
+    background: linear-gradient(-90deg, rgba(9,5,29,0) 0%, rgba(9,5,29,1) 86%, rgba(9,5,29,1) 100%);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: 3;
+    width: 100px;
+    right: -24px;
+    top: 0;
+    bottom: 0;
+    background: rgb(9,5,29);
+    background: linear-gradient(90deg, rgba(9,5,29,0) 0%, rgba(9,5,29,1) 86%, rgba(9,5,29,1) 100%);
+  }
+}

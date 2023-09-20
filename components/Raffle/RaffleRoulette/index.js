@@ -1,24 +1,19 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import RoulettePro from 'react-roulette-pro'
 import 'react-roulette-pro/dist/index.css'
 
 import App from '@/components/App'
+import rouletteDesign from './RouletteDesign'
 
 const prizes = [
   {
-    image: 'https://i.ibb.co/6Z6Xm9d/good-1.png',
+    image: '/images/raffle/box-common.png',
   },
   {
-    image: 'https://i.ibb.co/T1M05LR/good-2.png',
+    image: '/images/raffle/box-uncommon.png',
   },
   {
-    image: 'https://i.ibb.co/Qbm8cNL/good-3.png',
-  },
-  {
-    image: 'https://i.ibb.co/5Tpfs6W/good-4.png',
-  },
-  {
-    image: 'https://i.ibb.co/64k8D1c/good-5.png',
+    image: '/images/raffle/box-legendary.png',
   },
 ]
 
@@ -32,7 +27,7 @@ const reproductionArray = (array = [], length = 0) => [
 
 const reproducedPrizeList = [
   ...prizes,
-  ...reproductionArray(prizes, prizes.length * 3),
+  ...reproductionArray(prizes, prizes.length * 10),
   ...prizes,
   ...reproductionArray(prizes, prizes.length),
 ]
@@ -45,16 +40,23 @@ const prizeList = reproducedPrizeList.map((prize) => ({
   id: typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : generateId(),
 }))
 
-const RaffleRoulette = () => {
+const RaffleRoulette = ({autoStart = false, onPrizeDefined}) => {
   const [start, setStart] = useState(false)
 
   const prizeIndex = prizes.length * 4 + winPrizeIndex
+
+  useEffect(() => {
+    if (autoStart) {
+      handleStart()
+    }
+  }, [autoStart])
 
   const handleStart = () => {
     setStart((prevState) => !prevState)
   }
 
   const handlePrizeDefined = () => {
+    onPrizeDefined()
     console.log('🥳 Prize defined! 🥳')
   }
 
@@ -65,14 +67,17 @@ const RaffleRoulette = () => {
         prizeIndex={prizeIndex}
         start={start}
         onPrizeDefined={handlePrizeDefined}
-        options={{withoutAnimation: true}}
-        spinningTime={10}
-        // transitionFunction={'ease-out'}
+        options={{
+          withoutAnimation: true,
+          // stopInCenter: false,
+        }}
+        spinningTime={16}
         transitionFunction={'cubic-bezier(0.1, 0.1, 0.2, 1)'}
+        designPlugin={rouletteDesign}
       />
-      <App.Flex justify="center">
+      {/* <App.Flex justify="center">
         <App.Button sx={{width: 210}} onClick={handleStart}>Start</App.Button>
-      </App.Flex>
+      </App.Flex> */}
     </App.Flex>
   )
 }
