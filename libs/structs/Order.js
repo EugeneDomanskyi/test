@@ -1,12 +1,9 @@
 import numeral from 'numeral'
-import { formatUnits, encodeFunctionData, parseUnits, hashTypedData, createPublicClient, http } from 'viem'
-import { privateKeyToAccount, generatePrivateKey } from 'viem/accounts'
+import { formatUnits, encodeFunctionData, parseUnits, hashTypedData } from 'viem'
 import { getClient } from '@reservoir0x/reservoir-sdk'
-import { getWalletClient, waitForTransaction, sendTransaction, signTypedData, readContract, writeContract, prepareWriteContract, multicall, fetchBalance, watchContractEvent } from '@wagmi/core'
+import { getWalletClient, waitForTransaction, sendTransaction, readContract, writeContract, prepareWriteContract, fetchBalance, watchContractEvent } from '@wagmi/core'
 import { LimitOrderProtocolFacade, LimitOrderBuilder } from '@1inch/limit-order-protocol-utils'
-import { FusionSDK } from '@1inch/fusion-sdk'
 import { toast } from 'react-toastify'
-import BigNumber from 'bignumber.js'
 import * as math from 'mathjs'
 
 import { CHAINS, INCH_CONTRACTS, INCH_TOKENS, TEGRO_FILL_ORDERS_CONTRACTS } from '@/config'
@@ -379,136 +376,11 @@ class TOKEN extends Order {
     }
   }
 
-  static formatter = (order, makerDecimals, takerDecimals) => {
-    const makingAmount = new BigNumber(order.remainingMakerAmount)
-    const takingAmount = makingAmount.multipliedBy(new BigNumber(order.data.takingAmount)).dividedBy(new BigNumber(order.data.makingAmount))
-    const makingAmountFormatted = formatUnits(makingAmount.toFixed(), makerDecimals)*1
-    const takingAmountFormatted = formatUnits(takingAmount.toFixed(), takerDecimals)*1
-    return {
-      ...order,
-      makingAmount: makingAmount,
-      takingAmount: takingAmount,
-      makingAmountFormatted: makingAmountFormatted,
-      takingAmountFormatted: takingAmountFormatted,
-      makerPrice: takingAmountFormatted/makingAmountFormatted,
-      takerPrice: makingAmountFormatted/takingAmountFormatted,
-      takerRate: new BigNumber(order.takerRate),
-      makerRate: new BigNumber(order.makerRate),
-    }
-  }
-
-  // static getCheapest = async ({chainId, takerAsset, makerAsset, amount}) => {
-  //   const network = CHAINS.find(chain => chain.id === chainId)
-  //   const res = await $orders.api.get.tokens.byAssets({
-  //     makerAsset: makerAsset,
-  //     takerAsset: takerAsset,
-  //     blockchain: network.code,
-  //     limit: 500,
-  //     statuses: '[1]',
-  //     sortBy: 'takerRate',
-  //   })
-  //   if (res && Array.isArray(res)) {
-  //     const takerDecimals = await Order.getDecimals(takerAsset, chainId)
-  //     const makerDecimals = await Order.getDecimals(makerAsset, chainId)
-  //     const temp = res.reduce((acc, order) => {
-  //       if (acc.totalTakerAmount <= 0) {
-  //         return acc
-  //       }
-  //       const remainingTakerAmount = order.remainingMakerAmount*order.data.takingAmount/order.data.makingAmount
-        
-  //       const left = acc.totalTakerAmount - remainingTakerAmount
-  //       const takerRate = Math.floor((order.takerRate*1 + Number.EPSILON) * 1000000) / 1000000
-  //       if (left > 0) {
-  //         acc.orders = [...acc.orders, {...order, willSpendAmount: remainingTakerAmount, willTakeAmount: Math.floor(remainingTakerAmount*takerRate), price: order.makerRate}]
-  //         acc.totalTakerAmount = left
-  //       } else {
-  //         acc.orders = [...acc.orders, {...order, willSpendAmount: acc.totalTakerAmount, willTakeAmount: Math.floor(acc.totalTakerAmount*takerRate), price: order.makerRate}]
-  //         acc.totalTakerAmount = 0
-  //       }
-  //       return acc
-  //     }, {totalTakerAmount: Math.pow(10, takerDecimals)*amount, orders: []})
-  //     const totalAmount =  temp.orders.reduce((acc, order) => acc + Math.pow(10, -makerDecimals)*order.willTakeAmount, 0)
-  //     return {
-  //       orders: temp.orders,
-  //       totalAmount: numeral(totalAmount).format('0.0[0000]'),
-  //       avgPrice: (amount && totalAmount) ? numeral(amount / totalAmount).format('0.0[0000]') : 0,
-  //     }
-  //   }
-  //   return null
-  // }
-
   static getOpenWithPriceLimitation = async ({chainId, takerAsset, makerAsset, amount, price, side}) => {
     const res = await fetch(`/api/tokens/abilities/${chainId}/${makerAsset}/${takerAsset}/${price}/${amount}/${side}`)
     const json = await res.json()
     return json
   }
-
-  // static getQuote = async ({chainId, address, amount, side}) => {
-  //   if (!amount) {
-  //     return 0
-  //   }
-  //   // const { walletClient } = await Order.getWalletData()
-  //   const network = CHAINS.find(chain => chain.id === chainId)
-  //   const sdk = new FusionSDK({url: 'https://fusion.1inch.io', network: chainId})
-  //   const tokenDecimals = await Order.getDecimals(address, chainId)
-
-  //   let fromToken = network.usdtContract
-  //   let toToken = address
-  //   let amountFrom = parseUnits(`${amount}`, USDT_DECIMALS)
-  //   if (side === 'sell') {
-  //     fromToken = address
-  //     toToken = network.usdtContract
-  //     amountFrom = parseUnits(`${amount}`, tokenDecimals)
-  //   }
-  //   const params = {
-  //     fromTokenAddress: fromToken,
-  //     toTokenAddress: toToken,
-  //     amount: amountFrom,
-  //   }
-  //   const quote = await sdk.getQuote(params).catch(error => {
-  //     return {toTokenAmount: side === 'sell' ? 1000000 : 1000000000000000000}
-  //   })
-  //   return formatUnits(`${quote.toTokenAmount}`, side === 'buy' ? tokenDecimals : USDT_DECIMALS)
-  // }
-
-  // static swap = ({address, amount, side}) => {
-  //   return new Promise(async (resolve, reject) => {
-  //     const { chainId, walletClient } = await Order.getWalletData()
-  //     const network = CHAINS.find(chain => chain.id === chainId)
-  //     const tokenDecimals = await Order.getDecimals(address)
-
-  //     walletClient.signTypedData = (address, typedData) => {
-  //       return signTypedData(typedData)
-  //     }
-  //     const sdk = new FusionSDK({url: 'https://fusion.1inch.io', network: chainId, blockchainProvider: walletClient})
-
-  //     let fromToken = network.usdtContract
-  //     let toToken = address
-  //     let amountFrom = parseUnits(`${amount}`, USDT_DECIMALS)
-  //     if (side === 'sell') {
-  //       fromToken = address
-  //       toToken = network.usdtContract
-  //       amountFrom = parseUnits(`${amount}`, tokenDecimals)
-  //     }
-
-  //     const balance = await Order.getBalance(walletClient.account.address, fromToken)
-  //     if (balance < amount*1) {
-  //       Order.showErrorMessage('Insufficient balance')
-  //       reject()
-  //       return 
-  //     }
-
-  //     sdk.placeOrder({
-  //       fromTokenAddress: fromToken,
-  //       toTokenAddress: toToken,
-  //       amount: amountFrom,
-  //       walletAddress: walletClient.account.address
-  //     }).then(res => {
-  //       console.log(res)
-  //       resolve()
-  //     }).catch(reject)
-  //   })
-  // }
 
   static fulfill = ({address, amount, price, side}, callback) => {
     return new Promise(async (resolve, reject) => {

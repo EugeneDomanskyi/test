@@ -16,12 +16,14 @@ import TradeInput from '@/components/Exchange/TradeInput'
 
 const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, userBalances}) => {
   const dispatch = useDispatch()
-  const { wallet, connect, changeNetwork } = useWalletConnect()
+  const { wallet, changeNetwork } = useWalletConnect()
   const { getNftUser } = useTrade()
   
   const blockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
 
   const [form, setForm] = useState(initialForm)
+
+  const isDisabled = !(form.amount*1) || !(form.price*1) || !(form.total*1)
 
   const loadingRef = useRef(false)
 
@@ -34,12 +36,14 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
   }, [initialForm])
 
   const handleChangeForm = field => value => {
+    value = value.toString()
     const decimalRegExp = /^(?=.*\d)\d*(?:\.\d*)?$/
     if (!decimalRegExp.test(value) && value) {
       return
     }
     switch (field) {
       case 'price':
+        value = value.substring(0, value.indexOf('.') + 7)
         setForm(state => ({
           ...state,
           price: value,
@@ -65,7 +69,7 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
           return {
             ...state,
             total: value,
-            amount: amount,
+            amount: isNaN(amount) || !isFinite(amount) ? state.amount : amount,
           }
         })
         return
@@ -73,10 +77,6 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
   }
 
   const handleSubmit = async () => {
-    // const address = await connect()
-    // if (!address) {
-    //   return
-    // }
     const network = await changeNetwork(blockchain.code)
     if (!network) {
       return
@@ -166,23 +166,6 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
             },
           }
         }))
-        // dispatch($modal.set.show({
-        //   show: true,
-        //   modal: 'Exchange/SellModal',
-        //   props: {
-        //     header: {
-        //       title: `Sell ${current.name} for USDT`,
-        //     },
-        //     data: {
-        //       ...form,
-        //       type: 'place',
-        //       current: current,
-        //       blockchain: blockchain,
-        //       tokenType: type,
-        //       tokens: [],
-        //     },
-        //   }
-        // }))
     }
   }
 
@@ -293,8 +276,7 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
           currency={type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'}
           value={form.total}
           onBlur={handleTotalBlur}
-          onChange={handleChangeForm('total')}
-          type="number" />
+          onChange={handleChangeForm('total')} />
           {
             currentTab === 'buy'
               ? renderBalance()
@@ -302,9 +284,9 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
           }
       </App.Flex>
       <App.Button
-        sx={{backgroundColor: currentOption.color}}
+        sx={{backgroundColor: currentOption.color, opacity: isDisabled ? 0.5 : 1,}}
         className={styles.button}
-        disabled={!form.total}
+        disabled={isDisabled}
         onClick={handleSubmit}>
         <App.Text color="#09051D" size={15} weight={700}>
           { currentOption.title } {`${form.amount || 0}` } { type === 'nfts' ? `NFT${form.amount > 1 ? `s` : ''}` : current.symbol }
