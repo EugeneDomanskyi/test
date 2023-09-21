@@ -240,5 +240,56 @@ export default {
         "type": "bytes"
       }],
     }]
+  },
+
+  tkeys: {
+    isApprovedForAll: [
+      {
+        "inputs":[
+          {
+            "internalType":"address",
+            "name":"account",
+            "type":"address"
+          },
+          {
+            "internalType":"address",
+            "name":"operator",
+            "type":"address"
+          }
+        ],
+        "name":"isApprovedForAll",
+        "outputs":[
+          {
+            "internalType":"bool",
+            "name":"",
+            "type":"bool"
+          }
+        ],
+        "stateMutability":"view",
+        "type":"function"
+      } 
+    ],
+    setApprovalForAll: [
+      {
+        "inputs":[
+          {
+            "internalType":"address",
+            "name":"operator",
+            "type":"address"
+          },
+          {
+            "internalType":"bool",
+            "name":"approved",
+            "type":"bool"
+          }
+        ],
+        "name":"setApprovalForAll",
+        "outputs":[
+           
+        ],
+        "stateMutability":"nonpayable",
+        "type":"function"
+     }
+    ]
   }
 }

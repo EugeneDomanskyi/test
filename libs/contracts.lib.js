@@ -92,7 +92,7 @@ export default function Contracts(defaultGasLimit = null) {
     isApprovedForAll: async (contract, owner, operator = defaultOperator) => {
       const result = await methods.readContract({
         address: contract,
-        abi: abi.erc721.isApprovedForAll,
+        abi: abi.tkeys.isApprovedForAll,
         functionName: 'isApprovedForAll',
         args: [
           owner,
@@ -106,7 +106,7 @@ export default function Contracts(defaultGasLimit = null) {
     setApprovalForAll: async (contract, operator = defaultOperator, approved = true) => {
       const config = await methods.prepareWriteContract({
         address: contract,
-        abi: abi.erc721.setApprovalForAll,
+        abi: abi.tkeys.setApprovalForAll,
         functionName: 'setApprovalForAll',
         args: [
           operator,
