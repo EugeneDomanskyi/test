@@ -99,6 +99,7 @@ export const ordersSlice = createSlice({
         sell: [],
       },
     },
+    orderBookId: null,
     trades: {
       nfts: [],
       tokens: [],
@@ -114,6 +115,7 @@ export const ordersSlice = createSlice({
     },
     orderBook: (state, {payload}) => {
       state.orderBooks[payload.type] = payload.data
+      state.orderBookId = crypto.randomUUID()
     },
     trades: (state, {payload}) => {
       state.trades[payload.type] = payload.data

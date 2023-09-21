@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import Image from 'next/image'
 import numeral from 'numeral'
 import BigNumber from 'bignumber.js'
-import { useRouter } from 'next/router'
 
 import $app from '@/store/app'
 import $modal from '@/store/modal'
@@ -32,10 +31,10 @@ BigNumber.config({ FORMAT: fmt })
 const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalances}, ref) => {
   const { changeNetwork, wallet } = useWalletConnect()
   const dispatch = useDispatch()
-  const router = useRouter()
 
   const tokenBlockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
   const orderBook = useSelector($orders.get.orderBook('tokens'))
+  const orderBookId = useSelector(({$orders}) => $orders.orderBookId)
 
   const [loading, setLoading] = useState(false)
   const [showErrors, setShowErrors] = useState(false)
@@ -81,15 +80,8 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
   }, [form.price, form.amount, current?.address, tokenBlockchain?.id, currentTab])
 
   useEffect(() => {
-    if (current?.address && router.query?.segments?.[1] === current?.address) {
-      if (currentTab === 'buy' && orderBook.sell.length) {
-        handleSetPrice()
-      }
-      if (currentTab === 'sell' && orderBook.buy.length) {
-        handleSetPrice()
-      }
-    }
-  }, [orderBook.buy.length, orderBook.sell.length, current?.address, router.query?.segments])
+    handleSetPrice()
+  }, [orderBookId])
 
   const fetchAbilities = async () => {
     setLoading(true)
@@ -102,7 +94,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
       side: currentTab,
     })
     const { orders, ...rest } = res
-    console.log(orders, rest)
+    
     setAbilities(rest)
     setLoading(false)
   }
