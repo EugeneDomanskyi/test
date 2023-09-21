@@ -115,7 +115,7 @@ export const ordersSlice = createSlice({
     },
     orderBook: (state, {payload}) => {
       state.orderBooks[payload.type] = payload.data
-      state.orderBookId = crypto.randomUUID()
+      state.orderBookId = payload.tokenAddress
     },
     trades: (state, {payload}) => {
       state.trades[payload.type] = payload.data

@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 're
 import { useSelector, useDispatch } from 'react-redux'
 import Image from 'next/image'
 import numeral from 'numeral'
-import BigNumber from 'bignumber.js'
+// import BigNumber from 'bignumber.js'
 
 import $app from '@/store/app'
 import $modal from '@/store/modal'
@@ -15,18 +15,18 @@ import { INCH_TOKENS } from '@/config'
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
 
-const fmt = {
-  prefix: '',
-  decimalSeparator: '.',
-  groupSeparator: '',
-  groupSize: 3,
-  secondaryGroupSize: 0,
-  fractionGroupSeparator: ' ',
-  fractionGroupSize: 0,
-  suffix: ''
-}
+// const fmt = {
+//   prefix: '',
+//   decimalSeparator: '.',
+//   groupSeparator: '',
+//   groupSize: 3,
+//   secondaryGroupSize: 0,
+//   fractionGroupSeparator: ' ',
+//   fractionGroupSize: 0,
+//   suffix: ''
+// }
 
-BigNumber.config({ FORMAT: fmt })
+// BigNumber.config({ FORMAT: fmt })
 
 const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalances}, ref) => {
   const { changeNetwork, wallet } = useWalletConnect()
