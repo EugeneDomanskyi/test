@@ -145,8 +145,8 @@ const getters = {
   ], (orderBook) => {
     if (type === 'tokens') {
       return {
-        buy: orderBook.buy.slice(0, 10),
-        sell: orderBook.sell.slice(0, 10),
+        buy: orderBook.buy,
+        sell: orderBook.sell,
       }
     }
     return {

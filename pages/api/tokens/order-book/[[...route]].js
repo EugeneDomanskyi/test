@@ -59,10 +59,8 @@ const groupByPrice = (data, sort = 'asc') => {
   for (const item of data) {
     if (!isNaN(item.priceFormatted) && item.price) {
       if ( ! temp[item.priceFormatted]) {
-        
         temp[item.priceFormatted] = item
       } else {
-        
         temp[item.priceFormatted] = {
           ...temp[item.priceFormatted],
           amount: math.chain(temp[item.priceFormatted].amount).add(item.amount).done(),
@@ -74,7 +72,19 @@ const groupByPrice = (data, sort = 'asc') => {
   
   const array = Object.keys(temp).map(key => temp[key]).filter(el => el.quantity)
   array.sort((a, b) => sort == 'asc' ? (a.price - b.price) : (b.price - a.price))
-  return array
+  let prevVolume = 0
+  return array.slice(0, 10).map(item => {
+    prevVolume = math.add(prevVolume, item.amount)
+    return {
+      ...item,
+      volume: prevVolume
+    }
+  }).map(item => {
+    return {
+      ...item,
+      volume: math.round(formatUnits(item.volume, item.side === 'buy' ? item.takerDecimals : item.makerDecimals), 5)
+    }
+  }) //.map(item => ({...item, amount: math.round(formatUnits(item.amount, item.side === 'buy' ? item.takerDecimals : item.makerDecimals), 5)}))
 }
 
 const formatter = (order, makerDecimals, takerDecimals) => {
@@ -95,9 +105,11 @@ const formatter = (order, makerDecimals, takerDecimals) => {
     takerPrice: takerPrice,
     price: order.side === 'sell' ? makerPrice : takerPrice,
     priceFormatted: math.round(order.side === 'sell' ? makerPrice : takerPrice, 5),
-    amount: order.side === 'buy' ? takingAmountFormatted : makingAmountFormatted,
+    amount: order.side === 'buy' ? takingAmount : makingAmount,
     quantity: math.round(order.side === 'buy' ? takingAmountFormatted : makingAmountFormatted, 5),
-    timestamp: moment(order.createDateTime).unix()
+    timestamp: moment(order.createDateTime).unix(),
+    makerDecimals: makerDecimals,
+    takerDecimals: takerDecimals,
   }
 }
 

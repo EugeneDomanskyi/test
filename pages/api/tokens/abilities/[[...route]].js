@@ -1,6 +1,5 @@
 import { formatUnits } from 'viem'
 import * as math from 'mathjs'
-import numeral from 'numeral'
 import { createPublicClient, http } from 'viem'
 import * as viemChains from 'viem/chains'
 
@@ -153,8 +152,8 @@ const handler = async (req, res) => {
       }), {willSpendAmount: 0, willTakeAmount: 0})
       
       res.status(200).json({
-        totalAmountOnSell: numeral(stats.totalAmountOnSell).format('0.0[00000]'),
-        totalAmountToSell: numeral(stats.totalAmountToSell).format('0.0[00000]'),
+        totalAmountOnSell: math.round(stats.totalAmountOnSell, 5),
+        totalAmountToSell: math.round(stats.totalAmountToSell, 5),
         willSpendAmount: math.round(formatUnits(rates.willSpendAmount.toFixed(), takerDecimals), 5),
         willSpendAmountValue: rates.willSpendAmount.toFixed(),
         willTakeAmount: math.round(formatUnits(rates.willTakeAmount.toFixed(), makerDecimals), 5),
