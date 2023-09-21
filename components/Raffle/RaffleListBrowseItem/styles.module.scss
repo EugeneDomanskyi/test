@@ -34,9 +34,15 @@
     }
   }
 
-  &.closed {
+  &.Closed {
     .circle {
       background: #9C9C9C;
+    }
+  }
+
+  &.Upcoming {
+    .circle {
+      background: #FFD600;
     }
   }
 
@@ -62,7 +68,7 @@
       }
     }
 
-    &.closed {
+    &.Closed {
       background: rgba(77, 14, 39, 0.60);
 
       .dot {
@@ -73,6 +79,18 @@
         }
       }
     }
+
+    &.Upcoming {
+      background: rgba(255, 214, 0, 0.40);
+
+      .dot {
+        background: #FFD6003D;
+  
+        &:before {
+          background: #FFD600;
+        }
+      }
+    }
   }
 
   .tkeyBadge {
@@ -80,6 +98,10 @@
     border-radius: 100px;
     background: linear-gradient(0deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.08) 100%), rgba(8, 5, 28, 0.80);
     backdrop-filter: blur(2px);
+    
+    &.Upcoming {
+      background: rgba(255, 214, 0, 0.24);
+    }
   }
 }
 
