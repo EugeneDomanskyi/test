@@ -4,14 +4,12 @@ import { useRouter } from 'next/router'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
-import useOrders from '@/myhooks/useOrders'
 
 import { putAssetsFile, getAssetsFile } from '@/libs/aws.lib'
 
 import $app from '@/store/app'
 import $collection from '@/store/collection'
 import $token, { template, staticTemplate } from '@/store/token'
-import $exchange from '@/store/exchange'
 
 const getApolloClient = (chain) => {
   const client = new ApolloClient({
@@ -26,14 +24,12 @@ const getApolloClient = (chain) => {
 const WrapperTokens = ({ children }) => {
   const router = useRouter()
   const [queryBlockchainCode, queryTokenId] = router.query?.segments?.slice(-2) || []
-  
-  const { wallet, getBasicInfo, isContractAddress } = useWalletConnect()
-  const { updateOrders } = useOrders({tokenAddress: queryTokenId, type: 'tokens'})
-  
+
+  const { getBasicInfo, isContractAddress } = useWalletConnect()
+
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const pageBlockchains = useSelector($app.get.pageBlockchains('tokens'))
-  const activeInterval = useSelector(({$exchange}) => $exchange.interval)
 
   const tokens = useSelector(({ $token }) => $token.all)
   const searched = useSelector(({ $token }) => $token.searched)
@@ -57,6 +53,14 @@ const WrapperTokens = ({ children }) => {
 
   useEffect(() => {
     (async () => {
+      // const tempList = await $token.api.coingecko.list({ include_platform: true })
+      // if (tempList) {
+      //   const platforms = pageBlockchains.map(item => item.platform)
+      //   dispatch($token.set.list(tempList.filter(item => {
+      //     return platforms.some(el => item.platforms.hasOwnProperty(el))
+      //   })))
+      // }
+
       const infoList = await $token.api.coingecko.local()
       dispatch($token.set.infoList(infoList))
 
@@ -68,23 +72,6 @@ const WrapperTokens = ({ children }) => {
       setIsList(true)
     })()
   }, [])
-
-  useEffect(() => {
-    if (queryTokenId && queryBlockchainCode) {
-      
-      dispatch($exchange.set.loading(true))
-      $exchange.api.get.tokenChartData(queryTokenId, queryBlockchainCode, activeInterval.seconds).then(res => {
-        dispatch($exchange.set.chartData({type: 'tokens', data: res?.data ?? []}))
-        dispatch($exchange.set.loading(false))
-      })
-    }
-  }, [activeInterval, queryTokenId, queryBlockchainCode])
-
-  useEffect(() => {
-    if (queryTokenId && queryBlockchainCode) {
-      updateOrders()
-    }
-  }, [queryBlockchainCode, wallet, queryTokenId])
 
   useEffect(() => {
     if (router.isReady) {
@@ -255,7 +242,6 @@ const WrapperTokens = ({ children }) => {
         if (realTokenId) {
           const currentToken = await getToken(realTokenId)
           dispatch($token.set.current(currentToken))
-          dispatch($app.set.marketInfo(currentToken))
           dispatch($token.set.update(currentToken))
 
           if (tokens.length && pages.current == 1 && search == '') {
@@ -266,10 +252,9 @@ const WrapperTokens = ({ children }) => {
 
           const existingToken = list.length ? list.find(item => item.id === currentToken.id) : null
 
-          if (! existingToken || ! existingToken?.price || ! existingToken?.marketCap) {
+          if (! existingToken) {
             const fullToken = await getTokenFull(currentToken)
             dispatch($token.set.current(fullToken))
-            dispatch($app.set.marketInfo(fullToken))
             dispatch($token.set.update(fullToken))
 
             const staticData = staticTemplate(fullToken)
@@ -290,7 +275,6 @@ const WrapperTokens = ({ children }) => {
 
             }
             dispatch($token.set.current(mergedData))
-            dispatch($app.set.marketInfo(mergedData))
             dispatch($token.set.update(mergedData))
           }
         }

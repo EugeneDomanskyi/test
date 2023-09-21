@@ -106,6 +106,9 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
 
   const response = await fetch(`${base_url}/${uri}${query}`, options).catch(errorHandler)
 
+  if (`${base_url}/${uri}${query}` === 'https://api.coingecko.com/api/v3/coins/polygon/contract/0x2791bca1f2de4661ed88a30c99a7a9449aa84174?') {
+    console.log('response?.ok', response?.ok);
+  }
   if (response?.ok) {
     return responseHandler(response)
   }
@@ -118,6 +121,7 @@ const responseHandler = async (response) => {
 }
 
 const errorHandler = async (response) => {
+  console.log('response', await response.json());
   return null
 }
 

@@ -1,9 +1,14 @@
-import { useEffect, useRef, useCallback } from 'react'
-import { useSelector } from 'react-redux'
+import { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
-import Head from 'next/head';
+import Head from 'next/head'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
+import $collection from '@/store/collection'
+import $token, { template } from '@/store/token'
+import $app from '@/store/app'
+import $exchange from '@/store/exchange'
+import $orders from '@/store/orders'
 
 import App from '@/components/App'
 import Market from '@/components/Market'
@@ -22,33 +27,44 @@ import Investors from '@/components/Market/Details/Investors'
 import Resources from '@/components/Market/Details/Resources'
 import FAQ from '@/components/Market/Details/FAQ'
 
+import { getAssetsFile, putAssetsFile } from '@/libs/aws.lib'
+
 const token = 'fc873434915ecf9e639339b325338f768e1f5b81fc88e3e4299641a3f87de70fcf93c09316c0d1e5146fa36171076ead7c5797f1d1882f35a9f60aaf5ec065ad7757b0615886847a307d3b25dbaadb42b98d63c59a39744667ff3f5438393a87f3b63ce948bfb260ac0041c44dbe0a10e1646dfa8f8d2c85abd18e45c0bb02c6'
 
-export default function Markets() {
+export default function Markets({marketData, marketSales, marketOrders}) {
   const router = useRouter()
+  const dispatch = useDispatch()
   const { isMobile } = usePropsHelper()
 
   const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
 
   const marketInfo = useSelector(({$app}) => $app.marketInfo)
 
-  const tradeForm = useRef(null)
-
-  const handleClickOrder = useCallback(order => {
-    tradeForm.current.setForm({formType: 'market', amount: order.quantity, side: order.side})
-  }, [])
-
   useEffect(() => {
-    if (queryMarketId) {
-      const strapiURL = 'https://strapi.tegro.com/api/markets/?filters[contract_address][$eq]='+queryMarketId
-      console.log('strapiURL', strapiURL);
-      // const strapiURL = 'https://strapi.tegro.com/api/markets'
-      fetch(strapiURL, {headers: { Authorization: `Bearer ${token}` }}).then((res) => res.json())
-      .then(({data}) => {
-        console.log('data', data);
-      })
-    }
-  }, [queryMarketId])
+    console.log('marketData', marketData);
+    initPage(marketData, marketSales, marketOrders)
+    // if (marketData) {
+    //   // console.log('marketData', marketData);
+    //   dispatch($app.set.marketInfo(marketData))
+    // }
+
+    // if (marketSales) {
+    //   dispatch($exchange.set.sales(marketSales))
+    //   dispatch($orders.set.trades({type: queryMarketType, data: marketSales}))
+    // }
+
+    // if (marketOrders) {
+    //   dispatch($orders.set.orderBook({type: queryMarketType, data: marketOrders}))
+    // }
+
+    // if (marketInfo) {
+    //   dispatch($collection.set.currentMarketSeoInfo(marketInfo))
+    // }
+  }, [marketData, marketSales, marketOrders])
+
+  const initPage = async (data, sales, orders) => {
+
+  }
 
   return (
     <>
@@ -117,4 +133,119 @@ export default function Markets() {
       </App.Container>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  const [queryMarketType, blockchainCode, address] = context.params.segments
+  let marketData = []
+
+  const queryParams = (blockchainCode, page, sortType, searchQuery, customParams) => {
+    const [sortBy] = sortType.split(':')
+
+    let orderBy = sortBy.toLowerCase()
+    switch (orderBy) {
+      case 'volume':
+        orderBy = '1DayVolume'
+        break
+      case 'price':
+        orderBy = 'floorAskPrice'
+        break
+      case 'name':
+        orderBy = 'createdAt'
+        break
+    }
+
+    // Need to make Server Side Sort
+    orderBy = '1DayVolume'
+
+    const defaultParams = {
+      blockchain: blockchainCode,
+      sortBy: orderBy,
+      limit: 10,
+    }
+
+    if (searchQuery != '') {
+      if (isContractAddress(searchQuery)) {
+        defaultParams.id = searchQuery
+      } else {
+        defaultParams.name = searchQuery
+      }
+    } else {
+      defaultParams.minFloorAskPrice = '0.000001'
+      // defaultParams.maxFloorAskPrice = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 0.01 : null
+    }
+
+    let continuation = null
+    if (page != 'init' && searchQuery == '') {
+      continuation = page
+    }
+
+    return {
+      ...defaultParams,
+      ...customParams,
+      continuation,
+    }
+  }
+
+  console.log('queryMarketType', queryMarketType);
+  if (queryMarketType === 'nfts') {
+    const result = await $collection.api.all(queryParams(
+      blockchainCode,
+      null,
+      'desc',
+      '',
+      { id: address, limit: 1 }
+    ))
+    
+    if (result && result.hasOwnProperty('collections')) {
+      if (result.collections.length) {
+        const [current] = result.collections
+        current.blockchain = blockchainCode
+        current.currency = null
+        // current.currency = network(blockchainCode)?.currency
+        marketData = template(current)
+      } else {
+        console.log('Collection was not found in current blockchain')
+      }
+    }
+  } else {
+    // const full = await fetch(`https://api.coingecko.com/api/v3/coins/${blockchainCode}/contract/${address.toLowerCase()}`)
+    const full = await $token.api.coingecko.full({ platform: blockchainCode, address: address.toLowerCase() })
+    console.log('address', address);
+    console.log('full', full);
+    const info = await $token.api.coingecko.info({ vs_currency: 'usd', ids: [address.toLowerCase()] })
+    console.log('info', info);
+    let fullToken = {}
+    fullToken.full = full
+    fullToken.info = info
+
+    // const [priceInfo] = await getInfo([existingToken])
+    // const priceTemplate = template({info: priceInfo})
+    // mergedData = {...priceTemplate, ...existingToken, currency: priceTemplate.currency}
+
+    // marketData = template(fullToken)
+  }
+    
+
+  const marketSales = await $exchange.api.get.sales({
+    collection: address,
+    blockchain: blockchainCode,
+    includeDeleted: false,
+    includeTokenMetadata: false,
+    sortDirection: 'desc',
+    limit: 80,
+  })
+
+  const marketOrders = await $orders.api.get.nfts.orderBook({
+    collection: address,
+    blockchain: blockchainCode,
+  })
+
+  return {
+    props: {
+      marketData,
+      marketSales,
+      marketOrders
+    },
+  };
 }
