@@ -32,8 +32,6 @@ const queryBuilder = data => {
 
 const getDecimals = async (address, chainId) => {
   const network = Object.values(viemChains).find(chain => chain.id.toString() === chainId)
-  console.log('network', network)
-  console.log('viemChains', viemChains.mainnet)
   const client = createPublicClient({ 
     chain: network,
     transport: http()
@@ -157,9 +155,9 @@ const handler = async (req, res) => {
       res.status(200).json({
         totalAmountOnSell: numeral(stats.totalAmountOnSell).format('0.0[00000]'),
         totalAmountToSell: numeral(stats.totalAmountToSell).format('0.0[00000]'),
-        willSpendAmount: numeral(formatUnits(rates.willSpendAmount.toFixed(), takerDecimals)).format('0.0[00000]'),
+        willSpendAmount: math.round(formatUnits(rates.willSpendAmount.toFixed(), takerDecimals), 5),
         willSpendAmountValue: rates.willSpendAmount.toFixed(),
-        willTakeAmount: numeral(formatUnits(rates.willTakeAmount.toFixed(), makerDecimals)).format('0.0[00000]'),
+        willTakeAmount: math.round(formatUnits(rates.willTakeAmount.toFixed(), makerDecimals), 5),
         willTakeAmountValue: rates.willTakeAmount.toFixed(),
         orders: temp.orders,
         filteredByPrice: filteredByPrice,
