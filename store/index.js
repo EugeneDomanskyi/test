@@ -35,14 +35,14 @@ const createStore = initialData => {
   })
 }
 
-const COINGECKO_URL = 'https://api.coingecko.com/api/v3'
-const UNISWAP_URL = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3'
-const OPTIMISM_URL = 'https://static.optimism.io'
-const ARBITRUM_URL = 'https://tokenlist.arbitrum.io'
-const QUICKSWAP_URL = 'https://unpkg.com/quickswap-default-token-list@1.2.2'
-const CELO_URL = 'https://celo-org.github.io'
-const BNB_URL = 'https://raw.githubusercontent.com'
-const INCH_URL = 'https://limit-orders.1inch.io/v3.0'
+const COINGECKO_URL = 'https://api.coingecko.com/api/v3/'
+const UNISWAP_URL = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3/'
+const OPTIMISM_URL = 'https://static.optimism.io/'
+const ARBITRUM_URL = 'https://tokenlist.arbitrum.io/'
+const QUICKSWAP_URL = 'https://unpkg.com/quickswap-default-token-list@1.2.2/'
+const CELO_URL = 'https://celo-org.github.io/'
+const BNB_URL = 'https://raw.githubusercontent.com/'
+const INCH_URL = 'https://limit-orders.1inch.io/v3.0/'
 
 export const request = async (uri, method = 'GET', {blockchain, api, ...data} = {}) => {
   const currentChain = CHAINS.find(chain => chain.code === blockchain)
@@ -73,8 +73,11 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
   let base_url = currentChain?.baseApiUrl
   if (api) {
     switch (api) {
-      case 'local':
+      case 'remote':
         base_url = ''
+        break
+      case 'local':
+        base_url = '/'
         break
       case 'coingecko':
         base_url = COINGECKO_URL
@@ -98,16 +101,16 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
         base_url = BNB_URL
         break
       case 'inch':
-        base_url = `${INCH_URL}/${currentChain.id}`
+        base_url = `${INCH_URL}/${currentChain.id}/`
         break
       case 'inch-private':
-        base_url = `/api/inch`
+        base_url = `/api/inch/`
         console.log(base_url)
         break
     }
   }
 
-  const response = await fetch(`${base_url}/${uri}${query}`, options).catch(errorHandler)
+  const response = await fetch(`${base_url}${uri}${query}`, options).catch(errorHandler)
 
   if (response?.ok) {
     return responseHandler(response)

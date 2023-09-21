@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSelector, createSlice } from '@reduxjs/toolkit'
+import { gql } from '@apollo/client'
 
 import { request } from './index'
 
@@ -8,17 +9,18 @@ export const raffleSlice = createSlice({
   initialState: {
     fetching: false,
     all: [],
-    searched: [],
     current: {},
     loading: false,
-    sort: 'date',
+    sort: 'status:asc',
     search: '',
-    searching: false,
-    searchEmpty: false,
-    pages: {
-      history: ['init'],
-      current: 'init',
+    page: 1,
+    user: {
+      id: null,
+      totalEarned: 0,
+      totalTKeysSpent: 0,
+      campaignParticipated: [],
     },
+    last: [],
   },
 
   reducers: {
@@ -31,11 +33,7 @@ export const raffleSlice = createSlice({
     },
 
     all: (state, { payload }) => {
-      state.all = payload.map(template)
-    },
-
-    searched: (state, { payload }) => {
-      state.searched = payload.map(template)
+      state.all = payload
     },
 
     current: (state, { payload }) => {
@@ -50,43 +48,152 @@ export const raffleSlice = createSlice({
       state.search = payload
     },
 
-    searching: (state, { payload }) => {
-      state.searching = payload
+    page: (state, { payload }) => {
+      state.page = payload
     },
 
-    searchEmpty: (state, { payload }) => {
-      state.searchEmpty = payload
+    user: (state, { payload }) => {
+      state.user = payload
     },
 
-    pages: (state, { payload }) => {
-      const current = payload.current ?? state.pages.history.find(item => item == state.pages.current) ?? 'init'
-      const currentIndex = state.pages.history.indexOf(current)
-      const history = currentIndex > 0 ? state.pages.history.slice(0, currentIndex + 1) : ['init']
-
-      if (payload.next) {
-        history.push(payload.next)
-      }
-
-      state.pages = {
-        current,
-        history,
-      }
+    last: (state, { payload }) => {
+      state.last = payload
     },
 
-    clear: (state) => {
-      state.pages = {
-        current: 'init',
-        history: ['init'],
-      }
-
-      state.search = ''
-      state.searching = false
-      state.searchEmpty = false
+    update: (state, { payload }) => {
+      state.all = state.all.map(item => {
+        const participated = payload.find(el => el.campaignId == item.id)
+        if (participated) {
+          return {
+            ...item,
+            user: participated,
+          }
+        } else {
+          return item
+        }
+      })
     },
   },
 })
 
+const get = {
+  filtered: createSelector([
+    (state) => state.$raffle.all,
+    (state) => state.$raffle.search,
+    (state) => state.$raffle.sort,
+  ], (all, search, sort) => {
+    const searched = all.filter(item => {
+      return item.title.toLowerCase().includes(search.trim().toLowerCase())
+    })
+
+    const [sortBy, sortDirection] = sort.split(':')
+    const statusOrder = {
+      Active: 1,
+      Upcoming: 2,
+      Closed: 3,
+    }
+    searched.sort((a, b) => {
+      if (sortBy == 'status') {
+        return statusOrder[a.status] - statusOrder[b.status]
+      }
+
+      return sortDirection == 'asc' ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]
+    })
+
+    return searched
+  }),
+
+  campaign: createSelector([
+    (state) => state.$raffle.all,
+  ], (all) => {
+    return (id) => all.find(item => item.id == id)
+  }),
+}
+
+const api = {
+  ipfs: (hash) => {
+    return request(`https://${hash}.ipfs.w3s.link/info.json`, 'GET', {api: 'remote'})
+  }
+}
+
+const query = {
+  campaigns: gql`
+    query campaigns($skip: Int) {
+      campaigns(skip: $skip, where: {id_not: 0}) {
+        id
+        ipfsHash
+        rewardAmount
+        totalTransferred
+        tKeyRequired
+        status
+        startTimestamp
+        endTimestamp
+      }
+    }
+  `,
+
+  campaign: gql`
+    query campaign($id: String) {
+      campaign(id: $id) {
+        id
+        ipfsHash
+        rewardAmount
+        totalTransferred
+        tKeyRequired
+        status
+        startTimestamp
+        endTimestamp
+      }
+    }
+  `,
+
+  user: gql`
+    query user($id: String) {
+      user(id: $id) {
+        id
+        totalEarned
+        totalTKeysSpent
+        campaignParticipated {
+          id
+        }
+      }
+    }
+  `,
+
+  userCampaigns: gql`
+    query userCampaigns($id: String) {
+      userCampaigns(where: {user_: {id: $id}}) {
+        id
+        campaignId
+        tKeysSpent
+        totalEarned
+        user {
+          campaignParticipated(first: 1, orderBy: participatedTimestamp, orderDirection: desc) {
+            isResolved
+          }
+        }
+      }
+    }
+  `,
+
+  last: gql`
+    query userCampaignParticipants {
+      userCampaignParticipants(orderBy: resolvedTimestamp, orderDirection: desc, first: 6, where: {isResolved: true}) {
+        id
+        rewardAmount
+        transaction
+        user {
+          id
+        }
+      }
+    }
+  `,
+}
+
 export default {
   reducer: raffleSlice.reducer,
   set: raffleSlice.actions,
+  api,
+  get,
+  query,
 }

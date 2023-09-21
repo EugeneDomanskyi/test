@@ -1,21 +1,48 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from '@mui/material'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
+
+import $raffle from '@/store/raffle'
 
 import App from '@/components/App'
 import RaffleListMyItem from '@/components/Raffle/RaffleListMyItem'
 
 import styles from './styles.module.scss'
 
-const RaffleListMy = ({ all, onParticipate, onClaim, onShare }) => {
+const RaffleListMy = ({ onParticipate, onClaim, onShare }) => {
   const { isMobile } = usePropsHelper()
+
+  const dispatch = useDispatch()
+  const campaigns = useSelector($raffle.get.filtered)
+  const page = useSelector(({ $raffle }) => $raffle.page)
 
   const [orderBy, setOrderBy] = useState('title')
   const [order, setOrder] = useState('asc')
 
+  const [pagesCount, setPagesCount] = useState(1)
+  const perPage = 10
+
+  useEffect(() => {
+    if (participatedCampaigns().length) {
+      const count = Math.ceil(participatedCampaigns().length / perPage)
+      setPagesCount(count)
+
+      if (page > count) {
+        dispatch($raffle.set.page(count))
+      }
+    } else {
+      setPagesCount(1)
+    }
+  }, [campaigns])
+
+  const participatedCampaigns = () => {
+    return campaigns.filter(item => item.hasOwnProperty('user'))
+  }
+
   const handlePageChange = (value) => {
-    console.log(value)
+    dispatch($raffle.set.page(value))
   }
 
   const handleSort = useCallback((field) => () => {
@@ -32,7 +59,7 @@ const RaffleListMy = ({ all, onParticipate, onClaim, onShare }) => {
   }, [order, orderBy])
 
   return (
-    <App.Flex column sx={{ borderRadius: 12, overflow: 'hidden' }}>
+    <App.Flex column sx={{ borderRadius: 12, overflow: 'hidden' }} fullWidth>
       <TableContainer>
         {isMobile ? (
           <App.Text>Mobile</App.Text>
@@ -101,14 +128,14 @@ const RaffleListMy = ({ all, onParticipate, onClaim, onShare }) => {
             </TableHead>
 
             <TableBody>
-              {all.map(item => <RaffleListMyItem key={item.hash} item={item} onParticipate={onParticipate} onClaim={onClaim} onShare={onShare} />)}
+              {participatedCampaigns().map(item => <RaffleListMyItem key={item.id} item={item} onParticipate={onParticipate} onClaim={onClaim} onShare={onShare} />)}
             </TableBody>
           </Table>
         )}
       </TableContainer>
 
       <App.Flex center sx={{ background: '#17142a', padding: 16 }}>
-        <App.Pagination page={1} count={10} onChange={handlePageChange} />
+        <App.Pagination page={page} count={pagesCount} onChange={handlePageChange} />
       </App.Flex>
     </App.Flex>
   )

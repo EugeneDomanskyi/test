@@ -99,6 +99,27 @@
     }
   }
 
+  &.gray {
+    background-color: #5E5C6B;
+    border-color: #5E5C6B;
+
+    &.active:not(:disabled),
+    &:hover:not(:disabled) {
+      background-color: #6f6d79;
+    }
+
+    &.outlined {
+      background-color: transparent;
+      border-color: #5E5C6B;
+
+      &.active:not(:disabled),
+      &:hover:not(:disabled) {
+        border-color: #6f6d79;
+        background-color: transparent;
+      }
+    }
+  }
+
   &.success {
     background-color: rgba(92, 222, 160, 0.8);
     border-color: #5CDEA0;

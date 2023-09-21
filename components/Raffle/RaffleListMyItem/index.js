@@ -6,7 +6,7 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 import Image from 'next/image'
 
-const RaffleListMyItem = ({ item, onParticipate, onClaim, onShare }) => {
+const RaffleListMyItem = ({ item, onParticipate, onShare }) => {
   return (
     <TableRow
       sx={{ '& th, & td': { border: '0', backgroundColor: '#120f25' } }}
@@ -25,9 +25,17 @@ const RaffleListMyItem = ({ item, onParticipate, onClaim, onShare }) => {
         </App.Flex>
       </TableCell>
 
-      <TableCell align="center">
-        {item.status != 'closed' ? (
-          <App.Button primary onClick={() => onParticipate(item.hash)} sx={{ minWidth: 120 }}>Participate</App.Button>
+      <TableCell align="center" sx={{ width: 10 }}>
+        {item.status == 'Active' ? (
+          <>
+            {item.user.isResolved ? (
+              <App.Button primary onClick={() => onParticipate(item.hash)}>Play Again</App.Button>
+            ) : (
+              <App.Tooltip text="You need to wait till your current mystery box has been opened" placement="top">
+                <App.Button variant="gray" disabled>Play Again</App.Button>
+              </App.Tooltip>
+            )}
+          </>
         ) : null}
       </TableCell>
 
@@ -35,26 +43,26 @@ const RaffleListMyItem = ({ item, onParticipate, onClaim, onShare }) => {
         <App.Flex center>
           <App.Flex row align="center" gap={8} className={cn(styles.timeBadge, styles[item.status])}>
             <App.Flex center className={styles.dot} />
-            <App.Text height={1}>{item.status == 'open' ? `${item.time} Left` : 'Closed'}</App.Text>
+            <App.Text height={1}>{item.status == 'Active' ? `${item.time} left` : item.status}</App.Text>
           </App.Flex>
         </App.Flex>
       </TableCell>
 
       <TableCell align="right">
         <App.Flex row align="center" justify="flex-end" sx={{ padding: '0 8px' }}>
-          <App.Text right>${item.reward}</App.Text>
+          <App.Text right>${item.user.totalEarned}</App.Text>
         </App.Flex>
       </TableCell>
 
       <TableCell align="right">
         <App.Flex row align="center" justify="flex-end" gap={4} sx={{ padding: '0 8px' }}>
           <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
-          <App.Text center>{item.spent}</App.Text>
+          <App.Text center>{item.user.tKeysSpent}</App.Text>
         </App.Flex>
       </TableCell>
 
       <TableCell align="right">
-        <App.Button primary outlined onClick={() => onShare(item.hash)}>Share</App.Button>
+        <App.Button primary outlined onClick={() => onShare(item.id)}>Share</App.Button>
       </TableCell>
     </TableRow>
   )

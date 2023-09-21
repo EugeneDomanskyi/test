@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import moment from 'moment'
 import cn from 'classnames'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
@@ -10,6 +11,13 @@ import styles from './styles.module.scss'
 const RaffleListBrowseItem = ({ item }) => {
   const { propValue } = usePropsHelper()
 
+  const getTime = () => {
+    const end = item.endTimestamp * 1000
+    const current = moment().valueOf()
+    const duration = moment.duration(end - current, 'milliseconds')
+    return duration.humanize()
+  }
+
   return (
     <App.Flex column gap={32} className={cn(styles.box, styles[item.status])}>
       <div className={styles.circle} />
@@ -17,13 +25,13 @@ const RaffleListBrowseItem = ({ item }) => {
       <App.Flex row align="center" justify="space-between">
         <App.Flex row center gap={4} className={cn(styles.timeBadge, styles[item.status])}>
           <App.Flex center className={styles.dot} />
-          <App.Text size={[12, 10]} height={1}>{item.status == 'open' ? `${item.time} Left` : 'Closed'}</App.Text>
+          <App.Text size={[12, 10]} height={1}>{item.status == 'Active' ? `${getTime()} left` : item.status}</App.Text>
         </App.Flex>
 
-        {item.status != 'closed' ? (
+        {item.status != 'Closed' ? (
           <App.Flex row center gap={4} className={styles.tkeyBadge}>
             <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
-            <App.Text size={[12, 10]} height={1}>{item.keys} TKeys</App.Text>
+            <App.Text size={[12, 10]} height={1}>{item.tKeyRequired} TKeys</App.Text>
           </App.Flex>
         ) : null}
       </App.Flex>
@@ -39,12 +47,12 @@ const RaffleListBrowseItem = ({ item }) => {
       </App.Flex>
 
       <App.Flex column justify="flex-end" gap={8} height={[74, 'auto']}>
-        <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles.hiddenOnMobile)} fullWidth>
+        <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles.hiddenOnMobile, styles[item.status])} fullWidth>
           <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
-          <App.Text size={12} height={1}>{item.rewardDist}/{item.rewardMax} reward distributed</App.Text>
+          <App.Text size={12} height={1}>{item.totalTransferred}/{item.rewardAmount} reward distributed</App.Text>
         </App.Flex>
 
-        {item.status != 'closed' ? (
+        {item.status == 'Active' ? (
           <App.Button primary>Participate</App.Button>
         ) : null}
       </App.Flex>
