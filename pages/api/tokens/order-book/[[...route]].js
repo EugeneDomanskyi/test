@@ -17,8 +17,6 @@ const options = {
 
 const getDecimals = async (address, chainId) => {
   const network = Object.values(viemChains).find(chain => chain.id.toString() === chainId)
-  console.log('network', network)
-  console.log('viemChains', viemChains.mainnet)
   const client = createPublicClient({ 
     chain: network,
     transport: http()
@@ -74,7 +72,7 @@ const groupByPrice = (data, sort = 'asc') => {
     }
   }
   
-  const array = Object.keys(temp).map(key => temp[key])
+  const array = Object.keys(temp).map(key => temp[key]).filter(el => el.quantity)
   array.sort((a, b) => sort == 'asc' ? (a.price - b.price) : (b.price - a.price))
   return array
 }
