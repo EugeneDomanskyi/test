@@ -124,15 +124,15 @@ const PlaceOrder = ({data, onClose}) => {
                         <App.Text color="#5E5C6B" size={10} weight={500}>You Pay</App.Text>
                         <App.Text color="#5E5C6B" size={10} weight={500}>You Receive</App.Text>
                       </App.Flex>
-                      <App.Flex justify="space-between" direction={data.side === 'buy' ? 'row' : 'row-reverse'}>
+                      <App.Flex justify="space-between">
                         <App.Flex align="center">
                           <Image width={25} height={25} src={data.makerAsset.image} style={{marginRight: 8}} />
-                          <App.Text size={12} weight={600}>{ data.price * data.amount } {data.side === 'buy' ? data.makerAsset.symbol : data.takerAsset.symbol}</App.Text>
+                          <App.Text size={12} weight={600}>{ data.side === 'buy' ? data.price * data.amount : data.amount } {data.makerAsset.symbol}</App.Text>
                         </App.Flex>
                         <App.Icon icon="arrow-right" />
                         <App.Flex align="center">
                           <Image width={25} height={25} src={data.takerAsset.image} style={{marginRight: 8}} />
-                          <App.Text size={12} weight={600}>{ data.amount } {data.side === 'buy' ? data.takerAsset.symbol : data.makerAsset.symbol }</App.Text>
+                          <App.Text size={12} weight={600}>{ data.side === 'sell' ? data.price * data.amount : data.amount } {data.takerAsset.symbol }</App.Text>
                         </App.Flex>
                       </App.Flex>
                     </App.Flex>
