@@ -139,9 +139,8 @@ const getters = {
     }
   }),
   orderBook: (type) => createSelector([
-    state => state.$orders.orderBooks[type],
-    state => state.$token.current,
-  ], (orderBook, currentToken) => {
+    state => state.$orders.orderBooks[type]
+  ], (orderBook) => {
     if (type === 'tokens') {
       return {
         buy: orderBook.buy.slice(0, 10),
