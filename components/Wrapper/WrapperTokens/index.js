@@ -9,6 +9,7 @@ import useOrders from '@/myhooks/useOrders'
 import { putAssetsFile, getAssetsFile } from '@/libs/aws.lib'
 
 import $app from '@/store/app'
+import $collection from '@/store/collection'
 import $token, { template, staticTemplate } from '@/store/token'
 import $exchange from '@/store/exchange'
 
@@ -113,6 +114,8 @@ const WrapperTokens = ({ children }) => {
       apollo.current = getApolloClient(blockchain)
       dispatch($token.set.current({}))
       dispatch($token.set.fetching(true))
+      dispatch($collection.set.all([]))
+      dispatch($collection.set.current({}))
     }
   }, [blockchain.code])
 
@@ -279,11 +282,12 @@ const WrapperTokens = ({ children }) => {
             const tokenPrices = tokens.find(item => item.address === existingToken.address)
             
             if (tokenPrices) {
-              mergedData = {...tokenPrices, ...existingToken}
+              mergedData = {...tokenPrices, ...existingToken, currency: tokenPrices.currency}
             } else {
               const [priceInfo] = await getInfo([existingToken])
               const priceTemplate = template({info: priceInfo})
-              mergedData = {...priceTemplate, ...existingToken}
+              mergedData = {...priceTemplate, ...existingToken, currency: priceTemplate.currency}
+
             }
             dispatch($token.set.current(mergedData))
             dispatch($app.set.marketInfo(mergedData))

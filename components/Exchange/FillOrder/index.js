@@ -9,10 +9,20 @@ import App from '@/components/App'
 import Order from '@/libs/structs/Order'
 import useOrders from '@/myhooks/useOrders'
 
+const getErrorMessage = (message) => {
+  switch (message) {
+    case 'User rejected the request.':
+      return 'Looks like you have rejected signing through your wallet. Please restart the process'
+    default:
+      return 'Something went wrong. Please restart the process'
+  }
+}
+
 const FillOrder = ({data, onClose}) => {
   const { updateOrders } = useOrders({tokenAddress: data.side === 'buy' ? data.makerAsset.address : data.takerAsset.address, type: 'tokens'})
   
   const [currentStep, setCurrentStep] = useState('confirming')
+  const [errorMessage, setErrorMessage] = useState('')
   const [signSteps, setSignSteps] = useState({
     allowance: {
       complete: false,
@@ -102,8 +112,9 @@ const FillOrder = ({data, onClose}) => {
       price: data.price,
       side: data.side,
     }, eventHandler).catch(error => {
-      console.log('error', error)
-      setCurrentStep('sign_error')
+      console.log('error -> ', error)
+      setCurrentStep('error')
+      setErrorMessage(error?.shortMessage)
     }).then(() => {
       updateOrders()
     })
@@ -133,7 +144,7 @@ const FillOrder = ({data, onClose}) => {
         break
     }
   }
-
+  
   return (
     <App.Flex column className={styles.container}>
       <App.Flex className={styles.header} align="center" justify="space-between">
@@ -148,9 +159,9 @@ const FillOrder = ({data, onClose}) => {
         currentStep !== 'result'
           ? <App.Flex className={styles.steps}>
               <App.Flex flex={1} column align="center" justify="flex-end">
-                <App.Text color={['signing', 'blockchain_confirmation', 'sign_error'].includes(currentStep) ? '#53F19C' : '#5E5C6B'} size={10} weight={500}>Confirm</App.Text>
+                <App.Text color={['signing', 'blockchain_confirmation', 'error'].includes(currentStep) ? '#53F19C' : '#5E5C6B'} size={10} weight={500}>Confirm</App.Text>
                 <App.Flex sx={{width: '100%'}}>
-                  <App.Flex className={cn(styles.line, {[styles.active]: ['signing', 'blockchain_confirmation', 'sign_error'].includes(currentStep)})} flex={1} />
+                  <App.Flex className={cn(styles.line, {[styles.active]: ['signing', 'blockchain_confirmation', 'error'].includes(currentStep)})} flex={1} />
                 </App.Flex>
               </App.Flex>
               <App.Flex flex={1} column align="center" justify="flex-end">
@@ -304,12 +315,12 @@ const FillOrder = ({data, onClose}) => {
                   </App.Button>
                 </App.Flex>
               )
-            case 'sign_error':
+            case 'error':
               return (
                 <App.Flex column align="center" gap={8} className={styles.content}>
                   <App.Text size={132}>😕</App.Text>
                   <App.Text color="#FF1D61" size={20} center weight={700}>Oops! Transaction Error</App.Text>
-                  <App.Text color="#9996B1" size={14} center weight={500}>Looks like you have rejected signing through your wallet. Please restart the process </App.Text>
+                  <App.Text color="#9996B1" size={14} center weight={500}>{ getErrorMessage(errorMessage) }</App.Text>
                 </App.Flex>
               )
           }

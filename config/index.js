@@ -21,6 +21,20 @@ import { arbitrum, mainnet, polygon, goerli, optimism, celo, bsc, base, avalanch
 //     },
 // },
 
+export const TEG_TOKEN = '0xa1f102b004c8a5f4734e70bea7d62f829916d94c'
+
+export const TEGRO_FILL_ORDERS_CONTRACTS = {
+  1: '0x9c11f816f0a8A235B3c3674C8EFD89C805546457', // mainnet
+  137: '0xf360BD82C74c6613C55C3441281113ce196D629D', // polygon
+  80001: '0xB34Cb747e09d6d07B8419fE4c66D008456962eA5', // mumbai
+  42161: '0x4d0c3BC9ad8f0796186Fd3314ae520d43436d87e', // arbitrum
+  10: '0xaD929B0848DF4Aa7c071C16010D073dAC89f6AC3', // optimism
+  56: '0x64E7d3759D6fD46a49f8e768003559B684a88B6A', // bnb
+  8453: '0xaD929B0848DF4Aa7c071C16010D073dAC89f6AC3', // base
+  43114: '0x08fEA5882FABD20fF8067A14B134E937d9b4220D', // avalanche
+
+}
+
 const TEST_NETWORK = {
   ...goerli,
   code: 'goerli',
@@ -112,7 +126,7 @@ const ADDITIONAL_NETWORKS = [{
     coingecko: 'binancecoin',
     platform: 'binance-smart-chain',
     pages: ['nfts', 'tokens'],
-    usdtContract: '0x524bC91Dc82d6b90EF29F76A3ECAaBAffFD490Bc',
+    usdtContract: '0x55d398326f99059ff775485246999027b3197955',
     wrapped: {
       contract: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
       name: 'Wrapped BNB',
@@ -131,7 +145,7 @@ const ADDITIONAL_NETWORKS = [{
     coingecko: 'base',
     platform: 'base',
     pages: ['nfts', 'tokens'],
-    usdtContract: null,
+    usdtContract: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
     wrapped: {
       contract: '0x4200000000000000000000000000000000000006',
       name: 'Wrapped Ether',
@@ -220,7 +234,8 @@ export const CHAINS = [
       shortName: 'WMATIC',
     },
   }, 
-  ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? [TEST_NETWORK] : [])
+  ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? [TEST_NETWORK] : []),
+  ...ADDITIONAL_NETWORKS.filter(chain => TEGRO_FILL_ORDERS_CONTRACTS[chain.id]),
 ]
 
 export const INCH_CONTRACTS = {
@@ -234,7 +249,8 @@ export const INCH_CONTRACTS = {
   8217: "0x1111111254eeb25477b68fb85ed929f73a960582",
   42161: "0x1111111254eeb25477b68fb85ed929f73a960582",
   43114: "0x1111111254eeb25477b68fb85ed929f73a960582",
-  1313161554: "0x1111111254eeb25477b68fb85ed929f73a960582"
+  1313161554: "0x1111111254eeb25477b68fb85ed929f73a960582",
+  8453: "0x1111111254EEB25477B68fb85Ed929f73A960582",
 }
 
 export const INCH_TOKENS = {
@@ -251,6 +267,32 @@ export const INCH_TOKENS = {
             "native"
         ]
     },
+    "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913": {
+        "symbol": "USDC",
+        "name": "USD Coin",
+        "address": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "decimals": 6,
+        "logoURI": "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png?1547042389",
+        "providers": [
+            "1inch"
+        ],
+        "tags": [
+            "tokens"
+        ]
+    },
+    "0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7": {
+        "symbol": "USDT",
+        "name": "Tether USD",
+        "address": "0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7",
+        "decimals": 6,
+        "logoURI": "https://assets.coingecko.com/coins/images/325/large/Tether.png?1668148663",
+        "providers": [
+            "1inch"
+        ],
+        "tags": [
+            "tokens"
+        ]
+    },
     "0x4200000000000000000000000000000000000006": {
         "symbol": "WETH",
         "name": "Wrapped Ether",
@@ -262,6 +304,32 @@ export const INCH_TOKENS = {
         ],
         "tags": [
             "PEG:ETH",
+            "tokens"
+        ]
+    },
+    "0x55d398326f99059ff775485246999027b3197955": {
+        "symbol": "USDT",
+        "name": "Tether USD",
+        "address": "0x55d398326f99059ff775485246999027b3197955",
+        "decimals": 18,
+        "logoURI": "https://assets.coingecko.com/coins/images/325/large/Tether.png?1668148663",
+        "providers": [
+            "1inch"
+        ],
+        "tags": [
+            "tokens"
+        ]
+    },
+    "0xc7198437980c041c805a1edcba50c1ce5db95118": {
+        "symbol": "USDT",
+        "name": "Tether USD",
+        "address": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+        "decimals": 18,
+        "logoURI": "https://assets.coingecko.com/coins/images/325/large/Tether.png?1668148663",
+        "providers": [
+            "1inch"
+        ],
+        "tags": [
             "tokens"
         ]
     },

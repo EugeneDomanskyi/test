@@ -101,7 +101,7 @@ const Tokens = () => {
     updateOrders()
   }
 
-  useInterval(pollingOrders, 3000)
+  useInterval(pollingOrders, 15000)
 
   return (
     <App.Flex gap={GRID_GAP} className={styles.container}>

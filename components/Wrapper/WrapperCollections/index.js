@@ -8,6 +8,7 @@ import useOrders from '@/myhooks/useOrders'
 import Stream from '@/libs/stream.lib'
 
 import $app from '@/store/app'
+import $token from '@/store/token'
 import $collection, { template } from '@/store/collection'
 import $exchange from '@/store/exchange'
 import $orders from '@/store/orders'
@@ -330,8 +331,9 @@ const WrapperCollections = ({ children }) => {
       blockchainCode.current = blockchain.code
       dispatch($collection.set.current({}))
       dispatch($collection.set.fetching(true))
-
       initWSConnection(blockchain.code)
+      dispatch($token.set.all([]))
+      dispatch($token.set.current({}))
     }
   }, [blockchain.code])
 

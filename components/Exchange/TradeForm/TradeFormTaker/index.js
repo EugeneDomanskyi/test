@@ -3,8 +3,7 @@ import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 're
 import { useSelector, useDispatch } from 'react-redux'
 import Image from 'next/image'
 import numeral from 'numeral'
-import BigNumber from 'bignumber.js'
-import { useRouter } from 'next/router'
+// import BigNumber from 'bignumber.js'
 
 import $app from '@/store/app'
 import $modal from '@/store/modal'
@@ -16,28 +15,29 @@ import { INCH_TOKENS } from '@/config'
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
 
-const fmt = {
-  prefix: '',
-  decimalSeparator: '.',
-  groupSeparator: '',
-  groupSize: 3,
-  secondaryGroupSize: 0,
-  fractionGroupSeparator: ' ',
-  fractionGroupSize: 0,
-  suffix: ''
-}
+// const fmt = {
+//   prefix: '',
+//   decimalSeparator: '.',
+//   groupSeparator: '',
+//   groupSize: 3,
+//   secondaryGroupSize: 0,
+//   fractionGroupSeparator: ' ',
+//   fractionGroupSize: 0,
+//   suffix: ''
+// }
 
-BigNumber.config({ FORMAT: fmt })
+// BigNumber.config({ FORMAT: fmt })
 
 const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalances}, ref) => {
   const { changeNetwork, wallet } = useWalletConnect()
   const dispatch = useDispatch()
-  const router = useRouter()
 
   const tokenBlockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
   const orderBook = useSelector($orders.get.orderBook('tokens'))
+  const orderBookId = useSelector(({$orders}) => $orders.orderBookId)
 
   const [loading, setLoading] = useState(false)
+  const [showErrors, setShowErrors] = useState(false)
   const [form, setForm] = useState({amount: '1', price: '0'})
   const [abilities, setAbilities] = useState({totalAmountOnSell: 0, totalAmountToSell: 0, willSpendAmount: 0, willTakeAmount: 0})
 
@@ -63,6 +63,10 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
   }))
 
   useEffect(() => {
+    setShowErrors(false)
+  }, [current?.address])
+
+  useEffect(() => {
     if (fetchTimeout.current) {
       clearTimeout(fetchTimeout.current)
     }
@@ -76,15 +80,8 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
   }, [form.price, form.amount, current?.address, tokenBlockchain?.id, currentTab])
 
   useEffect(() => {
-    if (current?.address && router.query?.segments?.[1] === current?.address) {
-      if (currentTab === 'buy' && orderBook.sell.length) {
-        handleSetPrice()
-      }
-      if (currentTab === 'sell' && orderBook.buy.length) {
-        handleSetPrice()
-      }
-    }
-  }, [orderBook.buy.length, orderBook.sell.length, current?.address, router.query?.segments])
+    handleSetPrice()
+  }, [orderBookId])
 
   const fetchAbilities = async () => {
     setLoading(true)
@@ -97,12 +94,13 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
       side: currentTab,
     })
     const { orders, ...rest } = res
+    
     setAbilities(rest)
     setLoading(false)
   }
 
   const handleBlurAmount = () => {
-    
+    setShowErrors(true)
   }
 
   const handleChangeForm = (field) => (value) => {
@@ -110,13 +108,10 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
     if (!decimalRegExp.test(value) && value) {
       return
     }
-    if (field === 'price') {
-      value = value?.substring(0, value.indexOf('.') + 7)
-    }
     setForm(state => {
       return {
         ...state,
-        [field]: value,
+        [field]: value.substring(0, value.indexOf('.') + 7),
       }
     })
   }
@@ -125,13 +120,18 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
     switch (currentTab) {
       case 'buy':
         const [cheapestOrder] = orderBook.sell
-        handleChangeForm('price')(cheapestOrder?.priceFormatted.toString())
-        handleChangeForm('amount')(cheapestOrder?.amount.toString())
+        if (cheapestOrder) {
+          handleChangeForm('price')(cheapestOrder.priceFormatted.toString())
+          handleChangeForm('amount')(cheapestOrder.amount.toString())
+        }
         break
       case 'sell':
         const [expensiveOrder] = orderBook.buy
-        handleChangeForm('price')(expensiveOrder.priceFormatted.toString())
-        handleChangeForm('amount')(expensiveOrder.amount.toString())
+        if (expensiveOrder) {
+          handleChangeForm('price')(expensiveOrder.priceFormatted.toString())
+          handleChangeForm('amount')(expensiveOrder.amount.toString())
+        }
+        
         break
     }
   }
@@ -215,7 +215,7 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
         <TradeInput
           label="AMOUNT"
           value={form.amount}
-          error={errors.amount}
+          error={errors.amount && showErrors}
           currency={current.symbol}
           onBlur={handleBlurAmount}
           onChange={handleChangeForm('amount')} />
@@ -247,13 +247,13 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
           {
             loading
               ? <App.Loader size={15} />
-              : errors.amount
+              : errors.amount && showErrors
                 ? <App.Text color="#FF1D61" size={10} weight={500}>Amount higher than market availability</App.Text>
                 : null
           }
           <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto'}}>
             Available to {currentTab}:&nbsp;
-            {new BigNumber(currentTab === 'buy' ? abilities.totalAmountOnSell : abilities.totalAmountToSell).toFormat()} {current.symbol}
+            { currentTab === 'buy' ? abilities.totalAmountOnSell : abilities.totalAmountToSell } {current.symbol}
           </App.Text>
         </App.Flex>
       </App.Flex>
@@ -263,18 +263,20 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
             <App.Text color="#B9B8C5" size={10} weight={500} right>TOTAL</App.Text>
             <App.Text size={10} weight={700} right>USDT</App.Text>
           </App.Flex>
-          <App.Text size={36} weight={600}>{new BigNumber(currentTab === 'buy' ? abilities.willSpendAmount : abilities.willTakeAmount).toFixed()}</App.Text>
+          <App.Text size={36} weight={600}>
+            { currentTab === 'buy' ? abilities.willSpendAmount : abilities.willTakeAmount }
+          </App.Text>
         </App.Flex>
         {
           currentTab === 'buy'
             ? <App.Flex align="center" gap={4}>
-                <App.Icon icon="wallet" color={errors.balance ? '#FF1D61' : '#B9B8C5'} />
-                <App.Text color={errors.balance ? '#FF1D61' : '#B9B8C5'} size={10}>{userBalances.usdt} USDT</App.Text>
+                <App.Icon icon="wallet" color={errors.balance && showErrors ? '#FF1D61' : '#B9B8C5'} />
+                <App.Text color={errors.balance && showErrors ? '#FF1D61' : '#B9B8C5'} size={10}>{userBalances.usdt} USDT</App.Text>
               </App.Flex>
             : null
         }
         {
-          errors.balance
+          errors.balance && showErrors
             ? <App.Text color="#FF1D61" size={10} weight={500}>Insufficient funds in your wallet to make this purchase</App.Text>
             : null
         }
