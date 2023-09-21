@@ -1,8 +1,9 @@
 import * as math from 'mathjs'
 import { formatUnits } from 'viem'
-import { INCH_TOKENS } from '@/config'
 import numeral from 'numeral'
 import moment from 'moment'
+import { createPublicClient, http } from 'viem'
+import * as viemChains from 'viem/chains'
 
 const INCH_URL = 'https://limit-orders.1inch.io/v3.0'
 
@@ -14,8 +15,29 @@ const options = {
   },
 }
 
-const getDecimals = address => {
-  return INCH_TOKENS[address.toLowerCase()].decimals
+const getDecimals = async (address, chainId) => {
+  const network = Object.values(viemChains).find(chain => chain.id.toString() === chainId)
+  console.log('network', network)
+  console.log('viemChains', viemChains.mainnet)
+  const client = createPublicClient({ 
+    chain: network,
+    transport: http()
+  })
+  const abi = {
+    constant: true,
+    inputs: [],
+    name: 'decimals',
+    outputs: [{name: '', type: 'uint8'}],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function'
+  }
+  const res = await client.readContract({
+    address: address,
+    abi: [abi],
+    functionName: 'decimals',
+  })
+  return res
 }
 
 const queryBuilder = data => {
@@ -117,8 +139,8 @@ const handler = async (req, res) => {
       sell: sell && Array.isArray(sell) ? sell.map(order => ({...order, side: 'sell'})) : [],
     }
   })
-  const usdtDecimals = getDecimals(usdtAsset)
-  const tokenDecimals = getDecimals(tokenAsset)
+  const usdtDecimals = await getDecimals(usdtAsset, chainId)
+  const tokenDecimals = await getDecimals(tokenAsset, chainId)
   res.status(200).json({
     buy: groupByPrice(buy.map(order => formatter(order, usdtDecimals, tokenDecimals)), 'desc'),
     sell: groupByPrice(sell.map(order => formatter(order, tokenDecimals, usdtDecimals)), 'asc'),

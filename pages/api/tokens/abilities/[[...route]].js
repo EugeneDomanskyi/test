@@ -1,7 +1,8 @@
-import { INCH_TOKENS } from '@/config'
 import { formatUnits } from 'viem'
 import * as math from 'mathjs'
 import numeral from 'numeral'
+import { createPublicClient, http } from 'viem'
+import * as viemChains from 'viem/chains'
 
 const INCH_URL = 'https://limit-orders.1inch.io/v3.0'
 
@@ -29,8 +30,29 @@ const queryBuilder = data => {
   return `?${params}`
 }
 
-const getDecimals = address => {
-  return INCH_TOKENS[address.toLowerCase()].decimals
+const getDecimals = async (address, chainId) => {
+  const network = Object.values(viemChains).find(chain => chain.id.toString() === chainId)
+  console.log('network', network)
+  console.log('viemChains', viemChains.mainnet)
+  const client = createPublicClient({ 
+    chain: network,
+    transport: http()
+  })
+  const abi = {
+    constant: true,
+    inputs: [],
+    name: 'decimals',
+    outputs: [{name: '', type: 'uint8'}],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function'
+  }
+  const res = await client.readContract({
+    address: address,
+    abi: [abi],
+    functionName: 'decimals',
+  })
+  return res
 }
 
 const formatter = (order, makerDecimals, takerDecimals) => {
@@ -65,8 +87,8 @@ const handler = async (req, res) => {
   if (response.ok) {
     const json = await response.json()
     if (json && Array.isArray(json)) {
-      const makerDecimals = getDecimals(makerAsset)
-      const takerDecimals = getDecimals(takerAsset)
+      const makerDecimals = await getDecimals(makerAsset, chainId)
+      const takerDecimals = await getDecimals(takerAsset, chainId)
       const amountInWei = Math.pow(10, side === 'buy' ? makerDecimals : takerDecimals)*amount
       const list = json.map(order => formatter(order, makerDecimals, takerDecimals))
 
@@ -135,9 +157,9 @@ const handler = async (req, res) => {
       res.status(200).json({
         totalAmountOnSell: numeral(stats.totalAmountOnSell).format('0.0[00000]'),
         totalAmountToSell: numeral(stats.totalAmountToSell).format('0.0[00000]'),
-        willSpendAmount: formatUnits(rates.willSpendAmount.toFixed(), takerDecimals),
+        willSpendAmount: numeral(formatUnits(rates.willSpendAmount.toFixed(), takerDecimals)).format('0.0[00000]'),
         willSpendAmountValue: rates.willSpendAmount.toFixed(),
-        willTakeAmount: formatUnits(rates.willTakeAmount.toFixed(), makerDecimals),
+        willTakeAmount: numeral(formatUnits(rates.willTakeAmount.toFixed(), makerDecimals)).format('0.0[00000]'),
         willTakeAmountValue: rates.willTakeAmount.toFixed(),
         orders: temp.orders,
         filteredByPrice: filteredByPrice,
