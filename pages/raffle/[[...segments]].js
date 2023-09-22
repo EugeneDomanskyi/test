@@ -15,8 +15,9 @@ import Raffle from '@/components/Raffle'
 import styles from './styles.module.scss'
 
 const getApolloClient = () => {
+  const uri = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'https://api.thegraph.com/subgraphs/name/gulshanweb3/raffle-mumbai' : 'https://api.thegraph.com/subgraphs/name/gulshanweb3/raffle-mumbai'
   const client = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/gulshanweb3/raffle-mumbai',
+    uri,
     cache: new InMemoryCache(),
     connectToDevTools: true,
   })

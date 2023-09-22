@@ -8,7 +8,7 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const RaffleListBrowseItem = ({ item, onClick }) => {
+const RaffleListBrowseItem = ({ item, onParticipate, onShare }) => {
   const { propValue } = usePropsHelper()
 
   const getTime = () => {
@@ -53,7 +53,15 @@ const RaffleListBrowseItem = ({ item, onClick }) => {
         </App.Flex>
 
         {item.status == 'Active' ? (
-          <App.Button primary onClick={() => onClick(item)}>Participate</App.Button>
+          <>
+            {!item.hasOwnProperty('user') || (item.hasOwnProperty('user') && item.user?.isResolved) ? (
+              <App.Button primary onClick={() => onParticipate(item)}>Participate</App.Button>
+            ) : (
+              <App.Tooltip variant="gray" text="You need to wait till your current mystery box has been opened" placement="top">
+                <App.Button variant="gray" disabled fullWidth>Participate</App.Button>
+              </App.Tooltip>
+            )}
+          </>
         ) : null}
       </App.Flex>
     </App.Flex>

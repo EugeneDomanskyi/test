@@ -6,7 +6,7 @@ import App from '@/components/App'
 import RaffleListBrowseItem from '@/components/Raffle/RaffleListBrowseItem'
 import { useEffect, useState } from 'react'
 
-const RaffleListBrowse = ({ onParticipate, onClick, onShare }) => {
+const RaffleListBrowse = ({ onParticipate, onShare }) => {
   const dispatch = useDispatch()
   const campaigns = useSelector($raffle.get.filtered)
   const page = useSelector(({ $raffle }) => $raffle.page)
@@ -36,7 +36,7 @@ const RaffleListBrowse = ({ onParticipate, onClick, onShare }) => {
     <App.Flex column gap={16}>
       <App.Flex wrap gap={[32, 16]} >
         {campaigns.slice((page - 1) * perPage, page * perPage).map(item => (
-          <RaffleListBrowseItem key={item.id} item={item} onParticipate={onParticipate} onClick={onClick} onShare={onShare} />
+          <RaffleListBrowseItem key={item.id} item={item} onParticipate={onParticipate} onShare={onShare} />
         ))}
       </App.Flex>
 
