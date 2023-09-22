@@ -178,7 +178,7 @@ const query = {
 
   last: gql`
     query userCampaignParticipants {
-      userCampaignParticipants(orderBy: resolvedTimestamp, orderDirection: desc, first: 6, where: {isResolved: true}) {
+      userCampaignParticipants(orderBy: resolvedTimestamp, orderDirection: desc, first: 6, where: {and: [{isResolved: true}, {campaign_: {id_not: 0}}]}) {
         id
         rewardAmount
         transaction

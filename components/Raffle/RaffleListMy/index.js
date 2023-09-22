@@ -8,17 +8,18 @@ import $raffle from '@/store/raffle'
 
 import App from '@/components/App'
 import RaffleListMyItem from '@/components/Raffle/RaffleListMyItem'
+import RaffleListMyItemMobile from '@/components/Raffle/RaffleListMyItemMobile'
 
 import styles from './styles.module.scss'
 
-const RaffleListMy = ({ onParticipate, onClaim, onShare }) => {
+const RaffleListMy = ({ onParticipate, onShare }) => {
   const { isMobile } = usePropsHelper()
 
   const dispatch = useDispatch()
   const campaigns = useSelector($raffle.get.filtered)
   const page = useSelector(({ $raffle }) => $raffle.page)
 
-  const [orderBy, setOrderBy] = useState('title')
+  const [orderBy, setOrderBy] = useState('status')
   const [order, setOrder] = useState('asc')
 
   const [pagesCount, setPagesCount] = useState(1)
@@ -38,7 +39,37 @@ const RaffleListMy = ({ onParticipate, onClaim, onShare }) => {
   }, [campaigns])
 
   const participatedCampaigns = () => {
-    return campaigns.filter(item => item.hasOwnProperty('user'))
+    const newCampaigns = [...campaigns]
+    const statusOrder = {
+      Active: 1,
+      Upcoming: 2,
+      Closed: 3,
+    }
+
+    newCampaigns.sort((a, b) => {
+      if (orderBy == 'status') {
+        return order == 'asc' ? statusOrder[a.status] - statusOrder[b.status] : statusOrder[b.status] - statusOrder[a.status]
+      }
+
+      if (orderBy == 'title') {
+        const aTitle = a.title.toLowerCase()
+        const bTitle = b.title.toLowerCase()
+
+        if (order == 'asc') {
+          return aTitle < bTitle ? -1 : (aTitle > bTitle ? 1 : 0)
+        } else {
+          return aTitle < bTitle ? 1 : (aTitle > bTitle ? -1 : 0)
+        }
+      }
+      
+      if (a.hasOwnProperty('user') && b.hasOwnProperty('user')) {
+        return order == 'asc' ? a.user[orderBy] - b.user[orderBy] : b.user[orderBy] - a.user[orderBy]
+      }
+
+      return 0
+    })
+
+    return newCampaigns.filter(item => item.hasOwnProperty('user'))
   }
 
   const handlePageChange = (value) => {
@@ -62,7 +93,41 @@ const RaffleListMy = ({ onParticipate, onClaim, onShare }) => {
     <App.Flex column sx={{ borderRadius: 12, overflow: 'hidden' }} fullWidth>
       <TableContainer>
         {isMobile ? (
-          <App.Text>Mobile</App.Text>
+          <Table>
+            <TableHead>
+              <TableRow sx={{ '& th, & td': { border: 0 },  background: '#17142a' }}>
+                <TableCell
+                  align='left'
+                >
+                  <TableSortLabel
+                    active={orderBy === 'title'}
+                    direction={orderBy === 'title' ? order : 'asc'}
+                    classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
+                    onClick={handleSort('title')}
+                  >
+                    Campaign
+                  </TableSortLabel>
+                </TableCell>
+
+                <TableCell
+                  align='right'
+                >
+                  <TableSortLabel
+                    active={orderBy === 'status'}
+                    direction={orderBy === 'status' ? order : 'asc'}
+                    classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
+                    onClick={handleSort('status')}
+                  >
+                    Status
+                  </TableSortLabel>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {participatedCampaigns().map(item => <RaffleListMyItemMobile key={item.id} item={item} onParticipate={onParticipate} onShare={onShare} />)}
+            </TableBody>
+          </Table>
         ) : (
           <Table>
             <TableHead>
@@ -100,10 +165,10 @@ const RaffleListMy = ({ onParticipate, onClaim, onShare }) => {
                   sx={{ flexDirection: 'row' }}
                 >
                   <TableSortLabel
-                    active={orderBy === 'reward'}
-                    direction={orderBy === 'reward' ? order : 'asc'}
+                    active={orderBy === 'totalEarned'}
+                    direction={orderBy === 'totalEarned' ? order : 'asc'}
                     classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
-                    onClick={handleSort('reward')}
+                    onClick={handleSort('totalEarned')}
                   >
                     Reward Won
                   </TableSortLabel>
@@ -114,10 +179,10 @@ const RaffleListMy = ({ onParticipate, onClaim, onShare }) => {
                   sx={{ flexDirection: 'row' }}
                 >
                   <TableSortLabel
-                    active={orderBy === 'spent'}
-                    direction={orderBy === 'spent' ? order : 'asc'}
+                    active={orderBy === 'totalTKeysSpent'}
+                    direction={orderBy === 'totalTKeysSpent' ? order : 'asc'}
                     classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
-                    onClick={handleSort('spent')}
+                    onClick={handleSort('totalTKeysSpent')}
                   >
                     TKeys Spent
                   </TableSortLabel>
@@ -128,7 +193,7 @@ const RaffleListMy = ({ onParticipate, onClaim, onShare }) => {
             </TableHead>
 
             <TableBody>
-              {participatedCampaigns().map(item => <RaffleListMyItem key={item.id} item={item} onParticipate={onParticipate} onClaim={onClaim} onShare={onShare} />)}
+              {participatedCampaigns().map(item => <RaffleListMyItem key={item.id} item={item} onParticipate={onParticipate} onShare={onShare} />)}
             </TableBody>
           </Table>
         )}

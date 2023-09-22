@@ -148,6 +148,29 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
       )
     }
 
+    if (icon == 'x') {
+      return (
+        <svg width={width ?? 16} height={height ?? 17} viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <g filter="url(#filter0_b_4473_29356)">
+            <g clipPath="url(#clip0_4473_29356)">
+              <path fill={color ?? '#fff'} d="M9.577 7.672L15.406.897h-1.381L8.964 6.78 4.922.897H.26l6.112 8.895L.26 16.897h1.381l5.344-6.212 4.269 6.212h4.662L9.577 7.672zM7.686 9.87l-.62-.886L2.14 1.937H4.26l3.977 5.688.62.886 5.168 7.394h-2.121L7.686 9.87z" />
+            </g>
+          </g>
+          <defs>
+            <filter id="filter0_b_4473_29356" width="99.648" height="100" x="-41.648" y="-41.103" colorInterpolationFilters="sRGB" filterUnits="userSpaceOnUse">
+              <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
+              <feGaussianBlur in="BackgroundImageFix" stdDeviation="21"></feGaussianBlur>
+              <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_4473_29356"></feComposite>
+              <feBlend in="SourceGraphic" in2="effect1_backgroundBlur_4473_29356" result="shape"></feBlend>
+            </filter>
+            <clipPath id="clip0_4473_29356">
+              <rect fill={color ?? '#fff'} width="15.648" height="16" x="0.352" y="0.897" rx="2"></rect>
+            </clipPath>
+          </defs>
+        </svg>
+      )
+    }
+
     if (icon == 'order') {
       return (
         <svg width={width ?? 24} height={width ?? 22} viewBox="0 0 24 22" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
