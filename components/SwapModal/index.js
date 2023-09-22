@@ -25,6 +25,7 @@ const SwapModal = ({ collection, onClose, onStep }) => {
   const [form, setForm] = useState({price: 0, amount: 0, usdPrice: 0})
 
   const nftsRef = useRef([])
+  const completeRef = useRef(false)
 
   useEffect(() => {
     onStep(step)
@@ -43,8 +44,7 @@ const SwapModal = ({ collection, onClose, onStep }) => {
   }
 
   const handleSwap = () => {
-    
-    trackEvent('Swap NFT', {
+    trackEvent('Swap Confirmation', {
       'Token': collection.name,
       'Network': blockchain.code.toUpperCase(),
       'Quantity': nftsRef.current.length,
@@ -58,6 +58,8 @@ const SwapModal = ({ collection, onClose, onStep }) => {
         quantity: 1,
       }
     })
+
+    completeRef.current = false
 
     if (type == 'buy') {
       buyNft(items, currentCurrency, onBuyProgress(nftsRef.current), onBuyError)
@@ -73,15 +75,19 @@ const SwapModal = ({ collection, onClose, onStep }) => {
         setStep(2)
         console.log('Incomplete txHash', transaction.items[0]?.txHash)
       } else {
-        setStep(3)
-        console.log('Complete txHash', transaction.items[0]?.txHash)
+        if ( ! completeRef.current) {
+          completeRef.current = true
+          
+          setStep(3)
+          console.log('Complete txHash', transaction.items[0]?.txHash)
 
-        trackEvent('Swap Successful', {
-          'Token': collection.name,
-          'Network': blockchain.code.toUpperCase(),
-          'Quantity': nfts.length,
-          'At Price': 0,
-        })
+          trackEvent('Swap Successful', {
+            'Token': collection.name,
+            'Network': blockchain.code.toUpperCase(),
+            'Quantity': nfts.length,
+            'At Price': 0,
+          })
+        }
       }
     }
   }

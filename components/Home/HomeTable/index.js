@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { memo, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from '@mui/material'
@@ -13,8 +13,8 @@ import $modal from '@/store/modal'
 import $collection from '@/store/collection'
 
 import App from '@/components/App'
-import CollectionListSearch from '@/components/Exchange/CollectionList/CollectionListSearch'
-import CollectionListPagination from '@/components/Exchange/CollectionList/CollectionListPagination'
+import SidebarSearch from '@/components/Exchange/Sidebar/SidebarSearch'
+import SidebarPagination from '@/components/Exchange/Sidebar/SidebarPagination'
 
 import styles from './styles.module.scss'
 
@@ -24,65 +24,37 @@ const HomeTable = () => {
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
-  const { collections, searched } = useSelector($collection.get.all)
 
-  const [order, setOrder] = useState('desc')
-  const [orderBy, setOrderBy] = useState('volume')
-  const [wasSearched, setWasSearched] = useState(false)
+  const collections = useSelector(({$collection}) => $collection.all)
+  const searched = useSelector(({$collection}) => $collection.searched)
+  const searching = useSelector(({$collection}) => $collection.searching)
+  const search = useSelector(({$collection}) => $collection.search)
+  const sort = useSelector(({$collection}) => $collection.sort)
+  const loading = useSelector(({$collection}) => $collection.loading)
+  const pages = useSelector($collection.get.pages)
 
-  const handleSearched = useCallback((value) => {
-    setWasSearched(value)
+  const list = (searching) ? searched : collections
+  const [orderBy, order] = sort.toLowerCase().split(':')
+
+  const handleSearch = useCallback((value) => {
+    dispatch($collection.set.search(value))
   }, [])
 
-  const collectionList = () => {
-    return (wasSearched) ? searched : collections
-  }
-
-  const handleSort = (field) => () => {
+  const handleSort = useCallback((field) => () => {
     const isAsc = orderBy === field && order === 'asc'
-    setOrder(isAsc ? 'desc' : 'asc')
-    setOrderBy(field)
-  }
+    const newOrder = isAsc ? 'desc' : 'asc'
+    const result = `${field}:${newOrder}`.toUpperCase()
+    dispatch($collection.set.sort(result))
+  }, [sort])
 
-  const sortedTokens = () => {
-    return stableSort(collectionList(), getComparator(order, orderBy))
-  }
-
-  const stableSort = (array, comparator) => {
-    const stabilizedThis = array.map((el, index) => [el, index])
-    stabilizedThis.sort((a, b) => {
-      const order = comparator(a[0], b[0])
-      if (order !== 0) {
-        return order
-      }
-
-      return a[1] - b[1]
-    })
-
-    return stabilizedThis.map((el) => el[0])
-  }
-  
-
-  const getComparator = (order, orderBy) => {
-    return order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
-  }
-
-  const descendingComparator = (a, b, orderBy) => {
-    if (b[orderBy] < a[orderBy]) {
-      return -1
-    }
-
-    if (b[orderBy] > a[orderBy]) {
-      return 1
-    }
-
-    return 0
-  }
+  const handlePage = useCallback((value) => {
+    dispatch($collection.set.pages({current: value ?? 1}))
+  }, [])
 
   const handleSwap = (collection) => async (e) => {
     e.stopPropagation()
 
-    trackEvent('Dex Swap Clicked', {
+    trackEvent('Swap Clicked', {
       'Token': collection.name,
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
       'Wallet Address': wallet || null,
@@ -119,7 +91,7 @@ const HomeTable = () => {
     <div className={styles.container}>
       <App.Container className={styles.content}>
         <App.Flex column align="flex-end" gap={16}>
-          <CollectionListSearch sx={{ width: 300 }} onSearched={handleSearched} />
+          <SidebarSearch sx={{ width: 300 }} search={search} loading={loading} onSearch={handleSearch} />
 
           <App.Flex width="100%">
             <TableContainer>
@@ -159,7 +131,7 @@ const HomeTable = () => {
                   </TableHead>
 
                   <TableBody>
-                    {sortedTokens().map((item, index) => {
+                    {list.map((item, index) => {
                       return (
                         <TableRow
                           key={index}
@@ -246,18 +218,8 @@ const HomeTable = () => {
                         </TableSortLabel>
                       </TableCell>
 
-                      <TableCell
-                        align='center'
-                        sortDirection={orderBy === 'tvl' ? order : false}
-                      >
-                        <TableSortLabel
-                          active={orderBy === 'tvl'}
-                          direction={orderBy === 'tvl' ? order : 'asc'}
-                          classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
-                          onClick={handleSort('tvl')}
-                        >
-                          TVL
-                        </TableSortLabel>
+                      <TableCell align='center'>
+                        <App.Text center weight={600} color="rgba(185, 184, 197, 0.8)">Market Cap</App.Text>
                       </TableCell>
 
                       <TableCell sx={{ width: '10px' }}></TableCell>
@@ -265,7 +227,7 @@ const HomeTable = () => {
                   </TableHead>
 
                   <TableBody>
-                    {sortedTokens().map((item, index) => {
+                    {list.map((item, index) => {
                       return (
                         <TableRow
                           key={index}
@@ -301,7 +263,7 @@ const HomeTable = () => {
                           </TableCell>
 
                           <TableCell align="center">
-                            <App.Text center>{item.tvl ? `${numeral(item.tvl).format('0,0.[00]')} ${blockchain.currency}` : '-'}</App.Text>
+                            <App.Text center>{item.marketCap ? `${numeral(item.marketCap).format('0,0.[00]')} ${blockchain.currency}` : '-'}</App.Text>
                           </TableCell>
 
                           <TableCell align="center">
@@ -316,8 +278,8 @@ const HomeTable = () => {
             </TableContainer>
           </App.Flex>
 
-          {!wasSearched ? (
-            <CollectionListPagination />
+          {!searching ? (
+            <SidebarPagination pages={pages} loading={loading} onPage={handlePage} />
           ) : null}
         </App.Flex>
       </App.Container>
@@ -325,4 +287,4 @@ const HomeTable = () => {
   )
 }
 
-export default HomeTable
+export default memo(HomeTable, () => true)

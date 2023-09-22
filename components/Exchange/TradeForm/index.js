@@ -13,32 +13,37 @@ import App from '@/components/App'
 import Tabs from '@/components/Exchange/Tabs'
 import TradeFormLimit from '@/components/Exchange/TradeForm/TradeFormLimit'
 import TradeFormMarket from '@/components/Exchange/TradeForm/TradeFormMarket'
+import TradeFormTaker from '@/components/Exchange/TradeForm/TradeFormTaker'
 
 const TAB_OPTIONS = [
   {key: 'buy', title: 'BUY', color: 'rgb(13, 198, 109)'},
   {key: 'sell', title: 'SELL', color: 'rgb(206, 22, 93)'},
 ]
 
-const TradeForm = forwardRef((_props, ref) => {
-  const { wallet, getBalance } = useWalletConnect()
+const TradeForm = forwardRef(({current, type, fullWidth = null}, ref) => {
+  const { wallet, getBalance, changeNetwork } = useWalletConnect()
   const { getNftBalanceUser } = useTrade()
   
   const orderBook = useSelector($exchange.get.orderBook)
-  const currentCollection = useSelector(({$collection}) => $collection.current)
-  const loadingCollectionData = useSelector(({$exchange}) => $exchange.loadingCollectionData)
-  const blockchain = useSelector($app.get.blockchainByCode(currentCollection?.blockchain))
+  const loading = useSelector(({$exchange}) => $exchange.loadingCollectionData)
+  const blockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
 
   const [currentTab, setCurrentTab] = useState('buy')
   const [formType, setFormType] = useState('market')
-  const [userBalances, setUserBalances] = useState({native: 0, wrapped: 0, token: 0})
+  const [userBalances, setUserBalances] = useState({native: 0, wrapped: 0, token: 0, usdt: 0})
   const [limitForm, setLimitForm] = useState({price: '0', amount: '1', total: '0'})
   const [marketForm, setMarketForm] = useState({amount: '1'})
+
+  const takerFormRef = useRef(null)
 
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
       handleChangeTab(data.side)
       setFormType(data.formType)
       setMarketForm({amount: data.amount.toString()})
+      if (takerFormRef.current) {
+        takerFormRef.current.setForm({amount: data.amount, price: data.price})
+      }
     }
   }))
 
@@ -47,31 +52,44 @@ const TradeForm = forwardRef((_props, ref) => {
   const [lowestSell] = orderBook.sell
 
   useEffect(() => {
-    const getBalances = () => {
-      if (currentCollection?.address && wallet) {
-        getNftBalanceUser(currentCollection.address, wallet).then(res => {
-          setUserBalances(state => ({...state, token: res}))
-        })
-        getBalance().then(res => {
-          setUserBalances(state => ({...state, native: res}))
-        })
-        getBalance(blockchain.wrapped.contract).then(res => {
-          setUserBalances(state => ({...state, wrapped: res}))
-        })
+    const getUserBalances = async () => {
+      if (current?.address && wallet) {
+        await changeNetwork(current.blockchain)
+        switch (type) {
+          case 'nfts':
+            getNftBalanceUser(current.address, wallet).then(res => {
+              setUserBalances(state => ({...state, token: res}))
+            })
+            getBalance().then(res => {
+              setUserBalances(state => ({...state, native: res}))
+            })
+            getBalance(blockchain.wrapped.contract).then(res => {
+              setUserBalances(state => ({...state, wrapped: res}))
+            })
+            break
+          case 'tokens':
+            getBalance(current.address).then(res => {
+              setUserBalances(state => ({...state, token: res}))
+            })
+            getBalance(blockchain.usdtContract).then(res => {
+              setUserBalances(state => ({...state, usdt: res}))
+            })
+            break
+        }
       }
     }
-    getBalances()
-  }, [wallet, currentCollection?.address, blockchain])
+    getUserBalances()
+  }, [wallet, current?.address, blockchain, type])
 
   useEffect(() => {
-    if (!loadingCollectionData && currentCollection?.address) {
+    if (!loading && current?.address) {
       if (currentTab === 'buy') {
-        setInitialPrice(lowestBuy?.price || currentCollection?.price)
+        setInitialPrice(lowestBuy?.price || current?.price)
       } else {
-        setInitialPrice(lowestSell?.price || currentCollection?.price)
+        setInitialPrice(lowestSell?.price || current?.price)
       }
     }
-  }, [loadingCollectionData, currentCollection?.address])
+  }, [loading, current?.address])
 
   const setInitialPrice = price => {
     setLimitForm(state => ({
@@ -94,7 +112,7 @@ const TradeForm = forwardRef((_props, ref) => {
   }
 
   return (
-    <App.Flex className={styles.container} column>
+    <App.Flex className={styles.container} sx={{width: fullWidth ? '100%' : 366}} column>
       <App.Flex column>
         <Tabs
           options={TAB_OPTIONS}
@@ -102,21 +120,22 @@ const TradeForm = forwardRef((_props, ref) => {
           onChange={handleChangeTab} />
       </App.Flex>
       <App.Flex gap={16} sx={{padding: '24px 16px'}}>
-        <App.Button className={cn(styles.formTypeButton, {[styles.active]: formType === 'market'})} onClick={handleChangeFormType('market')}>
-          {
-            formType === 'market'
-              ? <App.Icon icon="check" />
-              : null
-          }
-          <App.Text color={formType === 'market' ? '#fff' : '#5E5C6B'} weight={600} size={12}>Market Order</App.Text>
-        </App.Button>
+        
         <App.Button className={cn(styles.formTypeButton, {[styles.active]: formType === 'limit'})} onClick={handleChangeFormType('limit')}>
           {
             formType === 'limit'
               ? <App.Icon icon="check" />
               : null
           }
-          <App.Text color={formType === 'limit' ? '#fff' : '#5E5C6B'} weight={600} size={12}>Limit Order</App.Text>
+          <App.Text color={formType === 'limit' ? '#fff' : '#5E5C6B'} weight={600} size={12}>Place Order</App.Text>
+        </App.Button>
+        <App.Button className={cn(styles.formTypeButton, {[styles.active]: formType === 'market'})} onClick={handleChangeFormType('market')}>
+          {
+            formType === 'market'
+              ? <App.Icon icon="check" />
+              : null
+          }
+          <App.Text color={formType === 'market' ? '#fff' : '#5E5C6B'} weight={600} size={12}>{currentTab === 'buy' ? 'Buy ' : 'Sell ' }Now</App.Text>
         </App.Button>
       </App.Flex>
       {
@@ -124,15 +143,26 @@ const TradeForm = forwardRef((_props, ref) => {
           switch (form) {
             case 'market':
               return (
-                <TradeFormMarket
-                  initialForm={marketForm}
-                  userBalances={userBalances}
-                  currentTab={currentTab}
-                  currentOption={currentOption} />
+                type === 'nfts'
+                  ? <TradeFormMarket
+                      current={current}
+                      type={type}
+                      initialForm={marketForm}
+                      userBalances={userBalances}
+                      currentTab={currentTab}
+                      currentOption={currentOption} />
+                  : <TradeFormTaker
+                      ref={takerFormRef}
+                      current={current}
+                      userBalances={userBalances}
+                      currentTab={currentTab}
+                      formOption={currentOption} />
               )
               case 'limit':
                 return (
                   <TradeFormLimit
+                    current={current}
+                    type={type}
                     currentTab={currentTab}
                     currentOption={currentOption}
                     userBalances={userBalances}
@@ -147,8 +177,8 @@ const TradeForm = forwardRef((_props, ref) => {
   )
 })
 
-const isEqual = () => {
-  return true
+const isEqual = (prev, next) => {
+  return JSON.stringify(prev.current) === JSON.stringify(next.current)
 }
 
 export default memo(TradeForm, isEqual)

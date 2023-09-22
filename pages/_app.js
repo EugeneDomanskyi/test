@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import Head from 'next/head'
 import { ToastContainer } from 'react-toastify'
@@ -6,6 +6,8 @@ import { createClient } from '@reservoir0x/reservoir-sdk'
 import nookies from 'nookies'
 import { getSelectorsByUserAgent } from 'react-device-detect'
 import amplitude from 'amplitude-js'
+import * as Sentry from '@sentry/nextjs'
+import Smartlook from 'smartlook-client'
 
 import { getDefaultWallets, RainbowKitProvider, darkTheme, connectorsForWallets } from '@rainbow-me/rainbowkit'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
@@ -17,6 +19,8 @@ import { MagicConnectConnector } from '@everipedia/wagmi-magic-connector'
 
 import { CHAINS } from '@/config'
 import store from '@/store'
+import $token from '@/store/token'
+import $collection from '@/store/collection'
 
 import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
@@ -26,19 +30,28 @@ import '@rainbow-me/rainbowkit/styles.css'
 import '@uniswap/widgets/fonts.css'
 import '@/styles/globals.css'
 
+if (process.env.NODE_ENV === 'production') {
+  Sentry.init({
+    dsn: 'https://b6059579615abe9ca86108562cbeb308@o1399663.ingest.sentry.io/4505906094538752',
+    // integrations: [
+    //   new Sentry.BrowserTracing(),
+    //   new Sentry.Replay(),
+    // ],
+    // Performance Monitoring
+    tracesSampleRate: 0.1, // Capture 100% of the transactions, reduce in production!
+    // Session Replay
+    replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+    replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+  })
+}
+
 createClient({
   chains: CHAINS,
   source: "tegro.com"
 })
 
-//const initialChain = process.env.NEXT_PUBLIC_APP_ENV == 'production' ? [mainnet, polygon] : [goerli, polygonMumbai]
-const initialChain = CHAINS
-// if (process.env.NEXT_PUBLIC_APP_ENV == 'local') {
-//   initialChain.push(goerli)
-// }
-
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  initialChain, [
+  CHAINS, [
     alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }),
     infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_ID }),
     publicProvider(),
@@ -83,7 +96,7 @@ const { wallets: [popularWallets] } = getDefaultWallets({
 const connectors = connectorsForWallets([
   {
     groupName: 'Recommended',
-    wallets: [rainbowMagicConnector({ chains: initialChain })],
+    wallets: [rainbowMagicConnector({ chains: CHAINS })],
   },
   popularWallets
 ])
@@ -114,14 +127,48 @@ const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
 
 amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
 
-function MyApp({ Component, pageProps, initialData }) {
+function MyApp({ Component, pageProps, initialData, currentPage, currentAddress, currentSymbol }) {
   const storeRef = useRef(store(initialData)).current
+
+  useEffect(() => {
+    Smartlook.init('cf71ed516173943775e4d8cc10245b95b9ed7de0')
+  }, [])
+
+  const getTitle = () => {
+    if (!currentSymbol) {
+      return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'
+    }
+    switch (currentPage) {
+      case 'nfts':
+        return `${currentSymbol} Trading and Charts | Tegro: The CEX-DEX`
+      case 'tokens':
+        return `${currentSymbol}/USDT Trading and Charts | Tegro: The CEX-DEX`
+      default:
+        return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'
+    }
+  }
+
+  const getDescription = () => {
+    if (!currentSymbol) {
+      return 'Buy, sell, and trade Tokens or NFTs instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade Tokens and NFTs at the best prices.'
+    }
+    switch (currentPage) {
+      case 'nfts':
+        return `Buy, sell, and trade ${currentSymbol} instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${currentSymbol} at the best prices.`
+      case 'tokens':
+        return `Buy, sell, and trade ${currentSymbol}/USDT instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${currentSymbol} at the best prices.`
+      default:
+        return 'Buy, sell, and trade Tokens or NFTs instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade Tokens and NFTs at the best prices.'
+    }
+  }
+  
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
         <Provider store={storeRef}>
           <Head>
-            <title>TEGRO | NFT Trading Platform</title>
+            <title>{getTitle()}</title>
+            <meta content={getDescription()} property="description" key="description" />
           </Head>
 
           <Wrapper>
@@ -138,12 +185,48 @@ function MyApp({ Component, pageProps, initialData }) {
 
 MyApp.getInitialProps = async ({ctx}) => {
   const cookies = nookies.get(ctx)
-  const res = getSelectorsByUserAgent(ctx.req?.headers?.['user-agent'])
+  
+  let isMobile = false
+  if (ctx.req?.headers?.['user-agent']) {
+    const res = getSelectorsByUserAgent(ctx.req?.headers?.['user-agent'])
+    isMobile = res?.isMobile
+  }
+  let currentPage = ''
+  let currentAddress = ''
+  let currentSymbol = ''
+  if (ctx?.req) {
+    const [_, page, blockchain, address] = ctx.req.url.split('/')
+    
+    currentPage = page
+    currentAddress = address
+    if (currentPage === 'tokens') {
+      if (blockchain && address) {
+        const network = CHAINS.find(chain => chain.code === blockchain)
+        if (network) {
+          const res = await $token.api.coingecko.full({platform: network.platform, address: address})
+          if (res) {
+            currentSymbol = res.symbol.toUpperCase()
+          }
+        }
+      }
+    } else if (currentPage === 'nfts') {
+      const res = await $collection.api.all({ id: address, limit: 1, blockchain: blockchain })
+      if (res && Array.isArray(res?.collections)) {
+        const [current] = res.collections
+        currentSymbol = current.name
+      }
+    }
+  }
+  
+
   return {
     initialData: {
       blockchain: cookies.blockchain,
-      isMobile: res?.isMobile,
-    }
+      isMobile,
+    },
+    currentPage,
+    currentAddress,
+    currentSymbol,
   }
 }
 

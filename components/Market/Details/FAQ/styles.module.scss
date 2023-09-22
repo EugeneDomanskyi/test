@@ -1,0 +1,113 @@
+.container {
+  padding-bottom: 32px;
+
+  .item {
+    padding-left: 28px;
+    padding-right: 28px;
+    padding-top: 16px;
+    border-radius: 10px;
+
+    .question {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 16px;
+
+      .button {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #2E1C8C;
+        margin-right: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .plus {
+          position: relative;
+          width: 20px;
+          height: 20px;
+
+          &:before,
+          &:after{
+            content: "";
+            position: absolute;
+            background-color: white;
+            transition: transform 0.25s ease-out;
+          }
+
+          /* Vertical line */
+          &:before{
+            top: 0;
+            left: 50%;
+            width: 4px;
+            height: 100%;
+            margin-left: -2px;
+            border-radius: 2px;
+          }
+
+          /* horizontal line */
+          &:after{
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            margin-top: -2px;
+            border-radius: 2px;
+          }
+          
+          &.open {
+            cursor: pointer;
+            
+            &:before{ transform: rotate(90deg); }
+            &:after{ transform: rotate(180deg); }
+          }
+        }
+      }
+    }
+
+    .answer {
+      height: 0;
+      overflow: hidden;
+      letter-spacing: 0.01em;
+      font-size: 18px;
+      display: flex;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    .item {  
+      .question {
+        font-size: 16px;
+  
+        .button {
+          width: 24px;
+          height: 24px;
+  
+          .plus {
+            width: 11px;
+            height: 11px;
+
+            &:before{
+              top: -1px;
+              width: 2px;
+              margin-left: -1px;
+            }
+  
+            &:after{
+              height: 2px;
+            }
+          }
+        }
+      }
+  
+      .answer {
+        font-size: 14px;
+      }
+    }
+  }
+}

@@ -17,6 +17,15 @@
     padding: 0 8px;
   }
 
+  .badge {
+    position: absolute;
+    background-color: rgba(255,255,255,0.1);
+    height: 4px;
+    width: 50%;
+    bottom: 0;
+    transition: transform .2s;
+  }
+
   .cancelAllButton {
     height: 19px;
     width: 63px;
@@ -32,13 +41,21 @@
   .order {
     height: 40px;
     position: relative;
-    cursor: pointer;
 
     &:hover {
+      cursor: pointer;
       background-color: rgba(255,255,255,0.1);
 
       .cancelButton {
         transform: translateX(0%);
+      }
+    }
+
+    &.disabled {
+      .cancelButton {
+        .statusText {
+          text-transform: capitalize;
+        }
       }
     }
 
@@ -55,7 +72,6 @@
       bottom: 0;
       right: 0;
       left: 0;
-      background-color: rgb(77, 14, 39);
       cursor: pointer;
       justify-content: center;
       align-items: center;

@@ -66,20 +66,22 @@ const CHART_CONFIG = {
 }
 
 const INTERVALS = [
-  {key: '5m', count: 5, unit: 'minutes'},
-  {key: '15m', count: 15, unit: 'minutes'},
-  {key: '30m', count: 30, unit: 'minutes'},
-  {key: '1h', count: 1, unit: 'hours'},
-  {key: '6h', count: 6, unit: 'hours'},
-  {key: '1d', count: 1, unit: 'days'},
-  {key: '1w', count: 1, unit: 'weeks'},
+  {key: '5m', count: 5, unit: 'minutes', seconds: 5*60},
+  {key: '15m', count: 15, unit: 'minutes', seconds: 15*60},
+  {key: '1h', count: 1, unit: 'hours', seconds: 60*60},
+  {key: '4h', count: 4, unit: 'hours', seconds: 4*60*60},
+  {key: '1d', count: 1, unit: 'days', seconds: 24*60*60},
+  {key: '1w', count: 1, unit: 'weeks', seconds: 7*24*60*60},
 ]
 
-const TradeChart = () => {
+const TradeChart = ({type}) => {
   const dispatch = useDispatch()
   
   const activeInterval = useSelector(({$exchange}) => $exchange.interval)
   const kLineData = useSelector($exchange.get.kLineData(activeInterval))
+  const tokenChartData = useSelector($exchange.get.chartData)
+
+  const chartData = type === 'nfts' ? kLineData : tokenChartData
 
   const wrapperRef = useRef(null)
   const containerRef = useRef(null)
@@ -91,10 +93,10 @@ const TradeChart = () => {
   }, [])
 
   useEffect(() => {
-    if (kLineData.length) {
+    if (chartData) {
       updateChart()
     }
-  }, [kLineData])
+  }, [chartData])
 
   const handleChangeInterval = (interval) => () => {
     dispatch($exchange.set.interval(interval))
@@ -110,8 +112,8 @@ const TradeChart = () => {
   }
 
   const updateChart = () => {
-    candlestickSeriesRef.current.setData(kLineData)
-    chartRef.current.timeScale().setVisibleLogicalRange({ from: kLineData.length-30, to: kLineData.length-1})
+    candlestickSeriesRef.current.setData(chartData)
+    chartRef.current.timeScale().setVisibleLogicalRange({ from: chartData.length-30, to: chartData.length-1})
   }
 
   return (
@@ -138,8 +140,8 @@ const TradeChart = () => {
   )
 }
 
-const isEqual = () => {
-  return true
+const isEqual = (prevProps, nextProps) => {
+  return prevProps.type === nextProps.type
 }
 
 export default memo(TradeChart, isEqual)

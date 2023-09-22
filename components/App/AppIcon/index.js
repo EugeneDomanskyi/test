@@ -27,9 +27,17 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
 
     if (icon == 'lock-star-fill') {
       return (
-        <svg width={width ?? 25} height={width ?? 25} viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+        <svg width={width ?? 25} height={height ?? 25} viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <path fill={color ?? '#53F19C'} d="M11.394 1.03c.828-.707 2.183-.707 3.023 0l1.896 1.633c.36.312 1.031.563 1.511.563h2.04a2.324 2.324 0 012.315 2.316v2.04c0 .467.252 1.151.564 1.511l1.632 1.895c.707.828.707 2.184 0 3.024l-1.632 1.895c-.312.36-.564 1.032-.564 1.512v2.04a2.324 2.324 0 01-2.315 2.315h-2.04c-.468 0-1.152.252-1.512.564l-1.895 1.631c-.828.708-2.184.708-3.023 0l-1.896-1.631c-.36-.312-1.032-.564-1.511-.564H5.91a2.324 2.324 0 01-2.315-2.316v-2.051c0-.468-.252-1.14-.552-1.5L1.424 14c-.696-.828-.696-2.172 0-3l1.62-1.907c.3-.36.552-1.032.552-1.5V5.542A2.324 2.324 0 015.91 3.226h2.076c.467 0 1.151-.251 1.511-.563l1.896-1.632z" />
           <path fill="#06382F" d="M16.38 10.91v-.829a3.48 3.48 0 00-3.475-3.476 3.48 3.48 0 00-3.476 3.476v.829a1.66 1.66 0 00-1.21 1.59v4.23c0 .92.744 1.663 1.663 1.663h6.045c.919 0 1.663-.743 1.663-1.662v-4.232c0-.755-.514-1.39-1.21-1.59zM12.906 8.72c.75 0 1.36.61 1.36 1.36v.756h-2.72v-.756c0-.75.61-1.36 1.36-1.36zm.453 6.54v.865a.457.457 0 01-.453.454.457.457 0 01-.454-.454v-.864a1.054 1.054 0 01-.604-.95c0-.58.477-1.057 1.058-1.057.58 0 1.058.477 1.058 1.058 0 .423-.248.78-.605.949z" />
+        </svg>
+      )
+    }
+
+    if (icon == 'arrow-45') {
+      return (
+        <svg width={width ?? 11} height={height ?? 12} viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill={color ?? '#fff'} d="M.5 10.392L1.507 11.5l7.564-8.32v5.177H10.5V.5H3.357v1.571h4.707L.5 10.392z" />
         </svg>
       )
     }
@@ -220,6 +228,108 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
       return (
         <svg width={width ?? 10} height={height ?? 10} viewBox="0 0 10 10" fill="none" {...props}>
           <path stroke={color ?? '#B9B8C5'} strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M5 6.6v-2M5 1C2.8 1 1 2.8 1 5s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4ZM5.002 3.4h-.004" />
+        </svg>
+      )
+    }
+
+    if (icon === 'twitter') {
+      return (
+        <svg width={width ?? 32} height={height ?? 27} viewBox="0 0 32 27" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill="url(#paint0_linear_314_8732)" d="M22.018.975c-3.737 0-6.776 3.056-6.776 6.815 0 .226.056.447.078.668C10.7 8.014 6.613 5.775 3.838 2.35a.622.622 0 00-1.035.079 6.792 6.792 0 00-.918 3.417c0 1.51.537 2.892 1.367 4.026-.16-.07-.337-.11-.488-.196a.62.62 0 00-.613.015.633.633 0 00-.305.535v.079c0 2.315 1.191 4.326 2.949 5.558-.02-.002-.04.005-.059 0a.623.623 0 00-.576.204.634.634 0 00-.127.602c.698 2.182 2.48 3.85 4.687 4.458a11.625 11.625 0 01-5.995 1.67c-.476 0-.933-.025-1.387-.079a.629.629 0 00-.41 1.159 17.946 17.946 0 009.764 2.888c5.832 0 10.406-2.45 13.475-5.952 3.068-3.501 4.667-8.048 4.667-12.296 0-.18-.015-.353-.02-.53 1.145-.882 2.168-1.915 2.968-3.123a.63.63 0 00-.041-.761.62.62 0 00-.74-.162c-.322.144-.698.16-1.035.275.445-.597.825-1.24 1.055-1.965a.634.634 0 00-.21-.682.623.623 0 00-.708-.044 11.668 11.668 0 01-3.495 1.355C25.397 1.74 23.803.975 22.018.975zm0 1.257c1.595 0 3.035.685 4.043 1.767a.627.627 0 00.586.177c.815-.162 1.589-.4 2.343-.707a5.575 5.575 0 01-1.601 1.473.63.63 0 00.41 1.179c.625-.076 1.181-.332 1.777-.491A11.893 11.893 0 0127.818 7.2a.627.627 0 00-.254.55c.01.255.02.508.02.766 0 3.928-1.499 8.193-4.355 11.451-2.856 3.259-7.05 5.54-12.537 5.54a16.63 16.63 0 01-6.971-1.533c2.636-.203 5.067-1.141 7.03-2.69a.63.63 0 00-.371-1.12c-2.06-.037-3.786-1.242-4.706-2.947h.097c.618 0 1.228-.078 1.797-.235a.63.63 0 00-.04-1.218c-2.223-.452-3.89-2.274-4.276-4.537.63.218 1.274.39 1.972.412a.63.63 0 00.371-1.159c-1.484-.999-2.46-2.7-2.46-4.635 0-.717.186-1.375.43-2.004 3.124 3.45 7.498 5.74 12.439 5.991a.63.63 0 00.512-.22.63.63 0 00.132-.546 5.64 5.64 0 01-.156-1.277c0-3.079 2.465-5.558 5.526-5.558z" />
+          <defs>
+            <linearGradient id="paint0_linear_314_8732" x1="7.794" x2="24.43" y1="0.975" y2="26.534" gradientUnits="userSpaceOnUse">
+              <stop stopColor={color ?? '#fff'} stopOpacity="0.76"></stop><stop offset="1" stopColor={color ?? '#fff'} stopOpacity="0.19"></stop>
+            </linearGradient>
+          </defs>
+        </svg>
+      )
+    }
+
+    if (icon === 'discord') {
+      return (
+        <svg width={width ?? 36} height={height ?? 29} viewBox="0 0 36 29" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke="url(#paint0_linear_314_8733)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7.454 21.725c8.319 4.16 13.31 4.16 21.63 0" />
+          <path stroke="url(#paint1_linear_314_8733)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M24.685 25.203l1.071 2.345s6.94-2.21 9.152-5.824c0-1.664.882-13.555-4.992-17.47-2.496-1.664-6.655-2.496-6.655-2.496l-1.664 3.328h-3.328" />
+          <path stroke="url(#paint2_linear_314_8733)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12.18 25.203l-1.352 2.345s-6.94-2.21-9.15-5.824c0-1.664-.883-13.555 4.99-17.47 2.497-1.664 6.656-2.496 6.656-2.496l1.664 3.328h3.328" />
+          <path stroke="url(#paint3_linear_314_8733)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12.445 18.398c-1.378 0-2.496-1.49-2.496-3.328 0-1.838 1.118-3.328 2.496-3.328 1.379 0 2.496 1.49 2.496 3.328 0 1.838-1.117 3.328-2.496 3.328z" />
+          <path stroke="url(#paint4_linear_314_8733)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M24.092 18.398c-1.378 0-2.496-1.49-2.496-3.328 0-1.838 1.118-3.328 2.496-3.328 1.379 0 2.496 1.49 2.496 3.328 0 1.838-1.117 3.328-2.496 3.328z" />
+          <defs>
+            <linearGradient id="paint0_linear_314_8733" x1="18.269" x2="18.269" y1="21.725" y2="24.844" gradientUnits="userSpaceOnUse">
+              <stop stopColor={color ?? '#fff'} stopOpacity="0.61"></stop><stop offset="1" stopColor={color ?? '#fff'} stopOpacity="0.32"></stop>
+            </linearGradient>
+            <linearGradient id="paint1_linear_314_8733" x1="26.612" x2="26.612" y1="1.758" y2="27.548" gradientUnits="userSpaceOnUse">
+              <stop stopColor={color ?? '#fff'} stopOpacity="0.61"></stop><stop offset="1" stopColor={color ?? '#fff'} stopOpacity="0.43"></stop>
+            </linearGradient>
+            <linearGradient id="paint2_linear_314_8733" x1="9.973" x2="9.973" y1="1.758" y2="27.548" gradientUnits="userSpaceOnUse">
+              <stop stopColor={color ?? '#fff'} stopOpacity="0.61"></stop><stop offset="1" stopColor={color ?? '#fff'} stopOpacity="0.43"></stop>
+            </linearGradient>
+            <linearGradient id="paint3_linear_314_8733" x1="12.445" x2="12.445" y1="11.742" y2="18.398" gradientUnits="userSpaceOnUse">
+              <stop stopColor={color ?? '#fff'} stopOpacity="0.25"></stop><stop offset="1" stopColor={color ?? '#fff'} stopOpacity="0.32"></stop>
+            </linearGradient>
+            <linearGradient id="paint4_linear_314_8733" x1="24.092" x2="24.092" y1="11.742" y2="18.398" gradientUnits="userSpaceOnUse">
+              <stop stopColor={color ?? '#fff'} stopOpacity="0.25"></stop><stop offset="1" stopColor={color ?? '#fff'} stopOpacity="0.32"></stop>
+            </linearGradient>
+          </defs>
+        </svg>
+      )
+    }
+
+    if (icon === 'facebook') {
+      return (
+        <svg width={width ?? 18} height={height ?? 31} viewBox="0 0 18 31" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke="url(#paint0_linear_314_8734)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16.316 1.412h-4.22a7.033 7.033 0 00-7.034 7.034v4.22H.842v5.627h4.22v11.254h5.627V18.293h4.22l1.407-5.627h-5.627v-4.22a1.407 1.407 0 011.407-1.407h4.22V1.412z" />
+          <defs>
+            <linearGradient id="paint0_linear_314_8734" x1="8.579" x2="8.579" y1="1.412" y2="29.547" gradientUnits="userSpaceOnUse">
+              <stop stopColor={color ?? '#fff'} stopOpacity="0.66"></stop><stop offset="1" stopColor={color ?? '#fff'} stopOpacity="0.13"></stop>
+            </linearGradient>
+          </defs>
+        </svg>
+      )
+    }
+
+    if (icon === 'instagram') {
+      return (
+        <svg width={width ?? 31} height={height ?? 31} viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke="url(#paint0_linear_314_8735)" strokeMiterlimit="10" strokeWidth="2" d="M22.092 1.193H9.118a7.58 7.58 0 00-7.58 7.58v12.975a7.58 7.58 0 007.58 7.58h12.974a7.58 7.58 0 007.58-7.58V8.774a7.58 7.58 0 00-7.58-7.58z" />
+          <path stroke="url(#paint1_linear_314_8735)" strokeMiterlimit="10" strokeWidth="2" d="M15.605 22.052a6.791 6.791 0 100-13.582 6.791 6.791 0 000 13.582z" />
+          <path fill="url(#paint2_linear_314_8735)" d="M23.851 8.47a1.455 1.455 0 100-2.912 1.455 1.455 0 000 2.911z" />
+          <defs>
+            <linearGradient id="paint0_linear_314_8735" x1="15.605" x2="15.605" y1="1.193" y2="29.328" gradientUnits="userSpaceOnUse">
+              <stop stopColor={color ?? '#fff'} stopOpacity="0.54"></stop><stop offset="1" stopColor={color ?? '#fff'} stopOpacity="0.17"></stop>
+            </linearGradient>
+            <linearGradient id="paint1_linear_314_8735" x1="15.605" x2="15.605" y1="8.47" y2="22.052" gradientUnits="userSpaceOnUse">
+              <stop stopColor={color ?? '#fff'} stopOpacity="0.54"></stop><stop offset="1" stopColor={color ?? '#fff'} stopOpacity="0.17"></stop>
+            </linearGradient>
+            <linearGradient id="paint2_linear_314_8735" x1="23.851" x2="23.851" y1="5.559" y2="8.469" gradientUnits="userSpaceOnUse">
+              <stop stopColor={color ?? '#fff'} stopOpacity="0.71"></stop><stop offset="1" stopColor={color ?? '#fff'} stopOpacity="0.35"></stop>
+            </linearGradient>
+          </defs>
+        </svg>
+      )
+    }
+
+    if (icon === 'substack') {
+      return (
+        <svg width={width ?? 29} height={height ?? 30} viewBox="0 0 29 30" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke="url(#paint0_linear_415_13275)" strokeWidth="2" d="M1.808 1.854v0h25.866V3.39H1.808V1.854zm0 12.895h25.866v13.267l-12.03-6.107a2 2 0 00-1.812 0L1.808 28.017V14.748zm0-6.447h25.866v1.535H1.808V8.302z" />
+          <defs>
+            <linearGradient id="paint0_linear_415_13275" x1="14.741" x2="14.741" y1="0.854" y2="29.645" gradientUnits="userSpaceOnUse">
+              <stop stopColor={color ?? '#fff'} stopOpacity="0.51"></stop><stop offset="0.922" stopColor={color ?? '#fff'} stopOpacity="0.09"></stop><stop offset="1" stopColor={color ?? '#fff'} stopOpacity="0"></stop>
+            </linearGradient>
+          </defs>
+        </svg>
+      )
+    }
+
+    if (icon === 'linkedin') {
+      return (
+        <svg width={width ?? 16} height={height ?? 16} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill="url(#paint0_linear_314_8801)" d="M2.303.885A1.782 1.782 0 102.3 4.448 1.782 1.782 0 002.303.885zm9.33 4.725c-1.487 0-2.484.816-2.893 1.589h-.042V5.856H5.767v9.837H8.82v-4.868c0-1.283.245-2.524 1.836-2.524 1.568 0 1.588 1.466 1.588 2.607v4.785h3.057v-5.396c0-2.649-.572-4.687-3.668-4.687zm-10.86.246v9.837H3.83V5.856H.773z" />
+          <defs>
+            <linearGradient id="paint0_linear_314_8801" x1="0.52" x2="15.399" y1="0.885" y2="15.763" gradientUnits="userSpaceOnUse">
+              <stop stopColor={color ?? '#fff'} stopOpacity="0.76"></stop><stop offset="1" stopColor={color ?? '#fff'} stopOpacity="0.19"></stop>
+            </linearGradient>
+          </defs>
         </svg>
       )
     }

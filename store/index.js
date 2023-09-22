@@ -5,7 +5,9 @@ import $modal from './modal'
 import $app, { appSlice } from './app'
 import $exchange from './exchange'
 import $collection from './collection'
+import $token from './token'
 import $nft from './nft'
+import $orders from './orders'
 import { CHAINS } from '@/config'
 
 const createStore = initialData => {
@@ -15,8 +17,11 @@ const createStore = initialData => {
       $app: $app.reducer,
       $exchange: $exchange.reducer,
       $collection: $collection.reducer,
+      $token: $token.reducer,
       $nft: $nft.reducer,
+      $orders: $orders.reducer,
     },
+
     preloadedState: {
       $app: {
         ...appSlice.getInitialState(),
@@ -27,15 +32,28 @@ const createStore = initialData => {
   })
 }
 
-export const request = async (uri, method = 'GET', {blockchain, ...data} = {}) => {
+const COINGECKO_URL = 'https://api.coingecko.com/api/v3'
+const UNISWAP_URL = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3'
+const OPTIMISM_URL = 'https://static.optimism.io'
+const ARBITRUM_URL = 'https://tokenlist.arbitrum.io'
+const QUICKSWAP_URL = 'https://unpkg.com/quickswap-default-token-list@1.2.2'
+const CELO_URL = 'https://celo-org.github.io'
+const BNB_URL = 'https://raw.githubusercontent.com'
+const INCH_URL = 'https://limit-orders.1inch.io/v3.0'
+
+export const request = async (uri, method = 'GET', {blockchain, api, ...data} = {}) => {
   const currentChain = CHAINS.find(chain => chain.code === blockchain)
+
   const options = {
     method,
     headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'x-api-key': process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
+      'content-type': 'application/json',
     },
+  }
+
+  if ( ! api) {
+    options.headers['x-api-key'] = process.env.NEXT_PUBLIC_RESERVOIR_API_KEY
   }
 
   let query = ''
@@ -47,10 +65,50 @@ export const request = async (uri, method = 'GET', {blockchain, ...data} = {}) =
       options.body = JSON.stringify(data)
     }
   }
-  const response = await fetch(`${currentChain.baseApiUrl}/${uri}${query}`, options)
-  if (response.ok) {
+
+  let base_url = currentChain?.baseApiUrl
+  if (api) {
+    switch (api) {
+      case 'local':
+        base_url = ''
+        break
+      case 'coingecko':
+        base_url = COINGECKO_URL
+        break
+      case 'uniswap':
+        base_url = UNISWAP_URL
+        break
+      case 'optimism':
+        base_url = OPTIMISM_URL
+        break
+      case 'arbitrum':
+        base_url = ARBITRUM_URL
+        break
+      case 'quickswap':
+        base_url = QUICKSWAP_URL
+        break
+      case 'celo':
+        base_url = CELO_URL
+        break
+      case 'bnb':
+        base_url = BNB_URL
+        break
+      case 'inch':
+        base_url = `${INCH_URL}/${currentChain.id}`
+        break
+      case 'inch-private':
+        base_url = `/api/inch`
+        console.log(base_url)
+        break
+    }
+  }
+
+  const response = await fetch(`${base_url}/${uri}${query}`, options).catch(errorHandler)
+
+  if (response?.ok) {
     return responseHandler(response)
   }
+  
   return errorHandler(response)
 }
 
@@ -59,7 +117,6 @@ const responseHandler = async (response) => {
 }
 
 const errorHandler = async (response) => {
-  // console.log(response)
   return null
 }
 
