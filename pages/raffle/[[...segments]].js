@@ -6,6 +6,7 @@ import moment from 'moment'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
+import Contracts from '@/libs/contracts.lib'
 
 import $raffle from '@/store/raffle'
 
@@ -32,6 +33,7 @@ const RafflePage = () => {
   const all = useSelector(({ $raffle }) => $raffle.all)
 
   const apollo = useRef(getApolloClient())
+  const contracts = new Contracts()
 
   useEffect(() => {
     (async () => {
@@ -64,42 +66,48 @@ const RafflePage = () => {
 
   useEffect(() => {
     if (wallet) {
-      (async () => {
-        const result = await apollo.current.query({
-          query: $raffle.query.user,
-          variables: {
-            id: wallet,
-          },
-        })
-        
-        if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('user')) {
-          const user = result.data.user
-          if (user) {
-            dispatch($raffle.set.user({
-              ...user,
-              totalEarned: user.totalEarned / Math.pow(10, 6),
-            }))
-          }
-        }
-
-        const campaigns = await apollo.current.query({
-          query: $raffle.query.userCampaigns,
-          variables: {
-            id: wallet,
-          },
-        })
-
-        if (campaigns && campaigns.hasOwnProperty('data') && campaigns.data.hasOwnProperty('userCampaigns')) {
-          dispatch($raffle.set.update(campaigns.data.userCampaigns.map(item => ({
-            campaignId: item.campaignId,
-            tKeysSpent: item.tKeysSpent,
-            totalEarned: item.totalEarned / Math.pow(10, 6),
-            isResolved: item.user.campaignParticipated.length ? item.user.campaignParticipated[0].isResolved : null,
-          }))))
-        }
-      })()
+      handleUpdateUser()
     }
   }, [wallet])
+
+  const handleUpdateUser = async () => {
+    const result = await apollo.current.query({
+      query: $raffle.query.user,
+      variables: {
+        id: wallet,
+      },
+    })
+
+    if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('user')) {
+      const user = result.data.user
+      if (user) {
+        dispatch($raffle.set.user({
+          ...user,
+          totalEarned: user.totalEarned / Math.pow(10, 6),
+        }))
+      }
+    }
+
+    const campaigns = await apollo.current.query({
+      query: $raffle.query.userCampaigns,
+      variables: {
+        id: wallet,
+      },
+    })
+
+    if (campaigns && campaigns.hasOwnProperty('data') && campaigns.data.hasOwnProperty('userCampaigns')) {
+      dispatch($raffle.set.update(campaigns.data.userCampaigns.map(item => ({
+        campaignId: item.campaignId,
+        tKeysSpent: item.tKeysSpent,
+        totalEarned: item.totalEarned / Math.pow(10, 6),
+        isResolved: item.user.campaignParticipated.length ? item.user.campaignParticipated[0].isResolved : null,
+      }))))
+    }
+
+    const contractAddress = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? '0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84' : '0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84'
+    const tempBalance = await contracts.balanceOfTkeys(wallet, contractAddress, 0)
+    dispatch($raffle.set.balance(tempBalance))
+  }
 
   const getIpfsInfo = async (campaigns) => {
     const client = new Web3Storage({ token: process.env.NEXT_PUBLIC_WEB3_STORAGE_API_KEY })
@@ -183,7 +191,7 @@ const RafflePage = () => {
     <App.Flex column className={styles.container}>
       <Raffle.Header />
       <Raffle.Top />
-      <Raffle.List />
+      <Raffle.List onUpdateUser={handleUpdateUser} />
     </App.Flex>
   )
 }
