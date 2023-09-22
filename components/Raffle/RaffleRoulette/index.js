@@ -57,7 +57,6 @@ const RaffleRoulette = ({autoStart = false, onPrizeDefined}) => {
 
   const handlePrizeDefined = () => {
     onPrizeDefined()
-    console.log('🥳 Prize defined! 🥳')
   }
 
   return (

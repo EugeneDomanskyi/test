@@ -290,6 +290,27 @@ export default {
         "stateMutability":"nonpayable",
         "type":"function"
      }
+    ],
+    enterCampaign: [
+      {
+        "inputs":[
+          {
+            "internalType":"uint256",
+            "name":"campaignId",
+            "type":"uint256"
+          },
+          {
+            "internalType":"uint256",
+            "name":"tokenId",
+            "type":"uint256"
+          }
+        ],
+        "name":"enterCampaign",
+        "outputs":[
+           
+        ],
+        "type":"function"
+     }
     ]
   }
 }

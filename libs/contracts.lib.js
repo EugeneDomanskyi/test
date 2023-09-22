@@ -264,6 +264,21 @@ export default function Contracts(defaultGasLimit = null) {
       const result = await methods.writeContract(config)
       return result
     },
+    
+    enterCampaign: async (contract, campaignId, tokenId = 0) => {
+      const config = await methods.prepareWriteContract({
+        address: contract,
+        abi: abi.tkeys.enterCampaign,
+        functionName: 'enterCampaign',
+        args: [
+          campaignId,
+          tokenId
+        ],
+      })
+
+      const result = await methods.writeContract(config)
+      return result
+    },
   }
 
   return methods

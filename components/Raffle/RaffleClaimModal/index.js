@@ -27,17 +27,17 @@ const RaffleClaimModal = ({item, onStep}) => {
 
     if (step === 0) {
       const isApproved = await contract.isApprovedForAll(contractAddr, owner, operator)
+      console.log('isApproved', isApproved);
       // const approve = await contract.setApprovalForAll(contractAddr, operator)
       // console.log('approve', approve);
-      console.log('isApproved', isApproved);
       
     }
     
     if (step === 1) {
-      const isApproved = await contract.isApprovedForAll(contractAddr, owner, operator)
+      const enterCampaign = await contract.enterCampaign(contractAddr, item.id)
       // const approve = await contract.setApprovalForAll(contractAddr, operator)
       // console.log('approve', approve);
-      console.log('isApproved', isApproved);
+      console.log('enterCampaign', enterCampaign);
       
     }
     setStep(step >= 2 ? 0 : step+1)

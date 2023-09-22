@@ -1,6 +1,7 @@
 import { useDispatch } from 'react-redux'
 import Image from 'next/image'
 import cn from 'classnames'
+import moment from 'moment'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
 
@@ -39,19 +40,26 @@ const RaffleInfoModal = ({item}) => {
     }}))
   }
 
+  const getTime = () => {
+    const end = item.endTimestamp * 1000
+    const current = moment().valueOf()
+    const duration = moment.duration(end - current, 'milliseconds')
+    return duration.humanize()
+  }
+
   return (
     <>
       <App.Flex column className={styles.top} justify="space-between" gap={16}>
         <App.Flex sx={{width: '100%'}} justify="space-between">
           <App.Flex row center gap={4} className={cn(styles.timeBadge, styles[item.status])}>
             <App.Flex center className={styles.dot} />
-            <App.Text size={[12, 10]} height={1}>{item.status == 'open' ? `${item.time} Left` : 'Closed'}</App.Text>
+            <App.Text size={[12, 10]} height={1}>{item.status == 'Active' ? `${getTime()} left` : item.status}</App.Text>
           </App.Flex>
 
           {item.status != 'closed' ? (
             <App.Flex row center gap={4} className={styles.tkeyBadge}>
               <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
-              <App.Text size={[12, 10]} height={1}>{item.keys} TKeys required to participate</App.Text>
+              <App.Text size={[12, 10]} height={1}>{item.tKeyRequired} TKeys required to participate</App.Text>
             </App.Flex>
           ) : null}
         </App.Flex>
@@ -126,7 +134,7 @@ const RaffleInfoModal = ({item}) => {
 
         <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles.hiddenOnMobile)}>
           <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
-          <App.Text size={12} height={1}>{item.rewardDist}/{item.rewardMax} reward distributed</App.Text>
+          <App.Text size={12} height={1}>{item.totalTransferred}/{item.rewardAmount} reward distributed</App.Text>
         </App.Flex>
 
         <App.Button primary sx={{width: 240}} onClick={() => handleClick(item)}>
