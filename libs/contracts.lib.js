@@ -279,6 +279,20 @@ export default function Contracts(defaultGasLimit = null) {
       const result = await methods.writeContract(config)
       return result
     },
+
+    balanceOfTkeys: async (wallet, contract, tokenId) => {
+      const result = await methods.readContract({
+        address: contract,
+        abi: abi.tkeys.balanceOf,
+        functionName: 'balanceOf',
+        args: [
+          wallet,
+          tokenId,
+        ],
+      })
+
+      return parseFloat(result) / Math.pow(10, 6)
+    },
   }
 
   return methods

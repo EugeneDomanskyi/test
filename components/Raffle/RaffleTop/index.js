@@ -17,6 +17,7 @@ const RaffleTop = () => {
   const campaigns = useSelector(({ $raffle }) => $raffle.all)
   const user = useSelector(({ $raffle }) => $raffle.user)
   const last = useSelector(({ $raffle }) => $raffle.last)
+  const balance = useSelector(({ $raffle }) => $raffle.balance)
 
   const [totalReward, setTotalReward] = useState()
 
@@ -79,7 +80,7 @@ const RaffleTop = () => {
                     <App.Flex row center gap={8}>
                       <Image src="/images/raffle/tkey-large.png" width={isMobile ? 20 : 44} height={isMobile ? 30 : 64} alt="" />
                       <App.Flex column>
-                        <App.Text center size={[48, 24]} family="ClashDisplay" height={1} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">{user.totalTKeysSpent}</App.Text>
+                        <App.Text center size={[48, 24]} family="ClashDisplay" height={1} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">{balance}</App.Text>
                         <App.Text center size={[16, 10]} family="ClashDisplay" height={1.2} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">TKeys Available</App.Text>
                       </App.Flex>
                     </App.Flex>
@@ -87,7 +88,7 @@ const RaffleTop = () => {
                     <App.Flex column center>
                       <App.Flex row gap={8} center>
                         <Image src="/images/raffle/tkey-large.png" width={isMobile ? 18 : 44} height={isMobile ? 25 : 64} alt="" />
-                        <App.Text center size={[48, 24]} family="ClashDisplay" height={1} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">{user.totalTKeysSpent}</App.Text>
+                        <App.Text center size={[48, 24]} family="ClashDisplay" height={1} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">{balance}</App.Text>
                       </App.Flex>
                       <App.Text center size={[16, 10]} family="ClashDisplay" height={1.2} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">TKeys Available</App.Text>
                     </App.Flex>

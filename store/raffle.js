@@ -21,6 +21,7 @@ export const raffleSlice = createSlice({
       campaignParticipated: [],
     },
     last: [],
+    balance: 0,
   },
 
   reducers: {
@@ -58,6 +59,10 @@ export const raffleSlice = createSlice({
 
     last: (state, { payload }) => {
       state.last = payload
+    },
+
+    balance: (state, { payload }) => {
+      state.balance = payload
     },
 
     update: (state, { payload }) => {
@@ -128,6 +133,11 @@ const query = {
         status
         startTimestamp
         endTimestamp
+        rewardRange {
+          id
+          range
+          reward
+        }
       }
     }
   `,
@@ -143,6 +153,11 @@ const query = {
         status
         startTimestamp
         endTimestamp
+        rewardRange {
+          id
+          range
+          reward
+        }
       }
     }
   `,

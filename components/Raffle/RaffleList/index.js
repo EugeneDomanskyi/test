@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -8,7 +8,7 @@ import $modal from '@/store/modal'
 import App from '@/components/App'
 import Raffle from '@/components/Raffle'
 
-const RaffleList = () => {
+const RaffleList = ({ onUpdateUser }) => {
   const dispatch = useDispatch()
   const { wallet, connect, changeNetwork } = useWalletConnect()
   const [tab, setTab] = useState('browse')
@@ -18,11 +18,26 @@ const RaffleList = () => {
     { key: 'my', title: 'My Raffle', disabled: ! wallet },
   ]
 
+  const timer = useRef()
+
   useEffect(() => {
     if (!wallet && tab == 'my') {
       setTab('browse')
     }
   }, [wallet])
+
+  useEffect(() => {
+    if (tab == 'my' && wallet) {
+      if (onUpdateUser) {
+        onUpdateUser()
+        timer.current = setInterval(onUpdateUser, 5000)
+      }
+    }
+
+    return () => {
+      clearInterval(timer.current)
+    }
+  }, [tab, wallet])
 
   const handleTabChange = (value) => {
     setTab(value)
