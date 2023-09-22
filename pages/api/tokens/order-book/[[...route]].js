@@ -61,6 +61,7 @@ const groupByPrice = (data, sort = 'asc') => {
       if ( ! temp[item.priceFormatted]) {
         temp[item.priceFormatted] = item
       } else {
+        
         temp[item.priceFormatted] = {
           ...temp[item.priceFormatted],
           amount: math.chain(temp[item.priceFormatted].amount).add(item.amount).done(),
@@ -73,8 +74,9 @@ const groupByPrice = (data, sort = 'asc') => {
   const array = Object.keys(temp).map(key => temp[key]).filter(el => el.quantity)
   array.sort((a, b) => sort == 'asc' ? (a.price - b.price) : (b.price - a.price))
   let prevVolume = 0
+  
   return array.slice(0, 10).map(item => {
-    prevVolume = math.add(prevVolume, item.amount)
+    prevVolume = math.add(prevVolume, item.amount).toLocaleString('fullwide', { useGrouping: false })
     return {
       ...item,
       volume: prevVolume
@@ -92,7 +94,7 @@ const formatter = (order, makerDecimals, takerDecimals) => {
   const takingAmount = math.chain(makingAmount).multiply(order.data.takingAmount).divide(order.data.makingAmount).round().done()
   const makingAmountFormatted = formatUnits(makingAmount, makerDecimals)*1
   const takingAmountFormatted = formatUnits(takingAmount, takerDecimals)*1
-
+  
   const makerPrice = math.chain(takingAmountFormatted).divide(makingAmountFormatted).done()
   const takerPrice = math.chain(makingAmountFormatted).divide(takingAmountFormatted).done()
   return {
@@ -151,6 +153,7 @@ const handler = async (req, res) => {
   })
   const usdtDecimals = await getDecimals(usdtAsset, chainId)
   const tokenDecimals = await getDecimals(tokenAsset, chainId)
+
   res.status(200).json({
     buy: groupByPrice(buy.map(order => formatter(order, usdtDecimals, tokenDecimals)), 'desc'),
     sell: groupByPrice(sell.map(order => formatter(order, tokenDecimals, usdtDecimals)), 'asc'),
