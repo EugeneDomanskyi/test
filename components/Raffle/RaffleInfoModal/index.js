@@ -15,6 +15,8 @@ const RaffleInfoModal = ({item}) => {
   const dispatch = useDispatch()
   const { propValue } = usePropsHelper()
 
+  console.log('InfoModal', item);
+
   const handleClick = (item) => {
     // console.log('Click', item)
 

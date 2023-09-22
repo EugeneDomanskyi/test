@@ -1,16 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 
 import $modal from '@/store/modal'
+import $raffle from '@/store/raffle'
 
 import App from '@/components/App'
 import Raffle from '@/components/Raffle'
 
 const RaffleList = ({ onUpdateUser }) => {
   const dispatch = useDispatch()
+  const router = useRouter()
   const { wallet, connect, changeNetwork } = useWalletConnect()
+
+  const campaigns = useSelector($raffle.get.filtered)
+  const showModal = useSelector((state) => state.$modal.show)
+
+  const [queryCampaignId] = router.query.segments || []
+
   const [tab, setTab] = useState('browse')
 
   const tabs = [
@@ -39,6 +48,28 @@ const RaffleList = ({ onUpdateUser }) => {
     }
   }, [tab, wallet])
 
+  useEffect(() => {
+    if (queryCampaignId && campaigns.length) {
+      const item = campaigns.find(campaign => campaign.id === queryCampaignId)
+
+      if (item) {
+        dispatch($modal.set.show({modal: 'Raffle/RaffleInfoModal', props: {
+          size: 'large',
+          item: item,
+          header: {
+            title: `Win your prize!`,
+          },
+        }}))
+      }
+    }
+  }, [queryCampaignId, campaigns])
+
+  useEffect(() => {
+    if (! showModal) {
+      router.push('/raffle', undefined, { scroll: false })
+    }
+  }, [showModal])
+
   const handleTabChange = (value) => {
     setTab(value)
   }
@@ -56,13 +87,7 @@ const RaffleList = ({ onUpdateUser }) => {
     }
 
     if (item.hasOwnProperty('user') && item.user.isResolved || !item.hasOwnProperty('user')) {
-      dispatch($modal.set.show({modal: 'Raffle/RaffleInfoModal', props: {
-        size: 'large',
-        item: item,
-        header: {
-          title: `Win your prize!`,
-        },
-      }}))
+      router.push(`/raffle/${item.id}`, undefined, { scroll: false })
     }
   }
 
