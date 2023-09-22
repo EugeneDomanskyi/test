@@ -6,7 +6,7 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const RaffleListMyItemModal = ({ item, onParticipate }) => {
+const RaffleListMyItemModal = ({ item, onParticipate, onShare }) => {
   const getTime = () => {
     const end = item.endTimestamp * 1000
     const current = moment().valueOf()
@@ -15,7 +15,7 @@ const RaffleListMyItemModal = ({ item, onParticipate }) => {
   }
 
   return (
-    <App.Flex column gap={8} sx={{padding: 16}}>
+    <App.Flex column gap={16} sx={{padding: 16}}>
       <App.Flex row align="center" justify="space-between" gap={16}>
         <App.Text color="#B9B8C5">Campaign</App.Text>
         
@@ -57,17 +57,27 @@ const RaffleListMyItemModal = ({ item, onParticipate }) => {
         </App.Flex>
       </App.Flex>
 
+      {!item?.user?.isResolved ? (
+        <App.Flex column className={styles.alert}>
+          <App.Text>You need to wait till your current mystery container has been opened</App.Text>
+        </App.Flex>
+      ) : null}
+
       {item.status == 'Active' ? (
-        <>
-          {item?.user?.isResolved ? (
-            <App.Button primary large onClick={() => onParticipate(item)}>Play Again</App.Button>
-          ) : (
-            <App.Flex column gap={8} sx={{ paddingTop: 16 }}>
-              <App.Text center color="#B9B8C5">You need to wait till your current mystery box has been opened</App.Text>
-              <App.Button variant="gray" large disabled>Play Again</App.Button>
-            </App.Flex>
-          )}
-        </>
+        <App.Flex row gap={16} align="center" fullWidth>
+          <App.Button primary large outlined onClick={() => onShare(item)} flex={4}>
+            Share on
+            <App.Icon icon="x" />
+          </App.Button>
+
+          <App.Flex flex={6}>
+            {item?.user?.isResolved ? (
+              <App.Button primary large fullWidth onClick={() => onParticipate(item)}>Play Again</App.Button>
+            ) : (
+              <App.Button variant="gray" large fullWidth disabled>Play Again</App.Button>
+            )}
+          </App.Flex>
+        </App.Flex>
       ) : null}
     </App.Flex>
   )

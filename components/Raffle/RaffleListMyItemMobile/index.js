@@ -20,7 +20,7 @@ const RaffleListMyItemMobile = ({ item, onParticipate, onShare }) => {
   }
 
   const handleInfoModalShow = () => {
-    dispatch($modal.set.show({modal: 'Raffle/RaffleListMyItemModal', props: { item, onParticipate }}))
+    dispatch($modal.set.show({modal: 'Raffle/RaffleListMyItemModal', props: { item, onParticipate, onShare }}))
   }
 
   return (
