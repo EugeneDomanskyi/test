@@ -45,6 +45,7 @@ const RafflePage = () => {
         dispatch($raffle.set.all(campaigns.map(item => ({
           ...item,
           rewardAmount: item.rewardAmount / Math.pow(10, 6),
+          totalTransferred: item.totalTransferred / Math.pow(10, 6),
           status: getStatus(item),
         }))))
       }
