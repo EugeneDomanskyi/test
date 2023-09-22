@@ -45,6 +45,7 @@ const RafflePage = () => {
         dispatch($raffle.set.all(campaigns.map(item => ({
           ...item,
           rewardAmount: item.rewardAmount / Math.pow(10, 6),
+          totalTransferred: item.totalTransferred / Math.pow(10, 6),
           status: getStatus(item),
         }))))
       }
@@ -130,14 +131,15 @@ const RafflePage = () => {
 
     const result = []
     const responses = await Promise.all(promises)
-    for (const response of responses) {
+    for (const index in responses) {
+      const response = responses[index]
       if (response.ok) {
         const cid = response.url.split('/').pop()
         const files = await response.files()
         const file = files.find(item => item.name == 'info.json')
         if (file) {
           const info = await readIpfsInfo(file)
-          const campaign = campaigns.find(item => hexToString(item.ipfsHash) == cid)
+          const campaign = campaigns[index]
           result.push({
             ...campaign,
             ...info,
