@@ -8,16 +8,26 @@ import rouletteDesign from './RouletteDesign'
 const prizes = [
   {
     image: '/images/raffle/box-common.png',
+    winner: false,
   },
   {
     image: '/images/raffle/box-uncommon.png',
+    winner: false,
   },
   {
     image: '/images/raffle/box-legendary.png',
+    winner: true,
   },
 ]
 
-const winPrizeIndex = 0
+const getRandomWinnerIndex = (arr) => {
+  const winners = arr.filter(item => item.winner === true)
+  const randomIndex = Math.floor(Math.random() * winners.length)
+  const randomWinner = winners[randomIndex]
+  const originalIndex = arr.indexOf(randomWinner)
+
+  return originalIndex
+}
 
 const reproductionArray = (array = [], length = 0) => [
   ...Array(length)
@@ -43,7 +53,8 @@ const prizeList = reproducedPrizeList.map((prize) => ({
 const RaffleRoulette = ({autoStart = false, onPrizeDefined}) => {
   const [start, setStart] = useState(false)
 
-  const prizeIndex = prizes.length * 4 + winPrizeIndex
+  // const prizeIndex = prizes.length * 4 + winPrizeIndex
+  let prizeIndex = getRandomWinnerIndex(prizeList)
 
   useEffect(() => {
     if (autoStart) {

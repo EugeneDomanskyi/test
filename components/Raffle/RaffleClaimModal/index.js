@@ -39,8 +39,7 @@ const RaffleClaimModal = ({item, onStep}) => {
     if (step === 0) {
       const isApproved = checkIfApproved()
       if (! isApproved) {
-        const approve = await contract.setApprovalForAll(contractAddr, factoryAddr)
-        console.log('approve', approve);
+        await contract.setApprovalForAll(contractAddr, factoryAddr)
       }
     }
     
@@ -49,14 +48,13 @@ const RaffleClaimModal = ({item, onStep}) => {
       if (enterCampaign.error) {
         return
       }
-      console.log('enterCampaign', enterCampaign);
-      
     }
 
     if (step === 2) {
       dispatch($modal.set.close())
       return
     }
+    
     setStep(step >= 2 ? 0 : step+1)
     onStep(step >= 2 ? 0 : step+1)
   }

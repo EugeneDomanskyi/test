@@ -16,7 +16,6 @@ const RaffleList = ({ onUpdateUser }) => {
   const { wallet, connect, changeNetwork } = useWalletConnect()
 
   const campaigns = useSelector($raffle.get.filtered)
-  const showModal = useSelector((state) => state.$modal.show)
 
   const [queryCampaignId] = router.query.segments || []
 
@@ -49,6 +48,7 @@ const RaffleList = ({ onUpdateUser }) => {
   }, [tab, wallet])
 
   useEffect(() => {
+    console.log('campaigns', campaigns);
     if (queryCampaignId && campaigns.length) {
       const item = campaigns.find(campaign => campaign.id === queryCampaignId)
 
@@ -56,19 +56,18 @@ const RaffleList = ({ onUpdateUser }) => {
         dispatch($modal.set.show({modal: 'Raffle/RaffleInfoModal', props: {
           size: 'large',
           item: item,
+          onClose: handleCloseModal,
           header: {
-            title: `Win your prize!`,
+            title: `Details`,
           },
         }}))
       }
     }
   }, [queryCampaignId, campaigns])
 
-  useEffect(() => {
-    if (! showModal) {
-      router.push('/raffle', undefined, { scroll: false })
-    }
-  }, [showModal])
+  const handleCloseModal = () => {
+    router.push('/raffle', undefined, { scroll: false })
+  }
 
   const handleTabChange = (value) => {
     setTab(value)

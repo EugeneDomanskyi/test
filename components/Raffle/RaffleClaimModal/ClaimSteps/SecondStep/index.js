@@ -12,7 +12,7 @@ const SecondStep = ({item, onSubmit}) => {
       <ClaimImage contentImg={{src: "/images/raffle/tkey-xl.png", width: 128, height: 128}} />
       
       <ClaimText
-        title="Deposit 3 Tkeys"
+        title={`Deposit ${item.tKeyRequired} Tkeys`}
         subTitle="You must deposit your TKeys to participate in the raffle."
       />
 

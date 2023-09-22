@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import cn from 'classnames'
 import moment from 'moment'
@@ -10,16 +10,19 @@ import $modal from '@/store/modal'
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
+import { useEffect } from 'react'
 
-const RaffleInfoModal = ({item}) => {
+const RaffleInfoModal = ({item, onClose}) => {
   const dispatch = useDispatch()
   const { propValue } = usePropsHelper()
 
-  console.log('InfoModal', item);
+  const showModal = useSelector((state) => state.$modal.show)
+
+  useEffect(() => {
+    console.log('showModal', showModal);
+  }, [showModal])
 
   const handleClick = (item) => {
-    // console.log('Click', item)
-
     dispatch($modal.set.show({modal: 'Raffle/RaffleClaimModal', props: {
       item: item,
       size: 'small',
