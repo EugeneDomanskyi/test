@@ -27,10 +27,9 @@ const getApolloClient = () => {
 }
 
 const RafflePage = () => {
-  const { wallet } = useWalletConnect()
+  const { wallet, changeNetwork } = useWalletConnect()
 
   const dispatch = useDispatch()
-  const all = useSelector(({ $raffle }) => $raffle.all)
 
   const apollo = useRef(getApolloClient())
   const contracts = new Contracts()
@@ -66,11 +65,18 @@ const RafflePage = () => {
 
   useEffect(() => {
     if (wallet) {
-      handleUpdateUser()
+      (async () => {
+        await handleUpdateUser()
+        dispatch($raffle.set.loadingUser(false))
+      })()
     }
   }, [wallet])
 
-  const handleUpdateUser = async () => {
+  const handleUpdateUser = async (hard = false) => {
+    if (hard) {
+      apollo.current = getApolloClient()
+    }
+
     const result = await apollo.current.query({
       query: $raffle.query.user,
       variables: {
@@ -102,6 +108,12 @@ const RafflePage = () => {
         totalEarned: item.totalEarned / Math.pow(10, 6),
         isResolved: item.user.campaignParticipated.length ? item.user.campaignParticipated[0].isResolved : null,
       }))))
+    }
+
+    const networkCode = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
+    const network = await changeNetwork(networkCode)
+    if ( ! network) {
+      return
     }
 
     const contractAddress = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? '0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84' : '0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84'

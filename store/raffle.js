@@ -11,6 +11,7 @@ export const raffleSlice = createSlice({
     all: [],
     current: {},
     loading: false,
+    loadingUser: true,
     sort: 'status:asc',
     search: '',
     page: 1,
@@ -63,6 +64,10 @@ export const raffleSlice = createSlice({
 
     balance: (state, { payload }) => {
       state.balance = payload
+    },
+
+    loadingUser: (state, { payload }) => {
+      state.loadingUser = payload
     },
 
     update: (state, { payload }) => {

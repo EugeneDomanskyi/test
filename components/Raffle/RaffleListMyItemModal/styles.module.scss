@@ -7,7 +7,6 @@
   border-radius: 100px;
   background: rgba(6, 56, 47, 0.60);
   backdrop-filter: blur(2px);
-  width: 115px;
 
   .dot {
     width: 16px;
@@ -36,4 +35,10 @@
       }
     }
   }
+}
+
+.alert {
+  background-color: #4D0E27;
+  border-radius: 4px;
+  padding: 16px;
 }

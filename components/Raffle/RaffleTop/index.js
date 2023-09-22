@@ -18,6 +18,7 @@ const RaffleTop = () => {
   const user = useSelector(({ $raffle }) => $raffle.user)
   const last = useSelector(({ $raffle }) => $raffle.last)
   const balance = useSelector(({ $raffle }) => $raffle.balance)
+  const loadingUser = useSelector(({ $raffle }) => $raffle.loadingUser)
 
   const [totalReward, setTotalReward] = useState()
 
@@ -50,11 +51,11 @@ const RaffleTop = () => {
           <App.Flex column gap={[64, 32]} sx={[{ padding: '103px 0 87px' }, { padding: '32px 0 24px' }]}>
             <App.Flex column>
               <App.Text center size={[46, 32]} height={1} family="ClashDisplay" gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">Mega USDT Rewards Up For Grabs!</App.Text>
-              <App.Text center size={[16, 14]}>Join raffles with TKeys for chances to win USDT and more on Polygon!</App.Text>
+              <App.Text center size={[16, 14]}>Use your TKeys to unlock USDT and other exciting rewards on Polygon!</App.Text>
             </App.Flex>
 
             <App.Flex direction={['row', 'column']} center gap={[96, 16]}>
-              <App.Flex row center gap={32} className={styles.box}>
+              <App.Flex row align="center" justify={['center', 'space-between']} gap={32} className={styles.box}>
                 <App.Flex center column>
                   {totalReward ? (
                     <App.Text center size={[48, 24]} family="ClashDisplay" height={1} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">${totalReward}</App.Text>
@@ -70,17 +71,25 @@ const RaffleTop = () => {
               </App.Flex>
 
               {wallet ? (
-                <App.Flex row center gap={[32, 8]} className={styles.box}>
-                  <App.Flex column>
-                    <App.Text center size={[48, 24]} family="ClashDisplay" height={1} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">${user.totalEarned}</App.Text>
+                <App.Flex row align="center" justify={['center', 'space-between']} gap={[32, 8]} className={styles.box}>
+                  <App.Flex column center>
+                    {loadingUser ? (
+                      <App.Loader size={[48, 24]} />
+                    ) : (
+                      <App.Text center size={[48, 24]} family="ClashDisplay" height={1} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">${user.totalEarned}</App.Text>
+                    )}
                     <App.Text center size={[16, 10]} family="ClashDisplay" height={1.2} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">Rewards Unlocked</App.Text>
                   </App.Flex>
 
                   {!isMobile ? (
                     <App.Flex row center gap={8}>
                       <Image src="/images/raffle/tkey-large.png" width={isMobile ? 20 : 44} height={isMobile ? 30 : 64} alt="" />
-                      <App.Flex column>
-                        <App.Text center size={[48, 24]} family="ClashDisplay" height={1} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">{balance}</App.Text>
+                      <App.Flex column center>
+                        {loadingUser ? (
+                          <App.Loader size={[48, 24]} />
+                        ) : (
+                          <App.Text center size={[48, 24]} family="ClashDisplay" height={1} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">{balance}</App.Text>
+                        )}
                         <App.Text center size={[16, 10]} family="ClashDisplay" height={1.2} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">TKeys Available</App.Text>
                       </App.Flex>
                     </App.Flex>
@@ -88,14 +97,18 @@ const RaffleTop = () => {
                     <App.Flex column center>
                       <App.Flex row gap={8} center>
                         <Image src="/images/raffle/tkey-large.png" width={isMobile ? 18 : 44} height={isMobile ? 25 : 64} alt="" />
-                        <App.Text center size={[48, 24]} family="ClashDisplay" height={1} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">{balance}</App.Text>
+                        {loadingUser ? (
+                          <App.Loader size={[48, 24]} />
+                        ) : (
+                          <App.Text center size={[48, 24]} family="ClashDisplay" height={1} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">{balance}</App.Text>
+                        )}
                       </App.Flex>
                       <App.Text center size={[16, 10]} family="ClashDisplay" height={1.2} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">TKeys Available</App.Text>
                     </App.Flex>
                   )}
 
                   <App.Flex center className={styles.button} onClick={handleMoreClick}>
-                    <App.Text center size={[14, 12]} weight={700}>Collect more TKeys</App.Text>
+                    <App.Text center size={[14, 12]} weight={700}>Grab more TKeys</App.Text>
                   </App.Flex>
                 </App.Flex>
               ) : null}

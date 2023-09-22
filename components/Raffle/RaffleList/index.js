@@ -29,8 +29,8 @@ const RaffleList = ({ onUpdateUser }) => {
   useEffect(() => {
     if (tab == 'my' && wallet) {
       if (onUpdateUser) {
-        onUpdateUser()
-        timer.current = setInterval(onUpdateUser, 5000)
+        onUpdateUser(true)
+        timer.current = setInterval(() => onUpdateUser(true), 5000)
       }
     }
 
