@@ -275,7 +275,6 @@ export default function Contracts(defaultGasLimit = null) {
           tokenId
         ],
       })
-
       const result = await methods.writeContract(config)
       return result
     },
