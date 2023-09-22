@@ -291,7 +291,7 @@ export default function Contracts(defaultGasLimit = null) {
         ],
       })
 
-      return parseFloat(result) / Math.pow(10, 6)
+      return parseFloat(result)
     },
   }
 
