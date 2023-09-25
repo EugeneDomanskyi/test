@@ -37,25 +37,36 @@ const RaffleClaimModal = ({item, onStep}) => {
   }, [showModal])
 
   useEffect(() => {
-    const isApproved = checkIfApproved()
-    setStep(isApproved ? 1 : 0)
-    onStep(isApproved ? 1 : 0)
-  }, [])
+    (async () => {
+      if (wallet) {
+        const isApproved = await checkIfApproved()
+        setStep(isApproved ? 1 : 0)
+        onStep(isApproved ? 1 : 0)
+      }
+    })()
+  }, [wallet])
 
   const checkIfApproved = async () => {
-    return await contract.isApprovedForAll(contractAddr, wallet, factoryAddr)
+    const res = await contract.isApprovedForAll(contractAddr, wallet, factoryAddr)
+    console.log('res', res);
+    return res
   }
 
   const handleClickNextStep = async () => {
     if (step === 0) {
-      const isApproved = checkIfApproved()
+      const isApproved = await checkIfApproved()
       if (! isApproved) {
-        await contract.setApprovalForAll(contractAddr, factoryAddr)
+        const approveRes = await contract.setApprovalForAll(contractAddr, factoryAddr)
+        dispatch($raffle.set.loading(false))
+        if (approveRes.error) {
+          return
+        }
       }
     }
     
     if (step === 1) {
       const enterCampaign = await contract.enterCampaign(factoryAddr, item.id)
+
       dispatch($raffle.set.loading(false))
       if (enterCampaign.error) {
         return

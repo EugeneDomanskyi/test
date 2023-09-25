@@ -25,10 +25,10 @@ const SecondStep = ({item, onSubmit}) => {
         subTitle="You must deposit your TKeys to participate in the raffle."
       />
 
-      <App.Button primary onClick={handleClickNextStep}>
+      <App.Button primary onClick={handleClickNextStep} sx={{width: 130}}>
         {
           loading
-            ? <App.Loader size={24} />
+            ? <App.Loader size={20} />
             : "Confirm Deposit"
         }
       </App.Button>

@@ -29,13 +29,19 @@ export default function Contracts(defaultGasLimit = null) {
     prepareWriteContract: async (contractConfig, gasLimit = defaultGasLimit) => {
       const place = contractConfig?.functionName
       let errorCode = null
+      let errorData = {}
       let config = {}
       try {
         config = await prepareWriteContract(contractConfig)
       } catch (error) {
         errorCode = error?.code
+        // errorData.error = error
         methods.debugMessage(error, `Prepare "${place}"`)
       }
+
+      // if (errorData) {
+      //   return errorData
+      // }
 
       if (errorCode) {
         if (errorCode == 'UNPREDICTABLE_GAS_LIMIT' && gasLimit) {
@@ -275,6 +281,11 @@ export default function Contracts(defaultGasLimit = null) {
           tokenId
         ],
       })
+
+      // if (config.error) {
+      //   return config
+      // }
+
       const result = await methods.writeContract(config)
       return result
     },

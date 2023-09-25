@@ -56,8 +56,6 @@ const RaffleInfoModal = ({item}) => {
     return duration.humanize()
   }
 
-  console.log('item', item);
-
   return (
     <>
       <App.Flex column className={styles.top} justify="space-between" gap={16}>

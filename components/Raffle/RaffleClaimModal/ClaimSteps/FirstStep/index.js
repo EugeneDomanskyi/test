@@ -2,8 +2,17 @@ import App from '@/components/App'
 import ClaimImage from '@/components/Raffle/RaffleClaimModal/ClaimImage'
 import ClaimText from '@/components/Raffle/RaffleClaimModal/ClaimText'
 
+import { useDispatch, useSelector } from 'react-redux'
+
+import $raffle from '@/store/raffle'
+
 const FirstStep = ({item, onSubmit}) => {
+  const dispatch = useDispatch()
+
+  const { loading } = useSelector(({$raffle}) => $raffle)
+
   const handleClickNextStep = () => {
+    dispatch($raffle.set.loading(true))
     onSubmit()
   }
 
@@ -16,8 +25,12 @@ const FirstStep = ({item, onSubmit}) => {
         subTitle="You must grant approval to the factory contract to manage your TKeys."
       />
 
-      <App.Button primary onClick={handleClickNextStep}>
-        Confirm Approval
+      <App.Button primary onClick={handleClickNextStep} sx={{width: 140}}>
+        {
+          loading
+            ? <App.Loader size={20} />
+            : "Confirm Approval"
+        }
       </App.Button>
     </>
   )

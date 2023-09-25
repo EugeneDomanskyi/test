@@ -33,7 +33,7 @@ const RaffleListBrowse = ({ onParticipate, onShare }) => {
   }
 
   return (
-    <App.Flex column gap={16}>
+    <App.Flex column gap={16} fullWidth>
       <App.Flex wrap gap={[32, 16]} >
         {campaigns.slice((page - 1) * perPage, page * perPage).map((item, index) => (
           <RaffleListBrowseItem key={item.id + index} item={item} onParticipate={onParticipate} onShare={onShare} />
