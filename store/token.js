@@ -1,8 +1,29 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
 import { gql } from '@apollo/client'
 import numeral from 'numeral'
+import * as math from 'mathjs'
+import { formatUnits } from 'viem'
 
 import { request } from './index'
+
+function formatNumber(number) {
+  if (!number) {
+    return '0'
+  }
+  const str = number.toString()?.toFixed(20)
+  let lastIndex = -1;
+
+  for (let i = str.length - 1; i >= 0; i--) {
+    if (str[i] !== '0') {
+      lastIndex = i+1;
+      break;
+    }
+  }
+  if (lastIndex !== -1) {
+    return str.slice(0, lastIndex)
+  }
+  return str
+}
 
 export const template = (item) => {
   const currency = 'USDT'
