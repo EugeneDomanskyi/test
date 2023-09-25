@@ -56,6 +56,8 @@ const RaffleInfoModal = ({item}) => {
     return duration.humanize()
   }
 
+  console.log('item', item);
+
   return (
     <>
       <App.Flex column className={styles.top} justify="space-between" gap={16}>
@@ -90,55 +92,22 @@ const RaffleInfoModal = ({item}) => {
         </App.Flex>
 
         <App.Flex gap={16} className={styles.rewardsContainer}>
-          <App.Flex column align="center" className={styles.rewardBlock} gap={8}>
-            <App.Flex gap={4}>
-              <Image src="/images/raffle/icon-crown.png" width={18} height={17} alt="" />
-              <App.Text size={12} weight={400}>Mirco Reward</App.Text>
-            </App.Flex>
+          {
+            item.rewardRange.map((item, index) => {
+              const amount = item.reward / 1000000
+              return (
+                <App.Flex key={index} column align="center" className={styles.rewardBlock} gap={8}>
+                  <App.Flex gap={4}>
+                    <Image src="/images/raffle/icon-crown.png" width={18} height={17} alt="" />
+                    <App.Text size={12} weight={400}>Mirco Reward</App.Text>
+                  </App.Flex>
 
-            <App.ShadowText color="#FFCB04" shadowColor="#FF7708" size={26} weight={700}>$0.001</App.ShadowText>
-            <App.Text size={14} weight={500}>Odds: 65%</App.Text>
-          </App.Flex>
-          
-          <App.Flex column align="center" className={styles.rewardBlock} gap={8}>
-            <App.Flex gap={4}>
-              <Image src="/images/raffle/icon-crown.png" width={18} height={17} alt="" />
-              <App.Text size={12} weight={400}>Small Reward</App.Text>
-            </App.Flex>
-
-            <App.ShadowText color="#FFCB04" shadowColor="#FF7708" size={26} weight={700}>$0.01</App.ShadowText>
-            <App.Text size={14} weight={500}>Odds: 20%</App.Text>
-          </App.Flex>
-          
-          <App.Flex column align="center" className={styles.rewardBlock} gap={8}>
-            <App.Flex gap={4}>
-              <Image src="/images/raffle/icon-crown.png" width={18} height={17} alt="" />
-              <App.Text size={12} weight={400}>Medium Reward</App.Text>
-            </App.Flex>
-
-            <App.ShadowText color="#FFCB04" shadowColor="#FF7708" size={26} weight={700}>$1</App.ShadowText>
-            <App.Text size={14} weight={500}>Odds: 10%</App.Text>
-          </App.Flex>
-
-          <App.Flex column align="center" className={styles.rewardBlock} gap={8}>
-            <App.Flex gap={4}>
-              <Image src="/images/raffle/icon-crown.png" width={18} height={17} alt="" />
-              <App.Text size={12} weight={400}>Big Reward</App.Text>
-            </App.Flex>
-
-            <App.ShadowText color="#FFCB04" shadowColor="#FF7708" size={26} weight={700}>$10</App.ShadowText>
-            <App.Text size={14} weight={500}>Odds: 4%</App.Text>
-          </App.Flex>
-          
-          <App.Flex column align="center" className={styles.rewardBlock} gap={8}>
-            <App.Flex gap={4}>
-              <Image src="/images/raffle/icon-crown.png" width={18} height={17} alt="" />
-              <App.Text size={12} weight={400}>Jumbo Reward</App.Text>
-            </App.Flex>
-
-            <App.ShadowText color="#FFCB04" shadowColor="#FF7708" size={26} weight={700}>$50</App.ShadowText>
-            <App.Text size={14} weight={500}>Odds: 1%</App.Text>
-          </App.Flex>
+                  <App.ShadowText color="#FFCB04" shadowColor="#FF7708" size={26} weight={700}>${amount}</App.ShadowText>
+                  <App.Text size={14} weight={500}>Odds: 65%</App.Text>
+                </App.Flex>
+              )
+            })
+          }
         </App.Flex>
 
         <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles.hiddenOnMobile)}>

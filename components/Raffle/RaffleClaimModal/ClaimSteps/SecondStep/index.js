@@ -2,8 +2,17 @@ import App from '@/components/App'
 import ClaimImage from '@/components/Raffle/RaffleClaimModal/ClaimImage'
 import ClaimText from '@/components/Raffle/RaffleClaimModal/ClaimText'
 
+import { useDispatch, useSelector } from 'react-redux'
+
+import $raffle from '@/store/raffle'
+
 const SecondStep = ({item, onSubmit}) => {
+  const dispatch = useDispatch()
+
+  const { loading } = useSelector(({$raffle}) => $raffle)
+
   const handleClickNextStep = () => {
+    dispatch($raffle.set.loading(true))
     onSubmit()
   }
 
@@ -17,7 +26,11 @@ const SecondStep = ({item, onSubmit}) => {
       />
 
       <App.Button primary onClick={handleClickNextStep}>
-        Confirm Deposit
+        {
+          loading
+            ? <App.Loader size={24} />
+            : "Confirm Deposit"
+        }
       </App.Button>
     </>
   )

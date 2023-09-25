@@ -7,6 +7,7 @@ import Contracts from '@/libs/contracts.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
 import $modal from '@/store/modal'
+import $raffle from '@/store/raffle'
 
 import App from '@/components/App'
 import FirstStep from '@/components/Raffle/RaffleClaimModal/ClaimSteps/FirstStep'
@@ -55,6 +56,7 @@ const RaffleClaimModal = ({item, onStep}) => {
     
     if (step === 1) {
       const enterCampaign = await contract.enterCampaign(factoryAddr, item.id)
+      dispatch($raffle.set.loading(false))
       if (enterCampaign.error) {
         return
       }
