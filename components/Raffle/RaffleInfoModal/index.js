@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
 import Image from 'next/image'
 import cn from 'classnames'
 import moment from 'moment'
@@ -12,14 +13,17 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 import { useEffect } from 'react'
 
-const RaffleInfoModal = ({item, onClose}) => {
+const RaffleInfoModal = ({item}) => {
+  const router = useRouter()
   const dispatch = useDispatch()
   const { propValue } = usePropsHelper()
 
   const showModal = useSelector((state) => state.$modal.show)
 
   useEffect(() => {
-    console.log('showModal', showModal);
+    if (!showModal) {
+      router.push('/raffle', undefined, { scroll: false })
+    }
   }, [showModal])
 
   const handleClick = (item) => {

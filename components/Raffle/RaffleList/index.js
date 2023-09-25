@@ -48,7 +48,6 @@ const RaffleList = ({ onUpdateUser }) => {
   }, [tab, wallet])
 
   useEffect(() => {
-    console.log('campaigns', campaigns);
     if (queryCampaignId && campaigns.length) {
       const item = campaigns.find(campaign => campaign.id === queryCampaignId)
 
@@ -56,7 +55,6 @@ const RaffleList = ({ onUpdateUser }) => {
         dispatch($modal.set.show({modal: 'Raffle/RaffleInfoModal', props: {
           size: 'large',
           item: item,
-          onClose: handleCloseModal,
           header: {
             title: `Details`,
           },
@@ -64,10 +62,6 @@ const RaffleList = ({ onUpdateUser }) => {
       }
     }
   }, [queryCampaignId, campaigns])
-
-  const handleCloseModal = () => {
-    router.push('/raffle', undefined, { scroll: false })
-  }
 
   const handleTabChange = (value) => {
     setTab(value)

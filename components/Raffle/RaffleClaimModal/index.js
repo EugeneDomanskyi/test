@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
+import { useDispatch, useSelector } from 'react-redux'
 
 import Contracts from '@/libs/contracts.lib'
 
@@ -12,11 +14,13 @@ import SecondStep from '@/components/Raffle/RaffleClaimModal/ClaimSteps/SecondSt
 import ThirdStep from '@/components/Raffle/RaffleClaimModal/ClaimSteps/ThirdStep'
 
 import styles from './styles.module.scss'
-import { useDispatch } from 'react-redux'
 
 const RaffleClaimModal = ({item, onStep}) => {
+  const router = useRouter()
   const dispatch = useDispatch()
   const { wallet } = useWalletConnect()
+
+  const showModal = useSelector((state) => state.$modal.show)
 
   const contract = new Contracts()
 
@@ -24,6 +28,12 @@ const RaffleClaimModal = ({item, onStep}) => {
 
   const contractAddr = '0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84'
   const factoryAddr = '0xA4cDD0FEe85c917A68a9432a3ebfF1f66E9f281A'
+
+  useEffect(() => {
+    if (!showModal) {
+      router.push('/raffle', undefined, { scroll: false })
+    }
+  }, [showModal])
 
   useEffect(() => {
     const isApproved = checkIfApproved()
@@ -54,7 +64,7 @@ const RaffleClaimModal = ({item, onStep}) => {
       dispatch($modal.set.close())
       return
     }
-    
+
     setStep(step >= 2 ? 0 : step+1)
     onStep(step >= 2 ? 0 : step+1)
   }
