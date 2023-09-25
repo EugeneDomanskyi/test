@@ -53,10 +53,7 @@ export default function Trending() {
           image: item.small
         }
       })
-
-      console.log('topResults', topResults);
     }
-    // console.log('result.collections', result.collections);
     setTrending(topResults)
   }
 

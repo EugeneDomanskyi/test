@@ -52,6 +52,37 @@ const WrapperTokens = ({ children }) => {
   const apollo = useRef(getApolloClient(blockchain))
 
   useEffect(() => {
+    fillAssetsFile()
+  }, [])
+
+  const fillAssetsFile = async () => {
+    for (const token of infoList) {
+      const tokenId = token.platforms[blockchain.platform]
+      console.log('tokenId', tokenId)
+      console.log('token.platforms', token.platforms)
+      if (tokenId) {
+        const currentToken = await getToken(tokenId)
+  
+        const existingToken = list.length ? list.find(item => item.id === currentToken.id) : null
+
+        console.log('existingToken', existingToken);
+  
+        if (!existingToken) {
+          const fullToken = await getTokenFull(currentToken)
+  
+          const staticData = staticTemplate(fullToken)
+          const preUpdateList = list.filter(item => item.address !== currentToken.address)
+          const mergedData = preUpdateList.length ? [...preUpdateList, staticData] : [staticData]
+          console.log('mergedData', mergedData);
+          putAssetsFile(mergedData)
+        }
+      }
+  
+      await new Promise(resolve => setTimeout(resolve, 5000))
+    }
+  }
+
+  useEffect(() => {
     (async () => {
       // const tempList = await $token.api.coingecko.list({ include_platform: true })
       // if (tempList) {
@@ -252,7 +283,7 @@ const WrapperTokens = ({ children }) => {
 
           const existingToken = list.length ? list.find(item => item.id === currentToken.id) : null
 
-          if (! existingToken) {
+          if (existingToken) {
             const fullToken = await getTokenFull(currentToken)
             dispatch($token.set.current(fullToken))
             dispatch($token.set.update(fullToken))

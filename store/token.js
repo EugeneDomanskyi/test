@@ -88,7 +88,7 @@ const infoToTemplate = (item) => {
   if (item) {
     return {
       cgId: item.id,
-      symbol: item.symbol.toUpperCase(),
+      symbol: item.symbol?.toUpperCase(),
       image: item.image,
       price: item.current_price,
       high: item.high_24h,

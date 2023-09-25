@@ -5,10 +5,12 @@ import Head from 'next/head'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
 import $collection from '@/store/collection'
-import $token, { template } from '@/store/token'
+import $token, { template, staticTemplate } from '@/store/token'
 import $app from '@/store/app'
 import $exchange from '@/store/exchange'
 import $orders from '@/store/orders'
+
+import { CHAINS } from '@/config'
 
 import App from '@/components/App'
 import Market from '@/components/Market'
@@ -41,7 +43,7 @@ export default function Markets({marketData, marketSales, marketOrders}) {
   const marketInfo = useSelector(({$app}) => $app.marketInfo)
 
   useEffect(() => {
-    console.log('marketData', marketData);
+    // console.log('marketData', marketData);
     initPage(marketData, marketSales, marketOrders)
     // if (marketData) {
     //   // console.log('marketData', marketData);
@@ -63,7 +65,9 @@ export default function Markets({marketData, marketSales, marketOrders}) {
   }, [marketData, marketSales, marketOrders])
 
   const initPage = async (data, sales, orders) => {
-
+    if (marketData) {
+      dispatch($app.set.marketInfo(marketData))
+    }
   }
 
   return (
@@ -187,7 +191,6 @@ export async function getServerSideProps(context) {
     }
   }
 
-  console.log('queryMarketType', queryMarketType);
   if (queryMarketType === 'nfts') {
     const result = await $collection.api.all(queryParams(
       blockchainCode,
@@ -209,15 +212,54 @@ export async function getServerSideProps(context) {
       }
     }
   } else {
-    // const full = await fetch(`https://api.coingecko.com/api/v3/coins/${blockchainCode}/contract/${address.toLowerCase()}`)
-    const full = await $token.api.coingecko.full({ platform: blockchainCode, address: address.toLowerCase() })
-    console.log('address', address);
-    console.log('full', full);
-    const info = await $token.api.coingecko.info({ vs_currency: 'usd', ids: [address.toLowerCase()] })
-    console.log('info', info);
-    let fullToken = {}
-    fullToken.full = full
-    fullToken.info = info
+    // const tempList = await getAssetsFile()
+    // let currentToken = tempList.find(item => item.id === address)
+    // const info = await $token.api.coingecko.info({ vs_currency: 'usd', ids: [address.toLowerCase()] })
+    // console.log('info', info);
+    // currentToken.info = info
+    // marketData = template(currentToken)
+
+
+
+    // console.log('currentToken', currentToken);
+    // let token = {}
+    // const result = await apollo.current.query({
+    //   query: $token.query.token,
+    //   variables: {
+    //     id,
+    //   },
+    // })
+
+    // if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('token') && result.data.token != null) {
+    //   token = {
+    //     basic: result.data.token,
+    //     blockchain: blockchain.code,
+    //   }
+    // } else {
+    //   const scanData = await getBasicInfo(id, blockchain.id)
+    //   if (scanData) {
+    //     token = {
+    //       basic: {
+    //         ...scanData,
+    //         id: scanData.address,
+    //         totalSupply: scanData.totalSupply.formatted,
+    //       },
+    //       blockchain: blockchain.code,
+    //     }
+    //   } else {
+    //     console.log('Token was not found in current blockchain')
+    //   }
+    // }
+    // let currentToken = template(token)
+    // const network = CHAINS.find(chain => chain.code === blockchainCode)
+    // const full = await $token.api.coingecko.full({ platform: network.platform, address: address.toLowerCase() })
+    // const info = await $token.api.coingecko.info({ vs_currency: 'usd', ids: [address.toLowerCase()] })
+    // currentToken.full = full
+    // currentToken.info = info
+    // const templateData = template(currentToken)
+    // console.log('templateData', templateData);
+    // marketData = staticTemplate(templateData)
+    // console.log('marketData', marketData);
 
     // const [priceInfo] = await getInfo([existingToken])
     // const priceTemplate = template({info: priceInfo})

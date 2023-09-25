@@ -16,12 +16,14 @@ import WrapperCollections from '@/components/Wrapper/WrapperCollections'
 
 const Wrapper = ({ children }) => {
   const router = useRouter()
-  const isNfts = router.pathname.includes('/nfts')
+  const isNfts = router.asPath?.includes('nfts')
   const isSwap = router.pathname.includes('/swap')
-  const isTokens = router.pathname.includes('/tokens')
+  const isTokens = router.asPath?.includes('tokens')
   const isLanding = router.pathname.includes('/landing')
 
   const { address, isConnected } = useAccount()
+
+  console.log('isTokens', isTokens);
 
   useEffect(() => {
     if (isConnected && address) {
