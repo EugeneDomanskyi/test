@@ -1,8 +1,6 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
 import { gql } from '@apollo/client'
 import numeral from 'numeral'
-import * as math from 'mathjs'
-import { formatUnits } from 'viem'
 
 import { request } from './index'
 
