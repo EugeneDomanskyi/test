@@ -23,8 +23,6 @@ const Wrapper = ({ children }) => {
 
   const { address, isConnected } = useAccount()
 
-  console.log('isTokens', isTokens);
-
   useEffect(() => {
     if (isConnected && address) {
       const identifyObj = new amplitude.Identify()
