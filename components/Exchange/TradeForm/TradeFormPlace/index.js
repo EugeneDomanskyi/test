@@ -12,6 +12,7 @@ import { INCH_TOKENS } from '@/config'
 
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
+import numeral from 'numeral'
 
 const trimLeadingZerosBeforeDecimal = number => {
   return number.toString().replace(/^0+(?=\d+(\.\d*)?$)/, '')
@@ -39,18 +40,25 @@ const TradeFormPlace = ({current, currentTab, currentOption, userBalances}) => {
     switch (currentTab) {
       case 'buy':
         const [cheapestOrder] = orderBook.sell
-        if (cheapestOrder) {
+        if (cheapestOrder && cheapestOrder.priceFormatted) {
           handleChangeForm('price')(cheapestOrder.priceFormatted.toString())
           handleChangeForm('amount')(cheapestOrder.quantity.toString())
+        } else if (current.price) {
+          handleChangeForm('price')(current.price)
+        } else {
+          handleChangeForm('price')('')
         }
         break
       case 'sell':
         const [expensiveOrder] = orderBook.buy
-        if (expensiveOrder) {
+        if (expensiveOrder && expensiveOrder.priceFormatted) {
           handleChangeForm('price')(expensiveOrder.priceFormatted.toString())
           handleChangeForm('amount')(expensiveOrder.quantity.toString())
+        } else if (current.price) {
+          handleChangeForm('price')(current.price)
+        } else {
+          handleChangeForm('price')('')
         }
-        
         break
     }
   }
@@ -61,22 +69,20 @@ const TradeFormPlace = ({current, currentTab, currentOption, userBalances}) => {
     if (!decimalRegExp.test(value) && value) {
       return
     }
-    
+    value = value.indexOf('.')+1 ? value.substring(0, value.indexOf('.') + 6) : value
     switch (field) {
       case 'price':
-        value = value.indexOf('.')+1 ? value.substring(0, value.indexOf('.') + 6) : value
         setForm(state => ({
           ...state,
           price: value,
-          total: (value*state.amount).toString(),
+          total: numeral(value*state.amount).format('0.0[0000]'),
         }))
         return
       case 'amount':
-        value = value.indexOf('.')+1 ? value.substring(0, value.indexOf('.') + 6) : value
         setForm(state => ({
           ...state,
           amount: value,
-          total: (value*state.price).toString(),
+          total: numeral(value*state.price).format('0.0[0000]'),
         }))
         return
       case 'total':

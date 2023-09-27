@@ -185,6 +185,13 @@ export const tokenSlice = createSlice({
 
     all: (state, { payload }) => {
       state.all = payload.map(template)
+      if (state.current.id) {
+        const exist = state.all.find(item => item.id === state.current.id)
+        if (exist) {
+          const { price, high, low, volume, tvl, ticker } = exist
+          state.current = {...state.current, price, high, low, volume, tvl, ticker}
+        }
+      }
     },
 
     searched: (state, { payload }) => {
