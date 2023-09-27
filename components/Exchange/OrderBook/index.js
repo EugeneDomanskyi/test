@@ -2,6 +2,7 @@ import styles from './styles.module.scss'
 import { memo } from 'react'
 import { useSelector } from 'react-redux'
 import cn from 'classnames'
+import * as math from 'mathjs'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
@@ -16,9 +17,6 @@ const toLowerFixed = val => {
 const OrderBook = ({type, onClickOrder}) => {
   const orderBook = useSelector($orders.get.orderBook(type))
   const blockchain = useSelector($app.get.blockchain)
-
-  let prevBuyVolumeValue = 0
-  let prevSellVolumeValue = 0
 
   const maxBuyVolume = orderBook.buy.reduce((acc, {quantity}) => acc + quantity*1, 0)
   const maxSellVolume = orderBook.sell.reduce((acc, {quantity}) => acc + quantity*1, 0)
@@ -40,13 +38,11 @@ const OrderBook = ({type, onClickOrder}) => {
           </App.Flex>
           {
             orderBook.buy.map((order, i) => {
-              prevBuyVolumeValue += order.quantity * 1
-              const width = prevBuyVolumeValue * 100 / maxBuyVolume
-              const formattedVolume = toLowerFixed(prevBuyVolumeValue)
+              const width = order.volume * 100 / maxBuyVolume
               return (
-                <App.Flex key={i} justify="space-between" align="center" className={styles.row} onClick={handleClick({...order, side: 'sell'}, prevBuyVolumeValue)}>
+                <App.Flex key={i} justify="space-between" align="center" className={styles.row} onClick={handleClick({...order, side: 'sell'}, order.volume)}>
                   <div className={cn(styles.fill, styles.buy)} style={{width}} />
-                  <App.Text size={12}  color="#53f19c" weight={600} sx={{position: 'relative'}}>{ formattedVolume }</App.Text>
+                  <App.Text size={12}  color="#53f19c" weight={600} sx={{position: 'relative'}}>{ order.volume }</App.Text>
                   <App.Text size={12} sx={{position: 'relative'}} weight={600} color="rgba(255,255,255,0.8)">{ order.priceFormatted }</App.Text>
                 </App.Flex>
               )
@@ -60,14 +56,12 @@ const OrderBook = ({type, onClickOrder}) => {
           </App.Flex>
           {
             orderBook.sell.map((order, i) => {
-              prevSellVolumeValue += order.quantity * 1
-              const width = prevSellVolumeValue * 100 / maxSellVolume
-              const formattedVolume = toLowerFixed(prevSellVolumeValue)
+              const width = order.volume * 100 / maxSellVolume
               return (
-                <App.Flex key={i} justify="space-between" align="center" className={styles.row} onClick={handleClick({...order, side: 'buy'}, prevSellVolumeValue)}>
+                <App.Flex key={i} justify="space-between" align="center" className={styles.row} onClick={handleClick({...order, side: 'buy'}, order.volume)}>
                   <div className={cn(styles.fill, styles.sell)} style={{width}} />
                   <App.Text size={12} sx={{position: 'relative'}} weight={600} color="rgba(255,255,255,0.8)">{ order.priceFormatted }</App.Text>
-                  <App.Text size={12} color="#eb3169" weight={600} sx={{position: 'relative'}}>{ formattedVolume }</App.Text>
+                  <App.Text size={12} color="#eb3169" weight={600} sx={{position: 'relative'}}>{ order.volume }</App.Text>
                 </App.Flex>
               )
             })

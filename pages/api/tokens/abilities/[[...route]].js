@@ -1,6 +1,5 @@
 import { formatUnits } from 'viem'
 import * as math from 'mathjs'
-import numeral from 'numeral'
 import { createPublicClient, http } from 'viem'
 import * as viemChains from 'viem/chains'
 
@@ -148,16 +147,15 @@ const handler = async (req, res) => {
       }), {totalAmountOnSell: 0, totalAmountToSell: 0})
 
       const rates = temp.orders.reduce((acc, order) => ({
-        willSpendAmount: math.chain(acc.willSpendAmount).add(order.willSpendTakingAmount).done(),
-        willTakeAmount: math.chain(acc.willTakeAmount).add(order.willTakeMakingAmount).done(),
+        willSpendAmount: math.chain(acc.willSpendAmount).add(order.willSpendTakingAmount).round().done(),
+        willTakeAmount: math.chain(acc.willTakeAmount).add(order.willTakeMakingAmount).round().done(),
       }), {willSpendAmount: 0, willTakeAmount: 0})
-      
       res.status(200).json({
-        totalAmountOnSell: numeral(stats.totalAmountOnSell).format('0.0[00000]'),
-        totalAmountToSell: numeral(stats.totalAmountToSell).format('0.0[00000]'),
-        willSpendAmount: math.round(formatUnits(rates.willSpendAmount.toFixed(), takerDecimals), 5),
+        totalAmountOnSell: math.round(stats.totalAmountOnSell, 5),
+        totalAmountToSell: math.round(stats.totalAmountToSell, 5),
+        willSpendAmount: math.round(formatUnits(rates.willSpendAmount.toLocaleString('fullwide', { useGrouping: false }), takerDecimals), 5),
         willSpendAmountValue: rates.willSpendAmount.toFixed(),
-        willTakeAmount: math.round(formatUnits(rates.willTakeAmount.toFixed(), makerDecimals), 5),
+        willTakeAmount: math.round(formatUnits(rates.willTakeAmount.toLocaleString('fullwide', { useGrouping: false }), makerDecimals), 5),
         willTakeAmountValue: rates.willTakeAmount.toFixed(),
         orders: temp.orders,
         filteredByPrice: filteredByPrice,
