@@ -73,7 +73,7 @@ const RaffleInfoModal = ({item}) => {
           ) : null}
         </App.Flex>
 
-        <App.Flex justify="space-between">
+        <App.Flex justify="space-between" gap={16}>
           <App.Flex center sx={{ minWidth: propValue([65, 32], true) }} gap={16}>
             <Image src={item.image} width={propValue([48, 32], true)} height={propValue([48, 32], true)} alt="" />
             <App.Text size={20} weight={700}>{ item.title }</App.Text>
@@ -91,17 +91,23 @@ const RaffleInfoModal = ({item}) => {
 
         <App.Flex gap={16} className={styles.rewardsContainer}>
           {
-            item.rewardRange.map((item, index) => {
-              const amount = item.reward / 1000000
+            item.rewardRange.map((reward, index) => {
+              const currentReward = item.odds.find(odd => odd.range === reward.range*1)
+              if (!currentReward) {
+                return
+              }
+              const title = currentReward.title
+              const odds = currentReward.odds
+              const amount = reward.reward / 1000000
               return (
                 <App.Flex key={index} column align="center" className={styles.rewardBlock} gap={8}>
                   <App.Flex gap={4}>
                     <Image src="/images/raffle/icon-crown.png" width={18} height={17} alt="" />
-                    <App.Text size={12} weight={400}>Mirco Reward</App.Text>
+                    <App.Text size={12} weight={400}>{title}</App.Text>
                   </App.Flex>
 
                   <App.ShadowText color="#FFCB04" shadowColor="#FF7708" size={26} weight={700}>${amount}</App.ShadowText>
-                  <App.Text size={14} weight={500}>Odds: 65%</App.Text>
+                  <App.Text size={14} weight={500}>Odds: {odds}%</App.Text>
                 </App.Flex>
               )
             })

@@ -191,7 +191,10 @@ const RafflePage = () => {
   
       reader.addEventListener('load', (e) => {
         const fileContent = e.target.result
-        resolve(JSON.parse(fileContent))
+        const parsedContent = JSON.parse(fileContent)
+        parsedContent.odds = parsedContent.rewardRange
+        delete parsedContent.rewardRange
+        resolve(parsedContent)
       });
   
       reader.addEventListener('error', (error) => {
