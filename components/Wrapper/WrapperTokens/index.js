@@ -52,37 +52,71 @@ const WrapperTokens = ({ children }) => {
   const apollo = useRef(getApolloClient(blockchain))
 
   useEffect(() => {
-    fillAssetsFile()
-  }, [])
+    if (infoList.length) {
+      // console.log('infoList', infoList);
+      // fillAssetsFile()
+    }
+  }, [infoList])
 
   const fillAssetsFile = async () => {
     const supportedPlatforms = pageBlockchains.map(item => item.platform)
-    for (const token of infoList) {
-      console.log('token', token);
-      for (const platform of token.platforms) {
-        console.log('platform', platform)
-        const tokenId = token.platforms[platform]
-        if (supportedPlatforms.includes(platform)) {
-          if (tokenId) {
-            const currentToken = await getToken(tokenId)
-      
-            const existingToken = list.length ? list.find(item => item.id === currentToken.id) : null
+    let tempArray = []
+    let res = null
+    try {
+      res = await fetch('/api/assets', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      })
+    } catch (error) {
+      console.error(error)
+    }
     
-            console.log('existingToken', existingToken);
-      
-            if (!existingToken) {
-              const fullToken = await getTokenFull(currentToken)
-      
-              const staticData = staticTemplate(fullToken)
-              const preUpdateList = list.filter(item => item.address !== fullToken.address)
-              const mergedData = preUpdateList.length ? [...preUpdateList, staticData] : [staticData]
-              console.log('mergedData', mergedData);
-              // putAssetsFile(mergedData)
-            }
+    const existingTokens = await res.json()
+    const existingIds = existingTokens.map(item => {
+      return item.address
+    })
+    // console.log('existingTokens', existingTokens);
+    const networkList = infoList.filter(item => item.platforms[blockchain.platform]).filter(item => !existingIds.includes(item.platforms[blockchain.platform]))
+
+    // console.log('networkList', networkList);
+
+    // return
+    for (const token of networkList) {
+    // for (const token of infoList) {
+      console.log('token', token);
+      const tokenId = token.platforms[blockchain.platform]
+      console.log('tokenId', tokenId);
+      if (tokenId) {
+        const currentToken = await getToken(tokenId)
+        // const existingToken = list.length ? list.find(item => item.id === currentToken.id) : null
+        const fullToken = await getTokenFull(currentToken)
+        const staticData = staticTemplate(fullToken)
+        
+        if (staticData.cgId) {
+          // existingTokens.push(staticData)
+          // console.log('existingTokens', existingTokens);
+          tempArray.push(staticData)
+          console.log('tempArray', tempArray)
+          // return
+
+          try {
+            await fetch('/api/assets', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(tempArray),
+            })
+          } catch (error) {
+            console.error(error)
           }
-      
-          await new Promise(resolve => setTimeout(resolve, 5000))
         }
+
+        // const preUpdateList = list.filter(item => item.address !== fullToken.address)
+        // const mergedData = preUpdateList.length ? [...preUpdateList, staticData] : [staticData]
+        
+
+        // putAssetsFile(mergedData)
+    
+        await new Promise(resolve => setTimeout(resolve, 10000))
       }
     }
   }
