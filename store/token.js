@@ -8,7 +8,7 @@ function formatNumber(number) {
   if (!number) {
     return '0'
   }
-  const str = number.toString()?.toFixed(20)
+  const str = (number*1)?.toFixed(20)
   let lastIndex = -1;
 
   for (let i = str.length - 1; i >= 0; i--) {
@@ -17,10 +17,13 @@ function formatNumber(number) {
       break;
     }
   }
+  let result = '0.0'
   if (lastIndex !== -1) {
-    return str.slice(0, lastIndex)
+    result = str.slice(0, lastIndex)
+  } else {
+    result = str
   }
-  return str
+  return isNaN(numeral(result).format('0.0[00000]')) ? result : numeral(result).format('0.0[00000]')
 }
 
 export const template = (item) => {
@@ -41,9 +44,9 @@ export const template = (item) => {
     name: overwrite?.name ?? item?.name,
     blockchain: overwrite?.blockchain ?? item?.blockchain,
     symbol: overwrite?.symbol ?? item?.symbol,
-    price: numeral(overwrite?.price ?? item?.price ?? 0).format('0.[0000]'),
-    high: numeral(overwrite?.high ?? item?.high ?? 0).format('0.[0000]'),
-    low: numeral(overwrite?.low ?? item?.low ?? 0).format('0.[0000]'),
+    price: formatNumber(overwrite?.price ?? item?.price ?? 0),
+    high: formatNumber(overwrite?.high ?? item?.high ?? 0),
+    low: formatNumber(overwrite?.low ?? item?.low ?? 0),
     currency: currency,
     volume: numeral(overwrite?.volume ?? item?.volume ?? 0).format('0.[0000]'),
     tvl: numeral(overwrite?.tvl ?? item?.tvl ?? 0).format('0.[0000]'),

@@ -111,7 +111,6 @@ const getters = {
       }
     }).slice(0, limit)
   }),
-
   kLineData: (interval) => createSelector([
     state => state.$orders.trades.tokens,
   ], (sales) => {

@@ -88,7 +88,7 @@ const Info = ({ current, location }) => {
                   <App.Flex sx={{marginTop: 'auto'}} gap={16}>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>Price</App.Text>
-                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.price } { current?.currency }</App.Text>
+                      <App.Number size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.price } { current?.currency }</App.Number>
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>24h Price Change</App.Text>
@@ -108,11 +108,11 @@ const Info = ({ current, location }) => {
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>24h High</App.Text>
-                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.high ?? high } { current?.currency }</App.Text>
+                      <App.Number size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.high ?? high } { current?.currency }</App.Number>
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>24h Low</App.Text>
-                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.low ?? low } { current?.currency }</App.Text>
+                      <App.Number size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.low ?? low } { current?.currency }</App.Number>
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Flex align="center" gap={4}>
@@ -121,7 +121,7 @@ const Info = ({ current, location }) => {
                           <App.Icon icon="info" width={12} height={12} />
                         </App.Tooltip>
                       </App.Flex>
-                      <App.Text size={16} weight={700}>{ current?.tokenCount }</App.Text>
+                      <App.Number size={16} weight={700}>{ current?.tokenCount }</App.Number>
                     </App.Flex>
                   </App.Flex>
                 </App.Flex>
