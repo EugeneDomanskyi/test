@@ -12,7 +12,7 @@ import RaffleListMyItemMobile from '@/components/Raffle/RaffleListMyItemMobile'
 
 import styles from './styles.module.scss'
 
-const RaffleListMy = ({ onParticipate, onShare }) => {
+const RaffleListMy = ({ loading, onParticipate, onShare }) => {
   const { isMobile } = usePropsHelper()
 
   const dispatch = useDispatch()
@@ -91,113 +91,125 @@ const RaffleListMy = ({ onParticipate, onShare }) => {
 
   return (
     <App.Flex column sx={{ borderRadius: 12, overflow: 'hidden' }} fullWidth>
-      <TableContainer>
-        {isMobile ? (
-          <Table>
-            <TableHead>
-              <TableRow sx={{ '& th, & td': { border: 0 },  background: '#17142a' }}>
-                <TableCell
-                  align='left'
-                >
-                  <TableSortLabel
-                    active={orderBy === 'title'}
-                    direction={orderBy === 'title' ? order : 'asc'}
-                    classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
-                    onClick={handleSort('title')}
-                  >
-                    Campaign
-                  </TableSortLabel>
-                </TableCell>
+      {loading ? (
+        <App.LoaderBlock />
+      ) : (
+        <>
+          {participatedCampaigns().length ? (
+            <TableContainer>
+              {isMobile ? (
+                <Table>
+                  <TableHead>
+                    <TableRow sx={{ '& th, & td': { border: 0 },  background: '#17142a' }}>
+                      <TableCell
+                        align='left'
+                      >
+                        <TableSortLabel
+                          active={orderBy === 'title'}
+                          direction={orderBy === 'title' ? order : 'asc'}
+                          classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
+                          onClick={handleSort('title')}
+                        >
+                          Campaign
+                        </TableSortLabel>
+                      </TableCell>
 
-                <TableCell
-                  align='right'
-                >
-                  <TableSortLabel
-                    active={orderBy === 'status'}
-                    direction={orderBy === 'status' ? order : 'asc'}
-                    classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
-                    onClick={handleSort('status')}
-                  >
-                    Status
-                  </TableSortLabel>
-                </TableCell>
-              </TableRow>
-            </TableHead>
+                      <TableCell
+                        align='right'
+                      >
+                        <TableSortLabel
+                          active={orderBy === 'status'}
+                          direction={orderBy === 'status' ? order : 'asc'}
+                          classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
+                          onClick={handleSort('status')}
+                        >
+                          Status
+                        </TableSortLabel>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
 
-            <TableBody>
-              {participatedCampaigns().map(item => <RaffleListMyItemMobile key={item.id} item={item} onParticipate={onParticipate} onShare={onShare} />)}
-            </TableBody>
-          </Table>
-        ) : (
-          <Table>
-            <TableHead>
-              <TableRow sx={{ '& th, & td': { border: 0 },  background: '#17142a' }}>
-                <TableCell
-                  align='left'
-                >
-                  <TableSortLabel
-                    active={orderBy === 'title'}
-                    direction={orderBy === 'title' ? order : 'asc'}
-                    classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
-                    onClick={handleSort('title')}
-                  >
-                    Campaign Name
-                  </TableSortLabel>
-                </TableCell>
+                  <TableBody>
+                    {participatedCampaigns().map(item => <RaffleListMyItemMobile key={item.id} item={item} onParticipate={onParticipate} onShare={onShare} />)}
+                  </TableBody>
+                </Table>
+              ) : (
+                <Table>
+                  <TableHead>
+                    <TableRow sx={{ '& th, & td': { border: 0 },  background: '#17142a' }}>
+                      <TableCell
+                        align='left'
+                      >
+                        <TableSortLabel
+                          active={orderBy === 'title'}
+                          direction={orderBy === 'title' ? order : 'asc'}
+                          classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
+                          onClick={handleSort('title')}
+                        >
+                          Campaign Name
+                        </TableSortLabel>
+                      </TableCell>
 
-                <TableCell></TableCell>
+                      <TableCell></TableCell>
 
-                <TableCell
-                  align='center'
-                >
-                  <TableSortLabel
-                    active={orderBy === 'status'}
-                    direction={orderBy === 'status' ? order : 'asc'}
-                    classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
-                    onClick={handleSort('status')}
-                  >
-                    Campaign Status
-                  </TableSortLabel>
-                </TableCell>
+                      <TableCell
+                        align='center'
+                      >
+                        <TableSortLabel
+                          active={orderBy === 'status'}
+                          direction={orderBy === 'status' ? order : 'asc'}
+                          classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
+                          onClick={handleSort('status')}
+                        >
+                          Campaign Status
+                        </TableSortLabel>
+                      </TableCell>
 
-                <TableCell
-                  align='right'
-                  sx={{ flexDirection: 'row' }}
-                >
-                  <TableSortLabel
-                    active={orderBy === 'totalEarned'}
-                    direction={orderBy === 'totalEarned' ? order : 'asc'}
-                    classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
-                    onClick={handleSort('totalEarned')}
-                  >
-                    Reward Won
-                  </TableSortLabel>
-                </TableCell>
+                      <TableCell
+                        align='right'
+                        sx={{ flexDirection: 'row' }}
+                      >
+                        <TableSortLabel
+                          active={orderBy === 'totalEarned'}
+                          direction={orderBy === 'totalEarned' ? order : 'asc'}
+                          classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
+                          onClick={handleSort('totalEarned')}
+                        >
+                          Reward Won
+                        </TableSortLabel>
+                      </TableCell>
 
-                <TableCell
-                  align='right'
-                  sx={{ flexDirection: 'row' }}
-                >
-                  <TableSortLabel
-                    active={orderBy === 'totalTKeysSpent'}
-                    direction={orderBy === 'totalTKeysSpent' ? order : 'asc'}
-                    classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
-                    onClick={handleSort('totalTKeysSpent')}
-                  >
-                    TKeys Spent
-                  </TableSortLabel>
-                </TableCell>
+                      <TableCell
+                        align='right'
+                        sx={{ flexDirection: 'row' }}
+                      >
+                        <TableSortLabel
+                          active={orderBy === 'totalTKeysSpent'}
+                          direction={orderBy === 'totalTKeysSpent' ? order : 'asc'}
+                          classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
+                          onClick={handleSort('totalTKeysSpent')}
+                        >
+                          TKeys Spent
+                        </TableSortLabel>
+                      </TableCell>
 
-                <TableCell sx={{ width: '10px' }}></TableCell>
-              </TableRow>
-            </TableHead>
+                      <TableCell sx={{ width: '10px' }}></TableCell>
+                    </TableRow>
+                  </TableHead>
 
-            <TableBody>
-              {participatedCampaigns().map(item => <RaffleListMyItem key={item.id} item={item} onParticipate={onParticipate} onShare={onShare} />)}
-            </TableBody>
-          </Table>
-        )}
-      </TableContainer>
+                  <TableBody>
+                    {participatedCampaigns().map(item => <RaffleListMyItem key={item.id} item={item} onParticipate={onParticipate} onShare={onShare} />)}
+                  </TableBody>
+                </Table>
+              )}
+            </TableContainer>
+          ) : (
+            <App.Flex center height={300}>
+              <App.Text>There are no campaigns yet</App.Text>
+            </App.Flex>
+          )}
+        </>
+      )}
 
       <App.Flex center sx={{ background: '#17142a', padding: 16 }}>
         <App.Pagination page={page} count={pagesCount} onChange={handlePageChange} />

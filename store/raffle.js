@@ -23,6 +23,7 @@ export const raffleSlice = createSlice({
     },
     last: [],
     balance: 0,
+    tokenIds: [],
   },
 
   reducers: {
@@ -66,6 +67,10 @@ export const raffleSlice = createSlice({
       state.balance = payload
     },
 
+    tokenIds: (state, { payload }) => {
+      state.tokenIds = payload
+    },
+
     loadingUser: (state, { payload }) => {
       state.loadingUser = payload
     },
@@ -83,6 +88,23 @@ export const raffleSlice = createSlice({
         }
       })
     },
+
+    reset: (state) => {
+      state.user = {
+        id: null,
+        totalEarned: 0,
+        totalTKeysSpent: 0,
+        campaignParticipated: [],
+      }
+
+      state.balance = 0
+      state.tokenIds = []
+
+      state.all = state.all.map(item => {
+        delete item.user
+        return item
+      })
+    }
   },
 })
 
@@ -198,7 +220,7 @@ const query = {
 
   last: gql`
     query userCampaignParticipants {
-      userCampaignParticipants(orderBy: resolvedTimestamp, orderDirection: desc, first: 6, where: {and: [{isResolved: true}, {campaign_: {id_not: 0}}]}) {
+      userCampaignParticipants(orderBy: resolvedTimestamp, orderDirection: desc, first: 8, where: {and: [{isResolved: true}, {campaign_: {id_not: 0}}]}) {
         id
         rewardAmount
         transaction

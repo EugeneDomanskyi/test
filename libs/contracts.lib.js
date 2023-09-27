@@ -271,14 +271,14 @@ export default function Contracts(defaultGasLimit = null) {
       return result
     },
     
-    enterCampaign: async (contract, campaignId, tokenId = 0) => {
+    enterCampaign: async (contract, campaignId, tokenIds = []) => {
       const config = await methods.prepareWriteContract({
         address: contract,
         abi: abi.tkeys.enterCampaign,
         functionName: 'enterCampaign',
         args: [
           campaignId,
-          tokenId
+          tokenIds
         ],
       })
 

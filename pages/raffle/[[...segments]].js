@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { hexToString } from 'viem'
 import { Web3Storage } from 'web3.storage'
@@ -7,6 +7,7 @@ import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import Contracts from '@/libs/contracts.lib'
+import AlchemyLibrary from '@/libs/alchemy.lib'
 
 import $raffle from '@/store/raffle'
 
@@ -31,8 +32,13 @@ const RafflePage = () => {
 
   const dispatch = useDispatch()
 
+  const [campaignLoading, setCampaignLoading] = useState(true)
+
   const apollo = useRef(getApolloClient())
   const contracts = new Contracts()
+  const alchemy = new AlchemyLibrary(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'MATIC_MUMBAI' : 'MATIC_MAINNET')
+
+  const prevWallet = useRef()
 
   useEffect(() => {
     (async () => {
@@ -61,15 +67,26 @@ const RafflePage = () => {
           address: item.user.id.slice(0, 4) + '...' + item.user.id.slice(-4),
         }))))
       }
+
+      setCampaignLoading(false)
     })()
   }, [])
 
   useEffect(() => {
     if (wallet) {
       (async () => {
+        if (wallet != prevWallet.current) {
+          dispatch($raffle.set.reset())
+          prevWallet.current = wallet
+        }
+
         await handleUpdateUser()
         dispatch($raffle.set.loadingUser(false))
       })()
+    }
+
+    return () => {
+      prevWallet.current = null
     }
   }, [wallet])
 
@@ -117,9 +134,13 @@ const RafflePage = () => {
       return
     }
 
-    const contractAddress = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? '0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84' : '0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84'
-    const tempBalance = await contracts.balanceOfTkeys(wallet, contractAddress, 0)
-    dispatch($raffle.set.balance(tempBalance))
+    // const contractAddress = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? '0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84' : '0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84'
+    // const tempBalance = await contracts.balanceOfTkeys(wallet, contractAddress, 0)
+    // dispatch($raffle.set.balance(tempBalance))
+
+    const contractAddress = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? '0x9BFDfDac362f810ff15240045E600a7468CAf91C' : '0x9BFDfDac362f810ff15240045E600a7468CAf91C'
+    const nfts = await alchemy.getNftsForOwnerCollection(wallet, contractAddress)
+    dispatch($raffle.set.tokenIds(nfts.map(item => item.id)))
   }
 
   const getIpfsInfo = async (campaigns) => {
@@ -204,8 +225,8 @@ const RafflePage = () => {
   return (
     <App.Flex column className={styles.container}>
       <Raffle.Header />
-      <Raffle.Top />
-      <Raffle.List onUpdateUser={handleUpdateUser} />
+      <Raffle.Top loading={campaignLoading} />
+      <Raffle.List loading={campaignLoading} onUpdateUser={handleUpdateUser} />
     </App.Flex>
   )
 }

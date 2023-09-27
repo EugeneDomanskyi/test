@@ -10,7 +10,7 @@ import $raffle from '@/store/raffle'
 import App from '@/components/App'
 import Raffle from '@/components/Raffle'
 
-const RaffleList = ({ onUpdateUser }) => {
+const RaffleList = ({ loading, onUpdateUser }) => {
   const dispatch = useDispatch()
   const router = useRouter()
   const { wallet, connect, changeNetwork } = useWalletConnect()
@@ -100,9 +100,9 @@ const RaffleList = ({ onUpdateUser }) => {
 
         <App.Flex fullWidth sx={{ minHeight: 263 }}>
           {tab == 'browse' ? (
-            <Raffle.ListBrowse onParticipate={handleParticipate} onShare={handleShare} />
+            <Raffle.ListBrowse loading={loading} onParticipate={handleParticipate} onShare={handleShare} />
           ) : (
-            <Raffle.ListMy onParticipate={handleParticipate} onShare={handleShare} />
+            <Raffle.ListMy loading={loading} onParticipate={handleParticipate} onShare={handleShare} />
           )}
         </App.Flex>
       </App.Flex>

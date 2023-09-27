@@ -21,15 +21,16 @@ const RaffleClaimModal = ({item, onStep}) => {
   const dispatch = useDispatch()
   const { wallet } = useWalletConnect()
 
+  const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
   const showModal = useSelector((state) => state.$modal.show)
 
   const contract = new Contracts()
 
   const [step, setStep] = useState(0)
 
-  const contractAddr = '0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84'
-  const factoryAddr = '0xA4cDD0FEe85c917A68a9432a3ebfF1f66E9f281A'
-
+  const contractAddr = '0x9bfdfdac362f810ff15240045e600a7468caf91c' //'0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84'
+  const factoryAddr = '0xc8217B265320981C5F0fFD6239D3cE33CBD7abB7' //'0xA4cDD0FEe85c917A68a9432a3ebfF1f66E9f281A'
+  
   useEffect(() => {
     if (!showModal) {
       router.push('/raffle', undefined, { scroll: false })
@@ -65,7 +66,12 @@ const RaffleClaimModal = ({item, onStep}) => {
     }
     
     if (step === 1) {
-      const enterCampaign = await contract.enterCampaign(factoryAddr, item.id)
+      if (tokenIds.length < item.tKeyRequired) {
+        return
+      }
+
+      const ids = tokenIds.slice(0, item.tKeyRequired)
+      const enterCampaign = await contract.enterCampaign(factoryAddr, item.id, ids)
 
       dispatch($raffle.set.loading(false))
       if (enterCampaign.error) {
