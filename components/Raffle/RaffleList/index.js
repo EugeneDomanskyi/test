@@ -73,7 +73,8 @@ const RaffleList = ({ loading, onUpdateUser }) => {
       return
     }
 
-    const networkCode = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
+    // const networkCode = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
+    const networkCode = 'mumbai'
     const network = await changeNetwork(networkCode)
     if ( ! network) {
       return
