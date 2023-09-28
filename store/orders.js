@@ -181,13 +181,20 @@ const getters = {
 
 const api = {
   get: {
-    tokens: ({address, blockchain, ...rest}) => {
-      return request(`address/${address}`, 'GET', {api: 'inch', blockchain, ...rest}).then(res => {
-        if (res && Array.isArray(res)) {
-          return res.map(order => ({...order, network: blockchain}))
+    tokens: ({address, blockchain}) => {
+      const network = CHAINS.find(chain => chain.code === blockchain)
+      return fetch(`/api/tokens/orders/${network.id}/${address}`).then(async res => {
+        const json = await res.json()
+        if (json && Array.isArray(json)) {
+          return json
         }
-        return []
       })
+      // return request(`address/${address}`, 'GET', {api: 'inch', blockchain, ...rest}).then(res => {
+      //   if (res && Array.isArray(res)) {
+      //     return res.map(order => ({...order, network: blockchain}))
+      //   }
+      //   return []
+      // })
     },
     nfts: (params) => {
       return Promise.all([

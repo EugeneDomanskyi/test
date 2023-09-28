@@ -343,23 +343,17 @@ class NFT extends Order {
 class TOKEN extends Order {
   constructor(data) {
     super()
-    this.rawData = data
-    const makerToken = INCH_TOKENS[data.data.makerAsset] || {symbol: '', decimals: 18, logoURI: ''}
-    const takerToken = INCH_TOKENS[data.data.takerAsset] || {symbol: '', decimals: 18, logoURI: ''}
-    
-    const network = CHAINS.find(chain => chain.code === data.network)
-    this.id = data.signature
-    this.side = network.usdtContract.toLowerCase() === data.data.makerAsset.toLowerCase() ? 'buy' : 'sell'
-    const buyCurrency = this.side === 'buy' ? 'makingAmount' : 'takingAmount'
-    const sellCurrency = this.side === 'sell' ? 'makingAmount' : 'takingAmount'
-    this.baseCurrency = 'USDT'
-    this.quoteCurrency = this.side === 'sell' ? makerToken.symbol : takerToken.symbol
-    this.contractAddress = this.side === 'buy' ? data.data.takerAsset.toLowerCase() : data.data.makerAsset.toLowerCase()
-    this.quantity = numeral(formatUnits(data.data[sellCurrency], this.side === 'sell' ? makerToken.decimals : takerToken.decimals)).format('0.[0000]')
-    this.quantityFilled = numeral(formatUnits(data.data.makingAmount - data.remainingMakerAmount, USDT_DECIMALS)).format('0.[0000]')
-    this.price = numeral(formatUnits(data.data[buyCurrency], USDT_DECIMALS)).format('0.[0000]')
-    this.image = this.side === 'sell' ? makerToken.logoURI : takerToken.logoURI
-    this.status = !data.orderInvalidReason ? 'open' : (data.orderInvalidReason === 'order filled' ? 'completed' : (data.orderInvalidReason === 'order cancelled' ? 'cancelled' : null))
+    this.rawData = data.data
+    this.id = data.id
+    this.side = data.side
+    this.baseCurrency = data.baseCurrency
+    this.quoteCurrency = data.quoteCurrency
+    this.image = data.image
+    this.contractAddress = data.contractAddress
+    this.quantity = data.quantity
+    this.price = data.price
+    this.quantityFilled = data.quantityFilled
+    this.status = data.status
   }
 
   get itemPrice () {
@@ -521,7 +515,7 @@ class TOKEN extends Order {
         return encodeFunctionData({abi: abi, functionName: methodName, args: methodParams})
       }
       const limitOrderProtocolFacade = new LimitOrderProtocolFacade(INCH_CONTRACTS[chainId], chainId, {contractEncodeABI})
-      const callData = limitOrderProtocolFacade.cancelLimitOrder(this.rawData.data)
+      const callData = limitOrderProtocolFacade.cancelLimitOrder(this.rawData)
       const res = await sendTransaction({
         chainId: chainId,
         to: INCH_CONTRACTS[chainId],
