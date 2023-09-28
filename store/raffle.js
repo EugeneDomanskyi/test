@@ -145,7 +145,11 @@ const get = {
 const api = {
   ipfs: (hash) => {
     return request(`https://${hash}.ipfs.w3s.link/info.json`, 'GET', {api: 'remote'})
-  }
+  },
+
+  reward: (hash) => {
+    return request(`https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status?transactions[]=${hash}`, 'GET', {api: 'remote'})
+  },
 }
 
 const query = {
@@ -212,6 +216,8 @@ const query = {
         user {
           campaignParticipated(first: 1, orderBy: participatedTimestamp, orderDirection: desc) {
             isResolved
+            resolvedTransaction
+            participatedTransaction
           }
         }
       }
@@ -223,7 +229,8 @@ const query = {
       userCampaignParticipants(orderBy: resolvedTimestamp, orderDirection: desc, first: 8, where: {and: [{isResolved: true}, {campaign_: {id_not: 0}}]}) {
         id
         rewardAmount
-        transaction
+        participatedTransaction
+        resolvedTransaction
         user {
           id
         }

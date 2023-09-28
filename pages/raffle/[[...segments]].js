@@ -62,7 +62,7 @@ const RafflePage = () => {
 
       if (last && last.hasOwnProperty('data') && last.data.hasOwnProperty('userCampaignParticipants')) {
         dispatch($raffle.set.last(last.data.userCampaignParticipants.map(item => ({
-          transaction: item.transaction,
+          resolvedTransaction: item.resolvedTransaction,
           rewardAmount: item.rewardAmount / Math.pow(10, 6),
           address: item.user.id.slice(0, 4) + '...' + item.user.id.slice(-4),
         }))))
@@ -83,9 +83,7 @@ const RafflePage = () => {
         await handleUpdateUser()
         dispatch($raffle.set.loadingUser(false))
       })()
-    }
-
-    return () => {
+    } else {
       prevWallet.current = null
     }
   }, [wallet])
@@ -215,6 +213,9 @@ const RafflePage = () => {
         if (current >= end) {
           return 'Closed'
         } else {
+          if (item.totalTransferred >= item.rewardAmount) {
+            return 'Closed'
+          }
           return 'Active'
         }
       } else {

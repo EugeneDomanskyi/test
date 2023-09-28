@@ -140,7 +140,14 @@ const queryBuilder = (data) => {
       }
     }
   }
-  return `?${params}`
+
+  for (const key of params.keys()) {
+    if (params.has(key)) {
+      return `?${params}`
+    }
+  }
+  
+  return ''
 }
 
 export default createStore

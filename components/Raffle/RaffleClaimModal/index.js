@@ -29,7 +29,7 @@ const RaffleClaimModal = ({item, onStep}) => {
   const [step, setStep] = useState(0)
 
   const contractAddr = '0x9bfdfdac362f810ff15240045e600a7468caf91c' //'0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84'
-  const factoryAddr = '0xc8217B265320981C5F0fFD6239D3cE33CBD7abB7' //'0xA4cDD0FEe85c917A68a9432a3ebfF1f66E9f281A'
+  const factoryAddr = '0x6730d9E6f08E23DCC680D577af918Ae1CeD28230' //'0xA4cDD0FEe85c917A68a9432a3ebfF1f66E9f281A'
   
   useEffect(() => {
     if (!showModal) {
@@ -71,12 +71,15 @@ const RaffleClaimModal = ({item, onStep}) => {
       }
 
       const ids = tokenIds.slice(0, item.tKeyRequired)
-      const enterCampaign = await contract.enterCampaign(factoryAddr, item.id, ids)
-
-      dispatch($raffle.set.loading(false))
-      if (enterCampaign.error) {
+      const enterCampaignHash = await contract.enterCampaign(factoryAddr, item.id, ids)
+      
+      if (enterCampaignHash.error) {
+        dispatch($raffle.set.loading(false))
         return
       }
+
+      const result = await $raffle.api.reward(enterCampaignHash)
+      dispatch($raffle.set.loading(false))
     }
 
     if (step === 2) {
