@@ -22,7 +22,11 @@ export default function Trading({type, marketInfo}) {
       </App.Flex>
 
       <Trending />
-      <Analysis />
+      {
+        marketInfo.analysis
+          ? <Analysis />
+          : null
+      }
     </App.Flex>
   )
 }

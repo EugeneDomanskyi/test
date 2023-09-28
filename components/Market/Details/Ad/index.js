@@ -16,7 +16,7 @@ export default function Ad() {
 
       <div className={styles.background} />
       <App.Text size={isMobile ? 20 : 28} className={styles.text} center weight={700}>
-        Trade { marketInfo.name } on Tegro! (Ad)
+        Trade { marketInfo.name } on Tegro!
       </App.Text>
     </App.Flex>
   )
