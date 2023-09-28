@@ -86,6 +86,8 @@ export const staticTemplate = (item) => {
     externalUrl: item?.externalUrl,
     twitterUrl: item?.twitterUrl,
     openseaVerificationStatus: item?.openseaVerificationStatus === 'verified',
+    marketCap: item?.marketCap,
+    createdAt: item?.createdAt,
   }
 }
 

@@ -8,13 +8,17 @@ const handler = async (req, res) => {
   const body = req.body
   const method = req.method
   const filePath = '/Users/dd/projects/nft20/public/files/assets_ethereum.json'
-  const partOnefilePath = '/Users/dd/projects/nft20/public/files/assets_ethereum_part_one.json'
+  const ether = '/Users/dd/projects/nft20/public/files/assets_ethereum_part_one.json'
+  const polygon = '/Users/dd/projects/nft20/public/files/assets_part_one.json'
   
   if (method === 'GET') {
     try {
-      const fileContents = await fs.promises.readFile(partOnefilePath)
+      const fileContents = await fs.promises.readFile(ether)
       const parsedData = JSON.parse(fileContents)
-      return res.status(200).json(parsedData)
+      const fileContent2 = await fs.promises.readFile(polygon)
+      const parsedData2 = JSON.parse(fileContent2)
+      const mergedData = [...parsedData, ...parsedData2]
+      return res.status(200).json(mergedData)
     } catch (error) {
       console.error('Error reading file:', error);
       throw error; // Optionally, re-throw the error to handle it elsewhere

@@ -6,7 +6,8 @@ const accessKey = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY
 const secretKey = process.env.NEXT_PUBLIC_AWS_SECRET_KEY
 const region = process.env.NEXT_PUBLIC_AWS_REGION
 const bucketName = 'tegro-imagekit-tora'
-const jsonFileName = 'assets.json'
+const jsonFileName = 'assets_new.json'
+// const jsonFileName = 'assets.json'
 
 const s3 = new AWS.S3({
   accessKeyId: accessKey,
@@ -23,8 +24,6 @@ export const putAssetsFile = (body) => {
   }
 
   const image = grabTheImage(body.image)
-
-  console.log('body', body);
 
   s3.putObject(params, (err, data) => {
     if (err) {

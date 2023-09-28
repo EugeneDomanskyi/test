@@ -38,7 +38,6 @@ const Tokens = () => {
   
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
-  const activeInterval = useSelector(({$exchange}) => $exchange.interval)
 
   const {
     tokens,
