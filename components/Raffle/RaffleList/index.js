@@ -52,7 +52,7 @@ const RaffleList = ({ loading, onUpdateUser }) => {
       const item = campaigns.find(campaign => campaign.id === queryCampaignId)
 
       if (item) {
-        dispatch($modal.set.show({modal: 'Raffle/RaffleInfoModal', props: {
+        dispatch($modal.set.show({modal: 'Raffle/RaffleModalParticipate', props: {
           size: 'large',
           item: item,
           header: {
