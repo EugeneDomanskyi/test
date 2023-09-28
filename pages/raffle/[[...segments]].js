@@ -204,6 +204,7 @@ const RafflePage = () => {
   }
 
   const getStatus = (item) => {
+    console.log(item)
     const start = item.startTimestamp * 1000
     const end = item.endTimestamp * 1000
     const current = moment().valueOf()
@@ -213,7 +214,7 @@ const RafflePage = () => {
         if (current >= end) {
           return 'Closed'
         } else {
-          if (item.totalTransferred >= item.rewardAmount) {
+          if (item.totalTransferred * 1 >= item.rewardAmount * 1) {
             return 'Closed'
           }
           return 'Active'
