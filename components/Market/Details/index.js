@@ -1,5 +1,3 @@
-import { useSelector } from 'react-redux'
-
 import App from '@/components/App'
 import Info from '@/components/Market/Details/Info'
 import LivePrice from '@/components/Market/Details/LivePrice'
@@ -12,19 +10,33 @@ import Investors from '@/components/Market/Details/Investors'
 import Resources from '@/components/Market/Details/Resources'
 import FAQ from '@/components/Market/Details/FAQ'
 
-export default function Details() {
+export default function Details({marketInfo, type}) {
   return (
     <App.Flex column sx={{paddingTop: 64}} gap={96}>
-      <Info />
-      <LivePrice />
+      <Info type={type} />
+      <LivePrice type={type} />
       <Stats />
       <About />
-      <Images />
+
+      {
+        marketInfo?.sampleImages
+          ? <Images />
+          : null
+      }
+      
       <Ad />
-      <Team />
-      <Investors />
+      {
+        marketInfo?.team
+          ? <Team />
+          : null
+      }
+      {
+        marketInfo?.investors
+          ? <Investors />
+          : null
+      }      
       <Resources />
-      <FAQ />
+      <FAQ type={type} />
     </App.Flex>
   )
 }

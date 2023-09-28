@@ -2,19 +2,25 @@ import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 
+
 import useWalletConnect from '@/myhooks/wallet-connect'
+import useOrders from '@/myhooks/useOrders'
 import Stream from '@/libs/stream.lib'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
 import $collection, { template } from '@/store/collection'
+import $exchange from '@/store/exchange'
+import $orders from '@/store/orders'
 
 const WrapperCollections = ({ children }) => {
   const router = useRouter()
   const [queryBlockchainCode, queryCollectionId] = router.query.segments?.slice(-2) || []
   const isNfts = router.pathname.includes('/nfts') || router.query.segments?.includes('nfts')
 
-  const { network, isContractAddress } = useWalletConnect()
+  const { wallet, network, isContractAddress } = useWalletConnect()
+
+  const { updateOrders } = useOrders({tokenAddress: queryCollectionId, type: 'nfts'})
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -48,6 +54,30 @@ const WrapperCollections = ({ children }) => {
     })
   }
 
+  useEffect(() => {
+    if (queryCollectionId && blockchain.code) {
+      initCollection(queryCollectionId, blockchain.code)
+    }
+  }, [queryCollectionId, blockchain.code])
+
+  const initCollection = (queryCollectionId) => {
+    dispatch($exchange.set.loading(true))
+    $exchange.api.get.sales({
+      collection: queryCollectionId,
+      blockchain: blockchain.code,
+      includeDeleted: false,
+      includeTokenMetadata: false,
+      sortDirection: 'desc',
+      limit: 800,
+    }).then(sales => {
+      if (sales) {
+        dispatch($exchange.set.sales(sales))
+        dispatch($orders.set.trades({type: 'nfts', data: sales}))
+      }
+      dispatch($exchange.set.loading(false))
+    })
+  }
+
   const wsSubscribe = (ids) => {
     const newIds = ids.filter(id => {
       if (!wsCollectionIds.current.includes(id)) {
@@ -62,6 +92,57 @@ const WrapperCollections = ({ children }) => {
       Stream.subscribe('collection.updated', newIds)
     }
   }
+
+  useEffect(() => {
+    updateOrders()
+  }, [blockchain.code, wallet, queryCollectionId])
+
+  useEffect(() => {
+    Stream.on('sale', (event, data) => {
+      switch (event) {
+        case 'sale.created':
+          dispatch($exchange.set.saleAdd(data))
+          break
+        case 'sale.updated':
+          dispatch($exchange.set.saleUpdate(data))
+          break
+      }
+    })
+    Stream.on('bid', (event, data) => {
+      if (wallet && wallet.toLowerCase() !== data.maker.toLowerCase()) {
+        return
+      }
+      dispatch($exchange.set.orderUpdate(data))
+    })
+    Stream.on('ask', (event, data) => {
+      if (wallet && wallet.toLowerCase() !== data.maker.toLowerCase()) {
+        return
+      }
+      dispatch($exchange.set.orderUpdate(data))
+    })
+  }, [wallet])
+
+  useEffect(() => {
+    if (queryCollectionId) {
+      Stream.subscribe('sale.*', [queryCollectionId])
+    }
+
+    return () => {
+      Stream.unsubscribe('sale.*')
+    }
+  }, [queryCollectionId])
+
+  useEffect(() => {
+    if (queryCollectionId && wallet) {
+      Stream.subscribe('bid.*', [queryCollectionId], {maker: wallet})
+      Stream.subscribe('ask.*', [queryCollectionId], {maker: wallet})
+    }
+    
+    return () => {
+      Stream.unsubscribe('bid.*')
+      Stream.unsubscribe('ask.*')
+    }
+  }, [queryCollectionId, wallet])
 
   useEffect(() => {
     if (router.isReady) {
@@ -109,23 +190,6 @@ const WrapperCollections = ({ children }) => {
           currency: network(blockchain.code)?.currency,
         }
       })
-
-      // let tempAssets = []
-      // console.log('assetsList', assetsList);
-      // tempAll.map(async item => {
-      //   const isExist = assetsList.find(asset => asset.address === item.id)
-      //   console.log('isExist', isExist);
-      //   if (! isExist) {
-      //     const data = staticTemplate(item)
-      //     tempAssets = [...tempAssets, data]
-      //   }
-      // })
-
-      // if (tempAssets.length) {
-      //   const mergedList = [...assetsList, ...tempAssets]
-      //   putAssetsFile(mergedList)
-      //   dispatch($app.set.assetsList(mergedList))
-      // }
       
       if (search == '') {
         dispatch($collection.set.searched([]))
@@ -172,6 +236,7 @@ const WrapperCollections = ({ children }) => {
         if (realCollectionId) {
           const currentCollection = await getCollection(realCollectionId)
           dispatch($collection.set.current(currentCollection))
+          dispatch($app.set.marketInfo(currentCollection))
 
           wsSubscribe([currentCollection.id])
         }

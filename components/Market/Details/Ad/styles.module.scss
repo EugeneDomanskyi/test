@@ -6,12 +6,19 @@
   overflow: hidden;
   position: relative;
 
-  .backgroundImage {
+  .backgroundImage,
+  .background {
     position: absolute;
     z-index: 0;
     inset: 0;
     background-size: cover;
     margin: auto;
+    filter: blur(1px);
+    width: 100%;
+  }
+
+  .background {
+    background-color: rgba(0, 0, 0, .33);
   }
 
   .text {

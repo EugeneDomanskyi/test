@@ -2,7 +2,7 @@ import styles from './styles.module.scss'
 import { memo } from 'react'
 import { useSelector } from 'react-redux'
 import cn from 'classnames'
-import * as math from 'mathjs'
+// import * as math from 'mathjs'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'

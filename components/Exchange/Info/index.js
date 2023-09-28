@@ -25,6 +25,12 @@ const Info = ({ current, location }) => {
     })
   }
 
+  const handleClickDetails = (type) => () => {
+    trackEvent(`Click ${type} Redirect`, {
+      Markets: current.name,
+    })
+  }
+
   return (
     <App.Flex className={styles.container} gap={6}>
       {
@@ -56,6 +62,12 @@ const Info = ({ current, location }) => {
                             </App.Tooltip>
                           : null
                       }
+
+                      {/* <Link href={`/market/${type}/${blockchain.code}/${current.address}`}>
+                        <App.Button onClick={handleClickDetails} sx={{paddingTop: 4, paddingBottom: 4}}>
+                          <App.Text size={12}>More Details</App.Text>
+                        </App.Button>
+                      </Link> */}
                     </App.Flex>
                     <App.Flex align="center">
                       <Link href={scanLink} target="_blank" onClick={handleClickLink(blockchain?.code)} style={{marginRight: 8}}>
