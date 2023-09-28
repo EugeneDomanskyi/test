@@ -40,8 +40,8 @@ const getDecimals = async (address, chainId) => {
 const formatter = (order, makerDecimals, takerDecimals) => {
   const makingAmount = order.data.makingAmount
   const takingAmount = math.chain(makingAmount).multiply(order.data.takingAmount).divide(order.data.makingAmount).round().done()
-  const makingAmountFormatted = formatUnits(makingAmount, makerDecimals)*1
-  const takingAmountFormatted = formatUnits(takingAmount, takerDecimals)*1
+  const makingAmountFormatted = formatUnits(makingAmount.toLocaleString('fullwide', { useGrouping: false }), makerDecimals)*1
+  const takingAmountFormatted = formatUnits(takingAmount.toLocaleString('fullwide', { useGrouping: false }), takerDecimals)*1
   
   const makerPrice = math.chain(takingAmountFormatted).divide(makingAmountFormatted).done()
   const takerPrice = math.chain(makingAmountFormatted).divide(takingAmountFormatted).done()
