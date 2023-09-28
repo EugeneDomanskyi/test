@@ -10,9 +10,11 @@ import { CHAINS, INCH_CONTRACTS, INCH_TOKENS, TEGRO_FILL_ORDERS_CONTRACTS } from
 import $orders from '@/store/orders'
 import $nft from '@/store/nft'
 
+//engage dwarf solar solid gesture naive scare accuse pilot scatter chicken ball
+
 const USDT_DECIMALS = 6
 const e = {"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"index","type":"uint256"}],"name":"TradeFailed","type":"event"}
-const TEGRO_ABI = [{"inputs":[{"internalType":"address","name":"_tradingContract","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"index","type":"uint256"}],"name":"OrderFailed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"maker","type":"address"},{"indexed":true,"internalType":"address","name":"taker","type":"address"},{"indexed":false,"internalType":"address","name":"makerAsset","type":"address"},{"indexed":false,"internalType":"address","name":"takerAsset","type":"address"},{"indexed":false,"internalType":"uint256","name":"makerAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"takerAmount","type":"uint256"},{"indexed":false,"internalType":"bytes32","name":"orderHash","type":"bytes32"}],"name":"TradeSuccessful","type":"event"},{"inputs":[{"components":[{"components":[{"internalType":"uint256","name":"salt","type":"uint256"},{"internalType":"address","name":"makerAsset","type":"address"},{"internalType":"address","name":"takerAsset","type":"address"},{"internalType":"address","name":"maker","type":"address"},{"internalType":"address","name":"receiver","type":"address"},{"internalType":"address","name":"allowedSender","type":"address"},{"internalType":"uint256","name":"makingAmount","type":"uint256"},{"internalType":"uint256","name":"takingAmount","type":"uint256"},{"internalType":"uint256","name":"offsets","type":"uint256"},{"internalType":"bytes","name":"interactions","type":"bytes"}],"internalType":"struct ITradingContract.Order","name":"orderDetails","type":"tuple"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"bytes","name":"interaction","type":"bytes"},{"internalType":"uint256","name":"makingAmount","type":"uint256"},{"internalType":"uint256","name":"takingAmount","type":"uint256"},{"internalType":"uint256","name":"thresholdAmount","type":"uint256"}],"internalType":"struct MultiOrderRouter.OrderExecution[]","name":"orders","type":"tuple[]"},{"internalType":"uint256","name":"totalTakerAmount","type":"uint256"}],"name":"fillMultipleOrders","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"tradingContract","outputs":[{"internalType":"contract ITradingContract","name":"","type":"address"}],"stateMutability":"view","type":"function"}]
+const TEGRO_ABI = [{"inputs":[{"internalType":"address","name":"_tradingContract","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"index","type":"uint256"}],"name":"OrderFailed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"maker","type":"address"},{"indexed":true,"internalType":"address","name":"taker","type":"address"},{"indexed":false,"internalType":"address","name":"makerAsset","type":"address"},{"indexed":false,"internalType":"address","name":"takerAsset","type":"address"},{"indexed":false,"internalType":"uint256","name":"makerAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"takerAmount","type":"uint256"},{"indexed":false,"internalType":"bytes32","name":"orderHash","type":"bytes32"}],"name":"TradeSuccessful","type":"event"},{"inputs":[{"components":[{"components":[{"internalType":"uint256","name":"salt","type":"uint256"},{"internalType":"address","name":"makerAsset","type":"address"},{"internalType":"address","name":"takerAsset","type":"address"},{"internalType":"address","name":"maker","type":"address"},{"internalType":"address","name":"receiver","type":"address"},{"internalType":"address","name":"allowedSender","type":"address"},{"internalType":"uint256","name":"makingAmount","type":"uint256"},{"internalType":"uint256","name":"takingAmount","type":"uint256"},{"internalType":"uint256","name":"offsets","type":"uint256"},{"internalType":"bytes","name":"interactions","type":"bytes"}],"internalType":"struct ITradingContract.Order","name":"orderDetails","type":"tuple"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"bytes","name":"interaction","type":"bytes"},{"internalType":"uint256","name":"makingAmount","type":"uint256"},{"internalType":"uint256","name":"takingAmount","type":"uint256"},{"internalType":"uint256","name":"thresholdAmount","type":"uint256"}],"internalType":"struct MultiOrderRouter.OrderExecution[]","name":"orders","type":"tuple[]"},{"internalType":"uint256","name":"totalTakerAmount","type":"uint256"}],"name":"fillMultipleOrders","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"tradingContract","outputs":[{"internalType":"contract ITradingContract","name":"","type":"address"}],"stateMutability":"view","type":"function"}, e]
 class Order {
 
   static showSuccessMessage = (message) => {
@@ -365,11 +367,8 @@ class TOKEN extends Order {
   }
 
   static listenContract = (events, params, callback) => {
-    const eventHandler = (eventName, event) => {
-      callback(eventName, event)
-    }
     const subsribers = events.map((eventName) => {
-      return watchContractEvent({...params, eventName: eventName}, (event) => eventHandler(eventName, event))
+      return watchContractEvent({...params, eventName: eventName}, (event) => callback(eventName, event))
     })
     return () => {
       subsribers.forEach(fn => fn())
@@ -407,7 +406,6 @@ class TOKEN extends Order {
           return
         }
         callback('allowance', {success: true})
-        // const totalSpendAmount = orders.reduce((acc, order) => acc.plus(order.willSpendTakingAmount), new BigNumber(0))
         
         const balance = await Order.getBalance(walletClient.account.address, sellAsset)
         if (willSpendAmount*1 > balance*1) {
@@ -421,23 +419,26 @@ class TOKEN extends Order {
             order.data,
             order.signature,
             '0x',
-            math.chain(order.willTakeMakingAmount).divide(side === 'sell' ? 1.000001 : 1).round().done(), // order.willTakeMakingAmount.dividedBy(side === 'sell' ? 1.000001 : 1).toFixed(0).toString(),
+            math.chain(order.willTakeMakingAmount).divide(side === 'sell' ? 1.000001 : 1).round().done(),
             '0',
-            math.chain(order.willSpendTakingAmount).multiply(1.1).round().done(), // order.willSpendTakingAmount.multipliedBy(2).toFixed(0).toString(),
+            math.chain(order.willSpendTakingAmount).multiply(1.1).round().done(),
           ]
         })
 
         console.log('params -> ', list, math.chain(willSpendAmountValue).multiply(side === 'buy' ? 1.00001 : 1).round().done())
-
-        TOKEN.listenContract(['TradeSuccessful'], {address: TEGRO_FILL_ORDERS_CONTRACTS[chainId], abi: TEGRO_ABI}, (eventName, eventData) => {
+        
+        const eventHandler = (eventName, eventData) => {
+          console.log('event -> ', eventName, eventData)
           callback(`contract_${eventName}`, eventData)
-        })
+        }
+
+        TOKEN.listenContract(['TradeSuccessful', 'TradeFailed'], {address: TEGRO_FILL_ORDERS_CONTRACTS[chainId], abi: TEGRO_ABI}, eventHandler)
 
         const result = await Order.writeContract({
           address: TEGRO_FILL_ORDERS_CONTRACTS[chainId],
           abi: TEGRO_ABI,
           functionName: 'fillMultipleOrders',
-          args: [list, math.chain(willSpendAmountValue).multiply(side === 'buy' ? 1.00001 : 1).round().done()],
+          args: [list, math.chain(willSpendAmountValue).multiply(side === 'buy' ? 1.0001 : 1).round().done()],
         }, (eventName) => {
           if (eventName === 'waiting') {
             callback('transaction', {success: true})
@@ -445,9 +446,6 @@ class TOKEN extends Order {
         })
 
         if (result.success) {
-          callback('blockchain', {success: true})
-          resolve()
-          // Order.showSuccessMessage('Order filled successfully')
           return
         }
 
