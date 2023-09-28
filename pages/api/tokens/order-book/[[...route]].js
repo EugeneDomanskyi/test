@@ -1,6 +1,5 @@
 import * as math from 'mathjs'
 import { formatUnits } from 'viem'
-import numeral from 'numeral'
 import moment from 'moment'
 import { createPublicClient, http } from 'viem'
 import * as viemChains from 'viem/chains'
