@@ -11,6 +11,8 @@ const FirstStep = ({item, onSubmit}) => {
 
   const { loading } = useSelector(({$raffle}) => $raffle)
 
+  console.log('loading', loading);
+
   const handleClickNextStep = () => {
     dispatch($raffle.set.loading(true))
     onSubmit()

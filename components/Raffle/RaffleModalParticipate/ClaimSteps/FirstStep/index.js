@@ -1,6 +1,6 @@
 import App from '@/components/App'
-import ClaimImage from '@/components/Raffle/RaffleClaimModal/ClaimImage'
-import ClaimText from '@/components/Raffle/RaffleClaimModal/ClaimText'
+import ClaimImage from '@/components/Raffle/RaffleModalParticipate/ClaimImage'
+import ClaimText from '@/components/Raffle/RaffleModalParticipate/ClaimText'
 
 import { useDispatch, useSelector } from 'react-redux'
 

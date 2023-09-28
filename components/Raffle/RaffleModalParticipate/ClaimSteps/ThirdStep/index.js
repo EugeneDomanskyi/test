@@ -6,8 +6,8 @@ import styles from './styles.module.scss'
 
 import App from '@/components/App'
 import Raffle from '@/components/Raffle'
-import ClaimImage from '@/components/Raffle/RaffleClaimModal/ClaimImage'
-import ClaimText from '@/components/Raffle/RaffleClaimModal/ClaimText'
+import ClaimImage from '@/components/Raffle/RaffleModalParticipate/ClaimImage'
+import ClaimText from '@/components/Raffle/RaffleModalParticipate/ClaimText'
 
 const ThirdStep = ({item, onSubmit}) => {
   const [showRoulette, setShowRoulette] = useState(true)

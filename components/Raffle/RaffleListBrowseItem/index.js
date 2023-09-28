@@ -66,8 +66,6 @@ const RaffleListBrowseItem = ({ item, onParticipate, onShare }) => {
             )}
           </> */}
 
-        <App.Button primary onClick={() => onParticipate(item)}>Participate</App.Button>
-
         {item.status == 'Active' ? (
           <>
             {!item.hasOwnProperty('user') || (item.hasOwnProperty('user') && item.user?.isResolved) ? (
