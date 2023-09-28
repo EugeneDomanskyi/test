@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { Provider } from 'react-redux'
-import Head from 'next/head'
+// import Head from 'next/head'
 import { ToastContainer } from 'react-toastify'
 import { createClient } from '@reservoir0x/reservoir-sdk'
 import nookies from 'nookies'
@@ -24,11 +24,14 @@ import $collection from '@/store/collection'
 
 import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
+import Head from '@/components/Head'
 
 import 'react-toastify/dist/ReactToastify.css'
 import '@rainbow-me/rainbowkit/styles.css'
 import '@uniswap/widgets/fonts.css'
 import '@/styles/globals.css'
+
+import { getAssetsFile } from '@/libs/aws.lib'
 
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
@@ -127,49 +130,18 @@ const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
 
 amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
 
-function MyApp({ Component, pageProps, initialData, currentPage, currentAddress, currentSymbol }) {
+function MyApp({ Component, pageProps, initialData, currentPage, currentAddress, currentSymbol, ssRoute, marketInfo }) {
   const storeRef = useRef(store(initialData)).current
 
   useEffect(() => {
     Smartlook.init('cf71ed516173943775e4d8cc10245b95b9ed7de0')
   }, [])
-
-  const getTitle = () => {
-    if (!currentSymbol) {
-      return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'
-    }
-    switch (currentPage) {
-      case 'nfts':
-        return `${currentSymbol} Trading and Charts | Tegro: The CEX-DEX`
-      case 'tokens':
-        return `${currentSymbol}/USDT Trading and Charts | Tegro: The CEX-DEX`
-      default:
-        return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'
-    }
-  }
-
-  const getDescription = () => {
-    if (!currentSymbol) {
-      return 'Buy, sell, and trade Tokens or NFTs instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade Tokens and NFTs at the best prices.'
-    }
-    switch (currentPage) {
-      case 'nfts':
-        return `Buy, sell, and trade ${currentSymbol} instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${currentSymbol} at the best prices.`
-      case 'tokens':
-        return `Buy, sell, and trade ${currentSymbol}/USDT instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${currentSymbol} at the best prices.`
-      default:
-        return 'Buy, sell, and trade Tokens or NFTs instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade Tokens and NFTs at the best prices.'
-    }
-  }
   
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
         <Provider store={storeRef}>
-          <Head>
-            <title>{getTitle()}</title>
-            <meta content={getDescription()} property="description" key="description" />
-          </Head>
+          <Head route={ssRoute} currentPage={currentPage} currentSymbol={currentSymbol} marketInfo={marketInfo} />
 
           <Wrapper>
             <Component {...pageProps} />
@@ -217,7 +189,18 @@ MyApp.getInitialProps = async ({ctx}) => {
       }
     }
   }
+
+  let ssRoute = ''
   
+  if (ctx?.req?.url && ! ctx?.req?.url.includes('/_next/') || ctx?.req?.url.includes('market')) {
+    const routeArr = ctx?.req?.url.split('/') || []
+    const [addrArr] = routeArr.slice(-1)
+    currentAddress = addrArr
+    ssRoute = (ctx?.req?.url)
+  }
+
+  const marketsList = await getAssetsFile()
+  const marketInfo = marketsList.find(item => item.address === currentAddress)
 
   return {
     initialData: {
@@ -227,6 +210,8 @@ MyApp.getInitialProps = async ({ctx}) => {
     currentPage,
     currentAddress,
     currentSymbol,
+    ssRoute,
+    marketInfo,
   }
 }
 

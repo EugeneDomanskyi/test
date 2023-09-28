@@ -1,47 +1,19 @@
 import styles from './styles.module.scss'
 import { useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { gsap } from 'gsap'
 import cn from 'classnames'
-import Container from '@mui/material/Container'
+import moment from 'moment'
 
 import App from '@/components/App'
+import SectionTitle from '@/components/Market/SectionTitle'
 
-const FAQ = [
-  {
-    question: 'What is the TGR Quest?',
-    answer: 'The TGR Quest is a series of three missions that users need to complete in order to activate the TGR tokens they earned by signing up & referring on Tegro.',
-  }, {
-    question: 'What are the three missions?',
-    answer: 'The three missions are: depositing USDT on Tegro, trading on Tegro, and spinning the wheel of fortune.',
-  }, {
-    question: "What happens if I don't complete the TGR Quest?",
-    answer: "If you don't complete the TGR Quest within the given time frame, the TGR tokens you have earned will be deactivated and you will lose access to them."
-  }, {
-    question: 'What do I get if I complete the TGR Quest?',
-    answer: 'If you complete the TGR Quest, you get to activate the TGR tokens you earned by signing up with Tegro and also earn a mystery box containing even more TGR tokens.'
-  }, {
-    question: 'I received TGR for referring my friends to Tegro. Can I access it now or do I need to complete the quest?',
-    answer: 'The TGR you received for referring your friends will be activated once your friend completes their TGR Quest. So, make sure to urge your friends to complete their quests so you can activate your referral TGR.',
-  }, {
-    question: 'How much time do I have to complete the TGR Quest?',
-    answer: 'The time frame for completing the TGR Quest will be mentioned on the website and in the promotional materials. Be sure to check and complete the quest before the time runs out.',
-  }, {
-    question: 'Do I have to pay anything to complete the TGR Quest?',
-    answer: `No, you don't have to pay anything to complete the TGR Quest. All you need to do is follow the instructions and complete the three missions within the given time frame.`
-  }, {
-    question: 'Can I complete the TGR Quest on mobile?',
-    answer: 'Yes, the TGR Quest can be completed on both desktop and mobile devices.'
-  }, {
-    question: "Can I participate in the TGR Quest if I haven't signed up with Tegro?",
-    answer: "No, the TGR Quest is only available for users who have signed up with Tegro and earned TGR tokens. If you haven't signed up yet, you can sign up on the Tegro website to be eligible to participate in future quests and promotions."
-  }
-]
-
-const QuestFAQ = () => {
+const QuestFAQ = ({type}) => {
   const itemRefs = useRef([])
   const answers = useRef([])
 
   const [openItem, setOpenItem] = useState(null)
+  const { marketInfo } = useSelector(({$app}) => $app)
 
   const handleClickQuestion = num => () => {
     const isOpen = answers.current[num].getBoundingClientRect().height
@@ -63,9 +35,45 @@ const QuestFAQ = () => {
     }
   }
 
+  const price = type === 'tokens' ? 'current price' : 'floor price'
+  const volume = type === 'tokens' ? marketInfo?.tokenCount : marketInfo?.tvl
+  const launchDate = moment(marketInfo.createdAt).format('MMMM DD, YYYY')
+
+  const FAQ = [
+    {
+      question: `What is ${ marketInfo.name }?`,
+      answer: marketInfo.description,
+    },
+    {
+      question: `What is the ${ price } of ${ marketInfo.name }?`,
+      answer: `The ${ price } of ${ marketInfo.name } is $${ marketInfo.price }.`,
+    },
+    {
+      question: `What is the total supply of ${ marketInfo.name }`,
+      answer: `${ marketInfo.name } has a total circulating supply of ${ volume }.`,
+    },
+    {
+      question: `What is the the total market cap of ${ marketInfo.name }?`,
+      answer: `${ marketInfo.name } has a total market cap of ${ marketInfo.marketCap ?? marketInfo.tvl }.`
+    },
+    {
+      question: `Where can I buy, sell, and trade ${ marketInfo.name }?`,
+      answer: `The best place to buy, sell, and trade ${ marketInfo.name } is Tegro: The CEX-DEX. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${ marketInfo.name } at the best prices.`,
+    },
+    {
+      question: `What is the 24 hour global trading volume of ${ marketInfo.name }?`,
+      answer: `In the past 24 hours, the total trading volume of ${ marketInfo.name } is ${ marketInfo.volume + (marketInfo.onSaleCount ? ` with ${ marketInfo.onSaleCount } sales` : '') }.`,
+    },
+    {
+      question: `When was ${ marketInfo.name } launched?`,
+      answer: `${ marketInfo.name } was first created on ${ launchDate }.`
+    },
+  ]
+
   return (
     <App.Flex column sx={{width: '100%'}} gap={8}>
-      <App.Text size={28} weight={700}>FAQs</App.Text>
+      <SectionTitle>FAQs</SectionTitle>
+      <h2 style={{marginTop: 0,fontSize: 18}}>Everything you need to know about { marketInfo.name }</h2>
       
       <div className={styles.container}>
         {
