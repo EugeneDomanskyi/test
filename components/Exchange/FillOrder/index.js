@@ -38,6 +38,7 @@ const FillOrder = ({data, onClose}) => {
   const [showDetails, setShgowDetails] = useState(false)
   const [abilities, setAbilities] = useState({totalAmountOnSell: 0, totalAmountToSell: 0, willSpendAmount: 0, willTakeAmount: 0, orders: []})
   const [successOrders, setSuccessOrders] = useState([])
+  const [failedOrders, setFailedOrders] = useState([])
 
   const progressBarRef = useRef(null)
   const progress = useRef(null)
@@ -61,6 +62,13 @@ const FillOrder = ({data, onClose}) => {
   useEffect(() => {
     fetchOrders()
   }, [])
+
+  useEffect(() => {
+    const totalCount = successOrders.length+failedOrders.length
+    if (totalCount && totalCount >= abilities.orders.length) {
+      setCurrentStep('result')
+    }
+  }, [successOrders, failedOrders, abilities.orders])
 
   useEffect(() => {
     if (isCompleteTransaction) {
@@ -139,6 +147,11 @@ const FillOrder = ({data, onClose}) => {
         break
       case 'contract_TradeSuccessful':
         setSuccessOrders(state => {
+          return [...state, ...data]
+        })
+        break
+      case 'contract_TradeFailed':
+        setFailedOrders(state => {
           return [...state, ...data]
         })
         break

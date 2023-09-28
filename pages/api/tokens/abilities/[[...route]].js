@@ -123,7 +123,7 @@ const handler = async (req, res) => {
           willSpendTakingAmount = side === 'buy' ? math.chain(willTakeMakingAmount).multiply(order.makerRate).done() : math.chain(willTakeMakingAmount).divide(order.takerRate).done()
           acc.totalToBuy = side === 'sell' ? math.chain(diff).multiply(-1).divide(order.takerRate).done() : math.chain(diff).multiply(-1).done()
         }
-        const willTakeMakingAmountFormatted = formatUnits(willTakeMakingAmount, makerDecimals)
+        const willTakeMakingAmountFormatted = formatUnits(math.chain(willTakeMakingAmount).round().done(), makerDecimals)
         const willSpendTakingAmountFormatted = formatUnits(willSpendTakingAmount, takerDecimals)
         
         return {
