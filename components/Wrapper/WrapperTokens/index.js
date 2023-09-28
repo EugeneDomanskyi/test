@@ -55,88 +55,7 @@ const WrapperTokens = ({ children }) => {
   const apollo = useRef(getApolloClient(blockchain))
 
   useEffect(() => {
-    if (infoList.length) {
-      // console.log('infoList', infoList);
-      fillAssetsFile()
-    }
-  }, [infoList])
-
-  const fillAssetsFile = async () => {
-    const supportedPlatforms = pageBlockchains.map(item => item.platform)
-    let tempArray = []
-    let res = null
-    try {
-      res = await fetch('/api/assets', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      })
-    } catch (error) {
-      console.error(error)
-    }
-    
-    const existingTokens = await res.json()
-    const existingIds = existingTokens.map(item => {
-      return item.address
-    })
-    console.log('existingTokens', existingTokens);
-    
-    return
-
-    const networkList = infoList.filter(item => item.platforms[blockchain.platform]).filter(item => !existingIds.includes(item.platforms[blockchain.platform]))
-
-    // console.log('networkList', networkList);
-
-    // return
-    for (const token of networkList) {
-    // for (const token of infoList) {
-      console.log('token', token);
-      const tokenId = token.platforms[blockchain.platform]
-      console.log('tokenId', tokenId);
-      if (tokenId) {
-        const currentToken = await getToken(tokenId)
-        // const existingToken = list.length ? list.find(item => item.id === currentToken.id) : null
-        const fullToken = await getTokenFull(currentToken)
-        const staticData = staticTemplate(fullToken)
-        
-        if (staticData.cgId) {
-          // existingTokens.push(staticData)
-          // console.log('existingTokens', existingTokens);
-          tempArray.push(staticData)
-          console.log('tempArray', tempArray)
-          // return
-
-          // try {
-          //   await fetch('/api/assets', {
-          //     method: 'POST',
-          //     headers: { 'Content-Type': 'application/json' },
-          //     body: JSON.stringify(tempArray),
-          //   })
-          // } catch (error) {
-          //   console.error(error)
-          // }
-        }
-
-        // const preUpdateList = list.filter(item => item.address !== fullToken.address)
-        // const mergedData = preUpdateList.length ? [...preUpdateList, staticData] : [staticData]
-        
-
-        // putAssetsFile(mergedData)
-    
-        await new Promise(resolve => setTimeout(resolve, 10000))
-      }
-    }
-  }
-
-  useEffect(() => {
     (async () => {
-      // const tempList = await $token.api.coingecko.list({ include_platform: true })
-      // if (tempList) {
-      //   const platforms = pageBlockchains.map(item => item.platform)
-      //   dispatch($token.set.list(tempList.filter(item => {
-      //     return platforms.some(el => item.platforms.hasOwnProperty(el))
-      //   })))
-      // }
-
       const infoList = await $token.api.coingecko.local()
       dispatch($token.set.infoList(infoList))
 
@@ -454,33 +373,33 @@ const WrapperTokens = ({ children }) => {
     }
   }, [activeInterval, queryTokenId, blockchain.code])
 
-  useEffect(() => {
-    if (queryTokenId && blockchain.code) {
-      getExchangeData(queryTokenId, blockchain.code)
-    }
-  }, [queryTokenId, blockchain.code])
+  // useEffect(() => {
+  //   if (queryTokenId && blockchain.code) {
+  //     getExchangeData(queryTokenId, blockchain.code)
+  //   }
+  // }, [queryTokenId, blockchain.code])
 
-  const getExchangeData = (tokenId, blockchain) => {
-    $orders.api.get.tokens.trades({
-      address: tokenId,
-      blockchain: blockchain,
-      sortBy: 'createDateTime',
-      statuses: '[3]',
-      limit: 50,
-    }).then(res => {
-      dispatch($orders.set.trades({type: 'tokens', data: res}))
-    })
+  // const getExchangeData = (tokenId, blockchain) => {
+  //   $orders.api.get.tokens.trades({
+  //     address: tokenId,
+  //     blockchain: blockchain,
+  //     sortBy: 'createDateTime',
+  //     statuses: '[3]',
+  //     limit: 50,
+  //   }).then(res => {
+  //     dispatch($orders.set.trades({type: 'tokens', data: res}))
+  //   })
 
-    $orders.api.get.tokens.orderBook({
-      address: tokenId,
-      blockchain: blockchain,
-      sortBy: 'createDateTime',
-      statuses: '[1]',
-      limit: 500,
-    }).then(res => {
-      dispatch($orders.set.orderBook({type: 'tokens', data: res}))
-    })
-  }
+  //   $orders.api.get.tokens.orderBook({
+  //     address: tokenId,
+  //     blockchain: blockchain,
+  //     sortBy: 'createDateTime',
+  //     statuses: '[1]',
+  //     limit: 500,
+  //   }).then(res => {
+  //     dispatch($orders.set.orderBook({type: 'tokens', data: res}))
+  //   })
+  // }
 
   return children
 }

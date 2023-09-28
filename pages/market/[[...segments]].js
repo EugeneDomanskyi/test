@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
-import $app from '@/store/app'
+import useOrders from '@/myhooks/useOrders'
 
 import App from '@/components/App'
 import Market from '@/components/Market'
@@ -22,49 +22,20 @@ import Investors from '@/components/Market/Details/Investors'
 import Resources from '@/components/Market/Details/Resources'
 import FAQ from '@/components/Market/Details/FAQ'
 
-import { getAssetsFile, putAssetsFile } from '@/libs/aws.lib'
-
 const token = 'fc873434915ecf9e639339b325338f768e1f5b81fc88e3e4299641a3f87de70fcf93c09316c0d1e5146fa36171076ead7c5797f1d1882f35a9f60aaf5ec065ad7757b0615886847a307d3b25dbaadb42b98d63c59a39744667ff3f5438393a87f3b63ce948bfb260ac0041c44dbe0a10e1646dfa8f8d2c85abd18e45c0bb02c6'
 
 export default function Markets({}) {
   const router = useRouter()
-  const dispatch = useDispatch()
   const { isMobile } = usePropsHelper()
 
   const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
-
+  
+  const { updateOrders } = useOrders({tokenAddress: queryMarketId, type: queryMarketType})
   const marketInfo = useSelector(({$app}) => $app.marketInfo)
 
   useEffect(() => {
-    console.log('marketInfo', marketInfo);
-    // console.log('marketData', marketData);
-    // initPage(marketData, marketSales, marketOrders)
-
-
-    // if (marketData) {
-    //   // console.log('marketData', marketData);
-    //   dispatch($app.set.marketInfo(marketData))
-    // }
-
-    // if (marketSales) {
-    //   dispatch($exchange.set.sales(marketSales))
-    //   dispatch($orders.set.trades({type: queryMarketType, data: marketSales}))
-    // }
-
-    // if (marketOrders) {
-    //   dispatch($orders.set.orderBook({type: queryMarketType, data: marketOrders}))
-    // }
-
-    // if (marketInfo) {
-    //   dispatch($collection.set.currentMarketSeoInfo(marketInfo))
-    // }
-  }, [marketInfo])
-
-  const initPage = async (data, sales, orders) => {
-    if (marketData) {
-      dispatch($app.set.marketInfo(marketData))
-    }
-  }
+    updateOrders()
+  }, [])
 
   return (
     <>
