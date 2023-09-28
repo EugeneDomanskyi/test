@@ -26,6 +26,9 @@ export const template = (item) => {
       value: (item.floorSaleChange['1day'] && item.floorSaleChange['1day'] != 0 ? Math.abs(1 - item.floorSaleChange['1day']) : 0).toFixed(2),
       type: ((item.floorSaleChange['1day'] >= 1 || item.floorSaleChange['1day'] == 0) ? 'plus' : 'minus'),
     },
+    banner: item.banner,
+    sampleImages: item.sampleImages,
+    createdAt: item.createdAt
   }
 }
 
@@ -186,7 +189,7 @@ const api = {
   },
 
   top: (params) => {
-    return request('collections/top-selling/v1', 'GET', params)
+    return request('collections/top-selling/v2', 'GET', params)
   },
 }
 

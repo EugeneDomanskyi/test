@@ -6,16 +6,9 @@
     border-radius: 8px;
     border: 1px solid #1D1937;
     padding: 8px;
-    gap: 16px;
+    gap: 8px;
     flex: .5;
     justify-content: space-between;
-    align-items: center;
-
-    .statInfo {
-      flex: 1;
-      align-items: center;
-      justify-content: space-between;
-    }
   }
 }
 
@@ -26,12 +19,7 @@
 
     .statBlock {
       flex-direction: column;
-      gap: 8px;
-
-      .statInfo {
-        justify-content: space-between;
-        width: 100%;
-      }
+      gap: 4px;
     }
   }
   

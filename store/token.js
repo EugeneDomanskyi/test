@@ -62,6 +62,8 @@ export const template = (item) => {
       type: overwrite?.ticker?.type ?? item?.ticker?.type,
     },
     isFull: overwrite?.isFull ?? item?.isFull,
+    createdAt: overwrite?.genesis_date ?? item?.genesis_date,
+    marketCap: overwrite?.marketCap ?? item.marketCap,
   }
 }
 
@@ -84,6 +86,8 @@ export const staticTemplate = (item) => {
     externalUrl: item?.externalUrl,
     twitterUrl: item?.twitterUrl,
     openseaVerificationStatus: item?.openseaVerificationStatus === 'verified',
+    marketCap: item?.marketCap,
+    createdAt: item?.createdAt,
   }
 }
 
@@ -108,7 +112,7 @@ const infoToTemplate = (item) => {
   if (item) {
     return {
       cgId: item.id,
-      symbol: item.symbol.toUpperCase(),
+      symbol: item.symbol?.toUpperCase(),
       image: item.image,
       price: item.current_price,
       high: item.high_24h,
@@ -120,6 +124,7 @@ const infoToTemplate = (item) => {
         value: Math.abs(item.price_change_percentage_24h ?? 0).toFixed(2),
         type: ((item.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
       },
+      
     }
   }
 
@@ -147,6 +152,8 @@ const fullToTemplate = (item) => {
         value: Math.abs(item.market_data?.price_change_percentage_24h ?? 0).toFixed(2),
         type: ((item.market_data?.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
       },
+      genesis_date: item?.genesis_date,
+      marketCap: item.market_data?.total_supply * (item.market_data?.current_price?.usd ?? 0),
     }
   }
 
@@ -313,6 +320,10 @@ const api = {
 
     full: ({platform, address, ...params}) => {
       return request(`coins/${platform}/contract/${address}`, 'GET', {api: 'coingecko', ...params})
+    },
+
+    top: (params) => {
+      return request('search/trending', 'GET', {api: 'coingecko', ...params})
     },
   },
 }
