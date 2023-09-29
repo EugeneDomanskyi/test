@@ -247,12 +247,12 @@ const WrapperTokens = ({ children }) => {
 
           const existingToken = list.length ? list.find(item => item.id === currentToken.id) : null
 
-          if (! existingToken || ! existingToken.createdAt) {
+          if (! existingToken) {
             const fullToken = await getTokenFull(currentToken)
             dispatch($token.set.current(fullToken))
             dispatch($token.set.update(fullToken))
             dispatch($app.set.marketInfo(fullToken))
-
+            
             const staticData = staticTemplate(fullToken)
             const preUpdateList = list.filter(item => item.address !== currentToken.address)
             const mergedData = preUpdateList.length ? [...preUpdateList, staticData] : [staticData]
