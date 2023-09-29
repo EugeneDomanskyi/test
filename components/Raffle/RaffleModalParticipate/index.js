@@ -43,7 +43,9 @@ const RaffleModalParticipate = ({item}) => {
     }
   }, [showModal])
 
-  const handleClickOpen = (item) => {
+  const handleClickOpen = async () => {
+    const isApproved = await checkIfApproved()
+    setStep(isApproved ? 1 : 0)
     setShowClaim(true)
   }
 
