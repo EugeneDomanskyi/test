@@ -1,5 +1,3 @@
-import { createPublicClient, http } from 'viem'
-import * as viemChains from 'viem/chains'
 import { formatUnits } from 'viem'
 import * as math from 'mathjs'
 import { CHAINS } from '../../../../config'
@@ -12,29 +10,6 @@ const options = {
     'Accept': 'application/json',
     'content-type': 'application/json',
   },
-}
-
-const getDecimals = async (address, chainId) => {
-  const network = Object.values(viemChains).find(chain => chain.id.toString() === chainId)
-  const client = createPublicClient({ 
-    chain: network,
-    transport: http()
-  })
-  const abi = {
-    constant: true,
-    inputs: [],
-    name: 'decimals',
-    outputs: [{name: '', type: 'uint8'}],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function'
-  }
-  const res = await client.readContract({
-    address: address,
-    abi: [abi],
-    functionName: 'decimals',
-  })
-  return res
 }
 
 const queryBuilder = data => {

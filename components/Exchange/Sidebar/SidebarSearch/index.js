@@ -53,7 +53,7 @@ const SidebarSearch = ({ search, loading, onSearch, ...props }) => {
       value={localSearch}
       type="text"
       labelFixed
-      placeholder="Assets, Tokens, Games"
+      placeholder="Search by name or paste address"
       onChange={handleSearchChange}
       start={<App.Icon icon="search" color={localSearch.trim() != '' ? '#fff' : null } />}
       end={localSearch.trim() != '' && loading ? <App.Loader size={12} /> : null}

@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from 'react'
+import { memo } from 'react'
 import cn from 'classnames'
 
 import App from '@/components/App'
@@ -22,12 +22,17 @@ const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpt
       <div className={styles.cardBox}>
         <div className={styles.cardBoxContent}>
           {loading ? (
-            <App.LoaderBlock height={500} />
+            [...new Array(10)].map((_, i) => {
+              const isOdd = i%2
+              return (
+                <div key={i} className={styles['card-loader']} style={{'--delay': `${i/(isOdd ? 20 : 5)}s`}} />
+              )
+            })
           ) : (
             <>
               {searchEmpty ? (
                 <App.Text center>No results were found for your search</App.Text>
-              ) : list.map((item) => {
+              ) : list.map((item, i) => {
                 return (
                   <SidebarItem
                     key={item.address}
