@@ -191,16 +191,18 @@ MyApp.getInitialProps = async ({ctx}) => {
   }
 
   let ssRoute = ''
-  
-  if (ctx?.req?.url && ! ctx?.req?.url.includes('/_next/') || ctx?.req?.url.includes('market')) {
+  let marketInfo = {}
+
+  if (ctx?.req) {
     const routeArr = ctx?.req?.url.split('/') || []
     const [addrArr] = routeArr.slice(-1)
     currentAddress = addrArr
-    ssRoute = (ctx?.req?.url)
+    ssRoute = (ctx.req.url)
+    if (ctx.req.url.includes('market')) {
+      const marketsList = await getAssetsFile()
+      marketInfo = marketsList.find(item => item.address === currentAddress) || {}
+    }
   }
-
-  const marketsList = await getAssetsFile()
-  const marketInfo = marketsList.find(item => item.address === currentAddress)
 
   return {
     initialData: {
