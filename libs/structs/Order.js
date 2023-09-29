@@ -432,7 +432,7 @@ class TOKEN extends Order {
           address: TEGRO_FILL_ORDERS_CONTRACTS[chainId],
           abi: TEGRO_ABI,
           functionName: 'fillMultipleOrders',
-          args: [list, math.chain(willSpendAmountValue).multiply(side === 'buy' ? 1.0001 : 1).round().done()],
+          args: [list, math.chain(willSpendAmountValue).multiply(side === 'buy' ? 1.00001 : 1).round().done()],
         }, (eventName) => {
           if (eventName === 'waiting') {
             callback('transaction', {success: true})
