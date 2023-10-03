@@ -66,7 +66,7 @@ const handler = async (req, res) => {
     const orders = await ordersResponse.json()
     const tokenAssets = assets.reduce((acc, item) => ({
       ...acc,
-      [item.address.toLowerCase()]: item
+      [item.address?.toLowerCase()]: item
     }), {})
 
     const network = CHAINS.find(chain => chain.id.toString() === chainId)
