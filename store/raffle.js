@@ -25,6 +25,7 @@ export const raffleSlice = createSlice({
     last: [],
     balance: 0,
     tokenIds: [],
+    participants: [],
   },
 
   reducers: {
@@ -94,6 +95,22 @@ export const raffleSlice = createSlice({
       })
     },
 
+    participants: (state, { payload }) => {
+      state.participants = payload
+
+      state.all = state.all.map(item => {
+        const participated = payload.find(el => el.campaign.id == item.id)
+        if (participated) {
+          return {
+            ...item,
+            user: participated,
+          }
+        } else {
+          return item
+        }
+      })
+    },
+
     reset: (state) => {
       state.user = {
         id: null,
@@ -104,7 +121,7 @@ export const raffleSlice = createSlice({
 
       state.balance = 0
       state.tokenIds = []
-
+      state.participants = []
       state.all = state.all.map(item => {
         delete item.user
         return item
@@ -167,7 +184,7 @@ const api = {
 const query = {
   campaigns: gql`
     query campaigns($skip: Int) {
-      campaigns(skip: $skip, where: {id_not: 0}) {
+      campaigns(skip: $skip) {
         id
         ipfsHash
         rewardAmount
@@ -218,19 +235,16 @@ const query = {
     }
   `,
 
-  userCampaigns: gql`
-    query userCampaigns($id: String) {
-      userCampaigns(where: {user_: {id: $id}}) {
-        id
-        campaignId
-        tKeysSpent
-        totalEarned
-        user {
-          campaignParticipated(first: 1, orderBy: participatedTimestamp, orderDirection: desc) {
-            isResolved
-            resolvedTransaction
-            participatedTransaction
-          }
+  userCampaignParticipants: gql`
+    query userCampaignParticipants($id: String) {
+      userCampaignParticipants(where: {user_: {id: $id}}) {
+        isResolved
+        rewardAmount
+        tokenIds
+        resolvedTransaction
+        resolvedTimestamp
+        campaign {
+          id
         }
       }
     }
@@ -238,7 +252,7 @@ const query = {
 
   last: gql`
     query userCampaignParticipants {
-      userCampaignParticipants(orderBy: resolvedTimestamp, orderDirection: desc, first: 8, where: {and: [{isResolved: true}, {campaign_: {id_not: 0}}]}) {
+      userCampaignParticipants(orderBy: resolvedTimestamp, orderDirection: desc, first: 8, where: {isResolved: true}) {
         id
         rewardAmount
         participatedTransaction

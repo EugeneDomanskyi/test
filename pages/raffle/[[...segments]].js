@@ -109,20 +109,15 @@ const RafflePage = () => {
       }
     }
 
-    const campaigns = await apollo.current.query({
-      query: $raffle.query.userCampaigns,
+    const participants = await apollo.current.query({
+      query: $raffle.query.userCampaignParticipants,
       variables: {
         id: wallet,
       },
     })
 
-    if (campaigns && campaigns.hasOwnProperty('data') && campaigns.data.hasOwnProperty('userCampaigns')) {
-      dispatch($raffle.set.update(campaigns.data.userCampaigns.map(item => ({
-        campaignId: item.campaignId,
-        tKeysSpent: item.tKeysSpent,
-        totalEarned: item.totalEarned / Math.pow(10, 6),
-        isResolved: item.user.campaignParticipated.length ? item.user.campaignParticipated[0].isResolved : null,
-      }))))
+    if (participants && participants.hasOwnProperty('data') && participants.data.hasOwnProperty('userCampaignParticipants')) {
+      dispatch($raffle.set.participants(participants.data.userCampaignParticipants))
     }
 
     const networkCode = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
@@ -130,10 +125,6 @@ const RafflePage = () => {
     if ( ! network) {
       return
     }
-
-    // const contractAddress = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? '0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84' : '0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84'
-    // const tempBalance = await contracts.balanceOfTkeys(wallet, contractAddress, 0)
-    // dispatch($raffle.set.balance(tempBalance))
 
     const contractAddress = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? '0x9BFDfDac362f810ff15240045E600a7468CAf91C' : '0x9BFDfDac362f810ff15240045E600a7468CAf91C'
     const nfts = await alchemy.getNftsForOwnerCollection(wallet, contractAddress)
