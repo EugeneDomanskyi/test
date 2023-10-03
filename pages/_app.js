@@ -192,6 +192,7 @@ MyApp.getInitialProps = async ({ctx}) => {
 
   let ssRoute = ''
   let marketInfo = {}
+  let marketsList = []
 
   if (ctx?.req) {
     const routeArr = ctx?.req?.url.split('/') || []
@@ -199,8 +200,11 @@ MyApp.getInitialProps = async ({ctx}) => {
     currentAddress = addrArr.split('?')[0]
     ssRoute = (ctx.req.url)
     if (ctx.req.url.includes('market') || ctx.req.url.includes('tokens')) {
-      const marketsList = await getAssetsFile()
-      marketInfo = marketsList.find(item => item.address === currentAddress) || {}
+      const list = await getAssetsFile()
+      if (list && Array.isArray(list)) {
+        marketsList = list
+        marketInfo = list.find(item => item.address === currentAddress) || {}
+      }
     }
   }
   
@@ -208,6 +212,7 @@ MyApp.getInitialProps = async ({ctx}) => {
     initialData: {
       blockchain: cookies.blockchain,
       isMobile,
+      marketsList,
     },
     currentPage,
     currentAddress,

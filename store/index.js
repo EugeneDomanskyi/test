@@ -5,7 +5,7 @@ import $modal from './modal'
 import $app, { appSlice } from './app'
 import $exchange from './exchange'
 import $collection from './collection'
-import $token from './token'
+import $token, { tokenSlice } from './token'
 import $nft from './nft'
 import $orders from './orders'
 import { CHAINS } from '@/config'
@@ -27,6 +27,10 @@ const createStore = initialData => {
         ...appSlice.getInitialState(),
         code: initialData.blockchain || 'ethereum',
         isMobile: initialData.isMobile,
+      },
+      $token: {
+        ...tokenSlice.getInitialState(),
+        list: initialData.marketsList,
       }
     }
   })

@@ -45,7 +45,7 @@ const WrapperTokens = ({ children }) => {
   const pages = useSelector($token.get.pages)
 
   const [isReady, setIsReady] = useState(false)
-  const [isList, setIsList] = useState(false)
+  const [isList, setIsList] = useState(true)
   const [isBlockchain, setIsBlockchain] = useState(false)
 
   const sortRef = useRef(sort)
@@ -59,12 +59,12 @@ const WrapperTokens = ({ children }) => {
       const infoList = await $token.api.coingecko.local()
       dispatch($token.set.infoList(infoList))
 
-      const tempList = await getAssetsFile()
-      if (tempList.length) {
-        dispatch($token.set.list(tempList))
-      }
+      // const tempList = await getAssetsFile()
+      // if (tempList.length) {
+      //   dispatch($token.set.list(tempList))
+      // }
 
-      setIsList(true)
+      // setIsList(true)
     })()
   }, [])
 
@@ -198,6 +198,7 @@ const WrapperTokens = ({ children }) => {
 
     let result = []
     if (idToAddressList.length) {
+
       const tempResult = await $token.api.coingecko.info({ vs_currency: 'usd', ids: idToAddressList.map(item => item.id).join(',') })
       if (tempResult && tempResult.length) {
         result = tempResult.map(item => {
