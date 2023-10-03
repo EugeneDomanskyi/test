@@ -94,7 +94,7 @@ const RaffleList = ({ loading, onUpdateUser }) => {
         <App.Tabs active={tab} options={tabs} onChange={handleTabChange} />
 
         <App.Flex direction={['row', 'column']} gap={12} align={['flex-end', 'flex-start']} justify="space-between" height={[68, 'auto']}>
-          <App.Flex fullWidth={[null, true]}>{tab == 'browse' ? <Raffle.Sort /> : null}</App.Flex>
+          <App.Flex fullWidth={[null, true]} flex={1}>{tab == 'browse' ? <Raffle.Sort /> : null}</App.Flex>
           <App.Flex fullWidth={[null, true]}><Raffle.Search /></App.Flex>
         </App.Flex>
 

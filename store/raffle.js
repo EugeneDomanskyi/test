@@ -13,6 +13,7 @@ export const raffleSlice = createSlice({
     loading: false,
     loadingUser: true,
     sort: 'status:asc',
+    filter: 'All',
     search: '',
     page: 1,
     user: {
@@ -45,6 +46,10 @@ export const raffleSlice = createSlice({
 
     sort: (state, { payload }) => {
       state.sort = payload
+    },
+
+    filter: (state, { payload }) => {
+      state.filter = payload
     },
 
     search: (state, { payload }) => {
@@ -113,8 +118,13 @@ const get = {
     (state) => state.$raffle.all,
     (state) => state.$raffle.search,
     (state) => state.$raffle.sort,
-  ], (all, search, sort) => {
-    const searched = all.filter(item => {
+    (state) => state.$raffle.filter,
+  ], (all, search, sort, filter) => {
+    const filtered = all.filter(item => {
+      return filter != 'All' ? item.status == filter : true
+    })
+
+    const searched = filtered.filter(item => {
       return item.title.toLowerCase().includes(search.trim().toLowerCase())
     })
 
@@ -126,7 +136,9 @@ const get = {
     }
     searched.sort((a, b) => {
       if (sortBy == 'status') {
-        return statusOrder[a.status] - statusOrder[b.status]
+        if (a.user && !b.user) return -1
+        if (!a.user && b.user) return 1
+        if (a.user && b.user) return statusOrder[a.status] - statusOrder[b.status]
       }
 
       return sortDirection == 'asc' ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]

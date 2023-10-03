@@ -11,8 +11,9 @@ import styles from './styles.module.scss'
 const RaffleSort = () => {
   const dispatch = useDispatch()
   const sort = useSelector(({ $raffle }) => $raffle.sort)
+  const filter = useSelector(({ $raffle }) => $raffle.filter)
 
-  const [dropdownShow, setDropdownShow] = useState(false)
+  const [dropdownShow, setDropdownShow] = useState()
 
   const sortOptions = [
     { code: 'status:asc', text: 'Featured' },
@@ -22,29 +23,61 @@ const RaffleSort = () => {
     { code: 'tKeyRequired:asc', text: 'TKeys Req: Low to High' },
   ]
 
-  const handleDropdownToggle = () => {
-    setDropdownShow( ! dropdownShow)
+  const filterOptions = [
+    { code: 'All', text: 'All' },
+    { code: 'Upcoming', text: 'Upcoming' },
+    { code: 'Active', text: 'Ongoing' },
+    { code: 'Closed', text: 'Closed' },
+  ]
+
+  const handleDropdownToggle = (type) => () => {
+    setDropdownShow(dropdownShow == type ? null : type)
   }
 
   const handleSortChange = (value) => () => {
     dispatch($raffle.set.sort(value))
   }
 
+  const handleFilterChange = (value) => () => {
+    dispatch($raffle.set.filter(value))
+  }
+
   return (
-    <App.Flex column gap={8} fullWidth>
-      <App.Text size={12} weight={400} height={1} color="#B9B8C5">Sort by</App.Text>
+    <App.Flex direction={['row', 'column']} fullWidth gap={[32, 12]}>
+      <App.Flex column gap={8}>
+        <App.Text size={12} weight={400} height={1} color="#B9B8C5">Sort by</App.Text>
 
-      <App.Flex className={styles.container}>
-        <App.Flex column className={cn(styles.sort, {[styles.active]: dropdownShow})} onClick={handleDropdownToggle}>
-          <App.Flex row align="center" justify="space-between" gap={8} className={styles.text}>
-            <App.Text size={16} color="#B9B8C5">{sortOptions.find(item => item.code == sort)?.text}</App.Text>
-            <App.Icon icon="chevron-down" color="#908F99" />
+        <App.Flex className={styles.container} width={[230, '100%']}>
+          <App.Flex column className={cn(styles.sort, {[styles.active]: dropdownShow == 'sort'})} onClick={handleDropdownToggle('sort')}>
+            <App.Flex row align="center" justify="space-between" gap={8} className={styles.text}>
+              <App.Text size={16} color="#B9B8C5">{sortOptions.find(item => item.code == sort)?.text}</App.Text>
+              <App.Icon icon="chevron-down" color="#908F99" />
+            </App.Flex>
+
+            <App.Flex column className={styles.dropdown}>
+              {sortOptions.map(item => (
+                <App.Text key={item.code} size={16} className={cn(styles.option, {[styles.active]: sort == item.code})} onClick={handleSortChange(item.code)}>{item.text}</App.Text>
+              ))}
+            </App.Flex>
           </App.Flex>
+        </App.Flex>
+      </App.Flex>
 
-          <App.Flex column className={styles.dropdown}>
-            {sortOptions.map(item => (
-              <App.Text key={item.code} size={16} className={cn(styles.option, {[styles.active]: sort == item.code})} onClick={handleSortChange(item.code)}>{item.text}</App.Text>
-            ))}
+      <App.Flex column gap={8}>
+        <App.Text size={12} weight={400} height={1} color="#B9B8C5">Filter</App.Text>
+
+        <App.Flex className={styles.container} width={[230, '100%']}>
+          <App.Flex column className={cn(styles.sort, {[styles.active]: dropdownShow == 'filter'})} onClick={handleDropdownToggle('filter')}>
+            <App.Flex row align="center" justify="space-between" gap={8} className={styles.text}>
+              <App.Text size={16} color="#B9B8C5">{filterOptions.find(item => item.code == filter)?.text}</App.Text>
+              <App.Icon icon="chevron-down" color="#908F99" />
+            </App.Flex>
+
+            <App.Flex column className={styles.dropdown}>
+              {filterOptions.map(item => (
+                <App.Text key={item.code} size={16} className={cn(styles.option, {[styles.active]: filter == item.code})} onClick={handleFilterChange(item.code)}>{item.text}</App.Text>
+              ))}
+            </App.Flex>
           </App.Flex>
         </App.Flex>
       </App.Flex>
