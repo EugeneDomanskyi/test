@@ -22,7 +22,7 @@
     right: -150px;
     top: -150px;
     border-radius: 300px;
-    background: #73E0A9;
+    background: #256AAB;
     filter: blur(101.31403350830078px);
 
     @media (max-width: 768px) {
@@ -31,6 +31,12 @@
       right: -100px;
       top: -100px;
       border-radius: 200px;
+    }
+  }
+
+  &.Active {
+    .circle {
+      background: #FF7743;
     }
   }
 

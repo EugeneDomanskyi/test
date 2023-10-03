@@ -28,7 +28,7 @@ const RaffleListBrowseItem = ({ item, onParticipate, onShare }) => {
           <App.Text size={[12, 10]} height={1}>{item.status == 'Active' ? `${getTime()} left` : item.status}</App.Text>
         </App.Flex>
 
-        {item.status != 'Closed' ? (
+        {item.status == 'Active' ? (
           <App.Flex row center gap={4} className={styles.tkeyBadge}>
             <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
             <App.Text size={[12, 10]} height={1}>{item.tKeyRequired} TKeys</App.Text>
@@ -37,45 +37,31 @@ const RaffleListBrowseItem = ({ item, onParticipate, onShare }) => {
       </App.Flex>
 
       <App.Flex row align="center" gap={[16, 8]}>
-        <App.Flex center sx={{ minWidth: propValue([65, 32], true) }}>
-          <Image src={item.image} width={propValue([65, 32], true)} height={propValue([65, 32], true)} alt="" />
+        <App.Flex center sx={{ minWidth: propValue([64, 34], true) }}>
+          <Image src={item.image} width={propValue([64, 34], true)} height={propValue([64, 34], true)} alt="" />
         </App.Flex>
 
         <App.Flex flex={1}>
-          <App.Text size={[20, 14]} weight={700} lines={2}>{item.title}</App.Text>
+          <App.Text size={[20, 14]} weight={[700, 500]} lines={2} height={1}>{item.title}</App.Text>
         </App.Flex>
       </App.Flex>
 
       <App.Flex column justify="flex-end" gap={8} height={[74, 'auto']}>
-        <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles.hiddenOnMobile, styles[item.status])} fullWidth>
+        <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles[item.status])} fullWidth>
           <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
           {item.status == 'Upcoming' ? (
-            <App.Text size={12} height={1}>{item.rewardAmount} reward available</App.Text>
+            <App.Text size={12} height={1.2}>{item.rewardAmount} reward available</App.Text>
           ) : (
-            <App.Text size={12} height={1}>{item.totalTransferred}/{item.rewardAmount} reward distributed</App.Text>
+            <App.Text size={12} height={1.2}>{item.totalTransferred}/{item.rewardAmount} reward distributed</App.Text>
           )}
         </App.Flex>
 
-        <>
-            {!item.hasOwnProperty('user') || (item.hasOwnProperty('user') && item.user?.isResolved) ? (
-              <App.Button primary onClick={() => onParticipate(item)}>Participate</App.Button>
-            ) : (
-              <App.Tooltip variant="gray" text="You need to wait till your current mystery box has been opened" placement="top">
-                <App.Button variant="gray" disabled fullWidth>Participate</App.Button>
-              </App.Tooltip>
-            )}
-          </>
+        {item.status !== 'Active' ? (
+          <App.Button primary onClick={() => onParticipate(item)}>Participate</App.Button>
+        ) : null}
 
-        {item.status == 'Active' ? (
-          <>
-            {!item.hasOwnProperty('user') || (item.hasOwnProperty('user') && item.user?.isResolved) ? (
-              <App.Button primary onClick={() => onParticipate(item)}>Participate</App.Button>
-            ) : (
-              <App.Tooltip variant="gray" text="You need to wait till your current mystery box has been opened" placement="top">
-                <App.Button variant="gray" disabled fullWidth>Participate</App.Button>
-              </App.Tooltip>
-            )}
-          </>
+        {item.status == 'Upcoming' ? (
+          <App.Button default outlined onClick={() => onShare(item)}>Tweet to show support</App.Button>
         ) : null}
       </App.Flex>
     </App.Flex>

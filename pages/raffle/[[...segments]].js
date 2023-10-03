@@ -35,7 +35,6 @@ const RafflePage = () => {
   const [campaignLoading, setCampaignLoading] = useState(true)
 
   const apollo = useRef(getApolloClient())
-  const contracts = new Contracts()
   const alchemy = new AlchemyLibrary(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'MATIC_MUMBAI' : 'MATIC_MAINNET')
 
   const prevWallet = useRef()
@@ -73,7 +72,7 @@ const RafflePage = () => {
   }, [])
 
   useEffect(() => {
-    if (wallet) {
+    if (wallet && ! campaignLoading) {
       (async () => {
         if (wallet != prevWallet.current) {
           dispatch($raffle.set.reset())
@@ -86,7 +85,7 @@ const RafflePage = () => {
     } else {
       prevWallet.current = null
     }
-  }, [wallet])
+  }, [wallet, campaignLoading])
 
   const handleUpdateUser = async (hard = false) => {
     if (hard) {
@@ -204,11 +203,10 @@ const RafflePage = () => {
   }
 
   const getStatus = (item) => {
-    console.log(item)
     const start = item.startTimestamp * 1000
     const end = item.endTimestamp * 1000
     const current = moment().valueOf()
-
+    
     if (item.status.toLowerCase() == 'active') {
       if (current >= start) {
         if (current >= end) {

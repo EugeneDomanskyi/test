@@ -78,7 +78,7 @@ const RaffleClaimModal = ({item, onStep}) => {
         return
       }
 
-      const result = await $raffle.api.reward(enterCampaignHash)
+      const result = await $raffle.api.reward(enterCampaignHash.trim())
       dispatch($raffle.set.loading(false))
     }
 
