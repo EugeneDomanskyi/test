@@ -122,7 +122,7 @@ const RaffleModalParticipate = ({item}) => {
 
             <App.Flex justify="space-between" gap={16}>
               <App.Flex center sx={{ minWidth: propValue([65, 32], true) }} gap={16}>
-                <Image src={item.image} width={propValue([48, 32], true)} height={propValue([48, 32], true)} alt="" />
+                {/* <Image src={item.image} width={propValue([48, 32], true)} height={propValue([48, 32], true)} alt="" /> */}
                 <App.Text size={20} weight={700}>{ item.title }</App.Text>
               </App.Flex>
 

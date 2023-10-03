@@ -1,26 +1,5 @@
 import { arbitrum, mainnet, polygon, goerli, optimism, celo, bsc, base, avalanche, linea, polygonMumbai } from '@wagmi/chains'
 
-// {
-//     ...polygonMumbai,
-//     code: 'mumbai',
-//     currency: polygonMumbai.nativeCurrency.symbol,
-//     decimals: polygonMumbai.nativeCurrency.decimals,
-//     baseApiUrl: 'https://api-mumbai.reservoir.tools',
-//     wsReservoirUrl: '',
-//     baseUniswapUrl: null,
-//     scanUrl: polygonMumbai.blockExplorers.etherscan.url,
-//     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
-//     coingecko: '',
-//     platform: '',
-//     pages: ['tokens'],
-//     usdtContract: '0xA02f6adc7926efeBBd59Fd43A84f4E0c0c91e832',
-//     wrapped: {
-//         contract: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
-//         name: 'Wrapped Matic',
-//         shortName: 'WMATIC',
-//     },
-// },
-
 export const TEG_TOKEN = '0xa1f102b004c8a5f4734e70bea7d62f829916d94c'
 
 export const TEGRO_FILL_ORDERS_CONTRACTS = {
@@ -35,26 +14,48 @@ export const TEGRO_FILL_ORDERS_CONTRACTS = {
 
 }
 
-const TEST_NETWORK = {
-  ...goerli,
-  code: 'goerli',
-  currency: goerli.nativeCurrency.symbol,
-  decimals: goerli.nativeCurrency.decimals,
-  baseApiUrl: 'https://api-goerli.reservoir.tools',
-  wsReservoirUrl: 'wss://ws-goerli.reservoir.tools',
-  baseUniswapUrl: null,
-  scanUrl: goerli.blockExplorers.etherscan.url,
-  apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
-  coingecko: 'ethereum',
-  platform: 'ethereum',
-  pages: ['nfts'],
-  usdtContract: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-  wrapped: {
-    contract: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-    name: 'Wrapped Ether',
-    shortName: 'WETH',
-  },
-}
+const TEST_NETWORKS = [
+    {
+        ...goerli,
+        code: 'goerli',
+        currency: goerli.nativeCurrency.symbol,
+        decimals: goerli.nativeCurrency.decimals,
+        baseApiUrl: 'https://api-goerli.reservoir.tools',
+        wsReservoirUrl: 'wss://ws-goerli.reservoir.tools',
+        baseUniswapUrl: null,
+        scanUrl: goerli.blockExplorers.etherscan.url,
+        apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
+        coingecko: 'ethereum',
+        platform: 'ethereum',
+        pages: ['nfts'],
+        usdtContract: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+        wrapped: {
+            contract: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+            name: 'Wrapped Ether',
+            shortName: 'WETH',
+        },
+    },
+    {
+        ...polygonMumbai,
+        code: 'mumbai',
+        currency: polygonMumbai.nativeCurrency.symbol,
+        decimals: polygonMumbai.nativeCurrency.decimals,
+        baseApiUrl: 'https://api-mumbai.reservoir.tools',
+        wsReservoirUrl: '',
+        baseUniswapUrl: null,
+        scanUrl: polygonMumbai.blockExplorers.etherscan.url,
+        apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
+        coingecko: '',
+        platform: '',
+        pages: ['tokens'],
+        usdtContract: '0xA02f6adc7926efeBBd59Fd43A84f4E0c0c91e832',
+        wrapped: {
+            contract: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
+            name: 'Wrapped Matic',
+            shortName: 'WMATIC',
+        },
+    },
+]
 
 const ADDITIONAL_NETWORKS = [{
     ...arbitrum,
@@ -234,7 +235,7 @@ export const CHAINS = [
       shortName: 'WMATIC',
     },
   }, 
-  ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? [TEST_NETWORK] : []),
+  ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? TEST_NETWORKS : []),
   ...ADDITIONAL_NETWORKS.filter(chain => TEGRO_FILL_ORDERS_CONTRACTS[chain.id]),
 ]
 
