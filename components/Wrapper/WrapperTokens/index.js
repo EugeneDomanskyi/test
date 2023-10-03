@@ -8,6 +8,9 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import { putAssetsFile, getAssetsFile } from '@/libs/aws.lib'
 
 import $app from '@/store/app'
+import $collection from '@/store/collection'
+import $exchange from '@/store/exchange'
+import $orders from '@/store/orders'
 import $token, { template, staticTemplate } from '@/store/token'
 
 const getApolloClient = (chain) => {
@@ -29,6 +32,7 @@ const WrapperTokens = ({ children }) => {
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const pageBlockchains = useSelector($app.get.pageBlockchains('tokens'))
+  const activeInterval = useSelector(({$exchange}) => $exchange.interval)
 
   const tokens = useSelector(({ $token }) => $token.all)
   const searched = useSelector(({ $token }) => $token.searched)
@@ -41,7 +45,7 @@ const WrapperTokens = ({ children }) => {
   const pages = useSelector($token.get.pages)
 
   const [isReady, setIsReady] = useState(false)
-  const [isList, setIsList] = useState(false)
+  const [isList, setIsList] = useState(true)
   const [isBlockchain, setIsBlockchain] = useState(false)
 
   const sortRef = useRef(sort)
@@ -52,23 +56,15 @@ const WrapperTokens = ({ children }) => {
 
   useEffect(() => {
     (async () => {
-      // const tempList = await $token.api.coingecko.list({ include_platform: true })
-      // if (tempList) {
-      //   const platforms = pageBlockchains.map(item => item.platform)
-      //   dispatch($token.set.list(tempList.filter(item => {
-      //     return platforms.some(el => item.platforms.hasOwnProperty(el))
-      //   })))
-      // }
-
       const infoList = await $token.api.coingecko.local()
       dispatch($token.set.infoList(infoList))
 
-      const tempList = await getAssetsFile()
-      if (tempList.length) {
-        dispatch($token.set.list(tempList))
-      }
+      // const tempList = await getAssetsFile()
+      // if (tempList.length) {
+      //   dispatch($token.set.list(tempList))
+      // }
 
-      setIsList(true)
+      // setIsList(true)
     })()
   }, [])
 
@@ -100,6 +96,8 @@ const WrapperTokens = ({ children }) => {
       apollo.current = getApolloClient(blockchain)
       dispatch($token.set.current({}))
       dispatch($token.set.fetching(true))
+      dispatch($collection.set.all([]))
+      dispatch($collection.set.current({}))
     }
   }, [blockchain.code])
 
@@ -200,6 +198,7 @@ const WrapperTokens = ({ children }) => {
 
     let result = []
     if (idToAddressList.length) {
+
       const tempResult = await $token.api.coingecko.info({ vs_currency: 'usd', ids: idToAddressList.map(item => item.id).join(',') })
       if (tempResult && tempResult.length) {
         result = tempResult.map(item => {
@@ -247,21 +246,33 @@ const WrapperTokens = ({ children }) => {
             }
           }
 
-          const existingToken = list.length ?  list.find(item => item.id === currentToken.id) : null
+          const existingToken = list.length ? list.find(item => item.id === currentToken.id) : null
 
           if (! existingToken) {
             const fullToken = await getTokenFull(currentToken)
             dispatch($token.set.current(fullToken))
             dispatch($token.set.update(fullToken))
-
+            dispatch($app.set.marketInfo(fullToken))
+            
             const staticData = staticTemplate(fullToken)
-            const mergedData = list.length ? [...list, staticData] : [staticData]
+            const preUpdateList = list.filter(item => item.address !== currentToken.address)
+            const mergedData = preUpdateList.length ? [...preUpdateList, staticData] : [staticData]
             putAssetsFile(mergedData)
             dispatch($token.set.list(mergedData))
           } else {
-            const mergedData = {...currentToken, ...existingToken}
+            let mergedData = {}
+            const tokenPrices = tokens.find(item => item.address === existingToken.address)
+            
+            if (tokenPrices) {
+              mergedData = {...tokenPrices, ...existingToken, currency: tokenPrices.currency}
+            } else {
+              const [priceInfo] = await getInfo([existingToken])
+              const priceTemplate = template({info: priceInfo})
+              mergedData = {...priceTemplate, ...existingToken, currency: priceTemplate.currency}
+            }
             dispatch($token.set.current(mergedData))
             dispatch($token.set.update(mergedData))
+            dispatch($app.set.marketInfo(mergedData))
           }
         }
 
@@ -348,6 +359,48 @@ const WrapperTokens = ({ children }) => {
       dispatch($token.set.fetching(true))
     }
   }, [pages])
+
+  useEffect(() => {
+    if (queryTokenId && blockchain.code) {
+      dispatch($exchange.set.loading(true))
+      $exchange.api.get.tokenChartData(queryTokenId, blockchain.code, activeInterval.seconds).then(res => {
+        dispatch($exchange.set.loading(false))
+        if (res) {
+          dispatch($exchange.set.chartData({type: 'tokens', data: res.data}))
+          return
+        }
+        dispatch($exchange.set.chartData({type: 'tokens', data: []}))
+      })
+    }
+  }, [activeInterval, queryTokenId, blockchain.code])
+
+  // useEffect(() => {
+  //   if (queryTokenId && blockchain.code) {
+  //     getExchangeData(queryTokenId, blockchain.code)
+  //   }
+  // }, [queryTokenId, blockchain.code])
+
+  // const getExchangeData = (tokenId, blockchain) => {
+  //   $orders.api.get.tokens.trades({
+  //     address: tokenId,
+  //     blockchain: blockchain,
+  //     sortBy: 'createDateTime',
+  //     statuses: '[3]',
+  //     limit: 50,
+  //   }).then(res => {
+  //     dispatch($orders.set.trades({type: 'tokens', data: res}))
+  //   })
+
+  //   $orders.api.get.tokens.orderBook({
+  //     address: tokenId,
+  //     blockchain: blockchain,
+  //     sortBy: 'createDateTime',
+  //     statuses: '[1]',
+  //     limit: 500,
+  //   }).then(res => {
+  //     dispatch($orders.set.orderBook({type: 'tokens', data: res}))
+  //   })
+  // }
 
   return children
 }

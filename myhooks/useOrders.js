@@ -25,6 +25,8 @@ const useOrders = ({tokenAddress, type}) => {
           dispatch($orders.set[type](res))
         }
       })
+    } else {
+      dispatch($orders.set[type]([]))
     }
 
     if (tokenAddress) {
@@ -35,7 +37,7 @@ const useOrders = ({tokenAddress, type}) => {
         sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
         ...(type === 'nfts' ? {} : {statuses: '[1]'})
       }).then(res => {
-        dispatch($orders.set.orderBook({type: type, data: res}))
+        dispatch($orders.set.orderBook({type: type, data: res, tokenAddress: tokenAddress}))
       })
       if (type === 'tokens') {
         $orders.api.get.tokens.trades({

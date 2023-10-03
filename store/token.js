@@ -4,8 +4,30 @@ import numeral from 'numeral'
 
 import { request } from './index'
 
+function formatNumber(number) {
+  if (!number) {
+    return '0'
+  }
+  const str = (number*1)?.toFixed(20)
+  let lastIndex = -1;
+
+  for (let i = str.length - 1; i >= 0; i--) {
+    if (str[i] !== '0') {
+      lastIndex = i+1;
+      break;
+    }
+  }
+  let result = '0.0'
+  if (lastIndex !== -1) {
+    result = str.slice(0, lastIndex)
+  } else {
+    result = str
+  }
+  return isNaN(numeral(result).format('0.0[00000]')) ? result : numeral(result).format('0.0[00000]')
+}
+
 export const template = (item) => {
-  const currency = 'USD'
+  const currency = 'USDT'
 
   const overwrite = {
     ...basicToTemplate(item?.basic),
@@ -22,9 +44,9 @@ export const template = (item) => {
     name: overwrite?.name ?? item?.name,
     blockchain: overwrite?.blockchain ?? item?.blockchain,
     symbol: overwrite?.symbol ?? item?.symbol,
-    price: numeral(overwrite?.price ?? item?.price ?? 0).format('0.[0000]'),
-    high: numeral(overwrite?.high ?? item?.high ?? 0).format('0.[0000]'),
-    low: numeral(overwrite?.low ?? item?.low ?? 0).format('0.[0000]'),
+    price: formatNumber(overwrite?.price ?? item?.price ?? 0),
+    high: formatNumber(overwrite?.high ?? item?.high ?? 0),
+    low: formatNumber(overwrite?.low ?? item?.low ?? 0),
     currency: currency,
     volume: numeral(overwrite?.volume ?? item?.volume ?? 0).format('0.[0000]'),
     tvl: numeral(overwrite?.tvl ?? item?.tvl ?? 0).format('0.[0000]'),
@@ -40,11 +62,13 @@ export const template = (item) => {
       type: overwrite?.ticker?.type ?? item?.ticker?.type,
     },
     isFull: overwrite?.isFull ?? item?.isFull,
+    createdAt: overwrite?.genesis_date ?? item?.genesis_date,
+    marketCap: overwrite?.marketCap ?? item.marketCap,
   }
 }
 
 export const staticTemplate = (item) => {
-  const currency = 'USD'
+  const currency = 'USDT'
 
   return {
     id: item?.id,
@@ -62,6 +86,8 @@ export const staticTemplate = (item) => {
     externalUrl: item?.externalUrl,
     twitterUrl: item?.twitterUrl,
     openseaVerificationStatus: item?.openseaVerificationStatus === 'verified',
+    marketCap: item?.marketCap,
+    createdAt: item?.createdAt,
   }
 }
 
@@ -86,7 +112,7 @@ const infoToTemplate = (item) => {
   if (item) {
     return {
       cgId: item.id,
-      symbol: item.symbol.toUpperCase(),
+      symbol: item.symbol?.toUpperCase(),
       image: item.image,
       price: item.current_price,
       high: item.high_24h,
@@ -98,6 +124,7 @@ const infoToTemplate = (item) => {
         value: Math.abs(item.price_change_percentage_24h ?? 0).toFixed(2),
         type: ((item.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
       },
+      
     }
   }
 
@@ -125,6 +152,8 @@ const fullToTemplate = (item) => {
         value: Math.abs(item.market_data?.price_change_percentage_24h ?? 0).toFixed(2),
         type: ((item.market_data?.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
       },
+      genesis_date: item?.genesis_date,
+      marketCap: item.market_data?.total_supply * (item.market_data?.current_price?.usd ?? 0),
     }
   }
 
@@ -163,6 +192,13 @@ export const tokenSlice = createSlice({
 
     all: (state, { payload }) => {
       state.all = payload.map(template)
+      if (state.current.id) {
+        const exist = state.all.find(item => item.id === state.current.id)
+        if (exist) {
+          const { price, high, low, volume, tvl, ticker } = exist
+          state.current = {...state.current, price, high, low, volume, tvl, ticker}
+        }
+      }
     },
 
     searched: (state, { payload }) => {
@@ -183,7 +219,7 @@ export const tokenSlice = createSlice({
 
     update: (state, { payload }) => {
       state.all = state.all.map(item => {
-        if (item.id.toLowerCase() == payload.id.toLowerCase()) {
+        if (item.id.toLowerCase() == payload.id?.toLowerCase()) {
           return payload
         } else {
           return item
@@ -245,6 +281,27 @@ const getters = {
     const next = history.find((_, index) => (currentIndex >= 0 && currentIndex < history.length - 1) ? index === (currentIndex + 1) : null) ?? null
     return { prev, current, next }
   }),
+  data: createSelector([
+    state => state.$token.all,
+    state => state.$token.searched,
+    state => state.$token.current,
+    state => state.$token.loading,
+    state => state.$token.sort,
+    state => state.$token.search,
+    state => state.$token.searching,
+    state => state.$token.searchEmpty,
+  ], (tokens, searched, current, tokenLoading, sort, search, searching, searchEmpty) => {
+    return {
+      tokens,
+      searched,
+      current,
+      tokenLoading,
+      sort,
+      search,
+      searching,
+      searchEmpty,
+    }
+  })
 }
 
 const api = {
@@ -263,6 +320,10 @@ const api = {
 
     full: ({platform, address, ...params}) => {
       return request(`coins/${platform}/contract/${address}`, 'GET', {api: 'coingecko', ...params})
+    },
+
+    top: (params) => {
+      return request('search/trending', 'GET', {api: 'coingecko', ...params})
     },
   },
 }

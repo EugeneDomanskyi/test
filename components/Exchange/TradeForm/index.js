@@ -14,6 +14,7 @@ import Tabs from '@/components/Exchange/Tabs'
 import TradeFormLimit from '@/components/Exchange/TradeForm/TradeFormLimit'
 import TradeFormMarket from '@/components/Exchange/TradeForm/TradeFormMarket'
 import TradeFormTaker from '@/components/Exchange/TradeForm/TradeFormTaker'
+import TradeFormPlace from '@/components/Exchange/TradeForm/TradeFormPlace'
 
 const TAB_OPTIONS = [
   {key: 'buy', title: 'BUY', color: 'rgb(13, 198, 109)'},
@@ -23,7 +24,7 @@ const TAB_OPTIONS = [
 const TradeForm = forwardRef(({current, type, fullWidth = null}, ref) => {
   const { wallet, getBalance, changeNetwork } = useWalletConnect()
   const { getNftBalanceUser } = useTrade()
-  
+
   const orderBook = useSelector($exchange.get.orderBook)
   const loading = useSelector(({$exchange}) => $exchange.loadingCollectionData)
   const blockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
@@ -160,13 +161,22 @@ const TradeForm = forwardRef(({current, type, fullWidth = null}, ref) => {
               )
               case 'limit':
                 return (
-                  <TradeFormLimit
-                    current={current}
-                    type={type}
-                    currentTab={currentTab}
-                    currentOption={currentOption}
-                    userBalances={userBalances}
-                    initialForm={limitForm} />
+                  type === 'nfts'
+                    ? <TradeFormLimit
+                        current={current}
+                        type={type}
+                        currentTab={currentTab}
+                        currentOption={currentOption}
+                        userBalances={userBalances}
+                        initialForm={limitForm} />
+                    : <TradeFormPlace
+                        current={current}
+                        type={type}
+                        currentTab={currentTab}
+                        currentOption={currentOption}
+                        userBalances={userBalances}
+                        initialForm={limitForm} />
+                  
                 )
               default:
                 return null
@@ -178,7 +188,7 @@ const TradeForm = forwardRef(({current, type, fullWidth = null}, ref) => {
 })
 
 const isEqual = (prev, next) => {
-  return prev.current.address === next.current.address
+  return JSON.stringify(prev.current) === JSON.stringify(next.current)
 }
 
 export default memo(TradeForm, isEqual)

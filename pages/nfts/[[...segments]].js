@@ -3,15 +3,12 @@ import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import dynamic from 'next/dynamic'
 
-import $exchange from '@/store/exchange'
 import $app from '@/store/app'
 import $collection from '@/store/collection'
 import $orders from '@/store/orders'
-import Stream from '@/libs/stream.lib'
 import { trackEvent } from '@/libs/analytics.lib'
-import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
-import useOrders from '@/myhooks/useOrders'
+import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
 import Sidebar from '@/components/Exchange/Sidebar'
@@ -50,7 +47,6 @@ const Nfts = () => {
   const searching = useSelector(({$collection}) => $collection.searching)
   const searchEmpty = useSelector(({$collection}) => $collection.searchEmpty)
   const pages = useSelector($collection.get.pages)
-  const { updateOrders } = useOrders({tokenAddress: collectionId, type: 'nfts'})
 
   const [mobileTab, setMobileTab] = useState('markets')
   const [mobileTabTrade, setMobileTabTrade] = useState(false)
@@ -64,81 +60,6 @@ const Nfts = () => {
       'Wallet Address': wallet || null,
     })
   }, [])
-
-  useEffect(() => {
-    Stream.on('sale', (event, data) => {
-      switch (event) {
-        case 'sale.created':
-          dispatch($exchange.set.saleAdd(data))
-          break
-        case 'sale.updated':
-          dispatch($exchange.set.saleUpdate(data))
-          break
-      }
-    })
-    Stream.on('bid', (event, data) => {
-      if (wallet && wallet.toLowerCase() !== data.maker.toLowerCase()) {
-        return
-      }
-      dispatch($exchange.set.orderUpdate(data))
-    })
-    Stream.on('ask', (event, data) => {
-      if (wallet && wallet.toLowerCase() !== data.maker.toLowerCase()) {
-        return
-      }
-      dispatch($exchange.set.orderUpdate(data))
-    })
-  }, [wallet])
-
-  useEffect(() => {
-    if (collectionId && blockchain.code) {
-      initCollection(collectionId, blockchain.code)
-    }
-  }, [collectionId, blockchain.code])
-
-  useEffect(() => {
-    updateOrders()
-  }, [blockchain.code, wallet, collectionId])
-  
-  useEffect(() => {
-    if (collectionId) {
-      Stream.subscribe('sale.*', [collectionId])
-    }
-
-    return () => {
-      Stream.unsubscribe('sale.*')
-    }
-  }, [collectionId])
-
-  useEffect(() => {
-    if (collectionId && wallet) {
-      Stream.subscribe('bid.*', [collectionId], {maker: wallet})
-      Stream.subscribe('ask.*', [collectionId], {maker: wallet})
-    }
-    
-    return () => {
-      Stream.unsubscribe('bid.*')
-      Stream.unsubscribe('ask.*')
-    }
-  }, [collectionId, wallet])
-
-  const initCollection = (collectionId) => {
-    dispatch($exchange.set.loading(true))
-    $exchange.api.get.sales({
-      collection: collectionId,
-      blockchain: blockchain.code,
-      includeDeleted: false,
-      includeTokenMetadata: false,
-      sortDirection: 'desc',
-      limit: 800,
-    }).then(sales => {
-      if (sales) {
-        dispatch($exchange.set.sales(sales))
-        dispatch($orders.set.trades({type: 'nfts', data: sales}))
-      }
-      dispatch($exchange.set.loading(false))
-    })
-  }
 
   const handleOrdersUpdated = useCallback(() => {
     if (wallet) {
@@ -163,10 +84,10 @@ const Nfts = () => {
     })
   }, [wallet, collectionId, blockchain.code])
 
-  const handleMobileTabChange = (tab) => {
+  const handleMobileTabChange = useCallback((tab) => {
     setMobileTabTrade(false)
     setMobileTab(tab)
-  }
+  }, [])
 
   const handleClickOrder = useCallback(order => {
     tradeForm.current.setForm({formType: 'market', amount: order.quantity, side: order.side})
@@ -304,6 +225,7 @@ const Nfts = () => {
           ) : null}
 
           <MobileTabsBar
+            isConnected={Boolean(wallet)}
             active={mobileTab}
             actvieTrade={mobileTabTrade}
             onTabChange={handleMobileTabChange}

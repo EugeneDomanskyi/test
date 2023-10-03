@@ -1,120 +1,12 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
-import numeral from 'numeral'
 import moment from 'moment'
 
 import { request } from './index'
 import Order from '@/libs/structs/Order'
-import { INCH_TOKENS, CHAINS } from '@/config'
+import { CHAINS } from '@/config'
 
 const round = (date, duration, method) => {
   return moment(Math[method]((+date) / (+duration)) * (+duration))
-}
-
-const toFixed = (value, precision, direction) => {
-  let str = value.toString()
-  if (str.indexOf('.') == -1) {
-    str += '.0'
-  }
-  let [num, dec] = str.split('.')
-  if (direction === 'down') {
-    dec = dec.substring(0, precision)
-    return `${num}.${dec}`
-    // const multipler = Math.pow(10, precision)
-    // const formatted = `${Math.floor((value*1) * multipler) / multipler}`
-    // return formatted
-  } else {
-    const multipler = Math.pow(10, precision)
-    const formatted = `${Math.ceil((value*1) * multipler) / multipler}`
-    return formatted
-  }
-}
-
-const orderBookFormatter = (list, currentToken) => {
-  if (list && Array.isArray(list)) {
-    return list.map(item => {
-      const makerAsset = INCH_TOKENS[item.data.makerAsset] || currentToken
-      const takerAsset = INCH_TOKENS[item.data.takerAsset] || currentToken
-    
-      const order = Order.TOKEN.formatter(item, makerAsset.decimals, takerAsset.decimals)
-      
-      const makerPrice = order.makingAmountFormatted / order.takingAmountFormatted
-      const takerPrice = order.takingAmountFormatted / order.makingAmountFormatted
-      
-      const price = item.side === 'buy' ? makerPrice : takerPrice
-      const amount = item.side === 'buy' ? order.takingAmountFormatted : order.makingAmountFormatted
-      // const amountFormatted = toFixed(side === 'buy' ? order.takingAmountFormatted : order.makingAmountFormatted, 6, 'up')
-      const priceFormatted = numeral(toFixed(price, 6, item.side === 'sell' ? 'up' : 'down')).format('0.0[00000]')
-      return {
-        ...item,
-        price: price,
-        priceFormatted: priceFormatted,
-        amount: amount,
-        quantity: amount,
-        timestamp: moment(item.createDateTime).unix(),
-      }
-    })
-  }
-  return []
-}
-
-const tradeFormatter = list => {
-  if (list && Array.isArray(list)) {
-    return list.map(item => {
-      const makerAsset = INCH_TOKENS[item.data.makerAsset]
-      const takerAsset = INCH_TOKENS[item.data.takerAsset]
-    
-      if (!makerAsset || !takerAsset) {
-        return {}
-      }
-      
-      const makingAmountFormatted = Math.pow(10, -makerAsset.decimals)*item.data.makingAmount //formatUnits(item.data.makingAmount, makerAsset.decimals)
-      const takingAmountFormatted = Math.pow(10, -takerAsset.decimals)*item.data.takingAmount//formatUnits(item.data.takingAmount, takerAsset.decimals)
-      
-      const side = makerAsset.symbol === 'USDT' ? 'buy' : 'sell'
-
-      const makerPrice = makingAmountFormatted / takingAmountFormatted
-      const takerPrice = takingAmountFormatted / makingAmountFormatted
-      
-      const makerAmount = Math.pow(10, -makerAsset.decimals)*item.data.makingAmount //side === 'sell' ? makingAmountFormatted : takingAmountFormatted
-      const takerAmount = Math.pow(10, -takerAsset.decimals)*item.data.takingAmount
-
-      return {
-        ...item,
-        side: side,
-        price: side === 'buy' ? makerPrice : takerPrice,
-        priceFormatted: numeral(side === 'buy' ? makerPrice : takerPrice).format('0.0[00000]'),
-        amount: numeral(side === 'buy' ? takerAmount : makerAmount).format('0.0[00000]'),
-        quantity: numeral(side === 'buy' ? takerAmount : makerAmount).format('0.0[00000]'),
-        timestamp: moment(item.createDateTime).unix(),
-      }
-    })
-  }
-  return []
-}
-
-const groupByPrice = (data, sort = 'asc') => {
-  const temp = {}
-  for (const item of data) {
-    if (!isNaN(item.priceFormatted) && item.price) {
-      if ( ! temp[item.priceFormatted]) {
-        temp[item.priceFormatted] = item
-      } else {
-        temp[item.priceFormatted] = {
-          ...temp[item.priceFormatted],
-          amount: (temp[item.priceFormatted].amount * 1 + item.amount * 1),
-          quantity: (temp[item.priceFormatted].quantity * 1 + item.quantity * 1),
-        }
-      }
-    }
-  }
-  
-  const array = Object.keys(temp).map(key => temp[key])
-  array.sort((a, b) => sort == 'asc' ? (a.price - b.price) : (b.price - a.price))
-  return array
-
-  // const array = [...data]
-  // array.sort((a, b) => sort == 'asc' ? (a.price - b.price) : (b.price - a.price))
-  // return array
 }
 
 const generatePeriods = (from, to, closePrice, step) => {
@@ -152,6 +44,7 @@ export const ordersSlice = createSlice({
         sell: [],
       },
     },
+    orderBookId: null,
     trades: {
       nfts: [],
       tokens: [],
@@ -167,6 +60,7 @@ export const ordersSlice = createSlice({
     },
     orderBook: (state, {payload}) => {
       state.orderBooks[payload.type] = payload.data
+      state.orderBookId = payload.tokenAddress
     },
     trades: (state, {payload}) => {
       state.trades[payload.type] = payload.data
@@ -192,13 +86,12 @@ const getters = {
     }
   }),
   orderBook: (type) => createSelector([
-    state => state.$orders.orderBooks[type],
-    state => state.$token.current,
-  ], (orderBook, currentToken) => {
+    state => state.$orders.orderBooks[type]
+  ], (orderBook) => {
     if (type === 'tokens') {
       return {
-        buy: groupByPrice(orderBookFormatter(orderBook.buy, currentToken), 'desc').slice(0, 10),
-        sell: groupByPrice(orderBookFormatter(orderBook.sell, currentToken), 'asc').slice(0, 10),
+        buy: orderBook.buy,
+        sell: orderBook.sell,
       }
     }
     return {
@@ -218,7 +111,6 @@ const getters = {
       }
     }).slice(0, limit)
   }),
-
   kLineData: (interval) => createSelector([
     state => state.$orders.trades.tokens,
   ], (sales) => {
@@ -289,13 +181,20 @@ const getters = {
 
 const api = {
   get: {
-    tokens: ({address, blockchain, ...rest}) => {
-      return request(`address/${address}`, 'GET', {api: 'inch', blockchain, ...rest}).then(res => {
-        if (res && Array.isArray(res)) {
-          return res.map(order => ({...order, network: blockchain}))
+    tokens: ({address, blockchain}) => {
+      const network = CHAINS.find(chain => chain.code === blockchain)
+      return fetch(`/api/tokens/orders/${network.id}/${address}`).then(async res => {
+        const json = await res.json()
+        if (json && Array.isArray(json)) {
+          return json
         }
-        return []
       })
+      // return request(`address/${address}`, 'GET', {api: 'inch', blockchain, ...rest}).then(res => {
+      //   if (res && Array.isArray(res)) {
+      //     return res.map(order => ({...order, network: blockchain}))
+      //   }
+      //   return []
+      // })
     },
     nfts: (params) => {
       return Promise.all([
@@ -322,29 +221,17 @@ api.get.nfts.orderBook = (params) => {
   })
 }
 
-api.get.tokens.orderBook = ({address, ...rest}) => {
+api.get.tokens.orderBook = async ({address, ...rest}) => {
   const network = CHAINS.find(chain => chain.code === rest.blockchain)
-  return Promise.all([
-    request('all', 'GET', {api: 'inch', takerAsset: address, makerAsset: network.usdtContract, sortBy: 'takerRate', ...rest}),
-    request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, sortBy: 'makerRate', ...rest}),
-  ]).then(([buy, sell]) => {
-    return {
-      buy: buy.map(order => ({...order, side: 'buy'})),
-      sell: sell.map(order => ({...order, side: 'sell'}))
-    }
-  })
+  const res = await fetch(`/api/tokens/order-book/${network.id}/${network.usdtContract}/${address}`)
+  const json = await res.json()
+  return json
 }
 
 api.get.tokens.trades = ({address, blockchain, ...rest}) => {
   const network = CHAINS.find(chain => chain.code === blockchain)
-  return Promise.all([
-    request('all', 'GET', {api: 'inch', takerAsset: address, makerAsset: network.usdtContract, blockchain, ...rest}),
-    request('all', 'GET', {api: 'inch', makerAsset: address, takerAsset: network.usdtContract, blockchain, ...rest}),
-  ]).then(([sell1, buy1]) => {
-    return [
-      tradeFormatter(buy1),
-      tradeFormatter(sell1),
-    ].flat()
+  return fetch(`/api/tokens/sales/${network.id}/${network.usdtContract}/${address}`).then(async res => {
+    return await res.json()
   })
 }
 

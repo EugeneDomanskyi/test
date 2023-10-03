@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { Provider } from 'react-redux'
-import Head from 'next/head'
+// import Head from 'next/head'
 import { ToastContainer } from 'react-toastify'
 import { createClient } from '@reservoir0x/reservoir-sdk'
 import nookies from 'nookies'
@@ -24,6 +24,7 @@ import $collection from '@/store/collection'
 
 import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
+import Head from '@/components/Head'
 
 import 'react-toastify/dist/ReactToastify.css'
 import '@rainbow-me/rainbowkit/styles.css'
@@ -31,15 +32,17 @@ import '@uniswap/widgets/fonts.css'
 import '@/styles/globals.css'
 import '@/styles/roulette_design.css'
 
-if (process.env.NEXT_PUBLIC_APP_ENV == 'production') {
+import { getAssetsFile } from '@/libs/aws.lib'
+
+if (process.env.NODE_ENV === 'production') {
   Sentry.init({
-    dsn: 'https://a48fc91863a08075997f5355b49858cc@o4505192627830784.ingest.sentry.io/4505793143242752',
+    dsn: 'https://b6059579615abe9ca86108562cbeb308@o1399663.ingest.sentry.io/4505906094538752',
     // integrations: [
     //   new Sentry.BrowserTracing(),
     //   new Sentry.Replay(),
     // ],
     // Performance Monitoring
-    tracesSampleRate: 0.5, // Capture 100% of the transactions, reduce in production!
+    tracesSampleRate: 0.1, // Capture 100% of the transactions, reduce in production!
     // Session Replay
     replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
     replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
@@ -128,49 +131,18 @@ const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
 
 amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
 
-function MyApp({ Component, pageProps, initialData, currentPage, currentAddress, currentSymbol }) {
+function MyApp({ Component, pageProps, initialData, currentPage, currentAddress, currentSymbol, ssRoute, marketInfo }) {
   const storeRef = useRef(store(initialData)).current
 
   useEffect(() => {
     Smartlook.init('cf71ed516173943775e4d8cc10245b95b9ed7de0')
   }, [])
-
-  const getTitle = () => {
-    if (!currentSymbol) {
-      return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'
-    }
-    switch (currentPage) {
-      case 'nfts':
-        return `${currentSymbol} Trading and Charts | Tegro: The CEX-DEX`
-      case 'tokens':
-        return `${currentSymbol}/USDT Trading and Charts | Tegro: The CEX-DEX`
-      default:
-        return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'
-    }
-  }
-
-  const getDescription = () => {
-    if (!currentSymbol) {
-      return 'Buy, sell, and trade Tokens or NFTs instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade Tokens and NFTs at the best prices.'
-    }
-    switch (currentPage) {
-      case 'nfts':
-        return `Buy, sell, and trade ${currentSymbol} instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${currentSymbol} at the best prices.`
-      case 'tokens':
-        return `Buy, sell, and trade ${currentSymbol}/USDT instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${currentSymbol} at the best prices.`
-      default:
-        return 'Buy, sell, and trade Tokens or NFTs instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade Tokens and NFTs at the best prices.'
-    }
-  }
   
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
         <Provider store={storeRef}>
-          <Head>
-            <title>{getTitle()}</title>
-            <meta content={getDescription()} property="description" key="description" />
-          </Head>
+          <Head route={ssRoute} currentPage={currentPage} currentSymbol={currentSymbol} marketInfo={marketInfo} />
 
           <Wrapper>
             <Component {...pageProps} />
@@ -218,16 +190,36 @@ MyApp.getInitialProps = async ({ctx}) => {
       }
     }
   }
-  
 
+  let ssRoute = ''
+  let marketInfo = {}
+  let marketsList = []
+
+  if (ctx?.req) {
+    const routeArr = ctx?.req?.url.split('/') || []
+    const [addrArr] = routeArr.slice(-1)
+    currentAddress = addrArr.split('?')[0]
+    ssRoute = (ctx.req.url)
+    if (ctx.req.url.includes('market') || ctx.req.url.includes('tokens')) {
+      const list = await getAssetsFile()
+      if (list && Array.isArray(list)) {
+        marketsList = list
+        marketInfo = list.find(item => item.address === currentAddress) || {}
+      }
+    }
+  }
+  
   return {
     initialData: {
       blockchain: cookies.blockchain,
       isMobile,
+      marketsList,
     },
     currentPage,
     currentAddress,
     currentSymbol,
+    ssRoute,
+    marketInfo,
   }
 }
 

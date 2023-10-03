@@ -25,6 +25,12 @@ const Info = ({ current, location }) => {
     })
   }
 
+  const handleClickDetails = (type) => () => {
+    trackEvent(`Click ${type} Redirect`, {
+      Markets: current.name,
+    })
+  }
+
   return (
     <App.Flex className={styles.container} gap={6}>
       {
@@ -56,6 +62,12 @@ const Info = ({ current, location }) => {
                             </App.Tooltip>
                           : null
                       }
+
+                      {/* <Link href={`/market/${type}/${blockchain.code}/${current.address}`}>
+                        <App.Button onClick={handleClickDetails} sx={{paddingTop: 4, paddingBottom: 4}}>
+                          <App.Text size={12}>More Details</App.Text>
+                        </App.Button>
+                      </Link> */}
                     </App.Flex>
                     <App.Flex align="center">
                       <Link href={scanLink} target="_blank" onClick={handleClickLink(blockchain?.code)} style={{marginRight: 8}}>
@@ -88,7 +100,7 @@ const Info = ({ current, location }) => {
                   <App.Flex sx={{marginTop: 'auto'}} gap={16}>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>Price</App.Text>
-                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.price } { current?.currency }</App.Text>
+                      <App.Number size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.price } { current?.currency }</App.Number>
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>24h Price Change</App.Text>
@@ -108,11 +120,11 @@ const Info = ({ current, location }) => {
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>24h High</App.Text>
-                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.high ?? high } { current?.currency }</App.Text>
+                      <App.Number size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.high ?? high } { current?.currency }</App.Number>
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>24h Low</App.Text>
-                      <App.Text size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.low ?? low } { current?.currency }</App.Text>
+                      <App.Number size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.low ?? low } { current?.currency }</App.Number>
                     </App.Flex>
                     <App.Flex column className={styles.card}>
                       <App.Flex align="center" gap={4}>
@@ -121,7 +133,7 @@ const Info = ({ current, location }) => {
                           <App.Icon icon="info" width={12} height={12} />
                         </App.Tooltip>
                       </App.Flex>
-                      <App.Text size={16} weight={700}>{ current?.tokenCount }</App.Text>
+                      <App.Number size={16} weight={700}>{ current?.tokenCount }</App.Number>
                     </App.Flex>
                   </App.Flex>
                 </App.Flex>

@@ -7,7 +7,7 @@ import $modal from './modal'
 import $app, { appSlice } from './app'
 import $exchange from './exchange'
 import $collection from './collection'
-import $token from './token'
+import $token, { tokenSlice } from './token'
 import $nft from './nft'
 import $orders from './orders'
 import $raffle from './raffle'
@@ -30,6 +30,10 @@ const createStore = initialData => {
         ...appSlice.getInitialState(),
         code: initialData.blockchain || 'ethereum',
         isMobile: initialData.isMobile,
+      },
+      $token: {
+        ...tokenSlice.getInitialState(),
+        list: initialData.marketsList,
       }
     }
   })
@@ -56,7 +60,6 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
   }
 
   if ( ! api) {
-    options.headers['Content-Type'] = 'application/json'
     options.headers['x-api-key'] = process.env.NEXT_PUBLIC_RESERVOIR_API_KEY
   }
 
