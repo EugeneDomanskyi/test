@@ -364,6 +364,34 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
         </svg>
       )
     }
+
+    if (icon === 'question') {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={width ?? 24}
+          height={height ?? 25}
+          fill="none"
+          {...props}
+        >
+          <path
+            stroke={color ?? "#fff"}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeMiterlimit={10}
+            strokeWidth={1.5}
+            d="M17 19.258h-4l-4.45 2.96a.997.997 0 0 1-1.55-.83v-2.13c-3 0-5-2-5-5v-6c0-3 2-5 5-5h10c3 0 5 2 5 5v6c0 3-2 5-5 5Z"
+          />
+          <path
+            stroke={color ?? "#fff"}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M12 12.188v-.21c0-.68.42-1.04.84-1.33.41-.28.82-.64.82-1.3 0-.92-.74-1.66-1.66-1.66-.92 0-1.66.74-1.66 1.66M11.995 14.578h.01"
+          />
+        </svg>
+      )
+    }
   }
 
   return getIcon()

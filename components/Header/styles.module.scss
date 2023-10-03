@@ -79,6 +79,36 @@
     }
   }
 
+  .linkWrapper {
+    z-index: 0;
+    position: relative;
+
+    .link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(170, 163, 207, 0.4);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: .5s;
+
+      &:hover,
+      &.active {
+        background: rgba(129, 118, 184, 0.2);
+        border: 1px solid rgba(170, 163, 207, 1);
+        border-radius: 4px;
+
+        & svg {
+          & path {
+            stroke: #fff;
+          }
+        }
+      }
+    }
+  }
+
   .menu {
     position: absolute;
     background-color: rgba(9, 5, 29, 0.8);

@@ -7,6 +7,7 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 import { trackEvent } from '@/libs/analytics.lib'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 
 import $modal from '@/store/modal'
@@ -94,12 +95,13 @@ const Header = () => {
       <App.Flex row height="100%" align="center" justify="space-between">
         <App.Flex row height="100%" align="center" gap={64}>
           <Link href="/">
-            <div className={styles.logo}>
+            <Image src="/images/x-logo.png" width={159} height={48} alt="" />
+            {/* <div className={styles.logo}>
               <div className={styles.badge}>
                 BETA
               </div>
               <App.Icon icon="tegro" width={117} height={25} />
-            </div>
+            </div> */}
           </Link>
 
           <App.Flex row height="100%" align="center" className={styles.navItems}>
@@ -124,6 +126,11 @@ const Header = () => {
         </App.Flex>
 
         <App.Flex row gap={[24, 16]} align="center">
+          <App.Flex className={styles.linkWrapper}>
+            <App.Flex className={styles.link}>
+              <App.Icon icon="question" />
+            </App.Flex>
+          </App.Flex>
           {!isMobile ? <SwitchBlockchain /> : null}
           
           {wallet ? (
