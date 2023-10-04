@@ -1,6 +1,5 @@
 import { useRef, useEffect } from 'react'
 import { Provider } from 'react-redux'
-// import Head from 'next/head'
 import { ToastContainer } from 'react-toastify'
 import { createClient } from '@reservoir0x/reservoir-sdk'
 import nookies from 'nookies'
@@ -130,7 +129,7 @@ const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
 
 amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
 
-function MyApp({ Component, pageProps, initialData, currentPage, currentAddress, currentSymbol, ssRoute, marketInfo }) {
+function MyApp({ Component, pageProps, initialData, currentPage, currentAddress, currentSymbol, ssRoute, marketInfo, marketsList }) {
   const storeRef = useRef(store(initialData)).current
 
   useEffect(() => {
@@ -143,7 +142,7 @@ function MyApp({ Component, pageProps, initialData, currentPage, currentAddress,
         <Provider store={storeRef}>
           <Head route={ssRoute} currentPage={currentPage} currentSymbol={currentSymbol} marketInfo={marketInfo} />
 
-          <Wrapper>
+          <Wrapper marketsList={marketsList}>
             <Component {...pageProps} />
           </Wrapper>
 
@@ -192,6 +191,7 @@ MyApp.getInitialProps = async ({ctx}) => {
 
   let ssRoute = ''
   let marketInfo = {}
+  let marketsList = []
 
   if (ctx?.req) {
     const routeArr = ctx?.req?.url.split('/') || []
@@ -199,8 +199,9 @@ MyApp.getInitialProps = async ({ctx}) => {
     currentAddress = addrArr.split('?')[0]
     ssRoute = (ctx.req.url)
     if (ctx.req.url.includes('market') || ctx.req.url.includes('tokens')) {
-      const marketsList = await getAssetsFile()
+      marketsList = await getAssetsFile()
       marketInfo = marketsList.find(item => item.address === currentAddress) || {}
+      console.log('marketInfo', marketInfo);
     }
   }
   
@@ -214,6 +215,7 @@ MyApp.getInitialProps = async ({ctx}) => {
     currentSymbol,
     ssRoute,
     marketInfo,
+    marketsList,
   }
 }
 
