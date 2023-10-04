@@ -201,7 +201,6 @@ MyApp.getInitialProps = async ({ctx}) => {
     if (ctx.req.url.includes('market') || ctx.req.url.includes('tokens')) {
       marketsList = await getAssetsFile()
       marketInfo = marketsList.find(item => item.address === currentAddress) || {}
-      console.log('marketsList', marketsList.length);
     }
   }
   
