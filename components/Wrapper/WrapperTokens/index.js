@@ -256,7 +256,7 @@ const WrapperTokens = ({ children }) => {
             const staticData = staticTemplate(fullToken)
             const preUpdateList = list.filter(item => item.address !== currentToken.address)
             const mergedData = preUpdateList.length ? [...preUpdateList, staticData] : [staticData]
-            putAssetsFile(mergedData)
+            // putAssetsFile(mergedData)
             dispatch($token.set.list(mergedData))
           } else {
             let mergedData = {}
