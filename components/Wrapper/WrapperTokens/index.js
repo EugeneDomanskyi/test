@@ -252,6 +252,7 @@ const WrapperTokens = ({ children }) => {
           }
 
           const existingToken = list.length ? list.find(item => item.id === currentToken.id) : null
+          console.log('list', list);
 
           if (! existingToken) {
             const fullToken = await getTokenFull(currentToken)
@@ -262,7 +263,7 @@ const WrapperTokens = ({ children }) => {
             const staticData = staticTemplate(fullToken)
             const updatedList = [...list, staticData]
             console.log('updatedList', updatedList);
-            putAssetsFile(updatedList)
+            // putAssetsFile(updatedList)
             dispatch($token.set.list(updatedList))
           } else {
             let mergedData = {}
