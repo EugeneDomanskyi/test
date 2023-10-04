@@ -56,7 +56,7 @@ const RaffleListBrowseItem = ({ item, onParticipate, onShare }) => {
           )}
         </App.Flex>
 
-        {item.status !== 'Active' ? (
+        {item.status == 'Active' ? (
           <App.Button primary onClick={() => onParticipate(item)}>Participate</App.Button>
         ) : null}
 

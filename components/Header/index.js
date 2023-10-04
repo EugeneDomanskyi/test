@@ -127,7 +127,7 @@ const Header = () => {
 
         <App.Flex row gap={[24, 16]} align="center">
           <App.Flex className={styles.linkWrapper}>
-            <App.Flex className={styles.link}>
+            <App.Flex className={styles.linkButton}>
               <App.Icon icon="question" />
             </App.Flex>
           </App.Flex>
