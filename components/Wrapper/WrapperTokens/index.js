@@ -256,7 +256,7 @@ const WrapperTokens = ({ children }) => {
             
             const staticData = staticTemplate(fullToken)
             const updatedList = [...list, staticData]
-            // putAssetsFile(updatedList)
+            putAssetsFile(updatedList)
             dispatch($token.set.list(updatedList))
           } else {
             let mergedData = {}
