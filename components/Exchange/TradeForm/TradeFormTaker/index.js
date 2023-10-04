@@ -155,6 +155,35 @@ const TradeFormTaker = forwardRef(({current, currentTab, formOption, userBalance
       case 'buy':
         dispatch($modal.set.show({
           show: true,
+          modal: 'Exchange/OrderProceed',
+          props: {
+            side: 'buy',
+            makerAsset: current,
+            takerAsset: usdtFormatted,
+            makerAmountFormatted: form.amount,
+            takerAmountFormatted: form.amount*form.price,
+          }
+        }))
+        break
+      case 'sell':
+        dispatch($modal.set.show({
+          show: true,
+          modal: 'Exchange/OrderProceed',
+          props: {
+            side: 'sell',
+            makerAsset: usdtFormatted,
+            takerAsset: current,
+            makerAmountFormatted: form.amount,
+            takerAmountFormatted: form.amount*form.price,
+          }
+        }))
+        break
+    }
+    return 
+    switch (currentTab) {
+      case 'buy':
+        dispatch($modal.set.show({
+          show: true,
           modal: 'Exchange/FillOrder',
           props: {
             data: {

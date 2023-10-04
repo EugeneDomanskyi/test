@@ -394,12 +394,12 @@ class TOKEN extends Order {
         price: price,
       })
       if (orders && Array.isArray(orders)) {
-        const allowance = await Order.checkAllowance(chainId, TEGRO_FILL_ORDERS_CONTRACTS[chainId], walletClient.account.address, sellAsset, willSpendAmount*1)
-        if (!allowance.success) {
-          reject(allowance.error)
-          return
-        }
-        callback('allowance', {success: true})
+        // const allowance = await Order.checkAllowance(chainId, TEGRO_FILL_ORDERS_CONTRACTS[chainId], walletClient.account.address, sellAsset, willSpendAmount*1)
+        // if (!allowance.success) {
+        //   reject(allowance.error)
+        //   return
+        // }
+        // callback('allowance', {success: true})
         
         const balance = await Order.getBalance(walletClient.account.address, sellAsset)
         if (willSpendAmount*1 > balance*1) {
@@ -422,7 +422,6 @@ class TOKEN extends Order {
         console.log('params -> ', list, math.chain(willSpendAmountValue).multiply(side === 'buy' ? 1.00001 : 1).round().done())
         
         const eventHandler = (eventName, eventData) => {
-          console.log('event -> ', eventName, eventData)
           callback(`contract_${eventName}`, eventData)
         }
 
@@ -435,7 +434,7 @@ class TOKEN extends Order {
           args: [list, math.chain(willSpendAmountValue).multiply(side === 'buy' ? 1.00001 : 1).round().done()],
         }, (eventName) => {
           if (eventName === 'waiting') {
-            callback('transaction', {success: true})
+            callback('transaction_completed', {success: true})
           }
         })
 
