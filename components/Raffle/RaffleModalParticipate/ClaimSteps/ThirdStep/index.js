@@ -23,14 +23,12 @@ const ThirdStep = ({item, onSubmit}) => {
       })
   
       return () => {
-        // Cleanup animation on unmount (optional)
         anim.destroy()
       }
     }
   }, [showRoulette])
 
   const handlePrizeDefined = () => {
-    // onSubmit()
     setShowRoulette(prevState => ! prevState)
   }
 
@@ -52,21 +50,24 @@ const ThirdStep = ({item, onSubmit}) => {
               </App.Flex>
       
               <ClaimText
-                title=""
-                subTitle="Collecting your mystery box to see what reward you win."
+                title="Fingers crossed, Best of Luck!"
+                subTitle="This case can only be opened once"
               />
             </>
           : <>
-              <App.Flex id="lottie-container" sx={{position: 'absolute', inset: -32}} />
+              <App.Flex id="lottie-container" sx={{position: 'absolute'}} />
+
+              <App.Flex className={styles.titleBlock}>
+                <Image src="/images/raffle/lootbox.png" width={49} height={45} alt="" />
+                <App.Text center size={14} weight={400}>Rewards that might be in this case</App.Text>
+              </App.Flex>
               
-              <App.Flex sx={{position: 'absolute', top: 32}}>
-                <App.ShadowText color="#FFCB04" shadowColor="#FF7708" center size={26} weight={700}>MYSTERY BOX<br/> COLLECTED!</App.ShadowText>
+              <App.Flex>
+                <App.ShadowText color="#FFCB04" shadowColor="#FF7708" center size={26} weight={700}>YOU HAVE WON!</App.ShadowText>
               </App.Flex>
 
-              <App.Flex sx={{paddingTop: 32}}>
+              <App.Flex sx={{marginTop: -32}}>
                 <ClaimImage onlyShadow contentImg={{src: "/images/raffle/box-legendary.png", width: 102, height: 102}} />
-                {/* <ClaimImage onlyShadow /> */}
-                {/* <Image src="/images/raffle/box-legendary.png" width={110} height={101} className="roulette-pro-regular-prize-item-image" alt='' /> */}
               </App.Flex>
 
               <App.Flex sx={{marginTop: -64}}>
@@ -77,7 +78,7 @@ const ThirdStep = ({item, onSubmit}) => {
                 />
               </App.Flex>
         
-              <App.Button primary onClick={handleClickNextStep}>
+              <App.Button primary sx={{width: 240, height: 56, fontSize: 16}} onClick={handleClickNextStep}>
                 Got It
               </App.Button>
             </>

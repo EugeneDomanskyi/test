@@ -27,3 +27,14 @@
     background: linear-gradient(90deg, rgba(9,5,29,0) 0%, rgba(9,5,29,1) 86%, rgba(9,5,29,1) 100%);
   }
 }
+
+.titleBlock {
+  max-width: 340px;
+  height: 96px;
+  padding: 16px;
+  gap: 16px;
+  border-radius: 12px;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(64, 22, 152, 0.40) 0%, rgba(41, 1, 91, 0.40) 100%);
+}

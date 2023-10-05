@@ -5,9 +5,9 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const ClaimImage = ({warningIcon = null, contentImg, onlyShadow}) => {
+const RaffleReward = ({title, amount, additionalText}) => {
   return (
-    <App.Flex width={330} height={300} className={styles.imageTemplate}>
+    <App.Flex width={400} height={300} className={styles.imageTemplate}>
       <div className={styles.bgGlow} />
 
       {
@@ -33,4 +33,4 @@ const ClaimImage = ({warningIcon = null, contentImg, onlyShadow}) => {
   )
 }
 
-export default ClaimImage
+export default RaffleReward

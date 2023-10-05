@@ -81,8 +81,9 @@ const RaffleRoulette = ({autoStart = false, onPrizeDefined}) => {
           withoutAnimation: true,
           // stopInCenter: false,
         }}
-        spinningTime={16}
-        transitionFunction={'cubic-bezier(0.1, 0.1, 0.2, 1)'}
+        spinningTime={8}
+        transitionFunction={'cubic-bezier(0,0.24,0.09,1)'}
+        // transitionFunction={'cubic-bezier(0.1, 0.1, 0.2, 1)'}
         designPlugin={rouletteDesign}
       />
       {/* <App.Flex justify="center">

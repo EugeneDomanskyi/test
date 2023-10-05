@@ -1,5 +1,6 @@
 .top {
   width: 100%;
+  height: 116px;
   position: relative;
   z-index: 0;
   overflow: hidden;
@@ -44,6 +45,16 @@
   }
 }
 
+.shareButton {
+  cursor: pointer;
+
+  &:hover {
+    svg path {
+      fill: grey;
+    }
+  }
+}
+
 .tkeyBadge {
   padding: 5px 8px;
   border-radius: 100px;
@@ -65,9 +76,11 @@
   background-color: #08051C;
   position: relative;
   z-index: 0;
+  height: 100%;
 
   .titleBlock {
-    max-width: 250px;
+    max-width: 340px;
+    height: 96px;
     padding: 16px;
     gap: 16px;
     border-radius: 12px;

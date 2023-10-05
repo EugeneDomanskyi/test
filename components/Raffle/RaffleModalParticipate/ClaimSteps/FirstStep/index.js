@@ -18,14 +18,14 @@ const FirstStep = ({item, onSubmit}) => {
 
   return (
     <>
-      <ClaimImage warningIcon contentImg={{src: '/images/raffle/usdt.png', width: 64, height: 65}}/>
+      <ClaimImage warningIcon contentImg={{src: '/images/raffle/tkey-xl.png', width: 128, height: 128}}/>
         
       <ClaimText
-        title="Grant factory contract approval"
-        subTitle="You must grant approval to the factory contract to manage your TKeys."
+        title="Approval required to manage TKeys"
+        subTitle="The smart contract needs your approval to manage your TKeys"
       />
 
-      <App.Button primary onClick={handleClickNextStep} sx={{width: 140}}>
+      <App.Button primary onClick={handleClickNextStep} sx={{width: 240, height: 56, fontSize: 16}}>
         {
           loading
             ? <App.Loader size={20} />

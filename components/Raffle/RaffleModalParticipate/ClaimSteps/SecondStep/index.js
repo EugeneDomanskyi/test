@@ -22,10 +22,10 @@ const SecondStep = ({item, onSubmit}) => {
       
       <ClaimText
         title={`Deposit ${item.tKeyRequired} Tkeys`}
-        subTitle="You must deposit your TKeys to participate in the raffle."
+        subTitle={`You need to deposit ${item.tKeyRequired} TKeys to open the case`}
       />
 
-      <App.Button primary onClick={handleClickNextStep} sx={{width: 130}}>
+      <App.Button primary onClick={handleClickNextStep} sx={{width: 240, height: 56, fontSize: 16}}>
         {
           loading
             ? <App.Loader size={20} />
