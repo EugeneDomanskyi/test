@@ -7,7 +7,7 @@ import styles from './styles.module.scss'
 
 const ClaimImage = ({warningIcon = null, contentImg, onlyShadow}) => {
   return (
-    <App.Flex width={400} height={300} className={styles.imageTemplate}>
+    <App.Flex width={330} height={300} className={styles.imageTemplate}>
       <div className={styles.bgGlow} />
 
       {

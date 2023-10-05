@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import $raffle from '@/store/raffle'
 
-const FirstStep = ({item, onSubmit}) => {
+const FirstStep = ({campaign, onSubmit}) => {
   const dispatch = useDispatch()
 
   const { loading } = useSelector(({$raffle}) => $raffle)

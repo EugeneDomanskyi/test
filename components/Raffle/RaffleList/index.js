@@ -56,7 +56,7 @@ const RaffleList = ({ loading, onUpdateUser }) => {
           size: 'large',
           item: item,
           header: {
-            title: `Details`,
+            title: `Case Details`,
           },
         }}))
       }

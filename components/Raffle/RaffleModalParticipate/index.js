@@ -17,6 +17,8 @@ import App from '@/components/App'
 import FirstStep from '@/components/Raffle/RaffleModalParticipate/ClaimSteps/FirstStep'
 import SecondStep from '@/components/Raffle/RaffleModalParticipate/ClaimSteps/SecondStep'
 import ThirdStep from '@/components/Raffle/RaffleModalParticipate/ClaimSteps/ThirdStep'
+import FourthStep from '@/components/Raffle/RaffleModalParticipate/ClaimSteps/FourthStep'
+import RaffleReward from '@/components/Raffle/RaffleModalParticipate/RaffleReward'
 
 import styles from './styles.module.scss'
 
@@ -54,6 +56,13 @@ const RaffleModalParticipate = ({item}) => {
   const handleClickOpen = async () => {
     setStep(isApproved ? 1 : 0)
     setShowClaim(true)
+    if (! isApproved) {
+      dispatch($modal.set.update({
+        header: {
+          title: 'Approve Transaction',
+        },
+      }))
+    }
   }
 
   const getTime = () => {
@@ -69,154 +78,172 @@ const RaffleModalParticipate = ({item}) => {
   }
 
   const handleClickNextStep = async () => {
-    // if (step === 0) {
-    //   if (! isApproved) {
-    //     const approveRes = await contract.setApprovalForAll(contractAddr, factoryAddr)
-    //     dispatch($raffle.set.loading(false))
-    //     if (approveRes.error) {
-    //       return
-    //     }
-    //   }
+    if (step === 0) {
+      dispatch($modal.set.update({
+        header: {
+          title: 'Deposit TKeys',
+        },
+      }))
 
-    //   dispatch($raffle.set.loading(false))
-    // }
+      if (! isApproved) {
+        // const approveRes = await contract.setApprovalForAll(contractAddr, factoryAddr)
+        // dispatch($raffle.set.loading(false))
+        // if (approveRes.error) {
+        //   return
+        // }
+      }
+
+      dispatch($raffle.set.loading(false))
+    }
     
-    // if (step === 1) {
-    //   if (tokenIds.length < item.tKeyRequired) {
-    //     return
-    //   }
+    if (step === 1) {
+      dispatch($modal.set.update({
+        header: {
+          title: 'Unlock Case',
+        },
+      }))
+      if (tokenIds.length < item.tKeyRequired) {
+        return
+      }
 
-    //   const ids = tokenIds.slice(0, item.tKeyRequired)
-    //   const enterCampaignHash = await contract.enterCampaign(factoryAddr, item.id, ids)
+      // const ids = tokenIds.slice(0, item.tKeyRequired)
+      // const enterCampaignHash = await contract.enterCampaign(factoryAddr, item.id, ids)
       
-    //   if (enterCampaignHash.error) {
-    //     dispatch($raffle.set.loading(false))
-    //     return
-    //   }
+      // if (enterCampaignHash.error) {
+      //   dispatch($raffle.set.loading(false))
+      //   return
+      // }
 
-    //   const result = await $raffle.api.reward(enterCampaignHash)
-    //   console.log('result', result);
-    //   dispatch($raffle.set.loading(false))
-    // }
+      // setTimeout(async () => {
+      //   const result = await $raffle.api.reward(enterCampaignHash.trim())
+      //   console.log('$raffle.api.reward', result);
+      // }, 3000)
+      
+      dispatch($raffle.set.loading(false))
+    }
 
     if (step === 2) {
+      dispatch($modal.set.update({
+        header: {
+          title: 'Congratulations!',
+        },
+      }))
+    }
+
+    if (step === 3) {
       dispatch($modal.set.close())
       return
     }
 
-    setStep(step >= 2 ? 0 : step+1)
+    setStep(step >= 3 ? 0 : step+1)
     dispatch($raffle.set.loading(false))
   }
 
   return (
-    <App.Flex column sx={{height: 590}}>
-      {
-        ! showClaim
-        ? <>
-            <App.Flex column className={styles.top} justify="space-between" gap={16}>
-              <App.Flex sx={{width: '100%'}} justify="space-between">
-                <App.Flex row center gap={4} className={cn(styles.timeBadge, styles[item.status])}>
-                  <App.Flex center className={styles.dot} />
-                  <App.Text size={[12, 10]} height={1}>{item.status == 'Active' ? `${getTime()} left` : item.status}</App.Text>
-                </App.Flex>
-  
-                {item.status != 'closed' ? (
-                  <App.Flex row center gap={4} className={styles.tkeyBadge}>
-                    <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
-                    <App.Text size={[12, 10]} weight={400} height={1}>{item.tKeyRequired} TKeys required to participate</App.Text>
-                  </App.Flex>
-                ) : null}
+    ! showClaim
+      ? <>
+          <App.Flex column className={styles.top} justify="space-between" gap={16}>
+            <App.Flex sx={{width: '100%'}} justify="space-between">
+              <App.Flex row center gap={4} className={cn(styles.timeBadge, styles[item.status])}>
+                <App.Flex center className={styles.dot} />
+                <App.Text size={[12, 10]} height={1}>{item.status == 'Active' ? `${getTime()} left` : item.status}</App.Text>
               </App.Flex>
-  
-              <App.Flex justify="space-between" gap={16}>
-                <App.Flex center sx={{ minWidth: propValue([65, 32], true) }} gap={16}>
-                  {/* <Image src={item.image} width={propValue([48, 32], true)} height={propValue([48, 32], true)} alt="" /> */}
-                  <App.Text size={20} weight={600}>{ item.title }</App.Text>
-                </App.Flex>
-  
-                <App.Flex className={styles.shareButton}>
-                  <App.Icon icon="share" />
-                </App.Flex>
-              </App.Flex>
-            </App.Flex>
-  
-            <App.Flex column gap={32} align="center" justify="space-between" className={styles.content}>
-              <App.Flex className={styles.titleBlock}>
-                <Image src="/images/raffle/lootbox.png" width={49} height={45} alt="" />
-                <App.Text center size={14} weight={400}>Rewards that might be in this case</App.Text>
-              </App.Flex>
-  
-              <App.Flex gap={16} className={styles.rewardsContainer}>
-                {
-                  item.rewardRange.map((reward, index) => {
-                    const currentReward = item.odds.find(odd => odd.range === reward.range*1)
-                    if (!currentReward) {
-                      return
-                    }
-                    const title = currentReward.title
-                    const odds = currentReward.odds
-                    const amount = reward.reward / 1000000
-                    return (
-                      <App.Flex key={index} column align="center" className={styles.rewardBlock} gap={8}>
-                        <App.Flex gap={4}>
-                          <Image src="/images/raffle/icon-crown.png" width={18} height={17} alt="" />
-                          <App.Text size={12} weight={400}>{title}</App.Text>
-                        </App.Flex>
-  
-                        <App.ShadowText color="#FFCB04" shadowColor="#FF7708" size={26} weight={700}>${amount}</App.ShadowText>
-                        <App.Text size={14} weight={500}>Odds: {odds}%</App.Text>
-                      </App.Flex>
-                    )
-                  })
-                }
-              </App.Flex>
-  
-              <App.Flex column gap={16}>
-                <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles.hiddenOnMobile)}>
+
+              {item.status != 'closed' ? (
+                <App.Flex row center gap={4} className={styles.tkeyBadge}>
                   <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
-                  <App.Text size={12} height={1}>{item.totalTransferred}/{item.rewardAmount} reward distributed</App.Text>
+                  <App.Text size={[12, 10]} weight={400} height={1}>{item.tKeyRequired} TKeys required to participate</App.Text>
                 </App.Flex>
-    
-                <App.Button primary sx={{width: 240, height: 56, fontSize: 16}} onClick={handleClickOpen}>
-                  Open Case
-                </App.Button>
+              ) : null}
+            </App.Flex>
+
+            <App.Flex justify="space-between" gap={16}>
+              <App.Flex center sx={{ minWidth: propValue([65, 32], true) }} gap={16}>
+                {/* <Image src={item.image} width={propValue([48, 32], true)} height={propValue([48, 32], true)} alt="" /> */}
+                <App.Text size={20} weight={600}>{ item.title }</App.Text>
+              </App.Flex>
+
+              <App.Flex className={styles.shareButton}>
+                <App.Icon icon="share" />
               </App.Flex>
             </App.Flex>
-          </>
-        : <>
-            <App.Flex row gap={8} className={styles.headerContent}>
-              <App.Flex column flex={1} gap={2}>
-                <div className={cn(styles.progress, {[styles.active]: step >= 0})} />
-              </App.Flex>
-              <App.Flex column flex={1} gap={2}>
-                <div className={cn(styles.progress, {[styles.active]: step >= 1})} />
-              </App.Flex>
-              <App.Flex column flex={1} gap={2}>
-                <div className={cn(styles.progress, {[styles.active]: step >= 2})} />
-              </App.Flex>
+          </App.Flex>
+
+          <App.Flex column gap={32} align="center" justify="space-between" className={styles.content}>
+            <App.Flex className={styles.titleBlock}>
+              <Image src="/images/raffle/lootbox.png" width={49} height={45} alt="" />
+              <App.Text center size={14} weight={400}>Rewards that might be in this case</App.Text>
             </App.Flex>
-            
-            <App.Flex column gap={32} align="center" justify={step === 2 ? 'center' : 'space-between'} className={styles.content} sx={{padding: step === 2 ? 0 : 32}}>
+
+            <App.Flex gap={16} className={styles.rewardsContainer}>
               {
-                (currentStep => {
-                  switch (currentStep) {
-                    case 0:
-                      return (
-                        <FirstStep item={item} onSubmit={handleClickNextStep} />
-                      )
-                    case 1:
-                      return (
-                        <SecondStep item={item} onSubmit={handleClickNextStep} />
-                      )
-                    default:
-                      return <ThirdStep item={item} onSubmit={handleClickNextStep} />
+                item.rewardRange.map((reward, index) => {
+                  const currentReward = item.odds.find(odd => odd.range === reward.range*1)
+                  if (!currentReward) {
+                    return
                   }
-                })(step)
+                  const title = currentReward.title
+                  const odds = currentReward.odds
+                  const amount = reward.reward / 1000000
+                  return (
+                    <RaffleReward key={index} title={title} amount={`${amount}$`} additionalText={`Odds: ${odds}%`} />
+                  )
+                })
               }
             </App.Flex>
-          </>
-      }
-    </App.Flex>
+
+            <App.Flex column gap={16}>
+              <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles.hiddenOnMobile)}>
+                <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
+                <App.Text size={12} height={1}>{item.totalTransferred}/{item.rewardAmount} reward distributed</App.Text>
+              </App.Flex>
+
+              <App.Button primary sx={{width: 240, height: 56, fontSize: 16}} onClick={handleClickOpen}>
+                Open Case
+              </App.Button>
+            </App.Flex>
+          </App.Flex>
+        </>
+      : <>
+          {
+            step !== 3
+              ? <App.Flex row gap={8} className={styles.headerContent}>
+                  <App.Flex column flex={1} gap={2}>
+                    <div className={cn(styles.progress, {[styles.active]: step >= 0})} />
+                  </App.Flex>
+                  <App.Flex column flex={1} gap={2}>
+                    <div className={cn(styles.progress, {[styles.active]: step >= 1})} />
+                  </App.Flex>
+                  <App.Flex column flex={1} gap={2}>
+                    <div className={cn(styles.progress, {[styles.active]: step >= 2})} />
+                  </App.Flex>
+                </App.Flex>
+              : null
+          }          
+          
+          <App.Flex column gap={32} align="center" justify={step === 2 ? 'center' : 'space-between'} className={styles.content} sx={{padding: step === 2 ? 0 : 32, height: 575}}>
+            {
+              (currentStep => {
+                switch (currentStep) {
+                  case 0:
+                    return (
+                      <FirstStep campaign={item} onSubmit={handleClickNextStep} />
+                    )
+                  case 1:
+                    return (
+                      <SecondStep campaign={item} onSubmit={handleClickNextStep} />
+                    )
+                  case 2:
+                    return (
+                      <ThirdStep campaign={item} onSubmit={handleClickNextStep} />
+                    )
+                  default:
+                    return <FourthStep campaign={item} onSubmit={handleClickNextStep} />
+                }
+              })(step)
+            }
+          </App.Flex>
+        </>
   )
 }
 

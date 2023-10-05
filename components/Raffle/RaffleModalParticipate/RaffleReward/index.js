@@ -5,30 +5,17 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const RaffleReward = ({title, amount, additionalText}) => {
+const RaffleReward = ({title, amount, additionalText, size = 'normal', ...props}) => {
   return (
-    <App.Flex width={400} height={300} className={styles.imageTemplate}>
-      <div className={styles.bgGlow} />
+    <App.Flex column className={cn(styles.rewardBlock, {[styles.large]: size === 'large'})} gap={8} {...props}>
+      <App.Flex gap={4}>
+        <Image src="/images/raffle/icon-crown.png" width={18} height={17} alt="" />
+        <App.Text className={styles.title}>{ title }</App.Text>
+      </App.Flex>
 
-      {
-        onlyShadow
-          ? null
-          : <>
-              <img src="/images/raffle/claim-image-template-bottom.png" className={cn(styles.image, styles.bottom)} alt="" />
-              <Image src="/images/raffle/claim-image-template-top.png" width={120} height={187} className={cn(styles.image, styles.top)} alt="" />
-              {
-                warningIcon
-                  ? <Image src="/images/raffle/warning-icon.png" width={53} height={46} className={styles.imageIcon} alt="" />
-                  : null
-              }
-            </>
-      }
-
-      {
-        contentImg
-          ? <Image src={contentImg.src} width={contentImg.width} height={contentImg.height} className={styles.image} alt="" />
-          : null
-      }
+      <App.ShadowText color="#FFCB04" shadowColor="#FF7708" size={size !== 'large' ? 26 : 48} weight={700}>{ amount }</App.ShadowText>
+      {/* <App.ShadowText color="#FFCB04" shadowColor="#FF7708" className={styles.amount}>{ amount }</App.ShadowText> */}
+      <App.Text className={styles.additionalText}>{ additionalText }</App.Text>
     </App.Flex>
   )
 }

@@ -9,7 +9,8 @@
     &.bottom {
       z-index: -3;
       top: 10px;
-      width: 100%;
+      left: -37px;
+      width: 400px;
     }
     
     &.top {
@@ -21,6 +22,7 @@
     position: absolute;
     z-index: -2;
     inset: 0;
+    left: calc(50% - 150px);
     margin: auto;
     width: 300px;
     height: 300px;
@@ -35,7 +37,7 @@
   .imageIcon {
     position: absolute;
     top: 38px;
-    right: 116px;
+    right: 82px;
     animation: shake 2s ease-in-out infinite;
   }
 }

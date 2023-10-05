@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import $raffle from '@/store/raffle'
 
-const SecondStep = ({item, onSubmit}) => {
+const SecondStep = ({campaign, onSubmit}) => {
   const dispatch = useDispatch()
 
   const { loading } = useSelector(({$raffle}) => $raffle)
@@ -21,8 +21,8 @@ const SecondStep = ({item, onSubmit}) => {
       <ClaimImage contentImg={{src: "/images/raffle/tkey-xl.png", width: 128, height: 128}} />
       
       <ClaimText
-        title={`Deposit ${item.tKeyRequired} Tkeys`}
-        subTitle={`You need to deposit ${item.tKeyRequired} TKeys to open the case`}
+        title={`Deposit ${campaign.tKeyRequired} Tkeys`}
+        subTitle={`You need to deposit ${campaign.tKeyRequired} TKeys to open the case`}
       />
 
       <App.Button primary onClick={handleClickNextStep} sx={{width: 240, height: 56, fontSize: 16}}>

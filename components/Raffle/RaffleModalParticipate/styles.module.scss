@@ -93,20 +93,6 @@
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-
-    .rewardBlock {
-      width: 156px;
-      position: relative;
-      z-index: 0;
-      overflow: hidden;
-      background: no-repeat center bottom url('/images/raffle/reward-block-bg.png');
-      background-size: contain;
-      padding: 4px;
-
-      @media (max-width: 768px) {
-        padding: 4px;
-      }
-    }
   }
 
 }
