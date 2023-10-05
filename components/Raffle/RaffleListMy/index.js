@@ -17,10 +17,12 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
 
   const dispatch = useDispatch()
   const campaigns = useSelector($raffle.get.filtered)
+  const campaign = useSelector($raffle.get.campaign)
+  const participants = useSelector(({$raffle}) => $raffle.participants)
   const page = useSelector(({ $raffle }) => $raffle.page)
 
-  const [orderBy, setOrderBy] = useState('status')
-  const [order, setOrder] = useState('asc')
+  const [orderBy, setOrderBy] = useState('participatedTimestamp')
+  const [order, setOrder] = useState('desc')
 
   const [pagesCount, setPagesCount] = useState(1)
   const perPage = 10
@@ -39,11 +41,17 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
   }, [campaigns])
 
   const participatedCampaigns = () => {
-    const newCampaigns = [...campaigns]
+    const newCampaigns = participants.map(item => {
+      return {
+        ...item,
+        campaign: campaign(item.campaign.id)
+      }
+    })
+
     const statusOrder = {
-      Active: 1,
-      Upcoming: 2,
-      Closed: 3,
+      Processing: 1,
+      Success: 2,
+      Failed: 3,
     }
 
     newCampaigns.sort((a, b) => {
@@ -52,8 +60,8 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
       }
 
       if (orderBy == 'title') {
-        const aTitle = a.title.toLowerCase()
-        const bTitle = b.title.toLowerCase()
+        const aTitle = a.campaign.title.toLowerCase()
+        const bTitle = b.campaign.title.toLowerCase()
 
         if (order == 'asc') {
           return aTitle < bTitle ? -1 : (aTitle > bTitle ? 1 : 0)
@@ -62,14 +70,10 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
         }
       }
       
-      if (a.hasOwnProperty('user') && b.hasOwnProperty('user')) {
-        return order == 'asc' ? a.user[orderBy] - b.user[orderBy] : b.user[orderBy] - a.user[orderBy]
-      }
-
-      return 0
+      return order == 'asc' ? a[orderBy] - b[orderBy] : b[orderBy] - a[orderBy]
     })
 
-    return newCampaigns.filter(item => item.hasOwnProperty('user'))
+    return newCampaigns
   }
 
   const handlePageChange = (value) => {
@@ -104,6 +108,12 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
                       <TableCell
                         align='left'
                       >
+                        <App.Text weight={600} color="rgba(185, 184, 197, 0.8)">#</App.Text>
+                      </TableCell>
+
+                      <TableCell
+                        align='left'
+                      >
                         <TableSortLabel
                           active={orderBy === 'title'}
                           direction={orderBy === 'title' ? order : 'asc'}
@@ -118,14 +128,16 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
                         align='right'
                       >
                         <TableSortLabel
-                          active={orderBy === 'status'}
-                          direction={orderBy === 'status' ? order : 'asc'}
+                          active={orderBy === 'rewardAmount'}
+                          direction={orderBy === 'rewardAmount' ? order : 'asc'}
                           classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
-                          onClick={handleSort('status')}
+                          onClick={handleSort('rewardAmount')}
                         >
-                          Status
+                          Reward
                         </TableSortLabel>
                       </TableCell>
+
+                      <TableCell sx={{ width: 10, padding: 0 }}></TableCell>
                     </TableRow>
                   </TableHead>
 
@@ -140,20 +152,56 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
                       <TableCell
                         align='left'
                       >
+                        <App.Text weight={600} color="rgba(185, 184, 197, 0.8)">#</App.Text>
+                      </TableCell>
+
+                      <TableCell
+                        align='left'
+                      >
+                        <TableSortLabel
+                          active={orderBy === 'participatedTimestamp'}
+                          direction={orderBy === 'participatedTimestamp' ? order : 'asc'}
+                          classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
+                          onClick={handleSort('participatedTimestamp')}
+                        >
+                          Date
+                        </TableSortLabel>
+                      </TableCell>
+
+                      <TableCell
+                        align='left'
+                      >
                         <TableSortLabel
                           active={orderBy === 'title'}
                           direction={orderBy === 'title' ? order : 'asc'}
                           classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
                           onClick={handleSort('title')}
                         >
-                          Campaign Name
+                          Cases
                         </TableSortLabel>
                       </TableCell>
 
-                      <TableCell></TableCell>
+                      <TableCell
+                        align='left'
+                      >
+                        <App.Text weight={600} color="rgba(185, 184, 197, 0.8)">Blockchain Hash</App.Text>
+                      </TableCell>
 
                       <TableCell
-                        align='center'
+                        align='left'
+                      >
+                        <TableSortLabel
+                          active={orderBy === 'rewardAmount'}
+                          direction={orderBy === 'rewardAmount' ? order : 'asc'}
+                          classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
+                          onClick={handleSort('rewardAmount')}
+                        >
+                          Reward
+                        </TableSortLabel>
+                      </TableCell>
+
+                      <TableCell
+                        align='left'
                       >
                         <TableSortLabel
                           active={orderBy === 'status'}
@@ -161,39 +209,22 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
                           classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
                           onClick={handleSort('status')}
                         >
-                          Campaign Status
+                          Status
                         </TableSortLabel>
                       </TableCell>
 
                       <TableCell
-                        align='right'
-                        sx={{ flexDirection: 'row' }}
+                        align='left'
                       >
                         <TableSortLabel
-                          active={orderBy === 'totalEarned'}
-                          direction={orderBy === 'totalEarned' ? order : 'asc'}
+                          active={orderBy === 'tKeysCount'}
+                          direction={orderBy === 'tKeysCount' ? order : 'asc'}
                           classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
-                          onClick={handleSort('totalEarned')}
+                          onClick={handleSort('tKeysCount')}
                         >
-                          Reward Won
+                          TKeys burnt
                         </TableSortLabel>
                       </TableCell>
-
-                      <TableCell
-                        align='right'
-                        sx={{ flexDirection: 'row' }}
-                      >
-                        <TableSortLabel
-                          active={orderBy === 'totalTKeysSpent'}
-                          direction={orderBy === 'totalTKeysSpent' ? order : 'asc'}
-                          classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
-                          onClick={handleSort('totalTKeysSpent')}
-                        >
-                          TKeys Spent
-                        </TableSortLabel>
-                      </TableCell>
-
-                      <TableCell sx={{ width: '10px' }}></TableCell>
                     </TableRow>
                   </TableHead>
 
@@ -205,7 +236,7 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
             </TableContainer>
           ) : (
             <App.Flex center height={300}>
-              <App.Text>There are no campaigns yet</App.Text>
+              <App.Text>There are no cases yet</App.Text>
             </App.Flex>
           )}
         </>

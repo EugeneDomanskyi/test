@@ -7,6 +7,12 @@
   background-size: contain, cover;
   padding: 64px 0;
 
+  @media (max-width: 768px) {
+    padding: 34px 0;
+    background: no-repeat right top url('/images/raffle/top-background-1-m.png'), no-repeat center bottom url('/images/raffle/top-background-2.png');
+    background-size: 190px 187px, auto;
+  }
+
   .box {
     padding: 16px 32px;
     border-radius: 100px;
@@ -25,11 +31,16 @@
       overflow: hidden;
       height: 40px;
 
+      &.primary {
+        background-color: #7204FF;
+        border-color: #7204FF;
+      }
+
       &:after {
         content: '';
         display: block;
         position: absolute;
-        z-index: 0;
+        z-index: -1;
         inset: 0;
         background: radial-gradient(107.32% 141.42% at 0% 0%, rgba(255, 255, 255, 0.40) 0%, rgba(255, 255, 255, 0.00) 100%);
         backdrop-filter: blur(21px);
@@ -68,13 +79,15 @@
     }
 
     .box {
-      padding: 14px;
+      padding: 8px 16px;
       border-radius: 82px;
-      width: 100%;
+      flex: 0 0 auto;
+      width: fit-content;
 
       .button {
-        padding: 8px 16px;
+        //padding: 8px 16px;
         border-radius: 82px;
+        white-space: nowrap;
       }
     }
   }

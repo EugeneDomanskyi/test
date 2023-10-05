@@ -29,7 +29,7 @@ const RaffleClaimModal = ({item, onStep}) => {
   const [step, setStep] = useState(0)
 
   const contractAddr = '0x9bfdfdac362f810ff15240045e600a7468caf91c' //'0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84'
-  const factoryAddr = '0x6730d9E6f08E23DCC680D577af918Ae1CeD28230' //'0xA4cDD0FEe85c917A68a9432a3ebfF1f66E9f281A'
+  const factoryAddr = '0x3897BdBAFA001CA14576Cb07ecdfbC1BcdF09ca7' //'0xA4cDD0FEe85c917A68a9432a3ebfF1f66E9f281A'
   
   useEffect(() => {
     if (!showModal) {
@@ -78,7 +78,10 @@ const RaffleClaimModal = ({item, onStep}) => {
         return
       }
 
-      const result = await $raffle.api.reward(enterCampaignHash.trim())
+      setTimeout(async () => {
+        const result = await $raffle.api.reward(enterCampaignHash.trim())
+      }, 3000)
+      
       dispatch($raffle.set.loading(false))
     }
 
