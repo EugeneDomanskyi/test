@@ -22,8 +22,8 @@ const RaffleList = ({ loading, onUpdateUser }) => {
   const [tab, setTab] = useState('browse')
 
   const tabs = [
-    { key: 'browse', title: 'Browse Raffle' },
-    { key: 'my', title: 'My Raffle', disabled: ! wallet },
+    { key: 'browse', title: 'Browse Cases' },
+    { key: 'my', title: 'Cases History', disabled: ! wallet },
   ]
 
   const timer = useRef()
@@ -38,7 +38,7 @@ const RaffleList = ({ loading, onUpdateUser }) => {
     if (tab == 'my' && wallet) {
       if (onUpdateUser) {
         onUpdateUser(true)
-        timer.current = setInterval(() => onUpdateUser(true), 5000)
+        timer.current = setInterval(() => onUpdateUser(true), 15000)
       }
     }
 
@@ -79,9 +79,7 @@ const RaffleList = ({ loading, onUpdateUser }) => {
       return
     }
 
-    if (item.hasOwnProperty('user') && item.user.isResolved || !item.hasOwnProperty('user')) {
-      router.push(`/raffle/${item.id}`, undefined, { scroll: false })
-    }
+    router.push(`/raffle/${item.id}`, undefined, { scroll: false })
   }
 
   const handleShare = (item) => {

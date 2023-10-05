@@ -220,6 +220,7 @@ const RafflePage = () => {
     <App.Flex column className={styles.container}>
       <Raffle.Header />
       <Raffle.Top loading={campaignLoading} />
+      <Raffle.Banner />
       <Raffle.List loading={campaignLoading} onUpdateUser={handleUpdateUser} />
     </App.Flex>
   )

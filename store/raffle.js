@@ -96,7 +96,14 @@ export const raffleSlice = createSlice({
     },
 
     participants: (state, { payload }) => {
-      state.participants = payload
+      state.participants = payload.map(item => {
+        return {
+          ...item,
+          tKeysCount: item.tokenIds.length,
+          rewardAmount: item.rewardAmount / Math.pow(10, 6),
+          status: item.isResolved ? 'Success' : (!item.isResolved ? 'Processing' : 'Failed')
+        }
+      })
 
       state.all = state.all.map(item => {
         const participated = payload.find(el => el.campaign.id == item.id)
@@ -237,12 +244,15 @@ const query = {
 
   userCampaignParticipants: gql`
     query userCampaignParticipants($id: String) {
-      userCampaignParticipants(where: {user_: {id: $id}}) {
+      userCampaignParticipants(where: {user_: {id: $id}}, orderBy: participatedTimestamp, orderDirection: desc) {
+        id
         isResolved
         rewardAmount
         tokenIds
         resolvedTransaction
         resolvedTimestamp
+        participatedTransaction
+        participatedTimestamp
         campaign {
           id
         }

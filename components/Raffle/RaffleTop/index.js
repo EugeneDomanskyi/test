@@ -11,7 +11,7 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const RaffleTop = ({ loading }) => {
-  const { wallet } = useWalletConnect()
+  const { wallet, connect } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
   const campaigns = useSelector(({ $raffle }) => $raffle.all)
@@ -40,6 +40,12 @@ const RaffleTop = ({ loading }) => {
     window.open('https://galxe.com/tegro', '_blank')
   }
 
+  const handleConnectWalletClick = async () => {
+    if ( ! wallet) {
+      connect()
+    }
+  }
+
   const handleTransactionClick = (tx) => () => {
     window.open(`https://${process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai.' : ''}polygonscan.com/tx/${tx}`, '_blank')
   }
@@ -49,9 +55,9 @@ const RaffleTop = ({ loading }) => {
       <App.Flex className={styles.top}>
         <App.Container>
           <App.Flex column gap={[64, 32]}>
-            <App.Flex column width={490}>
-              <App.Text size={[48, 32]} height={1.2} family="ClashDisplay" gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">Mega USDT Rewards Up For Grabs!</App.Text>
-              <App.Text size={[16, 14]} height={1.6}>Use your TKeys to unlock USDT and other exciting rewards on Polygon!</App.Text>
+            <App.Flex column width={['auto', 178]}>
+              <App.Text size={[48, 24]} height={1.2} family="ClashDisplay" gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">Open Cases, Win Epic Prizes</App.Text>
+              <App.Text size={[16, 14]} height={1.6} family="ClashDisplay">Use your TKeys to unlock USDT and token rewards!</App.Text>
             </App.Flex>
 
             <App.Flex direction={['row', 'column']} gap={[32, 16]}>
@@ -62,23 +68,19 @@ const RaffleTop = ({ loading }) => {
                   ) : (
                     <App.Loader size={[36, 24]} />
                   )}
-                  <App.Text center size={[16, 10]} family="ClashDisplay" height={1.2} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">Reward Prize Pool</App.Text>
-                </App.Flex>
-
-                <App.Flex center className={styles.button}>
-                  <App.Text center size={[14, 12]} weight={700}>Share</App.Text>
+                  <App.Text center size={[16, 10]} family="ClashDisplay" height={1.2} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">Prize Pool</App.Text>
                 </App.Flex>
               </App.Flex>
 
               {wallet ? (
-                <App.Flex row align="center" justify={['center', 'space-between']} gap={[32, 8]} className={styles.box}>
+                <App.Flex row align="center" justify={['center', 'space-between']} gap={[32, 8]} width={['auto', '100%']} className={styles.box}>
                   <App.Flex column center>
                     {loadingUser ? (
                       <App.Loader size={[36, 24]} />
                     ) : (
                       <App.Text center size={[36, 24]} family="ClashDisplay" height={1} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">${user.totalEarned}</App.Text>
                     )}
-                    <App.Text center size={[16, 10]} family="ClashDisplay" height={1.2} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">Rewards Unlocked</App.Text>
+                    <App.Text center size={[16, 10]} family="ClashDisplay" height={1.2} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">Prize Earned</App.Text>
                   </App.Flex>
 
                   <App.Flex column center>
@@ -90,14 +92,24 @@ const RaffleTop = ({ loading }) => {
                         <App.Text center size={[36, 24]} family="ClashDisplay" height={1} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">{tokenIds.length}</App.Text>
                       )}
                     </App.Flex>
-                    <App.Text center size={[16, 10]} family="ClashDisplay" height={1.2} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">TKeys Available</App.Text>
+                    <App.Text center size={[16, 10]} family="ClashDisplay" height={1.2} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">TKeys Balance</App.Text>
                   </App.Flex>
 
-                  <App.Flex center className={styles.button} onClick={handleMoreClick}>
-                    <App.Text center size={[14, 12]} weight={700}>Grab more TKeys</App.Text>
+                  <App.Flex center className={cn(styles.button, styles.primary)} onClick={handleMoreClick}>
+                    <App.Text center size={[14, 12]} weight={700}>Collect TKeys</App.Text>
                   </App.Flex>
                 </App.Flex>
-              ) : null}
+              ) : (
+                <App.Flex row align="center" justify={['center', 'space-between']} width={['auto', '100%']} gap={[32, 8]} className={styles.box}>
+                  <App.Flex width={[251, 'auto']}>
+                    <App.Text size={[16, 10]} family="ClashDisplay" height={1.2} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">Connect your wallet, open cases, and enjoy your winnings!</App.Text>
+                  </App.Flex>
+
+                  <App.Flex center className={cn(styles.button, styles.primary)} onClick={handleConnectWalletClick}>
+                    <App.Text center size={[14, 12]} weight={700}>Connect Wallet</App.Text>
+                  </App.Flex>
+                </App.Flex>
+              )}
             </App.Flex>
           </App.Flex>
         </App.Container>
