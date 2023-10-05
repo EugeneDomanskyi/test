@@ -68,10 +68,18 @@ const handler = async (req, res) => {
       ...acc,
       [item.address?.toLowerCase()]: item
     }), {})
-
+    // console.log('filtered -> ', orders.filter(order => tokenAssets[order.data.makerAsset.toLowerCase()] && tokenAssets[order.data.takerAsset.toLowerCase()]).length)
     const network = CHAINS.find(chain => chain.id.toString() === chainId)
     const list = orders
-      .filter(order => tokenAssets[order.data.makerAsset.toLowerCase()] && tokenAssets[order.data.takerAsset.toLowerCase()])
+      .filter(order => {
+        if (!tokenAssets[order.data.makerAsset.toLowerCase()]) {
+          console.log(order.data.makerAsset.toLowerCase())
+        }
+        if (!tokenAssets[order.data.takerAsset.toLowerCase()]) {
+          console.log(order.data.takerAsset.toLowerCase())
+        }
+        return tokenAssets[order.data.makerAsset.toLowerCase()] && tokenAssets[order.data.takerAsset.toLowerCase()]
+      })
       .map(order => formatter(order, tokenAssets[order.data.makerAsset.toLowerCase()], tokenAssets[order.data.takerAsset.toLowerCase()], network))
 
     res.status(200).json(list)

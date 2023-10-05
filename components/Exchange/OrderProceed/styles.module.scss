@@ -33,6 +33,21 @@
       }
     }
 
+    .tabContent {
+      padding-top: 16px;
+      flex: 1;
+    }
+
+    .badge {
+      width: 50px;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: auto;
+      border-radius: 2px;
+    }
+
     .row {
       margin-bottom: 8px;
     }
@@ -51,6 +66,19 @@
       background-color: #53F19C;
       width: 100%;
       cursor: pointer;
+  
+      &:hover {
+        filter: brightness(1.2);
+      }
+    }
+
+    .buttonResult {
+      height: 56px;
+      border-radius: 8px;
+      background-color: #7204FF;
+      width: 100%;
+      cursor: pointer;
+      margin-top: 16px;
   
       &:hover {
         filter: brightness(1.2);

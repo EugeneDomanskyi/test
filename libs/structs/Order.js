@@ -114,31 +114,39 @@ class Order {
       chainId: chainId,
       args: [walletAddress, spenderContract],
     })
-    
-    const decimals = await Order.getDecimals(tokenAddress, chainId)
-    const allowanceAmount = formatUnits(res, decimals)
-    const isEthereumUsdt = tokenAddress.toLowerCase() === '0xdac17f958d2ee523a2206206994597c13d831ec7'
-    console.log('allowanceAmount -> ', allowanceAmount)
-    if (allowanceAmount*1 < amount*1) {
-      if (isEthereumUsdt) {
-        await Order.writeContract({
+
+    return new Promise(async (resolve, reject) => {
+      const decimals = await Order.getDecimals(tokenAddress, chainId)
+      const allowanceAmount = formatUnits(res, decimals)
+      const isEthereumUsdt = tokenAddress.toLowerCase() === '0xdac17f958d2ee523a2206206994597c13d831ec7'
+      if (allowanceAmount*1 < amount*1) {
+        if (isEthereumUsdt) {
+          await Order.writeContract({
+            address: tokenAddress,
+            abi: [abiApprove],
+            functionName: 'approve',
+            chainId: chainId,
+            args: [spenderContract, parseUnits('0', decimals)],
+          }).catch(error => {
+            reject({success: false, message: error.shortMessage})
+          })
+        }
+        const writeContractResult = await Order.writeContract({
           address: tokenAddress,
           abi: [abiApprove],
           functionName: 'approve',
           chainId: chainId,
-          args: [spenderContract, parseUnits('0', decimals)],
+          args: [spenderContract, parseUnits(Number.MAX_SAFE_INTEGER.toString(), decimals)],
+        }).catch(error => {
+          reject({success: false, message: error.shortMessage})
         })
+        if (writeContractResult) {
+          resolve({success: true})
+        }
+        return
       }
-      const writeContractResult = await Order.writeContract({
-        address: tokenAddress,
-        abi: [abiApprove],
-        functionName: 'approve',
-        chainId: chainId,
-        args: [spenderContract, parseUnits(Number.MAX_SAFE_INTEGER.toString(), decimals)],
-      })
-      return writeContractResult
-    }
-    return {success: true}
+      resolve({success: true})
+    })
   }
 }
 
@@ -403,8 +411,8 @@ class TOKEN extends Order {
         
         const balance = await Order.getBalance(walletClient.account.address, sellAsset)
         if (willSpendAmount*1 > balance*1) {
-          Order.showErrorMessage('Insufficient balance')
-          reject()
+          // Order.showErrorMessage('Insufficient balance')
+          reject({success: false, message: 'Insufficient balance', type: 'balance'})
           return 
         }
         
@@ -439,12 +447,13 @@ class TOKEN extends Order {
         })
 
         if (result.success) {
+          resolve(result)
           return
         }
 
-        reject(result.error)
+        reject({success: false, message: result.error?.shortMessage})
       }
-      reject('There is no order to fulfill')
+      reject({success: false, message: 'There is no order to fulfill'})
     })
   }
 
@@ -457,17 +466,17 @@ class TOKEN extends Order {
       const spendAmount = type === 'buy' ? price*amount : amount*1
       const receiveAmount = type === 'buy' ? amount : price*amount
       
-      const allowance = await Order.checkAllowance(chainId, INCH_CONTRACTS[chainId], walletClient.account.address, makerAsset.address, spendAmount)
-      if (!allowance.success) {
-        reject()
-        return
-      }
-      callback('allowance', {success: true})
+      // const allowance = await Order.checkAllowance(chainId, INCH_CONTRACTS[chainId], walletClient.account.address, makerAsset.address, spendAmount)
+      // if (!allowance.success) {
+      //   reject()
+      //   return
+      // }
+      // callback('allowance', {success: true})
       const balance = await Order.getBalance(walletClient.account.address, makerAsset.address)
       
       if (balance < spendAmount) {
         Order.showErrorMessage('Insufficient balance')
-        reject()
+        reject({success: false, message: 'Insufficient balance', type: 'balance'})
         return 
       }
 
@@ -482,14 +491,15 @@ class TOKEN extends Order {
       const limitOrderTypedData = limitOrderBuilder.buildLimitOrderTypedData(limitOrder)
       const limitOrderHash = hashTypedData(limitOrderTypedData)
       const signature = await walletClient.signTypedData(limitOrderTypedData).catch(error => {
-        Order.showErrorMessage(error.shortMessage)
-        reject(error)
+        // Order.showErrorMessage(error.shortMessage)
+        reject({success: false, message: error.shortMessage})
       })
 
       if (!signature) {
+        // reject()
         return
       }
-      callback('transaction', {success: true})
+      callback('transaction_completed', {success: true})
       const post = {
         orderHash: limitOrderHash,
         signature: signature,
@@ -503,7 +513,7 @@ class TOKEN extends Order {
         resolve(res)
         return
       }
-      reject()
+      reject({success: false})
     })
   }
 
