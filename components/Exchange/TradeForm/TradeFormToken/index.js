@@ -19,6 +19,20 @@ const trimLeadingZerosBeforeDecimal = number => {
   return number.toString().replace(/^0+(?=\d+(\.\d*)?$)/, '')
 }
 
+const checkPrice = (price, tab, cheapestOrder, expensiveOrder) => {
+  if (!Boolean(price*1)) {
+    return false
+  }
+  switch (tab) {
+    case 'buy':
+      return cheapestOrder && cheapestOrder.priceFormatted && price*1 < cheapestOrder.priceFormatted/1.1
+    case 'sell':
+      return expensiveOrder && expensiveOrder.priceFormatted && price*1 > expensiveOrder.priceFormatted*1.1
+    default:
+      return false
+  }
+}
+
 const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
   const dispatch = useDispatch()
   const { wallet, changeNetwork, getBalance } = useWalletConnect()
@@ -30,9 +44,20 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
   const [form, setForm] = useState({price: '', amount: '1', total: '0'})
   const [userBalances, setUserBalances] = useState({token: 0, usdt: 0})
 
+  const [cheapestOrder] = orderBook.sell
+  const [expensiveOrder] = orderBook.buy
+
+  const isWrongPrice = checkPrice(form.price, currentTab, cheapestOrder, expensiveOrder)
   const isDisabled = !(form.amount*1) || !(form.price*1) || !(form.total*1)
 
   const loadingRef = useRef(false)
+
+  useImperativeHandle(ref, () => ({
+    setForm: (data) => {
+      handleChangeForm('price')(data.price.toString())
+      handleChangeForm('amount')(data.amount.toString())
+    }
+  }))
 
   useEffect(() => {
     handleSetPrice()
@@ -52,7 +77,6 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
         const [cheapestOrder] = orderBook.sell
         if (cheapestOrder && cheapestOrder.priceFormatted) {
           handleChangeForm('price')(cheapestOrder.priceFormatted.toString())
-          handleChangeForm('amount')(cheapestOrder.quantity.toString())
         } else if (current.price) {
           handleChangeForm('price')(current.price)
         } else {
@@ -205,13 +229,32 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
 
   return (
     <App.Flex column className={styles.form}>
-      <App.Flex column sx={{marginBottom: 24}}>
-        <TradeInput
-          label="AT PRICE"
-          currency={'USDT'}
-          value={form.price}
-          onBlur={handleBlurPrice}
-          onChange={handleChangeForm('price')} />
+      <App.Flex justify="flex-end" align="center" sx={{marginBottom: 16}}>
+        <App.Text color="rgba(255,255,255,0.6)" size={10} weight={600} italic sx={{marginRight: 8}}>Hybrid Limit Order</App.Text>
+        <App.Icon icon="info" />
+      </App.Flex>
+      <App.Flex column sx={{marginBottom: 10}}>
+        <App.Flex justify="center" flex={1} column sx={{position: 'relative'}}>
+          <TradeInput
+            label="AT PRICE"
+            currency={'USDT'}
+            value={form.price}
+            warning={isWrongPrice}
+            onBlur={handleBlurPrice}
+            onChange={handleChangeForm('price')} />
+          <App.Flex className={styles.priceSetter} onClick={handleSetPrice}>
+            <App.Text size={12} weight={600} color={currentTab === 'buy' ? '#53F19C' : '#FF1D61'}>
+              { currentTab === 'buy' ? 'LOWEST PRICE' : 'HIGHEST PRICE' }
+            </App.Text>
+          </App.Flex>
+        </App.Flex>
+        {
+          isWrongPrice
+            ? <App.Text color="#FFD600" size={10} weight={500}>
+                {currentTab === 'buy' ? 'Price deviation is more than 10% below the last trade price.' : 'Price deviation is more than 10% above the last trade price.'}
+              </App.Text>
+            :  <App.Text color="#FFD600" size={10} weight={500}>&nbsp;</App.Text>
+        }
       </App.Flex>
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput

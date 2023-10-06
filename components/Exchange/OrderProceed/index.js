@@ -77,6 +77,12 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
     limit: numeral(amountLimitOrder * 100 / makerAmountFormatted).format('0'),
   }
 
+  const flowSteps = {
+    approval: true,
+    fill_order: !!amountFillOrder,
+    place_order: !!amountLimitOrder
+  }
+
   const completedOrders = abilities.orders.filter(order => successOrders.find(o => o.args.orderHash === order.orderHash))
 
   const stats = completedOrders.reduce((acc, order) => {
@@ -90,8 +96,9 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
   stats.tookAmount = numeral(stats.tookAmount).format('0.[00000]')
 
   const completePercentage = numeral(stats.tookAmount*100/abilities.willTakeAmount).format('0')
-
-  const currentSignStep = signSteps.find(step => step.current)
+  
+  const stepsInFlow = signSteps.filter(step => flowSteps[step.key]).map((step, i) => ({...step, index: i}))
+  const currentSignStep = stepsInFlow.find(step => step.current)
 
   useEffect(() => {
     fetchOrders()
@@ -136,12 +143,12 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
   const handleConfirm = async () => {
     setStep('sign')
     const allowances = []
-    if (!!amountFillOrder) {
+    if (flowSteps.fill_order) {
       allowances.push(() => {
         return Order.Order.checkAllowance(blockchain.id, TEGRO_FILL_ORDERS_CONTRACTS[blockchain.id], wallet, takerAsset.address, takerAmountFormatted*1)
       })
     }
-    if (!!amountLimitOrder) {
+    if (flowSteps.place_order) {
       allowances.push(() => {
         return Order.Order.checkAllowance(blockchain.id, INCH_CONTRACTS[blockchain.id], wallet, takerAsset.address, takerAmountFormatted*1)
       })
@@ -149,7 +156,7 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
     const allowanceResults = await Promise.all(allowances.map(fn => fn()))
     if (allowanceResults.every(res => res.success)) {
       
-      if (!!amountFillOrder) {
+      if (flowSteps.fill_order) {
         setSignSteps(state => state.map(step => ({...step, current: step.key === 'fill_order'})))
         const fillOrderResult = await Order.TOKEN.fulfill({
           address: side === 'buy' ? makerAsset.address : takerAsset.address, //current.address,
@@ -161,7 +168,7 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
         })
         setResults(state => ({...state, fill_order: fillOrderResult}))
       }
-      if (!!amountLimitOrder) {
+      if (flowSteps.place_order) {
         setSignSteps(state => state.map(step => ({...step, current: step.key === 'place_order'})))
         const placeOrderResult = await Order.TOKEN.place({
           type: side,
@@ -175,6 +182,9 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
         setResults(state => ({...state, place_order: placeOrderResult}))
       }
       setStep('result')
+      if (!flowSteps.fill_order || !flowSteps.place_order) {
+        setCurrentTab(flowSteps.fill_order ? 'fill_order' : 'limit_order')
+      }
     }
   }
 
@@ -236,27 +246,39 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                       <App.Text color="#5E5C6B" size={10} weight={600}>{ takerAmountFormatted } { side === 'buy' ? takerAsset.symbol : makerAsset.symbol }</App.Text>
                     </App.Flex>
                     <div className={styles.line} />
-                    <App.Flex align="center" justify="space-between">
-                      <App.Flex column>
-                        <App.Text color="#5E5C6B" size={12} weight={600}>Instant Settle ⚡</App.Text>
-                        <App.Text color="#5E5C6B" size={10} weight={600}>Settled instantly with matching orders</App.Text>
-                      </App.Flex>
-                      <App.Text size={12} weight={600}>
-                        { numeral(amountFillOrder).format('0.0[0000]') } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol } ({percentages.sign}%)
-                      </App.Text>
-                    </App.Flex>
-                    <div className={styles.line} />
-                    <App.Flex align="center" justify="space-between">
-                      <App.Flex column>
-                        <App.Text color="#5E5C6B" size={12} weight={600}>Limit Order ⌛</App.Text>
-                        <App.Text color="#5E5C6B" size={10} weight={600}>Places your active order in the orderbook until cancelled or matched</App.Text>
-                      </App.Flex>
-                      <App.Text size={12} weight={600}>
-                        { numeral(amountLimitOrder).format('0.0[0000]') } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol } ({percentages.limit}%)
-                      </App.Text>
-                    </App.Flex>
-                    <div className={styles.line} />
-                    <App.Text color="#5E5C6B" size={12} weight={600}>Overall Summary</App.Text>
+                    {
+                      flowSteps.fill_order
+                        ? <Fragment>
+                            <App.Flex align="center" justify="space-between">
+                              <App.Flex column>
+                                <App.Text color="#5E5C6B" size={12} weight={600}>Instant Settle ⚡</App.Text>
+                                <App.Text color="#5E5C6B" size={10} weight={600}>Settled instantly with matching orders</App.Text>
+                              </App.Flex>
+                              <App.Text size={12} weight={600}>
+                                { numeral(amountFillOrder).format('0.0[0000]') } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol } ({percentages.sign}%)
+                              </App.Text>
+                            </App.Flex>
+                            <div className={styles.line} />
+                          </Fragment>
+                        : null
+                    }
+                    {
+                      flowSteps.place_order
+                        ? <Fragment>
+                            <App.Flex align="center" justify="space-between">
+                              <App.Flex column>
+                                <App.Text color="#5E5C6B" size={12} weight={600}>Limit Order ⌛</App.Text>
+                                <App.Text color="#5E5C6B" size={10} weight={600}>Places your active order in the orderbook until cancelled or matched</App.Text>
+                              </App.Flex>
+                              <App.Text size={12} weight={600}>
+                                { numeral(amountLimitOrder).format('0.0[0000]') } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol } ({percentages.limit}%)
+                              </App.Text>
+                            </App.Flex>
+                            <div className={styles.line} />
+                          </Fragment>
+                        : null
+                    }
+                    <App.Text color="#5E5C6B" size={12} weight={600} sx={{marginTop: 'auto'}}>Overall Summary</App.Text>
                     <App.Flex justify="space-between" className={styles.row}>
                       <App.Text color="#5E5C6B" size={10} weight={500}>You Pay</App.Text>
                       <App.Text color="#5E5C6B" size={10} weight={500}>You Receive</App.Text>
@@ -287,7 +309,7 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                 <App.Flex column className={styles.content}>
                   <App.Flex className={styles.steps}>
                     {
-                      signSteps.map((signStep, i) => {
+                      stepsInFlow.map((signStep, i) => {
                         const isActive = currentSignStep.index >= i
                         return (
                           <App.Flex flex={1} column justify="center" align="center" key={signStep.key} className={styles.step}>
@@ -302,9 +324,9 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                     <App.Loader size={100} color="#7204FF" sx={{marginBottom: 4}} />
                     {
                       currentSignStep.signed
-                        ? null
+                        ? <App.Text size={18} weight={700}>Waiting for Blockchain Confirmation</App.Text>
                         : <Fragment>
-                            <App.Text color="#A965FF" size={14} weight={700} sx={{marginBottom: 4}}>STEP {currentSignStep.index+1} / {signSteps.length}</App.Text>
+                            <App.Text color="#A965FF" size={14} weight={700} sx={{marginBottom: 4}}>STEP {currentSignStep.index+1} / {stepsInFlow.length}</App.Text>
                             <App.Text size={20} weight={700} sx={{marginBottom: 4}}>{currentSignStep.title}</App.Text>
                             <App.Text color="#9996B1" size={14} weight={500}>{currentSignStep.description.replace('$TOKEN', takerAsset.symbol)}</App.Text>
                           </Fragment>
@@ -316,10 +338,14 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
             case 'result':
               return (
                 <App.Flex column className={styles.content}>
-                  <Tabs
-                    options={TABS}
-                    active={currentTab}
-                    onChange={handleChangeTab} />
+                  {
+                    Object.values(flowSteps).every(val => val)
+                      ? <Tabs
+                          options={TABS}
+                          active={currentTab}
+                          onChange={handleChangeTab} />
+                      : <App.Text size={14} weight={700}>Order Summary</App.Text>
+                  }
                   {
                     (tab => {
                       switch (tab) {
@@ -389,7 +415,7 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                               <App.Flex justify="space-between">
                                 <App.Text color="#5E5C6B" size={10} weight={600}>Amount / Filled</App.Text>
                                 <App.Text color="#B9B8C5" size={10} weight={600}>
-                                  { side === 'buy' ? stats.tookAmount : stats.spendedAmount } { makerAsset.symbol } / { side === 'buy' ? abilities.willTakeAmount : abilities.willSpendAmount } { makerAsset.symbol }
+                                  { side === 'buy' ? stats.tookAmount : stats.spendedAmount } {  side === 'buy' ? makerAsset.symbol : takerAsset.symbol } / { side === 'buy' ? abilities.willTakeAmount : abilities.willSpendAmount } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol }
                                 </App.Text>
                               </App.Flex>
                               <div className={styles.line} />

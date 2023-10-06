@@ -22,6 +22,10 @@
     border-color: #FF1D61;
   }
 
+  &.warning {
+    border-color: #FFD600;
+  }
+
   .divider {
     width: 1px;
     height: 100%;
@@ -41,6 +45,10 @@
 
     &.error {
       color: #FF1D61;
+    }
+
+    &.warning {
+      color: #FFD600;
     }
 
     &::-webkit-outer-spin-button,

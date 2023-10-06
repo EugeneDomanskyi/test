@@ -36,15 +36,15 @@ const TradeForm = forwardRef(({current, type, fullWidth = null}, ref) => {
   const [limitForm, setLimitForm] = useState({price: '0', amount: '1', total: '0'})
   const [marketForm, setMarketForm] = useState({amount: '1'})
 
-  const takerFormRef = useRef(null)
+  const tokenFormRef = useRef(null)
 
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
       handleChangeTab(data.side)
-      setFormType(data.formType)
+      // setFormType(data.formType)
       setMarketForm({amount: data.amount.toString()})
-      if (takerFormRef.current) {
-        takerFormRef.current.setForm({amount: data.amount, price: data.price})
+      if (tokenFormRef.current) {
+        tokenFormRef.current.setForm({amount: data.amount, price: data.price})
       }
     }
   }))
@@ -163,7 +163,7 @@ const TradeForm = forwardRef(({current, type, fullWidth = null}, ref) => {
             case 'tokens':
               return (
                 <TradeFormToken
-                  ref={takerFormRef}
+                  ref={tokenFormRef}
                   current={current}
                   userBalances={userBalances}
                   currentTab={currentTab}
