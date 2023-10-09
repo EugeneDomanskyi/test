@@ -139,7 +139,7 @@ class Order {
           chainId: chainId,
           args: [spenderContract, parseUnits(Number.MAX_SAFE_INTEGER.toString(), decimals)],
         }).catch(error => {
-          reject({success: false, message: error.shortMessage})
+          reject({success: false, message: error.shortMessage, type: 'balance'})
         })
         if (writeContractResult) {
           resolve({success: true})
@@ -447,7 +447,6 @@ class TOKEN extends Order {
         subscribes.failed = watchContractEvent(
           {eventName: 'TradeFailed', address: TEGRO_FILL_ORDERS_CONTRACTS[chainId], abi: TEGRO_ABI},
           (event) => {
-            console.log('TradeFailed', list.length)
             callback(`contract_TradeFailed`, event)
             if (!haveEvent) {
               haveEvent = true
@@ -471,8 +470,7 @@ class TOKEN extends Order {
           // resolve(result)
           return
         }
-
-        reject({success: false, message: result.error?.shortMessage})
+        reject({success: false, message: result.error?.shortMessage, type: result.error?.cause?.name})
       }
       reject({success: false, message: 'There is no order to fulfill'})
     })
@@ -487,12 +485,6 @@ class TOKEN extends Order {
       const spendAmount = type === 'buy' ? price*amount : amount*1
       const receiveAmount = type === 'buy' ? amount : price*amount
       
-      // const allowance = await Order.checkAllowance(chainId, INCH_CONTRACTS[chainId], walletClient.account.address, makerAsset.address, spendAmount)
-      // if (!allowance.success) {
-      //   reject()
-      //   return
-      // }
-      // callback('allowance', {success: true})
       const balance = await Order.getBalance(walletClient.account.address, makerAsset.address)
       
       if (balance < spendAmount) {
@@ -512,8 +504,7 @@ class TOKEN extends Order {
       const limitOrderTypedData = limitOrderBuilder.buildLimitOrderTypedData(limitOrder)
       const limitOrderHash = hashTypedData(limitOrderTypedData)
       const signature = await walletClient.signTypedData(limitOrderTypedData).catch(error => {
-        // Order.showErrorMessage(error.shortMessage)
-        reject({success: false, message: error.shortMessage})
+        reject({success: false, message: error.shortMessage, type: error.name})
       })
 
       if (!signature) {

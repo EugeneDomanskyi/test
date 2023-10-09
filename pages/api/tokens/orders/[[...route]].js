@@ -43,9 +43,9 @@ const formatter = (order, makerAsset, takerAsset, network) => {
   const remainingMakingAmount = formatUnits(order.remainingMakerAmount, makerAsset.decimals)
   const remainingTakingAmount = formatUnits(math.chain(order.remainingMakerAmount).multiply(order.data.takingAmount).divide(order.data.makingAmount).round().done(), takerAsset.decimals)
 
-  order.quantity = order.side === 'sell' ? makingAmountFormatted : takingAmountFormatted
-  order.quantityFilled = order.quantity - (order.side === 'sell' ? remainingMakingAmount : remainingTakingAmount)
-  order.price = order.side === 'buy' ? makingAmountFormatted : takingAmountFormatted
+  order.quantity = math.chain(order.side === 'sell' ? makingAmountFormatted : takingAmountFormatted).round(5).done()
+  order.quantityFilled = math.chain(order.quantity - (order.side === 'sell' ? remainingMakingAmount : remainingTakingAmount)).round(5).done()
+  order.price = math.chain(order.side === 'buy' ? makingAmountFormatted : takingAmountFormatted).round(5).done()
   order.status = !order.orderInvalidReason ? 'open' : (order.orderInvalidReason === 'order filled' ? 'completed' : (order.orderInvalidReason === 'order cancelled' ? 'cancelled' : null))
   return order
 }

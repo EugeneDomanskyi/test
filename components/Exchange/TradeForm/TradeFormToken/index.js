@@ -19,15 +19,15 @@ const trimLeadingZerosBeforeDecimal = number => {
   return number.toString().replace(/^0+(?=\d+(\.\d*)?$)/, '')
 }
 
-const checkPrice = (price, tab, cheapestOrder, expensiveOrder) => {
+const checkPrice = (price, tab, marketPrice) => {
   if (!Boolean(price*1)) {
     return false
   }
   switch (tab) {
     case 'buy':
-      return cheapestOrder && cheapestOrder.priceFormatted && price*1 < cheapestOrder.priceFormatted/1.1
+      return marketPrice && price*1 > marketPrice*1.1
     case 'sell':
-      return expensiveOrder && expensiveOrder.priceFormatted && price*1 > expensiveOrder.priceFormatted*1.1
+      return marketPrice && price*1 < marketPrice/1.1
     default:
       return false
   }
@@ -44,10 +44,7 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
   const [form, setForm] = useState({price: '', amount: '1', total: '0'})
   const [userBalances, setUserBalances] = useState({token: 0, usdt: 0})
 
-  const [cheapestOrder] = orderBook.sell
-  const [expensiveOrder] = orderBook.buy
-
-  const isWrongPrice = checkPrice(form.price, currentTab, cheapestOrder, expensiveOrder)
+  const isWrongPrice = checkPrice(form.price, currentTab, current.price)
   const isDisabled = !(form.amount*1) || !(form.price*1) || !(form.total*1)
 
   const loadingRef = useRef(false)
@@ -55,7 +52,7 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
       handleChangeForm('price')(data.price.toString())
-      handleChangeForm('amount')(data.amount.toString())
+      // handleChangeForm('amount')(data.amount.toString())
     }
   }))
 
@@ -87,7 +84,6 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
         const [expensiveOrder] = orderBook.buy
         if (expensiveOrder && expensiveOrder.priceFormatted) {
           handleChangeForm('price')(expensiveOrder.priceFormatted.toString())
-          handleChangeForm('amount')(expensiveOrder.quantity.toString())
         } else if (current.price) {
           handleChangeForm('price')(current.price)
         } else {
@@ -113,11 +109,14 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
         }))
         return
       case 'amount':
-        setForm(state => ({
-          ...state,
-          amount: value,
-          total: numeral(value*state.price).format('0.0[0000]'),
-        }))
+
+        setForm(state => {
+          return {
+            ...state,
+            amount: value,
+            total: numeral(value*state.price).format('0.0[0000]'),
+          }
+        })
         return
       case 'total':
         setForm(state => {
@@ -251,7 +250,7 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
         {
           isWrongPrice
             ? <App.Text color="#FFD600" size={10} weight={500}>
-                {currentTab === 'buy' ? 'Price deviation is more than 10% below the last trade price.' : 'Price deviation is more than 10% above the last trade price.'}
+                {currentTab === 'buy' ? 'Price deviation is more than 10% above the last trade price.' : 'Price deviation is more than 10% below the last trade price.'}
               </App.Text>
             :  <App.Text color="#FFD600" size={10} weight={500}>&nbsp;</App.Text>
         }
