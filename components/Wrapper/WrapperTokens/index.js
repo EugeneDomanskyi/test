@@ -68,6 +68,12 @@ const WrapperTokens = ({ children }) => {
   }, [])
 
   useEffect(() => {
+    if (list.length) {
+      setIsList(true)
+    }
+  }, [list])
+
+  useEffect(() => {
     if (router.isReady) {
       if (queryBlockchainCode) {
         if ( ! pageBlockchains.map(item => item.code).includes(queryBlockchainCode)) {
