@@ -11,6 +11,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import $modal from '@/store/modal'
 import $raffle from '@/store/raffle'
 
+import AlchemyLibrary from '@/libs/alchemy.lib'
 import Contracts from '@/libs/contracts.lib'
 
 import App from '@/components/App'
@@ -30,8 +31,9 @@ const RaffleModalParticipate = ({item}) => {
   const dispatch = useDispatch()
   const { propValue } = usePropsHelper()
   const { wallet } = useWalletConnect()
-
+  
   const contract = new Contracts()
+  const alchemy = new AlchemyLibrary(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'MATIC_MUMBAI' : 'MATIC_MAINNET')
 
   const showModal = useSelector((state) => state.$modal.show)
   const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
@@ -39,13 +41,16 @@ const RaffleModalParticipate = ({item}) => {
   const [showClaim, setShowClaim] = useState(false)
   const [step, setStep] = useState(0)
   const [isApproved, setIsApproved] = useState(false)
+  const [expectedReward, setExpectedReward] = useState(null)
 
   useEffect(() => {
-    // (async () => {
-    //   const result = await checkIfApproved()
-    //   setIsApproved(result)
-    // })()
-  }, [])
+    (async () => {
+      if (wallet) {
+        const result = await checkIfApproved()
+        setIsApproved(result)
+      }
+    })()
+  }, [wallet])
 
   useEffect(() => {
     if (!showModal) {
@@ -60,6 +65,12 @@ const RaffleModalParticipate = ({item}) => {
       dispatch($modal.set.update({
         header: {
           title: 'Approve Transaction',
+        },
+      }))
+    } else {
+      dispatch($modal.set.update({
+        header: {
+          title: 'Deposit TKeys',
         },
       }))
     }
@@ -79,32 +90,27 @@ const RaffleModalParticipate = ({item}) => {
 
   const handleClickNextStep = async () => {
     if (step === 0) {
+      if (! isApproved) {
+        const approveRes = await contract.setApprovalForAll(contractAddr, factoryAddr)
+        dispatch($raffle.set.loading(false))
+        if (approveRes.error) {
+          return
+        }
+      }
+
       dispatch($modal.set.update({
         header: {
           title: 'Deposit TKeys',
         },
       }))
 
-      if (! isApproved) {
-        // const approveRes = await contract.setApprovalForAll(contractAddr, factoryAddr)
-        // dispatch($raffle.set.loading(false))
-        // if (approveRes.error) {
-        //   return
-        // }
-      }
-
       dispatch($raffle.set.loading(false))
     }
     
     if (step === 1) {
-      dispatch($modal.set.update({
-        header: {
-          title: 'Unlock Case',
-        },
-      }))
-      if (tokenIds.length < item.tKeyRequired) {
-        return
-      }
+      // if (tokenIds.length < item.tKeyRequired) {
+      //   return
+      // }
 
       // const ids = tokenIds.slice(0, item.tKeyRequired)
       // const enterCampaignHash = await contract.enterCampaign(factoryAddr, item.id, ids)
@@ -116,10 +122,27 @@ const RaffleModalParticipate = ({item}) => {
 
       // setTimeout(async () => {
       //   const result = await $raffle.api.reward(enterCampaignHash.trim())
-      //   console.log('$raffle.api.reward', result);
-      // }, 3000)
-      
-      dispatch($raffle.set.loading(false))
+      //   const parsedRes = JSON.parse(result.data)
+      //   console.log('parsedRes[enterCampaignHash]?.expectedRewardAmount', parsedRes[enterCampaignHash]?.expectedRewardAmount);
+      //   console.log('parsedRes[enterCampaignHash]', parsedRes[enterCampaignHash]);
+      //   console.log('parsedRes', parsedRes);
+      //   console.log('enterCampaignHash', enterCampaignHash);
+      //   setExpectedReward(parsedRes[enterCampaignHash]?.expectedRewardAmount)
+
+      //   const nfts = await alchemy.getNftsForOwnerCollection(wallet, contractAddr)
+      //   dispatch($raffle.set.tokenIds(nfts.map(item => item.id)))
+
+      //   setStep(step >= 3 ? 0 : step+1)
+      //   dispatch($modal.set.update({
+      //     header: {
+      //       title: 'Unlock Case',
+      //     },
+      //   }))
+        
+      //   dispatch($raffle.set.loading(false))
+      // }, 5000)      
+
+      // return
     }
 
     if (step === 2) {
@@ -235,10 +258,10 @@ const RaffleModalParticipate = ({item}) => {
                     )
                   case 2:
                     return (
-                      <ThirdStep campaign={item} onSubmit={handleClickNextStep} />
+                      <ThirdStep campaign={{...item, expectedReward}} onSubmit={handleClickNextStep} />
                     )
                   default:
-                    return <FourthStep campaign={item} onSubmit={handleClickNextStep} />
+                    return <FourthStep campaign={{...item, expectedReward}} onSubmit={handleClickNextStep} />
                 }
               })(step)
             }

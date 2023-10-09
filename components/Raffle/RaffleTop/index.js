@@ -117,8 +117,8 @@ const RaffleTop = ({ loading }) => {
 
       <App.Flex row center fullWidth sx={{ overflow: 'hidden' }}>
         <App.Flex row center gap={8} className={styles.awards}>
-          {getLast().map(item => (
-            <App.Flex key={item.resolvedTransaction} center gap={4} className={styles.last} onClick={handleTransactionClick(item.resolvedTransaction)}>
+          {getLast().map((item, index) => (
+            <App.Flex key={item.resolvedTransaction + index} center gap={4} className={styles.last} onClick={handleTransactionClick(item.resolvedTransaction)}>
               <Image src="/images/raffle/icon-crown.png" width={18} height={17} alt="" />
               <App.Text nowrap color="rgba(255, 255, 255, 0.8)">{item.address} wins {item.rewardAmount} USDT</App.Text>
             </App.Flex>

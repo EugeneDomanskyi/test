@@ -5,22 +5,6 @@ import styles from './styles.module.scss'
 
 import App from '@/components/App'
 import RaffleReward from '@/components/Raffle/RaffleModalParticipate/RaffleReward'
-import rouletteDesign from './RouletteDesign'
-
-// const prizes = [
-//   {
-//     image: '/images/raffle/box-common.png',
-//     winner: false,
-//   },
-//   {
-//     image: '/images/raffle/box-uncommon.png',
-//     winner: false,
-//   },
-//   {
-//     image: '/images/raffle/box-legendary.png',
-//     winner: true,
-//   },
-// ]
 
 const RaffleRoulette = ({autoStart = false, onPrizeDefined, campaign}) => {
   const [start, setStart] = useState(false)
@@ -34,7 +18,13 @@ const RaffleRoulette = ({autoStart = false, onPrizeDefined, campaign}) => {
     }
     const title = currentReward.title
     const amount = reward.reward / 1000000
-    prizes.push({component: <RaffleReward title={title} amount={`${amount} USDT`} additionalText="Reward" size="large" />})
+    
+    prizes.push(
+      {
+        component: <RaffleReward title={title} amount={`${amount} USDT`} additionalText="Reward" size="large" />,
+        winner: reward.reward === campaign.expectedReward
+      }
+    )
   })
 
   const handleStart = () => {
@@ -85,6 +75,9 @@ const RaffleRoulette = ({autoStart = false, onPrizeDefined, campaign}) => {
       </App.Flex>
     )
   }
+
+  console.log('prizeList', prizeList);
+  console.log('prizeIndex', prizeIndex);
 
   useEffect(() => {
     if (autoStart) {

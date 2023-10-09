@@ -8,10 +8,11 @@ import App from '@/components/App'
 import ClaimText from '@/components/Raffle/RaffleModalParticipate/ClaimText'
 import RaffleReward from '@/components/Raffle/RaffleModalParticipate/RaffleReward'
 
-const FourthStep = ({item, onSubmit}) => {
+const FourthStep = ({campaign, onSubmit}) => {
   const audioRef = useRef(null)
 
   const [showConfetti, setShowConfetti] = useState(true)
+  const [prize, setPrize] = useState({amount: '', title: ''})
 
   useEffect(() => {
     const anim = lottie.loadAnimation({
@@ -21,6 +22,10 @@ const FourthStep = ({item, onSubmit}) => {
       loop: false,
       autoplay: true,
     })
+
+    const currentPrize = campaign.rewardRange.find(item => item.reward === campaign.expectedReward)
+    const currentOdds = campaign.odds.find(item => item.range === currentPrize.range*1)
+    setPrize({amount: currentPrize.reward / 1000000, title: currentOdds.title})
 
     anim.onComplete = () => {
       setShowConfetti(false)
@@ -40,6 +45,8 @@ const FourthStep = ({item, onSubmit}) => {
   const handleClickNextStep = () => {
     onSubmit()
   }
+
+  console.log('campaign', campaign);
 
   return (
     <>
@@ -62,7 +69,7 @@ const FourthStep = ({item, onSubmit}) => {
 
       <App.Flex sx={{position: 'relative'}}>
         <div className={styles.bgGlow} />
-        <RaffleReward title="Legendary" amount="20 USDT" additionalText="Reward" size="large" />
+        <RaffleReward title={prize.title} amount={`${prize.amount} USDT`} additionalText="Reward" size="large" />
       </App.Flex>
 
       <App.Flex>
