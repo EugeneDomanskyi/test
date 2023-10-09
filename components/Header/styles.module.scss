@@ -54,19 +54,32 @@
       right: 0;
       bottom: 0;
       opacity: 0;
-      background: linear-gradient(90deg, #BD16F1 0%, #D94AD2 26.35%, #F8AE93 50.31%, #FCEE65 74.79%, #FACC7E 100%);;
+      background: #7204FF;
+      // background: linear-gradient(90deg, #BD16F1 0%, #D94AD2 26.35%, #F8AE93 50.31%, #FCEE65 74.79%, #FACC7E 100%);;
       transition: all .3s ease 0s;
     }
 
     &:hover {
-      background-color: #130A3A;
+      background-color: rgba(114, 4, 255, 0.32);
     }
 
     &.active {
-      background: #130A3A;
+      background: rgba(114, 4, 255, 0.32);
 
       &:after {
         opacity: 1;
+      }
+    }
+
+    &.navbarDropdown {
+      svg {
+        transition: .3s;
+      }
+
+      &.active {
+        svg {
+          transform: rotate(180deg);
+        }
       }
     }
   }
@@ -87,8 +100,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 38px;
-      height: 38px;
+      width: 44px;
+      height: 44px;
       border: 1px solid rgba(170, 163, 207, 0.4);
       border-radius: 50%;
       cursor: pointer;
@@ -125,6 +138,28 @@
     &.active {
       visibility: visible;
       opacity: 1;
+    }
+  }
+
+  .walletInfo {
+    padding: 8px 10px;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    align-self: stretch;
+    border-radius: 100px;
+    border: 0.5px solid #332D52;
+
+    .walletAddressWrapper {
+      display: flex;
+      // width: 118px;
+      padding: 4px 13px;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      align-self: stretch;
+      border-radius: 100px;
+      background: #7204FF;
     }
   }
 

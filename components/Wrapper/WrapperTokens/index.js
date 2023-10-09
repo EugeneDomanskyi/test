@@ -255,10 +255,9 @@ const WrapperTokens = ({ children }) => {
             dispatch($app.set.marketInfo(fullToken))
             
             const staticData = staticTemplate(fullToken)
-            const preUpdateList = list.filter(item => item.address !== currentToken.address)
-            const mergedData = preUpdateList.length ? [...preUpdateList, staticData] : [staticData]
-            putAssetsFile(mergedData)
-            dispatch($token.set.list(mergedData))
+            const updatedList = [...list, staticData]
+            putAssetsFile(updatedList)
+            dispatch($token.set.list(updatedList))
           } else {
             let mergedData = {}
             const tokenPrices = tokens.find(item => item.address === existingToken.address)
