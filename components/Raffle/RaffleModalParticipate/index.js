@@ -43,14 +43,14 @@ const RaffleModalParticipate = ({item}) => {
   const [isApproved, setIsApproved] = useState(false)
   const [expectedReward, setExpectedReward] = useState(null)
 
-  useEffect(() => {
-    (async () => {
-      if (wallet) {
-        const result = await checkIfApproved()
-        setIsApproved(result)
-      }
-    })()
-  }, [wallet])
+  // useEffect(() => {
+  //   (async () => {
+  //     if (wallet) {
+  //       const result = await checkIfApproved()
+  //       setIsApproved(result)
+  //     }
+  //   })()
+  // }, [wallet])
 
   useEffect(() => {
     if (!showModal) {
@@ -90,13 +90,13 @@ const RaffleModalParticipate = ({item}) => {
 
   const handleClickNextStep = async () => {
     if (step === 0) {
-      if (! isApproved) {
-        const approveRes = await contract.setApprovalForAll(contractAddr, factoryAddr)
-        dispatch($raffle.set.loading(false))
-        if (approveRes.error) {
-          return
-        }
-      }
+      // if (! isApproved) {
+      //   const approveRes = await contract.setApprovalForAll(contractAddr, factoryAddr)
+      //   dispatch($raffle.set.loading(false))
+      //   if (approveRes.error) {
+      //     return
+      //   }
+      // }
 
       dispatch($modal.set.update({
         header: {
@@ -194,7 +194,7 @@ const RaffleModalParticipate = ({item}) => {
 
           <App.Flex column gap={32} align="center" justify="space-between" className={styles.content}>
             <App.Flex className={styles.titleBlock}>
-              <Image src="/images/raffle/lootbox.png" width={49} height={45} alt="" />
+              <Image src="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/lootbox_red.png" width={49} height={45} alt="" />
               <App.Text center size={14} weight={400}>Rewards that might be in this case</App.Text>
             </App.Flex>
 
@@ -261,7 +261,7 @@ const RaffleModalParticipate = ({item}) => {
                       <ThirdStep campaign={{...item, expectedReward}} onSubmit={handleClickNextStep} />
                     )
                   default:
-                    return <FourthStep campaign={{...item, expectedReward}} onSubmit={handleClickNextStep} />
+                    return <FourthStep campaign={{...item, expectedReward: '5000000'}} onSubmit={handleClickNextStep} />
                 }
               })(step)
             }

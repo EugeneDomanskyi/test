@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useEffect, useState } from 'react'
 import cn from 'classnames'
 
@@ -14,6 +14,7 @@ import $modal from '@/store/modal'
 
 import App from '@/components/App'
 import SwitchBlockchain from '@/components/SwitchBlockchain'
+import NavbarDropdown from '@/components/NavbarDropdown'
 
 import styles from './styles.module.scss'
 
@@ -27,29 +28,17 @@ const Header = () => {
   const [menuShow, setMenuShow] = useState(false)
   const [mobileMenuShow, setMobileMenuShow] = useState(false)
   const [moreIsOpen, setMoreIsOpen] = useState(false)
-  const [currentBalance, setCurrentBalance] = useState({})
-
-  const code = useSelector(({$app}) => $app)
+  const [currentBalance, setCurrentBalance] = useState({amount: 0, symbol: ''})
+  const [balanceLoading, setBalanceLoading] = useState(true)
 
   useEffect(() => {
+    handleGetBalance()
     document.addEventListener('click', handleClickOutside, false)
 
     return () => {
       document.removeEventListener('click', handleClickOutside, false)
     }
   }, [])
-
-  useEffect(() => {
-    console.log('code', code);
-    (async () => {
-      const balance = await getBalance('', true)
-      console.log('balance', balance);
-      if (balance.formatted) {
-        const amount = balance.formatted*1
-        setCurrentBalance({amount: amount.toFixed(4), symbol: balance.symbol})
-      }
-    })()
-  }, [code])
 
   const handleClickOutside = (event) => {
     if (! event.target.closest('#wallet')) {
@@ -106,6 +95,17 @@ const Header = () => {
     setMobileMenuShow(!mobileMenuShow)
   }
 
+  const handleGetBalance = async () => {
+    setBalanceLoading(true)
+    const balance = await getBalance('', true)
+    console.log('balance', balance);
+    if (balance.formatted) {
+      const amount = balance.formatted*1
+      setCurrentBalance({amount: amount.toFixed(4), symbol: balance.symbol})
+    }
+    setBalanceLoading(false)
+  }
+
   return (
     <App.Container fluid className={styles.container}>
       <App.Flex row height="100%" align="center" justify="space-between">
@@ -133,11 +133,13 @@ const Header = () => {
               </App.Flex>
             </Link>
 
-            <App.Flex className={cn(styles.navbarItem, styles.navbarDropdown, {[styles.active]: moreIsOpen})} onClick={() => setMoreIsOpen(!moreIsOpen)}>
+            <App.Flex id="menu-dropdown" className={cn(styles.navbarItem, styles.navbarDropdown, {[styles.active]: moreIsOpen})} onClick={() => setMoreIsOpen(!moreIsOpen)}>
               <App.Flex center height="100%" gap={8}>
                 <App.Text size={16} weight={500}>More</App.Text>
-                <App.Icon icon='caret-down' color="#fff" />
+                <App.Icon icon='caret-down' color="#fff" className={styles.carret} />
               </App.Flex>
+
+              <NavbarDropdown isOpen={moreIsOpen} onClose={() => setMoreIsOpen(!moreIsOpen)} />
             </App.Flex>
 
             {/* <Link href="/swap" className={cn(styles.navbarItem, {[styles.active]: router.pathname == '/swap'})}>
@@ -154,13 +156,19 @@ const Header = () => {
               <App.Icon icon="question" />
             </App.Flex>
           </App.Flex>
-          {!isMobile ? <SwitchBlockchain /> : null}
+          {!isMobile ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : null}
           
           {wallet ? (
             <App.Flex sx={{ position: 'relative' }} id="wallet">
               <App.Flex row gap={16} className={styles.walletInfo}>
                 <App.Flex>
-                  <App.Text size={16} weight={500}>{ currentBalance.amount + ' ' + currentBalance.symbol }</App.Text>
+                  {
+                    balanceLoading
+                      ? <App.Flex center sx={{width: 90}}>
+                          <App.Loader />
+                        </App.Flex>
+                      : <App.Text size={16} weight={500}>{ currentBalance.amount + ' ' + currentBalance.symbol }</App.Text>
+                  }
                 </App.Flex>
 
                 <App.Flex className={styles.walletAddressWrapper} onClick={handleMenuToggle}>

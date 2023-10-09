@@ -16,7 +16,7 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
+const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose, onChangeNetwork }) => {
   const router = useRouter()
   const isTokens = router.pathname.includes('/tokens')
 
@@ -51,13 +51,14 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
       Network: val.toUpperCase(),
     })
     
-    const network = await changeNetwork(val)
-
-    console.log('network', network);
-    // dispatch($app.set.code(val))
+    dispatch($app.set.code(val))
     dispatch($collection.set.clear())
     dispatch($token.set.clear())
     setMenuShow(false)
+    const network = await changeNetwork(val)
+    if (network) {
+      onChangeNetwork()
+    }
 
     if (onMobileMenuClose) {
       onMobileMenuClose()
