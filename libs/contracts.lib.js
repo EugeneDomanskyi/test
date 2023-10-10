@@ -29,13 +29,19 @@ export default function Contracts(defaultGasLimit = null) {
     prepareWriteContract: async (contractConfig, gasLimit = defaultGasLimit) => {
       const place = contractConfig?.functionName
       let errorCode = null
+      let errorData = {}
       let config = {}
       try {
         config = await prepareWriteContract(contractConfig)
       } catch (error) {
         errorCode = error?.code
+        // errorData.error = error
         methods.debugMessage(error, `Prepare "${place}"`)
       }
+
+      // if (errorData) {
+      //   return errorData
+      // }
 
       if (errorCode) {
         if (errorCode == 'UNPREDICTABLE_GAS_LIMIT' && gasLimit) {
@@ -92,7 +98,7 @@ export default function Contracts(defaultGasLimit = null) {
     isApprovedForAll: async (contract, owner, operator = defaultOperator) => {
       const result = await methods.readContract({
         address: contract,
-        abi: abi.erc721.isApprovedForAll,
+        abi: abi.tkeys.isApprovedForAll,
         functionName: 'isApprovedForAll',
         args: [
           owner,
@@ -106,7 +112,7 @@ export default function Contracts(defaultGasLimit = null) {
     setApprovalForAll: async (contract, operator = defaultOperator, approved = true) => {
       const config = await methods.prepareWriteContract({
         address: contract,
-        abi: abi.erc721.setApprovalForAll,
+        abi: abi.tkeys.setApprovalForAll,
         functionName: 'setApprovalForAll',
         args: [
           operator,
@@ -263,6 +269,39 @@ export default function Contracts(defaultGasLimit = null) {
 
       const result = await methods.writeContract(config)
       return result
+    },
+    
+    enterCampaign: async (contract, campaignId, tokenIds = []) => {
+      const config = await methods.prepareWriteContract({
+        address: contract,
+        abi: abi.tkeys.enterCampaign,
+        functionName: 'enterCampaign',
+        args: [
+          campaignId,
+          tokenIds
+        ],
+      })
+
+      // if (config.error) {
+      //   return config
+      // }
+
+      const result = await methods.writeContract(config)
+      return result
+    },
+
+    balanceOfTkeys: async (wallet, contract, tokenId) => {
+      const result = await methods.readContract({
+        address: contract,
+        abi: abi.tkeys.balanceOf,
+        functionName: 'balanceOf',
+        args: [
+          wallet,
+          tokenId,
+        ],
+      })
+
+      return parseFloat(result)
     },
   }
 

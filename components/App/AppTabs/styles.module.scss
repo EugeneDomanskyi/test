@@ -33,19 +33,32 @@
       z-index: 1;
 
       .optionInner {
-        padding: 8px 16px;
+        padding: 14px 16px;
 
         .optionText {
-          color: #605884;
+          color: rgba(255, 255, 255, 0.5);
           transition: all .3s ease 0s;
-
-          &:hover {
-            color: #9c95b9;
-          }
 
           &.active {
             color: #fff;
           }
+        }
+      }
+
+      &:not(.disabled):not(.active):hover {
+        .optionInner {
+          .optionText {
+            color: rgba(255, 255, 255, 0.8);
+          }
+        }
+      }
+
+      &.standard {
+        flex: 0;
+        min-width: 150px;
+
+        @media (max-width: 768px) {
+          flex: 1;
         }
       }
 

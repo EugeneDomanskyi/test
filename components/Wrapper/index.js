@@ -20,6 +20,7 @@ const Wrapper = ({ children }) => {
   const isSwap = router.pathname.includes('/swap')
   const isTokens = router.asPath?.includes('tokens')
   const isLanding = router.pathname.includes('/landing')
+  const isRaffle = router.pathname.includes('/raffle')
 
   const { address, isConnected } = useAccount()
 
@@ -58,9 +59,7 @@ const Wrapper = ({ children }) => {
 
   return (
     <>
-      {!isLanding ? (
-        <Header />
-      ) : null}
+      <Header />
 
       {isTokens ? (
         <WrapperTokens>
@@ -78,7 +77,7 @@ const Wrapper = ({ children }) => {
         children
       ) : null}
 
-      {!isNfts && !isTokens && !isLanding ? (
+      {!isNfts && !isTokens && !isRaffle ? (
         <Footer />
       ) : null}
     </>

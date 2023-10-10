@@ -9,12 +9,14 @@ import AppIcon from '@/components/App/AppIcon'
 import AppLoader from '@/components/App/AppLoader'
 import AppLoaderBlock from '@/components/App/AppLoaderBlock'
 import AppModal from '@/components/App/AppModal'
+import AppPagination from '@/components/App/AppPagination'
 import AppSwitch from '@/components/App/AppSwitch'
 import AppTabs from '@/components/App/AppTabs'
 import AppText from '@/components/App/AppText'
 import AppTextField from '@/components/App/AppTextField'
 import AppRangeInput from '@/components/App/AppRangeInput'
 import AppTooltip from '@/components/App/AppTooltip'
+import AppShadowText from '@/components/App/AppShadowText'
 import AppNumber from '@/components/App/AppNumber'
 
 export default {
@@ -29,6 +31,7 @@ export default {
   Loader: AppLoader,
   LoaderBlock: AppLoaderBlock,
   Modal: AppModal,
+  Pagination: AppPagination,
   Switch: AppSwitch,
   Tabs: AppTabs,
   Text: AppText,
@@ -36,5 +39,6 @@ export default {
   Switch: AppSwitch,
   RangeInput: AppRangeInput,
   Tooltip: AppTooltip,
+  ShadowText: AppShadowText,
   Number: AppNumber,
 }

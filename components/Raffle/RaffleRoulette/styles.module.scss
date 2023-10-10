@@ -1,0 +1,25 @@
+.rouletteWrapper {
+	padding: 115px 0;
+}
+
+.topArrow {
+	width: 2px;
+	height: 80px;
+	background: linear-gradient(102deg, #631DFF 0%, #A91DFF 100%);
+	position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.bottomArrow {
+	width: 2px;
+	height: 80px;
+	background: linear-gradient(102deg, #A91DFF 0%, #631DFF 100%);
+	position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  z-index: 2;
+}

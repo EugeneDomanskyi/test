@@ -14,7 +14,7 @@ export default function AlchemyLibrary(network = null) {
     apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID,
     network: Network[network],
   }
-
+  
   const alchemy = new Alchemy(config)
 
   const methods = {

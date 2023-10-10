@@ -1,0 +1,94 @@
+.top {
+  width: 100%;
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  background: no-repeat right center url('/images/raffle/top-background-1.png'), no-repeat center bottom url('/images/raffle/top-background-2.png');
+  background-size: contain, cover;
+  padding: 64px 0;
+
+  @media (max-width: 768px) {
+    padding: 34px 0;
+    background: no-repeat right top url('/images/raffle/top-background-1-m.png'), no-repeat center bottom url('/images/raffle/top-background-2.png');
+    background-size: 190px 187px, auto;
+  }
+
+  .box {
+    padding: 16px 32px;
+    border-radius: 100px;
+    border: 1px solid #8C442470;
+    background: radial-gradient(107.32% 141.42% at 0% 0%, rgba(255, 255, 255, 0.40) 0%, rgba(255, 255, 255, 0.00) 100%);
+    backdrop-filter: blur(21px);
+    box-shadow: inset 1px 1px 0 #ffffff90, inset -1px -1px 0 #F53E0290;
+
+    .button {
+      position: relative;
+      z-index: 0;
+      padding: 16px 24px;
+      border-radius: 100px;
+      border: 0.5px solid #ffffff90;
+      cursor: pointer;
+      overflow: hidden;
+      height: 40px;
+
+      &.primary {
+        background-color: #7204FF;
+        border-color: #7204FF;
+      }
+
+      &:after {
+        content: '';
+        display: block;
+        position: absolute;
+        z-index: -1;
+        inset: 0;
+        background: radial-gradient(107.32% 141.42% at 0% 0%, rgba(255, 255, 255, 0.40) 0%, rgba(255, 255, 255, 0.00) 100%);
+        backdrop-filter: blur(21px);
+        border-radius: 100px;
+        transition: all .2s ease 0s;
+        opacity: 0;
+      }
+
+      &:hover {
+        &:after {
+          opacity: 1;
+        }
+      }
+    }
+  }
+}
+
+.awards {
+  padding: 5px;
+
+  .last {
+    cursor: pointer;
+    transition: all .3s ease 0s;
+    opacity: .5;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .top {
+    .hiddenOnMobile {
+      display: none;
+    }
+
+    .box {
+      padding: 8px 16px;
+      border-radius: 82px;
+      flex: 0 0 auto;
+      width: fit-content;
+
+      .button {
+        //padding: 8px 16px;
+        border-radius: 82px;
+        white-space: nowrap;
+      }
+    }
+  }
+}

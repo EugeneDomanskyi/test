@@ -13,10 +13,20 @@
         color: #fff;
       }
     }
+
+    &.gray {
+      background-color: #5E5C6B;
+      font-size: 14px;
+      text-align: center;
+    }
   }
 
   .arrow {
     color: #1D1937;
     font-size: 1rem;
+
+    &.gray {
+      color: #5E5C6B;
+    }
   }
 }

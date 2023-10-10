@@ -108,15 +108,17 @@ const useWalletConnect = () => {
     return CHAINS.find(chain => chain.code === currentChain)
   }
 
-  const getBalance = async (token) => {
+  const getBalance = async (token, full = false) => {
     const wallet = await connect()
+    console.log('wallet', wallet);
     if (wallet) {
       try {
         const balance = await fetchBalance({
           address: wallet,
           token,
         })
-        return balance.formatted
+
+        return full ? balance : balance.formatted
       } catch (error) {
         return 0
       }

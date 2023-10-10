@@ -35,14 +35,19 @@
       position: relative;
       z-index: 0;
       overflow: hidden;
+      margin: auto;
 
       &.small {
         width: 360px;
       }
 
+      &.large {
+        width: 650px;
+      }
+
       .header {
         position: relative;
-        z-index: 0;
+        z-index: 1;
         border-bottom: solid #1D1937 1px;
 
         .closeButton {
@@ -111,7 +116,7 @@
     .content {
       margin: 0;
       width: 100%;
-      align-items: flex-end;
+      align-items: flex-start;
 
       & > div {
         width: 100%;
@@ -123,7 +128,7 @@
           .header {
             .closeButton {
               right: 16px;
-              top: 16px;
+              top: 10px;
             }
 
             .headerContent {
