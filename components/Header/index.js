@@ -176,7 +176,7 @@ const Header = () => {
           }
           {/* {!isMobile ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : null} */}
           {
-            ! isRaffle
+            ! isEarn
               ? <SwitchBlockchain onChangeNetwork={handleGetBalance} />
               : null
           }
@@ -272,51 +272,51 @@ const Header = () => {
                 </App.Flex>
               </Link>
 
-              <Link href="https://classic.tegro.com" className={styles.link}>
+              <a href="https://classic.tegro.com" target="_blank" rel="noreferrer">
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   <App.Icon icon="menuClassic" />
                   <App.Text size={14} weight={700}>Classic Tegro Withdraw</App.Text>
                 </App.Flex>
-              </Link>
+              </a>
 
               <App.Flex sx={{padding: '32px 16px'}}>
                 <App.Text size={14} weight={700}>RESOURCES</App.Text>
               </App.Flex>
 
-              <Link href="/" className={styles.link}>
+              <a href="javascript:;" target="_blank" rel="noreferrer">
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   <App.Icon icon="menuSupport" />
                   <App.Text size={14} weight={700}>Support</App.Text>
                 </App.Flex>
-              </Link>
+              </a>
 
-              <Link href="/" className={styles.link}>
+              <a href="https://blog.tegro.com" target="_blank" rel="noreferrer">
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   <App.Icon icon="menuBlog" />
                   <App.Text size={14} weight={700}>Blog</App.Text>
                 </App.Flex>
-              </Link>
+              </a>
 
-              <Link href="/" className={styles.link}>
+              <a href="https://x-by-tegro.gitbook.io/x-by-tegro/" target="_blank" rel="noreferrer">
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   <App.Icon icon="menuGitbook" />
                   <App.Text size={14} weight={700}>Gitbook</App.Text>
                 </App.Flex>
-              </Link>
+              </a>
 
-              <Link href="/" className={styles.link}>
+              <a href="https://press.tegro.com/" target="_blank" rel="noreferrer">
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   <App.Icon icon="menuPress" />
                   <App.Text size={14} weight={700}>Press</App.Text>
                 </App.Flex>
-              </Link>
+              </a>
 
-              <Link href="/" className={styles.link}>
+              <a href="mailto:partnerships@tegro.com">
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   <App.Icon icon="menuContact" />
                   <App.Text size={14} weight={700}>Contact</App.Text>
                 </App.Flex>
-              </Link>
+              </a>
 
               <App.Flex sx={{padding: '32px 16px'}}>
                 <App.Text size={14} weight={700}>RESOURCES</App.Text>
@@ -324,37 +324,49 @@ const Header = () => {
 
               <App.Flex sx={{padding: '0 16px', paddingBottom: 64}} justify="space-between">
                 <App.Flex column gap={12} sx={{width: 140}}>
-                  <App.Flex gap={4}>
-                    <App.Icon icon="twitter-filled" />
-                    <App.Text size={10} weight={500}>Twitter</App.Text>
-                  </App.Flex>
+                  <a href="https://twitter.com/tegrofi?utm_source=website" target="_blank" rel="noreferrer">
+                    <App.Flex gap={4}>
+                      <App.Icon icon="twitter-filled" />
+                      <App.Text size={10} weight={500}>Twitter</App.Text>
+                    </App.Flex>
+                  </a>
                   
-                  <App.Flex gap={4}>
-                    <App.Icon icon="discord-filled" />
-                    <App.Text size={10} weight={500}>Discord</App.Text>
-                  </App.Flex>
+                  <a href="https://discord.gg/tegro?utm_source=website" target="_blank" rel="noreferrer">
+                    <App.Flex gap={4}>
+                      <App.Icon icon="discord-filled" />
+                      <App.Text size={10} weight={500}>Discord</App.Text>
+                    </App.Flex>
+                  </a>
                   
-                  <App.Flex gap={4}>
-                    <App.Icon icon="telegram-filled" />
-                    <App.Text size={10} weight={500}>Telegram</App.Text>
-                  </App.Flex>
+                  <a href="https://t.me/tegrochat?utm_source=website" target="_blank" rel="noreferrer">
+                    <App.Flex gap={4}>
+                      <App.Icon icon="telegram-filled" />
+                      <App.Text size={10} weight={500}>Telegram</App.Text>
+                    </App.Flex>
+                  </a>
                 </App.Flex>
                 
                 <App.Flex column gap={12} sx={{width: 140}}>
-                  <App.Flex gap={4}>
-                    <App.Icon icon="linkedin-filled" />
-                    <App.Text size={10} weight={500}>Linkdein</App.Text>
-                  </App.Flex>
+                  <a href="https://www.linkedin.com/company/tegrofi?utm_source=website" target="_blank" rel="noreferrer">
+                    <App.Flex gap={4}>
+                      <App.Icon icon="linkedin-filled" />
+                      <App.Text size={10} weight={500}>Linkdein</App.Text>
+                    </App.Flex>
+                  </a>
                   
-                  <App.Flex gap={4}>
-                    <App.Icon icon="substack-filled" />
-                    <App.Text size={10} weight={500}>Substack</App.Text>
-                  </App.Flex>
+                  <a href="https://tegro.substack.com/?utm_source=website" target="_blank" rel="noreferrer">
+                    <App.Flex gap={4}>
+                      <App.Icon icon="substack-filled" />
+                      <App.Text size={10} weight={500}>Substack</App.Text>
+                    </App.Flex>
+                  </a>
                   
-                  <App.Flex gap={4}>
-                    <App.Icon icon="youtube-filled" />
-                    <App.Text size={10} weight={500}>Youtube</App.Text>
-                  </App.Flex>
+                  <a href="https://www.youtube.com/@tegrofi?utm_source=website" target="_blank" rel="noreferrer">
+                    <App.Flex gap={4}>
+                      <App.Icon icon="youtube-filled" />
+                      <App.Text size={10} weight={500}>Youtube</App.Text>
+                    </App.Flex>
+                  </a>
                 </App.Flex>
               </App.Flex>
             </div>

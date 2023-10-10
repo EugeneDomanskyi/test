@@ -85,10 +85,6 @@ const Wrapper = ({ children, marketsList = [] }) => {
       {!isNfts && !isSwap && !isExchange ? (
         children
       ) : null}
-
-      {!isNfts && !isExchange && !isEarn ? (
-        <Footer />
-      ) : null}
     </>
   )
 }
