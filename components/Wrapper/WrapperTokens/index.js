@@ -182,7 +182,7 @@ const WrapperTokens = ({ children }) => {
 
       if (! current?.id) {
         const [first] = tempTokens
-        router.replace(`/tokens/${blockchain.code}/${first.id}`, undefined, { scroll: false })
+        router.replace(`/exchange/${blockchain.code}/${first.id}`, undefined, { scroll: false })
       }
     }
 
@@ -236,7 +236,7 @@ const WrapperTokens = ({ children }) => {
             const [first] = tokens
             id = first.id
           }
-          router.replace(`/tokens/${blockchain.code}/${id}`, undefined, { scroll: false })
+          router.replace(`/exchange/${blockchain.code}/${id}`, undefined, { scroll: false })
           return
         }
 

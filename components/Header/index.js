@@ -23,7 +23,7 @@ const Header = () => {
   const { wallet, connect, disconnect, getBalance } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
-  const isRaffle = router.pathname.includes('/raffle')
+  const isEarn = router.pathname.includes('/earn')
 
   const dispatch = useDispatch()
 
@@ -101,7 +101,7 @@ const Header = () => {
 
   const handleGetBalance = async () => {
     setBalanceLoading(true)
-    if (! isRaffle) {
+    if (! isEarn) {
       const balance = await getBalance('', true)
       if (balance.formatted) {
         const amount = balance.formatted*1
@@ -131,13 +131,13 @@ const Header = () => {
           </Link>
 
           <App.Flex row height="100%" align="center" className={styles.navItems}>
-            <Link href="/tokens" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/tokens')})}>
+            <Link href="/exchange" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/exchange')})}>
               <App.Flex center height="100%">
                 <App.Text size={16} weight={500}>Exchange</App.Text>
               </App.Flex>
             </Link>
 
-            <Link href="/nfts" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/nfts')})}>
+            <Link href="/earn" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/earn')})}>
               <App.Flex center height="100%">
                 <App.Text size={16} weight={500}>Earn</App.Text>
               </App.Flex>
@@ -151,12 +151,6 @@ const Header = () => {
 
               <NavbarDropdown isOpen={moreIsOpen} onClose={() => setMoreIsOpen(!moreIsOpen)} />
             </App.Flex>
-
-            {/* <Link href="/swap" className={cn(styles.navbarItem, {[styles.active]: router.pathname == '/swap'})}>
-              <App.Flex center  height="100%">
-                <App.Text size={18} weight={700}>SWAP</App.Text>
-              </App.Flex>
-            </Link> */}
           </App.Flex>
         </App.Flex>
 
@@ -186,7 +180,7 @@ const Header = () => {
                               </App.Flex>
                             : <App.Flex center gap={4}>
                                 {
-                                  isRaffle
+                                  isEarn
                                     ? <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
                                     : null
                                 }
@@ -232,14 +226,14 @@ const Header = () => {
 
               <div className={styles.line} />
 
-              <Link href="/tokens" className={cn(styles.link, {[styles.active]: router.pathname.includes('/tokens')})}>
+              <Link href="/exchange" className={cn(styles.link, {[styles.active]: router.pathname.includes('/exchange')})}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   <App.Icon icon="menuExchange" />
                   <App.Text size={14} weight={700}>Exchange</App.Text>
                 </App.Flex>
               </Link>
 
-              <Link href="/raffle" className={cn(styles.link, {[styles.active]: router.pathname.includes('/raffle')})}>
+              <Link href="/earn" className={cn(styles.link, {[styles.active]: router.pathname.includes('/earn')})}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   <App.Icon icon="menuEarn" />
                   <App.Text size={14} weight={700}>Earn</App.Text>

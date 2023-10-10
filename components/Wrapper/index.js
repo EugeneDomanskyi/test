@@ -22,9 +22,8 @@ const Wrapper = ({ children, marketsList = [] }) => {
   const router = useRouter()
   const isNfts = router.asPath?.includes('nfts')
   const isSwap = router.pathname.includes('/swap')
-  const isTokens = router.asPath?.includes('tokens')
-  const isLanding = router.pathname.includes('/landing')
-  const isRaffle = router.pathname.includes('/raffle')
+  const isExchange = router.asPath?.includes('exchange')
+  const isEarn = router.pathname.includes('/earn')
 
   const { address, isConnected } = useAccount()
 
@@ -71,7 +70,7 @@ const Wrapper = ({ children, marketsList = [] }) => {
     <>
       <Header />
 
-      {isTokens ? (
+      {isExchange ? (
         <WrapperTokens>
           {children}
         </WrapperTokens>
@@ -83,11 +82,11 @@ const Wrapper = ({ children, marketsList = [] }) => {
         </WrapperCollections>
       ) : null}
 
-      {!isNfts && !isSwap && !isTokens ? (
+      {!isNfts && !isSwap && !isExchange ? (
         children
       ) : null}
 
-      {!isNfts && !isTokens && !isRaffle ? (
+      {!isNfts && !isExchange && !isEarn ? (
         <Footer />
       ) : null}
     </>
