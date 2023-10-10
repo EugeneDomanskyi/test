@@ -57,7 +57,7 @@ const handler = async (req, res) => {
     sortBy: 'createDateTime'
   })
   const [assetsResponse, ordersResponse] = await Promise.all([
-    fetch('https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/assets_new.json'),
+    fetch('https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/assets.json'),
     fetch(`${INCH_URL}/${chainId}/address/${walletAddress}${query}`, options)
   ])
 
