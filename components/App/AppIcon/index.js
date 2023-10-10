@@ -342,6 +342,23 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       </svg>
       )
     }
+
+    if (icon === 'pencil') {
+      return (
+        <svg width={width ?? 12} height={height ?? 12} viewBox="0 0 12 12" fill="none" {...props}>
+          <path fill={color ?? '#B9B8C5'} d="M10.355 3.52a.498.498 0 0 0 0-.705l-1.17-1.17a.498.498 0 0 0-.705 0l-.92.915 1.875 1.875M1.5 8.625V10.5h1.875l5.53-5.535L7.03 3.09 1.5 8.625Z" />
+        </svg>
+      )
+    }
+
+    if (icon === 'cross-circle') {
+      return (
+        <svg width={width ?? 12} height={height ?? 12} viewBox="0 0 12 12" fill="none" {...props}>
+          <rect width={width ?? 12} height={height ?? 12} fill="#FF1D61" rx={6} />
+          <path stroke="#09051D" strokeLinecap="round" d="m4 4 4 4M8 4 4 8" />
+        </svg>
+      )
+    }
   }
 
   return getIcon()

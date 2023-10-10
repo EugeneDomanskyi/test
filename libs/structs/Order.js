@@ -5,6 +5,7 @@ import { getWalletClient, waitForTransaction, sendTransaction, readContract, wri
 import { LimitOrderProtocolFacade, LimitOrderBuilder } from '@1inch/limit-order-protocol-utils'
 import { toast } from 'react-toastify'
 import * as math from 'mathjs'
+import moment from 'moment'
 
 import { CHAINS, INCH_CONTRACTS, INCH_TOKENS, TEGRO_FILL_ORDERS_CONTRACTS } from '@/config'
 import $orders from '@/store/orders'
@@ -363,6 +364,7 @@ class TOKEN extends Order {
     this.price = data.price
     this.quantityFilled = data.quantityFilled
     this.status = data.status
+    this.time = moment(data.createDateTime).format('DD MMM, HH:mm')
   }
 
   get itemPrice () {

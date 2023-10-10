@@ -55,6 +55,22 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
     })
   }
 
+  const handlePressCopy = order => (e) => {
+    e.stopPropagation()
+    const [_, _seg1, seg2] = router.asPath.split('/')
+    router.push(`${[seg2, order.contractAddress].join('/')}`, undefined, {scroll: false})
+    onClickOrder({
+      quantity: order.quantity,
+      price: order.itemPrice,
+      side: order.side,
+    })
+
+  }
+  const handlePressEdit = order => (e) => {
+    e.stopPropagation()
+
+  }
+
   const handleChangeSwitch = (value) => {
     setShowCollectionOrders(value)
   }
@@ -150,8 +166,9 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
       <App.Flex column flex={1} sx={{overflow: 'auto'}}>
         {
           orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map((order) => {
+            console.log(order.status)
             return (
-              <App.Flex key={order.id} column sx={{position: 'relative'}}>
+              <App.Flex key={order.id} column sx={{position: 'relative'}} className={styles.orderContainer}>
                 <App.Flex align="center" className={cn(styles.order, {[styles.disabled]: order.status === 'completed' || order.status === 'cancelled'})} onClick={handleClick(order)}>
                   <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
                   <App.Flex column align="center" justify="center" sx={{width: 60}}>
@@ -176,14 +193,42 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
                   </App.Flex>
                   <App.Flex flex={1} column align="center" justify="center" sx={{position: 'relative', height: '100%', overflow: 'hidden'}}>
                     <App.Text size={12} weight={600}>{ order.price } { order.baseCurrency }</App.Text>
-                    <App.Flex className={styles.cancelButton} sx={{backgroundColor: order.status === 'completed' ? '#063834' : 'rgb(77, 14, 39)'}} onClick={handlePressCancel(order)}>
+                    
+                    {/* <App.Flex className={styles.cancelButton} sx={{backgroundColor: order.status === 'completed' ? '#063834' : 'rgb(77, 14, 39)'}} onClick={handlePressCancel(order)}>
                       <App.Text size={12} color={order.status === 'completed' ? 'rgb(83, 241, 156)' : 'rgb(235, 49, 105)'} className={styles.statusText}>
                         {
                           (order.status === 'completed' || order.status === 'cancelled') ? order.status : 'Cancel order'
                         }
                       </App.Text>
-                    </App.Flex>
+                    </App.Flex> */}
                   </App.Flex>
+                </App.Flex>
+                <App.Flex align="center" justify="flex-end" className={cn(styles.hoverContent)}>
+                  <App.Text color="rgba(185, 184, 197, 1)" size={10} weight={500} sx={{marginRight: 12}}>{ order.time }</App.Text>
+                  {
+                    order.status !== 'open'
+                      ? <App.Text color="#B9B8C5" size={10} weight={600} uppercase>
+                          { (order.status === 'completed' || order.status === 'cancelled') ? order.status : 'Cancel order' }
+                        </App.Text>
+                      : null
+                  }
+                  <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressCopy(order)}>
+                    <App.Icon icon="copy" width={12} height={12} color="#B9B8C5" />
+                  </App.Flex>
+                  {
+                    order.status === 'open'
+                      ? <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressEdit(order)}>
+                          <App.Icon icon="pencil" />
+                        </App.Flex>
+                      : null
+                  }
+                  {
+                    order.status === 'open'
+                      ? <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressCancel(order)}>
+                          <App.Icon icon="cross-circle" />
+                        </App.Flex>
+                      : null
+                  }
                 </App.Flex>
                 {
                   cancellingOrders.includes(order.id)
