@@ -34,6 +34,7 @@ const Header = () => {
   const [moreIsOpen, setMoreIsOpen] = useState(false)
   const [currentBalance, setCurrentBalance] = useState({amount: 0, symbol: ''})
   const [balanceLoading, setBalanceLoading] = useState(true)
+  const [tKeyBalance, setTKeyBalance] = useState(0)
 
   useEffect(() => {
     handleGetBalance()
@@ -43,6 +44,13 @@ const Header = () => {
       document.removeEventListener('click', handleClickOutside, false)
     }
   }, [])
+
+  useEffect(() => {
+    if (tKeys.length) {
+      setCurrentBalance({amount: tKeys.length, symbol: 'TKeys'})
+      setBalanceLoading(false)
+    }
+  }, [tKeys])
 
   const handleClickOutside = (event) => {
     if (! event.target.closest('#wallet')) {
@@ -107,10 +115,8 @@ const Header = () => {
         const amount = balance.formatted*1
         setCurrentBalance({amount: amount.toFixed(4), symbol: balance.symbol})
       }
-    } else {
-      setCurrentBalance({amount: tKeys.length, symbol: 'TKeys'})
+      setBalanceLoading(false)
     }
-    setBalanceLoading(false)
   }
 
   return (
