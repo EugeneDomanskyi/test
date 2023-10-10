@@ -5,7 +5,7 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const ClaimImage = ({warningIcon = null, contentImg, onlyShadow}) => {
+const ClaimImage = ({warningIcon = null, contentImg, dangerIcon = null, onlyShadow}) => {
   return (
     <App.Flex width={330} height={300} className={styles.imageTemplate}>
       <div className={styles.bgGlow} />
@@ -19,6 +19,11 @@ const ClaimImage = ({warningIcon = null, contentImg, onlyShadow}) => {
               {
                 warningIcon
                   ? <Image src="/images/raffle/warning-icon.png" width={53} height={46} className={styles.imageIcon} alt="" />
+                  : null
+              }
+              {
+                dangerIcon
+                  ? <Image src="/images/raffle/danger-icon.png" width={53} height={46} className={styles.imageIcon} alt="" />
                   : null
               }
             </>

@@ -19,6 +19,7 @@ import FirstStep from '@/components/Raffle/RaffleModalParticipate/ClaimSteps/Fir
 import SecondStep from '@/components/Raffle/RaffleModalParticipate/ClaimSteps/SecondStep'
 import ThirdStep from '@/components/Raffle/RaffleModalParticipate/ClaimSteps/ThirdStep'
 import FourthStep from '@/components/Raffle/RaffleModalParticipate/ClaimSteps/FourthStep'
+import ErrorStep from '@/components/Raffle/RaffleModalParticipate/ClaimSteps/ErrorStep'
 import RaffleReward from '@/components/Raffle/RaffleModalParticipate/RaffleReward'
 
 import styles from './styles.module.scss'
@@ -42,7 +43,6 @@ const RaffleModalParticipate = ({item}) => {
   const [step, setStep] = useState(0)
   const [isApproved, setIsApproved] = useState(false)
   const [expectedReward, setExpectedReward] = useState(null)
-  const [showErrorTkeys, setShowErrorTkeys] = useState(false)
 
   const rewards = [...item.rewardRange]
 
@@ -71,6 +71,18 @@ const RaffleModalParticipate = ({item}) => {
         },
       }))
     } else {
+      if (tokenIds.length < item.tKeyRequired) {
+        console.log('not enough TKeys');
+        setStep('error')
+        dispatch($raffle.set.loading(false))
+        dispatch($modal.set.update({
+          header: {
+            title: 'Insufficient TKeys Balance',
+          },
+        }))
+        return
+      }
+
       dispatch($modal.set.update({
         header: {
           title: 'Deposit TKeys',
@@ -113,7 +125,7 @@ const RaffleModalParticipate = ({item}) => {
     if (step === 1) {
       if (tokenIds.length < item.tKeyRequired) {
         console.log('not enough TKeys');
-        setShowErrorTkeys(true)
+        setStep('error')
         dispatch($raffle.set.loading(false))
         return
       }
@@ -163,7 +175,7 @@ const RaffleModalParticipate = ({item}) => {
     }
 
     if (step === 3) {
-      dispatch($modal.set.close())
+      handleCloseModal()
       return
     }
 
@@ -195,6 +207,10 @@ const RaffleModalParticipate = ({item}) => {
 
         dispatch($raffle.set.loading(false));
     }
+  }
+
+  const handleCloseModal = () => {
+    dispatch($modal.set.close())
   }
 
   return (
@@ -264,7 +280,7 @@ const RaffleModalParticipate = ({item}) => {
         </>
       : <>
           {
-            step !== 3
+            step !== 3 && step !== 'error'
               ? <App.Flex row gap={8} className={styles.headerContent}>
                   <App.Flex column flex={1} gap={2}>
                     <div className={cn(styles.progress, {[styles.active]: step >= 0})} />
@@ -294,6 +310,10 @@ const RaffleModalParticipate = ({item}) => {
                   case 2:
                     return (
                       <ThirdStep campaign={{...item, expectedReward}} onSubmit={handleClickNextStep} />
+                    )
+                  case 'error':
+                    return (
+                      <ErrorStep campaign={{...item, expectedReward}} onSubmit={handleCloseModal} />
                     )
                   default:
                     return <FourthStep campaign={{...item, expectedReward}} onSubmit={handleClickNextStep} />

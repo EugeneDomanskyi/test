@@ -75,12 +75,15 @@ const WrapperTokens = ({ children }) => {
 
   useEffect(() => {
     if (router.isReady) {
-      if (queryBlockchainCode) {
-        if ( ! pageBlockchains.map(item => item.code).includes(queryBlockchainCode)) {
+      const tempBlockhainCode = queryBlockchainCode ?? blockchain.code
+      
+      if (tempBlockhainCode) {
+        console.log('pageBlockchains', pageBlockchains);
+        if ( ! pageBlockchains.map(item => item.code).includes(tempBlockhainCode)) {
           dispatch($app.set.code('ethereum'))
         } else {
-          if (queryBlockchainCode != blockchain.code) {
-            dispatch($app.set.code(queryBlockchainCode))
+          if (tempBlockhainCode != blockchain.code) {
+            dispatch($app.set.code(tempBlockhainCode))
           }
         }
       }
@@ -180,7 +183,9 @@ const WrapperTokens = ({ children }) => {
         dispatch($token.set.searchEmpty(!tempAll.length))
       }
 
+      console.log('tempTokens', tempTokens);
       if (! current?.id) {
+        console.log('current?.id', current?.id);
         const [first] = tempTokens
         router.replace(`/exchange/${blockchain.code}/${first.id}`, undefined, { scroll: false })
       }
