@@ -34,7 +34,7 @@
     }
 
     .tabContent {
-      padding-top: 16px;
+      padding-top: 12px;
       flex: 1;
     }
 
@@ -46,18 +46,19 @@
       justify-content: center;
       margin-left: auto;
       border-radius: 2px;
+      margin-bottom: 4px;
     }
 
     .row {
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
 
     .line {
       background-color: #5E5C6B;
       height: 1px;
       width: 100%;
-      margin-top: 8px;
-      margin-bottom: 8px;
+      margin-top: 12px;
+      margin-bottom: 12px;
     }
 
     .button {

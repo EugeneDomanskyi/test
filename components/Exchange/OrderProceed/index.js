@@ -19,25 +19,20 @@ const SIGN_STEPS = [
     title: 'Spending Approval',
     description: 'Enable spending of $TOKEN on Tegro',
     current: true,
-    index: 0,
   }, {
-    name: `⚡ Approve Instant`,
+    name: `⚡ TX{index}: Instant`,
     key: 'fill_order',
-    title: 'Submit Taker Order',
-    description: 'Sign and submit your taker order',
+    title: 'Execute Instant Order',
+    description: 'Sign in your wallet',
     current: false,
     signed: false,
-    blockchain_confirmation: false,
-    index: 1,
   }, {
-    name: `⌛ Approve orderbook`,
+    name: `⌛ TX{index}: Orderbook Entry`,
     key: 'place_order',
-    title: 'Submit Maker Order',
-    description: 'Sign and submit your taker order',
+    title: 'Place Order in the Orderbook',
+    description: 'Sign your gasless maker order',
     current: false,
     signed: false,
-    blockchain_confirmation: false,
-    index: 2,
   }
 ]
 
@@ -107,12 +102,10 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
 
   const completedOrders = abilities.orders.filter(order => successOrders.find(o => o.args.orderHash === order.orderHash))
 
-  const stats = completedOrders.reduce((acc, order) => {
-    return {
-      spendedAmount: acc.spendedAmount + order.willSpendTakingAmountFormatted*1,
-      tookAmount: acc.tookAmount + order.willTakeMakingAmountFormatted*1,
-    }
-  }, {spendedAmount: 0, tookAmount: 0})
+  const stats = completedOrders.reduce((acc, order) => ({
+    spendedAmount: acc.spendedAmount + order.willSpendTakingAmountFormatted*1,
+    tookAmount: acc.tookAmount + order.willTakeMakingAmountFormatted*1,
+  }), {spendedAmount: 0, tookAmount: 0})
 
   stats.spendedAmount = numeral(stats.spendedAmount).format('0.[00000]')
   stats.tookAmount = numeral(stats.tookAmount).format('0.[00000]')
@@ -261,9 +254,10 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
               return (
                 <App.Flex column>
                   <App.Flex column className={styles.content}>
+                    <App.Text color="#B9B8C5" size={12} weight={600} sx={{marginBottom: 8}}>Order Information</App.Text>
                     <App.Flex align="center" justify="space-between" className={styles.row}>
                       <App.Text color="#5E5C6B" size={10} weight={600}>Type</App.Text>
-                      <App.Text color="#5E5C6B" size={10} weight={600}>Hybrid Limit Order</App.Text>
+                      <App.Text color="#5E5C6B" size={10} weight={600}>Limit Order</App.Text>
                     </App.Flex>
                     <App.Flex align="center" justify="space-between" className={styles.row}>
                       <App.Text color="#5E5C6B" size={10} weight={600}>At Price</App.Text>
@@ -278,54 +272,44 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                       <App.Text color="#5E5C6B" size={10} weight={600}>{ takerAmountFormatted } { side === 'buy' ? takerAsset.symbol : makerAsset.symbol }</App.Text>
                     </App.Flex>
                     <div className={styles.line} />
+                    <App.Text color="#B9B8C5" size={12} weight={600} sx={{marginBottom: 8}}>Transactions</App.Text>
                     {
                       flowSteps.fill_order
-                        ? <Fragment>
-                            <App.Flex align="center" justify="space-between">
-                              <App.Flex column>
-                                <App.Text color="#5E5C6B" size={12} weight={600}>Instant Settle ⚡</App.Text>
-                                <App.Text color="#5E5C6B" size={10} weight={600}>Settled instantly with matching orders</App.Text>
-                              </App.Flex>
-                              <App.Flex column>
-                                <App.Text size={12} weight={600} right>
-                                  { numeral(amountFillOrder).format('0.0[0000]') } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol } ({percentages.sign}%)
-                                </App.Text>
-                                <App.Text color="#5E5C6B" size={10} weight={600} right>
-                                  { numeral(amountFillOrderUsdt).format('0.0[0000]') } { side === 'buy' ? takerAsset.symbol : makerAsset.symbol }
-                                </App.Text>
-                              </App.Flex>
+                        ? <App.Flex align="flex-start" justify="space-between" sx={{marginBottom: 4}}>
+                            <App.Text color="#5E5C6B" size={10} weight={600}>Transaction 1 (Instant Settle⚡)</App.Text>
+                            <App.Flex column>
+                              <App.Text size={10} weight={600} right>
+                                { numeral(amountFillOrder).format('0.0[0000]') } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol } ({percentages.sign}%)
+                              </App.Text>
+                              <App.Text color="#5E5C6B" size={10} weight={600} right>
+                                { numeral(amountFillOrderUsdt).format('0.0[0000]') } { side === 'buy' ? takerAsset.symbol : makerAsset.symbol }
+                              </App.Text>
                             </App.Flex>
-                            <div className={styles.line} />
-                          </Fragment>
+                          </App.Flex>
                         : null
                     }
                     {
                       flowSteps.place_order
-                        ? <Fragment>
-                            <App.Flex align="center" justify="space-between">
-                              <App.Flex column>
-                                <App.Text color="#5E5C6B" size={12} weight={600}>Limit Order ⌛</App.Text>
-                                <App.Text color="#5E5C6B" size={10} weight={600}>Places your active order in the orderbook until cancelled or matched</App.Text>
-                              </App.Flex>
-                              <App.Flex column>
-                                <App.Text size={12} weight={600} right>
-                                  { numeral(amountLimitOrder).format('0.0[0000]') } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol } ({percentages.limit}%)
-                                </App.Text>
-                                <App.Text color="#5E5C6B" size={10} weight={600} right>
-                                  { numeral(amountLimitOrderUsdt).format('0.0[0000]') } { side === 'buy' ? takerAsset.symbol : makerAsset.symbol }
-                                </App.Text>
-                              </App.Flex>
+                        ? <App.Flex align="flex-start" justify="space-between" sx={{marginBottom: 4}}>
+                            <App.Text color="#5E5C6B" size={10} weight={600}>Transaction {flowSteps.fill_order ? 2 : 1} (Placed in Orderbook⌛)</App.Text>
+                            <App.Flex column>
+                              <App.Text size={10} weight={600} right>
+                                { numeral(amountLimitOrder).format('0.0[0000]') } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol } ({percentages.limit}%)
+                              </App.Text>
+                              <App.Text color="#5E5C6B" size={10} weight={600} right>
+                                { numeral(amountLimitOrderUsdt).format('0.0[0000]') } { side === 'buy' ? takerAsset.symbol : makerAsset.symbol }
+                              </App.Text>
                             </App.Flex>
-                            <div className={styles.line} />
-                          </Fragment>
+                          </App.Flex>
                         : null
                     }
-                    <App.Text color="#5E5C6B" size={12} weight={600} sx={{marginTop: 'auto'}}>Overall Summary</App.Text>
+                    <div className={styles.line} />
+                    <App.Text color="#B9B8C5" size={12} weight={600}>Overall Summary</App.Text>
                     <App.Flex justify="space-between" className={styles.row}>
                       <App.Text color="#5E5C6B" size={10} weight={500}>You Pay</App.Text>
-                      <App.Text color="#5E5C6B" size={10} weight={500}>You Receive</App.Text>
+                      <App.Text color="#5E5C6B" size={10} weight={500}>You Get</App.Text>
                     </App.Flex>
-                    <App.Flex justify="space-between" className={styles.row}>
+                    <App.Flex justify="space-between" className={styles.row} sx={{marginBottom: 12}}>
                       <App.Flex align="center">
                         <Image width={25} height={25} src={takerAsset.image} style={{marginRight: 8}} />
                         <App.Text size={12} weight={600}>{ numeral(side === 'buy' ? takerAmountFormatted : makerAmountFormatted).format('0.[00000]') } {takerAsset.symbol}</App.Text>
@@ -355,7 +339,7 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                         const isActive = currentSignStep.index >= i
                         return (
                           <App.Flex flex={1} column justify="center" align="center" key={signStep.key} className={styles.step}>
-                            <App.Text color={isActive ? '#53F19C' : '#5E5C6B'} size={10} weight={500}>{signStep.name}</App.Text>
+                            <App.Text color={isActive ? '#53F19C' : '#5E5C6B'} size={10} weight={500}>{signStep.name.replace('{index}', i)}</App.Text>
                             <App.Flex className={cn(styles.stepLine, {[styles.active]: isActive})} />
                           </App.Flex>
                         )
@@ -378,13 +362,10 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                         switch (step.key) {
                           case 'fill_order':
                             return (
-                              <App.Flex align="center" justify="space-between" sx={{width: '100%', marginTop: 'auto'}}>
+                              <App.Flex align="flex-start" justify="space-between" sx={{width: '100%', marginTop: 'auto'}}>
+                                <App.Text color="#5E5C6B" size={10} weight={600}>Transaction 1 (Instant Settle⚡)</App.Text>
                                 <App.Flex column>
-                                  <App.Text color="#5E5C6B" size={12} weight={600}>Instant Settle ⚡</App.Text>
-                                  <App.Text color="#5E5C6B" size={10} weight={600}>Settled instantly with matching orders</App.Text>
-                                </App.Flex>
-                                <App.Flex column>
-                                  <App.Text size={12} weight={600} right>
+                                  <App.Text size={10} weight={600} right>
                                     { numeral(amountFillOrder).format('0.0[0000]') } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol } ({percentages.sign}%)
                                   </App.Text>
                                   <App.Text color="#5E5C6B" size={10} weight={600} right>
@@ -395,11 +376,8 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                             )
                           case 'place_order':
                             return (
-                              <App.Flex align="center" justify="space-between" sx={{width: '100%', marginTop: 'auto'}}>
-                                <App.Flex column>
-                                  <App.Text color="#5E5C6B" size={12} weight={600}>Limit Order ⌛</App.Text>
-                                  <App.Text color="#5E5C6B" size={10} weight={600}>Places your active order in the orderbook until cancelled or matched</App.Text>
-                                </App.Flex>
+                              <App.Flex align="flex-start" justify="space-between" sx={{width: '100%', marginTop: 'auto'}}>
+                                <App.Text color="#5E5C6B" size={12} weight={600}>Transaction {flowSteps.fill_order ? 2 : 1} (Limit Order⌛)</App.Text>
                                 <App.Flex column>
                                   <App.Text size={12} weight={600} right>
                                     { numeral(amountLimitOrder).format('0.0[0000]') } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol } ({percentages.limit}%)
@@ -415,7 +393,7 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                         }
                       })(currentSignStep)
                     }
-                   
+                    <App.Text color="#5E5C6B" size={10} weight={500} sx={{marginTop: 'auto'}}>Please Proceed in Your Wallet</App.Text>
                   </App.Flex>
                 </App.Flex>
               )
@@ -428,7 +406,7 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                           options={TABS}
                           active={currentTab}
                           onChange={handleChangeTab} />
-                      : <App.Text size={14} weight={700}>Order Summary</App.Text>
+                      : null
                   }
                   {
                     (tab => {
@@ -445,14 +423,16 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                                       <App.Text color="#08051C" size={8} weight={700}>Rejected</App.Text>
                                     </div>
                               }
-                              <App.Flex align="center" justify="space-between" sx={{marginBottom: 12}}>
+                              <App.Flex align="flex-start" justify="space-between" sx={{marginBottom: 12}}>
+                                <App.Text color="#5E5C6B" size={10} weight={600}>Transaction 1 (Instant Settle⚡)</App.Text>
                                 <App.Flex column>
-                                  <App.Text color="#5E5C6B" size={12} weight={600}>Instant Settle ⚡</App.Text>
-                                  <App.Text color="#5E5C6B" size={10} weight={600}>Settled instantly with matching orders</App.Text>
+                                  <App.Text size={10} weight={600} right>
+                                    { numeral(amountFillOrder).format('0.0[0000]') } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol } ({percentages.sign}%)
+                                  </App.Text>
+                                  <App.Text color="#5E5C6B" size={10} weight={600} right>
+                                    { numeral(amountFillOrderUsdt).format('0.0[0000]') } { side === 'buy' ? takerAsset.symbol : makerAsset.symbol }
+                                  </App.Text>
                                 </App.Flex>
-                                <App.Text size={12} weight={600}>
-                                  { numeral(amountFillOrder).format('0.0[0000]') } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol } ({percentages.sign}%)
-                                </App.Text>
                               </App.Flex>
                               {
                                 results.place_order.success
@@ -463,29 +443,33 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                                       <App.Text color="#08051C" size={8} weight={700}>Rejected</App.Text>
                                     </div>
                               }
-                              <App.Flex align="center" justify="space-between" sx={{marginBottom: 12}}>
+                              <App.Flex align="flex-start" justify="space-between" sx={{marginBottom: 0}}>
+                                <App.Text color="#5E5C6B" size={10} weight={600}>Transaction {flowSteps.fill_order ? 2 : 1} (Placed in Orderbook⌛)</App.Text>
                                 <App.Flex column>
-                                  <App.Text color="#5E5C6B" size={12} weight={600}>Limit Order ⌛</App.Text>
-                                  <App.Text color="#5E5C6B" size={10} weight={600}>Places your active order in the orderbook until cancelled or matched</App.Text>
+                                  <App.Text size={10} weight={600} right>
+                                    { numeral(amountLimitOrder).format('0.0[0000]') } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol } ({percentages.limit}%)
+                                  </App.Text>
+                                  <App.Text color="#5E5C6B" size={10} weight={600} right>
+                                    { numeral(amountLimitOrderUsdt).format('0.0[0000]') } { side === 'buy' ? takerAsset.symbol : makerAsset.symbol }
+                                  </App.Text>
                                 </App.Flex>
-                                <App.Text size={12} weight={600}>
-                                  { numeral(amountLimitOrder).format('0.0[0000]') } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol } ({percentages.limit}%)
-                                </App.Text>
                               </App.Flex>
-                              <div className={styles.line} />
-                              <App.Flex justify="space-between" className={styles.row} sx={{marginTop: 'auto'}}>
-                                <App.Text color="#5E5C6B" size={10} weight={500}>You Pay</App.Text>
-                                <App.Text color="#5E5C6B" size={10} weight={500}>You Receive</App.Text>
-                              </App.Flex>
-                              <App.Flex justify="space-between" className={styles.row}>
-                                <App.Flex align="center">
-                                  <Image width={25} height={25} src={takerAsset.image} style={{marginRight: 8}} />
-                                  <App.Text size={12} weight={600}>{ numeral(side === 'buy' ? takerAmountFormatted : makerAmountFormatted).format('0.[00000]') } {takerAsset.symbol}</App.Text>
+                              <App.Flex column sx={{marginTop: 'auto'}}>
+                                <div className={styles.line} />
+                                <App.Flex justify="space-between" className={styles.row} >
+                                  <App.Text color="#5E5C6B" size={10} weight={500}>You Pay</App.Text>
+                                  <App.Text color="#5E5C6B" size={10} weight={500}>You Receive</App.Text>
                                 </App.Flex>
-                                <App.Icon icon="arrow-right" />
-                                <App.Flex align="center">
-                                  <Image width={25} height={25} src={makerAsset.image} style={{marginRight: 8}} />
-                                  <App.Text size={12} weight={600}>{ numeral(side === 'buy' ? makerAmountFormatted : takerAmountFormatted).format('0.[00000]') } {makerAsset.symbol}</App.Text>
+                                <App.Flex justify="space-between" className={styles.row}>
+                                  <App.Flex align="center">
+                                    <Image width={25} height={25} src={takerAsset.image} style={{marginRight: 8}} />
+                                    <App.Text size={12} weight={600}>{ numeral(side === 'buy' ? takerAmountFormatted : makerAmountFormatted).format('0.[00000]') } {takerAsset.symbol}</App.Text>
+                                  </App.Flex>
+                                  <App.Icon icon="arrow-right" />
+                                  <App.Flex align="center">
+                                    <Image width={25} height={25} src={makerAsset.image} style={{marginRight: 8}} />
+                                    <App.Text size={12} weight={600}>{ numeral(side === 'buy' ? makerAmountFormatted : takerAmountFormatted).format('0.[00000]') } {makerAsset.symbol}</App.Text>
+                                  </App.Flex>
                                 </App.Flex>
                               </App.Flex>
                             </App.Flex>
@@ -506,20 +490,22 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                                   { side === 'buy' ? stats.tookAmount : stats.spendedAmount } {  side === 'buy' ? makerAsset.symbol : takerAsset.symbol } / { side === 'buy' ? abilities.willTakeAmount : abilities.willSpendAmount } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol }
                                 </App.Text>
                               </App.Flex>
-                              <div className={styles.line} />
-                              <App.Flex justify="space-between" className={styles.row} sx={{marginTop: 'auto'}}>
-                                <App.Text color="#5E5C6B" size={10} weight={500}>You Pay</App.Text>
-                                <App.Text color="#5E5C6B" size={10} weight={500}>You Receive</App.Text>
-                              </App.Flex>
-                              <App.Flex justify="space-between" className={styles.row}>
-                                <App.Flex align="center">
-                                  <Image width={25} height={25} src={takerAsset.image} style={{marginRight: 8}} />
-                                  <App.Text size={12} weight={600}>{ stats.spendedAmount } {takerAsset.symbol}</App.Text>
+                              <App.Flex column sx={{marginTop: 'auto'}}>
+                                <div className={styles.line} />
+                                <App.Flex justify="space-between" className={styles.row}>
+                                  <App.Text color="#5E5C6B" size={10} weight={500}>You Pay</App.Text>
+                                  <App.Text color="#5E5C6B" size={10} weight={500}>You Receive</App.Text>
                                 </App.Flex>
-                                <App.Icon icon="arrow-right" />
-                                <App.Flex align="center">
-                                  <Image width={25} height={25} src={makerAsset.image} style={{marginRight: 8}} />
-                                  <App.Text size={12} weight={600}>{ stats.tookAmount } {makerAsset.symbol}</App.Text>
+                                <App.Flex justify="space-between" className={styles.row}>
+                                  <App.Flex align="center">
+                                    <Image width={25} height={25} src={takerAsset.image} style={{marginRight: 8}} />
+                                    <App.Text size={12} weight={600}>{ stats.spendedAmount } {takerAsset.symbol}</App.Text>
+                                  </App.Flex>
+                                  <App.Icon icon="arrow-right" />
+                                  <App.Flex align="center">
+                                    <Image width={25} height={25} src={makerAsset.image} style={{marginRight: 8}} />
+                                    <App.Text size={12} weight={600}>{ stats.tookAmount } {makerAsset.symbol}</App.Text>
+                                  </App.Flex>
                                 </App.Flex>
                               </App.Flex>
                             </App.Flex>
@@ -541,38 +527,41 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                                       <App.Text color="#5E5C6B" size={10} weight={500} center>Your Order transaction request was rejected while signing it. Please try placing the order again to complete it.</App.Text>
                                     </App.Flex>
                               }
-                              
                               <div className={styles.line} />
-                              <App.Flex align="center" justify="space-between" className={styles.row}>
-                                <App.Text color="#5E5C6B" size={12} weight={600}>At Price</App.Text>
-                                <App.Text size={12} weight={600}>{ price } { side === 'buy' ? takerAsset.symbol : makerAsset.symbol }</App.Text>
-                              </App.Flex>
-                              <App.Flex align="center" justify="space-between" className={styles.row}>
-                                <App.Text color="#5E5C6B" size={12} weight={600}>Amount</App.Text>
-                                <App.Text size={12} weight={600}>{ numeral(amountLimitOrder).format('0.0[0000]') } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol }</App.Text>
-                              </App.Flex>
-                              <App.Flex align="center" justify="space-between" className={styles.row}>
-                                <App.Text color="#5E5C6B" size={12} weight={600}>Total</App.Text>
-                                <App.Text size={12} weight={600}>{ numeral(amountLimitOrder*price).format('0.0[0000]') } { side === 'buy' ? takerAsset.symbol : makerAsset.symbol }</App.Text>
-                              </App.Flex>
-                              <div className={styles.line} />
-                              <App.Flex justify="space-between" className={styles.row} sx={{marginTop: 'auto'}}>
-                                <App.Text color="#5E5C6B" size={10} weight={500}>You Pay</App.Text>
-                                <App.Text color="#5E5C6B" size={10} weight={500}>You Receive</App.Text>
-                              </App.Flex>
-                              <App.Flex justify="space-between" className={styles.row}>
-                                <App.Flex align="center">
-                                  <Image width={25} height={25} src={takerAsset.image} style={{marginRight: 8}} />
-                                  <App.Text size={12} weight={600}>
-                                    { numeral(side === 'buy' ? amountLimitOrder*price : amountLimitOrder).format('0.0[0000]') } {takerAsset.symbol}
-                                  </App.Text>
+                              <App.Flex column flex={1} justify="center">
+                                <App.Flex align="center" justify="space-between" className={styles.row}>
+                                  <App.Text color="#5E5C6B" size={12} weight={600}>At Price</App.Text>
+                                  <App.Text size={12} weight={600}>{ price } { side === 'buy' ? takerAsset.symbol : makerAsset.symbol }</App.Text>
                                 </App.Flex>
-                                <App.Icon icon="arrow-right" />
-                                <App.Flex align="center">
-                                  <Image width={25} height={25} src={makerAsset.image} style={{marginRight: 8}} />
-                                  <App.Text size={12} weight={600}>
-                                    { numeral(side === 'buy' ? amountLimitOrder : amountLimitOrder*price).format('0.0[0000]') } {makerAsset.symbol}
-                                  </App.Text>
+                                <App.Flex align="center" justify="space-between" className={styles.row}>
+                                  <App.Text color="#5E5C6B" size={12} weight={600}>Amount</App.Text>
+                                  <App.Text size={12} weight={600}>{ numeral(amountLimitOrder).format('0.0[0000]') } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol }</App.Text>
+                                </App.Flex>
+                                <App.Flex align="center" justify="space-between" className={styles.row}>
+                                  <App.Text color="#5E5C6B" size={12} weight={600}>Total</App.Text>
+                                  <App.Text size={12} weight={600}>{ numeral(amountLimitOrder*price).format('0.0[0000]') } { side === 'buy' ? takerAsset.symbol : makerAsset.symbol }</App.Text>
+                                </App.Flex>
+                              </App.Flex>
+                              <App.Flex column sx={{marginTop: 'auto'}}>
+                                <div className={styles.line} />
+                                <App.Flex justify="space-between" className={styles.row}>
+                                  <App.Text color="#5E5C6B" size={10} weight={500}>You Pay</App.Text>
+                                  <App.Text color="#5E5C6B" size={10} weight={500}>You Receive</App.Text>
+                                </App.Flex>
+                                <App.Flex justify="space-between" className={styles.row}>
+                                  <App.Flex align="center">
+                                    <Image width={25} height={25} src={takerAsset.image} style={{marginRight: 8}} />
+                                    <App.Text size={12} weight={600}>
+                                      { numeral(side === 'buy' ? amountLimitOrder*price : amountLimitOrder).format('0.0[0000]') } {takerAsset.symbol}
+                                    </App.Text>
+                                  </App.Flex>
+                                  <App.Icon icon="arrow-right" />
+                                  <App.Flex align="center">
+                                    <Image width={25} height={25} src={makerAsset.image} style={{marginRight: 8}} />
+                                    <App.Text size={12} weight={600}>
+                                      { numeral(side === 'buy' ? amountLimitOrder : amountLimitOrder*price).format('0.0[0000]') } {makerAsset.symbol}
+                                    </App.Text>
+                                  </App.Flex>
                                 </App.Flex>
                               </App.Flex>
                             </App.Flex>
@@ -581,7 +570,7 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                     })(currentTab)
                   }
                   <App.Flex align="center" justify="center" className={styles.buttonResult} onClick={handleDone}>
-                    <App.Text size={15} weight={700} uppercase>DONE</App.Text>
+                    <App.Text size={15} weight={700} uppercase>GO TO EXPLORER</App.Text>
                   </App.Flex>
                 </App.Flex>
               )
