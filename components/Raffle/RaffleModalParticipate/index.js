@@ -138,7 +138,7 @@ const RaffleModalParticipate = ({item}) => {
         return
       }
 
-      fetchReward()
+      fetchReward(enterCampaignHash)
 
       // setTimeout(async () => {
       //   const result = await $raffle.api.reward(enterCampaignHash.trim())
@@ -183,7 +183,7 @@ const RaffleModalParticipate = ({item}) => {
     dispatch($raffle.set.loading(false))
   }
 
-  const fetchReward = async () => {
+  const fetchReward = async (enterCampaignHash) => {
     const result = await $raffle.api.reward(enterCampaignHash.trim());
     const parsedRes = JSON.parse(result.data);
 

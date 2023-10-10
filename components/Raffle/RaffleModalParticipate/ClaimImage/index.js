@@ -23,7 +23,7 @@ const ClaimImage = ({warningIcon = null, contentImg, dangerIcon = null, onlyShad
               }
               {
                 dangerIcon
-                  ? <Image src="/images/raffle/danger-icon.png" width={53} height={46} className={styles.imageIcon} alt="" />
+                  ? <Image src="/images/raffle/danger-icon.png" width={53} height={53} className={styles.imageIcon} alt="" />
                   : null
               }
             </>
