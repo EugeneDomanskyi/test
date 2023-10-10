@@ -19,6 +19,7 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
   const { wallet, changeNetwork } = useWalletConnect()
 
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
+  const [hideCancelledOrders, setHideCancelledOrders] = useState(true)
   const [cancellingOrders, setCancellingOrders] = useState([])
   const [ordersType, setOrderTypes] = useState('open')
 
@@ -54,6 +55,22 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
     })
   }
 
+  const handlePressCopy = order => (e) => {
+    e.stopPropagation()
+    const [_, _seg1, seg2] = router.asPath.split('/')
+    router.push(`${[seg2, order.contractAddress].join('/')}`, undefined, {scroll: false})
+    onClickOrder({
+      quantity: order.quantity,
+      price: order.itemPrice,
+      side: order.side,
+    })
+
+  }
+  const handlePressEdit = order => (e) => {
+    e.stopPropagation()
+
+  }
+
   const handleChangeSwitch = (value) => {
     setShowCollectionOrders(value)
   }
@@ -72,41 +89,66 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
     setOrderTypes(type)
   }
 
+  const handleHideCancelledOrders = value => {
+    setHideCancelledOrders(value)
+  }
+
+  const filterByAddress = (order) => {
+    return !showCollectionOrders || (order.contractAddress === current.address)
+  }
+
+  const filteredByStatus = order => {
+    return type !== 'tokens' || !hideCancelledOrders || (order.status !== 'cancelled')
+  }
+
   return (
     <App.Flex column className={styles.container}>
-      <App.Flex column>
-        <App.Flex className={styles.header} align="center">
-          <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600}>MY ORDERS</App.Text>
-        </App.Flex>
-      </App.Flex>
+      {
+        type === 'tokens'
+          ? <App.Flex sx={{height: 26, position: 'relative', marginBottom: 8}}>
+              <App.Flex flex={1} justify="center" align="center" sx={{cursor: 'pointer', backgroundColor: '#1C192F'}} onClick={handleChangeOrdersType('open')}>
+                <App.Text size={12} color={ordersType === 'open' ? '#fff' : 'rgba(185, 184, 197, 0.8)'}>OPEN ORDERS</App.Text>
+              </App.Flex>
+              <App.Flex flex={1} justify="center" align="center" sx={{cursor: 'pointer'}} onClick={handleChangeOrdersType('closed')}>
+                <App.Text size={12} color={ordersType === 'closed' ? '#fff' : 'rgba(185, 184, 197, 0.8)'}>COMPLETED ORDERS</App.Text>
+              </App.Flex>
+              <div className={styles.badge} style={{transform: `translateX(${ordersType === 'open' ? 0 : 100}%)`}} />
+            </App.Flex>
+          : <App.Flex column>
+              <App.Flex className={styles.header} align="center">
+                <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600}>MY ORDERS</App.Text>
+              </App.Flex>
+            </App.Flex>
+      }
       <App.Flex sx={{height: 40, padding: '0 8px'}} align="center" justify="space-between">
-        <App.Flex align="center" gap={8}>
+        <App.Flex align="center" gap={8} flex={1}>
           <App.Switch
             width={40}
             height={20}
             checked={showCollectionOrders}
             onChange={handleChangeSwitch} />
           {
-            current?.image
+            type === 'nfts'
               ? <Image alt="" src={current?.image} width={20} height={20} />
-              : null
+              : <App.Flex>
+                  <App.Text color="#B9B8C5" size={10} weight={600}>{current.symbol} - USDT</App.Text>
+                </App.Flex>
           }
-          <App.Text>Orders</App.Text>
+          <App.Text color="#B9B8C5" size={10} weight={600}>Orders</App.Text>
         </App.Flex>
+        {
+          type === 'tokens' && ordersType === 'closed'
+            ? <App.Flex align="center" gap={8} flex={1}>
+                <App.Switch
+                  width={40}
+                  height={20}
+                  checked={hideCancelledOrders}
+                  onChange={handleHideCancelledOrders} />
+                <App.Text color="#B9B8C5" size={10} weight={600}>Hide All Cancelled Orders</App.Text>
+              </App.Flex>
+            : null
+        }
       </App.Flex>
-      {
-        type === 'tokens'
-          ? <App.Flex sx={{height: 30, position: 'relative', marginBottom: 8}}>
-              <App.Flex flex={1} justify="center" align="center" sx={{cursor: 'pointer'}} onClick={handleChangeOrdersType('open')}>
-                <App.Text size={12} color={ordersType === 'open' ? '#fff' : 'rgba(185, 184, 197, 0.8)'}>Open</App.Text>
-              </App.Flex>
-              <App.Flex flex={1} justify="center" align="center" sx={{cursor: 'pointer'}} onClick={handleChangeOrdersType('closed')}>
-                <App.Text size={12} color={ordersType === 'closed' ? '#fff' : 'rgba(185, 184, 197, 0.8)'}>Completed</App.Text>
-              </App.Flex>
-              <div className={styles.badge} style={{transform: `translateX(${ordersType === 'open' ? 0 : 100}%)`}} />
-            </App.Flex>
-          : null
-      }
       <App.Flex align="center" sx={{height: 20, borderBottom: '1px solid rgba(94, 92, 107, 0.3)'}}>
         <App.Flex column sx={{width: 60}} align="center">
           <App.Text size={10} weight={600} color="#B9B8C5" center>Asset</App.Text>
@@ -123,17 +165,22 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
       </App.Flex>
       <App.Flex column flex={1} sx={{overflow: 'auto'}}>
         {
-          orders[ordersType].filter(order => !showCollectionOrders || (order.contractAddress === current.address)).map((order) => {
+          orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map((order) => {
+            console.log(order.status)
             return (
-              <App.Flex key={order.id} column sx={{position: 'relative'}}>
+              <App.Flex key={order.id} column sx={{position: 'relative'}} className={styles.orderContainer}>
                 <App.Flex align="center" className={cn(styles.order, {[styles.disabled]: order.status === 'completed' || order.status === 'cancelled'})} onClick={handleClick(order)}>
                   <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
                   <App.Flex column align="center" justify="center" sx={{width: 60}}>
                     {
-                      order.image
+                      order.image && type === 'nfts'
                         ? <Image alt="" src={order.image} width={35} height={35} />
                         : order.quoteCurrency
-                          ? <App.Text size={12} weight={600}>{ order.quoteCurrency }</App.Text>
+                          ? <App.Flex column>
+                              <App.Text size={10} weight={600} center>{ order.quoteCurrency }</App.Text>
+                              <div style={{width: '100%', height: 1, background: '#5E5C6B'}} />
+                              <App.Text color="#5E5C6B" size={9} weight={600} center>{ order.baseCurrency }</App.Text>
+                            </App.Flex>
                           : null
                     }
                   </App.Flex>
@@ -146,14 +193,42 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
                   </App.Flex>
                   <App.Flex flex={1} column align="center" justify="center" sx={{position: 'relative', height: '100%', overflow: 'hidden'}}>
                     <App.Text size={12} weight={600}>{ order.price } { order.baseCurrency }</App.Text>
-                    <App.Flex className={styles.cancelButton} sx={{backgroundColor: order.status === 'completed' ? '#063834' : 'rgb(77, 14, 39)'}} onClick={handlePressCancel(order)}>
+                    
+                    {/* <App.Flex className={styles.cancelButton} sx={{backgroundColor: order.status === 'completed' ? '#063834' : 'rgb(77, 14, 39)'}} onClick={handlePressCancel(order)}>
                       <App.Text size={12} color={order.status === 'completed' ? 'rgb(83, 241, 156)' : 'rgb(235, 49, 105)'} className={styles.statusText}>
                         {
                           (order.status === 'completed' || order.status === 'cancelled') ? order.status : 'Cancel order'
                         }
                       </App.Text>
-                    </App.Flex>
+                    </App.Flex> */}
                   </App.Flex>
+                </App.Flex>
+                <App.Flex align="center" justify="flex-end" className={cn(styles.hoverContent)}>
+                  <App.Text color="rgba(185, 184, 197, 1)" size={10} weight={500} sx={{marginRight: 12}}>{ order.time }</App.Text>
+                  {
+                    order.status !== 'open'
+                      ? <App.Text color="#B9B8C5" size={10} weight={600} uppercase>
+                          { (order.status === 'completed' || order.status === 'cancelled') ? order.status : 'Cancel order' }
+                        </App.Text>
+                      : null
+                  }
+                  <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressCopy(order)}>
+                    <App.Icon icon="copy" width={12} height={12} color="#B9B8C5" />
+                  </App.Flex>
+                  {
+                    order.status === 'open'
+                      ? <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressEdit(order)}>
+                          <App.Icon icon="pencil" />
+                        </App.Flex>
+                      : null
+                  }
+                  {
+                    order.status === 'open'
+                      ? <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressCancel(order)}>
+                          <App.Icon icon="cross-circle" />
+                        </App.Flex>
+                      : null
+                  }
                 </App.Flex>
                 {
                   cancellingOrders.includes(order.id)

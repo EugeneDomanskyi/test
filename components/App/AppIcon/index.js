@@ -1,4 +1,4 @@
-const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
+const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props }) => {
   const getIcon = () => {
     if (icon == 'logo') {
       return (
@@ -118,7 +118,7 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
     if (icon == 'check-circle-fill') {
       return (
         <svg width={width ?? 48} height={height ?? 49} viewBox="0 0 48 49" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-          <rect width="48" height="48" y="0.996" fill="#fff" rx="24"></rect>
+          <rect width="48" height="48" y="0.996" fill={secondaryColor ?? "#fff"} rx="24"></rect>
           <path fill={color ?? '#53F19C'} d="M0 24.996c0-13.256 10.744-24 24-24s24 10.744 24 24-10.744 24-24 24-24-10.744-24-24zm34.856-4.144a2.631 2.631 0 000-3.712 2.631 2.631 0 00-3.712 0L21 27.284l-4.144-4.144a2.631 2.631 0 00-3.712 0 2.631 2.631 0 000 3.712l6 6a2.631 2.631 0 003.712 0l12-12z" />
         </svg>
       )
@@ -397,6 +397,23 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
             strokeWidth={1.5}
             d="M12 12.188v-.21c0-.68.42-1.04.84-1.33.41-.28.82-.64.82-1.3 0-.92-.74-1.66-1.66-1.66-.92 0-1.66.74-1.66 1.66M11.995 14.578h.01"
           />
+        </svg>
+      )
+    }
+    
+    if (icon === 'info-shape') {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width={width ?? 31} height={height ?? 30} viewBox="0 0 31 30" fill="none" {...props}>
+        <path fill="#53F19C" d="M13.114.664c1.035-.885 2.73-.885 3.78 0l2.369 2.04c.45.39 1.29.704 1.89.704h2.549a2.906 2.906 0 0 1 2.894 2.894v2.55c0 .585.315 1.44.705 1.89l2.04 2.368c.884 1.035.884 2.73 0 3.78l-2.04 2.369c-.39.45-.705 1.29-.705 1.89v2.549a2.906 2.906 0 0 1-2.894 2.894h-2.55c-.585 0-1.44.315-1.89.705l-2.369 2.04c-1.035.884-2.729.884-3.779 0l-2.37-2.04c-.45-.39-1.289-.705-1.889-.705H6.261a2.906 2.906 0 0 1-2.894-2.894v-2.564c0-.585-.315-1.425-.69-1.875L.652 16.875c-.87-1.035-.87-2.715 0-3.75l2.025-2.384c.375-.45.69-1.29.69-1.874V6.302A2.906 2.906 0 0 1 6.26 3.408h2.594c.585 0 1.44-.315 1.89-.705l2.37-2.04Z" />
+        <path fill="#06382F" d="M16 9.667a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm-.24 3.18c-.793.066-2.96 1.793-2.96 1.793-.133.1-.093.093.013.28.107.18.094.193.22.107a40 40 0 0 1 .72-.454c1.414-.906.227 1.187-.38 4.714-.24 1.746 1.334.846 1.74.58.4-.26 1.474-1 1.58-1.074.147-.1.04-.18-.073-.346-.08-.114-.16-.034-.16-.034-.433.287-1.227.887-1.333.507-.127-.38.686-2.987 1.133-4.78.073-.427.273-1.36-.5-1.293Z" />
+      </svg>
+      )
+    }
+
+    if (icon === 'pencil') {
+      return (
+        <svg width={width ?? 12} height={height ?? 12} viewBox="0 0 12 12" fill="none" {...props}>
+          <path fill={color ?? '#B9B8C5'} d="M10.355 3.52a.498.498 0 0 0 0-.705l-1.17-1.17a.498.498 0 0 0-.705 0l-.92.915 1.875 1.875M1.5 8.625V10.5h1.875l5.53-5.535L7.03 3.09 1.5 8.625Z" />
         </svg>
       )
     }
@@ -1101,6 +1118,15 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
               <path fill="#fff" d="M0 .018h32.004v32.004H0z" />
             </clipPath>
           </defs>
+        </svg>
+      )
+    }
+    
+    if (icon === 'cross-circle') {
+      return (
+        <svg width={width ?? 12} height={height ?? 12} viewBox="0 0 12 12" fill="none" {...props}>
+          <rect width={width ?? 12} height={height ?? 12} fill="#FF1D61" rx={6} />
+          <path stroke="#09051D" strokeLinecap="round" d="m4 4 4 4M8 4 4 8" />
         </svg>
       )
     }

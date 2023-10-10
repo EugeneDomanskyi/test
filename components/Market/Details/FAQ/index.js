@@ -37,6 +37,7 @@ const QuestFAQ = ({type}) => {
 
   const price = type === 'tokens' ? 'current price' : 'floor price'
   const volume = type === 'tokens' ? marketInfo?.tokenCount : marketInfo?.tvl
+  console.log('marketInfo.createdAt', marketInfo.createdAt);
   const launchDate = moment(marketInfo.createdAt).format('MMMM DD, YYYY')
 
   const FAQ = [
@@ -64,11 +65,16 @@ const QuestFAQ = ({type}) => {
       question: `What is the 24 hour global trading volume of ${ marketInfo.name }?`,
       answer: `In the past 24 hours, the total trading volume of ${ marketInfo.name } is ${ marketInfo.volume + (marketInfo.onSaleCount ? ` with ${ marketInfo.onSaleCount } sales` : '') }.`,
     },
-    {
-      question: `When was ${ marketInfo.name } launched?`,
-      answer: `${ marketInfo.name } was first created on ${ launchDate }.`
-    },
   ]
+
+  if (marketInfo.createdAt) {
+    FAQ.push(
+      {
+        question: `When was ${ marketInfo.name } launched?`,
+        answer: `${ marketInfo.name } was first created on ${ launchDate }.`
+      }
+    )
+  }
 
   return (
     <App.Flex column sx={{width: '100%'}} gap={8}>
