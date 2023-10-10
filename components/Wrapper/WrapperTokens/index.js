@@ -73,7 +73,6 @@ const WrapperTokens = ({ children }) => {
       const tempBlockhainCode = queryBlockchainCode ?? blockchain.code
       
       if (tempBlockhainCode) {
-        console.log('pageBlockchains', pageBlockchains);
         if ( ! pageBlockchains.map(item => item.code).includes(tempBlockhainCode)) {
           dispatch($app.set.code('ethereum'))
         } else {
