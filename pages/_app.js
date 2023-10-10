@@ -26,6 +26,8 @@ import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
 import Head from '@/components/Head'
 
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
 import 'react-toastify/dist/ReactToastify.css'
 import '@rainbow-me/rainbowkit/styles.css'
 import '@uniswap/widgets/fonts.css'
