@@ -59,9 +59,7 @@ const Wrapper = ({ children }) => {
 
   return (
     <>
-      {!isRaffle ? (
-        <Header />
-      ) : null}
+      <Header />
 
       {isTokens ? (
         <WrapperTokens>

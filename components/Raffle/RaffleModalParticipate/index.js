@@ -42,15 +42,18 @@ const RaffleModalParticipate = ({item}) => {
   const [step, setStep] = useState(0)
   const [isApproved, setIsApproved] = useState(false)
   const [expectedReward, setExpectedReward] = useState(null)
+  const [showErrorTkeys, setShowErrorTkeys] = useState(false)
 
-  // useEffect(() => {
-  //   (async () => {
-  //     if (wallet) {
-  //       const result = await checkIfApproved()
-  //       setIsApproved(result)
-  //     }
-  //   })()
-  // }, [wallet])
+  const rewards = [...item.rewardRange]
+
+  useEffect(() => {
+    (async () => {
+      if (wallet) {
+        const result = await checkIfApproved()
+        setIsApproved(result)
+      }
+    })()
+  }, [wallet])
 
   useEffect(() => {
     if (!showModal) {
@@ -90,13 +93,13 @@ const RaffleModalParticipate = ({item}) => {
 
   const handleClickNextStep = async () => {
     if (step === 0) {
-      // if (! isApproved) {
-      //   const approveRes = await contract.setApprovalForAll(contractAddr, factoryAddr)
-      //   dispatch($raffle.set.loading(false))
-      //   if (approveRes.error) {
-      //     return
-      //   }
-      // }
+      if (! isApproved) {
+        const approveRes = await contract.setApprovalForAll(contractAddr, factoryAddr)
+        dispatch($raffle.set.loading(false))
+        if (approveRes.error) {
+          return
+        }
+      }
 
       dispatch($modal.set.update({
         header: {
@@ -108,26 +111,32 @@ const RaffleModalParticipate = ({item}) => {
     }
     
     if (step === 1) {
-      // if (tokenIds.length < item.tKeyRequired) {
-      //   return
-      // }
+      if (tokenIds.length < item.tKeyRequired) {
+        console.log('not enough TKeys');
+        setShowErrorTkeys(true)
+        dispatch($raffle.set.loading(false))
+        return
+      }
 
-      // const ids = tokenIds.slice(0, item.tKeyRequired)
-      // const enterCampaignHash = await contract.enterCampaign(factoryAddr, item.id, ids)
+      const ids = tokenIds.slice(0, item.tKeyRequired)
+      const enterCampaignHash = await contract.enterCampaign(factoryAddr, item.id, ids)
       
-      // if (enterCampaignHash.error) {
-      //   dispatch($raffle.set.loading(false))
-      //   return
-      // }
+      if (enterCampaignHash.error) {
+        dispatch($raffle.set.loading(false))
+        return
+      }
+
+      fetchReward()
 
       // setTimeout(async () => {
       //   const result = await $raffle.api.reward(enterCampaignHash.trim())
       //   const parsedRes = JSON.parse(result.data)
-      //   console.log('parsedRes[enterCampaignHash]?.expectedRewardAmount', parsedRes[enterCampaignHash]?.expectedRewardAmount);
-      //   console.log('parsedRes[enterCampaignHash]', parsedRes[enterCampaignHash]);
-      //   console.log('parsedRes', parsedRes);
-      //   console.log('enterCampaignHash', enterCampaignHash);
+      //   if (! parsedRes[enterCampaignHash]?.expectedRewardAmount) {
+
+      //   }
       //   setExpectedReward(parsedRes[enterCampaignHash]?.expectedRewardAmount)
+      //   console.log('parsedRes', parsedRes);
+      //   console.log('expectedRewardAmount', parsedRes[enterCampaignHash]?.expectedRewardAmount);
 
       //   const nfts = await alchemy.getNftsForOwnerCollection(wallet, contractAddr)
       //   dispatch($raffle.set.tokenIds(nfts.map(item => item.id)))
@@ -142,7 +151,7 @@ const RaffleModalParticipate = ({item}) => {
       //   dispatch($raffle.set.loading(false))
       // }, 5000)      
 
-      // return
+      return
     }
 
     if (step === 2) {
@@ -162,6 +171,32 @@ const RaffleModalParticipate = ({item}) => {
     dispatch($raffle.set.loading(false))
   }
 
+  const fetchReward = async () => {
+    const result = await $raffle.api.reward(enterCampaignHash.trim());
+    const parsedRes = JSON.parse(result.data);
+
+    if (!parsedRes[enterCampaignHash]?.expectedRewardAmount) {
+        setTimeout(fetchAndCheckData, 2000);
+    } else {
+        // Data received, process it
+        setExpectedReward(parsedRes[enterCampaignHash]?.expectedRewardAmount);
+        console.log('parsedRes', parsedRes);
+        console.log('expectedRewardAmount', parsedRes[enterCampaignHash]?.expectedRewardAmount);
+
+        const nfts = await alchemy.getNftsForOwnerCollection(wallet, contractAddr);
+        dispatch($raffle.set.tokenIds(nfts.map(item => item.id)));
+
+        setStep(step >= 3 ? 0 : step + 1);
+        dispatch($modal.set.update({
+            header: {
+                title: 'Unlock Case',
+            },
+        }));
+
+        dispatch($raffle.set.loading(false));
+    }
+  }
+
   return (
     ! showClaim
       ? <>
@@ -174,7 +209,7 @@ const RaffleModalParticipate = ({item}) => {
 
               {item.status != 'closed' ? (
                 <App.Flex row center gap={4} className={styles.tkeyBadge}>
-                  <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
+                  <Image src='/images/raffle/tkey-small.png' width={12} height={17} alt="" />
                   <App.Text size={[12, 10]} weight={400} height={1}>{item.tKeyRequired} TKeys required to participate</App.Text>
                 </App.Flex>
               ) : null}
@@ -194,13 +229,13 @@ const RaffleModalParticipate = ({item}) => {
 
           <App.Flex column gap={32} align="center" justify="space-between" className={styles.content}>
             <App.Flex className={styles.titleBlock}>
-              <Image src="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/lootbox_red.png" width={49} height={45} alt="" />
+              <Image src={item.image} width={49} height={45} alt="" />
               <App.Text center size={14} weight={400}>Rewards that might be in this case</App.Text>
             </App.Flex>
 
             <App.Flex gap={16} className={styles.rewardsContainer}>
               {
-                item.rewardRange.map((reward, index) => {
+                rewards.sort((a, b) => parseInt(a.range) - parseInt(b.range)).map((reward, index) => {
                   const currentReward = item.odds.find(odd => odd.range === reward.range*1)
                   if (!currentReward) {
                     return
@@ -244,7 +279,7 @@ const RaffleModalParticipate = ({item}) => {
               : null
           }          
           
-          <App.Flex column gap={32} align="center" justify={step === 2 ? 'center' : 'space-between'} className={styles.content} sx={{padding: step === 2 ? 0 : 32, height: 575}}>
+          <App.Flex column gap={32} align="center" justify={step === 2 ? 'center' : 'space-between'} className={styles.content} sx={{padding: step === 2 ? 0 : 32, height: 600}}>
             {
               (currentStep => {
                 switch (currentStep) {
@@ -261,7 +296,7 @@ const RaffleModalParticipate = ({item}) => {
                       <ThirdStep campaign={{...item, expectedReward}} onSubmit={handleClickNextStep} />
                     )
                   default:
-                    return <FourthStep campaign={{...item, expectedReward: '5000000'}} onSubmit={handleClickNextStep} />
+                    return <FourthStep campaign={{...item, expectedReward}} onSubmit={handleClickNextStep} />
                 }
               })(step)
             }

@@ -900,6 +900,210 @@ const AppIcon = ({ icon, width, height, color, opacity, ...props }) => {
         </svg>
       )
     }
+    
+    if (icon === 'logo-tiger-head') {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={width ??36}
+          height={height ?? 36}
+          fill="none"
+          {...props}
+        >
+          <path
+            fill="#fff"
+            d="m32.92 5.036-.047 2.733 2.056 2.748L36 4.353l-3.923-2.687-4.932 2.676-9.138-2.783V0L8.86 4.342 3.926 1.666 0 4.363l1.07 6.154 2.06-2.758-.05-2.734 3.587 2.04L.34 14.99v11.506l5.786 6.937h4.387v-2.392H7.356l-4.622-5.53v-7.667l4.815-5.983-2.416 6.72v5.936l2.395 2.847v-3.8l2.855-2.73 1.556.405-2.013 3.652v3.538l2.991 1.206 3.887-1.883v-2.288l-3.366-2.63.75-1 3.82 1 3.804-1 .753 1-3.366 2.63v2.306l3.884 1.883 2.994-1.207v-3.555l-2.002-3.652 1.549-.402 2.856 2.73v3.812l2.398-2.848v-5.95l-2.424-6.72 4.812 5.983v7.666l-4.619 5.53h-3.144v2.393h4.372l5.79-6.937V14.991l-6.332-7.916 3.587-2.039ZM13.906 16.471 8.984 15.7v-2.377h4.922v3.15Zm4.101-9.35L9.71 9.18l8.298-5.157 8.288 5.157-8.288-2.057Zm9.02 8.578-4.93.772v-3.15h4.923l.007 2.378Z"
+          />
+          <path
+            fill="#fff"
+            d="M13.906 13.32v-2.316l-6.357.858-1.624 4.509 7.981 1.69v-1.59l-4.922-.773v-2.377h4.922ZM6.668 7.077 8.86 4.34 3.927 1.664.019 4.362l1.052 6.164 2.06-2.758-.05-2.734 3.587 2.043ZM29.337 7.077 27.145 4.34l4.933-2.676 3.905 2.698-1.05 6.164-2.06-2.758.047-2.734-3.583 2.043ZM23.082 32.01 18 30.58l-5.083 1.43v2.189l5.083 1.8 5.082-1.8v-2.19Z"
+          />
+        </svg>
+      )
+    }
+    
+    if (icon === 'menuExchange') {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={width ?? 32}
+          height={height ?? 32}
+          fill="none"
+          {...props}
+        >
+          <rect
+            width={30.003}
+            height={30.003}
+            x={1}
+            y={1.053}
+            fill="url(#a)"
+            fillOpacity={0.24}
+            rx={4}
+          />
+          <path
+            stroke="#fff"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M6.858 1.054H5.001a4 4 0 0 0-4 4v22.003a4 4 0 0 0 4 4h22.002a4 4 0 0 0 4-4V5.054a4 4 0 0 0-4-4h-2.17"
+          />
+          <path stroke="#fff" strokeLinecap="round" d="M10.307.945H21.12" />
+          <path
+            stroke="#fff"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeMiterlimit={10}
+            strokeWidth={1.5}
+            d="M6.002 6.002v17c0 1.66 1.34 3 3 3h17"
+          />
+          <path
+            stroke="#fff"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeMiterlimit={10}
+            strokeWidth={1.5}
+            d="m9.002 21.002 4.59-5.36c.76-.88 2.11-.94 2.93-.11l.95.95c.82.82 2.17.77 2.93-.11l4.6-5.37"
+          />
+          <defs>
+            <linearGradient
+              id="a"
+              x1={16.002}
+              x2={16.002}
+              y1={1.053}
+              y2={31.057}
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#fff" stopOpacity={0} />
+              <stop offset={1} stopColor="#fff" />
+            </linearGradient>
+          </defs>
+        </svg>
+      )
+    }
+    
+    if (icon === 'menuEarn') {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={width ?? 32}
+          height={height ?? 32}
+          fill="none"
+          {...props}
+        >
+          <g clipPath="url(#a)">
+            <rect
+              width={30.003}
+              height={30.003}
+              x={1}
+              y={1.057}
+              fill="url(#b)"
+              fillOpacity={0.24}
+              rx={4}
+            />
+            <path
+              stroke="#fff"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6.858 1.058H5.001a4 4 0 0 0-4 4v22.003a4 4 0 0 0 4 4h22.002a4 4 0 0 0 4-4V5.058a4 4 0 0 0-4-4h-2.17"
+            />
+            <path stroke="#fff" strokeLinecap="round" d="M10.307.949H21.12" />
+            <path
+              stroke="#fff"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M22.502 16.655v3.7c0 3.12-2.91 5.65-6.5 5.65s-6.5-2.53-6.5-5.65v-3.7c0 3.12 2.91 5.35 6.5 5.35s6.5-2.23 6.5-5.35Z"
+            />
+            <path
+              stroke="#fff"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M22.502 11.656c0 .91-.25 1.75-.69 2.47-1.07 1.76-3.27 2.88-5.81 2.88-2.54 0-4.74-1.12-5.81-2.88-.44-.72-.69-1.56-.69-2.47 0-1.56.73-2.97 1.9-3.99 1.18-1.03 2.8-1.66 4.6-1.66 1.8 0 3.42.63 4.6 1.65 1.17 1.03 1.9 2.44 1.9 4Z"
+            />
+            <path
+              stroke="#fff"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M22.502 11.656v5c0 3.12-2.91 5.35-6.5 5.35s-6.5-2.23-6.5-5.35v-5c0-3.12 2.91-5.65 6.5-5.65 1.8 0 3.42.63 4.6 1.65 1.17 1.03 1.9 2.44 1.9 4Z"
+            />
+          </g>
+          <defs>
+            <linearGradient
+              id="b"
+              x1={16.002}
+              x2={16.002}
+              y1={1.057}
+              y2={31.061}
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#fff" stopOpacity={0} />
+              <stop offset={1} stopColor="#fff" />
+            </linearGradient>
+            <clipPath id="a">
+              <path fill="#fff" d="M0 .004h32.004v32.004H0z" />
+            </clipPath>
+          </defs>
+        </svg>
+      )
+    }
+    
+    if (icon === 'menuSupport') {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={width ?? 32}
+          height={height ?? 33}
+          fill="none"
+          {...props}
+        >
+          <g clipPath="url(#a)">
+            <rect
+              width={30.003}
+              height={30.003}
+              x={1}
+              y={1.072}
+              fill="url(#b)"
+              fillOpacity={0.24}
+              rx={4}
+            />
+            <path
+              stroke="#fff"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6.858 1.072H5.001a4 4 0 0 0-4 4v22.003a4 4 0 0 0 4 4h22.002a4 4 0 0 0 4-4V5.073a4 4 0 0 0-4-4h-2.17"
+            />
+            <path stroke="#fff" strokeLinecap="round" d="M10.307.964H21.12" />
+            <path
+              stroke="#fff"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeMiterlimit={10}
+              d="M20.169 21.378h-3.334l-3.708 2.467a.83.83 0 0 1-1.292-.692v-1.775c-2.5 0-4.167-1.666-4.167-4.166v-5c0-2.5 1.667-4.167 4.167-4.167h8.334c2.5 0 4.166 1.667 4.166 4.167v5c0 2.5-1.666 4.166-4.166 4.166Z"
+            />
+            <path
+              stroke="#fff"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M16.002 15.487v-.175c0-.567.35-.867.7-1.109.342-.233.683-.533.683-1.083a1.38 1.38 0 0 0-1.383-1.383 1.38 1.38 0 0 0-1.383 1.383M15.998 17.478h.008"
+            />
+          </g>
+          <defs>
+            <linearGradient
+              id="b"
+              x1={16.002}
+              x2={16.002}
+              y1={1.072}
+              y2={31.075}
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#fff" stopOpacity={0} />
+              <stop offset={1} stopColor="#fff" />
+            </linearGradient>
+            <clipPath id="a">
+              <path fill="#fff" d="M0 .018h32.004v32.004H0z" />
+            </clipPath>
+          </defs>
+        </svg>
+      )
+    }
   }
 
   return getIcon()

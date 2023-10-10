@@ -26,7 +26,7 @@ const FourthStep = ({campaign, onSubmit}) => {
     const currentPrize = campaign.rewardRange.find(item => item.reward === campaign.expectedReward)
     console.log('currentPrize', currentPrize);
     const currentOdds = campaign.odds.find(item => item.range === currentPrize.range*1)
-    setPrize({amount: currentPrize.reward / 1000000, title: currentOdds.title})
+    setPrize({amount: currentPrize.reward / 1000000, title: currentOdds?.title})
 
     anim.onComplete = () => {
       setShowConfetti(false)
@@ -47,8 +47,6 @@ const FourthStep = ({campaign, onSubmit}) => {
     onSubmit()
   }
 
-  console.log('campaign', campaign);
-
   return (
     <>
       <audio ref={audioRef} src='/audio/roulette_win_original.wav'></audio>
@@ -60,7 +58,7 @@ const FourthStep = ({campaign, onSubmit}) => {
       }
 
       <App.Flex className={styles.titleBlock}>
-        <Image src="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/lootbox_red.png" width={49} height={45} alt="" />
+        <Image src={campaign.image} width={49} height={45} alt="" />
         <App.Text center size={14} weight={400}>Rewards that might be in this case</App.Text>
       </App.Flex>
       

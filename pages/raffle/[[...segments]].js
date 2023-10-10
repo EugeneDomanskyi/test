@@ -218,7 +218,7 @@ const RafflePage = () => {
 
   return (
     <App.Flex column className={styles.container}>
-      <Raffle.Header />
+      {/* <Raffle.Header /> */}
       <Raffle.Top loading={campaignLoading} />
       <Raffle.Banner />
       <Raffle.List loading={campaignLoading} onUpdateUser={handleUpdateUser} />

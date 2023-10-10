@@ -47,7 +47,7 @@ const TEST_NETWORKS = [
         apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
         coingecko: '',
         platform: '',
-        pages: ['tokens'],
+        pages: ['tokens', 'raffle'],
         usdtContract: '0xA02f6adc7926efeBBd59Fd43A84f4E0c0c91e832',
         wrapped: {
             contract: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
@@ -226,7 +226,7 @@ export const CHAINS = [
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'matic-network',
     platform: 'polygon-pos',
-    pages: ['nfts', 'tokens'],
+    pages: ['nfts', 'tokens', 'raffle'],
     gasLimit: 250000,
     usdtContract: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
     wrapped: {

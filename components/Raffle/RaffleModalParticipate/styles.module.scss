@@ -63,20 +63,16 @@
   height: 24.5px;
 }
 
-// .content {
-//   background-color: #08051C;
-//   position: relative;
-//   z-index: 0;
-//   height: 575px;
-//   justify-content: center;
-// }
-
 .content {
   padding: 32px;
   background-color: #08051C;
   position: relative;
   z-index: 0;
   height: 100%;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
 
   .titleBlock {
     max-width: 340px;

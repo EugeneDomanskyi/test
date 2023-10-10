@@ -52,7 +52,7 @@ const RaffleRoulette = ({autoStart = false, onPrizeDefined, campaign}) => {
   
   const reproducedPrizeList = [
     ...prizes,
-    ...reproductionArray(prizes, prizes.length * 50),
+    ...reproductionArray(prizes, prizes.length * 30),
     ...prizes,
     ...reproductionArray(prizes, prizes.length),
   ]
@@ -65,8 +65,8 @@ const RaffleRoulette = ({autoStart = false, onPrizeDefined, campaign}) => {
     id: typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : generateId(),
   }))
 
-  // let prizeIndex = getRandomWinnerIndex(prizeList)
-  let prizeIndex = 25
+  let prizeIndex = getRandomWinnerIndex(prizeList)
+  // let prizeIndex = 25
 
   const prizeItem = (item) => {
     return (      

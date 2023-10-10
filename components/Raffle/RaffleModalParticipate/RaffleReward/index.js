@@ -7,7 +7,7 @@ import styles from './styles.module.scss'
 
 const RaffleReward = ({title, amount, additionalText, size = 'normal', ...props}) => {
   return (
-    <App.Flex column className={cn(styles.rewardBlock, {[styles.large]: size === 'large'})} gap={8} {...props}>
+    <App.Flex column className={cn(styles.rewardBlock, {[styles.large]: size === 'large'})} {...props}>
       <App.Flex gap={4}>
         <Image src="/images/raffle/icon-crown.png" width={18} height={17} alt="" />
         <App.Text className={styles.title}>{ title }</App.Text>

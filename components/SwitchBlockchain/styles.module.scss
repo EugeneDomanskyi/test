@@ -10,6 +10,12 @@
     border: 0.5px solid #7204FF;
     background: rgba(114, 4, 255, 0.32);
   }
+
+  .badgeTitle {
+    @media (max-width: 1100px) {
+      display: none;
+    }
+  }
 }
 
 .menu {
