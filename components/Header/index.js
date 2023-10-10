@@ -34,10 +34,14 @@ const Header = () => {
   const [moreIsOpen, setMoreIsOpen] = useState(false)
   const [currentBalance, setCurrentBalance] = useState({amount: 0, symbol: ''})
   const [balanceLoading, setBalanceLoading] = useState(true)
-  const [tKeyBalance, setTKeyBalance] = useState(0)
 
   useEffect(() => {
-    handleGetBalance()
+    if (wallet) {
+      handleGetBalance()
+    }
+  }, [wallet])
+
+  useEffect(() => {
     document.addEventListener('click', handleClickOutside, false)
 
     return () => {
@@ -177,7 +181,11 @@ const Header = () => {
               : null
           }
           {/* {!isMobile ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : null} */}
-          <SwitchBlockchain onChangeNetwork={handleGetBalance} />
+          {
+            ! isRaffle
+              ? <SwitchBlockchain onChangeNetwork={handleGetBalance} />
+              : null
+          }
           
           {wallet ? (
             <App.Flex sx={{ position: 'relative' }} id="wallet">
