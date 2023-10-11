@@ -152,11 +152,6 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
     //   takerTokenDecimals: takerAsset.decimals.toString(),
     // }
 
-    // const query = queryBuilder(params)
-    // console.log(`https://us-central1-vibrant-waters-399406.cloudfunctions.net/matcher${query}`)
-    
-    // const json = await res.json()
-    // console.log(temp)
     const res = await Order.TOKEN.getOpenWithPriceLimitation({
       chainId: blockchain.id,
       makerAsset: makerAsset,
@@ -195,7 +190,7 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
       if (flowSteps.fill_order) {
         setSignSteps(state => state.map(step => ({...step, current: step.key === 'fill_order'})))
         const fillOrderResult = await Order.TOKEN.fulfill({
-          address: side === 'buy' ? makerAsset.address : takerAsset.address, //current.address,
+          // address: side === 'buy' ? makerAsset.address : takerAsset.address, //current.address,
           amount: amountFillOrder,
           price: price,
           side: side,

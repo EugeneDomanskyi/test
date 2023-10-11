@@ -421,10 +421,10 @@ class TOKEN extends Order {
       // const network = CHAINS.find(chain => chain.id === chainId)
       let sellAsset = takerAsset
       let buyAsset = makerAsset
-      if (side === 'sell') {
-        sellAsset = makerAsset
-        buyAsset = takerAsset
-      }
+      // if (side === 'sell') {
+      //   sellAsset = makerAsset
+      //   buyAsset = takerAsset
+      // }
       const { orders, willSpendAmount, willSpendAmountValue } = await TOKEN.getOpenWithPriceLimitation({
         chainId: chainId,
         takerAsset: sellAsset,
