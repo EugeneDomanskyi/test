@@ -166,9 +166,8 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
       <App.Flex column flex={1} sx={{overflow: 'auto'}}>
         {
           orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map((order) => {
-            console.log(order.status)
             return (
-              <App.Flex key={order.id} column sx={{position: 'relative'}} className={styles.orderContainer}>
+              <App.Flex key={order.id} column className={styles.orderContainer}>
                 <App.Flex align="center" className={cn(styles.order, {[styles.disabled]: order.status === 'completed' || order.status === 'cancelled'})} onClick={handleClick(order)}>
                   <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
                   <App.Flex column align="center" justify="center" sx={{width: 60}}>

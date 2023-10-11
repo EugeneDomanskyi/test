@@ -33,6 +33,13 @@ const checkPrice = (price, tab, marketPrice) => {
   }
 }
 
+const getDecimalsCount = string => {
+  const [_, decimals] = string.toString().split('.')
+  return decimals ? decimals.length : 0
+}
+
+const MAX_DECIMALS = 5
+
 const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
   const dispatch = useDispatch()
   const { wallet, changeNetwork, getBalance } = useWalletConnect()
@@ -48,6 +55,13 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
   const isDisabled = !(form.amount*1) || !(form.price*1) || !(form.total*1)
 
   const loadingRef = useRef(false)
+
+  const countOfDecimals = {
+    price: getDecimalsCount(form.price),
+    amount: getDecimalsCount(form.amount),
+  }
+
+  // console.log(countOfDecimals)
 
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
@@ -99,9 +113,10 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
     if (!decimalRegExp.test(value) && value) {
       return
     }
-    value = value.indexOf('.')+1 ? value.substring(0, value.indexOf('.') + 6) : value
+    
     switch (field) {
       case 'price':
+        value = value.indexOf('.')+1 ? value.substring(0, value.indexOf('.') + (MAX_DECIMALS + 1 - countOfDecimals.amount)) : value
         setForm(state => ({
           ...state,
           price: value,
@@ -109,7 +124,7 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
         }))
         return
       case 'amount':
-
+        value = value.indexOf('.')+1 ? value.substring(0, value.indexOf('.') + (MAX_DECIMALS + 1 - countOfDecimals.price)) : value
         setForm(state => {
           return {
             ...state,
@@ -120,6 +135,7 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
         return
       case 'total':
         setForm(state => {
+          value = value.indexOf('.')+1 ? value.substring(0, value.indexOf('.') + (MAX_DECIMALS + 1)) : value
           const amount = Math.floor(value/state.price)
           return {
             ...state,

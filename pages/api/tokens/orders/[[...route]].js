@@ -1,6 +1,8 @@
 import { formatUnits } from 'viem'
 import * as math from 'mathjs'
 import { CHAINS } from '../../../../config'
+import { gql } from '@apollo/client'
+import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 const INCH_URL = 'https://limit-orders.1inch.io/v3.0'
 
@@ -61,6 +63,80 @@ const handler = async (req, res) => {
     fetch(`${INCH_URL}/${chainId}/address/${walletAddress}${query}`, options)
   ])
 
+  const network = CHAINS.find(chain => chain.id.toString() === chainId)
+
+  // let transactions = {
+  //   buy: [],
+  //   sell: [],
+  // }
+
+  // if (network.tegroSubgraphUrl) {
+  //   const apolloClient = new ApolloClient({
+  //     uri: network.tegroSubgraphUrl,
+  //     cache: new InMemoryCache(),
+  //     connectToDevTools: true,
+  //   })
+  
+  //   const apolloQuery = {
+  //     buy: gql`
+  //       {
+  //         tradeSuccessfuls(
+  //           where: {
+  //             and: [
+  //               {taker: "0xe12a7327e660d1f05192eeae4e36f7b5dbbf7251", makerAsset: "0x2791bca1f2de4661ed88a30c99a7a9449aa84174"}
+  //             ]
+  //           }
+  //           first: 1
+  //           orderBy: blockTimestamp
+  //           orderDirection: desc
+  //         ) {
+  //           id
+  //           maker
+  //           taker
+  //           makerAsset
+  //           makerAmount
+  //           takerAmount
+  //           takerAsset
+  //           blockTimestamp
+  //         }
+  //       }
+  //     `,
+  //     sell: gql`
+  //       {
+  //         tradeSuccessfuls(
+  //           where: {
+  //             and: [
+  //               {taker: "0xe12a7327e660d1f05192eeae4e36f7b5dbbf7251", takerAsset: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F"}
+  //             ]
+  //           }
+  //           orderBy: blockTimestamp
+  //           orderDirection: desc
+  //           first: 1
+  //         ) {
+  //           id
+  //           maker
+  //           taker
+  //           makerAsset
+  //           makerAmount
+  //           takerAmount
+  //           takerAsset
+  //           blockTimestamp
+  //         }
+  //       }
+  //     `
+  //   }
+  //   const [buy, sell] = await Promise.all([
+  //     apolloClient.query({query: apolloQuery.buy}),
+  //     apolloClient.query({query: apolloQuery.sell}),
+  //   ])
+  //   transactions = {
+  //     buy: buy.data.tradeSuccessfuls,
+  //     sell: sell.data.tradeSuccessfuls,
+  //   }
+
+  //   console.log('transactions', transactions)
+  // }
+
   if (assetsResponse.ok && ordersResponse.ok) {
     const assets = await assetsResponse.json()
     const orders = await ordersResponse.json()
@@ -69,15 +145,9 @@ const handler = async (req, res) => {
       [item.address?.toLowerCase()]: item
     }), {})
     // console.log('filtered -> ', orders.filter(order => tokenAssets[order.data.makerAsset.toLowerCase()] && tokenAssets[order.data.takerAsset.toLowerCase()]).length)
-    const network = CHAINS.find(chain => chain.id.toString() === chainId)
+    // const network = CHAINS.find(chain => chain.id.toString() === chainId)
     const list = orders
       .filter(order => {
-        if (!tokenAssets[order.data.makerAsset.toLowerCase()]) {
-          console.log(order.data.makerAsset.toLowerCase())
-        }
-        if (!tokenAssets[order.data.takerAsset.toLowerCase()]) {
-          console.log(order.data.takerAsset.toLowerCase())
-        }
         return tokenAssets[order.data.makerAsset.toLowerCase()] && tokenAssets[order.data.takerAsset.toLowerCase()]
       })
       .map(order => formatter(order, tokenAssets[order.data.makerAsset.toLowerCase()], tokenAssets[order.data.takerAsset.toLowerCase()], network))
