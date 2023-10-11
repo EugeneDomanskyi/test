@@ -491,14 +491,15 @@ class TOKEN extends Order {
           abi: TEGRO_ABI,
           functionName: 'fillMultipleOrders',
           args: [list, math.chain(willSpendAmountValue).multiply(side === 'buy' ? 1.00001 : 1).round().done()],
-        }, (eventName) => {
+        }, (eventName, eventData) => {
           if (eventName === 'waiting') {
-            callback('transaction_completed', {success: true})
+            callback('transaction_completed', {success: true, data: eventData})
           }
         })
 
         if (result.success) {
           // resolve(result)
+          // callback('tran')
           return
         }
         reject({success: false, message: result.error?.shortMessage, type: result.error?.cause?.name})

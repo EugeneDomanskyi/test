@@ -144,8 +144,6 @@ const handler = async (req, res) => {
       ...acc,
       [item.address?.toLowerCase()]: item
     }), {})
-    // console.log('filtered -> ', orders.filter(order => tokenAssets[order.data.makerAsset.toLowerCase()] && tokenAssets[order.data.takerAsset.toLowerCase()]).length)
-    // const network = CHAINS.find(chain => chain.id.toString() === chainId)
     const list = orders
       .filter(order => {
         return tokenAssets[order.data.makerAsset.toLowerCase()] && tokenAssets[order.data.takerAsset.toLowerCase()]
