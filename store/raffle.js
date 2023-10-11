@@ -163,6 +163,7 @@ const get = {
         if (a.user && !b.user) return -1
         if (!a.user && b.user) return 1
         if (a.user && b.user) return statusOrder[a.status] - statusOrder[b.status]
+        if (!a.user && !b.user) return statusOrder[a.status] - statusOrder[b.status]
       }
 
       return sortDirection == 'asc' ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]

@@ -9,6 +9,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import Contracts from '@/libs/contracts.lib'
 import AlchemyLibrary from '@/libs/alchemy.lib'
 
+import $app from '@/store/app'
 import $raffle from '@/store/raffle'
 
 import App from '@/components/App'
@@ -31,6 +32,8 @@ const RafflePage = () => {
   const { wallet, changeNetwork } = useWalletConnect()
 
   const dispatch = useDispatch()
+  const blockchain = useSelector($app.get.blockchain)
+  const pageBlockchains = useSelector($app.get.pageBlockchains('raffle'))
 
   const [campaignLoading, setCampaignLoading] = useState(true)
 
@@ -70,6 +73,14 @@ const RafflePage = () => {
       setCampaignLoading(false)
     })()
   }, [])
+
+  useEffect(() => {
+    if (blockchain.code) {
+      if ( ! pageBlockchains.map(item => item.code).includes(blockchain.code)) {
+        dispatch($app.set.code(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'))
+      }
+    }
+  }, [blockchain.code])
 
   useEffect(() => {
     if (wallet && ! campaignLoading) {

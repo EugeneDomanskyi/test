@@ -167,19 +167,19 @@ const Header = () => {
         <App.Flex row align="center" className={styles.navbarRightWrapper}>
           {
             ! isMobile
-              ? <App.Flex className={styles.linkWrapper}>
-                  <App.Flex className={styles.linkButton}>
-                    <App.Icon icon="question" />
+              ?
+                <a href="https://discord.com/channels/951018857533935627/1107789606612631602/1135635808087462009" target="_blank" rel="noreferrer"> 
+                  <App.Flex className={styles.linkWrapper}>
+                    <App.Flex className={styles.linkButton}>
+                      <App.Icon icon="question" />
+                    </App.Flex>
                   </App.Flex>
-                </App.Flex>
+                </a>
               : null
           }
           {/* {!isMobile ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : null} */}
-          {
-            ! isEarn
-              ? <SwitchBlockchain onChangeNetwork={handleGetBalance} />
-              : null
-          }
+
+          <SwitchBlockchain onChangeNetwork={handleGetBalance} />
           
           {wallet ? (
             <App.Flex sx={{ position: 'relative' }} id="wallet">
@@ -272,7 +272,7 @@ const Header = () => {
                 </App.Flex>
               </Link>
 
-              <a href="https://classic.tegro.com" target="_blank" rel="noreferrer">
+              <a href="https://classic.tegro.com" target="_blank" rel="noreferrer" className={styles.link}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   <App.Icon icon="menuClassic" />
                   <App.Text size={14} weight={700}>Classic Tegro Withdraw</App.Text>
@@ -283,35 +283,35 @@ const Header = () => {
                 <App.Text size={14} weight={700}>RESOURCES</App.Text>
               </App.Flex>
 
-              <a href="javascript:;" target="_blank" rel="noreferrer">
+              <a href="https://discord.com/channels/951018857533935627/1107789606612631602/1135635808087462009" target="_blank" rel="noreferrer" className={styles.link}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   <App.Icon icon="menuSupport" />
                   <App.Text size={14} weight={700}>Support</App.Text>
                 </App.Flex>
               </a>
 
-              <a href="https://blog.tegro.com" target="_blank" rel="noreferrer">
+              <a href="https://blog.tegro.com" target="_blank" rel="noreferrer" className={styles.link}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   <App.Icon icon="menuBlog" />
                   <App.Text size={14} weight={700}>Blog</App.Text>
                 </App.Flex>
               </a>
 
-              <a href="https://x-by-tegro.gitbook.io/x-by-tegro/" target="_blank" rel="noreferrer">
+              <a href="https://x-by-tegro.gitbook.io/x-by-tegro/" target="_blank" rel="noreferrer" className={styles.link}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   <App.Icon icon="menuGitbook" />
                   <App.Text size={14} weight={700}>Gitbook</App.Text>
                 </App.Flex>
               </a>
 
-              <a href="https://press.tegro.com/" target="_blank" rel="noreferrer">
+              <a href="https://press.tegro.com/" target="_blank" rel="noreferrer" className={styles.link}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   <App.Icon icon="menuPress" />
                   <App.Text size={14} weight={700}>Press</App.Text>
                 </App.Flex>
               </a>
 
-              <a href="mailto:partnerships@tegro.com">
+              <a href="mailto:partnerships@tegro.com" className={styles.link}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   <App.Icon icon="menuContact" />
                   <App.Text size={14} weight={700}>Contact</App.Text>
