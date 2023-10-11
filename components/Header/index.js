@@ -39,7 +39,7 @@ const Header = () => {
     if (wallet) {
       handleGetBalance()
     }
-  }, [wallet])
+  }, [wallet, isEarn])
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, false)
