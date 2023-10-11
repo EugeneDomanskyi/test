@@ -1,8 +1,8 @@
 import { formatUnits } from 'viem'
 import * as math from 'mathjs'
 import { CHAINS } from '../../../../config'
-import { gql } from '@apollo/client'
-import { ApolloClient, InMemoryCache } from '@apollo/client'
+// import { gql } from '@apollo/client'
+// import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 const INCH_URL = 'https://limit-orders.1inch.io/v3.0'
 
@@ -52,18 +52,47 @@ const formatter = (order, makerAsset, takerAsset, network) => {
   return order
 }
 
+let tokenAssets = {}
+
 const handler = async (req, res) => {
   const [chainId, walletAddress] = req.query.route
   const query = queryBuilder({
     statuses: '[1,2,3]',
     sortBy: 'createDateTime'
   })
-  const [assetsResponse, ordersResponse] = await Promise.all([
-    fetch('https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/assets.json'),
-    fetch(`${INCH_URL}/${chainId}/address/${walletAddress}${query}`, options)
-  ])
-
   const network = CHAINS.find(chain => chain.id.toString() === chainId)
+
+  if (!Object.keys(tokenAssets).length) {
+    console.log('fetch assets')
+    const assetsResponse = await fetch('https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/assets.json')
+    if (assetsResponse.ok) {
+      const assets = await assetsResponse.json()
+      tokenAssets = assets.reduce((acc, item) => ({
+        ...acc,
+        [item.address?.toLowerCase()]: item
+      }), {})
+    } else {
+      res.status(400).json([])
+      return
+    }
+  }
+  const ordersResponse = await fetch(`${INCH_URL}/${chainId}/address/${walletAddress}${query}`, options)
+
+  if (ordersResponse.ok) {
+    const orders = await ordersResponse.json()
+    const list = orders
+      .filter(order => {
+        return tokenAssets[order.data.makerAsset.toLowerCase()] && tokenAssets[order.data.takerAsset.toLowerCase()]
+      })
+      .map(order => formatter(order, tokenAssets[order.data.makerAsset.toLowerCase()], tokenAssets[order.data.takerAsset.toLowerCase()], network))
+
+    res.status(200).json(list)
+    return
+  }
+  res.status(400).json([])
+}
+
+export default handler
 
   // let transactions = {
   //   buy: [],
@@ -136,24 +165,3 @@ const handler = async (req, res) => {
 
   //   console.log('transactions', transactions)
   // }
-
-  if (assetsResponse.ok && ordersResponse.ok) {
-    const assets = await assetsResponse.json()
-    const orders = await ordersResponse.json()
-    const tokenAssets = assets.reduce((acc, item) => ({
-      ...acc,
-      [item.address?.toLowerCase()]: item
-    }), {})
-    const list = orders
-      .filter(order => {
-        return tokenAssets[order.data.makerAsset.toLowerCase()] && tokenAssets[order.data.takerAsset.toLowerCase()]
-      })
-      .map(order => formatter(order, tokenAssets[order.data.makerAsset.toLowerCase()], tokenAssets[order.data.takerAsset.toLowerCase()], network))
-
-    res.status(200).json(list)
-    return
-  }
-  res.status(400).json([])
-}
-
-export default handler
