@@ -79,7 +79,7 @@ const RaffleList = ({ loading, onUpdateUser }) => {
       return
     }
 
-    router.push(`/raffle/${item.id}`, undefined, { scroll: false })
+    router.push(`/earn/${item.id}`, undefined, { scroll: false })
   }
 
   const handleShare = (item) => {

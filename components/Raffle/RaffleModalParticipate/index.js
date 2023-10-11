@@ -31,7 +31,7 @@ const RaffleModalParticipate = ({item}) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const { propValue } = usePropsHelper()
-  const { wallet } = useWalletConnect()
+  const { wallet, changeNetwork } = useWalletConnect()
   
   const contract = new Contracts()
   const alchemy = new AlchemyLibrary(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'MATIC_MUMBAI' : 'MATIC_MAINNET')
@@ -57,7 +57,7 @@ const RaffleModalParticipate = ({item}) => {
 
   useEffect(() => {
     if (!showModal) {
-      router.push('/raffle', undefined, { scroll: false })
+      router.push('/earn', undefined, { scroll: false })
     }
   }, [showModal])
 
@@ -100,10 +100,17 @@ const RaffleModalParticipate = ({item}) => {
 
   const checkIfApproved = async () => {
     const res = await contract.isApprovedForAll(contractAddr, wallet, factoryAddr)
+    return false
     return res
   }
 
   const handleClickNextStep = async () => {
+    const networkCode = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
+    const network = await changeNetwork(networkCode)
+    if ( ! network) {
+      return
+    }
+
     if (step === 0) {
       if (! isApproved) {
         const approveRes = await contract.setApprovalForAll(contractAddr, factoryAddr)
@@ -188,9 +195,10 @@ const RaffleModalParticipate = ({item}) => {
     const parsedRes = JSON.parse(result.data);
 
     if (!parsedRes[enterCampaignHash]?.expectedRewardAmount) {
-        setTimeout(fetchAndCheckData, 2000);
+        setTimeout(() => {
+          fetchReward(enterCampaignHash)
+        }, 2000);
     } else {
-        // Data received, process it
         setExpectedReward(parsedRes[enterCampaignHash]?.expectedRewardAmount);
         console.log('parsedRes', parsedRes);
         console.log('expectedRewardAmount', parsedRes[enterCampaignHash]?.expectedRewardAmount);
@@ -225,8 +233,8 @@ const RaffleModalParticipate = ({item}) => {
 
               {item.status != 'closed' ? (
                 <App.Flex row center gap={4} className={styles.tkeyBadge}>
-                  <Image src='/images/raffle/tkey-small.png' width={12} height={17} alt="" />
-                  <App.Text size={[12, 10]} weight={400} height={1}>{item.tKeyRequired} TKeys required to participate</App.Text>
+                  <Image src='/images/raffle/usdt.png' width={16} height={16} alt="" />
+                  <App.Text size={[12, 10]} weight={400} height={1}>{item.totalTransferred}/{item.rewardAmount} USDT Won</App.Text>
                 </App.Flex>
               ) : null}
             </App.Flex>
@@ -245,8 +253,8 @@ const RaffleModalParticipate = ({item}) => {
 
           <App.Flex column gap={32} align="center" justify="space-between" className={styles.content}>
             <App.Flex className={styles.titleBlock}>
-              <Image src={item.image} width={49} height={45} alt="" />
-              <App.Text center size={14} weight={400}>Rewards that might be in this case</App.Text>
+              <Image src={item.image} width={70} height={64} alt="" />
+              <App.Text center size={14} weight={400}>Possible rewards you can win</App.Text>
             </App.Flex>
 
             <App.Flex gap={16} className={styles.rewardsContainer}>
@@ -260,20 +268,20 @@ const RaffleModalParticipate = ({item}) => {
                   const odds = currentReward.odds
                   const amount = reward.reward / 1000000
                   return (
-                    <RaffleReward key={index} title={title} amount={`${amount}$`} additionalText={`Odds: ${odds}%`} />
+                    <RaffleReward key={index} title={title} amount={`$${amount}`} additionalText={`Odds: ${odds}%`} />
                   )
                 })
               }
             </App.Flex>
 
             <App.Flex column gap={16}>
-              <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles.hiddenOnMobile)}>
+              {/* <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles.hiddenOnMobile)}>
                 <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
                 <App.Text size={12} height={1}>{item.totalTransferred}/{item.rewardAmount} reward distributed</App.Text>
-              </App.Flex>
+              </App.Flex> */}
 
-              <App.Button primary sx={{width: 240, height: 56, fontSize: 16}} onClick={handleClickOpen}>
-                Open Case
+              <App.Button primary sx={{width: 240, height: 56, fontSize: 16, fontWeight: 600}} onClick={handleClickOpen}>
+                Unlock with { item.tKeyRequired } TKeys
               </App.Button>
             </App.Flex>
           </App.Flex>

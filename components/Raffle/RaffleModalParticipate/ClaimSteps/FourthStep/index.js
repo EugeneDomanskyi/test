@@ -58,8 +58,8 @@ const FourthStep = ({campaign, onSubmit}) => {
       }
 
       <App.Flex className={styles.titleBlock}>
-        <Image src={campaign.image} width={49} height={45} alt="" />
-        <App.Text center size={14} weight={400}>Rewards that might be in this case</App.Text>
+        <Image src={campaign.image} width={70} height={64} alt="" />
+        <App.Text center size={14} weight={400}>Reward unlocked successfully!</App.Text>
       </App.Flex>
       
       <App.Flex>
@@ -73,15 +73,20 @@ const FourthStep = ({campaign, onSubmit}) => {
 
       <App.Flex>
         <ClaimText
-          title="Reward will be sent to your wallet within a few mins!"
-          subTitle="Incase you get a reward, it will be sent to your wallet.
-          Check your wallet in 5 minutes."
+          title="Reward will reflect in your wallet within 15 mins!"
+          subTitle=""
         />
       </App.Flex>
 
-      <App.Button primary sx={{width: 240, height: 56, fontSize: 16}} onClick={handleClickNextStep}>
-        Got It
-      </App.Button>
+      <App.Flex gap={16}>
+        <App.Button outlined sx={{width: 107, height: 56, fontSize: 16, borderColor: '#7204FF'}} onClick={() => {}}>
+          Share
+        </App.Button>
+        
+        <App.Button primary sx={{width: 240, height: 56, fontSize: 16}} onClick={handleClickNextStep}>
+          Open Another USDT Case
+        </App.Button>
+      </App.Flex>
     </>
   )
 }
