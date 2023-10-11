@@ -28,7 +28,7 @@ const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 
 const GRID_GAP = 6
 
-const Tokens = () => {
+const Exchange = () => {
   const router = useRouter()
   const [queryBlockchainCode, queryTokenId] = router.query.segments || []
 
@@ -246,4 +246,4 @@ const Tokens = () => {
   )
 }
 
-export default Tokens
+export default Exchange

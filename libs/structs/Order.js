@@ -5,6 +5,7 @@ import { getWalletClient, waitForTransaction, sendTransaction, readContract, wri
 import { LimitOrderProtocolFacade, LimitOrderBuilder } from '@1inch/limit-order-protocol-utils'
 import { toast } from 'react-toastify'
 import * as math from 'mathjs'
+import moment from 'moment'
 
 import { CHAINS, INCH_CONTRACTS, INCH_TOKENS, TEGRO_FILL_ORDERS_CONTRACTS } from '@/config'
 import $orders from '@/store/orders'
@@ -12,11 +13,12 @@ import $nft from '@/store/nft'
 
 //engage dwarf solar solid gesture naive scare accuse pilot scatter chicken ball
 
-const USDT_DECIMALS = 6
 const e = {"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"index","type":"uint256"}],"name":"TradeFailed","type":"event"}
 const TEGRO_ABI = [{"inputs":[{"internalType":"address","name":"_tradingContract","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"index","type":"uint256"}],"name":"OrderFailed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"maker","type":"address"},{"indexed":true,"internalType":"address","name":"taker","type":"address"},{"indexed":false,"internalType":"address","name":"makerAsset","type":"address"},{"indexed":false,"internalType":"address","name":"takerAsset","type":"address"},{"indexed":false,"internalType":"uint256","name":"makerAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"takerAmount","type":"uint256"},{"indexed":false,"internalType":"bytes32","name":"orderHash","type":"bytes32"}],"name":"TradeSuccessful","type":"event"},{"inputs":[{"components":[{"components":[{"internalType":"uint256","name":"salt","type":"uint256"},{"internalType":"address","name":"makerAsset","type":"address"},{"internalType":"address","name":"takerAsset","type":"address"},{"internalType":"address","name":"maker","type":"address"},{"internalType":"address","name":"receiver","type":"address"},{"internalType":"address","name":"allowedSender","type":"address"},{"internalType":"uint256","name":"makingAmount","type":"uint256"},{"internalType":"uint256","name":"takingAmount","type":"uint256"},{"internalType":"uint256","name":"offsets","type":"uint256"},{"internalType":"bytes","name":"interactions","type":"bytes"}],"internalType":"struct ITradingContract.Order","name":"orderDetails","type":"tuple"},{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"bytes","name":"interaction","type":"bytes"},{"internalType":"uint256","name":"makingAmount","type":"uint256"},{"internalType":"uint256","name":"takingAmount","type":"uint256"},{"internalType":"uint256","name":"thresholdAmount","type":"uint256"}],"internalType":"struct MultiOrderRouter.OrderExecution[]","name":"orders","type":"tuple[]"},{"internalType":"uint256","name":"totalTakerAmount","type":"uint256"}],"name":"fillMultipleOrders","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"tradingContract","outputs":[{"internalType":"contract ITradingContract","name":"","type":"address"}],"stateMutability":"view","type":"function"}, e]
-class Order {
 
+const subscribes = {}
+
+class Order {
   static showSuccessMessage = (message) => {
     toast.success(message)
   }
@@ -114,31 +116,39 @@ class Order {
       chainId: chainId,
       args: [walletAddress, spenderContract],
     })
-    
-    const decimals = await Order.getDecimals(tokenAddress, chainId)
-    const allowanceAmount = formatUnits(res, decimals)
-    const isEthereumUsdt = tokenAddress.toLowerCase() === '0xdac17f958d2ee523a2206206994597c13d831ec7'
-    console.log('allowanceAmount -> ', allowanceAmount)
-    if (allowanceAmount*1 < amount*1) {
-      if (isEthereumUsdt) {
-        await Order.writeContract({
+
+    return new Promise(async (resolve, reject) => {
+      const decimals = await Order.getDecimals(tokenAddress, chainId)
+      const allowanceAmount = formatUnits(res, decimals)
+      const isEthereumUsdt = tokenAddress.toLowerCase() === '0xdac17f958d2ee523a2206206994597c13d831ec7'
+      if (allowanceAmount*1 < amount*1) {
+        if (isEthereumUsdt) {
+          await Order.writeContract({
+            address: tokenAddress,
+            abi: [abiApprove],
+            functionName: 'approve',
+            chainId: chainId,
+            args: [spenderContract, parseUnits('0', decimals)],
+          }).catch(error => {
+            reject({success: false, message: error.shortMessage})
+          })
+        }
+        const writeContractResult = await Order.writeContract({
           address: tokenAddress,
           abi: [abiApprove],
           functionName: 'approve',
           chainId: chainId,
-          args: [spenderContract, parseUnits('0', decimals)],
+          args: [spenderContract, parseUnits(Number.MAX_SAFE_INTEGER.toString(), decimals)],
+        }).catch(error => {
+          reject({success: false, message: error.shortMessage, type: 'balance'})
         })
+        if (writeContractResult) {
+          resolve({success: true})
+        }
+        return
       }
-      const writeContractResult = await Order.writeContract({
-        address: tokenAddress,
-        abi: [abiApprove],
-        functionName: 'approve',
-        chainId: chainId,
-        args: [spenderContract, parseUnits(Number.MAX_SAFE_INTEGER.toString(), decimals)],
-      })
-      return writeContractResult
-    }
-    return {success: true}
+      resolve({success: true})
+    })
   }
 }
 
@@ -354,6 +364,7 @@ class TOKEN extends Order {
     this.price = data.price
     this.quantityFilled = data.quantityFilled
     this.status = data.status
+    this.time = moment(data.createDateTime).format('DD MMM, HH:mm')
   }
 
   get itemPrice () {
@@ -393,18 +404,10 @@ class TOKEN extends Order {
         side: side,
         price: price,
       })
-      if (orders && Array.isArray(orders)) {
-        const allowance = await Order.checkAllowance(chainId, TEGRO_FILL_ORDERS_CONTRACTS[chainId], walletClient.account.address, sellAsset, willSpendAmount*1)
-        if (!allowance.success) {
-          reject(allowance.error)
-          return
-        }
-        callback('allowance', {success: true})
-        
+      if (orders && Array.isArray(orders)) {        
         const balance = await Order.getBalance(walletClient.account.address, sellAsset)
         if (willSpendAmount*1 > balance*1) {
-          Order.showErrorMessage('Insufficient balance')
-          reject()
+          reject({success: false, message: 'Insufficient balance', type: 'balance'})
           return 
         }
         
@@ -420,13 +423,39 @@ class TOKEN extends Order {
         })
 
         console.log('params -> ', list, math.chain(willSpendAmountValue).multiply(side === 'buy' ? 1.00001 : 1).round().done())
-        
-        const eventHandler = (eventName, eventData) => {
-          console.log('event -> ', eventName, eventData)
-          callback(`contract_${eventName}`, eventData)
+
+        let haveEvent = false
+
+        if (subscribes.success) {
+          subscribes.success()
         }
 
-        TOKEN.listenContract(['TradeSuccessful', 'TradeFailed'], {address: TEGRO_FILL_ORDERS_CONTRACTS[chainId], abi: TEGRO_ABI}, eventHandler)
+        if (subscribes.failed) {
+          subscribes.failed()
+        }
+
+        subscribes.success = watchContractEvent(
+          {eventName: 'TradeSuccessful', address: TEGRO_FILL_ORDERS_CONTRACTS[chainId], abi: TEGRO_ABI},
+          (event) => {
+            console.log('TradeSuccessful', list.length)
+            callback(`contract_TradeSuccessful`, event)
+            if (!haveEvent) {
+              haveEvent = true
+              resolve({success: true})
+            }
+          }
+        )
+
+        subscribes.failed = watchContractEvent(
+          {eventName: 'TradeFailed', address: TEGRO_FILL_ORDERS_CONTRACTS[chainId], abi: TEGRO_ABI},
+          (event) => {
+            callback(`contract_TradeFailed`, event)
+            if (!haveEvent) {
+              haveEvent = true
+              resolve({success: true})
+            }
+          }
+        )
 
         const result = await Order.writeContract({
           address: TEGRO_FILL_ORDERS_CONTRACTS[chainId],
@@ -435,17 +464,17 @@ class TOKEN extends Order {
           args: [list, math.chain(willSpendAmountValue).multiply(side === 'buy' ? 1.00001 : 1).round().done()],
         }, (eventName) => {
           if (eventName === 'waiting') {
-            callback('transaction', {success: true})
+            callback('transaction_completed', {success: true})
           }
         })
 
         if (result.success) {
+          // resolve(result)
           return
         }
-
-        reject(result.error)
+        reject({success: false, message: result.error?.shortMessage, type: result.error?.cause?.name})
       }
-      reject('There is no order to fulfill')
+      reject({success: false, message: 'There is no order to fulfill'})
     })
   }
 
@@ -458,17 +487,11 @@ class TOKEN extends Order {
       const spendAmount = type === 'buy' ? price*amount : amount*1
       const receiveAmount = type === 'buy' ? amount : price*amount
       
-      const allowance = await Order.checkAllowance(chainId, INCH_CONTRACTS[chainId], walletClient.account.address, makerAsset.address, spendAmount)
-      if (!allowance.success) {
-        reject()
-        return
-      }
-      callback('allowance', {success: true})
       const balance = await Order.getBalance(walletClient.account.address, makerAsset.address)
       
       if (balance < spendAmount) {
-        Order.showErrorMessage('Insufficient balance')
-        reject()
+        // Order.showErrorMessage('Insufficient balance')
+        reject({success: false, message: 'Insufficient balance', type: 'balance'})
         return 
       }
 
@@ -483,14 +506,14 @@ class TOKEN extends Order {
       const limitOrderTypedData = limitOrderBuilder.buildLimitOrderTypedData(limitOrder)
       const limitOrderHash = hashTypedData(limitOrderTypedData)
       const signature = await walletClient.signTypedData(limitOrderTypedData).catch(error => {
-        Order.showErrorMessage(error.shortMessage)
-        reject(error)
+        reject({success: false, message: error.shortMessage, type: error.name})
       })
 
       if (!signature) {
+        // reject()
         return
       }
-      callback('transaction', {success: true})
+      callback('transaction_completed', {success: true})
       const post = {
         orderHash: limitOrderHash,
         signature: signature,
@@ -504,7 +527,7 @@ class TOKEN extends Order {
         resolve(res)
         return
       }
-      reject()
+      reject({success: false})
     })
   }
 

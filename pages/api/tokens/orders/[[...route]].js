@@ -43,9 +43,9 @@ const formatter = (order, makerAsset, takerAsset, network) => {
   const remainingMakingAmount = formatUnits(order.remainingMakerAmount, makerAsset.decimals)
   const remainingTakingAmount = formatUnits(math.chain(order.remainingMakerAmount).multiply(order.data.takingAmount).divide(order.data.makingAmount).round().done(), takerAsset.decimals)
 
-  order.quantity = order.side === 'sell' ? makingAmountFormatted : takingAmountFormatted
-  order.quantityFilled = order.quantity - (order.side === 'sell' ? remainingMakingAmount : remainingTakingAmount)
-  order.price = order.side === 'buy' ? makingAmountFormatted : takingAmountFormatted
+  order.quantity = math.chain(order.side === 'sell' ? makingAmountFormatted : takingAmountFormatted).round(5).done()
+  order.quantityFilled = math.chain(order.quantity - (order.side === 'sell' ? remainingMakingAmount : remainingTakingAmount)).round(5).done()
+  order.price = math.chain(order.side === 'buy' ? makingAmountFormatted : takingAmountFormatted).round(5).done()
   order.status = !order.orderInvalidReason ? 'open' : (order.orderInvalidReason === 'order filled' ? 'completed' : (order.orderInvalidReason === 'order cancelled' ? 'cancelled' : null))
   return order
 }
@@ -68,10 +68,18 @@ const handler = async (req, res) => {
       ...acc,
       [item.address?.toLowerCase()]: item
     }), {})
-
+    // console.log('filtered -> ', orders.filter(order => tokenAssets[order.data.makerAsset.toLowerCase()] && tokenAssets[order.data.takerAsset.toLowerCase()]).length)
     const network = CHAINS.find(chain => chain.id.toString() === chainId)
     const list = orders
-      .filter(order => tokenAssets[order.data.makerAsset.toLowerCase()] && tokenAssets[order.data.takerAsset.toLowerCase()])
+      .filter(order => {
+        if (!tokenAssets[order.data.makerAsset.toLowerCase()]) {
+          console.log(order.data.makerAsset.toLowerCase())
+        }
+        if (!tokenAssets[order.data.takerAsset.toLowerCase()]) {
+          console.log(order.data.takerAsset.toLowerCase())
+        }
+        return tokenAssets[order.data.makerAsset.toLowerCase()] && tokenAssets[order.data.takerAsset.toLowerCase()]
+      })
       .map(order => formatter(order, tokenAssets[order.data.makerAsset.toLowerCase()], tokenAssets[order.data.takerAsset.toLowerCase()], network))
 
     res.status(200).json(list)

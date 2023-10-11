@@ -5,12 +5,11 @@ import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 
-import { putAssetsFile, getAssetsFile } from '@/libs/aws.lib'
+import { putAssetsFile } from '@/libs/aws.lib'
 
 import $app from '@/store/app'
 import $collection from '@/store/collection'
 import $exchange from '@/store/exchange'
-import $orders from '@/store/orders'
 import $token, { template, staticTemplate } from '@/store/token'
 
 const getApolloClient = (chain) => {
@@ -67,6 +66,12 @@ const WrapperTokens = ({ children }) => {
       // setIsList(true)
     })()
   }, [])
+
+  useEffect(() => {
+    if (list.length) {
+      setIsList(true)
+    }
+  }, [list])
 
   useEffect(() => {
     if (router.isReady) {
@@ -181,7 +186,7 @@ const WrapperTokens = ({ children }) => {
       if (! current?.id) {
         console.log('current?.id', current?.id);
         const [first] = tempTokens
-        router.replace(`/tokens/${blockchain.code}/${first.id}`, undefined, { scroll: false })
+        router.replace(`/exchange/${blockchain.code}/${first.id}`, undefined, { scroll: false })
       }
     }
 
@@ -235,7 +240,7 @@ const WrapperTokens = ({ children }) => {
             const [first] = tokens
             id = first.id
           }
-          router.replace(`/tokens/${blockchain.code}/${id}`, undefined, { scroll: false })
+          router.replace(`/exchange/${blockchain.code}/${id}`, undefined, { scroll: false })
           return
         }
 

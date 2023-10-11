@@ -19,15 +19,15 @@ import styles from './styles.module.scss'
 
 const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose, onChangeNetwork }) => {
   const router = useRouter()
-  const isTokens = router.pathname.includes('/tokens')
-  const isRaffle = router.pathname.includes('/raffle')
+  const isExchange = router.pathname.includes('/exchange')
+  const isEarn = router.pathname.includes('/earn')
 
   const { changeNetwork } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
-  const pageBlockchains = useSelector($app.get.pageBlockchains(isTokens ? 'tokens' : (isRaffle ? 'raffle' : 'nfts')))
+  const pageBlockchains = useSelector($app.get.pageBlockchains(isExchange ? 'tokens' : (isEarn ? 'raffle' : 'nfts')))
 
   const [menuShow, setMenuShow] = useState(false)
 

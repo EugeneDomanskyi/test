@@ -1,5 +1,6 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import { setCookie } from 'nookies'
+import { gql } from '@apollo/client'
 import { CHAINS } from '@/config'
 
 export const appSlice = createSlice({
@@ -45,8 +46,19 @@ export const get = {
   }),
 }
 
+const query = {
+  totalVolume: gql`
+    query totalVolume {
+      totalVolume(id: "usdt_volume") {
+        volume
+      }
+    }
+  `,
+}
+
 export default {
   reducer: appSlice.reducer,
   set: appSlice.actions,
+  query,
   get,
 }

@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { useDispatch } from 'react-redux'
 import { loadIntercom } from 'next-intercom'
 import { v4 as uuid } from 'uuid'
 import { useAccount } from 'wagmi'
@@ -9,18 +10,20 @@ import Smartlook from 'smartlook-client'
 
 import { trackEvent } from '@/libs/analytics.lib'
 
+import $token from '@/store/token'
+
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import WrapperTokens from '@/components/Wrapper/WrapperTokens'
 import WrapperCollections from '@/components/Wrapper/WrapperCollections'
 
-const Wrapper = ({ children }) => {
+const Wrapper = ({ children, marketsList = [] }) => {
+  const dispatch = useDispatch()
   const router = useRouter()
   const isNfts = router.asPath?.includes('nfts')
   const isSwap = router.pathname.includes('/swap')
-  const isTokens = router.asPath?.includes('tokens')
-  const isLanding = router.pathname.includes('/landing')
-  const isRaffle = router.pathname.includes('/raffle')
+  const isExchange = router.asPath?.includes('exchange')
+  const isEarn = router.pathname.includes('/earn')
 
   const { address, isConnected } = useAccount()
 
@@ -57,11 +60,17 @@ const Wrapper = ({ children }) => {
     trackEvent('Page Visited')
   }, [])
 
+  useEffect(() => {
+    if (marketsList.length) {
+      dispatch($token.set.list(marketsList))
+    }
+  }, [marketsList])
+
   return (
     <>
       <Header />
 
-      {isTokens ? (
+      {isExchange ? (
         <WrapperTokens>
           {children}
         </WrapperTokens>
@@ -73,12 +82,8 @@ const Wrapper = ({ children }) => {
         </WrapperCollections>
       ) : null}
 
-      {!isNfts && !isSwap && !isTokens ? (
+      {!isNfts && !isSwap && !isExchange ? (
         children
-      ) : null}
-
-      {!isNfts && !isTokens && !isRaffle ? (
-        <Footer />
       ) : null}
     </>
   )

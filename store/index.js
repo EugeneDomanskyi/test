@@ -73,7 +73,7 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
     }
   }
 
-  let base_url = currentChain?.baseApiUrl
+  let base_url = currentChain?.baseApiUrl + '/'
   if (api) {
     switch (api) {
       case 'remote':
