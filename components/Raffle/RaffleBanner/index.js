@@ -52,7 +52,7 @@ const RaffleBanner = () => {
             <App.Flex className={styles.banner1} flex={1}>
               <App.Flex column gap={3}>
                 <App.Text size={24} spacing={.72} height={1} family="ClashDisplay" sx={{ textShadow: '0px 2.85836px 2.85836px 0px rgba(0, 0, 0, 0.25)' }}>1 <App.Text inline size={14} spacing={.48} height={1} family="ClashDisplay">Collect TKeys!</App.Text></App.Text>
-                <App.Text size={12} color="rgba(255, 255, 255, 0.80)" height={1}>Collect TKeys by trading on Tegro</App.Text>
+                <App.Text size={12} color="rgba(255, 255, 255, 0.80)" height={1}>By completing tasks</App.Text>
               </App.Flex>
             </App.Flex>
           </div>
@@ -60,8 +60,8 @@ const RaffleBanner = () => {
           <div>
             <App.Flex className={styles.banner2} flex={1}>
               <App.Flex column gap={3}>
-                <App.Text size={24} spacing={.72} height={1} family="ClashDisplay" sx={{ textShadow: '0px 2.85836px 2.85836px 0px rgba(0, 0, 0, 0.25)' }}>2 <App.Text inline size={14} spacing={.48} height={1} family="ClashDisplay">Pick Your Case</App.Text></App.Text>
-                <App.Text size={12} color="rgba(255, 255, 255, 0.80)" height={1}>Pick a case with different token rewards</App.Text>
+                <App.Text size={24} spacing={.72} height={1} family="ClashDisplay" sx={{ textShadow: '0px 2.85836px 2.85836px 0px rgba(0, 0, 0, 0.25)' }}>2 <App.Text inline size={14} spacing={.48} height={1} family="ClashDisplay">Open Cases</App.Text></App.Text>
+                <App.Text size={12} color="rgba(255, 255, 255, 0.80)" height={1}>Using your TKeys</App.Text>
               </App.Flex>
             </App.Flex>
           </div>
@@ -69,8 +69,8 @@ const RaffleBanner = () => {
           <div>
             <App.Flex className={styles.banner3} flex={1}>
               <App.Flex column gap={3}>
-                <App.Text size={24} spacing={.72} height={1} family="ClashDisplay" sx={{ textShadow: '0px 2.85836px 2.85836px 0px rgba(0, 0, 0, 0.25)' }}>3 <App.Text inline size={14} spacing={.48} height={1} family="ClashDisplay">Profit</App.Text></App.Text>
-                <App.Text size={12} color="rgba(255, 255, 255, 0.80)" height={1}>Open cases and see reward add to your wallet!</App.Text>
+                <App.Text size={24} spacing={.72} height={1} family="ClashDisplay" sx={{ textShadow: '0px 2.85836px 2.85836px 0px rgba(0, 0, 0, 0.25)' }}>3 <App.Text inline size={14} spacing={.48} height={1} family="ClashDisplay">Earn Rewards</App.Text></App.Text>
+                <App.Text size={12} color="rgba(255, 255, 255, 0.80)" height={1}>See your luck in action</App.Text>
               </App.Flex>
             </App.Flex>
           </div>

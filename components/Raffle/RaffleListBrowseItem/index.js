@@ -48,11 +48,11 @@ const RaffleListBrowseItem = ({ item, onParticipate, onShare }) => {
 
       <App.Flex column justify="flex-end" gap={8} height={[74, 'auto']}>
         <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles[item.status])} fullWidth>
-          <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
+          <Image src="/images/raffle/usdt.png" width={16} height={16} alt="" />
           {item.status == 'Upcoming' ? (
-            <App.Text size={12} height={1.2}>{item.rewardAmount} reward available</App.Text>
+            <App.Text size={12} height={1}>{item.rewardAmount} USDT available</App.Text>
           ) : (
-            <App.Text size={12} height={1.2}>{item.totalTransferred}/{item.rewardAmount} reward distributed</App.Text>
+            <App.Text size={12} height={1}>{item.totalTransferred}/{item.rewardAmount} USDT distributed</App.Text>
           )}
         </App.Flex>
 

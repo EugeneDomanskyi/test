@@ -33,7 +33,16 @@ const RaffleTop = ({ loading }) => {
   }, [campaigns])
 
   const getLast = () => {
-    return isMobile ? last.slice(0, 2) : last
+    const result = []
+    if (last.length) {
+      let index = 0
+      for (let i = 0; i < 50; i++) {
+        result.push(last[index])
+        index = (index + 1) < last.length ? (index + 1) : 0
+      }
+    }
+    //return isMobile ? last.slice(0, 2) : last
+    return result
   }
 
   const handleMoreClick = () => {
@@ -55,13 +64,13 @@ const RaffleTop = ({ loading }) => {
       <App.Flex className={styles.top}>
         <App.Container>
           <App.Flex column gap={[64, 32]}>
-            <App.Flex column width={['auto', 178]}>
-              <App.Text size={[48, 24]} height={1.2} family="ClashDisplay" gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">Open Cases, Win Epic Prizes</App.Text>
-              <App.Text size={[16, 14]} height={1.6} family="ClashDisplay">Use your TKeys to unlock USDT and token rewards!</App.Text>
+            <App.Flex column width={['auto', 232]}>
+              <App.Text size={[48, 24]} height={1.2} family="ClashDisplay" gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">Rewards Worth $10,000+<br />Up For Grabs</App.Text>
+              <App.Text size={[16, 14]} height={1.6} family="ClashDisplay">Use TKeys to open cases and win $USDT, $PEPE, $SHIB & more</App.Text>
             </App.Flex>
 
             <App.Flex direction={['row', 'column']} gap={[32, 16]}>
-              <App.Flex row align="center" justify={['center', 'space-between']} gap={32} className={styles.box}>
+              {/* <App.Flex row align="center" justify={['center', 'space-between']} gap={32} className={styles.box}>
                 <App.Flex center column>
                   {!loading ? (
                     <App.Text center size={[36, 24]} family="ClashDisplay" height={1} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">${totalReward}</App.Text>
@@ -70,7 +79,7 @@ const RaffleTop = ({ loading }) => {
                   )}
                   <App.Text center size={[16, 10]} family="ClashDisplay" height={1.2} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">Prize Pool</App.Text>
                 </App.Flex>
-              </App.Flex>
+              </App.Flex> */}
 
               {wallet ? (
                 <App.Flex row align="center" justify={['center', 'space-between']} gap={[32, 8]} width={['auto', '100%']} className={styles.box}>
@@ -100,9 +109,9 @@ const RaffleTop = ({ loading }) => {
                   </App.Flex>
                 </App.Flex>
               ) : (
-                <App.Flex row align="center" justify={['center', 'space-between']} width={['auto', '100%']} gap={[32, 8]} className={styles.box}>
-                  <App.Flex width={[251, 'auto']}>
-                    <App.Text size={[16, 10]} family="ClashDisplay" height={1.2} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">Connect your wallet, open cases, and enjoy your winnings!</App.Text>
+                <App.Flex row align="center" justify={['center', 'space-between']} width={['auto', '100%']} gap={[0, 8]} className={styles.box}>
+                  <App.Flex width={[288, 'auto']}>
+                    <App.Text size={[16, 10]} family="ClashDisplay" height={1.6}>Use TKeys to open cases and win $USDT, $PEPE, $SHIB & more</App.Text>
                   </App.Flex>
 
                   <App.Flex center className={cn(styles.button, styles.primary)} onClick={handleConnectWalletClick}>
@@ -116,11 +125,11 @@ const RaffleTop = ({ loading }) => {
       </App.Flex>
 
       <App.Flex row center fullWidth sx={{ overflow: 'hidden' }}>
-        <App.Flex row center gap={8} className={styles.awards}>
+        <App.Flex row align="center" gap={8} className={styles.awards}>
           {getLast().map((item, index) => (
             <App.Flex key={item.resolvedTransaction + index} center gap={4} className={styles.last} onClick={handleTransactionClick(item.resolvedTransaction)}>
               <Image src="/images/raffle/icon-crown.png" width={18} height={17} alt="" />
-              <App.Text nowrap color="rgba(255, 255, 255, 0.8)">{item.address} wins {item.rewardAmount} USDT</App.Text>
+              <App.Text nowrap>{item.address} wins {item.rewardAmount} USDT</App.Text>
             </App.Flex>
           ))}
         </App.Flex>

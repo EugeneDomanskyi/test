@@ -120,7 +120,7 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
                           classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
                           onClick={handleSort('title')}
                         >
-                          Campaign
+                          <App.Text weight={600} color="rgba(185, 184, 197, 0.8)">Campaign</App.Text>
                         </TableSortLabel>
                       </TableCell>
 
@@ -133,7 +133,7 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
                           classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
                           onClick={handleSort('rewardAmount')}
                         >
-                          Reward
+                          <App.Text weight={600} color="rgba(185, 184, 197, 0.8)">Reward</App.Text>
                         </TableSortLabel>
                       </TableCell>
 
@@ -164,7 +164,7 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
                           classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
                           onClick={handleSort('participatedTimestamp')}
                         >
-                          Date
+                          <App.Text weight={600} color="rgba(185, 184, 197, 0.8)">Date</App.Text>
                         </TableSortLabel>
                       </TableCell>
 
@@ -177,7 +177,7 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
                           classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
                           onClick={handleSort('title')}
                         >
-                          Cases
+                          <App.Text weight={600} color="rgba(185, 184, 197, 0.8)">Cases</App.Text>
                         </TableSortLabel>
                       </TableCell>
 
@@ -196,7 +196,7 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
                           classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
                           onClick={handleSort('rewardAmount')}
                         >
-                          Reward
+                          <App.Text weight={600} color="rgba(185, 184, 197, 0.8)">Reward</App.Text>
                         </TableSortLabel>
                       </TableCell>
 
@@ -209,7 +209,7 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
                           classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
                           onClick={handleSort('status')}
                         >
-                          Status
+                          <App.Text weight={600} color="rgba(185, 184, 197, 0.8)">Status</App.Text>
                         </TableSortLabel>
                       </TableCell>
 
@@ -222,7 +222,7 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
                           classes={{ root: styles.th, active: styles.active, icon: styles.icon }}
                           onClick={handleSort('tKeysCount')}
                         >
-                          TKeys burnt
+                          <App.Text weight={600} color="rgba(185, 184, 197, 0.8)">TKeys burnt</App.Text>
                         </TableSortLabel>
                       </TableCell>
                     </TableRow>

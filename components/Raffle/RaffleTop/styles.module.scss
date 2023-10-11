@@ -59,16 +59,41 @@
 }
 
 .awards {
-  padding: 5px;
+  animation: marquee 100s linear infinite;
+
+  &:hover {
+    animation-play-state: paused;
+  }
 
   .last {
+    padding: 5px;
+    border: 1px solid transparent;
+    border-radius: 4px;
     cursor: pointer;
     transition: all .3s ease 0s;
-    opacity: .5;
+
+    div {
+      color: rgba(255, 255, 255, 0.8);
+    }
 
     &:hover {
-      opacity: 1;
+      border-color:#921600;
+      background: linear-gradient(133deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.16) 15.05%, rgba(255, 255, 255, 0.00) 24.06%, rgba(255, 255, 255, 0.00) 80.27%, rgba(255, 255, 255, 0.15) 89.09%, rgba(255, 255, 255, 0.55) 111.68%), radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF 0%, #FFC602 34.61%, #FBA804 68.83%, #FF7F03 100%);
+      box-shadow: 0.14597px 0px 0.29194px 0px #FFCB45 inset;
+
+      div {
+        color: #921600;
+      }
     }
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(-50%);
   }
 }
 

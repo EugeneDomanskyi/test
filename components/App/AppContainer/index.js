@@ -4,7 +4,7 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 
 import styles from './styles.module.scss'
 
-const AppContainer = ({ children, fluid, width, height, className, sx = {}, ...props }) => {
+const AppContainer = ({ children, fluid, width, height, maxWidth, className, sx = {}, ...props }) => {
   const { propValue } = usePropsHelper()
 
   const classes = () => {
@@ -20,6 +20,10 @@ const AppContainer = ({ children, fluid, width, height, className, sx = {}, ...p
 
     if (width) {
       result.width = propValue(width)
+    }
+
+    if (maxWidth) {
+      result.maxWidth = propValue(maxWidth)
     }
 
     if (height) {
