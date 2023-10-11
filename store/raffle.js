@@ -160,10 +160,14 @@ const get = {
     }
     searched.sort((a, b) => {
       if (sortBy == 'status') {
+        const statusComparison = statusOrder[a.status] - statusOrder[b.status]
+        if (statusComparison !== 0) {
+          return statusComparison
+        }
+        
         if (a.user && !b.user) return -1
         if (!a.user && b.user) return 1
-        if (a.user && b.user) return statusOrder[a.status] - statusOrder[b.status]
-        if (!a.user && !b.user) return statusOrder[a.status] - statusOrder[b.status]
+        return 0
       }
 
       return sortDirection == 'asc' ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]
