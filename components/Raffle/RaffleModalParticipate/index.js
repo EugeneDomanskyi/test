@@ -100,7 +100,6 @@ const RaffleModalParticipate = ({item}) => {
 
   const checkIfApproved = async () => {
     const res = await contract.isApprovedForAll(contractAddr, wallet, factoryAddr)
-    return false
     return res
   }
 
@@ -145,30 +144,7 @@ const RaffleModalParticipate = ({item}) => {
         return
       }
 
-      fetchReward(enterCampaignHash)
-
-      // setTimeout(async () => {
-      //   const result = await $raffle.api.reward(enterCampaignHash.trim())
-      //   const parsedRes = JSON.parse(result.data)
-      //   if (! parsedRes[enterCampaignHash]?.expectedRewardAmount) {
-
-      //   }
-      //   setExpectedReward(parsedRes[enterCampaignHash]?.expectedRewardAmount)
-      //   console.log('parsedRes', parsedRes);
-      //   console.log('expectedRewardAmount', parsedRes[enterCampaignHash]?.expectedRewardAmount);
-
-      //   const nfts = await alchemy.getNftsForOwnerCollection(wallet, contractAddr)
-      //   dispatch($raffle.set.tokenIds(nfts.map(item => item.id)))
-
-      //   setStep(step >= 3 ? 0 : step+1)
-      //   dispatch($modal.set.update({
-      //     header: {
-      //       title: 'Unlock Case',
-      //     },
-      //   }))
-        
-      //   dispatch($raffle.set.loading(false))
-      // }, 5000)      
+      fetchReward(enterCampaignHash)    
 
       return
     }
@@ -200,8 +176,6 @@ const RaffleModalParticipate = ({item}) => {
         }, 2000);
     } else {
         setExpectedReward(parsedRes[enterCampaignHash]?.expectedRewardAmount);
-        console.log('parsedRes', parsedRes);
-        console.log('expectedRewardAmount', parsedRes[enterCampaignHash]?.expectedRewardAmount);
 
         const nfts = await alchemy.getNftsForOwnerCollection(wallet, contractAddr);
         dispatch($raffle.set.tokenIds(nfts.map(item => item.id)));
@@ -219,6 +193,18 @@ const RaffleModalParticipate = ({item}) => {
 
   const handleCloseModal = () => {
     dispatch($modal.set.close())
+  }
+
+  const getTweeButtonLink = () => {
+    const url = `${window.location.origin}/earn`
+    const text = `🎉 Woohoo! Just unlocked a case & scored $10 in $SHIB tokens. You too can get in on the action! Collect TKeys and open cases on Tegro for big wins! 🚀 Start here: `
+
+    
+    return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
+  }
+
+  const handleClickShare = () => {
+    window.open(getTweeButtonLink(), '_blank')
   }
 
   return (
@@ -245,7 +231,7 @@ const RaffleModalParticipate = ({item}) => {
                 <App.Text size={20} weight={600}>{ item.title }</App.Text>
               </App.Flex>
 
-              <App.Flex className={styles.shareButton}>
+              <App.Flex className={styles.shareButton} onClick={handleClickShare}>
                 <App.Icon icon="share" />
               </App.Flex>
             </App.Flex>

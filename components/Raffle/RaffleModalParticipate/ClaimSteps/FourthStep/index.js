@@ -47,6 +47,18 @@ const FourthStep = ({campaign, onSubmit}) => {
     onSubmit()
   }
 
+  const getTweeButtonLink = () => {
+    const url = `${window.location.origin}/earn`
+    const text = `🎉 Woohoo! Just unlocked a case & scored $${prize.amount} in USDT. You too can get in on the action! Collect TKeys and open cases on Tegro for big wins! 🚀 Start here: `
+
+    
+    return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
+  }
+
+  const handleClickShare = () => {
+    window.open(getTweeButtonLink(), '_blank')
+  }
+
   return (
     <>
       <audio ref={audioRef} src='/audio/roulette_win_original.wav'></audio>
@@ -79,7 +91,7 @@ const FourthStep = ({campaign, onSubmit}) => {
       </App.Flex>
 
       <App.Flex gap={16}>
-        <App.Button outlined sx={{width: 107, height: 56, fontSize: 16, borderColor: '#7204FF'}} onClick={() => {}}>
+        <App.Button outlined sx={{width: 107, height: 56, fontSize: 16, borderColor: '#7204FF'}} onClick={handleClickShare}>
           Share
         </App.Button>
         
