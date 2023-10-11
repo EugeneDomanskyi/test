@@ -23,7 +23,7 @@ const RaffleList = ({ loading, onUpdateUser }) => {
 
   const tabs = [
     { key: 'browse', title: 'Browse Cases' },
-    { key: 'my', title: 'Cases History', disabled: ! wallet },
+    { key: 'my', title: 'My Case Opens', disabled: ! wallet },
   ]
 
   const timer = useRef()

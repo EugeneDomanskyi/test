@@ -25,8 +25,8 @@ const RaffleSort = () => {
 
   const filterOptions = [
     { code: 'All', text: 'All' },
-    { code: 'Upcoming', text: 'Upcoming' },
     { code: 'Active', text: 'Ongoing' },
+    { code: 'Upcoming', text: 'Upcoming' },
     { code: 'Closed', text: 'Closed' },
   ]
 
