@@ -4,9 +4,11 @@ import { useState, memo } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
+import { useDispatch } from 'react-redux'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
+import $modal from '@/store/modal'
 
 import App from '@/components/App'
 import { trackEvent } from '@/libs/analytics.lib'
@@ -14,6 +16,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 
 const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
   const router = useRouter()
+  const dispatch = useDispatch()
   const orders = useSelector($orders.get[type])
   const blockchain = useSelector($app.get.blockchain)
   const { wallet, changeNetwork } = useWalletConnect()
@@ -32,6 +35,18 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
     if (!network) {
       return
     }
+
+    // dispatch($modal.set.show({
+    //   show: true,
+    //   modal: 'Exchange/OrderCancel',
+    //   props: {
+    //     order: order,
+    //     blockchain: blockchain,
+    //     wallet: wallet,
+    //   }
+    // }))
+
+    // return
     
     const eventPost = {
       'Base Currency': order.baseCurrency,

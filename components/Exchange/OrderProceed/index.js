@@ -140,20 +140,39 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
   }, [completePercentage, step, currentTab])
 
   const fetchOrders = async () => {
+    // const params = {
+    //   chainId: blockchain.id,
+    //   makerAsset: makerAsset.address,
+    //   takerAsset: takerAsset.address,
+    //   amount: makerAmountFormatted,
+    //   price: price,
+    //   side: side,
+    //   makerTokenDecimals: makerAsset.decimals.toString(),
+    //   takerTokenDecimals: takerAsset.decimals.toString(),
+    // }
+
+    // const query = queryBuilder(params)
+    // console.log(`https://us-central1-vibrant-waters-399406.cloudfunctions.net/matcher${query}`)
+    
+    // const json = await res.json()
+    // console.log(temp)
     const res = await Order.TOKEN.getOpenWithPriceLimitation({
       chainId: blockchain.id,
-      makerAsset: makerAsset.address,
-      takerAsset: takerAsset.address,
+      makerAsset: makerAsset,
+      takerAsset: takerAsset,
       amount: makerAmountFormatted,
       price: price,
       side: side,
     })
+    console.log(res)
     setAbilities(res)
   }
 
   const handleDone = () => {
     onClose()
   }
+
+  
 
   const handleConfirm = async () => {
     setStep('sign')
@@ -177,6 +196,8 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
           amount: amountFillOrder,
           price: price,
           side: side,
+          makerAsset,
+          takerAsset,
         }, eventHandler).catch(error => {
           return error
         })
