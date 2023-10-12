@@ -48,11 +48,11 @@ const RaffleTop = ({ loading }) => {
   }
 
   const handleMoreClick = () => {
-    trackEvent('Click Collect TKeys', {
-      'Wallet connect Status': 'Connected',
-      'Tkeys Quantity': tokenIds.length,
-      'WalletAddress': wallet,
-    })
+    // trackEvent('Click Collect TKeys', {
+    //   'Wallet connect Status': 'Connected',
+    //   'Tkeys Quantity': tokenIds.length,
+    //   'WalletAddress': wallet,
+    // })
     window.open('https://galxe.com/tegro', '_blank')
   }
 

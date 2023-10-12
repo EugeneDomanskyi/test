@@ -51,13 +51,13 @@ const FourthStep = ({campaign, onSubmit}) => {
   }, [audioRef])
 
   const handleClickNextStep = () => {
-    trackEvent('Click Open another USDT case', {
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': tokenIds.length,
-      'TKeys Required': campaign.tKeyRequired,
-      'WalletAddress': wallet,
-      'Market': 'USDT',
-    })
+    // trackEvent('Click Open another USDT case', {
+    //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+    //   'Tkeys Quantity': tokenIds.length,
+    //   'TKeys Required': campaign.tKeyRequired,
+    //   'WalletAddress': wallet,
+    //   'Market': 'USDT',
+    // })
     onSubmit()
   }
 
@@ -70,10 +70,10 @@ const FourthStep = ({campaign, onSubmit}) => {
   }
 
   const handleClickShare = () => {
-    trackEvent('Click Share Reward Won', {
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'WalletAddress': wallet,
-    })
+    // trackEvent('Click Share Reward Won', {
+    //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+    //   'WalletAddress': wallet,
+    // })
     window.open(getTweeButtonLink(), '_blank')
   }
 

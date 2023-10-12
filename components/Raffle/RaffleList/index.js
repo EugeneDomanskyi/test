@@ -67,29 +67,29 @@ const RaffleList = ({ loading, onUpdateUser }) => {
   }, [queryCampaignId, campaigns])
 
   const handleTabChange = (value) => {
-    if (value === 'my') {
-      trackEvent('Click Case History', {
-        'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-        'Tkeys Quantity': tokenIds.length,
-        'WalletAddress': wallet,
-      })
-    } else {
-      trackEvent('Click Browse Case', {
-        'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-        'Tkeys Quantity': tokenIds.length,
-        'WalletAddress': wallet,
-      })
-    }
+    // if (value === 'my') {
+    //   trackEvent('Click Case History', {
+    //     'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+    //     'Tkeys Quantity': tokenIds.length,
+    //     'WalletAddress': wallet,
+    //   })
+    // } else {
+    //   trackEvent('Click Browse Case', {
+    //     'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+    //     'Tkeys Quantity': tokenIds.length,
+    //     'WalletAddress': wallet,
+    //   })
+    // }
     setTab(value)
   }
 
   const handleParticipate = async (item) => {
-    trackEvent('Click View Case', {
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': tokenIds.length,
-      'TKeys Required': item.tKeyRequired,
-      'WalletAddress': wallet,
-    })
+    // trackEvent('Click View Case', {
+    //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+    //   'Tkeys Quantity': tokenIds.length,
+    //   'TKeys Required': item.tKeyRequired,
+    //   'WalletAddress': wallet,
+    // })
     const address = await connect()
     if ( ! address) {
       return
