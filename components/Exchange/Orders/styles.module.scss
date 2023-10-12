@@ -39,7 +39,8 @@
   }
 
   .orderContainer {
-
+    position: relative;
+    overflow: hidden;
     &:hover {
       .hoverContent {
         transform: translateX(0%);

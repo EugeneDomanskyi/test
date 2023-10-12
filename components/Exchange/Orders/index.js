@@ -4,9 +4,11 @@ import { useState, memo } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
+import { useDispatch } from 'react-redux'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
+import $modal from '@/store/modal'
 
 import App from '@/components/App'
 import { trackEvent } from '@/libs/analytics.lib'
@@ -14,6 +16,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 
 const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
   const router = useRouter()
+  const dispatch = useDispatch()
   const orders = useSelector($orders.get[type])
   const blockchain = useSelector($app.get.blockchain)
   const { wallet, changeNetwork } = useWalletConnect()
@@ -32,6 +35,18 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
     if (!network) {
       return
     }
+
+    // dispatch($modal.set.show({
+    //   show: true,
+    //   modal: 'Exchange/OrderCancel',
+    //   props: {
+    //     order: order,
+    //     blockchain: blockchain,
+    //     wallet: wallet,
+    //   }
+    // }))
+
+    // return
     
     const eventPost = {
       'Base Currency': order.baseCurrency,
@@ -64,8 +79,21 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
       price: order.itemPrice,
       side: order.side,
     })
-
   }
+
+  const handleClickDetails = order => e => {
+    e.stopPropagation()
+    // console.log(order)
+    const { cancel, ...rest } = order
+    dispatch($modal.set.show({
+      show: true,
+      modal: 'Exchange/OrderDetails',
+      props: {
+        order: {...rest, itemPrice: order.itemPrice},
+      }
+    }))
+  }
+
   const handlePressEdit = order => (e) => {
     e.stopPropagation()
 
@@ -166,9 +194,9 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
       <App.Flex column flex={1} sx={{overflow: 'auto'}}>
         {
           orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map((order) => {
-            console.log(order.status)
+            console.log(order)
             return (
-              <App.Flex key={order.id} column sx={{position: 'relative'}} className={styles.orderContainer}>
+              <App.Flex key={order.id} column className={styles.orderContainer}>
                 <App.Flex align="center" className={cn(styles.order, {[styles.disabled]: order.status === 'completed' || order.status === 'cancelled'})} onClick={handleClick(order)}>
                   <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
                   <App.Flex column align="center" justify="center" sx={{width: 60}}>
@@ -212,16 +240,24 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
                         </App.Text>
                       : null
                   }
+                  
                   <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressCopy(order)}>
                     <App.Icon icon="copy" width={12} height={12} color="#B9B8C5" />
                   </App.Flex>
                   {
+                    order.status !== 'open'
+                      ? <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handleClickDetails(order)}>
+                          <App.Icon icon="order-details" />
+                        </App.Flex>
+                      : null
+                  }
+                  {/* {
                     order.status === 'open'
                       ? <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressEdit(order)}>
                           <App.Icon icon="pencil" />
                         </App.Flex>
                       : null
-                  }
+                  } */}
                   {
                     order.status === 'open'
                       ? <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressCancel(order)}>
