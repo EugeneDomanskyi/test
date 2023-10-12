@@ -70,6 +70,7 @@ const getErrorAssets = (errorType) => {
 }
 
 const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountFormatted, takerAmountFormatted, price, onClose}) => {
+  const [matchingLoaded, setMatchingLoaded] = useState(false)
   const [step, setStep] = useState('preview')
   const [signSteps, setSignSteps] = useState(SIGN_STEPS)
   const [abilities, setAbilities] = useState({willSpendAmount: 0, willTakeAmount: 0, orders: []})
@@ -141,17 +142,6 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
   }, [completePercentage, step, currentTab])
 
   const fetchOrders = async () => {
-    // const params = {
-    //   chainId: blockchain.id,
-    //   makerAsset: makerAsset.address,
-    //   takerAsset: takerAsset.address,
-    //   amount: makerAmountFormatted,
-    //   price: price,
-    //   side: side,
-    //   makerTokenDecimals: makerAsset.decimals.toString(),
-    //   takerTokenDecimals: takerAsset.decimals.toString(),
-    // }
-
     const res = await Order.TOKEN.getOpenWithPriceLimitation({
       chainId: blockchain.id,
       makerAsset: makerAsset,
@@ -160,8 +150,8 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
       price: price,
       side: side,
     })
-    console.log(res)
     setAbilities(res)
+    setMatchingLoaded(true)
   }
 
   const handleDone = () => {
@@ -173,6 +163,9 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
   }
 
   const handleConfirm = async () => {
+    if (!matchingLoaded) {
+      return
+    }
     setStep('sign')
     const allowances = []
     if (flowSteps.fill_order) {
@@ -340,8 +333,12 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                         <App.Text size={12} weight={600}>{ numeral(side === 'buy' ? makerAmountFormatted : takerAmountFormatted).format('0.[00000]') } {makerAsset.symbol}</App.Text>
                       </App.Flex>
                     </App.Flex>
-                    <App.Flex align="center" justify="center" className={styles.button} onClick={handleConfirm}>
-                      <App.Text color="#09051D" size={15} weight={700} uppercase>CONFIRM { side }</App.Text>
+                    <App.Flex align="center" justify="center" className={styles.button} onClick={handleConfirm} sx={{opacity: matchingLoaded ? 1 : 0.6}}>
+                      {
+                        matchingLoaded
+                          ? <App.Text color="#09051D" size={15} weight={700} uppercase>CONFIRM { side }</App.Text>
+                          : <App.Loader color="#09051D" />
+                      }
                     </App.Flex>
                   </App.Flex>
                   <App.Flex className={styles.banner} align="center">
