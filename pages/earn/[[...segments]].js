@@ -6,8 +6,8 @@ import moment from 'moment'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
-import Contracts from '@/libs/contracts.lib'
 import AlchemyLibrary from '@/libs/alchemy.lib'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import $app from '@/store/app'
 import $raffle from '@/store/raffle'
@@ -42,6 +42,10 @@ const RafflePage = () => {
 
   const prevWallet = useRef()
 
+  useEffect(() => {
+    trackEvent('Visit Raffle')
+  }, [])
+  
   useEffect(() => {
     (async () => {
       const result = await apollo.current.query({

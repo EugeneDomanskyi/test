@@ -13,6 +13,7 @@ import $raffle from '@/store/raffle'
 
 import AlchemyLibrary from '@/libs/alchemy.lib'
 import Contracts from '@/libs/contracts.lib'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 import FirstStep from '@/components/Raffle/RaffleModalParticipate/ClaimSteps/FirstStep'
@@ -204,6 +205,7 @@ const RaffleModalParticipate = ({item}) => {
   }
 
   const handleClickShare = () => {
+    trackEvent('Share Total Reward Available')
     window.open(getTweeButtonLink(), '_blank')
   }
 

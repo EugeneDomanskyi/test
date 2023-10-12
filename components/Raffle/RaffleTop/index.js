@@ -6,6 +6,8 @@ import cn from 'classnames'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
 
+import { trackEvent } from '@/libs/analytics.lib'
+
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
@@ -46,12 +48,26 @@ const RaffleTop = ({ loading }) => {
   }
 
   const handleMoreClick = () => {
+    trackEvent('Click Collect TKeys', {
+      'Wallet connect Status': 'Connected',
+      'Tkeys Quantity': tokenIds.length,
+      'WalletAddress': wallet,
+    })
     window.open('https://galxe.com/tegro', '_blank')
   }
 
   const handleConnectWalletClick = async () => {
+    trackEvent('Wallet Connect Clicked', {
+      'Wallet connected Status': 'Not Connected'
+    })
     if ( ! wallet) {
-      connect()
+      const result = await connect()
+      if (result) {
+        trackEvent('Wallet Connected Successfully', {
+          'Wallet connected Status': 'Connected',
+          'Wallet Address': result,
+        })
+      }
     }
   }
 
