@@ -229,13 +229,13 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
                   <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressCopy(order)}>
                     <App.Icon icon="copy" width={12} height={12} color="#B9B8C5" />
                   </App.Flex>
-                  {
+                  {/* {
                     order.status === 'open'
                       ? <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressEdit(order)}>
                           <App.Icon icon="pencil" />
                         </App.Flex>
                       : null
-                  }
+                  } */}
                   {
                     order.status === 'open'
                       ? <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressCancel(order)}>
