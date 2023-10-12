@@ -18,6 +18,22 @@ const TEGRO_ABI = [{"inputs":[{"internalType":"address","name":"_tradingContract
 
 const subscribes = {}
 
+const queryBuilder = data => {
+  const params = new URLSearchParams()
+  for (const key in data) {
+    if (data[key] != null) {
+      if (typeof data[key] == 'object') {
+        for (const value of data[key]) {
+          params.append(key, value)
+        }
+      } else {
+        params.append(key, data[key])
+      }
+    }
+  }
+  return `?${params}`
+}
+
 class Order {
   static showSuccessMessage = (message) => {
     toast.success(message)
@@ -381,21 +397,34 @@ class TOKEN extends Order {
   }
 
   static getOpenWithPriceLimitation = async ({chainId, takerAsset, makerAsset, amount, price, side}) => {
-    const res = await fetch(`/api/tokens/abilities/${chainId}/${makerAsset}/${takerAsset}/${price}/${amount}/${side}`)
+    const params = {
+      chainId: chainId,
+      makerAsset: makerAsset.address,
+      takerAsset: takerAsset.address,
+      amount: amount,
+      price: price,
+      side: side,
+      makerTokenDecimals: makerAsset.decimals.toString(),
+      takerTokenDecimals: takerAsset.decimals.toString(),
+    }
+    const query = queryBuilder(params)
+    const res = await fetch(`https://us-central1-vibrant-waters-399406.cloudfunctions.net/matcher${query}`, {method: 'GET'})
     const json = await res.json()
+    // const res = await fetch(`/api/tokens/abilities/${chainId}/${makerAsset}/${takerAsset}/${price}/${amount}/${side}`)
+    // const json = await res.json()
     return json
   }
 
-  static fulfill = ({address, amount, price, side}, callback) => {
+  static fulfill = ({address, makerAsset, takerAsset, amount, price, side}, callback) => {
     return new Promise(async (resolve, reject) => {
       const { chainId, walletClient } = await Order.getWalletData()
-      const network = CHAINS.find(chain => chain.id === chainId)
-      let sellAsset = network.usdtContract
-      let buyAsset = address
-      if (side === 'sell') {
-        sellAsset = address
-        buyAsset = network.usdtContract
-      }
+      // const network = CHAINS.find(chain => chain.id === chainId)
+      let sellAsset = takerAsset
+      let buyAsset = makerAsset
+      // if (side === 'sell') {
+      //   sellAsset = makerAsset
+      //   buyAsset = takerAsset
+      // }
       const { orders, willSpendAmount, willSpendAmountValue } = await TOKEN.getOpenWithPriceLimitation({
         chainId: chainId,
         takerAsset: sellAsset,
@@ -405,7 +434,7 @@ class TOKEN extends Order {
         price: price,
       })
       if (orders && Array.isArray(orders)) {        
-        const balance = await Order.getBalance(walletClient.account.address, sellAsset)
+        const balance = await Order.getBalance(walletClient.account.address, sellAsset.address)
         if (willSpendAmount*1 > balance*1) {
           reject({success: false, message: 'Insufficient balance', type: 'balance'})
           return 
@@ -462,14 +491,15 @@ class TOKEN extends Order {
           abi: TEGRO_ABI,
           functionName: 'fillMultipleOrders',
           args: [list, math.chain(willSpendAmountValue).multiply(side === 'buy' ? 1.00001 : 1).round().done()],
-        }, (eventName) => {
+        }, (eventName, eventData) => {
           if (eventName === 'waiting') {
-            callback('transaction_completed', {success: true})
+            callback('transaction_completed', {success: true, data: eventData})
           }
         })
 
         if (result.success) {
           // resolve(result)
+          // callback('tran')
           return
         }
         reject({success: false, message: result.error?.shortMessage, type: result.error?.cause?.name})

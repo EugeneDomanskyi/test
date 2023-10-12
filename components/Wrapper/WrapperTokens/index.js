@@ -5,7 +5,7 @@ import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 
-import { putAssetsFile } from '@/libs/aws.lib'
+import { putAssetsFile, getAssetsFile } from '@/libs/aws.lib'
 
 import $app from '@/store/app'
 import $collection from '@/store/collection'
@@ -44,7 +44,7 @@ const WrapperTokens = ({ children }) => {
   const pages = useSelector($token.get.pages)
 
   const [isReady, setIsReady] = useState(false)
-  const [isList, setIsList] = useState(true)
+  const [isList, setIsList] = useState(false)
   const [isBlockchain, setIsBlockchain] = useState(false)
 
   const sortRef = useRef(sort)
@@ -55,23 +55,21 @@ const WrapperTokens = ({ children }) => {
 
   useEffect(() => {
     (async () => {
+      
       const infoList = await $token.api.coingecko.local()
       dispatch($token.set.infoList(infoList))
-
-      // const tempList = await getAssetsFile()
-      // if (tempList.length) {
+      // if (!list.length) {
+      //   const tempList = await getAssetsFile()
       //   dispatch($token.set.list(tempList))
       // }
-
-      // setIsList(true)
     })()
   }, [])
 
   useEffect(() => {
-    if (list.length) {
+    if (list.length && infoList.length) {
       setIsList(true)
     }
-  }, [list])
+  }, [list, infoList])
 
   useEffect(() => {
     if (router.isReady) {
@@ -142,6 +140,7 @@ const WrapperTokens = ({ children }) => {
     })
 
     if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('tokens')) {
+      
       let tempTokens = result.data.tokens
       if (!tempTokens.length && searchText != '' && isContractAddress(searchText)) {
         const scanData = await getBasicInfo(searchText, blockchain.id)
@@ -265,7 +264,7 @@ const WrapperTokens = ({ children }) => {
             
             const staticData = staticTemplate(fullToken)
             const updatedList = [...list, staticData]
-            putAssetsFile(updatedList)
+            // putAssetsFile(updatedList)
             dispatch($token.set.list(updatedList))
           } else {
             let mergedData = {}
