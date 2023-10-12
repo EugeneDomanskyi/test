@@ -32,6 +32,7 @@ const Header = () => {
   const [menuShow, setMenuShow] = useState(false)
   const [mobileMenuShow, setMobileMenuShow] = useState(false)
   const [moreIsOpen, setMoreIsOpen] = useState(false)
+  const [supportIsOpen, setSupportIsOpen] = useState(false)
   const [currentBalance, setCurrentBalance] = useState({amount: 0, symbol: ''})
   const [balanceLoading, setBalanceLoading] = useState(true)
 
@@ -59,6 +60,14 @@ const Header = () => {
   const handleClickOutside = (event) => {
     if (! event.target.closest('#wallet')) {
       setMenuShow(false)
+    }
+
+    if (! event.target.closest('#menu-dropdown')) {
+      setMoreIsOpen(false)
+    }
+
+    if (! event.target.closest('#support-dropdown')) {
+      setSupportIsOpen(false)
     }
   }
 
@@ -165,18 +174,31 @@ const Header = () => {
         </App.Flex>
 
         <App.Flex row align="center" className={styles.navbarRightWrapper}>
-          {
-            ! isMobile
-              ?
-                <a href="https://discord.com/channels/951018857533935627/1107789606612631602/1135635808087462009" target="_blank" rel="noreferrer"> 
-                  <App.Flex className={styles.linkWrapper}>
-                    <App.Flex className={styles.linkButton}>
-                      <App.Icon icon="question" />
-                    </App.Flex>
+          { ! isMobile ? (
+            <App.Flex id="support-dropdown" className={cn(styles.supportButton, {[styles.active]: supportIsOpen})} onClick={() => setSupportIsOpen(!supportIsOpen)}>
+              <App.Flex className={styles.linkWrapper}>
+                <App.Flex className={cn(styles.linkButton, {[styles.active]: supportIsOpen})}>
+                  <App.Icon icon="question" />
+                </App.Flex>
+              </App.Flex>
+
+              <App.Flex column gap={32} className={cn(styles.dropdownMenu, {[styles.isOpen]: supportIsOpen})}>
+                <App.Flex column gap={16}>
+                  <App.Flex column gap={4}>
+                    <App.Text size={18} weight={600}>Get Instant Support</App.Text>
+                    <App.Text size={10} color="#B9B8C5">Join our Discord for assistance.</App.Text>
                   </App.Flex>
-                </a>
-              : null
-          }
+
+                  <a href="https://discord.com/channels/951018857533935627/1107789606612631602/1135635808087462009" target="_blank" rel="noreferrer">
+                    <App.Flex row align="center" gap={6} className={styles.support}>
+                      <Image src="/images/discord-blue.png" width={24} height={24} alt="" />
+                      <App.Text size={16} weight={600} height={1}>Discord</App.Text>
+                    </App.Flex>
+                  </a>
+                </App.Flex>
+              </App.Flex>
+            </App.Flex>
+          ) : null}
           {/* {!isMobile ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : null} */}
 
           <SwitchBlockchain onChangeNetwork={handleGetBalance} />
