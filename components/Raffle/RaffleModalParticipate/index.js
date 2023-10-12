@@ -63,6 +63,13 @@ const RaffleModalParticipate = ({item}) => {
   }, [showModal])
 
   const handleClickOpen = async () => {
+    trackEvent('Click Unlock With TKeys', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Tkeys Quantity': tokenIds.length,
+      'TKeys Required': item.tKeyRequired,
+      'WalletAddress': wallet,
+      'Market': 'USDT',
+    })
     setStep(isApproved ? 1 : 0)
     setShowClaim(true)
     if (! isApproved) {
@@ -113,6 +120,13 @@ const RaffleModalParticipate = ({item}) => {
 
     if (step === 0) {
       if (! isApproved) {
+        trackEvent('Click Approve Contract', {
+          'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+          'Tkeys Quantity': tokenIds.length,
+          'TKeys Required': item.tKeyRequired,
+          'WalletAddress': wallet,
+          'Market': 'USDT',
+        })
         const approveRes = await contract.setApprovalForAll(contractAddr, factoryAddr)
         dispatch($raffle.set.loading(false))
         if (approveRes.error) {
@@ -144,6 +158,14 @@ const RaffleModalParticipate = ({item}) => {
         dispatch($raffle.set.loading(false))
         return
       }
+
+      trackEvent('Click Confirm Deposit', {
+        'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+        'WalletAddress': wallet,
+        'Tkeys Quantity': tokenIds.length,
+        'TKeys Required': item.tKeyRequired,
+        'Market': 'USDT',
+      })
 
       fetchReward(enterCampaignHash)    
 
@@ -205,7 +227,10 @@ const RaffleModalParticipate = ({item}) => {
   }
 
   const handleClickShare = () => {
-    trackEvent('Share Total Reward Available')
+    trackEvent('Click Share Case Details', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'WalletAddress': wallet,
+    })
     window.open(getTweeButtonLink(), '_blank')
   }
 

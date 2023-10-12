@@ -4,6 +4,8 @@ import { useRouter } from 'next/router'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 
+import { trackEvent } from '@/libs/analytics.lib'
+
 import $modal from '@/store/modal'
 import $raffle from '@/store/raffle'
 
@@ -16,6 +18,7 @@ const RaffleList = ({ loading, onUpdateUser }) => {
   const { wallet, connect, changeNetwork } = useWalletConnect()
 
   const campaigns = useSelector($raffle.get.filtered)
+  const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
 
   const [queryCampaignId] = router.query.segments || []
 
@@ -64,10 +67,29 @@ const RaffleList = ({ loading, onUpdateUser }) => {
   }, [queryCampaignId, campaigns])
 
   const handleTabChange = (value) => {
+    if (value === 'my') {
+      trackEvent('Click Case History', {
+        'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+        'Tkeys Quantity': tokenIds.length,
+        'WalletAddress': wallet,
+      })
+    } else {
+      trackEvent('Click Browse Case', {
+        'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+        'Tkeys Quantity': tokenIds.length,
+        'WalletAddress': wallet,
+      })
+    }
     setTab(value)
   }
 
   const handleParticipate = async (item) => {
+    trackEvent('Click View Case', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Tkeys Quantity': tokenIds.length,
+      'TKeys Required': item.tKeyRequired,
+      'WalletAddress': wallet,
+    })
     const address = await connect()
     if ( ! address) {
       return

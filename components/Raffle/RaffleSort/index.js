@@ -1,6 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cn from 'classnames'
+
+import useWalletConnect from '@/myhooks/wallet-connect'
+
+import { trackEvent } from '@/libs/analytics.lib'
 
 import $raffle from '@/store/raffle'
 
@@ -10,6 +14,10 @@ import styles from './styles.module.scss'
 
 const RaffleSort = () => {
   const dispatch = useDispatch()
+  const { wallet } = useWalletConnect()
+
+  const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
+
   const sort = useSelector(({ $raffle }) => $raffle.sort)
   const filter = useSelector(({ $raffle }) => $raffle.filter)
 
@@ -34,12 +42,30 @@ const RaffleSort = () => {
     setDropdownShow(dropdownShow == type ? null : type)
   }
 
-  const handleSortChange = (value) => () => {
-    dispatch($raffle.set.sort(value))
+  const handleSortChange = (item) => () => {
+    trackEvent('Click Sort by', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Tkeys Quantity': tokenIds.length,
+      'TKeys Required': campaign.tKeyRequired,
+      'WalletAddress': wallet,
+      'Market': 'USDT',
+      'Selection': item.text
+    })
+
+    dispatch($raffle.set.sort(item.code))
   }
 
-  const handleFilterChange = (value) => () => {
-    dispatch($raffle.set.filter(value))
+  const handleFilterChange = (item) => () => {
+    trackEvent('Click Filter', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Tkeys Quantity': tokenIds.length,
+      'TKeys Required': campaign.tKeyRequired,
+      'WalletAddress': wallet,
+      'Market': 'USDT',
+      'Selection': item.text
+    })
+
+    dispatch($raffle.set.filter(item.code))
   }
 
   return (
@@ -56,7 +82,7 @@ const RaffleSort = () => {
 
             <App.Flex column className={styles.dropdown}>
               {sortOptions.map(item => (
-                <App.Text key={item.code} size={16} className={cn(styles.option, {[styles.active]: sort == item.code})} onClick={handleSortChange(item.code)}>{item.text}</App.Text>
+                <App.Text key={item.code} size={16} className={cn(styles.option, {[styles.active]: sort == item.code})} onClick={handleSortChange(item)}>{item.text}</App.Text>
               ))}
             </App.Flex>
           </App.Flex>
@@ -75,7 +101,7 @@ const RaffleSort = () => {
 
             <App.Flex column className={styles.dropdown}>
               {filterOptions.map(item => (
-                <App.Text key={item.code} size={16} className={cn(styles.option, {[styles.active]: filter == item.code})} onClick={handleFilterChange(item.code)}>{item.text}</App.Text>
+                <App.Text key={item.code} size={16} className={cn(styles.option, {[styles.active]: filter == item.code})} onClick={handleFilterChange(item)}>{item.text}</App.Text>
               ))}
             </App.Flex>
           </App.Flex>

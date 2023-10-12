@@ -132,6 +132,11 @@ const Header = () => {
     }
   }
 
+  const handleClickDiscord = () => {
+    trackEvent('Click Support')
+    window.open("https://discord.com/channels/951018857533935627/1107789606612631602/1135635808087462009", '_blank')
+  }
+
   return (
     <App.Container fluid className={styles.container}>
       <App.Flex row height="100%" align="center" justify="space-between">
@@ -189,12 +194,12 @@ const Header = () => {
                     <App.Text size={10} color="#B9B8C5">Join our Discord for assistance.</App.Text>
                   </App.Flex>
 
-                  <a href="https://discord.com/channels/951018857533935627/1107789606612631602/1135635808087462009" target="_blank" rel="noreferrer">
-                    <App.Flex row align="center" gap={6} className={styles.support}>
+                  {/* <a href="https://discord.com/channels/951018857533935627/1107789606612631602/1135635808087462009" target="_blank" rel="noreferrer"> */}
+                    <App.Flex row align="center" gap={6} className={styles.support} onClick={handleClickDiscord}>
                       <Image src="/images/discord-blue.png" width={24} height={24} alt="" />
                       <App.Text size={16} weight={600} height={1}>Discord</App.Text>
                     </App.Flex>
-                  </a>
+                  {/* </a> */}
                 </App.Flex>
               </App.Flex>
             </App.Flex>

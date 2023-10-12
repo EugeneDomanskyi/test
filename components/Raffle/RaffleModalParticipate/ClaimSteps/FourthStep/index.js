@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
 import lottie from 'lottie-web'
 import Image from 'next/image'
 import animationData from '@/public/animations/confetti_new.json'
 import styles from './styles.module.scss'
+
+import useWalletConnect from '@/myhooks/wallet-connect'
+
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 import ClaimText from '@/components/Raffle/RaffleModalParticipate/ClaimText'
@@ -10,6 +15,9 @@ import RaffleReward from '@/components/Raffle/RaffleModalParticipate/RaffleRewar
 
 const FourthStep = ({campaign, onSubmit}) => {
   const audioRef = useRef(null)
+  const { wallet } = useWalletConnect()
+
+  const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
 
   const [showConfetti, setShowConfetti] = useState(true)
   const [prize, setPrize] = useState({amount: '', title: ''})
@@ -24,7 +32,6 @@ const FourthStep = ({campaign, onSubmit}) => {
     })
 
     const currentPrize = campaign.rewardRange.find(item => item.reward === campaign.expectedReward)
-    console.log('currentPrize', currentPrize);
     const currentOdds = campaign.odds.find(item => item.range === currentPrize.range*1)
     setPrize({amount: currentPrize.reward / 1000000, title: currentOdds?.title})
 
@@ -44,6 +51,13 @@ const FourthStep = ({campaign, onSubmit}) => {
   }, [audioRef])
 
   const handleClickNextStep = () => {
+    trackEvent('Click Open another USDT case', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Tkeys Quantity': tokenIds.length,
+      'TKeys Required': campaign.tKeyRequired,
+      'WalletAddress': wallet,
+      'Market': 'USDT',
+    })
     onSubmit()
   }
 
@@ -56,6 +70,10 @@ const FourthStep = ({campaign, onSubmit}) => {
   }
 
   const handleClickShare = () => {
+    trackEvent('Click Share Reward Won', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'WalletAddress': wallet,
+    })
     window.open(getTweeButtonLink(), '_blank')
   }
 

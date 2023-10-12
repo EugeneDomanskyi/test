@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from '@mui/material'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
+import useWalletConnect from '@/myhooks/wallet-connect'
+
+import { trackEvent } from '@/libs/analytics.lib'
 
 import $raffle from '@/store/raffle'
 
@@ -13,13 +16,15 @@ import RaffleListMyItemMobile from '@/components/Raffle/RaffleListMyItemMobile'
 import styles from './styles.module.scss'
 
 const RaffleListMy = ({ loading, onParticipate, onShare }) => {
-  const { isMobile } = usePropsHelper()
-
   const dispatch = useDispatch()
+  const { isMobile } = usePropsHelper()
+  const { wallet } = useWalletConnect()
+
   const campaigns = useSelector($raffle.get.filtered)
   const campaign = useSelector($raffle.get.campaign)
   const participants = useSelector(({$raffle}) => $raffle.participants)
   const page = useSelector(({ $raffle }) => $raffle.page)
+  const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
 
   const [orderBy, setOrderBy] = useState('participatedTimestamp')
   const [order, setOrder] = useState('desc')
@@ -93,6 +98,17 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
     }
   }, [order, orderBy])
 
+  const handleParticipate = (item) => {
+    trackEvent('Click Open another USDT case', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Tkeys Quantity': tokenIds.length,
+      'TKeys Required': item.tKeyRequired,
+      'WalletAddress': wallet,
+      'Market': 'USDT',
+    })
+    onParticipate(item)
+  }
+
   return (
     <App.Flex column sx={{ borderRadius: 12, overflow: 'hidden' }} fullWidth>
       {loading ? (
@@ -142,7 +158,7 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
                   </TableHead>
 
                   <TableBody>
-                    {participatedCampaigns().map(item => <RaffleListMyItemMobile key={item.id} item={item} onParticipate={onParticipate} onShare={onShare} />)}
+                    {participatedCampaigns().map(item => <RaffleListMyItemMobile key={item.id} item={item} onParticipate={() => handleParticipate(item)} onShare={onShare} />)}
                   </TableBody>
                 </Table>
               ) : (
@@ -229,7 +245,7 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
                   </TableHead>
 
                   <TableBody>
-                    {participatedCampaigns().map(item => <RaffleListMyItem key={item.id} item={item} onParticipate={onParticipate} onShare={onShare} />)}
+                    {participatedCampaigns().map(item => <RaffleListMyItem key={item.id} item={item} onParticipate={() => handleParticipate(item)} onShare={onShare} />)}
                   </TableBody>
                 </Table>
               )}

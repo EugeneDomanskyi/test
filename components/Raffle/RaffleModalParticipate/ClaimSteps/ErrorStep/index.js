@@ -1,16 +1,25 @@
+import { useSelector } from 'react-redux'
+
+import useWalletConnect from '@/myhooks/wallet-connect'
+
 import App from '@/components/App'
 import ClaimImage from '@/components/Raffle/RaffleModalParticipate/ClaimImage'
 import ClaimText from '@/components/Raffle/RaffleModalParticipate/ClaimText'
 
-import { useDispatch, useSelector } from 'react-redux'
+import { trackEvent } from '@/libs/analytics.lib'
 
-import $raffle from '@/store/raffle'
+const ErrorStep = ({onSubmit}) => {
+  const { wallet } = useWalletConnect()
 
-const ErrorStep = ({campaign, onSubmit}) => {
-  const dispatch = useDispatch()
+  const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
 
   const handleClickNextStep = () => {
-    dispatch($raffle.set.loading(true))
+    trackEvent('Click Collect TKeys', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Tkeys Quantity': tokenIds.length,
+      'WalletAddress': wallet,
+    })
+    window.open('https://galxe.com/tegro', '_blank')
     onSubmit()
   }
 
