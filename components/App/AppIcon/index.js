@@ -359,6 +359,17 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
         </svg>
       )
     }
+
+    if (icon === 'order-details') {
+      return (
+        <svg width={width ?? 11} height={height ?? 12} viewBox="0 0 11 12" fill="none" {...props}>
+        <path
+          fill={color ?? '#B9B8C5'}
+          d="M9.5 5.555V2.5a1 1 0 0 0-1-1H6.41C6.2.92 5.65.5 5 .5c-.65 0-1.2.42-1.41 1H1.5c-.55 0-1 .45-1 1v7a1 1 0 0 0 1 1h3.055A3.497 3.497 0 0 0 9.5 5.555ZM5 1.5c.275 0 .5.225.5.5s-.225.5-.5.5a.501.501 0 0 1-.5-.5c0-.275.225-.5.5-.5Zm-3.5 8v-7h1v1h5v-1h1v2.34A3.493 3.493 0 0 0 7 4.5H2.5v1h2.05c-.3.285-.53.625-.71 1H2.5v1h1.04c-.025.165-.04.33-.04.5 0 .54.125 1.045.34 1.5H1.5Zm5.5 1a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5Zm.25-2.375 1.43.845-.375.61L6.5 8.5V6h.75v2.125Z"
+        />
+      </svg>
+      )
+    }
   }
 
   return getIcon()
