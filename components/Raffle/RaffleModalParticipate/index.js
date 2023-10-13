@@ -29,7 +29,7 @@ import styles from './styles.module.scss'
 const contractAddr = '0x9bfdfdac362f810ff15240045e600a7468caf91c' //'0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84'
 const factoryAddr = '0x3897BdBAFA001CA14576Cb07ecdfbC1BcdF09ca7' //'0xA4cDD0FEe85c917A68a9432a3ebfF1f66E9f281A'
 
-const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, onUpdateUserCases}) => {
+const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, onUpdateUserCases, onShare}) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const { propValue } = usePropsHelper()
@@ -251,20 +251,14 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
     onUpdateUserCases(true)
   }
 
-  const getTweeButtonLink = () => {
-    const url = `${window.location.origin}/earn`
-    const text = `🎉 Woohoo! Just unlocked a case & scored $10 in $SHIB tokens. You too can get in on the action! Collect TKeys and open cases on Tegro for big wins! 🚀 Start here: `
-
-    
-    return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
-  }
+  
 
   const handleClickShare = () => {
+    onShare(item)
     // trackEvent('Click Share Case Details', {
     //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
     //   'WalletAddress': wallet,
     // })
-    window.open(getTweeButtonLink(), '_blank')
   }
 
   return (
