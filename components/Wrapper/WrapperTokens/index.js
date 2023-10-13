@@ -41,6 +41,8 @@ const WrapperTokens = ({ children }) => {
   const infoList = useSelector(({ $token }) => $token.infoList)
   const sort = useSelector(({ $token }) => $token.sort)
   const search = useSelector(({ $token }) => $token.search)
+  const tokenLoading = useSelector(({$token}) => $token.loading)
+  
   const pages = useSelector($token.get.pages)
 
   const [isReady, setIsReady] = useState(false)
@@ -66,10 +68,10 @@ const WrapperTokens = ({ children }) => {
   }, [])
 
   useEffect(() => {
-    if (list.length && infoList.length) {
+    if (list.length) {
       setIsList(true)
     }
-  }, [list, infoList])
+  }, [list])
 
   useEffect(() => {
     if (router.isReady) {
@@ -112,7 +114,7 @@ const WrapperTokens = ({ children }) => {
   }, [isReady, fetching])
 
   const getTokenList = async (page, sortType, searchText) => {
-    dispatch($token.set.loading(true))
+    // dispatch($token.set.loading(true))
 
     const [sortBy, sortDirection] = sortType.split(':')
     const orderDirection = sortDirection.toLowerCase()
