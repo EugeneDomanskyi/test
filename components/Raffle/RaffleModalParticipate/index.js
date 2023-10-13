@@ -21,6 +21,7 @@ import SecondStep from '@/components/Raffle/RaffleModalParticipate/ClaimSteps/Se
 import ThirdStep from '@/components/Raffle/RaffleModalParticipate/ClaimSteps/ThirdStep'
 import FourthStep from '@/components/Raffle/RaffleModalParticipate/ClaimSteps/FourthStep'
 import ErrorStep from '@/components/Raffle/RaffleModalParticipate/ClaimSteps/ErrorStep'
+import ConfirmationStep from '@/components/Raffle/RaffleModalParticipate/ClaimSteps/ConfirmationStep'
 import RaffleReward from '@/components/Raffle/RaffleModalParticipate/RaffleReward'
 
 import styles from './styles.module.scss'
@@ -44,6 +45,7 @@ const RaffleModalParticipate = ({item}) => {
   const [step, setStep] = useState(0)
   const [isApproved, setIsApproved] = useState(false)
   const [expectedReward, setExpectedReward] = useState(null)
+  const [errorType, setErrorType] = useState('')
 
   const rewards = [...item.rewardRange]
 
@@ -61,6 +63,12 @@ const RaffleModalParticipate = ({item}) => {
       router.push('/earn', undefined, { scroll: false })
     }
   }, [showModal])
+
+  useEffect(() => {
+    if (expectedReward) {
+      setStep(3)
+    }
+  }, [expectedReward])
 
   const handleClickOpen = async () => {
     // trackEvent('Click Unlock With TKeys', {
@@ -81,8 +89,9 @@ const RaffleModalParticipate = ({item}) => {
     } else {
       if (tokenIds.length < item.tKeyRequired) {
         console.log('not enough TKeys');
-        setStep('error')
         dispatch($raffle.set.loading(false))
+        setStep('error')
+        setErrorType('balance')
         dispatch($modal.set.update({
           header: {
             title: 'Insufficient TKeys Balance',
@@ -167,12 +176,16 @@ const RaffleModalParticipate = ({item}) => {
       //   'Market': 'USDT',
       // })
 
-      fetchReward(enterCampaignHash)    
-
-      return
+      console.log('enterCampaignHash', enterCampaignHash);
+      dispatch($modal.set.update({
+        header: {
+          title: 'Blockchain Confirmation!',
+        },
+      }))
+      fetchReward(enterCampaignHash)
     }
 
-    if (step === 2) {
+    if (step === 3) {
       dispatch($modal.set.update({
         header: {
           title: 'Congratulations!',
@@ -180,37 +193,53 @@ const RaffleModalParticipate = ({item}) => {
       }))
     }
 
-    if (step === 3) {
+    if (step === 4) {
       handleCloseModal()
       return
     }
 
-    setStep(step >= 3 ? 0 : step+1)
+    setStep(step >= 4 ? 0 : step+1)
     dispatch($raffle.set.loading(false))
   }
 
-  const fetchReward = async (enterCampaignHash) => {
-    const result = await $raffle.api.reward(enterCampaignHash.trim());
-    const parsedRes = JSON.parse(result.data);
-
-    if (!parsedRes[enterCampaignHash]?.expectedRewardAmount) {
-        setTimeout(() => {
-          fetchReward(enterCampaignHash)
-        }, 2000);
-    } else {
-        setExpectedReward(parsedRes[enterCampaignHash]?.expectedRewardAmount);
-
-        const nfts = await alchemy.getNftsForOwnerCollection(wallet, contractAddr);
-        dispatch($raffle.set.tokenIds(nfts.map(item => item.id)));
-
-        setStep(step >= 3 ? 0 : step + 1);
+  const fetchReward = async (enterCampaignHash, maxTries = 10) => {
+    if (maxTries > 0) {
+      const result = await $raffle.api.reward(enterCampaignHash.trim());
+      const parsedRes = JSON.parse(result.data);
+  
+      console.log('parsedRes', parsedRes);
+      console.log('parsedRes[enterCampaignHash]', parsedRes[enterCampaignHash]);
+      console.log('!parsedRes[enterCampaignHash]?.expectedRewardAmount', !parsedRes[enterCampaignHash]?.expectedRewardAmount);
+      const rewardAmount = parsedRes[enterCampaignHash]?.expectedRewardAmount === '0' ? '0' : parsedRes[enterCampaignHash]?.expectedRewardAmount*1
+      console.log('rewardAmount', rewardAmount);
+      console.log('!rewardAmount', !rewardAmount);
+  
+      if (!rewardAmount) {
+        console.log('rewardAmount in if');
+          setTimeout(() => {
+            fetchReward(enterCampaignHash, (maxTries - 1))
+          }, 2000);
+      } else if (rewardAmount === '0') {
+        setStep('error')
+        setErrorType('api')
         dispatch($modal.set.update({
-            header: {
-                title: 'Unlock Case',
-            },
-        }));
-
-        dispatch($raffle.set.loading(false));
+          header: {
+            title: 'Something went wrong',
+          },
+        }))
+      } else {
+          console.log('rewardAmount in else', rewardAmount);
+          setExpectedReward(rewardAmount);
+  
+          setStep(step >= 4 ? 0 : step + 1);
+          dispatch($modal.set.update({
+              header: {
+                  title: 'Unlock Case',
+              },
+          }));
+  
+          dispatch($raffle.set.loading(false));
+      }
     }
   }
 
@@ -301,7 +330,7 @@ const RaffleModalParticipate = ({item}) => {
         </>
       : <>
           {
-            step !== 3 && step !== 'error'
+            step !== 4 && step !== 'error'
               ? <App.Flex row gap={8} className={styles.headerContent}>
                   <App.Flex column flex={1} gap={2}>
                     <div className={cn(styles.progress, {[styles.active]: step >= 0})} />
@@ -311,6 +340,9 @@ const RaffleModalParticipate = ({item}) => {
                   </App.Flex>
                   <App.Flex column flex={1} gap={2}>
                     <div className={cn(styles.progress, {[styles.active]: step >= 2})} />
+                  </App.Flex>
+                  <App.Flex column flex={1} gap={2}>
+                    <div className={cn(styles.progress, {[styles.active]: step >= 3})} />
                   </App.Flex>
                 </App.Flex>
               : null
@@ -330,11 +362,15 @@ const RaffleModalParticipate = ({item}) => {
                     )
                   case 2:
                     return (
+                      <ConfirmationStep />
+                    )
+                  case 3:
+                    return (
                       <ThirdStep campaign={{...item, expectedReward}} onSubmit={handleClickNextStep} />
                     )
                   case 'error':
                     return (
-                      <ErrorStep campaign={{...item, expectedReward}} onSubmit={handleCloseModal} />
+                      <ErrorStep type={errorType} onSubmit={handleCloseModal} />
                     )
                   default:
                     return <FourthStep campaign={{...item, expectedReward}} onSubmit={handleClickNextStep} />

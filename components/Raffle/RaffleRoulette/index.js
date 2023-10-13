@@ -18,11 +18,15 @@ const RaffleRoulette = ({autoStart = false, onPrizeDefined, campaign}) => {
     }
     const title = currentReward.title
     const amount = reward.reward / 1000000
+
+    console.log('reward.reward', reward.reward);
+    console.log('campaign.expectedReward', campaign.expectedReward);
+    console.log('reward.reward === campaign.expectedReward', reward.reward*1 === campaign.expectedReward);
     
     prizes.push(
       {
         component: <RaffleReward title={title} amount={`${amount} USDT`} additionalText="Reward" size="large" />,
-        winner: reward.reward === campaign.expectedReward
+        winner: reward.reward*1 === campaign.expectedReward
       }
     )
   })
@@ -76,6 +80,7 @@ const RaffleRoulette = ({autoStart = false, onPrizeDefined, campaign}) => {
     )
   }
 
+  console.log('campaign', campaign);
   console.log('prizeList', prizeList);
   console.log('prizeIndex', prizeIndex);
 

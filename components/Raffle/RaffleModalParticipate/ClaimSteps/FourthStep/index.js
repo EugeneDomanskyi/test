@@ -31,7 +31,7 @@ const FourthStep = ({campaign, onSubmit}) => {
       autoplay: true,
     })
 
-    const currentPrize = campaign.rewardRange.find(item => item.reward === campaign.expectedReward)
+    const currentPrize = campaign.rewardRange.find(item => item.reward*1 === campaign.expectedReward)
     const currentOdds = campaign.odds.find(item => item.range === currentPrize.range*1)
     setPrize({amount: currentPrize.reward / 1000000, title: currentOdds?.title})
 

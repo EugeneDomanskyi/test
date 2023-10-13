@@ -31,6 +31,10 @@ export default function AlchemyLibrary(network = null) {
         if (result.ownedNfts && result.ownedNfts.length) {
           nfts = nfts.concat(result.ownedNfts)
         }
+        if (nfts.length > 10) {
+          console.log('nfts', nfts);
+          break
+        }
       }
 
       const processedNfts = []
