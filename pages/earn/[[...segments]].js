@@ -191,13 +191,13 @@ const RafflePage = () => {
       const result = await $raffle.api.reward(participatedTransaction.trim())
       if (result) {
         const parsedRes = JSON.parse(result.data)
-        const rewardAmount = parsedRes[participatedTransaction]?.expectedRewardAmount ?? parsedRes[participatedTransaction]?.rewardAmount
-        if ( ! rewardAmount) {
+        if (parsedRes[participatedTransaction].hasOwnProperty('expectedRewardAmount') || parsedRes[participatedTransaction].hasOwnProperty('rewardAmount')) {
+          const rewardAmount = parsedRes[participatedTransaction]?.expectedRewardAmount ?? parsedRes[participatedTransaction]?.rewardAmount ?? 0
+          reward.current = rewardAmount
+        } else {
           setTimeout(() => {
             fetchReward(participatedTransaction, (maxTries - 1))
           }, 2000)
-        } else {
-          reward.current = rewardAmount
         }
       }
     }
