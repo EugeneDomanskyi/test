@@ -7,7 +7,7 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const RaffleListMyItem = ({ item, onParticipate, onShare }) => {
+const RaffleListMyItem = ({ item, number, onParticipate, onShare }) => {
   const handleTransactionClick = (tx) => () => {
     window.open(`https://${process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai.' : ''}polygonscan.com/tx/${tx}`, '_blank')
   }
@@ -17,7 +17,7 @@ const RaffleListMyItem = ({ item, onParticipate, onShare }) => {
       sx={{ '& th, & td': { border: '0', backgroundColor: '#120f25' } }}
     >
       <TableCell>
-        <App.Text>{item.id}</App.Text>
+        <App.Text>{number}</App.Text>
       </TableCell>
 
       <TableCell>
@@ -46,14 +46,10 @@ const RaffleListMyItem = ({ item, onParticipate, onShare }) => {
       </TableCell>
 
       <TableCell align="left">
-        {item.status == 'Processing' ? (
-          <App.Loader size={16} />
-        ) : (
-          <App.Flex row align="center" gap={4}>
-            <Image src="/images/raffle/usdt.png" width={16} height={16} alt="" />
-            <App.Text>{item.rewardAmount ?? 0} USDT</App.Text>
-          </App.Flex>
-        )}
+        <App.Flex row align="center" gap={4}>
+          <Image src="/images/raffle/usdt.png" width={16} height={16} alt="" />
+          <App.Text>{item.rewardAmount ?? 0} USDT</App.Text>
+        </App.Flex>
       </TableCell>
 
       <TableCell align="left">

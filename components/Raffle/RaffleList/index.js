@@ -12,7 +12,7 @@ import $raffle from '@/store/raffle'
 import App from '@/components/App'
 import Raffle from '@/components/Raffle'
 
-const RaffleList = ({ loading, onUpdateUser }) => {
+const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKeysBalance }) => {
   const dispatch = useDispatch()
   const router = useRouter()
   const { wallet, connect, changeNetwork } = useWalletConnect()
@@ -36,19 +36,6 @@ const RaffleList = ({ loading, onUpdateUser }) => {
       setTab('browse')
     }
   }, [wallet])
-
-  useEffect(() => {
-    if (tab == 'my' && wallet) {
-      if (onUpdateUser) {
-        onUpdateUser(true)
-        timer.current = setInterval(() => onUpdateUser(true), 15000)
-      }
-    }
-
-    return () => {
-      clearInterval(timer.current)
-    }
-  }, [tab, wallet])
 
   useEffect(() => {
     if (queryCampaignId && campaigns.length) {
@@ -122,7 +109,7 @@ const RaffleList = ({ loading, onUpdateUser }) => {
           {tab == 'browse' ? (
             <Raffle.ListBrowse loading={loading} onParticipate={handleParticipate} onShare={handleShare} />
           ) : (
-            <Raffle.ListMy loading={loading} onParticipate={handleParticipate} onShare={handleShare} />
+            <Raffle.ListMy loading={loading} onParticipate={handleParticipate} onShare={handleShare} onUpdateUserCases={onUpdateUserCases} onUpdateUserTKeys={onUpdateUserTKeys} />
           )}
         </App.Flex>
       </App.Flex>

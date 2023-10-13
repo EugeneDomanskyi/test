@@ -41,6 +41,7 @@ const RafflePage = () => {
   const alchemy = new AlchemyLibrary(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'MATIC_MUMBAI' : 'MATIC_MAINNET')
 
   const prevWallet = useRef()
+  const reward = useRef()
 
   useEffect(() => {
     trackEvent('Visit Raffle')
@@ -94,7 +95,9 @@ const RafflePage = () => {
           prevWallet.current = wallet
         }
 
-        await handleUpdateUser()
+        await getUserCases()
+        await getUserTKeysBalance()
+
         dispatch($raffle.set.loadingUser(false))
       })()
     } else {
@@ -102,7 +105,7 @@ const RafflePage = () => {
     }
   }, [wallet, campaignLoading])
 
-  const handleUpdateUser = async (hard = false) => {
+  const getUserSummary = async (hard = false) => {
     if (hard) {
       apollo.current = getApolloClient()
     }
@@ -123,6 +126,12 @@ const RafflePage = () => {
         }))
       }
     }
+  }
+
+  const getUserCases = async (hard = false) => {
+    if (hard) {
+      apollo.current = getApolloClient()
+    }
 
     const participants = await apollo.current.query({
       query: $raffle.query.userCampaignParticipants,
@@ -132,9 +141,26 @@ const RafflePage = () => {
     })
 
     if (participants && participants.hasOwnProperty('data') && participants.data.hasOwnProperty('userCampaignParticipants')) {
-      dispatch($raffle.set.participants(participants.data.userCampaignParticipants))
-    }
+      const result = []
+      for (const item of participants.data.userCampaignParticipants) {
+        if ( ! item.isResolved) {
+          reward.current = null
+          await fetchReward(item.participatedTransaction)
 
+          result.push({
+            ...item,
+            rewardAmount: reward.current,
+          })
+        } else {
+          result.push(item)
+        }
+      }
+
+      dispatch($raffle.set.participants(result))
+    }
+  }
+
+  const getUserTKeysBalance = async () => {
     const networkCode = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
     const network = await changeNetwork(networkCode)
     if ( ! network) {
@@ -142,8 +168,37 @@ const RafflePage = () => {
     }
 
     const contractAddress = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? '0x9BFDfDac362f810ff15240045E600a7468CAf91C' : '0x9BFDfDac362f810ff15240045E600a7468CAf91C'
-    const nfts = await alchemy.getNftsForOwnerCollection(wallet, contractAddress)
+    const balance = await alchemy.getNftsForOwnerCollectionCount(wallet, contractAddress)
+    dispatch($raffle.set.balance(balance))
+  }
+
+  const getUserTKeys = async (limit = 100) => {
+    const networkCode = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
+    const network = await changeNetwork(networkCode)
+    if ( ! network) {
+      return
+    }
+
+    const contractAddress = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? '0x9BFDfDac362f810ff15240045E600a7468CAf91C' : '0x9BFDfDac362f810ff15240045E600a7468CAf91C'
+    const nfts = await alchemy.getNftsForOwnerCollection(wallet, contractAddress, limit)
     dispatch($raffle.set.tokenIds(nfts.map(item => item.id)))
+  }
+
+  const fetchReward = async (participatedTransaction, maxTries = 3) => {
+    if (maxTries > 0) {
+      const result = await $raffle.api.reward(participatedTransaction.trim())
+      if (result) {
+        const parsedRes = JSON.parse(result.data)
+        const rewardAmount = parsedRes[participatedTransaction]?.expectedRewardAmount ?? parsedRes[participatedTransaction]?.rewardAmount
+        if ( ! rewardAmount) {
+          setTimeout(() => {
+            fetchReward(participatedTransaction, (maxTries - 1))
+          }, 2000)
+        } else {
+          reward.current = rewardAmount
+        }
+      }
+    }
   }
 
   const getIpfsInfo = async (campaigns) => {
@@ -236,7 +291,7 @@ const RafflePage = () => {
       {/* <Raffle.Header /> */}
       <Raffle.Top loading={campaignLoading} />
       <Raffle.Banner />
-      <Raffle.List loading={campaignLoading} onUpdateUser={handleUpdateUser} />
+      <Raffle.List loading={campaignLoading} onUpdateUserCases={getUserCases} onUpdateUserTKeys={getUserTKeys} getUserTKeysBalance={getUserTKeysBalance} />
     </App.Flex>
   )
 }

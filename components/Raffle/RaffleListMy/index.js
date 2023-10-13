@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from '@mui/material'
 
@@ -15,7 +15,7 @@ import RaffleListMyItemMobile from '@/components/Raffle/RaffleListMyItemMobile'
 
 import styles from './styles.module.scss'
 
-const RaffleListMy = ({ loading, onParticipate, onShare }) => {
+const RaffleListMy = ({ loading, onParticipate, onShare, onUpdateUserCases, onUpdateUserTKeys }) => {
   const dispatch = useDispatch()
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
@@ -32,6 +32,14 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
   const [pagesCount, setPagesCount] = useState(1)
   const perPage = 10
 
+  const timer = useRef()
+
+  useEffect(() => {
+    if (onUpdateUserCases) {
+      onUpdateUserCases(true)
+    }
+  }, [])
+
   useEffect(() => {
     if (participatedCampaigns().length) {
       const count = Math.ceil(participatedCampaigns().length / perPage)
@@ -40,8 +48,24 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
       if (page > count) {
         dispatch($raffle.set.page(count))
       }
+
+      const processings = participatedCampaigns().filter(item => item.status == 'Processing')
+      if (processings.length) {
+        timer.current = setInterval(() => {
+          const processings = participatedCampaigns().filter(item => item.status == 'Processing')
+          if (processings.length) {
+            onUpdateUserCases(true)
+          } else {
+            clearInterval(timer.current)
+          }
+        }, 10000)
+      }
     } else {
       setPagesCount(1)
+    }
+
+    return () => {
+      clearInterval(timer.current)
     }
   }, [campaigns])
 
@@ -158,7 +182,7 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
                   </TableHead>
 
                   <TableBody>
-                    {participatedCampaigns().map(item => <RaffleListMyItemMobile key={item.id} item={item} onParticipate={() => handleParticipate(item)} onShare={onShare} />)}
+                    {participatedCampaigns().slice((page - 1) * perPage, page * perPage).map((item, index) => <RaffleListMyItemMobile key={item.id} item={item} number={(page - 1) * perPage + (index + 1)} onParticipate={() => handleParticipate(item)} onShare={onShare} />)}
                   </TableBody>
                 </Table>
               ) : (
@@ -245,7 +269,7 @@ const RaffleListMy = ({ loading, onParticipate, onShare }) => {
                   </TableHead>
 
                   <TableBody>
-                    {participatedCampaigns().map(item => <RaffleListMyItem key={item.id} item={item} onParticipate={() => handleParticipate(item)} onShare={onShare} />)}
+                    {participatedCampaigns().slice((page - 1) * perPage, page * perPage).map((item, index) => <RaffleListMyItem key={item.id} item={item} number={(page - 1) * perPage + (index + 1)} onParticipate={() => handleParticipate(item)} onShare={onShare} />)}
                   </TableBody>
                 </Table>
               )}
