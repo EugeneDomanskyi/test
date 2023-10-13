@@ -47,7 +47,7 @@ const RaffleSort = () => {
       <App.Flex column gap={8}>
         <App.Text size={12} weight={400} height={1} color="#B9B8C5">Sort by</App.Text>
 
-        <App.Flex className={styles.container} width={[230, '100%']}>
+        <App.Flex className={styles.container} width={[230, '100%']} sx={{ zIndex: 3 }}>
           <App.Flex column className={cn(styles.sort, {[styles.active]: dropdownShow == 'sort'})} onClick={handleDropdownToggle('sort')}>
             <App.Flex row align="center" justify="space-between" gap={8} className={styles.text}>
               <App.Text size={16} color="#B9B8C5">{sortOptions.find(item => item.code == sort)?.text}</App.Text>

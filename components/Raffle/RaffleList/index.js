@@ -42,6 +42,7 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
         dispatch($modal.set.show({modal: 'Raffle/RaffleModalParticipate', props: {
           size: 'large',
           item: item,
+          onTop: true,
           header: {
             title: `Case Details`,
           },
@@ -73,6 +74,11 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
     console.log('Share Campaign Id', item.id)
   }
 
+  const handleMoreCases = () => {
+    handleTabChange('browse')
+    dispatch($modal.set.close())
+  }
+
   return (
     <App.Container sx={{ paddingTop: '32px', paddingBottom: '32px' }}>
       <App.Flex column gap={32}>
@@ -85,9 +91,9 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
 
         <App.Flex fullWidth sx={{ minHeight: 263 }}>
           {tab == 'browse' ? (
-            <Raffle.ListBrowse loading={loading} onParticipate={handleParticipate} onShare={handleShare} />
+            <Raffle.ListBrowse loading={loading} onParticipate={handleParticipate} />
           ) : (
-            <Raffle.ListMy loading={loading} onParticipate={handleParticipate} onShare={handleShare} onUpdateUserCases={onUpdateUserCases} onUpdateUserTKeys={onUpdateUserTKeys} />
+            <Raffle.ListMy loading={loading} onMoreCases={handleMoreCases} onUpdateUserCases={onUpdateUserCases} onUpdateUserTKeys={onUpdateUserTKeys} />
           )}
         </App.Flex>
       </App.Flex>

@@ -12,7 +12,7 @@ import RaffleListMyItemMobile from '@/components/Raffle/RaffleListMyItemMobile'
 
 import styles from './styles.module.scss'
 
-const RaffleListMy = ({ loading, onParticipate, onShare, onUpdateUserCases, onUpdateUserTKeys }) => {
+const RaffleListMy = ({ loading, onMoreCases, onUpdateUserCases }) => {
   const { isMobile } = usePropsHelper()
 
   const dispatch = useDispatch()
@@ -166,7 +166,7 @@ const RaffleListMy = ({ loading, onParticipate, onShare, onUpdateUserCases, onUp
                   </TableHead>
 
                   <TableBody>
-                    {participatedCampaigns().slice((page - 1) * perPage, page * perPage).map((item, index) => <RaffleListMyItemMobile key={item.id} item={item} number={(page - 1) * perPage + (index + 1)} onParticipate={onParticipate} onShare={onShare} />)}
+                    {participatedCampaigns().slice((page - 1) * perPage, page * perPage).map((item, index) => <RaffleListMyItemMobile key={item.id} item={item} number={(page - 1) * perPage + (index + 1)} onMoreCases={onMoreCases} />)}
                   </TableBody>
                 </Table>
               ) : (
@@ -253,7 +253,7 @@ const RaffleListMy = ({ loading, onParticipate, onShare, onUpdateUserCases, onUp
                   </TableHead>
 
                   <TableBody>
-                    {participatedCampaigns().slice((page - 1) * perPage, page * perPage).map((item, index) => <RaffleListMyItem key={item.id} item={item} number={(page - 1) * perPage + (index + 1)} onParticipate={onParticipate} onShare={onShare} />)}
+                    {participatedCampaigns().slice((page - 1) * perPage, page * perPage).map((item, index) => <RaffleListMyItem key={item.id} item={item} number={(page - 1) * perPage + (index + 1)} />)}
                   </TableBody>
                 </Table>
               )}

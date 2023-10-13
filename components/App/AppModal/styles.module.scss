@@ -116,7 +116,11 @@
     .content {
       margin: 0;
       width: 100%;
-      align-items: flex-start;
+      align-items: flex-end;
+
+      &.onTop {
+        align-items: flex-start;
+      }
 
       & > div {
         width: 100%;
