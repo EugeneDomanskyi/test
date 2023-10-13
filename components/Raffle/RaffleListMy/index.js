@@ -265,11 +265,13 @@ const RaffleListMy = ({ loading, onMoreCases, onShare, onUpdateUserCases }) => {
                           <App.Text weight={600} color="rgba(185, 184, 197, 0.8)">TKeys burnt</App.Text>
                         </TableSortLabel>
                       </TableCell>
+
+                      <TableCell sx={{ width: 10 }}></TableCell>
                     </TableRow>
                   </TableHead>
 
                   <TableBody>
-                    {participatedCampaigns().slice((page - 1) * perPage, page * perPage).map((item, index) => <RaffleListMyItem key={item.id} item={item} number={(page - 1) * perPage + (index + 1)} onMoreCases={onMoreCases} onShare={onShare} />)}
+                    {participatedCampaigns().slice((page - 1) * perPage, page * perPage).map((item, index) => <RaffleListMyItem key={item.id} item={item} number={(page - 1) * perPage + (index + 1)} onShare={onShare} />)}
                   </TableBody>
                 </Table>
               )}

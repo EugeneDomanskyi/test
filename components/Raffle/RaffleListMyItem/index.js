@@ -7,7 +7,7 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const RaffleListMyItem = ({ item, number, onParticipate, onShare }) => {
+const RaffleListMyItem = ({ item, number, onShare }) => {
   const handleTransactionClick = (tx) => () => {
     window.open(`https://${process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai.' : ''}polygonscan.com/tx/${tx}`, '_blank')
   }
@@ -60,6 +60,12 @@ const RaffleListMyItem = ({ item, number, onParticipate, onShare }) => {
         <App.Flex row align="center" gap={4}>
           <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
           <App.Text center>{item.tKeysCount ?? 0}</App.Text>
+        </App.Flex>
+      </TableCell>
+
+      <TableCell>
+        <App.Flex row align="center" onClick={() => onShare(item)} sx={{ cursor: 'pointer' }}>
+          <App.Icon icon="share" />
         </App.Flex>
       </TableCell>
     </TableRow>
