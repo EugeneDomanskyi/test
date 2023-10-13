@@ -40,13 +40,45 @@ const RaffleRoulette = ({autoStart = false, onPrizeDefined, campaign}) => {
   }
 
   const getRandomWinnerIndex = (arr) => {
-    const winners = arr.filter(item => item.winner === true)
-    const randomIndex = Math.floor(Math.random() * winners.length)
-    const randomWinner = winners[randomIndex]
-    const originalIndex = arr.indexOf(randomWinner)
-  
-    return originalIndex
+    const winners = arr.filter(item => item.winner === true);
+    const winnersCount = winners.length;
+    
+    // You can adjust the weight as per your preference.
+    const weightTowardsEnd = 3; // Higher weight towards the end
+
+    const weights = winners.map((_, index) => {
+        // Calculate a weight based on the index.
+        const weight = index < winnersCount / weightTowardsEnd ? 1 : weightTowardsEnd;
+        return { index, weight };
+    });
+
+    // Calculate the total weight
+    const totalWeight = weights.reduce((sum, entry) => sum + entry.weight, 0);
+
+    // Generate a random number between 0 and totalWeight
+    const randomValue = Math.random() * totalWeight;
+
+    // Find the index corresponding to the randomValue
+    let accumulatedWeight = 0;
+    for (const entry of weights) {
+        accumulatedWeight += entry.weight;
+        if (accumulatedWeight >= randomValue) {
+            return arr.indexOf(winners[entry.index]);
+        }
+    }
+
+    // Fallback: In case something goes wrong, return the index of the last winner.
+    return arr.indexOf(winners[winnersCount - 1]);
   }
+
+  // const getRandomWinnerIndex = (arr) => {
+  //   const winners = arr.filter(item => item.winner === true)
+  //   const randomIndex = Math.floor(Math.random() * winners.length)
+  //   const randomWinner = winners[randomIndex]
+  //   const originalIndex = arr.indexOf(randomWinner)
+  
+  //   return originalIndex
+  // }
   
   const reproductionArray = (array = [], length = 0) => [
     ...Array(length)

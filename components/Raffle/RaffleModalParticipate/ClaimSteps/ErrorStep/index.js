@@ -30,7 +30,9 @@ const ErrorStep = ({onSubmit, type}) => {
     //   'Tkeys Quantity': tokenIds.length,
     //   'WalletAddress': wallet,
     // })
-    window.open('https://galxe.com/tegro', '_blank')
+    if (type === 'balance') {
+      window.open('https://galxe.com/tegro', '_blank')
+    }
     onSubmit()
   }
 
@@ -44,7 +46,11 @@ const ErrorStep = ({onSubmit, type}) => {
       />
 
       <App.Button primary onClick={handleClickNextStep} sx={{width: 240, height: 56, fontSize: 16}}>
-        Collect TKeys
+        {
+          type === 'balance'
+            ? 'Collect TKeys'
+            : 'Close'
+        }
       </App.Button>
     </>
   )

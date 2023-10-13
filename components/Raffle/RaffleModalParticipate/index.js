@@ -72,10 +72,6 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   const handleClickOpen = async () => {
     const res = await onUpdateUserTKeys(item.tKeyRequired)
 
-    console.log('res', res)
-    console.log('res.length', res.length)
-    console.log('item.tKeyRequired', item.tKeyRequired)
-    console.log('res.length !== item.tKeyRequired*1', res.length !== item.tKeyRequired*1)
     if (res.length !== item.tKeyRequired*1) {
       setStep('error')
       setErrorType('balance')
@@ -180,7 +176,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
       }))
       
       getUserTKeysBalance()
-      onUpdateUserCases(true)
+      // onUpdateUserCases(true)
       fetchReward(enterCampaignHash)
     }
 
@@ -250,8 +246,6 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
     getUserTKeysBalance()
     onUpdateUserCases(true)
   }
-
-  
 
   const handleClickShare = () => {
     onShare(item)
