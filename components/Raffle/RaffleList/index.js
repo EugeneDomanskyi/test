@@ -48,6 +48,7 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
           onUpdateUserTKeys,
           getUserTKeysBalance,
           onUpdateUserCases,
+          onShare: handleShare,
           onTop: true,
           header: {
             title: `Case Details`,
@@ -96,12 +97,21 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
   }
 
   const handleShare = (item) => {
+    window.open(getTweeButtonLink(), '_blank')
     console.log('Share Campaign Id', item.id)
   }
 
   const handleMoreCases = () => {
     handleTabChange('browse')
     dispatch($modal.set.close())
+  }
+
+  const getTweeButtonLink = () => {
+    const url = `${window.location.origin}/earn`
+    const text = `🎉 Woohoo! Just unlocked a case & scored $10 in $SHIB tokens. You too can get in on the action! Collect TKeys and open cases on Tegro for big wins! 🚀 Start here: `
+
+    
+    return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
   }
 
   return (
