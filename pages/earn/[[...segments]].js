@@ -181,7 +181,9 @@ const RafflePage = () => {
 
     const contractAddress = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? '0x9BFDfDac362f810ff15240045E600a7468CAf91C' : '0x9BFDfDac362f810ff15240045E600a7468CAf91C'
     const nfts = await alchemy.getNftsForOwnerCollection(wallet, contractAddress, limit)
-    dispatch($raffle.set.tokenIds(nfts.map(item => item.id)))
+    const ids = nfts.map(item => item.id)
+    dispatch($raffle.set.tokenIds(ids))
+    return ids
   }
 
   const fetchReward = async (participatedTransaction, maxTries = 3) => {

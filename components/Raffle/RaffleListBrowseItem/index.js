@@ -1,4 +1,3 @@
-import { useSelector } from 'react-redux'
 import Image from 'next/image'
 import moment from 'moment'
 import cn from 'classnames'
@@ -8,14 +7,9 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
-import { useEffect, useState } from 'react'
 
 const RaffleListBrowseItem = ({ item, onParticipate, onShare }) => {
   const { propValue } = usePropsHelper()
-
-  const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
-
-  const [keysLoading, setKeysLoading] = useState(true)
 
   const getTime = () => {
     const end = item.endTimestamp * 1000
@@ -24,14 +18,8 @@ const RaffleListBrowseItem = ({ item, onParticipate, onShare }) => {
     return duration.humanize()
   }
 
-  useEffect(() => {
-    if (tokenIds.length) {
-      setKeysLoading(false)
-    }
-  }, [tokenIds])
-
   return (
-    <App.Flex column gap={32} className={cn(styles.box, styles[item.status], {[styles.disabled]: keysLoading})}>
+    <App.Flex column gap={32} className={cn(styles.box, styles[item.status])}>
       <div className={styles.circle} />
 
       <App.Flex row align="center" justify="space-between">
@@ -69,7 +57,7 @@ const RaffleListBrowseItem = ({ item, onParticipate, onShare }) => {
         </App.Flex>
 
         {item.status == 'Active' ? (
-          <App.Button primary disabled={keysLoading} onClick={() => onParticipate(item)}>View Case</App.Button>
+          <App.Button primary onClick={() => onParticipate(item)}>View Case</App.Button>
         ) : null}
       </App.Flex>
     </App.Flex>

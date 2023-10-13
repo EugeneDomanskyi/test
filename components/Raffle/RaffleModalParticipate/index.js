@@ -29,14 +29,13 @@ import styles from './styles.module.scss'
 const contractAddr = '0x9bfdfdac362f810ff15240045e600a7468caf91c' //'0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84'
 const factoryAddr = '0x3897BdBAFA001CA14576Cb07ecdfbC1BcdF09ca7' //'0xA4cDD0FEe85c917A68a9432a3ebfF1f66E9f281A'
 
-const RaffleModalParticipate = ({item}) => {
+const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, onUpdateUserCases}) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const { propValue } = usePropsHelper()
   const { wallet, changeNetwork } = useWalletConnect()
   
   const contract = new Contracts()
-  const alchemy = new AlchemyLibrary(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'MATIC_MUMBAI' : 'MATIC_MAINNET')
 
   const showModal = useSelector((state) => state.$modal.show)
   const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
@@ -71,6 +70,21 @@ const RaffleModalParticipate = ({item}) => {
   }, [expectedReward])
 
   const handleClickOpen = async () => {
+    const res = await onUpdateUserTKeys(item.tKeyRequired)
+
+    console.log('res', res)
+    console.log('res.length', res.length)
+    console.log('item.tKeyRequired', item.tKeyRequired)
+    console.log('res.length !== item.tKeyRequired*1', res.length !== item.tKeyRequired*1)
+    if (res.length !== item.tKeyRequired*1) {
+      setStep('error')
+      setErrorType('balance')
+      dispatch($modal.set.update({
+        header: {
+          title: 'Insufficient TKeys Balance',
+        },
+      }))
+    }
     // trackEvent('Click Unlock With TKeys', {
     //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
     //   'Tkeys Quantity': tokenIds.length,
@@ -86,26 +100,15 @@ const RaffleModalParticipate = ({item}) => {
           title: 'Approve Transaction',
         },
       }))
-    } else {
-      if (tokenIds.length < item.tKeyRequired) {
-        console.log('not enough TKeys');
-        dispatch($raffle.set.loading(false))
-        setStep('error')
-        setErrorType('balance')
-        dispatch($modal.set.update({
-          header: {
-            title: 'Insufficient TKeys Balance',
-          },
-        }))
-        return
-      }
 
-      dispatch($modal.set.update({
-        header: {
-          title: 'Deposit TKeys',
-        },
-      }))
+      return
     }
+
+    dispatch($modal.set.update({
+      header: {
+        title: 'Deposit TKeys',
+      },
+    }))
   }
 
   const getTime = () => {
@@ -153,13 +156,6 @@ const RaffleModalParticipate = ({item}) => {
     }
     
     if (step === 1) {
-      if (tokenIds.length < item.tKeyRequired) {
-        console.log('not enough TKeys');
-        setStep('error')
-        dispatch($raffle.set.loading(false))
-        return
-      }
-
       const ids = tokenIds.slice(0, item.tKeyRequired)
       const enterCampaignHash = await contract.enterCampaign(factoryAddr, item.id, ids)
       
@@ -176,12 +172,15 @@ const RaffleModalParticipate = ({item}) => {
       //   'Market': 'USDT',
       // })
 
-      console.log('enterCampaignHash', enterCampaignHash);
+      console.log('enterCampaignHash', enterCampaignHash)
       dispatch($modal.set.update({
         header: {
           title: 'Blockchain Confirmation!',
         },
       }))
+      
+      getUserTKeysBalance()
+      onUpdateUserCases(true)
       fetchReward(enterCampaignHash)
     }
 
@@ -204,21 +203,17 @@ const RaffleModalParticipate = ({item}) => {
 
   const fetchReward = async (enterCampaignHash, maxTries = 10) => {
     if (maxTries > 0) {
-      const result = await $raffle.api.reward(enterCampaignHash.trim());
-      const parsedRes = JSON.parse(result.data);
+      const result = await $raffle.api.reward(enterCampaignHash.trim())
+      const parsedRes = JSON.parse(result.data)
   
-      console.log('parsedRes', parsedRes);
-      console.log('parsedRes[enterCampaignHash]', parsedRes[enterCampaignHash]);
-      console.log('!parsedRes[enterCampaignHash]?.expectedRewardAmount', !parsedRes[enterCampaignHash]?.expectedRewardAmount);
+      console.log('parsedRes', parsedRes)
       const rewardAmount = parsedRes[enterCampaignHash]?.expectedRewardAmount === '0' ? '0' : parsedRes[enterCampaignHash]?.expectedRewardAmount*1
-      console.log('rewardAmount', rewardAmount);
-      console.log('!rewardAmount', !rewardAmount);
+      console.log('rewardAmount', rewardAmount)
   
       if (!rewardAmount) {
-        console.log('rewardAmount in if');
-          setTimeout(() => {
-            fetchReward(enterCampaignHash, (maxTries - 1))
-          }, 2000);
+        setTimeout(() => {
+          fetchReward(enterCampaignHash, (maxTries - 1))
+        }, 2000)
       } else if (rewardAmount === '0') {
         setStep('error')
         setErrorType('api')
@@ -228,23 +223,32 @@ const RaffleModalParticipate = ({item}) => {
           },
         }))
       } else {
-          console.log('rewardAmount in else', rewardAmount);
-          setExpectedReward(rewardAmount);
-  
-          setStep(step >= 4 ? 0 : step + 1);
-          dispatch($modal.set.update({
-              header: {
-                  title: 'Unlock Case',
-              },
-          }));
-  
-          dispatch($raffle.set.loading(false));
+        setExpectedReward(rewardAmount)
+
+        setStep(step >= 4 ? 0 : step + 1)
+        dispatch($modal.set.update({
+            header: {
+                title: 'Unlock Case',
+            },
+        }))
+
+        dispatch($raffle.set.loading(false))
       }
+    } else {
+      setStep('error')
+      setErrorType('api')
+      dispatch($modal.set.update({
+        header: {
+          title: 'Something went wrong',
+        },
+      }))
     }
   }
 
   const handleCloseModal = () => {
     dispatch($modal.set.close())
+    getUserTKeysBalance()
+    onUpdateUserCases(true)
   }
 
   const getTweeButtonLink = () => {

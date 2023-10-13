@@ -45,6 +45,9 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
         dispatch($modal.set.show({modal: 'Raffle/RaffleModalParticipate', props: {
           size: 'large',
           item: item,
+          onUpdateUserTKeys,
+          getUserTKeysBalance,
+          onUpdateUserCases,
           header: {
             title: `Case Details`,
           },

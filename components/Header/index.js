@@ -210,13 +210,6 @@ const Header = () => {
                   <App.Flex className={cn(styles.linkButton, {[styles.active]: supportIsOpen})}>
                     <App.Icon icon="question" />
                   </App.Flex>
-
-                  {/* <a href="https://discord.com/channels/951018857533935627/1107789606612631602/1135635808087462009" target="_blank" rel="noreferrer"> */}
-                    <App.Flex row align="center" gap={6} className={styles.support} onClick={handleClickDiscord}>
-                      <Image src="/images/discord-blue.png" width={24} height={24} alt="" />
-                      <App.Text size={16} weight={600} height={1}>Discord</App.Text>
-                    </App.Flex>
-                  {/* </a> */}
                 </App.Flex>
 
                 <App.Flex column gap={32} className={cn(styles.dropdownMenu, {[styles.isOpen]: supportIsOpen})}>
@@ -226,19 +219,21 @@ const Header = () => {
                       <App.Text size={10} color="#B9B8C5">Join our Discord for assistance.</App.Text>
                     </App.Flex>
 
-                    <a href="https://discord.com/channels/951018857533935627/1107789606612631602/1135635808087462009" target="_blank" rel="noreferrer">
-                      <App.Flex row align="center" gap={6} className={styles.support}>
-                        <Image src="/images/discord-blue.png" width={24} height={24} alt="" />
-                        <App.Text size={16} weight={600} height={1}>Discord</App.Text>
-                      </App.Flex>
-                    </a>
+                    <App.Flex row align="center" gap={6} className={styles.support} onClick={handleClickDiscord}>
+                      <Image src="/images/discord-blue.png" width={24} height={24} alt="" />
+                      <App.Text size={16} weight={600} height={1}>Discord</App.Text>
+                    </App.Flex>
                   </App.Flex>
                 </App.Flex>
               </App.Flex>
             ) : null}
             {/* {!isMobile ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : null} */}
 
-            <SwitchBlockchain onChangeNetwork={handleGetBalance} />
+            {
+              ! isEarn
+                ? <SwitchBlockchain onChangeNetwork={handleGetBalance} />
+                : null
+            }
             
             {wallet ? (
               <App.Flex sx={{ position: 'relative' }} id="wallet">

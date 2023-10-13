@@ -28,15 +28,11 @@ export default function AlchemyLibrary(network = null) {
         nfts = nfts.concat(result.ownedNfts)
       }
 
-      while (result.pageKey) {
+      while (result.pageKey && nfts.length < limit) {
         options.pageKey = result.pageKey
         result = await alchemy.nft.getNftsForOwner(wallet, options)
         if (result.ownedNfts && result.ownedNfts.length) {
           nfts = nfts.concat(result.ownedNfts)
-        }
-        if (nfts.length > 10) {
-          console.log('nfts', nfts);
-          break
         }
       }
 
