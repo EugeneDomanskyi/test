@@ -29,8 +29,6 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
     { key: 'my', title: 'My Case Opens', disabled: ! wallet },
   ]
 
-  const timer = useRef()
-
   useEffect(() => {
     if (!wallet && tab == 'my') {
       setTab('browse')
@@ -118,7 +116,7 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
           {tab == 'browse' ? (
             <Raffle.ListBrowse loading={loading} onParticipate={handleParticipate} />
           ) : (
-            <Raffle.ListMy loading={loading} onMoreCases={handleMoreCases} onUpdateUserCases={onUpdateUserCases} onUpdateUserTKeys={onUpdateUserTKeys} />
+            <Raffle.ListMy loading={loading} onMoreCases={handleMoreCases} onShare={handleShare} onUpdateUserCases={onUpdateUserCases} onUpdateUserTKeys={onUpdateUserTKeys} />
           )}
         </App.Flex>
       </App.Flex>
