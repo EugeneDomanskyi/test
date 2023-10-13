@@ -68,10 +68,10 @@ const WrapperTokens = ({ children }) => {
   }, [])
 
   useEffect(() => {
-    if (list.length) {
+    if (list.length && infoList.length) {
       setIsList(true)
     }
-  }, [list])
+  }, [list, infoList])
 
   useEffect(() => {
     if (router.isReady) {
