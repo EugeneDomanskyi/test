@@ -50,6 +50,8 @@ if (process.env.NODE_ENV === 'production') {
   })
 }
 
+let firstTimeLoaded = false
+
 createClient({
   chains: CHAINS,
   source: "tegro.com"
@@ -201,11 +203,12 @@ MyApp.getInitialProps = async ({ctx}) => {
     const [addrArr] = routeArr.slice(-1)
     currentAddress = addrArr.split('?')[0]
     ssRoute = (ctx.req.url)
-    if (ctx.req.url.includes('market') || ctx.req.url.includes('tokens')) {
+    if (!firstTimeLoaded) {
       const list = await getAssetsFile()
       if (list && Array.isArray(list)) {
         marketsList = list
         marketInfo = list.find(item => item.address === currentAddress) || {}
+        firstTimeLoaded = true
       }
     }
   }

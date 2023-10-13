@@ -77,6 +77,7 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
   const [successOrders, setSuccessOrders] = useState([])
   const [failedOrders, setFailedOrders] = useState([])
   const [results, setResults] = useState({approval: {}, fill_order: {}, place_order: {}})
+  const [fillOrderTransactionData, setFillOrderTransactionData] = useState(null)
 
   const { wallet } = useWalletConnect()
 
@@ -140,18 +141,34 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
   }, [completePercentage, step, currentTab])
 
   const fetchOrders = async () => {
+    // const params = {
+    //   chainId: blockchain.id,
+    //   makerAsset: makerAsset.address,
+    //   takerAsset: takerAsset.address,
+    //   amount: makerAmountFormatted,
+    //   price: price,
+    //   side: side,
+    //   makerTokenDecimals: makerAsset.decimals.toString(),
+    //   takerTokenDecimals: takerAsset.decimals.toString(),
+    // }
+
     const res = await Order.TOKEN.getOpenWithPriceLimitation({
       chainId: blockchain.id,
-      makerAsset: makerAsset.address,
-      takerAsset: takerAsset.address,
+      makerAsset: makerAsset,
+      takerAsset: takerAsset,
       amount: makerAmountFormatted,
       price: price,
       side: side,
     })
+    console.log(res)
     setAbilities(res)
   }
 
   const handleDone = () => {
+    if (fillOrderTransactionData?.data?.hash) {
+      window.open(`${blockchain.scanUrl}/tx/${fillOrderTransactionData?.data?.hash}`, '_blank')
+      return
+    }
     onClose()
   }
 
@@ -173,10 +190,12 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
       if (flowSteps.fill_order) {
         setSignSteps(state => state.map(step => ({...step, current: step.key === 'fill_order'})))
         const fillOrderResult = await Order.TOKEN.fulfill({
-          address: side === 'buy' ? makerAsset.address : takerAsset.address, //current.address,
+          // address: side === 'buy' ? makerAsset.address : takerAsset.address, //current.address,
           amount: amountFillOrder,
           price: price,
           side: side,
+          makerAsset,
+          takerAsset,
         }, eventHandler).catch(error => {
           return error
         })
@@ -216,6 +235,7 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
   const eventHandler = (eventName, eventData) => {
     switch (eventName) {
       case 'transaction_completed':
+        setFillOrderTransactionData(eventData)
         setSignSteps(state => {
           return state.map(step => ({...step, signed: step.current}))
         })
@@ -570,7 +590,7 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                     })(currentTab)
                   }
                   <App.Flex align="center" justify="center" className={styles.buttonResult} onClick={handleDone}>
-                    <App.Text size={15} weight={700} uppercase>GO TO EXPLORER</App.Text>
+                    <App.Text size={15} weight={700} uppercase>{fillOrderTransactionData?.data?.hash ? 'GO TO EXPLORER' : 'DONE'}</App.Text>
                   </App.Flex>
                 </App.Flex>
               )
@@ -582,7 +602,7 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                     <App.Text color="#FF1D61" size={20} weight={700}>{ errors.title }</App.Text>
                     <App.Text color="#9996B1" size={14} weight={500} center>{ errors.description }</App.Text>
                   </App.Flex>
-                  <App.Flex align="center" justify="center" className={styles.buttonResult} onClick={handleDone}>
+                  <App.Flex align="center" justify="center" className={styles.buttonResult} onClick={onClose}>
                     <App.Text size={15} weight={700} uppercase>CLOSE</App.Text>
                   </App.Flex>
                 </App.Flex>
