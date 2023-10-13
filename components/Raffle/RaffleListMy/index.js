@@ -15,7 +15,7 @@ import RaffleListMyItemMobile from '@/components/Raffle/RaffleListMyItemMobile'
 
 import styles from './styles.module.scss'
 
-const RaffleListMy = ({ loading, onParticipate, onShare, onUpdateUserCases, onUpdateUserTKeys }) => {
+const RaffleListMy = ({ loading, onMoreCases, onUpdateUserCases }) => {
   const dispatch = useDispatch()
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()

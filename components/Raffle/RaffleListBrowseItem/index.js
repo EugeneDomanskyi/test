@@ -8,7 +8,7 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const RaffleListBrowseItem = ({ item, onParticipate, onShare }) => {
+const RaffleListBrowseItem = ({ item, onParticipate }) => {
   const { propValue } = usePropsHelper()
 
   const getTime = () => {

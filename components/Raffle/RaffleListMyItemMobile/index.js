@@ -10,11 +10,11 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const RaffleListMyItemMobile = ({ item, number, onParticipate }) => {
+const RaffleListMyItemMobile = ({ item, number, onMoreCases }) => {
   const dispatch = useDispatch()
 
   const handleInfoModalShow = () => {
-    dispatch($modal.set.show({modal: 'Raffle/RaffleListMyItemModal', props: { item, onParticipate }}))
+    dispatch($modal.set.show({modal: 'Raffle/RaffleListMyItemModal', props: { item, onMoreCases }}))
   }
 
   return (

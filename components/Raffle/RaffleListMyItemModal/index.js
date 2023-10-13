@@ -6,7 +6,7 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const RaffleListMyItemModal = ({ item, onParticipate }) => {
+const RaffleListMyItemModal = ({ item, onMoreCases }) => {
   const handleTransactionClick = (tx) => () => {
     window.open(`https://${process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai.' : ''}polygonscan.com/tx/${tx}`, '_blank')
   }
@@ -61,7 +61,7 @@ const RaffleListMyItemModal = ({ item, onParticipate }) => {
       </App.Flex>
 
       {item.campaign.status == 'Active' ? (
-        <App.Button primary large fullWidth onClick={() => onParticipate(item)}>Open More Cases</App.Button>
+        <App.Button primary large fullWidth onClick={onMoreCases}>Open More Cases</App.Button>
       ) : null}
     </App.Flex>
   )
