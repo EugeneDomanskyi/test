@@ -39,14 +39,10 @@ const RaffleListMyItemModal = ({ item, onParticipate }) => {
       <App.Flex row align="center" justify="space-between" gap={16} height={24}>
         <App.Text color="#B9B8C5">Rewards</App.Text>
         
-        {item.status == 'Processing' ? (
-          <App.Loader size={14} />
-        ) : (
-          <App.Flex row align="center" gap={4}>
-            <Image src="/images/raffle/usdt.png" width={14} height={14} alt="" />
-            <App.Text height={1}>{item.rewardAmount ?? 0} USDT</App.Text>
-          </App.Flex>
-        )}
+        <App.Flex row align="center" gap={4}>
+          <Image src="/images/raffle/usdt.png" width={14} height={14} alt="" />
+          <App.Text height={1}>{item.rewardAmount ?? 0} USDT</App.Text>
+        </App.Flex>
       </App.Flex>
 
       <App.Flex row align="center" justify="space-between" gap={16} height={24}>

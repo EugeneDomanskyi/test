@@ -17,7 +17,7 @@ const RaffleTop = ({ loading }) => {
   const campaigns = useSelector(({ $raffle }) => $raffle.all)
   const user = useSelector(({ $raffle }) => $raffle.user)
   const last = useSelector(({ $raffle }) => $raffle.last)
-  const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
+  const balance = useSelector(({ $raffle }) => $raffle.balance)
   const loadingUser = useSelector(({ $raffle }) => $raffle.loadingUser)
 
   const [totalReward, setTotalReward] = useState(0)
@@ -98,7 +98,7 @@ const RaffleTop = ({ loading }) => {
                       {loadingUser ? (
                         <App.Loader size={[36, 24]} />
                       ) : (
-                        <App.Text center size={[36, 24]} family="ClashDisplay" height={1} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">{tokenIds.length}</App.Text>
+                        <App.Text center size={[36, 24]} family="ClashDisplay" height={1} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">{balance}</App.Text>
                       )}
                     </App.Flex>
                     <App.Text center size={[16, 10]} family="ClashDisplay" height={1.2} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">TKeys Balance</App.Text>

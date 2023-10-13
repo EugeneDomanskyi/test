@@ -10,7 +10,7 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const RaffleListMyItemMobile = ({ item, onParticipate }) => {
+const RaffleListMyItemMobile = ({ item, number, onParticipate }) => {
   const dispatch = useDispatch()
 
   const handleInfoModalShow = () => {
@@ -23,7 +23,7 @@ const RaffleListMyItemMobile = ({ item, onParticipate }) => {
       onClick={handleInfoModalShow}
     >
       <TableCell>
-        <App.Text size={12}>{item.id}</App.Text>
+        <App.Text size={12}>{number}</App.Text>
       </TableCell>
 
       <TableCell>
@@ -46,14 +46,10 @@ const RaffleListMyItemMobile = ({ item, onParticipate }) => {
 
       <TableCell align="right">
         <App.Flex column gap={8} align="flex-end">
-          {item.status == 'Processing' ? (
-            <App.Loader size={12} />
-          ) : (
-            <App.Flex row align="center" gap={4}>
-              <Image src="/images/raffle/usdt.png" width={12} height={12} alt="" />
-              <App.Text size={12} height={1}>{item.rewardAmount ?? 0} USDT</App.Text>
-            </App.Flex>
-          )}
+          <App.Flex row align="center" gap={4}>
+            <Image src="/images/raffle/usdt.png" width={12} height={12} alt="" />
+            <App.Text size={12} height={1}>{item.rewardAmount ?? 0} USDT</App.Text>
+          </App.Flex>
 
           <App.Text size={10} color={item.status == 'Success' ? '#53F19C' : (item.status == 'Processing' ? '#FFD600' : '#FF1D61')}>{item.status}</App.Text>
         </App.Flex>

@@ -1,12 +1,47 @@
 .container {
-  height: 64px;
+  width: 100%;
   position: absolute;
   z-index: 5;
   top: 0;
   left: 0;
-  background: rgba(9, 5, 29, 0.6);
+  // background: rgba(9, 5, 29, 0.6);
+  background: rgb(9, 5, 29);
   border-bottom: 0.5px solid #311B92;
-  backdrop-filter: blur(6px);
+  // backdrop-filter: blur(6px);
+
+  .banner {
+    background: #7204FF url('/images/raffle/top-banner-background.png') center no-repeat;
+    height: 30px;
+    position: relative;
+    z-index: 0;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all .2s ease 0s;
+
+    &.closed {
+      height: 0;
+    }
+
+    .closeButton {
+      position: absolute;
+      z-index: 0;
+      right: 8px;
+      top: 0;
+      height: 30px;
+      width: 30px;
+      cursor: pointer;
+      opacity: .8;
+      transition: all .2s ease 0s;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .containerHeader {
+    height: 64px;
+  }
 
   .navbarLeftWrapper {
     gap: 64px;
