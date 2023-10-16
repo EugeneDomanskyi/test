@@ -56,7 +56,7 @@ const TradeForm = forwardRef(({current, type, fullWidth = null}, ref) => {
   useEffect(() => {
     const getUserBalances = async () => {
       if (current?.address && wallet) {
-        // await changeNetwork(current.blockchain)
+        await changeNetwork(current.blockchain)
         switch (type) {
           case 'nfts':
             getNftBalanceUser(current.address, wallet).then(res => {

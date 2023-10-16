@@ -11,6 +11,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 
 import $modal from '@/store/modal'
+import $app from '@/store/app'
 
 import App from '@/components/App'
 import SwitchBlockchain from '@/components/SwitchBlockchain'
@@ -28,6 +29,7 @@ const Header = () => {
   const dispatch = useDispatch()
 
   const balance = useSelector(({$raffle}) => $raffle.balance)
+  const blockchain = useSelector($app.get.blockchain)
 
   const [menuShow, setMenuShow] = useState(false)
   const [mobileMenuShow, setMobileMenuShow] = useState(false)
@@ -41,7 +43,7 @@ const Header = () => {
     if (wallet) {
       handleGetBalance()
     }
-  }, [wallet, isEarn])
+  }, [wallet, isEarn, blockchain])
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, false)
