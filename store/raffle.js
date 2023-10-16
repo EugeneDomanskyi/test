@@ -193,7 +193,9 @@ const api = {
   },
 
   reward: (hash) => {
-    return request(`https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status?transactions[]=${hash}`, 'GET', {api: 'remote'})
+    // const url = 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status'     // dev endpoint
+    const url = 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status-polygon'
+    return request(`${url}?transactions[]=${hash}`, 'GET', {api: 'remote'})
   },
 }
 

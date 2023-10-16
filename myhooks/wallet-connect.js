@@ -110,7 +110,6 @@ const useWalletConnect = () => {
 
   const getBalance = async (token, full = false) => {
     const wallet = await connect()
-    console.log('wallet', wallet);
     if (wallet) {
       try {
         const balance = await fetchBalance({

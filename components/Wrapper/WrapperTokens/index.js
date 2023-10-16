@@ -181,9 +181,7 @@ const WrapperTokens = ({ children }) => {
         dispatch($token.set.searchEmpty(!tempAll.length))
       }
 
-      console.log('tempTokens', tempTokens);
       if (! current?.id) {
-        console.log('current?.id', current?.id);
         const [first] = tempTokens
         router.replace(`/exchange/${blockchain.code}/${first.id}`, undefined, { scroll: false })
       }
