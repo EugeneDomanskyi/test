@@ -51,6 +51,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 let firstTimeLoaded = false
+let globalList = []
 
 createClient({
   chains: CHAINS,
@@ -196,7 +197,7 @@ MyApp.getInitialProps = async ({ctx}) => {
 
   let ssRoute = ''
   let marketInfo = {}
-  let marketsList = []
+  let marketsList = globalList
 
   if (ctx?.req) {
     const routeArr = ctx?.req?.url.split('/') || []
@@ -207,6 +208,7 @@ MyApp.getInitialProps = async ({ctx}) => {
       const list = await getAssetsFile()
       if (list && Array.isArray(list)) {
         marketsList = list
+        globalList = list
         marketInfo = list.find(item => item.address === currentAddress) || {}
         firstTimeLoaded = true
       }

