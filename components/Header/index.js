@@ -40,10 +40,10 @@ const Header = () => {
   const [isBannerClosed, setIsBannerClosed] = useState(false)
 
   useEffect(() => {
-    if (wallet) {
+    if (wallet && ! isEarn) {
       handleGetBalance()
     }
-  }, [wallet, blockchain])
+  }, [wallet, isEarn, blockchain])
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, false)
@@ -54,9 +54,11 @@ const Header = () => {
   }, [])
 
   useEffect(() => {
-    setCurrentBalance({amount: balance, symbol: 'TKeys'})
-    setBalanceLoading(false)
-  }, [balance])
+    if (isEarn) {
+      setCurrentBalance({amount: balance, symbol: 'TKeys'})
+      setBalanceLoading(false)
+    }
+  }, [balance, isEarn])
 
   const handleClickOutside = (event) => {
     if (! event.target.closest('#wallet')) {
