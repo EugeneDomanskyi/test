@@ -6,6 +6,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 
 import { trackEvent } from '@/libs/analytics.lib'
 
+import $app from '@/store/app'
 import $modal from '@/store/modal'
 import $raffle from '@/store/raffle'
 
@@ -17,6 +18,7 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
   const router = useRouter()
   const { wallet, connect, changeNetwork } = useWalletConnect()
 
+  const blockchain = useSelector($app.get.blockchain)
   const campaigns = useSelector($raffle.get.filtered)
   const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
 
@@ -85,8 +87,7 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
       return
     }
 
-    const networkCode = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
-    const network = await changeNetwork(networkCode)
+    const network = await changeNetwork(blockchain.code)
     if ( ! network) {
       return
     }

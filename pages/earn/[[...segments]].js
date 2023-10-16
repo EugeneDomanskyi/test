@@ -17,8 +17,8 @@ import Raffle from '@/components/Raffle'
 
 import styles from './styles.module.scss'
 
-const getApolloClient = () => {
-  const uri = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'https://api.thegraph.com/subgraphs/name/gulshanweb3/raffle-mumbai' : 'https://api.thegraph.com/subgraphs/name/gulshanweb3/raffle-mumbai'
+const getApolloClient = (blockchain) => {
+  const uri = blockchain?.raffle?.subgraph
   const client = new ApolloClient({
     uri,
     cache: new InMemoryCache(),
@@ -37,63 +37,70 @@ const RafflePage = () => {
 
   const [campaignLoading, setCampaignLoading] = useState(true)
 
-  const apollo = useRef(getApolloClient())
-  const alchemy = new AlchemyLibrary(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'MATIC_MUMBAI' : 'MATIC_MAINNET')
+  const apollo = useRef()
+  const alchemy = useRef()
 
   const prevWallet = useRef()
   const reward = useRef()
 
+  const requiredChain = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
+
   useEffect(() => {
     trackEvent('Visit Raffle')
-  }, [])
-  
-  useEffect(() => {
-    (async () => {
-      const result = await apollo.current.query({
-        query: $raffle.query.campaigns,
-      })
-
-      if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('campaigns')) {
-        const campaigns = await getIpfsInfo(result.data.campaigns)
-        dispatch($raffle.set.all(campaigns.map(item => ({
-          ...item,
-          rewardAmount: item.rewardAmount / Math.pow(10, 6),
-          totalTransferred: item.totalTransferred / Math.pow(10, 6),
-          status: getStatus(item),
-        }))))
-      }
-
-      const last = await apollo.current.query({
-        query: $raffle.query.last,
-      })
-
-      if (last && last.hasOwnProperty('data') && last.data.hasOwnProperty('userCampaignParticipants')) {
-        dispatch($raffle.set.last(last.data.userCampaignParticipants.map(item => ({
-          resolvedTransaction: item.resolvedTransaction,
-          rewardAmount: item.rewardAmount / Math.pow(10, 6),
-          address: item.user.id.slice(0, 4) + '...' + item.user.id.slice(-4),
-        }))))
-      }
-
-      setCampaignLoading(false)
-    })()
   }, [])
 
   useEffect(() => {
     if (blockchain.code) {
-      if ( ! pageBlockchains.map(item => item.code).includes(blockchain.code)) {
-        dispatch($app.set.code(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'))
+      if ( ! pageBlockchains.map(item => item.code).includes(blockchain.code) || blockchain.code != requiredChain) {
+        dispatch($app.set.code(requiredChain))
       }
+    }
+  }, [blockchain.code])
+  
+  useEffect(() => {
+    if (blockchain.code == requiredChain) {
+      (async () => {
+        apollo.current = getApolloClient(blockchain)
+        const result = await apollo.current.query({
+          query: $raffle.query.campaigns,
+        })
+
+        if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('campaigns')) {
+          const campaigns = await getIpfsInfo(result.data.campaigns)
+          dispatch($raffle.set.all(campaigns.map(item => ({
+            ...item,
+            rewardAmount: item.rewardAmount / Math.pow(10, 6),
+            totalTransferred: item.totalTransferred / Math.pow(10, 6),
+            status: getStatus(item),
+          }))))
+        }
+
+        const last = await apollo.current.query({
+          query: $raffle.query.last,
+        })
+
+        if (last && last.hasOwnProperty('data') && last.data.hasOwnProperty('userCampaignParticipants')) {
+          dispatch($raffle.set.last(last.data.userCampaignParticipants.map(item => ({
+            resolvedTransaction: item.resolvedTransaction,
+            rewardAmount: item.rewardAmount / Math.pow(10, 6),
+            address: item.user.id.slice(0, 4) + '...' + item.user.id.slice(-4),
+          }))))
+        }
+
+        setCampaignLoading(false)
+      })()
     }
   }, [blockchain.code])
 
   useEffect(() => {
-    if (wallet && ! campaignLoading) {
+    if (wallet && ! campaignLoading && blockchain.code == requiredChain) {
       (async () => {
         if (wallet != prevWallet.current) {
           dispatch($raffle.set.reset())
           prevWallet.current = wallet
         }
+
+        alchemy.current = new AlchemyLibrary(blockchain.raffle.alchemy)
 
         await getUserCases()
         await getUserTKeysBalance()
@@ -103,11 +110,11 @@ const RafflePage = () => {
     } else {
       prevWallet.current = null
     }
-  }, [wallet, campaignLoading])
+  }, [wallet, campaignLoading, blockchain.code])
 
   const getUserSummary = async (hard = false) => {
     if (hard) {
-      apollo.current = getApolloClient()
+      apollo.current = getApolloClient(blockchain)
     }
 
     const result = await apollo.current.query({
@@ -130,7 +137,7 @@ const RafflePage = () => {
 
   const getUserCases = async (hard = false) => {
     if (hard) {
-      apollo.current = getApolloClient()
+      apollo.current = getApolloClient(blockchain)
     }
 
     const participants = await apollo.current.query({
@@ -161,26 +168,22 @@ const RafflePage = () => {
   }
 
   const getUserTKeysBalance = async () => {
-    const networkCode = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
-    const network = await changeNetwork(networkCode)
+    const network = await changeNetwork(blockchain.code)
     if ( ! network) {
       return
     }
 
-    const contractAddress = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? '0x9BFDfDac362f810ff15240045E600a7468CAf91C' : '0x9BFDfDac362f810ff15240045E600a7468CAf91C'
-    const balance = await alchemy.getNftsForOwnerCollectionCount(wallet, contractAddress)
+    const balance = await alchemy.current.getNftsForOwnerCollectionCount(wallet, blockchain.raffle.contract)
     dispatch($raffle.set.balance(balance))
   }
 
   const getUserTKeys = async (limit = 100) => {
-    const networkCode = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
-    const network = await changeNetwork(networkCode)
+    const network = await changeNetwork(blockchain.code)
     if ( ! network) {
       return
     }
 
-    const contractAddress = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? '0x9BFDfDac362f810ff15240045E600a7468CAf91C' : '0x9BFDfDac362f810ff15240045E600a7468CAf91C'
-    const nfts = await alchemy.getNftsForOwnerCollection(wallet, contractAddress, limit)
+    const nfts = await alchemy.current.getNftsForOwnerCollection(wallet, blockchain.raffle.contract, limit)
     const ids = nfts.map(item => item.id)
     dispatch($raffle.set.tokenIds(ids))
     return ids
