@@ -54,6 +54,13 @@ const TEST_NETWORKS = [
             name: 'Wrapped Matic',
             shortName: 'WMATIC',
         },
+        raffle: {
+            subgraph: 'https://api.thegraph.com/subgraphs/name/gulshanweb3/raffle-mumbai',
+            contract: '0x9bfdfdac362f810ff15240045e600a7468caf91c',
+            factory: '0x3897BdBAFA001CA14576Cb07ecdfbC1BcdF09ca7',
+            alchemy: 'MATIC_MUMBAI',
+            txUrl: 'https://mumbai.polygonscan.com/tx/',
+        },
     },
 ]
 
@@ -242,6 +249,13 @@ export const CHAINS = [
       contract: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
       name: 'Wrapped Matic',
       shortName: 'WMATIC',
+    },
+    raffle: {
+        subgraph: 'https://api.thegraph.com/subgraphs/name/gulshanweb3/raffle-polygon',
+        contract: '0x9bfdfdac362f810ff15240045e600a7468caf91c',
+        factory: '0xEb1E2f70C204fcE5d7EEF7F5A159C64fA13c4Ad9',
+        alchemy: 'MATIC_MAINNET',
+        txUrl: 'https://polygonscan.com/tx/',
     },
   }, 
   ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? TEST_NETWORKS : []),

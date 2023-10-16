@@ -6,6 +6,8 @@ import cn from 'classnames'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
 
+import $app from '@/store/app'
+
 import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
@@ -16,6 +18,7 @@ const RaffleTop = ({ loading }) => {
   const { wallet, connect } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
+  const blockchain = useSelector($app.get.blockchain)
   const campaigns = useSelector(({ $raffle }) => $raffle.all)
   const user = useSelector(({ $raffle }) => $raffle.user)
   const last = useSelector(({ $raffle }) => $raffle.last)
@@ -72,7 +75,7 @@ const RaffleTop = ({ loading }) => {
   }
 
   const handleTransactionClick = (tx) => () => {
-    window.open(`https://${process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai.' : ''}polygonscan.com/tx/${tx}`, '_blank')
+    window.open(`${blockchain.raffle.txUrl}${tx}`, '_blank')
   }
 
   return (

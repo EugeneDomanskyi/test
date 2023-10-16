@@ -1,15 +1,19 @@
+import { useSelector } from 'react-redux'
 import Image from 'next/image'
 import { TableCell, TableRow } from '@mui/material'
 import moment from 'moment'
-import cn from 'classnames'
+
+import $app from '@/store/app'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const RaffleListMyItem = ({ item, number, onShare }) => {
+  const blockchain = useSelector($app.get.blockchain)
+
   const handleTransactionClick = (tx) => () => {
-    window.open(`https://${process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai.' : ''}polygonscan.com/tx/${tx}`, '_blank')
+    window.open(`${blockchain.raffle.txUrl}${tx}`, '_blank')
   }
 
   return (

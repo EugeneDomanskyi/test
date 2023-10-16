@@ -8,6 +8,7 @@ import moment from 'moment'
 import { usePropsHelper } from '@/myhooks/props-helper'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
+import $app from '@/store/app'
 import $modal from '@/store/modal'
 import $raffle from '@/store/raffle'
 
@@ -26,9 +27,6 @@ import RaffleReward from '@/components/Raffle/RaffleModalParticipate/RaffleRewar
 
 import styles from './styles.module.scss'
 
-const contractAddr = '0x9bfdfdac362f810ff15240045e600a7468caf91c' //'0xddbe6cb6c57511e36e3fe6c06a2de92d196cda84'
-const factoryAddr = '0x3897BdBAFA001CA14576Cb07ecdfbC1BcdF09ca7' //'0xA4cDD0FEe85c917A68a9432a3ebfF1f66E9f281A'
-
 const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, onUpdateUserCases, onShare}) => {
   const router = useRouter()
   const dispatch = useDispatch()
@@ -37,6 +35,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   
   const contract = new Contracts()
 
+  const blockchain = useSelector($app.get.blockchain)
   const showModal = useSelector((state) => state.$modal.show)
   const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
 
@@ -115,13 +114,12 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   }
 
   const checkIfApproved = async () => {
-    const res = await contract.isApprovedForAll(contractAddr, wallet, factoryAddr)
+    const res = await contract.isApprovedForAll(blockchain.raffle.contract, wallet, blockchain.raffle.factory)
     return res
   }
 
   const handleClickNextStep = async () => {
-    const networkCode = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
-    const network = await changeNetwork(networkCode)
+    const network = await changeNetwork(blockchain.code)
     if ( ! network) {
       return
     }
@@ -135,7 +133,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
         //   'WalletAddress': wallet,
         //   'Market': 'USDT',
         // })
-        const approveRes = await contract.setApprovalForAll(contractAddr, factoryAddr)
+        const approveRes = await contract.setApprovalForAll(blockchain.raffle.contract, blockchain.raffle.factory)
         dispatch($raffle.set.loading(false))
         if (approveRes.error) {
           return
@@ -153,7 +151,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
     
     if (step === 1) {
       const ids = tokenIds.slice(0, item.tKeyRequired)
-      const enterCampaignHash = await contract.enterCampaign(factoryAddr, item.id, ids)
+      const enterCampaignHash = await contract.enterCampaign(blockchain.raffle.factory, item.id, ids)
       
       if (enterCampaignHash.error) {
         dispatch($raffle.set.loading(false))
