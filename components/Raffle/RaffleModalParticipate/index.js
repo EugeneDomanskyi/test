@@ -80,13 +80,13 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
         },
       }))
     }
-    // trackEvent('Click Unlock With TKeys', {
-    //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-    //   'Tkeys Quantity': tokenIds.length,
-    //   'TKeys Required': item.tKeyRequired,
-    //   'WalletAddress': wallet,
-    //   'Market': 'USDT',
-    // })
+    trackEvent('Click Unlock With TKeys', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Tkeys Quantity': tokenIds.length,
+      'TKeys Required': item.tKeyRequired,
+      'WalletAddress': wallet,
+      'Market': 'USDT',
+    })
     setStep(isApproved ? 1 : 0)
     setShowClaim(true)
     if (! isApproved) {
@@ -126,13 +126,13 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
 
     if (step === 0) {
       if (! isApproved) {
-        // trackEvent('Click Approve Contract', {
-        //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-        //   'Tkeys Quantity': tokenIds.length,
-        //   'TKeys Required': item.tKeyRequired,
-        //   'WalletAddress': wallet,
-        //   'Market': 'USDT',
-        // })
+        trackEvent('Click Approve Contract', {
+          'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+          'Tkeys Quantity': tokenIds.length,
+          'TKeys Required': item.tKeyRequired,
+          'WalletAddress': wallet,
+          'Market': 'USDT',
+        })
         const approveRes = await contract.setApprovalForAll(blockchain.raffle.contract, blockchain.raffle.factory)
         dispatch($raffle.set.loading(false))
         if (approveRes.error) {
@@ -158,13 +158,13 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
         return
       }
 
-      // trackEvent('Click Confirm Deposit', {
-      //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      //   'WalletAddress': wallet,
-      //   'Tkeys Quantity': tokenIds.length,
-      //   'TKeys Required': item.tKeyRequired,
-      //   'Market': 'USDT',
-      // })
+      trackEvent('Click Confirm Deposit', {
+        'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+        'WalletAddress': wallet,
+        'Tkeys Quantity': tokenIds.length,
+        'TKeys Required': item.tKeyRequired,
+        'Market': 'USDT',
+      })
 
       console.log('enterCampaignHash', enterCampaignHash)
       dispatch($modal.set.update({
@@ -246,11 +246,12 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   }
 
   const handleClickShare = () => {
-    onShare(item)
-    // trackEvent('Click Share Case Details', {
-    //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-    //   'WalletAddress': wallet,
-    // })
+    trackEvent('Click Share Case Details', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'WalletAddress': wallet,
+    })
+    const shareText = `🎁✨ Did you know? You can open cases on Tegro and share rewards worth 💰💰 $10,000 in $USDT, $PEPE, $SHIB, and other tokens! Unlock your first case for FREE! Start here 👉 `
+    onShare(shareText)
   }
 
   return (
@@ -363,7 +364,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
                       <ErrorStep type={errorType} onSubmit={handleCloseModal} />
                     )
                   default:
-                    return <FourthStep campaign={{...item, expectedReward}} onSubmit={handleClickNextStep} />
+                    return <FourthStep campaign={{...item, expectedReward}} onSubmit={handleClickNextStep} onShare={onShare} />
                 }
               })(step)
             }

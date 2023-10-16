@@ -21,7 +21,7 @@ import styles from './styles.module.scss'
 
 const Header = () => {
   const router = useRouter()
-  const { wallet, connect, disconnect, getBalance } = useWalletConnect()
+  const { wallet, connect, disconnect, getBalance, changeNetwork } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
   const isEarn = router.pathname.includes('/earn')
@@ -43,7 +43,7 @@ const Header = () => {
     if (wallet) {
       handleGetBalance()
     }
-  }, [wallet, isEarn, blockchain])
+  }, [wallet, blockchain])
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, false)
@@ -54,8 +54,10 @@ const Header = () => {
   }, [])
 
   useEffect(() => {
-    setCurrentBalance({amount: balance, symbol: 'TKeys'})
-    setBalanceLoading(false)
+    if (balance) {
+      setCurrentBalance({amount: balance, symbol: 'TKeys'})
+      setBalanceLoading(false)
+    }
   }, [balance])
 
   const handleClickOutside = (event) => {
@@ -75,7 +77,7 @@ const Header = () => {
   const handleConnectWallet = async () => {
     if ( ! wallet) {
       trackEvent('Wallet Connect Clicked', {
-        'Wallet connected Status': 'Not Connected'
+        'Wallet connected Status': 'Not Connected',
       })
       const result = await connect()
       if (result) {
@@ -107,7 +109,7 @@ const Header = () => {
     disconnect()
     setMenuShow(false)
     trackEvent('Wallet Disconnect successfully', {
-      'Wallet connected Status': 'Not Connected'
+      'Wallet connected Status': 'Not Connected',
     })
   }
 
@@ -123,9 +125,13 @@ const Header = () => {
 
   const handleGetBalance = async () => {
     setBalanceLoading(true)
+    const network = await changeNetwork(blockchain.code)
+    if (!network) {
+      return
+    }
     if (! isEarn) {
       const balance = await getBalance('', true)
-      if (balance.formatted) {
+      if (balance) {
         const amount = balance.formatted*1
         setCurrentBalance({amount: amount.toFixed(4), symbol: balance.symbol})
       }

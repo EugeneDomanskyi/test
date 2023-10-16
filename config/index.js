@@ -252,7 +252,7 @@ export const CHAINS = [
     },
     raffle: {
         subgraph: 'https://api.thegraph.com/subgraphs/name/gulshanweb3/raffle-polygon',
-        contract: '0x9bfdfdac362f810ff15240045e600a7468caf91c',
+        contract: '0xA8CD44b30Daa2759A6aA1a1126A5F038B855a741',
         factory: '0xEb1E2f70C204fcE5d7EEF7F5A159C64fA13c4Ad9',
         alchemy: 'MATIC_MAINNET',
         txUrl: 'https://polygonscan.com/tx/',

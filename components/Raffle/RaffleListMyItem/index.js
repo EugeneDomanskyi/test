@@ -5,6 +5,8 @@ import moment from 'moment'
 
 import $app from '@/store/app'
 
+import useWalletConnect from '@/myhooks/wallet-connect'
+
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
@@ -12,8 +14,19 @@ import styles from './styles.module.scss'
 const RaffleListMyItem = ({ item, number, onShare }) => {
   const blockchain = useSelector($app.get.blockchain)
 
+  const { wallet } = useWalletConnect()
+
   const handleTransactionClick = (tx) => () => {
     window.open(`${blockchain.raffle.txUrl}${tx}`, '_blank')
+  }
+
+  const handleClickShare = () => {
+    trackEvent('Click Share My Case Opens', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'WalletAddress': wallet,
+    })
+    const shareText = `🎁✨ Did you know? You can open cases on Tegro and share rewards worth 💰💰 $10,000 in $USDT, $PEPE, $SHIB, and other tokens! Unlock your first case for FREE! Start here 👉 `
+    onShare(shareText)
   }
 
   return (
@@ -68,7 +81,7 @@ const RaffleListMyItem = ({ item, number, onShare }) => {
       </TableCell>
 
       <TableCell>
-        <App.Flex row align="center" onClick={() => onShare(item)} sx={{ cursor: 'pointer' }}>
+        <App.Flex row align="center" onClick={handleClickShare} sx={{ cursor: 'pointer' }}>
           <App.Icon icon="share" />
         </App.Flex>
       </TableCell>

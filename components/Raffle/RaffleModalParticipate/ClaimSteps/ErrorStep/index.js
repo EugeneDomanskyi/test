@@ -25,11 +25,11 @@ const ErrorStep = ({onSubmit, type}) => {
   const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
 
   const handleClickNextStep = () => {
-    // trackEvent('Click Collect TKeys', {
-    //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-    //   'Tkeys Quantity': tokenIds.length,
-    //   'WalletAddress': wallet,
-    // })
+    trackEvent('Click Collect TKeys', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Tkeys Quantity': tokenIds.length,
+      'WalletAddress': wallet,
+    })
     if (type === 'balance') {
       window.open('https://galxe.com/tegro', '_blank')
     }

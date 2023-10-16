@@ -123,13 +123,13 @@ const RaffleListMy = ({ loading, onMoreCases, onShare, onUpdateUserCases }) => {
   }, [order, orderBy])
 
   const handleParticipate = (item) => {
-    // trackEvent('Click Open another USDT case', {
-    //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-    //   'Tkeys Quantity': tokenIds.length,
-    //   'TKeys Required': item.tKeyRequired,
-    //   'WalletAddress': wallet,
-    //   'Market': 'USDT',
-    // })
+    trackEvent('Click Open another USDT case', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Tkeys Quantity': tokenIds.length,
+      'TKeys Required': item.tKeyRequired,
+      'WalletAddress': wallet,
+      'Market': 'USDT',
+    })
     onParticipate(item)
   }
 

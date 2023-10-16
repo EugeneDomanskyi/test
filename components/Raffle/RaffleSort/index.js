@@ -43,27 +43,27 @@ const RaffleSort = () => {
   }
 
   const handleSortChange = (item) => () => {
-    // trackEvent('Click Sort by', {
-    //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-    //   'Tkeys Quantity': tokenIds.length,
-    //   'TKeys Required': campaign.tKeyRequired,
-    //   'WalletAddress': wallet,
-    //   'Market': 'USDT',
-    //   'Selection': item.text
-    // })
+    trackEvent('Click Sort by', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Tkeys Quantity': tokenIds.length,
+      'TKeys Required': campaign.tKeyRequired,
+      'WalletAddress': wallet,
+      'Market': 'USDT',
+      'Selection': item.text
+    })
 
     dispatch($raffle.set.sort(item.code))
   }
 
   const handleFilterChange = (item) => () => {
-    // trackEvent('Click Filter', {
-    //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-    //   'Tkeys Quantity': tokenIds.length,
-    //   'TKeys Required': campaign.tKeyRequired,
-    //   'WalletAddress': wallet,
-    //   'Market': 'USDT',
-    //   'Selection': item.text
-    // })
+    trackEvent('Click Filter', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Tkeys Quantity': tokenIds.length,
+      'TKeys Required': campaign.tKeyRequired,
+      'WalletAddress': wallet,
+      'Market': 'USDT',
+      'Selection': item.text
+    })
 
     dispatch($raffle.set.filter(item.code))
   }

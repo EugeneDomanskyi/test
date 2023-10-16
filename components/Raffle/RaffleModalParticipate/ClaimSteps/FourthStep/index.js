@@ -13,7 +13,7 @@ import App from '@/components/App'
 import ClaimText from '@/components/Raffle/RaffleModalParticipate/ClaimText'
 import RaffleReward from '@/components/Raffle/RaffleModalParticipate/RaffleReward'
 
-const FourthStep = ({campaign, onSubmit}) => {
+const FourthStep = ({campaign, onSubmit, onShare}) => {
   const audioRef = useRef(null)
   const { wallet } = useWalletConnect()
 
@@ -51,30 +51,23 @@ const FourthStep = ({campaign, onSubmit}) => {
   }, [audioRef])
 
   const handleClickNextStep = () => {
-    // trackEvent('Click Open another USDT case', {
-    //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-    //   'Tkeys Quantity': tokenIds.length,
-    //   'TKeys Required': campaign.tKeyRequired,
-    //   'WalletAddress': wallet,
-    //   'Market': 'USDT',
-    // })
+    trackEvent('Click Open another USDT case', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Tkeys Quantity': tokenIds.length,
+      'TKeys Required': campaign.tKeyRequired,
+      'WalletAddress': wallet,
+      'Market': 'USDT',
+    })
     onSubmit()
   }
 
-  const getTweeButtonLink = () => {
-    const url = `${window.location.origin}/earn`
-    const text = `🎉 Woohoo! Just unlocked a case & scored $${prize.amount} in USDT. You too can get in on the action! Collect TKeys and open cases on Tegro for big wins! 🚀 Start here: `
-
-    
-    return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
-  }
-
   const handleClickShare = () => {
-    // trackEvent('Click Share Reward Won', {
-    //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-    //   'WalletAddress': wallet,
-    // })
-    window.open(getTweeButtonLink(), '_blank')
+    trackEvent('Click Share Reward Won', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'WalletAddress': wallet,
+    })
+    const shareText = `🥳💸 Woohoo! I just won $${prize.amount} in USDT from a Tegro case! You can win BIG too. 💰💰 Join me now! Unlock your first Tegro case 🎁 for FREE! 👀 Start here 👉`
+    onShare(shareText)
   }
 
   return (

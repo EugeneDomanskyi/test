@@ -59,29 +59,21 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
   }, [queryCampaignId, campaigns])
 
   const handleTabChange = (value) => {
-    // if (value === 'my') {
-    //   trackEvent('Click Case History', {
-    //     'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-    //     'Tkeys Quantity': tokenIds.length,
-    //     'WalletAddress': wallet,
-    //   })
-    // } else {
-    //   trackEvent('Click Browse Case', {
-    //     'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-    //     'Tkeys Quantity': tokenIds.length,
-    //     'WalletAddress': wallet,
-    //   })
-    // }
+    trackEvent(value === 'my' ? 'Click My Case Opens' :  'Click Browse Case', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Tkeys Quantity': tokenIds.length,
+      'WalletAddress': wallet,
+    })
     setTab(value)
   }
 
   const handleParticipate = async (item) => {
-    // trackEvent('Click View Case', {
-    //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-    //   'Tkeys Quantity': tokenIds.length,
-    //   'TKeys Required': item.tKeyRequired,
-    //   'WalletAddress': wallet,
-    // })
+    trackEvent('Click View Case', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Tkeys Quantity': tokenIds.length,
+      'TKeys Required': item.tKeyRequired,
+      'WalletAddress': wallet,
+    })
     const address = await connect()
     if ( ! address) {
       return
@@ -95,9 +87,8 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
     router.push(`/earn/${item.id}`, undefined, { scroll: false })
   }
 
-  const handleShare = (item) => {
-    window.open(getTweeButtonLink(), '_blank')
-    console.log('Share Campaign Id', item.id)
+  const handleShare = (text) => {
+    window.open(getTweeButtonLink(text), '_blank')
   }
 
   const handleMoreCases = () => {
@@ -105,10 +96,8 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
     dispatch($modal.set.close())
   }
 
-  const getTweeButtonLink = () => {
+  const getTweeButtonLink = (text) => {
     const url = `${window.location.origin}/earn`
-    const text = `🎉 Woohoo! Just unlocked a case & scored $10 in $SHIB tokens. You too can get in on the action! Collect TKeys and open cases on Tegro for big wins! 🚀 Start here: `
-
     
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
   }
