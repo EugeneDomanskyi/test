@@ -57,13 +57,8 @@ const WrapperTokens = ({ children }) => {
 
   useEffect(() => {
     (async () => {
-      
       const infoList = await $token.api.coingecko.local()
       dispatch($token.set.infoList(infoList))
-      // if (!list.length) {
-      //   const tempList = await getAssetsFile()
-      //   dispatch($token.set.list(tempList))
-      // }
     })()
   }, [])
 
