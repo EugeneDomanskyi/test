@@ -54,10 +54,8 @@ const Header = () => {
   }, [])
 
   useEffect(() => {
-    if (balance) {
-      setCurrentBalance({amount: balance, symbol: 'TKeys'})
-      setBalanceLoading(false)
-    }
+    setCurrentBalance({amount: balance, symbol: 'TKeys'})
+    setBalanceLoading(false)
   }, [balance])
 
   const handleClickOutside = (event) => {

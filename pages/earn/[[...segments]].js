@@ -43,7 +43,8 @@ const RafflePage = () => {
   const prevWallet = useRef()
   const reward = useRef()
 
-  const requiredChain = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
+  // const requiredChain = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
+  const requiredChain = 'polygon'
 
   useEffect(() => {
     trackEvent('Visit Raffle')
