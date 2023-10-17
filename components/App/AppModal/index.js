@@ -67,7 +67,9 @@ const AppModal = () => {
   }
 
   const handleClose = () => {
-    props.onClose()
+    if (props.onClose()) {
+      props.onClose()
+    }
     dispatch($modal.set.close())
   }
 
