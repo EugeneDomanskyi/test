@@ -7,6 +7,7 @@ import { getApolloClient, queries } from '@/api/graphql'
 import { getPrices } from '@/api/coingecko'
 import { CHAINS } from '@/config'
 import $token from '@/store/token'
+import $exchange from '@/store/exchange'
 import $app from '@/store/app'
 
 const getTokens = async (url, {skip, orderBy, orderDirection, searchText, usdt}) => {
@@ -41,6 +42,7 @@ const WrapperExchange = ({children, isMobile}) => {
   const tokenList = useSelector(({$token}) => $token.all)
   const sort = useSelector(({ $token }) => $token.sort)
   const pages = useSelector($token.get.pages)
+  const activeInterval = useSelector(({$exchange}) => $exchange.interval)
 
   const [wrongAddress, setWrongAddress] = useState(false)
 
@@ -128,6 +130,18 @@ const WrapperExchange = ({children, isMobile}) => {
       }
     }
   }, [tokenList, currentToken?.address, address])
+
+  useEffect(() => {
+    if (currentToken?.id && currentToken.id === address && !wrongAddress) {
+      $exchange.api.get.tokenChartData(address, blockchain, activeInterval.seconds).then(res => {
+        if (res) {
+          dispatch($exchange.set.chartData({type: 'tokens', data: res.data}))
+          return
+        }
+        dispatch($exchange.set.chartData({type: 'tokens', data: []}))
+      })
+    }
+  }, [address, wrongAddress, currentToken?.id, blockchain, activeInterval.seconds])
 
   return children
 }
