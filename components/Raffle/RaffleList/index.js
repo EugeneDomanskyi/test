@@ -60,7 +60,7 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
   }, [queryCampaignId, campaigns])
 
   const handleClose = () => {
-    console.log('MODAL HAS CLOSED!')
+    router.push('/earn', undefined, { scroll: false })
     onUpdateUserCases()
     getUserTKeysBalance()
   }

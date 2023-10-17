@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useRouter } from 'next/router'
 import Image from 'next/image'
 import cn from 'classnames'
 import moment from 'moment'
@@ -27,7 +26,6 @@ import RaffleReward from '@/components/Raffle/RaffleModalParticipate/RaffleRewar
 import styles from './styles.module.scss'
 
 const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, onUpdateUserCases, onShare}) => {
-  const router = useRouter()
   const dispatch = useDispatch()
   const { propValue } = usePropsHelper()
   const { wallet, changeNetwork } = useWalletConnect()
@@ -35,7 +33,6 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   const contract = new Contracts()
 
   const blockchain = useSelector($app.get.blockchain)
-  const showModal = useSelector((state) => state.$modal.show)
   const balance = useSelector(({$raffle}) => $raffle.balance)
   const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
 
@@ -55,12 +52,6 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
       }
     })()
   }, [wallet])
-
-  useEffect(() => {
-    if (!showModal) {
-      router.push('/earn', undefined, { scroll: false })
-    }
-  }, [showModal])
 
   useEffect(() => {
     if (expectedReward) {

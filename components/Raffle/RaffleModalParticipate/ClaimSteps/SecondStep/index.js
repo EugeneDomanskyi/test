@@ -25,7 +25,7 @@ const SecondStep = ({campaign, onSubmit}) => {
         subTitle={`You need to deposit ${campaign.tKeyRequired} TKeys to open the case`}
       />
 
-      <App.Button primary onClick={handleClickNextStep} sx={{width: 240, height: 56, fontSize: 16}}>
+      <App.Button primary onClick={handleClickNextStep} disabled={loading} sx={{width: 240, height: 56, fontSize: 16}}>
         {
           loading
             ? <App.Loader size={20} />
