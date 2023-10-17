@@ -14,6 +14,7 @@ import $token from '@/store/token'
 
 import App from '@/components/App'
 import Sidebar from '@/components/Exchange/Sidebar'
+import Mobile from '@/components/Exchange/Mobile'
 import SidebarMobile from '@/components/Exchange/Sidebar/SidebarMobile'
 import OrderBook from '@/components/Exchange/OrderBook'
 import Sales from '@/components/Exchange/Sales'
@@ -107,6 +108,78 @@ const Exchange = () => {
 
   useInterval(pollingOrders, 15000)
 
+  /* {
+    (tab => {
+      switch (tab) {
+        case 'markets':
+          return (
+            <Sidebar
+              items={tokens}
+              searched={searched}
+              current={current}
+              sort={sort}
+              search={search}
+              searching={searching}
+              searchEmpty={searchEmpty}
+              pages={pages}
+              loading={tokenLoading}
+              onSort={handleSort}
+              onSearch={handleSearch}
+              onPage={handlePage} />
+          )
+        case 'charts':
+          return (
+            <Chart type="tokens" />
+          )
+        case 'trades':
+          return (
+            <App.Flex column gap={GRID_GAP} width="100%">
+              <SidebarMobile
+                items={tokens}
+                searched={searched}
+                current={current}
+                sort={sort}
+                search={search}
+                searching={searching}
+                searchEmpty={searchEmpty}
+                pages={pages}
+                loading={tokenLoading}
+                onSort={handleSort}
+                onSearch={handleSearch}
+                onPage={handlePage}
+              />
+
+              <App.Flex column flex={1} sx={{ position: 'relative' }}>
+                <App.Flex column gap={GRID_GAP} className={styles.tradesContent}>
+                  <OrderBook
+                    type="tokens"
+                    onClickOrder={handleClickOrder} />
+                  <Sales
+                    type="tokens"
+                    onClickSale={handleClickOrder} />
+                </App.Flex>
+              </App.Flex>
+            </App.Flex>
+          )
+        case 'orders':
+          return (
+            <Orders
+              current={current}
+              type="tokens"
+              onOrderCancelled={handleOrdersUpdated}
+              onClickOrder={handleClickOrder} />
+          )
+        case 'buy_sell':
+          return (
+            <TradeForm
+              ref={tradeForm}
+              type="tokens"
+              current={current} />
+          )
+      }
+    })(mobileTab)
+  } */
+
   return (
     <App.Flex gap={GRID_GAP} className={styles.container}>
       {!isMobile ? (
@@ -163,85 +236,24 @@ const Exchange = () => {
           </App.Flex>
         </>
       ) : (
-        <>
-          {
-            (tab => {
-              switch (tab) {
-                case 'markets':
-                  return (
-                    <Sidebar
-                      items={tokens}
-                      searched={searched}
-                      current={current}
-                      sort={sort}
-                      search={search}
-                      searching={searching}
-                      searchEmpty={searchEmpty}
-                      pages={pages}
-                      loading={tokenLoading}
-                      onSort={handleSort}
-                      onSearch={handleSearch}
-                      onPage={handlePage} />
-                  )
-                case 'charts':
-                  return (
-                    <Chart type="tokens" />
-                  )
-                case 'trades':
-                  return (
-                    <App.Flex column gap={GRID_GAP} width="100%">
-                      <SidebarMobile
-                        items={tokens}
-                        searched={searched}
-                        current={current}
-                        sort={sort}
-                        search={search}
-                        searching={searching}
-                        searchEmpty={searchEmpty}
-                        pages={pages}
-                        loading={tokenLoading}
-                        onSort={handleSort}
-                        onSearch={handleSearch}
-                        onPage={handlePage}
-                      />
-
-                      <App.Flex column flex={1} sx={{ position: 'relative' }}>
-                        <App.Flex column gap={GRID_GAP} className={styles.tradesContent}>
-                          <OrderBook
-                            type="tokens"
-                            onClickOrder={handleClickOrder} />
-                          <Sales
-                            type="tokens"
-                            onClickSale={handleClickOrder} />
-                        </App.Flex>
-                      </App.Flex>
-                    </App.Flex>
-                  )
-                case 'orders':
-                  return (
-                    <Orders
-                      current={current}
-                      type="tokens"
-                      onOrderCancelled={handleOrdersUpdated}
-                      onClickOrder={handleClickOrder} />
-                  )
-                case 'buy_sell':
-                  return (
-                    <TradeForm
-                      ref={tradeForm}
-                      type="tokens"
-                      current={current} />
-                  )
-              }
-            })(mobileTab)
-          }
-          <MobileTabsBar
-            isConnected={Boolean(wallet)}
-            active={mobileTab}
-            actvieTrade={mobileTabTrade}
-            onTabChange={handleMobileTabChange}
+        !queryTokenId ? (
+          <Sidebar
+            items={tokens}
+            searched={searched}
+            current={current}
+            sort={sort}
+            search={search}
+            searching={searching}
+            searchEmpty={searchEmpty}
+            pages={pages}
+            loading={tokenLoading}
+            onSort={handleSort}
+            onSearch={handleSearch}
+            onPage={handlePage}
           />
-        </>
+        ) : (
+          <Mobile />
+        )
       )}
     </App.Flex>
   )

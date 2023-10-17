@@ -172,19 +172,19 @@ const Header = () => {
       ) : null}
 
       <App.Container fluid className={styles.containerHeader}>
-        <App.Flex row height="100%" align="center" justify="space-between">
+        <App.Flex row height="100%" align="center" justify="space-between" gap={[0, 12]}>
           <App.Flex row height="100%" align="center" className={styles.navbarLeftWrapper}>
             <Link href="/">
-              {
-                isMobile
-                  ? <App.Icon icon="logo-tiger-head" />
-                  : <div className={styles.logo}>
-                      <div className={styles.badge}>
-                        BETA
-                      </div>
-                      <App.Icon icon="tegro" width={117} height={25} />
-                    </div>
-              }
+              {isMobile ? (
+                <App.Icon icon="logo-tiger-head" />
+              ) : (
+                <div className={styles.logo}>
+                  <div className={styles.badge}>
+                    BETA
+                  </div>
+                  <App.Icon icon="tegro" width={117} height={25} />
+                </div>
+              )}
             </Link>
 
             <App.Flex row height="100%" align="center" className={styles.navItems}>
@@ -235,44 +235,29 @@ const Header = () => {
                 </App.Flex>
               </App.Flex>
             ) : null}
-            {/* {!isMobile ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : null} */}
-
-            {
-              ! isEarn
-                ? <SwitchBlockchain onChangeNetwork={handleGetBalance} />
-                : null
-            }
+            
+            { ! isEarn ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : null}
             
             {wallet ? (
               <App.Flex sx={{ position: 'relative' }} id="wallet">
                 <App.Flex row gap={16} className={styles.walletInfo}>
-                  {
-                    ! isMobile
-                      ? <App.Flex>
-                          {
-                            balanceLoading
-                              ? <App.Flex center sx={{width: 90}}>
-                                  <App.Loader />
-                                </App.Flex>
-                              : <App.Flex center gap={4}>
-                                  {
-                                    isEarn
-                                      ? <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
-                                      : null
-                                  }
-                                  <App.Text size={16} weight={500}>{ currentBalance.amount + ' ' + currentBalance.symbol }</App.Text>
-                                </App.Flex>
-                          }
+                  {! isMobile ? (
+                    <App.Flex>
+                      {balanceLoading ? (
+                        <App.Flex center sx={{width: 90}}>
+                          <App.Loader />
                         </App.Flex>
-                      : null
-                  }
+                      ) : (
+                        <App.Flex center gap={4}>
+                          {isEarn ? <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" /> : null}
+                          <App.Text size={16} weight={500}>{ currentBalance.amount + ' ' + currentBalance.symbol }</App.Text>
+                        </App.Flex>
+                      )}
+                    </App.Flex>
+                  ) : null}
 
                   <App.Flex className={styles.walletAddressWrapper} onClick={handleMenuToggle}>
-                    {/* <App.Flex width={28} height={28} sx={{ borderRadius: '50%', background: 'linear-gradient(91.77deg, #E792E4 2.92%, #B545BE 36.09%, #7931CB 70.47%, #4D42C9 100%)' }} /> */}
                     <App.Text size={16} weight={500}>{shorterAddress(isMobile ? 4 : 6)}</App.Text>
-                    {/* {isMobile ? (
-                      <App.Icon icon="caret-down" color="#fff" />
-                    ) : null} */}
                   </App.Flex>
                 </App.Flex>
 
@@ -284,24 +269,20 @@ const Header = () => {
               </App.Flex>
             ) : (
               <App.Button primary large={!isMobile} onClick={handleConnectWallet}>
-                Connect Wallet
+                Connect{!isMobile ? ' Wallet' : ''}
               </App.Button>
             )}
 
-            <div className={cn(styles.mobileMenuButton, {[styles.show]: mobileMenuShow})} onClick={handleMobileMenuClick}>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
+            { ! isMobile ? (
+              <div className={cn(styles.mobileMenuButton, {[styles.show]: mobileMenuShow})} onClick={handleMobileMenuClick}>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            ) : null}
 
             <div className={cn(styles.mobileMenu, {[styles.show]: mobileMenuShow})}>
               <div className={styles.content}>
-                {/* <App.Flex row sx={{ padding: 16 }}>
-                  <SwitchBlockchain onMobileMenuClose={handleMobileMenuClick} />
-                </App.Flex> */}
-
-                <div className={styles.line} />
-
                 <Link href="/exchange" className={cn(styles.link, {[styles.active]: router.pathname.includes('/exchange')})}>
                   <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                     <App.Icon icon="menuExchange" />

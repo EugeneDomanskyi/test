@@ -3,9 +3,14 @@
   cursor: pointer;
   transition: all .2s ease 0s;
   background: transparent;
-  border-bottom: solid #08051C 2px;
   position: relative;
   z-index: 0;
+
+  &:nth-of-type(odd) {
+    background-color: #0E0B23;
+    border-top: solid #000 1px;
+    border-bottom: solid #000 1px;
+  }
 
   & > * {
     position: relative;
@@ -37,6 +42,19 @@
   }
 
   @media (max-width: 768px) {
+    &:hover,
+    &.active {
+      background: transparent;
+
+      .secondaryText {
+        color: #5E5C6B;
+      }
+
+      .emptyImage {
+        background: linear-gradient(0deg, #311B9200, #311B92);
+      }
+    }
+
     &.withArrow {
       &:hover,
       &.active {
@@ -64,11 +82,11 @@
     filter: blur(22px);
 
     &.plus {
-      background: linear-gradient(270deg, rgba(0, 255, 117, 0.60) 0%, rgba(44, 248, 138, 0.29) 15.42%, rgba(83, 241, 156, 0.00) 49.27%);
+      background: linear-gradient(270deg, #00FF75 0%, rgba(44, 248, 138, 0.48) 28.02%, rgba(83, 241, 156, 0.00) 89.56%);
     }
 
     &.minus {
-      background: linear-gradient(270deg, rgba(255, 29, 97, 0.60) 0%, rgba(255, 29, 97, 0.28) 15.94%, rgba(255, 29, 97, 0.00) 44.58%);
+      background: linear-gradient(270deg, #FF1D61 0%, rgba(255, 29, 97, 0.46) 28.97%, rgba(255, 29, 97, 0.00) 81.04%);
     }
   }
 }

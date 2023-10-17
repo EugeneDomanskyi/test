@@ -57,6 +57,11 @@
     @media (max-width: 1200px) {
       gap: 16px;
     }
+
+    @media (max-width: 768px) {
+      flex: 1;
+      justify-content: space-between;
+    }
   }
 
   .logo {
