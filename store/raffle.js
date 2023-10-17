@@ -117,9 +117,11 @@ export const raffleSlice = createSlice({
         }
       })
 
-      state.user.totalEarned = state.participants.reduce((acc, item) => {
+      const rawAmount = state.participants.reduce((acc, item) => {
         return acc + item.rewardAmount
       }, 0)
+
+      state.user.totalEarned = Math.round(rawAmount * Math.pow(10, 6))/Math.pow(10, 6)
     },
 
     reset: (state) => {
