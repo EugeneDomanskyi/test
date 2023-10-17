@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
-// import { loadIntercom } from 'next-intercom'
 import { v4 as uuid } from 'uuid'
 import { useAccount } from 'wagmi'
 import { getNetwork } from '@wagmi/core'
@@ -49,14 +48,6 @@ const Wrapper = ({ children }) => {
     if (!deviceId) {
       localStorage.setItem('device_id', uuid())
     }
-
-    // loadIntercom({
-    //   user_id: deviceId,
-    //   appId: process.env.NEXT_PUBLIC_INTERCOM_APP_ID,
-    //   ssr: false,
-    //   initWindow: false,
-    //   delay: 0,
-    // })
 
     trackEvent('Page Visited')
   }, [])

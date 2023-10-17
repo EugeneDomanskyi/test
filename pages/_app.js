@@ -14,7 +14,7 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
 import merge from 'lodash.merge'
-import { MagicConnectConnector } from '@everipedia/wagmi-magic-connector'
+import { UniversalWalletConnector } from '@magiclabs/wagmi-connector'
 
 import { CHAINS } from '@/config'
 import store from '@/store'
@@ -77,7 +77,7 @@ const rainbowMagicConnector = ({ chains }) => ({
       }
     })
     
-    const connector = new MagicConnectConnector({
+    const connector = new UniversalWalletConnector({
       chains: chains,
       options: {
         apiKey: process.env.NEXT_PUBLIC_MAGIC_LINK_API_KEY,
@@ -159,7 +159,6 @@ function MyApp({ Component, pageProps, initialData, currentPage, currentAddress,
 
 MyApp.getInitialProps = async ({ctx}) => {
   const cookies = nookies.get(ctx)
-  
   let isMobile = false
   if (ctx.req?.headers?.['user-agent']) {
     const res = getSelectorsByUserAgent(ctx.req?.headers?.['user-agent'])

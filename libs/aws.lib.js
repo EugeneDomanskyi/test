@@ -32,8 +32,5 @@ export const getAssetsFile = async () => {
   const command = new AWS.GetObjectCommand(input)
   const response = await client.send(command)
   const bodyContents = await streamToString(response.Body)
-  return JSON.parse(bodyContents).filter(token => token.id).reduce((acc, token) => ({
-    ...acc,
-    [token.id.toLowerCase()]: token
-  }), {})
+  return JSON.parse(bodyContents)
 }

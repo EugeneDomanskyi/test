@@ -1,6 +1,6 @@
 import { useEffect, memo } from 'react'
 import { useRouter } from 'next/router'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 // import _ from 'lodash'
 
 import coingeckoAssets from '@/public/files/coingecko_ids'
@@ -8,6 +8,7 @@ import { getApolloClient, queries } from '@/api/graphql'
 import { getPrices } from '@/api/coingecko'
 import { CHAINS } from '@/config'
 import $token from '@/store/token'
+import $app from '@/store/app'
 
 const getTokens = async (url, {skip, orderBy, orderDirection, searchText, usdt}) => {
   const client = getApolloClient(url)
@@ -28,11 +29,19 @@ const WrapperExchange = ({children}) => {
   const router = useRouter()
   const dispatch = useDispatch()
 
-  const [address] = router.query.adrress || []
+  // const blockchain = useSelector($app.get.blockchain)
+  const currentToken = useSelector(({$token}) => $token.current)
+  const tokenList = useSelector(({$token}) => $token.all)
+
+  // console.log('blockchain', blockchain)
+
+  const [address] = router.query.address || []
+  const blockchain = router.query.blockchain
   const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(address)
 
-  const currentChain = CHAINS.find(chain => chain.code === router.query.blockchain)
+  const currentChain = CHAINS.find(chain => chain.code === blockchain)
 
+  // fetch list for blockchain
   useEffect(() => {
     const post = {
       skip: 0,
@@ -51,7 +60,28 @@ const WrapperExchange = ({children}) => {
       const res = await getPrices(coingeckoIds)
       dispatch($token.set.updatedAll(res))
     })
-  }, [router.query.blockchain])
+  }, [blockchain])
+
+  // fetch current if address is correct
+  useEffect(() => {
+    (async () => {
+      // if (isAddress && currentChain && currentToken?.id !== address) {
+      //   const existInList = tokenList.find(token => token.id === address)
+      //   if (!existInList) {
+      //     const token = await getToken(currentChain.baseUniswapUrl, address)
+      //     if (token) {
+      //       dispatch($token.set.current(token))
+      //       return
+      //     }
+      //     setWrongAddress(true)
+      //     return
+      //   }
+      //   dispatch($token.set.current(existInList))
+      // } else if (!isAddress) {
+      //   setWrongAddress(true)
+      // }
+    })()
+  }, [isAddress, blockchain, address, currentToken?.address])
 
   return children
 }
