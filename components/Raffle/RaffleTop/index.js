@@ -24,6 +24,7 @@ const RaffleTop = ({ loading }) => {
   const last = useSelector(({ $raffle }) => $raffle.last)
   const balance = useSelector(({ $raffle }) => $raffle.balance)
   const loadingUser = useSelector(({ $raffle }) => $raffle.loadingUser)
+  const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
 
   const [totalReward, setTotalReward] = useState(0)
 

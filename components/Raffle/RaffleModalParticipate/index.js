@@ -12,7 +12,6 @@ import $app from '@/store/app'
 import $modal from '@/store/modal'
 import $raffle from '@/store/raffle'
 
-import AlchemyLibrary from '@/libs/alchemy.lib'
 import Contracts from '@/libs/contracts.lib'
 import { trackEvent } from '@/libs/analytics.lib'
 
@@ -198,45 +197,48 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   const fetchReward = async (enterCampaignHash, maxTries = 10) => {
     if (maxTries > 0) {
       const result = await $raffle.api.reward(enterCampaignHash.trim())
-      const parsedRes = JSON.parse(result.data)
-  
-      console.log('parsedRes', parsedRes)
-      const rewardAmount = parsedRes[enterCampaignHash]?.expectedRewardAmount === '0' ? '0' : parsedRes[enterCampaignHash]?.expectedRewardAmount*1
-      console.log('rewardAmount', rewardAmount)
-  
-      if (!rewardAmount) {
-        setTimeout(() => {
-          fetchReward(enterCampaignHash, (maxTries - 1))
-        }, 2000)
-      } else if (rewardAmount === '0') {
-        setStep('error')
-        setErrorType('api')
-        dispatch($modal.set.update({
-          header: {
-            title: 'Something went wrong',
-          },
-        }))
-      } else {
-        setExpectedReward(rewardAmount)
-
-        setStep(step >= 4 ? 0 : step + 1)
-        dispatch($modal.set.update({
+      if (result?.data) {
+        const parsedRes = JSON.parse(result.data)
+    
+        console.log('parsedRes', parsedRes)
+        const rewardAmount = parsedRes[enterCampaignHash]?.expectedRewardAmount === '0' ? '0' : parsedRes[enterCampaignHash]?.expectedRewardAmount*1
+        console.log('rewardAmount', rewardAmount)
+    
+        if (!rewardAmount) {
+          setTimeout(() => {
+            fetchReward(enterCampaignHash, (maxTries - 1))
+          }, 2000)
+        } else if (rewardAmount === '0') {
+          setStep('error')
+          setErrorType('api')
+          dispatch($modal.set.update({
             header: {
-                title: 'Unlock Case',
+              title: 'Something went wrong',
             },
-        }))
-
-        dispatch($raffle.set.loading(false))
+          }))
+        } else {
+          setExpectedReward(rewardAmount)
+  
+          setStep(step >= 4 ? 0 : step + 1)
+          dispatch($modal.set.update({
+              header: {
+                  title: 'Unlock Case',
+              },
+          }))
+  
+          dispatch($raffle.set.loading(false))
+        }
+        return
       }
-    } else {
-      setStep('error')
-      setErrorType('api')
-      dispatch($modal.set.update({
-        header: {
-          title: 'Something went wrong',
-        },
-      }))
-    }
+    }  
+
+    setStep('error')
+    setErrorType('api')
+    dispatch($modal.set.update({
+      header: {
+        title: 'Something went wrong',
+      },
+    }))
   }
 
   const handleCloseModal = () => {
