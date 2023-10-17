@@ -5,6 +5,8 @@ import moment from 'moment'
 
 import $app from '@/store/app'
 
+import { trackEvent } from '@/libs/analytics.lib'
+
 import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'

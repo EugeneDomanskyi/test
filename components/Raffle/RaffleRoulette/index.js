@@ -18,10 +18,6 @@ const RaffleRoulette = ({autoStart = false, onPrizeDefined, campaign}) => {
     }
     const title = currentReward.title
     const amount = reward.reward / 1000000
-
-    console.log('reward.reward', reward.reward)
-    console.log('campaign.expectedReward', campaign.expectedReward)
-    console.log('reward.reward === campaign.expectedReward', reward.reward*1 === campaign.expectedReward)
     
     prizes.push(
       {
@@ -105,10 +101,6 @@ const RaffleRoulette = ({autoStart = false, onPrizeDefined, campaign}) => {
       </App.Flex>
     )
   }
-
-  console.log('campaign', campaign)
-  console.log('prizeList', prizeList)
-  console.log('prizeIndex', prizeIndex)
 
   useEffect(() => {
     if (autoStart) {
