@@ -1,8 +1,5 @@
 import fs from 'fs'
-import path from 'path'
 import getConfig from 'next/config'
-
-import { getAssetsFile, putAssetsFile } from '@/libs/aws.lib.old'
 
 const handler = async (req, res) => {
   const body = req.body

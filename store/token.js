@@ -8,7 +8,7 @@ import tokenAssets from '@/public/files/assets'
 
 function formatNumber(number) {
   if (!number) {
-    return '0'
+    return ''
   }
   const str = (number*1)?.toFixed(20)
   let lastIndex = -1;
@@ -46,14 +46,14 @@ export const template = (item, assets) => {
     name: assets?.name ?? item?.name,
     blockchain: assets?.blockchain ?? item?.blockchain,
     symbol: assets?.symbol ?? item?.symbol,
-    price: formatNumber(assets?.price ?? item?.price ?? 0),
+    price: formatNumber(item?.current_price || item?.price || 0),
     high: formatNumber(assets?.high ?? item?.high ?? 0),
     low: formatNumber(assets?.low ?? item?.low ?? 0),
     currency: currency,
-    volume: numeral(assets?.volume ?? item?.volume ?? 0).format('0.[0000]'),
+    volume: numeral(assets?.volume ?? item?.volumeUSD ?? 0).format('0.[0000]'),
     tvl: numeral(assets?.tvl ?? item?.tvl ?? 0).format('0.[0000]'),
     description: assets?.description ?? item?.description,
-    tokenCount: assets?.tokenCount ?? item?.tokenCount ?? 0,
+    tokenCount: assets?.tokenCount ?? item?.totalSupply ?? 0,
     onSaleCount: assets?.onSaleCount ?? item?.onSaleCount ?? 0,
     discordUrl: null,
     externalUrl: assets?.externalUrl ?? item?.externalUrl,

@@ -1,7 +1,6 @@
 import { useEffect, memo, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
-// import _ from 'lodash'
 
 import coingeckoAssets from '@/public/files/coingecko_ids'
 import { getApolloClient, queries } from '@/api/graphql'
@@ -38,13 +37,12 @@ const WrapperExchange = ({children}) => {
   const router = useRouter()
   const dispatch = useDispatch()
 
-  // const blockchain = useSelector($app.get.blockchain)
   const currentToken = useSelector(({$token}) => $token.current)
   const tokenList = useSelector(({$token}) => $token.all)
+  const sort = useSelector(({ $token }) => $token.sort)
+  const pages = useSelector($token.get.pages)
 
   const [wrongAddress, setWrongAddress] = useState(false)
-
-  // console.log('blockchain', blockchain)
 
   const [address] = router.query.address || []
   const blockchain = router.query.blockchain
@@ -52,18 +50,30 @@ const WrapperExchange = ({children}) => {
 
   const currentChain = CHAINS.find(chain => chain.code === blockchain)
 
+  const [sortBy, sortDirection] = sort.split(':')
+
+  let orderBy = sortBy.toLowerCase()
+  if (orderBy == 'volume') {
+    orderBy = 'volumeUSD'
+  }
+
+  if (orderBy == 'price') {
+    orderBy = 'derivedETH'
+  }
+
   // fetch list for blockchain
   useEffect(() => {
     const post = {
-      skip: 0,
-      orderBy: 'volumeUSD',
-      orderDirection: 'desc',
+      skip: (pages.current - 1) * 10,
+      orderBy: orderBy,
+      orderDirection: sortDirection.toLowerCase(),
       searchText: '',
       usdt: currentChain.usdtContract,
     }
     getTokens(currentChain.baseUniswapUrl, post).then(async tokens => {
       dispatch($token.set.all(tokens))
       dispatch($token.set.loading(false))
+      dispatch($token.set.pages({ next: (pages.current * 1 + 1) }))
       const coingeckoIds = tokens.reduce((acc, token) => ({
         ...acc,
         [coingeckoAssets[currentChain.platform][token.id]]: token.id
@@ -71,7 +81,7 @@ const WrapperExchange = ({children}) => {
       const res = await getPrices(coingeckoIds)
       dispatch($token.set.updatedAll(res))
     })
-  }, [blockchain])
+  }, [blockchain, sort, pages.current])
 
   // fetch current if address is correct
   useEffect(() => {
@@ -93,6 +103,31 @@ const WrapperExchange = ({children}) => {
       }
     })()
   }, [isAddress, blockchain, address, currentToken?.address])
+
+  // set current from list
+  useEffect(() => {
+    if (wrongAddress && tokenList.length) {
+      dispatch($token.set.current(tokenList[0]))
+      router.replace(`/exchange/${blockchain}/${tokenList[0].id}`)
+    }
+  }, [wrongAddress, tokenList.length])
+
+  // update price for current
+  useEffect(() => {
+    if (currentToken?.id && currentToken.id === address && tokenList.length) {
+      if (tokenList.some(token => token.price) && !currentToken.price) {
+        const exist = tokenList.find(token => token.id === currentToken.id)
+        if (exist) {
+          dispatch($token.set.updatedCurrent(exist))
+        } else {
+          const id = {[coingeckoAssets[currentChain.platform][currentToken.id]]: currentToken.id}
+          getPrices(id).then(res => {
+            dispatch($token.set.updatedCurrent(res[currentToken.id]))
+          })
+        }
+      }
+    }
+  }, [tokenList, currentToken?.address, address])
 
   return children
 }

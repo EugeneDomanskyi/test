@@ -553,6 +553,7 @@ class TOKEN extends Order {
         blockchain: network.code,
       }
       const res = await $orders.api.create.token(post)
+      console.log('res', res)
       if (res) {
         const data = {
           maker: post.data.maker,

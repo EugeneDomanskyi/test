@@ -9,7 +9,7 @@ import Smartlook from 'smartlook-client'
 
 import { trackEvent } from '@/libs/analytics.lib'
 
-import $token from '@/store/token'
+// import $token from '@/store/token'
 
 import Header from '@/components/Header'
 // import Footer from '@/components/Footer'

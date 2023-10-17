@@ -104,7 +104,7 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
         base_url = BNB_URL
         break
       case 'inch':
-        base_url = `${INCH_URL}/${currentChain.id}/`
+        base_url = `${INCH_URL}${currentChain.id}/`
         break
       case 'inch-private':
         base_url = `/api/inch/`
