@@ -255,7 +255,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
 
   return (
     ! showClaim
-      ? <>
+      ? <div style={{overflow: 'auto'}}>
           <App.Flex column className={styles.top} justify="space-between" gap={16}>
             <App.Flex sx={{width: '100%'}} justify="space-between">
               <App.Flex row center gap={4} className={cn(styles.timeBadge, styles[item.status])}>
@@ -317,7 +317,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
               </App.Button>
             </App.Flex>
           </App.Flex>
-        </>
+        </div>
       : <>
           {
             step !== 4 && step !== 'error'
