@@ -30,7 +30,7 @@ const ErrorStep = ({onSubmit, type}) => {
       'Tkeys Quantity': balance,
     })
     if (type === 'balance') {
-      window.open('https://galxe.com/tegro', '_blank')
+      window.open('https://galxe.com/tegro/campaign/GC9QPUMqMz?utm_source=web', '_blank')
     }
     onSubmit()
   }

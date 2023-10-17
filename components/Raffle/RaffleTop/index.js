@@ -55,7 +55,7 @@ const RaffleTop = ({ loading }) => {
       'Wallet connect Status': 'Connected',
       'Tkeys Quantity': balance,
     })
-    window.open('https://galxe.com/tegro', '_blank')
+    window.open('https://galxe.com/tegro/campaign/GC9QPUMqMz?utm_source=web', '_blank')
   }
 
   const handleConnectWalletClick = async () => {
