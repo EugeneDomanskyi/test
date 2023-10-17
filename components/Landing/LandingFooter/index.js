@@ -6,13 +6,13 @@ import styles from './styles.module.scss'
 
 const LandingFooter = () => {
   const { isMobile } = usePropsHelper()
-  
+
   return (
     <App.Flex className={styles.container}>
       <App.Container>
         <App.Flex column gap={32} className={styles.parent}>
           <video autoPlay loop muted className={styles.video}>
-            <source src={process.env.NEXT_PUBLIC_APP_ENV == 'local' ? null : '/images/landing/protocol.webm'} type="video/webm" />
+            <source src={'/images/landing/protocol.webm'} type="video/webm" />
           </video>
 
           <App.Flex direction={['row', 'column']} justify="space-between" gap={16}>
