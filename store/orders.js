@@ -95,8 +95,8 @@ const getters = {
       }
     }
     return {
-      buy: orderBook.buy.slice(0, 10).map(item => ({...item, priceFormatted: item.priceFormatted ?? item.price})),
-      sell: orderBook.sell.slice(0, 10).map(item => ({...item, priceFormatted: item.priceFormatted ?? item.price})),
+      buy: orderBook.buy.slice(0, 10).map(item => ({...item, priceFormatted: item.priceFormatted ?? item.price, volume: item.volume || item.quantity})),
+      sell: orderBook.sell.slice(0, 10).map(item => ({...item, priceFormatted: item.priceFormatted ?? item.price, volume: item.volume || item.quantity})),
     }
   }),
   recentTrades: (type, limit) => createSelector([
