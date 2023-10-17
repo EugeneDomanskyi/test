@@ -43,6 +43,11 @@
 
       &.large {
         width: 650px;
+        overflow: auto;
+
+        @media (max-width: 768px) {
+          padding-bottom: 64px;
+        }
       }
 
       .header {
