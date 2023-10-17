@@ -70,7 +70,7 @@ const LandingHead = () => {
           <img src="/images/landing/header.png" alt="" className={styles.image} />
         ) : (
           <video autoPlay loop muted className={styles.video}>
-            <source src={process.env.NEXT_PUBLIC_APP_ENV == 'local' ? null : '/images/landing/header.webm'} type="video/webm" />
+            <source src={'/images/landing/header.webm'} type="video/webm" />
           </video>
         )}
         
