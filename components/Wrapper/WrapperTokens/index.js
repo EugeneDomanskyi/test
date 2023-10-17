@@ -5,7 +5,7 @@ import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 
-import { putAssetsFile, getAssetsFile } from '@/libs/aws.lib'
+import { putAssetsFile, getAssetsFile } from '@/libs/aws.lib.old'
 
 import $app from '@/store/app'
 import $collection from '@/store/collection'

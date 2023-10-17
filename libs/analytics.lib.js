@@ -51,7 +51,7 @@ export const trackEvent = (eventName, eventProperties) => {
   const [subDomain] = window.location.hostname.split('.')
   const segments = window.location.pathname.split('/')
 
-  console.log('segments', segments);
+  // console.log('segments', segments);
   const data = {
     ...eventProperties,
     IsBrowser: true,

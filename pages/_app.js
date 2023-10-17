@@ -29,11 +29,8 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import 'react-toastify/dist/ReactToastify.css'
 import '@rainbow-me/rainbowkit/styles.css'
-import '@uniswap/widgets/fonts.css'
 import '@/styles/globals.css'
 import '@/styles/roulette_design.css'
-
-import { getAssetsFile } from '@/libs/aws.lib'
 
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
@@ -148,7 +145,7 @@ function MyApp({ Component, pageProps, initialData, currentPage, currentAddress,
         <Provider store={storeRef}>
           <Head route={ssRoute} currentPage={currentPage} currentSymbol={currentSymbol} marketInfo={marketInfo} />
 
-          <Wrapper marketsList={marketsList}>
+          <Wrapper>
             <Component {...pageProps} />
           </Wrapper>
 
@@ -205,13 +202,13 @@ MyApp.getInitialProps = async ({ctx}) => {
     currentAddress = addrArr.split('?')[0]
     ssRoute = (ctx.req.url)
     if (!firstTimeLoaded) {
-      const list = await getAssetsFile()
-      if (list && Array.isArray(list)) {
-        marketsList = list
-        globalList = list
-        marketInfo = list.find(item => item.address === currentAddress) || {}
-        firstTimeLoaded = true
-      }
+      // const list = await getAssetsFile()
+      // if (list && Array.isArray(list)) {
+      //   marketsList = list
+      //   globalList = list
+      //   marketInfo = list.find(item => item.address === currentAddress) || {}
+      //   firstTimeLoaded = true
+      // }
     }
   }
   

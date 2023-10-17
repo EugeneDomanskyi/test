@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
-import { loadIntercom } from 'next-intercom'
+// import { loadIntercom } from 'next-intercom'
 import { v4 as uuid } from 'uuid'
 import { useAccount } from 'wagmi'
 import { getNetwork } from '@wagmi/core'
@@ -13,11 +13,12 @@ import { trackEvent } from '@/libs/analytics.lib'
 import $token from '@/store/token'
 
 import Header from '@/components/Header'
-import Footer from '@/components/Footer'
-import WrapperTokens from '@/components/Wrapper/WrapperTokens'
+// import Footer from '@/components/Footer'
+// import WrapperTokens from '@/components/Wrapper/WrapperTokens'
+import WrapperExchange from '@/components/Wrapper/WrapperExchange'
 import WrapperCollections from '@/components/Wrapper/WrapperCollections'
 
-const Wrapper = ({ children, marketsList = [] }) => {
+const Wrapper = ({ children }) => {
   const dispatch = useDispatch()
   const router = useRouter()
   const isNfts = router.asPath?.includes('nfts')
@@ -49,31 +50,25 @@ const Wrapper = ({ children, marketsList = [] }) => {
       localStorage.setItem('device_id', uuid())
     }
 
-    loadIntercom({
-      user_id: deviceId,
-      appId: process.env.NEXT_PUBLIC_INTERCOM_APP_ID,
-      ssr: false,
-      initWindow: false,
-      delay: 0,
-    })
+    // loadIntercom({
+    //   user_id: deviceId,
+    //   appId: process.env.NEXT_PUBLIC_INTERCOM_APP_ID,
+    //   ssr: false,
+    //   initWindow: false,
+    //   delay: 0,
+    // })
 
     trackEvent('Page Visited')
   }, [])
-
-  useEffect(() => {
-    if (marketsList.length) {
-      dispatch($token.set.list(marketsList))
-    }
-  }, [marketsList])
 
   return (
     <>
       <Header />
 
       {isExchange ? (
-        <WrapperTokens>
+        <WrapperExchange>
           {children}
-        </WrapperTokens>
+        </WrapperExchange>
       ) : null}
 
       {isNfts || isSwap ? (

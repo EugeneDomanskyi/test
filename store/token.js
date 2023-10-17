@@ -4,6 +4,8 @@ import numeral from 'numeral'
 
 import { request } from './index'
 
+import tokenAssets from '@/public/files/assets'
+
 function formatNumber(number) {
   if (!number) {
     return '0'
@@ -26,44 +28,44 @@ function formatNumber(number) {
   return isNaN(numeral(result).format('0.0[00000]')) ? result : numeral(result).format('0.0[00000]')
 }
 
-export const template = (item) => {
+export const template = (item, assets) => {
   const currency = 'USDT'
 
   const overwrite = {
-    ...basicToTemplate(item?.basic),
-    ...infoToTemplate(item?.info),
-    ...fullToTemplate(item?.full),
+    // ...basicToTemplate(item?.basic),
+    // ...infoToTemplate(item?.info),
+    // ...fullToTemplate(item?.full),
   }
 
   return {
     id: overwrite?.id ?? item?.id,
-    cgId: overwrite?.cgId ?? item?.cgId,
-    address: overwrite?.address ?? item?.address,
-    decimals: overwrite?.decimals ?? item?.decimals,
-    image: overwrite?.image ?? item?.image,
-    name: overwrite?.name ?? item?.name,
-    blockchain: overwrite?.blockchain ?? item?.blockchain,
-    symbol: overwrite?.symbol ?? item?.symbol,
-    price: formatNumber(overwrite?.price ?? item?.price ?? 0),
-    high: formatNumber(overwrite?.high ?? item?.high ?? 0),
-    low: formatNumber(overwrite?.low ?? item?.low ?? 0),
+    // cgId: overwrite?.cgId ?? item?.cgId,
+    address: assets?.address ?? item?.id,
+    decimals: assets?.decimals ?? item?.decimals,
+    image: assets?.image ?? item?.image,
+    name: assets?.name ?? item?.name,
+    blockchain: assets?.blockchain ?? item?.blockchain,
+    symbol: assets?.symbol ?? item?.symbol,
+    price: formatNumber(assets?.price ?? item?.price ?? 0),
+    high: formatNumber(assets?.high ?? item?.high ?? 0),
+    low: formatNumber(assets?.low ?? item?.low ?? 0),
     currency: currency,
-    volume: numeral(overwrite?.volume ?? item?.volume ?? 0).format('0.[0000]'),
-    tvl: numeral(overwrite?.tvl ?? item?.tvl ?? 0).format('0.[0000]'),
-    description: overwrite?.description ?? item?.description,
-    tokenCount: overwrite?.tokenCount ?? item?.tokenCount ?? 0,
-    onSaleCount: overwrite?.onSaleCount ?? item?.onSaleCount ?? 0,
+    volume: numeral(assets?.volume ?? item?.volume ?? 0).format('0.[0000]'),
+    tvl: numeral(assets?.tvl ?? item?.tvl ?? 0).format('0.[0000]'),
+    description: assets?.description ?? item?.description,
+    tokenCount: assets?.tokenCount ?? item?.tokenCount ?? 0,
+    onSaleCount: assets?.onSaleCount ?? item?.onSaleCount ?? 0,
     discordUrl: null,
-    externalUrl: overwrite?.externalUrl ?? item?.externalUrl,
-    twitterUrl: overwrite?.twitterUrl ?? item?.twitterUrl,
+    externalUrl: assets?.externalUrl ?? item?.externalUrl,
+    twitterUrl: assets?.twitterUrl ?? item?.twitterUrl,
     openseaVerificationStatus: null,
     ticker: {
       value: overwrite?.ticker?.value ?? item?.ticker?.value ?? 0,
       type: overwrite?.ticker?.type ?? item?.ticker?.type,
     },
-    isFull: overwrite?.isFull ?? item?.isFull,
-    createdAt: overwrite?.genesis_date ?? item?.genesis_date,
-    marketCap: overwrite?.marketCap ?? item.marketCap,
+    isFull: assets?.isFull ?? item?.isFull,
+    createdAt: assets?.genesis_date ?? item?.genesis_date,
+    marketCap: assets?.marketCap ?? item.marketCap,
   }
 }
 
@@ -164,6 +166,7 @@ export const tokenSlice = createSlice({
   name: '$token',
 
   initialState: {
+    assets: tokenAssets,
     fetching: false,
     all: [],
     searched: [],
@@ -191,14 +194,18 @@ export const tokenSlice = createSlice({
     },
 
     all: (state, { payload }) => {
-      state.all = payload.map(template)
-      if (state.current.id) {
-        const exist = state.all.find(item => item.id === state.current.id)
-        if (exist) {
-          const { price, high, low, volume, tvl, ticker } = exist
-          state.current = {...state.current, price, high, low, volume, tvl, ticker}
-        }
-      }
+      state.all = payload.map(token => template(token, state.assets[token.id]))
+      // if (state.current.id) {
+      //   const exist = state.all.find(item => item.id === state.current.id)
+      //   if (exist) {
+      //     const { price, high, low, volume, tvl, ticker } = exist
+      //     state.current = {...state.current, price, high, low, volume, tvl, ticker}
+      //   }
+      // }
+    },
+
+    updatedAll: (state, {payload}) => {
+      state.all = state.all.map(token => template({...token, ...payload[token.id]}, state.assets[token.id]))
     },
 
     searched: (state, { payload }) => {

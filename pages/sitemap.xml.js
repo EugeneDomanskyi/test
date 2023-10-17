@@ -1,4 +1,4 @@
-import { getAssetsFile } from '@/libs/aws.lib'
+import { getAssetsFile } from '@/libs/aws.lib.old'
 
 function generateSiteMap(markets) {
   return `<?xml version="1.0" encoding="UTF-8"?>
