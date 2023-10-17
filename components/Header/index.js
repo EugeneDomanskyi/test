@@ -412,7 +412,7 @@ const Header = () => {
                     <a href="https://www.linkedin.com/company/tegrofi?utm_source=website" target="_blank" rel="noreferrer">
                       <App.Flex gap={4}>
                         <App.Icon icon="linkedin-filled" />
-                        <App.Text size={10} weight={500}>Linkdein</App.Text>
+                        <App.Text size={10} weight={500}>LinkedIn</App.Text>
                       </App.Flex>
                     </a>
                     

@@ -38,7 +38,7 @@ export const raffleSlice = createSlice({
     },
 
     all: (state, { payload }) => {
-      state.all = payload
+      state.all = payload.filter(item => item.id != 0)
     },
 
     current: (state, { payload }) => {

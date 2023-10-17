@@ -45,14 +45,14 @@ const RaffleListMyItem = ({ item, number, onShare }) => {
 
       <TableCell>
         <App.Flex gap={8} align="center">
-          {item.campaign.image ? (
-            <img src={item.campaign.image} width={48} height={48} alt="" />
+          {item?.campaign?.image ? (
+            <img src={item.campaign?.image} width={48} height={48} alt="" />
           ) : (
             <App.Flex className={styles.imagePlaceholder} width={48} height={48} />
           )}
 
           <App.Flex column>
-            <App.Text>{item.campaign.title}</App.Text>
+            <App.Text>{item.campaign?.title}</App.Text>
           </App.Flex>
         </App.Flex>
       </TableCell>
