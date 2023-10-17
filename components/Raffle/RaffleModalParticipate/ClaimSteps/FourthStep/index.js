@@ -17,7 +17,7 @@ const FourthStep = ({campaign, onSubmit, onShare}) => {
   const audioRef = useRef(null)
   const { wallet } = useWalletConnect()
 
-  const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
+  const balance = useSelector(({$raffle}) => $raffle.balance)
 
   const [showConfetti, setShowConfetti] = useState(true)
   const [prize, setPrize] = useState({amount: '', title: ''})
@@ -53,9 +53,8 @@ const FourthStep = ({campaign, onSubmit, onShare}) => {
   const handleClickNextStep = () => {
     trackEvent('Click Open another USDT case', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': tokenIds.length,
+      'Tkeys Quantity': balance,
       'TKeys Required': campaign.tKeyRequired,
-      'WalletAddress': wallet,
       'Market': 'USDT',
     })
     onSubmit()
@@ -64,7 +63,6 @@ const FourthStep = ({campaign, onSubmit, onShare}) => {
   const handleClickShare = () => {
     trackEvent('Click Share Reward Won', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'WalletAddress': wallet,
     })
     const shareText = `🥳💸 Woohoo! I just won $${prize.amount} in USDT from a Tegro case! You can win BIG too. 💰💰 Join me now! Unlock your first Tegro case 🎁 for FREE! 👀 Start here 👉`
     onShare(shareText)

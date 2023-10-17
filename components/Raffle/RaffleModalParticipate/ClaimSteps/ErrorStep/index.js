@@ -22,13 +22,12 @@ const errors = {
 const ErrorStep = ({onSubmit, type}) => {
   const { wallet } = useWalletConnect()
 
-  const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
+  const balance = useSelector(({$raffle}) => $raffle.balance)
 
   const handleClickNextStep = () => {
     trackEvent('Click Collect TKeys', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': tokenIds.length,
-      'WalletAddress': wallet,
+      'Tkeys Quantity': balance,
     })
     if (type === 'balance') {
       window.open('https://galxe.com/tegro', '_blank')

@@ -20,7 +20,7 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
 
   const blockchain = useSelector($app.get.blockchain)
   const campaigns = useSelector($raffle.get.filtered)
-  const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
+  const balance = useSelector(({$raffle}) => $raffle.balance)
 
   const [queryCampaignId] = router.query.segments || []
 
@@ -68,8 +68,7 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
   const handleTabChange = (value) => {
     trackEvent(value === 'my' ? 'Click My Case Opens' :  'Click Browse Case', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': tokenIds.length,
-      'WalletAddress': wallet,
+      'Tkeys Quantity': balance,
     })
     setTab(value)
   }
@@ -77,9 +76,8 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
   const handleParticipate = async (item) => {
     trackEvent('Click View Case', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': tokenIds.length,
+      'Tkeys Quantity': balance,
       'TKeys Required': item.tKeyRequired,
-      'WalletAddress': wallet,
     })
     const address = await connect()
     if ( ! address) {
@@ -112,8 +110,7 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
   const handleSearch = (search) => {
     trackEvent('Click Search', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': tokenIds.length,
-      'WalletAddress': wallet,
+      'Tkeys Quantity': balance,
       'Search Term': search,
     })
   }

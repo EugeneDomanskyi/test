@@ -36,6 +36,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
 
   const blockchain = useSelector($app.get.blockchain)
   const showModal = useSelector((state) => state.$modal.show)
+  const balance = useSelector(({$raffle}) => $raffle.balance)
   const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
 
   const [showClaim, setShowClaim] = useState(false)
@@ -81,9 +82,8 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
     }
     trackEvent('Click Unlock With TKeys', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': tokenIds.length,
+      'Tkeys Quantity': balance,
       'TKeys Required': item.tKeyRequired,
-      'WalletAddress': wallet,
       'Market': 'USDT',
     })
     setStep(isApproved ? 1 : 0)
@@ -127,9 +127,8 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
       if (! isApproved) {
         trackEvent('Click Approve Contract', {
           'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-          'Tkeys Quantity': tokenIds.length,
+          'Tkeys Quantity': balance,
           'TKeys Required': item.tKeyRequired,
-          'WalletAddress': wallet,
           'Market': 'USDT',
         })
         const approveRes = await contract.setApprovalForAll(blockchain.raffle.contract, blockchain.raffle.factory)
@@ -159,8 +158,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
 
       trackEvent('Click Confirm Deposit', {
         'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-        'WalletAddress': wallet,
-        'Tkeys Quantity': tokenIds.length,
+        'Tkeys Quantity': balance,
         'TKeys Required': item.tKeyRequired,
         'Market': 'USDT',
       })
@@ -250,7 +248,6 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   const handleClickShare = () => {
     trackEvent('Click Share Case Details', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'WalletAddress': wallet,
     })
     const shareText = `🎁✨ Did you know? You can open cases on Tegro and share rewards worth 💰💰 $10,000 in $USDT, $PEPE, $SHIB, and other tokens! Unlock your first case for FREE! Start here 👉 `
     onShare(shareText)

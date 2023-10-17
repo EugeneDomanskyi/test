@@ -25,7 +25,6 @@ const RaffleListMyItem = ({ item, number, onShare }) => {
   const handleClickShare = () => {
     trackEvent('Click Share My Case Opens', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'WalletAddress': wallet,
     })
     const shareText = `🎁✨ Did you know? You can open cases on Tegro and share rewards worth 💰💰 $10,000 in $USDT, $PEPE, $SHIB, and other tokens! Unlock your first case for FREE! Start here 👉 `
     onShare(shareText)

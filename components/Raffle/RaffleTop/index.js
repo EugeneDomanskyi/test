@@ -24,7 +24,6 @@ const RaffleTop = ({ loading }) => {
   const last = useSelector(({ $raffle }) => $raffle.last)
   const balance = useSelector(({ $raffle }) => $raffle.balance)
   const loadingUser = useSelector(({ $raffle }) => $raffle.loadingUser)
-  const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
 
   const [totalReward, setTotalReward] = useState(0)
 
@@ -54,8 +53,7 @@ const RaffleTop = ({ loading }) => {
   const handleMoreClick = () => {
     trackEvent('Click Collect TKeys', {
       'Wallet connect Status': 'Connected',
-      'Tkeys Quantity': tokenIds.length,
-      'WalletAddress': wallet,
+      'Tkeys Quantity': balance,
     })
     window.open('https://galxe.com/tegro', '_blank')
   }
