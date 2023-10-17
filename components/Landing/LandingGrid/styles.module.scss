@@ -1,0 +1,213 @@
+.container {
+  position: absolute;
+  z-index: 0;
+  inset: 64px 0 0;
+
+  .back {
+    width: 100%;
+    height: 100%;
+    background: #08051C;
+
+    .glowBox1 {
+      width: 688px;
+      height: 722.246px;
+      transform: rotate(-45deg);
+      position: absolute;
+      z-index: 0;
+      top: -706px;
+      left: -403px;
+      opacity: 0.35;
+  
+      .glow1 {
+        width: 462.246px;
+        height: 462.246px;
+        flex-shrink: 0;
+        border-radius: 462.246px;
+        background: #00FFD1;
+        filter: blur(183.5px);
+        position: absolute;
+        z-index: 0;
+        top: 286px;
+        left: 190px;
+      }
+  
+      .glow2 {
+        width: 620.347px;
+        height: 620.347px;
+        flex-shrink: 0;
+        border-radius: 620.347px;
+        background: #7204FF;
+        filter: blur(183.5px);
+        position: absolute;
+        z-index: 0;
+        top: 338px;
+        left: -25px;
+      }
+    }
+
+    .glowBox2 {
+      width: 646.073px;
+      height: 678.231px;
+      transform: rotate(137.228deg);
+      flex-shrink: 0;
+      position: absolute;
+      z-index: 0;
+      top: 299px;
+      right: -34px;
+      opacity: 0.35;
+  
+      .glow1 {
+        width: 434.076px;
+        height: 434.076px;
+        flex-shrink: 0;
+        border-radius: 434.076px;
+        background: #00FFD1;
+        filter: blur(183.5px);
+        position: absolute;
+        z-index: 0;
+        top: 53.2px;
+        left: 147px;
+      }
+  
+      .glow2 {
+        width: 582.543px;
+        height: 582.543px;
+        flex-shrink: 0;
+        border-radius: 582.543px;
+        background: #7204FF;
+        filter: blur(183.5px);
+        position: absolute;
+        z-index: 0;
+        top: -201px;
+        left: 146px;
+      }
+    }
+
+    .glowBox3 {
+      width: 688px;
+      height: 722.246px;
+      transform: rotate(35.807deg);
+      flex-shrink: 0;
+      position: absolute;
+      z-index: 0;
+      top: 809px;
+      left: 50%;
+      margin-left: -344px;
+      opacity: 0.35;
+  
+      .glow1 {
+        width: 462.246px;
+        height: 462.246px;
+        flex-shrink: 0;
+        border-radius: 462.246px;
+        background: #00FFD1;
+        filter: blur(183.5px);
+        position: absolute;
+        z-index: 0;
+        top: 211px;
+        left: 0;
+      }
+  
+      .glow2 {
+        width: 598.521px;
+        height: 598.521px;
+        flex-shrink: 0;
+        border-radius: 598.521px;
+        background: #7204FF;
+        filter: blur(183.5px);
+        position: absolute;
+        z-index: 0;
+        top: 52.4px;
+        left: 145px;
+      }
+    }
+
+    .grid {
+      background: url('/images/landing/grid.png') center top;
+      mix-blend-mode: overlay;
+      height: 100%;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    .back {
+      .glowBox1 {
+        width: 251.222px;
+        height: 263.727px;
+        top: -223px;
+        left: -171px;
+    
+        .glow1 {
+          width: 168.788px;
+          height: 168.789px;
+          border-radius: 168.788px;
+          filter: blur(35.5px);
+          top: 105px;
+          left: 70px;
+        }
+    
+        .glow2 {
+          width: 226.519px;
+          height: 226.519px;
+          border-radius: 226.519px;
+          filter: blur(35.5px);
+          top: 123px;
+          left: -9px;
+        }
+      }
+
+      .glowBox2 {
+        width: 266.833px;
+        height: 280.114px;
+        top: 225px;
+        right: -172px;
+    
+        .glow1 {
+          width: 179.276px;
+          height: 179.276px;
+          border-radius: 179.276px;
+          filter: blur(52px);
+          top: 20.7px;
+          left: 67.6px;
+        }
+    
+        .glow2 {
+          width: 240.594px;
+          height: 240.594px;
+          border-radius: 240.594px;
+          filter: blur(52px);
+          top: -72px;
+          left: 81px;
+        }
+      }
+
+      .glowBox3 {
+        width: 258.441px;
+        height: 271.305px;
+        top: 589px;
+        left: 50%;
+        margin-left: -129px;
+    
+        .glow1 {
+          width: 173.638px;
+          height: 173.638px;
+          border-radius: 173.638px;
+          filter: blur(50px);
+          top: 79.2px;
+          left: 0;
+        }
+    
+        .glow2 {
+          width: 224.829px;
+          height: 224.829px;
+          border-radius: 224.829px;
+          filter: blur(50px);
+          top: 19.7px;
+          left: 54.5px;
+        }
+      }
+    }
+  }
+}

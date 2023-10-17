@@ -25,10 +25,12 @@ import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
 import Head from '@/components/Head'
 
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
 import 'react-toastify/dist/ReactToastify.css'
 import '@rainbow-me/rainbowkit/styles.css'
-import '@uniswap/widgets/fonts.css'
 import '@/styles/globals.css'
+import '@/styles/roulette_design.css'
 
 import { getAssetsFile } from '@/libs/aws.lib'
 
@@ -46,6 +48,9 @@ if (process.env.NODE_ENV === 'production') {
     replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
   })
 }
+
+let firstTimeLoaded = false
+let globalList = []
 
 createClient({
   chains: CHAINS,
@@ -191,16 +196,21 @@ MyApp.getInitialProps = async ({ctx}) => {
 
   let ssRoute = ''
   let marketInfo = {}
-  let marketsList = []
+  let marketsList = globalList
 
   if (ctx?.req) {
     const routeArr = ctx?.req?.url.split('/') || []
     const [addrArr] = routeArr.slice(-1)
     currentAddress = addrArr.split('?')[0]
     ssRoute = (ctx.req.url)
-    if (ctx.req.url.includes('market') || ctx.req.url.includes('tokens')) {
-      marketsList = await getAssetsFile()
-      marketInfo = marketsList.find(item => item.address === currentAddress) || {}
+    if (!firstTimeLoaded) {
+      const list = await getAssetsFile()
+      if (list && Array.isArray(list)) {
+        marketsList = list
+        globalList = list
+        marketInfo = list.find(item => item.address === currentAddress) || {}
+        firstTimeLoaded = true
+      }
     }
   }
   
@@ -208,6 +218,7 @@ MyApp.getInitialProps = async ({ctx}) => {
     initialData: {
       blockchain: cookies.blockchain,
       isMobile,
+      marketsList,
     },
     currentPage,
     currentAddress,

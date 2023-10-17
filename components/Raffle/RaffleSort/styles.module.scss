@@ -1,0 +1,61 @@
+.container {
+  position: relative;
+  z-index: 2;
+  height: 48px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+
+  .sort {
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 230px;
+    border-radius: 8px;
+    background: #17142a;
+    cursor: pointer;
+    transition: all .3s ease 0s;
+    overflow: hidden;
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+
+    .text {
+      padding: 0 14px;
+      height: 48px;
+    }
+
+    .dropdown {
+      width: 100%;
+      overflow: hidden;
+      max-height: 0;
+      transition: all .2s ease 0s;
+
+      .option {
+        padding: 14px;
+        cursor: pointer;
+        transition: all .2s ease 0s;
+
+        &:hover,
+        &.active {
+          background-color: rgba(9, 5, 29, 0.8);
+        }
+      }
+    }
+
+    &:hover {
+      background-color: #262242;
+    }
+  
+    &.active {
+      background-color: #262242;
+  
+      .dropdown {
+        max-height: 252px;
+      }
+    }
+  }
+}

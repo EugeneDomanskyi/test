@@ -146,12 +146,14 @@ const WrapperCollections = ({ children }) => {
 
   useEffect(() => {
     if (router.isReady) {
-      if (queryBlockchainCode) {
-        if ( ! pageBlockchains.map(item => item.code).includes(queryBlockchainCode)) {
+      const tempBlockhainCode = queryBlockchainCode ?? blockchain.code
+
+      if (tempBlockhainCode) {
+        if ( ! pageBlockchains.map(item => item.code).includes(tempBlockhainCode)) {
           dispatch($app.set.code('ethereum'))
         } else {
-          if (queryBlockchainCode != blockchain.code) {
-            dispatch($app.set.code(queryBlockchainCode))
+          if (tempBlockhainCode != blockchain.code) {
+            dispatch($app.set.code(tempBlockhainCode))
           }
         }
       }

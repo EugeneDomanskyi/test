@@ -1,6 +1,8 @@
 import { formatUnits } from 'viem'
 import * as math from 'mathjs'
 import { CHAINS } from '../../../../config'
+// import { gql } from '@apollo/client'
+// import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 const INCH_URL = 'https://limit-orders.1inch.io/v3.0'
 
@@ -43,12 +45,14 @@ const formatter = (order, makerAsset, takerAsset, network) => {
   const remainingMakingAmount = formatUnits(order.remainingMakerAmount, makerAsset.decimals)
   const remainingTakingAmount = formatUnits(math.chain(order.remainingMakerAmount).multiply(order.data.takingAmount).divide(order.data.makingAmount).round().done(), takerAsset.decimals)
 
-  order.quantity = order.side === 'sell' ? makingAmountFormatted : takingAmountFormatted
-  order.quantityFilled = order.quantity - (order.side === 'sell' ? remainingMakingAmount : remainingTakingAmount)
-  order.price = order.side === 'buy' ? makingAmountFormatted : takingAmountFormatted
+  order.quantity = math.chain(order.side === 'sell' ? makingAmountFormatted : takingAmountFormatted).round(5).done()
+  order.quantityFilled = math.chain(order.quantity - (order.side === 'sell' ? remainingMakingAmount : remainingTakingAmount)).round(5).done()
+  order.price = math.chain(order.side === 'buy' ? makingAmountFormatted : takingAmountFormatted).round(5).done()
   order.status = !order.orderInvalidReason ? 'open' : (order.orderInvalidReason === 'order filled' ? 'completed' : (order.orderInvalidReason === 'order cancelled' ? 'cancelled' : null))
   return order
 }
+
+let tokenAssets = {}
 
 const handler = async (req, res) => {
   const [chainId, walletAddress] = req.query.route
@@ -56,22 +60,30 @@ const handler = async (req, res) => {
     statuses: '[1,2,3]',
     sortBy: 'createDateTime'
   })
-  const [assetsResponse, ordersResponse] = await Promise.all([
-    fetch('https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/assets_new.json'),
-    fetch(`${INCH_URL}/${chainId}/address/${walletAddress}${query}`, options)
-  ])
+  const network = CHAINS.find(chain => chain.id.toString() === chainId)
 
-  if (assetsResponse.ok && ordersResponse.ok) {
-    const assets = await assetsResponse.json()
+  if (!Object.keys(tokenAssets).length) {
+    console.log('fetch assets')
+    const assetsResponse = await fetch('https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/assets.json')
+    if (assetsResponse.ok) {
+      const assets = await assetsResponse.json()
+      tokenAssets = assets.reduce((acc, item) => ({
+        ...acc,
+        [item.address?.toLowerCase()]: item
+      }), {})
+    } else {
+      res.status(400).json([])
+      return
+    }
+  }
+  const ordersResponse = await fetch(`${INCH_URL}/${chainId}/address/${walletAddress}${query}`, options)
+
+  if (ordersResponse.ok) {
     const orders = await ordersResponse.json()
-    const tokenAssets = assets.reduce((acc, item) => ({
-      ...acc,
-      [item.address.toLowerCase()]: item
-    }), {})
-
-    const network = CHAINS.find(chain => chain.id.toString() === chainId)
     const list = orders
-      .filter(order => tokenAssets[order.data.makerAsset.toLowerCase()] && tokenAssets[order.data.takerAsset.toLowerCase()])
+      .filter(order => {
+        return tokenAssets[order.data.makerAsset.toLowerCase()] && tokenAssets[order.data.takerAsset.toLowerCase()]
+      })
       .map(order => formatter(order, tokenAssets[order.data.makerAsset.toLowerCase()], tokenAssets[order.data.takerAsset.toLowerCase()], network))
 
     res.status(200).json(list)
@@ -81,3 +93,75 @@ const handler = async (req, res) => {
 }
 
 export default handler
+
+  // let transactions = {
+  //   buy: [],
+  //   sell: [],
+  // }
+
+  // if (network.tegroSubgraphUrl) {
+  //   const apolloClient = new ApolloClient({
+  //     uri: network.tegroSubgraphUrl,
+  //     cache: new InMemoryCache(),
+  //     connectToDevTools: true,
+  //   })
+  
+  //   const apolloQuery = {
+  //     buy: gql`
+  //       {
+  //         tradeSuccessfuls(
+  //           where: {
+  //             and: [
+  //               {taker: "0xe12a7327e660d1f05192eeae4e36f7b5dbbf7251", makerAsset: "0x2791bca1f2de4661ed88a30c99a7a9449aa84174"}
+  //             ]
+  //           }
+  //           first: 1
+  //           orderBy: blockTimestamp
+  //           orderDirection: desc
+  //         ) {
+  //           id
+  //           maker
+  //           taker
+  //           makerAsset
+  //           makerAmount
+  //           takerAmount
+  //           takerAsset
+  //           blockTimestamp
+  //         }
+  //       }
+  //     `,
+  //     sell: gql`
+  //       {
+  //         tradeSuccessfuls(
+  //           where: {
+  //             and: [
+  //               {taker: "0xe12a7327e660d1f05192eeae4e36f7b5dbbf7251", takerAsset: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F"}
+  //             ]
+  //           }
+  //           orderBy: blockTimestamp
+  //           orderDirection: desc
+  //           first: 1
+  //         ) {
+  //           id
+  //           maker
+  //           taker
+  //           makerAsset
+  //           makerAmount
+  //           takerAmount
+  //           takerAsset
+  //           blockTimestamp
+  //         }
+  //       }
+  //     `
+  //   }
+  //   const [buy, sell] = await Promise.all([
+  //     apolloClient.query({query: apolloQuery.buy}),
+  //     apolloClient.query({query: apolloQuery.sell}),
+  //   ])
+  //   transactions = {
+  //     buy: buy.data.tradeSuccessfuls,
+  //     sell: sell.data.tradeSuccessfuls,
+  //   }
+
+  //   console.log('transactions', transactions)
+  // }

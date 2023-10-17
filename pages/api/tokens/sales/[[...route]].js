@@ -14,12 +14,7 @@ const options = {
   },
 }
 
-const getDecimals = async (address, chainId) => {
-  const network = Object.values(viemChains).find(chain => chain.id.toString() === chainId)
-  const client = createPublicClient({ 
-    chain: network,
-    transport: http()
-  })
+const getDecimals = async (address, client) => {
   const abi = {
     constant: true,
     inputs: [],
@@ -108,8 +103,14 @@ const handler = async (req, res) => {
     }
   })
 
-  const usdtDecimals = await getDecimals(usdtAsset, chainId)
-  const tokenDecimals = await getDecimals(tokenAsset, chainId)
+  const network = Object.values(viemChains).find(chain => chain.id.toString() === chainId)
+  const client = createPublicClient({ 
+    chain: network,
+    transport: http()
+  })
+
+  const usdtDecimals = await getDecimals(usdtAsset, client)
+  const tokenDecimals = await getDecimals(tokenAsset, client)
 
   res.status(200).json([
     ...buy.map(order => formatter(order, usdtDecimals, tokenDecimals)),

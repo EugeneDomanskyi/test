@@ -1,0 +1,52 @@
+.rouletteWrapper {
+  position: relative;
+  width: 100%;
+
+  &::before {
+    content: '';
+    position: absolute;
+    z-index: 3;
+    width: 100px;
+    left: -24px;
+    top: 0;
+    bottom: 0;
+    background: rgb(9,5,29);
+    background: linear-gradient(-90deg, rgba(9,5,29,0) 0%, rgba(9,5,29,1) 86%, rgba(9,5,29,1) 100%);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: 3;
+    width: 100px;
+    right: -24px;
+    top: 0;
+    bottom: 0;
+    background: rgb(9,5,29);
+    background: linear-gradient(90deg, rgba(9,5,29,0) 0%, rgba(9,5,29,1) 86%, rgba(9,5,29,1) 100%);
+  }
+}
+
+.transparentCircle {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  overflow:hidden;
+
+  &::after{
+    content:'';
+    position:absolute;
+    left: calc(50% - 204px);
+    top: calc(50% - 270px);
+    border-radius:100%;
+    width: 394px;
+    height: 394px;
+    border-radius: 12px;
+    border-radius: 400px;
+    border: 6px solid #631DFF;
+    box-shadow: 0px 0px 0px 2000px rgba(0,0,0,.5);
+  }
+}

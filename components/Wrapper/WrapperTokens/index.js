@@ -10,7 +10,6 @@ import { putAssetsFile, getAssetsFile } from '@/libs/aws.lib'
 import $app from '@/store/app'
 import $collection from '@/store/collection'
 import $exchange from '@/store/exchange'
-import $orders from '@/store/orders'
 import $token, { template, staticTemplate } from '@/store/token'
 
 const getApolloClient = (chain) => {
@@ -42,6 +41,8 @@ const WrapperTokens = ({ children }) => {
   const infoList = useSelector(({ $token }) => $token.infoList)
   const sort = useSelector(({ $token }) => $token.sort)
   const search = useSelector(({ $token }) => $token.search)
+  const tokenLoading = useSelector(({$token}) => $token.loading)
+  
   const pages = useSelector($token.get.pages)
 
   const [isReady, setIsReady] = useState(false)
@@ -58,30 +59,25 @@ const WrapperTokens = ({ children }) => {
     (async () => {
       const infoList = await $token.api.coingecko.local()
       dispatch($token.set.infoList(infoList))
-
-      const tempList = await getAssetsFile()
-      if (tempList.length) {
-        dispatch($token.set.list(tempList))
-      }
-
-      setIsList(true)
     })()
   }, [])
 
   useEffect(() => {
-    if (list.length) {
+    if (list.length && infoList.length) {
       setIsList(true)
     }
-  }, [list])
+  }, [list, infoList])
 
   useEffect(() => {
     if (router.isReady) {
-      if (queryBlockchainCode) {
-        if ( ! pageBlockchains.map(item => item.code).includes(queryBlockchainCode)) {
+      const tempBlockhainCode = queryBlockchainCode ?? blockchain.code
+      
+      if (tempBlockhainCode) {
+        if ( ! pageBlockchains.map(item => item.code).includes(tempBlockhainCode)) {
           dispatch($app.set.code('ethereum'))
         } else {
-          if (queryBlockchainCode != blockchain.code) {
-            dispatch($app.set.code(queryBlockchainCode))
+          if (tempBlockhainCode != blockchain.code) {
+            dispatch($app.set.code(tempBlockhainCode))
           }
         }
       }
@@ -115,7 +111,7 @@ const WrapperTokens = ({ children }) => {
   }, [isReady, fetching])
 
   const getTokenList = async (page, sortType, searchText) => {
-    dispatch($token.set.loading(true))
+    // dispatch($token.set.loading(true))
 
     const [sortBy, sortDirection] = sortType.split(':')
     const orderDirection = sortDirection.toLowerCase()
@@ -141,6 +137,7 @@ const WrapperTokens = ({ children }) => {
     })
 
     if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('tokens')) {
+      
       let tempTokens = result.data.tokens
       if (!tempTokens.length && searchText != '' && isContractAddress(searchText)) {
         const scanData = await getBasicInfo(searchText, blockchain.id)
@@ -183,7 +180,7 @@ const WrapperTokens = ({ children }) => {
 
       if (! current?.id) {
         const [first] = tempTokens
-        router.replace(`/tokens/${blockchain.code}/${first.id}`, undefined, { scroll: false })
+        router.replace(`/exchange/${blockchain.code}/${first.id}`, undefined, { scroll: false })
       }
     }
 
@@ -204,6 +201,7 @@ const WrapperTokens = ({ children }) => {
 
     let result = []
     if (idToAddressList.length) {
+
       const tempResult = await $token.api.coingecko.info({ vs_currency: 'usd', ids: idToAddressList.map(item => item.id).join(',') })
       if (tempResult && tempResult.length) {
         result = tempResult.map(item => {
@@ -236,7 +234,7 @@ const WrapperTokens = ({ children }) => {
             const [first] = tokens
             id = first.id
           }
-          router.replace(`/tokens/${blockchain.code}/${id}`, undefined, { scroll: false })
+          router.replace(`/exchange/${blockchain.code}/${id}`, undefined, { scroll: false })
           return
         }
 
@@ -261,7 +259,7 @@ const WrapperTokens = ({ children }) => {
             
             const staticData = staticTemplate(fullToken)
             const updatedList = [...list, staticData]
-            putAssetsFile(updatedList)
+            // putAssetsFile(updatedList)
             dispatch($token.set.list(updatedList))
           } else {
             let mergedData = {}

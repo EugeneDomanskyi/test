@@ -19,8 +19,8 @@
 
   .badge {
     position: absolute;
-    background-color: rgba(255,255,255,0.1);
-    height: 4px;
+    background-color: #B9B8C5;
+    height: 2px;
     width: 50%;
     bottom: 0;
     transition: transform .2s;
@@ -38,13 +38,36 @@
     }
   }
 
+  .orderContainer {
+    position: relative;
+    overflow: hidden;
+    &:hover {
+      .hoverContent {
+        transform: translateX(0%);
+      }
+    }
+    .hoverContent {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      background: linear-gradient(90deg, rgba(9,5,29,0) 10%, rgba(9,5,29,1) 20%);
+      transform: translateX(100%);
+      transition: .2s;
+
+      .actionButton {
+        cursor: pointer;
+      }
+    }
+  }
+
   .order {
     height: 40px;
     position: relative;
 
     &:hover {
       cursor: pointer;
-      background-color: rgba(255,255,255,0.1);
 
       .cancelButton {
         transform: translateX(0%);

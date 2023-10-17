@@ -14,20 +14,23 @@ export default function AlchemyLibrary(network = null) {
     apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID,
     network: Network[network],
   }
-
+  
   const alchemy = new Alchemy(config)
 
   const methods = {
-    getNftsForOwner: async (wallet, standard = null) => {
+    getNftsForOwner: async (wallet, standard = null, contractAddresses = [], limit = 100) => {
+      const options = { contractAddresses, pageSize: limit }
+
       let nfts = []
-      let result = await alchemy.nft.getNftsForOwner(wallet)
+      let result = await alchemy.nft.getNftsForOwner(wallet, options)
 
       if (result.ownedNfts && result.ownedNfts.length) {
         nfts = nfts.concat(result.ownedNfts)
       }
 
-      while (result.pageKey) {
-        result = await alchemy.nft.getNftsForOwner(wallet, { pageKey: result.pageKey })
+      while (result.pageKey && nfts.length < limit) {
+        options.pageKey = result.pageKey
+        result = await alchemy.nft.getNftsForOwner(wallet, options)
         if (result.ownedNfts && result.ownedNfts.length) {
           nfts = nfts.concat(result.ownedNfts)
         }
@@ -70,16 +73,20 @@ export default function AlchemyLibrary(network = null) {
       return processedNfts
     },
 
-    getNftsForOwnerCollection: async (wallet, address) => {
-      const result = []
-      const nfts = await methods.getNftsForOwner(wallet)
-      for (const nft of nfts) {
-        if (nft.collectionAddress.toLowerCase() == address.toLowerCase()) {
-          result.push(nft)
-        }
+    getNftsForOwnerCollection: async (wallet, address, limit = 100) => {
+      const nfts = await methods.getNftsForOwner(wallet, null, [address], limit)
+      return nfts
+    },
+
+    getNftsForOwnerCollectionCount: async (wallet, address) => {
+      const options = {
+        contractAddresses: [address],
+        omitMetadata: false,
+        pageSize: 1,
       }
 
-      return result
+      const result = await alchemy.nft.getNftsForOwner(wallet, options)
+      return result?.totalCount ?? 0
     },
 
     getOwnersForNft: async (address, id) => {

@@ -33,7 +33,7 @@ const SidebarItem = ({ item, isActive, withArrow, searching, onClick, onClose })
         })
       }
 
-      router.push(`/${isNfts ? 'nfts' : 'tokens'}/${blockchain.code}/${item.address}`, undefined, { scroll: false })
+      router.push(`/${isNfts ? 'nfts' : 'exchange'}/${blockchain.code}/${item.address}`, undefined, { scroll: false })
 
       if (onClose) {
         onClose()

@@ -37,9 +37,9 @@ const AppTabs = ({width = '100%', height = '100%', options, active, end, variant
         {options.map((option, index) => {
           const isActive = option.key === active
           return (
-            <div key={index} ref={(element) => optionRefs.current[index] = element} className={cn(styles.option, styles[variant], styles[option?.variant], {[styles.active]: isActive})} onClick={() => onChange(option.key)}>
+            <div key={index} ref={(element) => optionRefs.current[index] = element} className={cn(styles.option, styles[variant], styles[option?.variant], {[styles.disabled]: option.disabled}, {[styles.active]: isActive})} onClick={() => ! option.disabled ? onChange(option.key) : null}>
               <div className={styles.optionInner}>
-                <App.Text center size={variant == 'classic' ? 20 : variant == 'back' ? 12 : 16} weight={variant == 'classic' ? 700 : 500} height={1} className={cn(styles.optionText, {[styles.active]: isActive})}>{ option.title }</App.Text>
+                <App.Text center size={variant == 'classic' ? 20 : variant == 'back' ? 12 : 14} weight={variant == 'classic' ? 700 : 500} height={1} className={cn(styles.optionText, {[styles.active]: isActive})}>{ option.title }</App.Text>
               </div>
             </div>
           )

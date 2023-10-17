@@ -1,0 +1,16 @@
+.pagination {
+  .item {
+    font-family: 'Gilroy';
+    font-weight: 500;
+    font-size: 14px;
+    color: #fff;
+
+    &:not(.ellipsis):hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    &.selected {
+      background: #7204FF;
+    }
+  }
+}

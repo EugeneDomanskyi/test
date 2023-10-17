@@ -114,4 +114,29 @@ $borderRadius: 12px;
       }
     }
   }
+
+  /* variant: search-light */
+  &.search-light {
+    .input {
+      background-color: #17142a;
+      width: 248px;
+      height: 48px;
+      border-radius: 8px;
+
+      @media (max-width: 768px) {
+        width: 100%;
+      }
+
+      .input_fieldset {
+        border-radius: 8px;
+        border: 0;
+      }
+    }
+
+    &.notEmpty {
+      .input {
+        background-color: #262242;
+      }
+    }
+  }
 }

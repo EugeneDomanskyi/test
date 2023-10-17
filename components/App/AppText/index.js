@@ -4,7 +4,7 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 
 import styles from './styles.module.scss'
 
-const AppText = ({ children, html, inline, family, size, weight, style, color, gradient, height, spacing, nowrap, lines, uppercase, lowercase, capitalize, center, right, transition, variant, flex, className, id, sx = {}, onClick }) => {
+const AppText = ({ children, html, inline, family, size, weight, style, color, gradient, height, spacing, nowrap, lines, uppercase, lowercase, capitalize, center, italic, right, transition, variant, flex, className, id, sx = {}, onClick }) => {
   const { propValue } = usePropsHelper()
 
   const classes = () => {
@@ -17,6 +17,7 @@ const AppText = ({ children, html, inline, family, size, weight, style, color, g
       {[styles.lowercase]: lowercase},
       {[styles.capitalize]: capitalize},
       {[styles.center]: center},
+      {[styles.italic]: italic},
       {[styles.right]: right},
       {[styles[variant]]: variant}
     )

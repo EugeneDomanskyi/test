@@ -1,33 +1,19 @@
-import { useSelector } from 'react-redux'
-import dynamic from 'next/dynamic'
-
 import App from '@/components/App'
+import Landing from '@/components/Landing'
 
-const HomeTop = dynamic(import('@/components/Home/HomeTop'), { ssr: false })
-const HomeTable = dynamic(import('@/components/Home/HomeTable'), { ssr: false })
-const HomeEarn = dynamic(import('@/components/Home/HomeEarn'), { ssr: false })
-const HomeUsing = dynamic(import('@/components/Home/HomeUsing'), { ssr: false })
-const HomeGuide = dynamic(import('@/components/Home/HomeGuide'), { ssr: false })
+import styles from './styles.module.scss'
 
-export default function Home() {
-  const { loading } = useSelector(({ $collection }) => $collection)
-
+const LandingPage = () => {
   return (
-    <App.Flex column sx={{ paddingBottom: 48, overflow: 'hidden' }}>
-      <App.Flex column gap={64}>
-        <App.Flex column gap={48}>
-          <HomeTop />
-          {loading ? (
-            <App.LoaderBlock height={600} />
-          ) : (
-            <HomeTable />
-          )}
-        </App.Flex>
-
-        <HomeEarn />
-        <HomeUsing />
-        <HomeGuide />
-      </App.Flex>
+    <App.Flex column gap={[130, 70]} className={styles.container}>
+      <Landing.Grid />
+      <Landing.Head />
+      <Landing.Slides />
+      <Landing.Platform />
+      <Landing.Founders />
+      <Landing.Footer />
     </App.Flex>
   )
 }
+
+export default LandingPage
