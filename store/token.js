@@ -221,7 +221,11 @@ export const tokenSlice = createSlice({
     },
 
     current: (state, { payload }) => {
-      state.current = payload
+      state.current = template(payload, state.assets[payload.id])
+    },
+
+    updatedCurrent: (state, {payload}) => {
+      state.current = template({...state.current, ...payload}, state.assets[payload.id])
     },
 
     update: (state, { payload }) => {

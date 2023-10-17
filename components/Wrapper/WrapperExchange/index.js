@@ -1,4 +1,4 @@
-import { useEffect, memo } from 'react'
+import { useEffect, memo, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 // import _ from 'lodash'
@@ -25,6 +25,15 @@ const getTokens = async (url, {skip, orderBy, orderDirection, searchText, usdt})
   return res.data.tokens
 }
 
+const getToken = async (url, id) => {
+  const client = getApolloClient(url)
+  const res = await client.query({
+    query: queries.tokenById,
+    variables: {id: id}
+  })
+  return res.data.token && res.data.token.symbol !== 'unknown' ? res.data.token : null
+}
+
 const WrapperExchange = ({children}) => {
   const router = useRouter()
   const dispatch = useDispatch()
@@ -32,6 +41,8 @@ const WrapperExchange = ({children}) => {
   // const blockchain = useSelector($app.get.blockchain)
   const currentToken = useSelector(({$token}) => $token.current)
   const tokenList = useSelector(({$token}) => $token.all)
+
+  const [wrongAddress, setWrongAddress] = useState(false)
 
   // console.log('blockchain', blockchain)
 
@@ -65,21 +76,21 @@ const WrapperExchange = ({children}) => {
   // fetch current if address is correct
   useEffect(() => {
     (async () => {
-      // if (isAddress && currentChain && currentToken?.id !== address) {
-      //   const existInList = tokenList.find(token => token.id === address)
-      //   if (!existInList) {
-      //     const token = await getToken(currentChain.baseUniswapUrl, address)
-      //     if (token) {
-      //       dispatch($token.set.current(token))
-      //       return
-      //     }
-      //     setWrongAddress(true)
-      //     return
-      //   }
-      //   dispatch($token.set.current(existInList))
-      // } else if (!isAddress) {
-      //   setWrongAddress(true)
-      // }
+      if (isAddress && currentChain && currentToken?.id !== address) {
+        const existInList = tokenList.find(token => token.id === address)
+        if (!existInList) {
+          const token = await getToken(currentChain.baseUniswapUrl, address)
+          if (token) {
+            dispatch($token.set.current(token))
+            return
+          }
+          setWrongAddress(true)
+          return
+        }
+        dispatch($token.set.current(existInList))
+      } else if (!isAddress) {
+        setWrongAddress(true)
+      }
     })()
   }, [isAddress, blockchain, address, currentToken?.address])
 

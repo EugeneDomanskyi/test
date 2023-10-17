@@ -30,7 +30,8 @@ const GRID_GAP = 6
 
 const Exchange = () => {
   const router = useRouter()
-  const [queryBlockchainCode, queryTokenId] = router.query.segments || []
+  const [queryTokenId] = router.query.address || []
+  const queryBlockchainCode = router.query.blockchain
 
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
