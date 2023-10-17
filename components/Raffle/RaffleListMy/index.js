@@ -267,7 +267,7 @@ const RaffleListMy = ({ loading, onMoreCases, onShare, onUpdateUserCases }) => {
             </TableContainer>
           ) : (
             <App.Flex center height={300}>
-              <App.Text>There are no cases yet</App.Text>
+              <App.Text>You have not opened any cases yet</App.Text>
             </App.Flex>
           )}
         </>

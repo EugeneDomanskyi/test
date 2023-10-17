@@ -264,7 +264,6 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
 
             <App.Flex justify="space-between" gap={16}>
               <App.Flex center sx={{ minWidth: propValue([65, 32], true) }} gap={16}>
-                {/* <Image src={item.image} width={propValue([48, 32], true)} height={propValue([48, 32], true)} alt="" /> */}
                 <App.Text size={20} weight={600}>{ item.title }</App.Text>
               </App.Flex>
 
@@ -291,7 +290,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
                   const odds = currentReward.odds
                   const amount = reward.reward / 1000000
                   return (
-                    <RaffleReward key={index} title={title} amount={`$${amount}`} additionalText={`Odds: ${odds}%`} />
+                    <RaffleReward key={index} title={title} amount={`$${amount}`} additionalText={`Chances: ${odds}%`} />
                   )
                 })
               }
@@ -304,7 +303,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
               </App.Flex> */}
 
               <App.Button primary sx={{width: 240, height: 56, fontSize: 16, fontWeight: 600}} onClick={handleClickOpen}>
-                Unlock with { item.tKeyRequired } TKeys
+                Unlock with {item.tKeyRequired +  ' ' + (item.tKeyRequired*1 === 1 ? 'TKey' : 'TKeys')}
               </App.Button>
             </App.Flex>
           </App.Flex>
