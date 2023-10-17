@@ -39,7 +39,6 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
 
   useEffect(() => {
     if (queryCampaignId && campaigns.length) {
-      console.log('queryCampaignId', queryCampaignId);
       const item = campaigns.find(campaign => campaign.id === queryCampaignId)
 
       if (item) {
@@ -62,7 +61,6 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
 
   const handleClose = () => {
     router.push('/earn', undefined, { scroll: false })
-    // onUpdateUserCases()
     getUserTKeysBalance()
   }
 

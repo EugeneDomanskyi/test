@@ -150,7 +150,8 @@ const RafflePage = () => {
 
     if (participants && participants.hasOwnProperty('data') && participants.data.hasOwnProperty('userCampaignParticipants')) {
       const result = []
-      for (const item of participants.data.userCampaignParticipants) {
+      const campaigns = participants.data.userCampaignParticipants.filter(item => ! item.campaign.id*1)
+      for (const item of campaigns) {
         if ( ! item.isResolved) {
           reward.current = null
           await fetchReward(item.participatedTransaction)
@@ -192,6 +193,7 @@ const RafflePage = () => {
 
   const fetchReward = async (participatedTransaction, maxTries = 3) => {
     if (maxTries > 0) {
+      console.log('participatedTransaction', participatedTransaction);
       const result = await $raffle.api.reward(participatedTransaction.trim())
       if (result) {
         const parsedRes = JSON.parse(result.data)
