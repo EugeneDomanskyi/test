@@ -17,7 +17,7 @@ import Header from '@/components/Header'
 import WrapperExchange from '@/components/Wrapper/WrapperExchange'
 import WrapperCollections from '@/components/Wrapper/WrapperCollections'
 
-const Wrapper = ({ children }) => {
+const Wrapper = ({ children, isMobile }) => {
   const dispatch = useDispatch()
   const router = useRouter()
   const isNfts = router.asPath?.includes('nfts')
@@ -57,7 +57,7 @@ const Wrapper = ({ children }) => {
       <Header />
 
       {isExchange ? (
-        <WrapperExchange>
+        <WrapperExchange isMobile={isMobile}>
           {children}
         </WrapperExchange>
       ) : null}

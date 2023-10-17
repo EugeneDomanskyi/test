@@ -145,7 +145,7 @@ function MyApp({ Component, pageProps, initialData, currentPage, currentAddress,
         <Provider store={storeRef}>
           <Head route={ssRoute} currentPage={currentPage} currentSymbol={currentSymbol} marketInfo={marketInfo} />
 
-          <Wrapper>
+          <Wrapper isMobile={initialData.isMobile}>
             <Component {...pageProps} />
           </Wrapper>
 

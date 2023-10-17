@@ -33,7 +33,7 @@ const getToken = async (url, id) => {
   return res.data.token && res.data.token.symbol !== 'unknown' ? res.data.token : null
 }
 
-const WrapperExchange = ({children}) => {
+const WrapperExchange = ({children, isMobile}) => {
   const router = useRouter()
   const dispatch = useDispatch()
 
@@ -106,11 +106,11 @@ const WrapperExchange = ({children}) => {
 
   // set current from list
   useEffect(() => {
-    if (wrongAddress && tokenList.length) {
+    if (wrongAddress && tokenList.length && !isMobile) {
       dispatch($token.set.current(tokenList[0]))
       router.replace(`/exchange/${blockchain}/${tokenList[0].id}`)
     }
-  }, [wrongAddress, tokenList.length])
+  }, [wrongAddress, tokenList.length, isMobile])
 
   // update price for current
   useEffect(() => {
