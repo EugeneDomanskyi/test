@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
 import { loadIntercom } from 'next-intercom'
@@ -16,6 +16,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import WrapperTokens from '@/components/Wrapper/WrapperTokens'
 import WrapperCollections from '@/components/Wrapper/WrapperCollections'
+import App from '@/store/app'
 
 const Wrapper = ({ children, marketsList = [] }) => {
   const dispatch = useDispatch()
@@ -26,6 +27,8 @@ const Wrapper = ({ children, marketsList = [] }) => {
   const isEarn = router.pathname.includes('/earn')
 
   const { address, isConnected } = useAccount()
+
+  const [headerHeight, setHeaderHeight] = useState(64)
 
   useEffect(() => {
     if (isConnected && address) {
@@ -66,9 +69,14 @@ const Wrapper = ({ children, marketsList = [] }) => {
     }
   }, [marketsList])
 
+  const handleHeaderHeightCounted = (height) => {
+    setHeaderHeight(height)
+    console.log('Header height is: ', height);
+  }
+
   return (
     <>
-      <Header />
+      <Header onHeightCounted={handleHeaderHeightCounted} />
 
       {isExchange ? (
         <WrapperTokens>
