@@ -125,10 +125,6 @@ const Header = () => {
 
   const handleGetBalance = async () => {
     setBalanceLoading(true)
-    const network = await changeNetwork(blockchain.code)
-    if (!network) {
-      return
-    }
     if (! isEarn) {
       const balance = await getBalance('', true)
       if (balance) {
