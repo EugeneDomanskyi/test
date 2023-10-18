@@ -43,6 +43,7 @@ const WrapperExchange = ({children, isMobile}) => {
   const sort = useSelector(({ $token }) => $token.sort)
   const pages = useSelector($token.get.pages)
   const activeInterval = useSelector(({$exchange}) => $exchange.interval)
+  const storedBlockchain = useSelector($app.get.blockchain)
 
   const [wrongAddress, setWrongAddress] = useState(false)
 
@@ -62,6 +63,12 @@ const WrapperExchange = ({children, isMobile}) => {
   if (orderBy == 'price') {
     orderBy = 'derivedETH'
   }
+
+  useEffect(() => {
+    if (storedBlockchain.code !== blockchain) {
+      router.replace(`/exchange/${storedBlockchain.code}/0x`)
+    }
+  }, [storedBlockchain, blockchain])
 
   // fetch list for blockchain
   useEffect(() => {
