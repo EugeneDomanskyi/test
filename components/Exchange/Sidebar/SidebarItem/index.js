@@ -77,10 +77,10 @@ const SidebarItem = ({ item, isActive, withArrow, searching, onClick, onClose })
       </App.Flex>
       
       <App.Flex column>
-        <App.Text right>{ item.price } { item.currency }</App.Text>
+        <App.Text right>${ item.price }</App.Text>
         <App.Flex row align="center" justify="flex-end" gap={2}>
           <App.Icon icon="caret-down" width={10} height={10} color={item.ticker.type == 'minus' ? '#FF1D61' : '#53F19C'} style={{transform: `rotate(${item.ticker.type == 'plus' ? '180deg' : '0deg'})`}} />
-          <App.Text size={10} color={item.ticker.type == 'minus' ? '#FF1D61' : '#53F19C'}>{ item.ticker.value }%</App.Text>
+          <App.Text size={12} color={item.ticker.type == 'minus' ? '#FF1D61' : '#53F19C'}>{ item.ticker.value }%</App.Text>
         </App.Flex>
       </App.Flex>
 

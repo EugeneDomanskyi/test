@@ -5,6 +5,7 @@ import AppCheckbox from '@/components/App/AppCheckbox'
 import AppContainer from '@/components/App/AppContainer'
 import AppFlex from '@/components/App/AppFlex'
 import AppFrame from '@/components/App/AppFrame'
+import AppHr from '@/components/App/AppHr'
 import AppIcon from '@/components/App/AppIcon'
 import AppLoader from '@/components/App/AppLoader'
 import AppLoaderBlock from '@/components/App/AppLoaderBlock'
@@ -27,6 +28,7 @@ export default {
   Container: AppContainer,
   Flex: AppFlex,
   Frame: AppFrame,
+  Hr: AppHr,
   Icon: AppIcon,
   Loader: AppLoader,
   LoaderBlock: AppLoaderBlock,

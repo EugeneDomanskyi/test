@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useAccount, useNetwork, useWalletClient } from 'wagmi'
+import { useAccount, useNetwork, useWalletClient, usePublicClient } from 'wagmi'
 import { signMessage, disconnect as wagmiDisconnect, getNetwork, getAccount, switchNetwork, fetchBalance, fetchToken } from '@wagmi/core'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 
@@ -12,6 +12,7 @@ const useWalletConnect = () => {
   const { address, isConnected } = useAccount()
   const { chain, chains } = useNetwork()
   const { data: walletClient } = useWalletClient()
+  const publicClient = usePublicClient()
 
   const [modalOpen, setModalOpen] = useState(false)
   const [wallet, setWallet] = useState(null)
@@ -208,6 +209,7 @@ const useWalletConnect = () => {
     blockchain,
     blockchains,
     walletClient,
+    publicClient,
     isContractAddress,
     connect,
     disconnect,

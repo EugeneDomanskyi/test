@@ -78,6 +78,18 @@
     }
   }
 
+  &.xl {
+    padding: 16px 20px;
+    font-size: 18px;
+    line-height: 24px;
+
+    &.rounded {
+      border-radius: 22px;
+      padding: 8px;
+      height: 44px;
+    }
+  }
+
   &.primary {
     background-color: #7204FF;
     border-color: #7204FF;
@@ -121,44 +133,44 @@
   }
 
   &.success {
-    background-color: rgba(92, 222, 160, 0.8);
-    border-color: #5CDEA0;
+    background-color: #0DC683;
+    border-color: #0DC683;
     backdrop-filter: blur(12px);
 
     &.active:not(:disabled),
     &:hover:not(:disabled) {
-      background-color: rgba(92, 222, 160, 0.6);
+      background-color: rgba(13, 198, 131, 0.8);
     }
 
     &.outlined {
       background-color: transparent;
-      border-color: #53F19C;
+      border-color: #0DC683;
 
       &.active:not(:disabled),
       &:hover:not(:disabled) {
-        border-color: #1c7a48;
+        border-color: #07b172;
         background-color: transparent;
       }
     }
   }
 
   &.danger {
-    background-color: rgba(222, 92, 100, 0.8);
-    border-color: #DE5C64;
+    background-color: #C00C4D;
+    border-color: #C00C4D;
     backdrop-filter: blur(12px);
 
     &.active:not(:disabled),
     &:hover:not(:disabled) {
-      background-color: rgba(222, 92, 100, 0.6);
+      background-color: rgba(192, 12, 77, 0.8);
     }
 
     &.outlined {
       background-color: transparent;
-      border-color: #FF1D61;
+      border-color: #C00C4D;
 
       &.active:not(:disabled),
       &:hover:not(:disabled) {
-        border-color: #9c0c37;
+        border-color: rgb(136, 9, 47);
         background-color: transparent;
       }
     }

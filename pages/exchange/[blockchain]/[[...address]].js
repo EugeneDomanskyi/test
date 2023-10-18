@@ -74,11 +74,6 @@ const Exchange = () => {
     updateOrders()
   }, [wallet, queryTokenId, queryBlockchainCode])
 
-  const handleMobileTabChange = useCallback((tab) => {
-    setMobileTabTrade(false)
-    setMobileTab(tab)
-  }, [])
-
   const handleClickOrder = useCallback(async order => {
     if (tradeForm.current) {
       tradeForm.current.setForm({formType: 'market', amount: order.quantity, price: order.price, side: order.side})
@@ -252,7 +247,9 @@ const Exchange = () => {
             onPage={handlePage}
           />
         ) : (
-          <Mobile />
+          <Mobile
+            item={current}
+          />
         )
       )}
     </App.Flex>
