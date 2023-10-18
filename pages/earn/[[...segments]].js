@@ -193,7 +193,6 @@ const RafflePage = () => {
 
   const fetchReward = async (participatedTransaction, maxTries = 3) => {
     if (maxTries > 0) {
-      console.log('participatedTransaction', participatedTransaction);
       const result = await $raffle.api.reward(participatedTransaction.trim())
       if (result) {
         const parsedRes = JSON.parse(result.data)
