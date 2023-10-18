@@ -42,7 +42,7 @@ export const template = (item, assets) => {
     value: tickerValue,
     type: tickerValue >= 0 ? 'plus' : 'minus',
   }
-
+  
   return {
     id: item?.id,
     // cgId: overwrite?.cgId ?? item?.cgId,

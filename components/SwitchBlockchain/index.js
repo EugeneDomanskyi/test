@@ -60,6 +60,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose, onChangeNetwo
     const network = await changeNetwork(val)
     if (network) {
       onChangeNetwork()
+      // router.push(`/exchange/${val}`)
       dispatch($app.set.code(val))
     }
 

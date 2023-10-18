@@ -101,11 +101,11 @@ const Exchange = () => {
     dispatch($token.set.pages({current: value ?? 1}))
   }, [])
 
-  const pollingOrders = () => {
-    updateOrders()
-  }
+  // const pollingOrders = () => {
+  //   updateOrders()
+  // }
 
-  useInterval(pollingOrders, 15000)
+  // useInterval(pollingOrders, 15000)
 
   return (
     <App.Flex gap={GRID_GAP} className={styles.container}>
