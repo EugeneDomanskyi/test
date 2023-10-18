@@ -200,15 +200,15 @@ MyApp.getInitialProps = async ({ctx}) => {
     const [addrArr] = routeArr.slice(-1)
     currentAddress = addrArr.split('?')[0]
     ssRoute = (ctx.req.url)
-    if (!firstTimeLoaded) {
-      // const list = await getAssetsFile()
-      // if (list && Array.isArray(list)) {
-      //   marketsList = list
-      //   globalList = list
-      //   marketInfo = list.find(item => item.address === currentAddress) || {}
-      //   firstTimeLoaded = true
-      // }
-    }
+    // if (!firstTimeLoaded) {
+    //   const list = await getAssetsFile()
+    //   if (list && Array.isArray(list)) {
+    //     marketsList = list
+    //     globalList = list
+    //     marketInfo = list.find(item => item.address === currentAddress) || {}
+    //     firstTimeLoaded = true
+    //   }
+    // }
   }
   
   return {

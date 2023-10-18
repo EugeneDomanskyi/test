@@ -7,7 +7,6 @@ import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
 import useOrders from '@/myhooks/useOrders'
-import useInterval from '@/myhooks/useInterval'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
@@ -100,12 +99,6 @@ const Exchange = () => {
   const handlePage = useCallback((value) => {
     dispatch($token.set.pages({current: value ?? 1}))
   }, [])
-
-  // const pollingOrders = () => {
-  //   updateOrders()
-  // }
-
-  // useInterval(pollingOrders, 15000)
 
   return (
     <App.Flex gap={GRID_GAP} className={styles.container}>
