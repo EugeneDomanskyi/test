@@ -51,14 +51,13 @@ export const trackEvent = (eventName, eventProperties) => {
   const [subDomain] = window.location.hostname.split('.')
   const segments = window.location.pathname.split('/')
 
-  // console.log('segments', segments);
   const data = {
     ...eventProperties,
     IsBrowser: true,
     OS: getOS(),
     Device: getDevice(),
     Source: `${subDomain.charAt(0).toUpperCase()}${subDomain.slice(1)}`,
-    'Asset Type': segments[1],
+    'Page': `${segments[1].charAt(0).toUpperCase()}${segments[1].slice(1)}`,
   }
   amplitude.getInstance().logEvent(eventName, data)
 }

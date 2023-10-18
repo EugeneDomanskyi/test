@@ -31,7 +31,7 @@ const RaffleListBrowseItem = ({ item, onParticipate }) => {
         {item.status == 'Active' ? (
           <App.Flex row center gap={4} className={styles.tkeyBadge}>
             <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
-            <App.Text size={[12, 10]} height={1}>{item.tKeyRequired} TKeys</App.Text>
+            <App.Text size={[12, 10]} height={1}>{item.tKeyRequired +  ' ' + (item.tKeyRequired*1 === 1 ? 'TKey' : 'TKeys')}</App.Text>
           </App.Flex>
         ) : null}
       </App.Flex>

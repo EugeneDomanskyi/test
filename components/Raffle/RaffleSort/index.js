@@ -16,7 +16,7 @@ const RaffleSort = () => {
   const dispatch = useDispatch()
   const { wallet } = useWalletConnect()
 
-  const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
+  const balance = useSelector(({$raffle}) => $raffle.balance)
 
   const sort = useSelector(({ $raffle }) => $raffle.sort)
   const filter = useSelector(({ $raffle }) => $raffle.filter)
@@ -45,9 +45,7 @@ const RaffleSort = () => {
   const handleSortChange = (item) => () => {
     trackEvent('Click Sort by', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': tokenIds.length,
-      'TKeys Required': campaign.tKeyRequired,
-      'WalletAddress': wallet,
+      'Tkeys Quantity': balance,
       'Market': 'USDT',
       'Selection': item.text
     })
@@ -58,9 +56,7 @@ const RaffleSort = () => {
   const handleFilterChange = (item) => () => {
     trackEvent('Click Filter', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': tokenIds.length,
-      'TKeys Required': campaign.tKeyRequired,
-      'WalletAddress': wallet,
+      'Tkeys Quantity': balance,
       'Market': 'USDT',
       'Selection': item.text
     })

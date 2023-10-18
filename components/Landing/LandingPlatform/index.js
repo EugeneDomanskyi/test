@@ -47,7 +47,7 @@ const LandingPlatform = () => {
   return (
     <App.Flex className={styles.container}>
       <video autoPlay loop muted>
-        <source src={process.env.NEXT_PUBLIC_APP_ENV == 'local' ? null : '/images/landing/reveal.webm'} type="video/webm" />
+        <source src={'/images/landing/reveal.webm'} type="video/webm" />
       </video>
 
       <App.Container>
@@ -80,7 +80,7 @@ const LandingPlatform = () => {
                   </App.Flex>
 
                   <App.Flex center className={styles.socialBox} onClick={handleSocialClick('linkedin')}>
-                    <App.Icon icon="linkedin" />
+                    <App.Icon icon="linkedin-frame" />
                   </App.Flex>
 
                   <App.Flex center className={styles.socialBox} onClick={handleSocialClick('substack')}>

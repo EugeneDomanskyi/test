@@ -5,6 +5,8 @@ import moment from 'moment'
 
 import $app from '@/store/app'
 
+import { trackEvent } from '@/libs/analytics.lib'
+
 import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
@@ -23,9 +25,8 @@ const RaffleListMyItem = ({ item, number, onShare }) => {
   const handleClickShare = () => {
     trackEvent('Click Share My Case Opens', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'WalletAddress': wallet,
     })
-    const shareText = `🎁✨ Did you know? You can open cases on Tegro and share rewards worth 💰💰 $10,000 in $USDT, $PEPE, $SHIB, and other tokens! Unlock your first case for FREE! Start here 👉 `
+    const shareText = `🥳💸 Woohoo! I just won $${item.rewardAmount} in USDT from a case! You can win $USDT, $PEPE, $SHIB, $FLOKI, and other tokens in the $10000 Tegro Treasure Case series! 💰💰 Join me now! Unlock your first Tegro case 🎁 for FREE! 👀 Start here 👉`
     onShare(shareText)
   }
 
@@ -44,14 +45,14 @@ const RaffleListMyItem = ({ item, number, onShare }) => {
 
       <TableCell>
         <App.Flex gap={8} align="center">
-          {item.campaign.image ? (
-            <img src={item.campaign.image} width={48} height={48} alt="" />
+          {item?.campaign?.image ? (
+            <img src={item.campaign?.image} width={48} height={48} alt="" />
           ) : (
             <App.Flex className={styles.imagePlaceholder} width={48} height={48} />
           )}
 
           <App.Flex column>
-            <App.Text>{item.campaign.title}</App.Text>
+            <App.Text>{item.campaign?.title}</App.Text>
           </App.Flex>
         </App.Flex>
       </TableCell>

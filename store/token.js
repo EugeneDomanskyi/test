@@ -36,9 +36,15 @@ export const template = (item, assets) => {
     // ...infoToTemplate(item?.info),
     // ...fullToTemplate(item?.full),
   }
+  const tickerValue = item.price_change_percentage_24h ? Math.abs(item.price_change_percentage_24h ?? 0).toFixed(2) : item.ticker?.value ?? 0
 
+  const ticker = {
+    value: tickerValue,
+    type: tickerValue >= 0 ? 'plus' : 'minus',
+  }
+  
   return {
-    id: overwrite?.id ?? item?.id,
+    id: item?.id,
     // cgId: overwrite?.cgId ?? item?.cgId,
     address: assets?.address ?? item?.id,
     decimals: assets?.decimals ?? item?.decimals,
@@ -50,8 +56,8 @@ export const template = (item, assets) => {
     high: formatNumber(item?.high_24h ?? item?.high ?? 0),
     low: formatNumber(item?.low_24h ?? item?.low ?? 0),
     currency: currency,
-    volume: numeral(assets?.volume ?? item?.volumeUSD ?? 0).format('0.[0000]'),
-    tvl: numeral(assets?.tvl ?? item?.tvl ?? 0).format('0.[0000]'),
+    volume: numeral(item?.volumeUSD ?? item?.volume ?? 0).format('0.[0000]'),
+    tvl: numeral(item?.totalValueLockedUSD ?? item?.tvl ?? 0).format('0.[0000]'),
     description: assets?.description ?? item?.description,
     tokenCount: assets?.tokenCount ?? item?.totalSupply ?? 0,
     onSaleCount: assets?.onSaleCount ?? item?.onSaleCount ?? 0,
@@ -59,10 +65,7 @@ export const template = (item, assets) => {
     externalUrl: assets?.externalUrl ?? item?.externalUrl,
     twitterUrl: assets?.twitterUrl ?? item?.twitterUrl,
     openseaVerificationStatus: null,
-    ticker: {
-      value: overwrite?.ticker?.value ?? item?.ticker?.value ?? 0,
-      type: overwrite?.ticker?.type ?? item?.ticker?.type,
-    },
+    ticker: ticker,
     isFull: assets?.isFull ?? item?.isFull,
     createdAt: assets?.genesis_date ?? item?.genesis_date,
     marketCap: assets?.marketCap ?? item.marketCap,
@@ -126,7 +129,6 @@ const infoToTemplate = (item) => {
         value: Math.abs(item.price_change_percentage_24h ?? 0).toFixed(2),
         type: ((item.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
       },
-      
     }
   }
 

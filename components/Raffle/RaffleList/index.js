@@ -20,7 +20,7 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
 
   const blockchain = useSelector($app.get.blockchain)
   const campaigns = useSelector($raffle.get.filtered)
-  const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
+  const balance = useSelector(({$raffle}) => $raffle.balance)
 
   const [queryCampaignId] = router.query.segments || []
 
@@ -50,6 +50,7 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
           onUpdateUserCases,
           onShare: handleShare,
           onTop: true,
+          onClose: handleClose,
           header: {
             title: `Case Details`,
           },
@@ -58,11 +59,15 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
     }
   }, [queryCampaignId, campaigns])
 
+  const handleClose = () => {
+    router.push('/earn', undefined, { scroll: false })
+    getUserTKeysBalance()
+  }
+
   const handleTabChange = (value) => {
     trackEvent(value === 'my' ? 'Click My Case Opens' :  'Click Browse Case', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': tokenIds.length,
-      'WalletAddress': wallet,
+      'Tkeys Quantity': balance,
     })
     setTab(value)
   }
@@ -70,9 +75,8 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
   const handleParticipate = async (item) => {
     trackEvent('Click View Case', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': tokenIds.length,
+      'Tkeys Quantity': balance,
       'TKeys Required': item.tKeyRequired,
-      'WalletAddress': wallet,
     })
     const address = await connect()
     if ( ! address) {
@@ -102,6 +106,14 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
   }
 
+  const handleSearch = (search) => {
+    trackEvent('Click Search', {
+      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+      'Tkeys Quantity': balance,
+      'Search Term': search,
+    })
+  }
+
   return (
     <App.Container sx={{ paddingTop: '32px', paddingBottom: '32px' }}>
       <App.Flex column gap={32}>
@@ -109,7 +121,7 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
 
         <App.Flex direction={['row', 'column']} gap={12} align={['flex-end', 'flex-start']} justify="space-between" height={[68, 'auto']}>
           <App.Flex fullWidth={[null, true]} flex={1}>{tab == 'browse' ? <Raffle.Sort /> : null}</App.Flex>
-          <App.Flex fullWidth={[null, true]}><Raffle.Search /></App.Flex>
+          <App.Flex fullWidth={[null, true]}><Raffle.Search onSearch={handleSearch} /></App.Flex>
         </App.Flex>
 
         <App.Flex fullWidth sx={{ minHeight: 263 }}>
