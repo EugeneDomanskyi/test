@@ -4,6 +4,7 @@ import { hexToString } from 'viem'
 import { Web3Storage } from 'web3.storage'
 import moment from 'moment'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
+import Head from 'next/head'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import AlchemyLibrary from '@/libs/alchemy.lib'
@@ -294,12 +295,24 @@ const RafflePage = () => {
   }
 
   return (
-    <App.Flex column className={styles.container}>
-      {/* <Raffle.Header /> */}
-      <Raffle.Top loading={campaignLoading} />
-      <Raffle.Banner />
-      <Raffle.List loading={campaignLoading} onUpdateUserCases={getUserCases} onUpdateUserTKeys={getUserTKeys} getUserTKeysBalance={getUserTKeysBalance} />
-    </App.Flex>
+    <>
+      <Head>
+        <title>$10,000+ Tegro Treasure Case Series Live Now! | Tegro Earn</title>
+        <meta content="Join the $10,000+ Tegro Treasure Case Series today! Complete trading objectives to obtain TKeys and unlock cases to win exciting $USDT, $PEPE, $SHIB, $FLOKI, and other token rewards! Enter now." property="description" key="description" />
+        <meta property="og:image" content="summary_large_image" />
+        <meta name="twitter:card" content="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/tegro-earn.jpg" />
+        <meta name="twitter:site" content="@TegroFi" />
+        <meta name="twitter:title" content="$10,000+ Tegro Treasure Case Series Live Now! | Tegro Earn" />
+        <meta name="twitter:description" content="Join the $10,000+ Tegro Treasure Case Series today! Complete trading objectives to obtain TKeys and unlock cases to win exciting $USDT, $PEPE, $SHIB, $FLOKI, and other token rewards! Enter now." />
+        <meta name="twitter:image" content="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/tegro-earn.jpg" />
+      </Head>
+      
+      <App.Flex column className={styles.container}>
+        <Raffle.Top loading={campaignLoading} />
+        <Raffle.Banner />
+        <Raffle.List loading={campaignLoading} onUpdateUserCases={getUserCases} onUpdateUserTKeys={getUserTKeys} getUserTKeysBalance={getUserTKeysBalance} />
+      </App.Flex>
+    </>
   )
 }
 
