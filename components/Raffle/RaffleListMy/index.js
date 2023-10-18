@@ -70,7 +70,7 @@ const RaffleListMy = ({ loading, onMoreCases, onShare, onUpdateUserCases }) => {
   }, [campaigns])
 
   const participatedCampaigns = () => {
-    const newCampaigns = participants.filter(item => !item.campaign.id*1).map(item => {
+    const newCampaigns = participants.map(item => {
       return {
         ...item,
         campaign: campaign(item.campaign.id)
