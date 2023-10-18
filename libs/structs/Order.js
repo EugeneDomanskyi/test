@@ -531,6 +531,7 @@ class TOKEN extends Order {
         makerAddress: walletClient.account.address,
         makingAmount: parseUnits(`${spendAmount}`, makerAsset.decimals).toString(),
         takingAmount: parseUnits(`${receiveAmount}`, takerAsset.decimals).toString(),
+        preInteraction: '0xd09de08a', // custom interaction for test
       })
 
       const limitOrderTypedData = limitOrderBuilder.buildLimitOrderTypedData(limitOrder)
