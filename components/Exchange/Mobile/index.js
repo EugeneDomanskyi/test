@@ -14,13 +14,12 @@ const Mobile = ({ item }) => {
   const router = useRouter()
   const queryBlockchainCode = router.query.blockchain
 
-  const { wallet, getBalance, getPrice, walletClient, publicClient } = useWalletConnect()
+  const { wallet, getBalance, getPrice, connectorId } = useWalletConnect()
 
   const assets = useSelector(({ $token }) => $token.assets)
 
   const [tab, setTab] = useState('charts')
   const [tabs, setTabs] = useState([])
-  const [connect, setConnect] = useState()
   const [balance, setBalance] = useState({ currency: 0, usd: 0, usdt: 0, loading: true })
 
   useEffect(() => {
@@ -43,8 +42,6 @@ const Mobile = ({ item }) => {
   const fetchBalance = async () => {
     const tempBalance = {}
  
-    const resolver = await getAccount()
-    setConnect(resolver.connector.id)
     //tempBalance.currency = await getBalance(item.id)
     //tempBalance.currency = await getBalance(item.id)
   }
@@ -94,7 +91,7 @@ const Mobile = ({ item }) => {
         <App.Tabs options={tabs} active={tab} onChange={handleTabChange} height="auto" variant="mobile" />
 
         <App.Flex flex={1}>
-          <App.Text>{connect}</App.Text>
+          <App.Text>{connectorId}</App.Text>
         </App.Flex>
       </App.Flex>
 

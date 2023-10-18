@@ -3,6 +3,7 @@ import AppButton from '@/components/App/AppButton'
 import AppCard from '@/components/App/AppCard'
 import AppCheckbox from '@/components/App/AppCheckbox'
 import AppContainer from '@/components/App/AppContainer'
+import AppDialog from '@/components/App/AppDialog'
 import AppFlex from '@/components/App/AppFlex'
 import AppFrame from '@/components/App/AppFrame'
 import AppHr from '@/components/App/AppHr'
@@ -26,6 +27,7 @@ export default {
   Card: AppCard,
   Checkbox: AppCheckbox,
   Container: AppContainer,
+  Dialog: AppDialog,
   Flex: AppFlex,
   Frame: AppFrame,
   Hr: AppHr,

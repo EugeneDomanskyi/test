@@ -16,12 +16,13 @@ import $app from '@/store/app'
 import App from '@/components/App'
 import SwitchBlockchain from '@/components/SwitchBlockchain'
 import NavbarDropdown from '@/components/NavbarDropdown'
+import HeaderWalletMobile from '@/components/Header/HeaderWalletMobile'
 
 import styles from './styles.module.scss'
 
 const Header = () => {
   const router = useRouter()
-  const { wallet, connect, disconnect, getBalance, changeNetwork } = useWalletConnect()
+  const { wallet, connect, disconnect, getBalance } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
   const isEarn = router.pathname.includes('/earn')
@@ -235,34 +236,38 @@ const Header = () => {
             { ! isEarn ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : null}
             
             {wallet ? (
-              <App.Flex sx={{ position: 'relative' }} id="wallet">
-                <App.Flex row gap={16} className={styles.walletInfo}>
-                  {! isMobile ? (
-                    <App.Flex>
-                      {balanceLoading ? (
-                        <App.Flex center sx={{width: 90}}>
-                          <App.Loader />
-                        </App.Flex>
-                      ) : (
-                        <App.Flex center gap={4}>
-                          {isEarn ? <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" /> : null}
-                          <App.Text size={16} weight={500}>{ currentBalance.amount + ' ' + currentBalance.symbol }</App.Text>
-                        </App.Flex>
-                      )}
+              isMobile ? (
+                <HeaderWalletMobile />
+              ) : (
+                <App.Flex sx={{ position: 'relative' }} id="wallet">
+                  <App.Flex row gap={16} className={styles.walletInfo}>
+                    {! isMobile ? (
+                      <App.Flex>
+                        {balanceLoading ? (
+                          <App.Flex center sx={{width: 90}}>
+                            <App.Loader />
+                          </App.Flex>
+                        ) : (
+                          <App.Flex center gap={4}>
+                            {isEarn ? <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" /> : null}
+                            <App.Text size={16} weight={500}>{ currentBalance.amount + ' ' + currentBalance.symbol }</App.Text>
+                          </App.Flex>
+                        )}
+                      </App.Flex>
+                    ) : null}
+
+                    <App.Flex className={styles.walletAddressWrapper} onClick={handleMenuToggle}>
+                      <App.Text size={16} weight={500}>{shorterAddress(isMobile ? 4 : 6)}</App.Text>
                     </App.Flex>
-                  ) : null}
-
-                  <App.Flex className={styles.walletAddressWrapper} onClick={handleMenuToggle}>
-                    <App.Text size={16} weight={500}>{shorterAddress(isMobile ? 4 : 6)}</App.Text>
                   </App.Flex>
-                </App.Flex>
 
-                <div className={cn(styles.menu, {[styles.active]: menuShow})}>
-                  <App.Button primary fullWidth onClick={handleDisconnect}>
-                  <App.Icon icon="logout" /> Disconnect
-                  </App.Button>
-                </div>
-              </App.Flex>
+                  <div className={cn(styles.menu, {[styles.active]: menuShow})}>
+                    <App.Button primary fullWidth onClick={handleDisconnect}>
+                    <App.Icon icon="logout" /> Disconnect
+                    </App.Button>
+                  </div>
+                </App.Flex>
+              )
             ) : (
               <App.Button primary large={!isMobile} onClick={handleConnectWallet}>
                 Connect{!isMobile ? ' Wallet' : ''}
