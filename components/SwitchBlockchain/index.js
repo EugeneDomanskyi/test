@@ -22,7 +22,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose, onChangeNetwo
   const isExchange = router.pathname.includes('/exchange')
   const isEarn = router.pathname.includes('/earn')
 
-  const { changeNetwork } = useWalletConnect()
+  const { wallet, changeNetwork } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
   const dispatch = useDispatch()
@@ -57,12 +57,13 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose, onChangeNetwo
     dispatch($collection.set.clear())
     dispatch($token.set.clear())
     setMenuShow(false)
-    const network = await changeNetwork(val)
-    if (network) {
-      onChangeNetwork()
-      // router.push(`/exchange/${val}`)
-      dispatch($app.set.code(val))
+    if (wallet) {
+      const network = await changeNetwork(val)
+      if (network) {
+        onChangeNetwork()
+      }
     }
+    dispatch($app.set.code(val))
 
     if (onMobileMenuClose) {
       onMobileMenuClose()
