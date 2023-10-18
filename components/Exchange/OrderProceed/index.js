@@ -274,15 +274,15 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                     </App.Flex>
                     <App.Flex align="center" justify="space-between" className={styles.row}>
                       <App.Text color="#5E5C6B" size={10} weight={600}>At Price</App.Text>
-                      <App.Text color="#5E5C6B" size={10} weight={600}>{ price } { side === 'buy' ? takerAsset.symbol : makerAsset.symbol }</App.Text>
+                      <App.Text color="#5E5C6B" size={10} weight={600}>{ numeral(price).format('0.[00000]') } { side === 'buy' ? takerAsset.symbol : makerAsset.symbol }</App.Text>
                     </App.Flex>
                     <App.Flex align="center" justify="space-between" className={styles.row}>
                       <App.Text color="#5E5C6B" size={10} weight={600}>Amount</App.Text>
-                      <App.Text color="#5E5C6B" size={10} weight={600}>{ makerAmountFormatted } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol }</App.Text>
+                      <App.Text color="#5E5C6B" size={10} weight={600}>{ numeral(makerAmountFormatted).format('0.[00000]') } { side === 'buy' ? makerAsset.symbol : takerAsset.symbol }</App.Text>
                     </App.Flex>
                     <App.Flex align="center" justify="space-between" className={styles.row}>
                       <App.Text color="#5E5C6B" size={10} weight={600}>Total</App.Text>
-                      <App.Text color="#5E5C6B" size={10} weight={600}>{ takerAmountFormatted } { side === 'buy' ? takerAsset.symbol : makerAsset.symbol }</App.Text>
+                      <App.Text color="#5E5C6B" size={10} weight={600}>{ numeral(takerAmountFormatted).format('0.[00000]') } { side === 'buy' ? takerAsset.symbol : makerAsset.symbol }</App.Text>
                     </App.Flex>
                     <div className={styles.line} />
                     <App.Text color="#B9B8C5" size={12} weight={600} sx={{marginBottom: 8}}>Transactions</App.Text>

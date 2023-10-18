@@ -150,7 +150,8 @@ const RafflePage = () => {
 
     if (participants && participants.hasOwnProperty('data') && participants.data.hasOwnProperty('userCampaignParticipants')) {
       const result = []
-      for (const item of participants.data.userCampaignParticipants) {
+      const campaigns = participants.data.userCampaignParticipants.filter(item => ! item.campaign.id*1)
+      for (const item of campaigns) {
         if ( ! item.isResolved) {
           reward.current = null
           await fetchReward(item.participatedTransaction)

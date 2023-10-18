@@ -122,17 +122,6 @@ const RaffleListMy = ({ loading, onMoreCases, onShare, onUpdateUserCases }) => {
     }
   }, [order, orderBy])
 
-  const handleParticipate = (item) => {
-    trackEvent('Click Open another USDT case', {
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': tokenIds.length,
-      'TKeys Required': item.tKeyRequired,
-      'WalletAddress': wallet,
-      'Market': 'USDT',
-    })
-    onParticipate(item)
-  }
-
   return (
     <App.Flex column sx={{ borderRadius: 12, overflow: 'hidden' }} fullWidth>
       {loading ? (
@@ -278,7 +267,7 @@ const RaffleListMy = ({ loading, onMoreCases, onShare, onUpdateUserCases }) => {
             </TableContainer>
           ) : (
             <App.Flex center height={300}>
-              <App.Text>There are no cases yet</App.Text>
+              <App.Text>You have not opened any cases yet</App.Text>
             </App.Flex>
           )}
         </>

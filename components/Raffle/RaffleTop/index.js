@@ -53,10 +53,9 @@ const RaffleTop = ({ loading }) => {
   const handleMoreClick = () => {
     trackEvent('Click Collect TKeys', {
       'Wallet connect Status': 'Connected',
-      'Tkeys Quantity': tokenIds.length,
-      'WalletAddress': wallet,
+      'Tkeys Quantity': balance,
     })
-    window.open('https://galxe.com/tegro', '_blank')
+    window.open('https://galxe.com/tegro/campaign/GC9QPUMqMz?utm_source=web', '_blank')
   }
 
   const handleConnectWalletClick = async () => {
@@ -143,7 +142,7 @@ const RaffleTop = ({ loading }) => {
         </App.Container>
       </App.Flex>
 
-      <App.Flex row center fullWidth sx={{ overflow: 'hidden' }}>
+      {/* <App.Flex row center fullWidth sx={{ overflow: 'hidden' }}>
         <App.Flex row align="center" gap={8} className={styles.awards}>
           {getLast().map((item, index) => (
             <App.Flex key={item.resolvedTransaction + index} center gap={4} className={styles.last} onClick={handleTransactionClick(item.resolvedTransaction)}>
@@ -152,7 +151,7 @@ const RaffleTop = ({ loading }) => {
             </App.Flex>
           ))}
         </App.Flex>
-      </App.Flex>
+      </App.Flex> */}
     </App.Flex>
   )
 }

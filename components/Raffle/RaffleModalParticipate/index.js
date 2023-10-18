@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useRouter } from 'next/router'
 import Image from 'next/image'
 import cn from 'classnames'
 import moment from 'moment'
@@ -12,7 +11,6 @@ import $app from '@/store/app'
 import $modal from '@/store/modal'
 import $raffle from '@/store/raffle'
 
-import AlchemyLibrary from '@/libs/alchemy.lib'
 import Contracts from '@/libs/contracts.lib'
 import { trackEvent } from '@/libs/analytics.lib'
 
@@ -28,7 +26,6 @@ import RaffleReward from '@/components/Raffle/RaffleModalParticipate/RaffleRewar
 import styles from './styles.module.scss'
 
 const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, onUpdateUserCases, onShare}) => {
-  const router = useRouter()
   const dispatch = useDispatch()
   const { propValue } = usePropsHelper()
   const { wallet, changeNetwork } = useWalletConnect()
@@ -36,7 +33,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   const contract = new Contracts()
 
   const blockchain = useSelector($app.get.blockchain)
-  const showModal = useSelector((state) => state.$modal.show)
+  const balance = useSelector(({$raffle}) => $raffle.balance)
   const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
 
   const [showClaim, setShowClaim] = useState(false)
@@ -55,12 +52,6 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
       }
     })()
   }, [wallet])
-
-  useEffect(() => {
-    if (!showModal) {
-      router.push('/earn', undefined, { scroll: false })
-    }
-  }, [showModal])
 
   useEffect(() => {
     if (expectedReward) {
@@ -82,9 +73,8 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
     }
     trackEvent('Click Unlock With TKeys', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': tokenIds.length,
+      'Tkeys Quantity': balance,
       'TKeys Required': item.tKeyRequired,
-      'WalletAddress': wallet,
       'Market': 'USDT',
     })
     setStep(isApproved ? 1 : 0)
@@ -128,9 +118,8 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
       if (! isApproved) {
         trackEvent('Click Approve Contract', {
           'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-          'Tkeys Quantity': tokenIds.length,
+          'Tkeys Quantity': balance,
           'TKeys Required': item.tKeyRequired,
-          'WalletAddress': wallet,
           'Market': 'USDT',
         })
         const approveRes = await contract.setApprovalForAll(blockchain.raffle.contract, blockchain.raffle.factory)
@@ -160,8 +149,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
 
       trackEvent('Click Confirm Deposit', {
         'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-        'WalletAddress': wallet,
-        'Tkeys Quantity': tokenIds.length,
+        'Tkeys Quantity': balance,
         'TKeys Required': item.tKeyRequired,
         'Market': 'USDT',
       })
@@ -198,45 +186,48 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   const fetchReward = async (enterCampaignHash, maxTries = 10) => {
     if (maxTries > 0) {
       const result = await $raffle.api.reward(enterCampaignHash.trim())
-      const parsedRes = JSON.parse(result.data)
-  
-      console.log('parsedRes', parsedRes)
-      const rewardAmount = parsedRes[enterCampaignHash]?.expectedRewardAmount === '0' ? '0' : parsedRes[enterCampaignHash]?.expectedRewardAmount*1
-      console.log('rewardAmount', rewardAmount)
-  
-      if (!rewardAmount) {
-        setTimeout(() => {
-          fetchReward(enterCampaignHash, (maxTries - 1))
-        }, 2000)
-      } else if (rewardAmount === '0') {
-        setStep('error')
-        setErrorType('api')
-        dispatch($modal.set.update({
-          header: {
-            title: 'Something went wrong',
-          },
-        }))
-      } else {
-        setExpectedReward(rewardAmount)
-
-        setStep(step >= 4 ? 0 : step + 1)
-        dispatch($modal.set.update({
+      if (result?.data) {
+        const parsedRes = JSON.parse(result.data)
+    
+        console.log('parsedRes', parsedRes)
+        const rewardAmount = parsedRes[enterCampaignHash]?.expectedRewardAmount === '0' ? '0' : parsedRes[enterCampaignHash]?.expectedRewardAmount*1
+        console.log('rewardAmount', rewardAmount)
+    
+        if (!rewardAmount) {
+          setTimeout(() => {
+            fetchReward(enterCampaignHash, (maxTries - 1))
+          }, 2000)
+        } else if (rewardAmount === '0') {
+          setStep('error')
+          setErrorType('api')
+          dispatch($modal.set.update({
             header: {
-                title: 'Unlock Case',
+              title: 'Something went wrong',
             },
-        }))
-
-        dispatch($raffle.set.loading(false))
+          }))
+        } else {
+          setExpectedReward(rewardAmount)
+  
+          setStep(step >= 4 ? 0 : step + 1)
+          dispatch($modal.set.update({
+              header: {
+                  title: 'Unlock Case',
+              },
+          }))
+  
+          dispatch($raffle.set.loading(false))
+        }
+        return
       }
-    } else {
-      setStep('error')
-      setErrorType('api')
-      dispatch($modal.set.update({
-        header: {
-          title: 'Something went wrong',
-        },
-      }))
-    }
+    }  
+
+    setStep('error')
+    setErrorType('api')
+    dispatch($modal.set.update({
+      header: {
+        title: 'Something went wrong',
+      },
+    }))
   }
 
   const handleCloseModal = () => {
@@ -248,7 +239,6 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   const handleClickShare = () => {
     trackEvent('Click Share Case Details', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'WalletAddress': wallet,
     })
     const shareText = `🎁✨ Did you know? You can open cases on Tegro and share rewards worth 💰💰 $10,000 in $USDT, $PEPE, $SHIB, and other tokens! Unlock your first case for FREE! Start here 👉 `
     onShare(shareText)
@@ -274,7 +264,6 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
 
             <App.Flex justify="space-between" gap={16}>
               <App.Flex center sx={{ minWidth: propValue([65, 32], true) }} gap={16}>
-                {/* <Image src={item.image} width={propValue([48, 32], true)} height={propValue([48, 32], true)} alt="" /> */}
                 <App.Text size={20} weight={600}>{ item.title }</App.Text>
               </App.Flex>
 
@@ -301,7 +290,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
                   const odds = currentReward.odds
                   const amount = reward.reward / 1000000
                   return (
-                    <RaffleReward key={index} title={title} amount={`$${amount}`} additionalText={`Odds: ${odds}%`} />
+                    <RaffleReward key={index} title={title} amount={`$${amount}`} additionalText={`Chances: ${odds}%`} />
                   )
                 })
               }
@@ -314,7 +303,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
               </App.Flex> */}
 
               <App.Button primary sx={{width: 240, height: 56, fontSize: 16, fontWeight: 600}} onClick={handleClickOpen}>
-                Unlock with { item.tKeyRequired } TKeys
+                Unlock with {item.tKeyRequired +  ' ' + (item.tKeyRequired*1 === 1 ? 'TKey' : 'TKeys')}
               </App.Button>
             </App.Flex>
           </App.Flex>

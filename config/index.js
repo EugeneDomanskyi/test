@@ -60,6 +60,7 @@ const TEST_NETWORKS = [
             factory: '0x3897BdBAFA001CA14576Cb07ecdfbC1BcdF09ca7',
             alchemy: 'MATIC_MUMBAI',
             txUrl: 'https://mumbai.polygonscan.com/tx/',
+            rewardEndpoint: 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status',
         },
     },
 ]
@@ -256,6 +257,7 @@ export const CHAINS = [
         factory: '0xEb1E2f70C204fcE5d7EEF7F5A159C64fA13c4Ad9',
         alchemy: 'MATIC_MAINNET',
         txUrl: 'https://polygonscan.com/tx/',
+        rewardEndpoint: 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status-polygon',
     },
   }, 
   ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? TEST_NETWORKS : []),
