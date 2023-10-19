@@ -11,6 +11,20 @@ import $token from '@/store/token'
 import $exchange from '@/store/exchange'
 import $app from '@/store/app'
 
+// const temp = coinmarketAssets.reduce((acc, token) => {
+//   const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(token.platform.token_address)
+//   if (!isAddress) {
+//     return acc
+//   }
+//   const platform = token.platform.slug
+//   const platformData = {...acc[platform], [token.platform.token_address]: token.id}
+//   return {
+//     ...acc,
+//     [platform]: platformData
+//   }
+// }, {})
+
+
 const getTokens = async (url, {skip, orderBy, orderDirection, searchText, usdt}) => {
   const client = getApolloClient(url)
   const res = await client.query({
@@ -67,6 +81,44 @@ const WrapperExchange = ({children, isMobile}) => {
   if (orderBy == 'price') {
     orderBy = 'derivedETH'
   }
+
+  // useEffect(() => {
+    
+  //   const temp = Object.entries(assets).reduce((acc, [address, token]) => {
+  //     const updated = tempAssets[address] ? {...token, ...tempAssets[address]} : token
+  //     return {
+  //       ...acc,
+  //      [address]: updated
+  //     }
+  //   }, {})
+  //   console.log(temp)
+  //   const temp = Object.values(data.data).reduce((acc, token) => {
+  //     if (!token.platform?.token_address) {
+  //       return acc
+  //     }
+  //     const info = {
+  //       "id": token.platform.token_address,
+  //       "address": token.platform.token_address,
+  //       "image": token.logo,
+  //       "name": token.name,
+  //       "symbol": token.symbol,
+  //       "currency": "USDT",
+  //       "description": token.description,
+  //       "discordUrl": null,
+  //       ...(token.urls && Array.isArray(token.urls.website) ? {"externalUrl": token.urls.website[0]} : {}),
+  //       ...(token.twitter_username ? {"twitterUrl": `https://twitter.com/${token.twitter_username}`} : {}),
+  //       "openseaVerificationStatus": false
+  //   }
+  //     return {
+  //       ...acc,
+  //       [token.platform.token_address.toLowerCase()]: info
+  //     }
+  //   }, {})
+  //   console.log(coinmarketAssets.ethereum)
+  //   const ids = Object.values(coinmarketAssets.ethereum).slice(0, 100)
+  //   console.log(`https://pro-api.coinmarketcap.com/v1/cryptocurrency/info?id=${ids.join(',')}`)
+  //   console.log(temp)
+  // }, [])
 
   useEffect(() => {
     if (storedBlockchain.code !== blockchain) {

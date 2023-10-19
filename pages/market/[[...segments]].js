@@ -29,7 +29,6 @@ export default function Markets({}) {
   const { isMobile } = usePropsHelper()
 
   const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
-  
   const { updateOrders } = useOrders({tokenAddress: queryMarketId, type: queryMarketType})
   const marketInfo = useSelector(({$app}) => $app.marketInfo)
 
