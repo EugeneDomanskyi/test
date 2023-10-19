@@ -22,6 +22,8 @@ import Investors from '@/components/Market/Details/Investors'
 import Resources from '@/components/Market/Details/Resources'
 import FAQ from '@/components/Market/Details/FAQ'
 
+import assetsFile from '@/public/files/assets_new.json'
+
 const token = 'fc873434915ecf9e639339b325338f768e1f5b81fc88e3e4299641a3f87de70fcf93c09316c0d1e5146fa36171076ead7c5797f1d1882f35a9f60aaf5ec065ad7757b0615886847a307d3b25dbaadb42b98d63c59a39744667ff3f5438393a87f3b63ce948bfb260ac0041c44dbe0a10e1646dfa8f8d2c85abd18e45c0bb02c6'
 
 export default function Markets({}) {
@@ -31,7 +33,8 @@ export default function Markets({}) {
   const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
   
   const { updateOrders } = useOrders({tokenAddress: queryMarketId, type: queryMarketType})
-  const marketInfo = useSelector(({$app}) => $app.marketInfo)
+
+  const marketInfo = assetsFile.find(item => item.address === queryMarketId)
 
   useEffect(() => {
     updateOrders()
