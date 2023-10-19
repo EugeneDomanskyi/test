@@ -114,11 +114,10 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
   }
 
   const getOrders = async () => {
-    console.log('get orders')
     const res = await $orders.api.get[type]({
       blockchain: blockchain.code,
       maker: wallet,
-      includeCriteriaMetadata: false,
+      includeCriteriaMetadata: true,
       address: wallet,
       sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
       statuses: '[1,2,3]',

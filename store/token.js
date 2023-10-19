@@ -198,7 +198,11 @@ export const tokenSlice = createSlice({
     },
 
     searched: (state, { payload }) => {
-      state.searched = payload.map(template)
+      state.searched = payload.map(token => template(token, state.assets[token.id]))
+    },
+
+    updatedSearched: (state, {payload}) => {
+      state.searched = state.searched.map(token => template({...token, ...payload[token.id]}, state.assets[token.id]))
     },
 
     list: (state, { payload }) => {

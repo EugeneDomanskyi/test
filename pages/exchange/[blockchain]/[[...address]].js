@@ -64,10 +64,6 @@ const Exchange = () => {
     })
   }, [])
 
-  useEffect(() => {
-    updateOrders()
-  }, [wallet, queryTokenId, queryBlockchainCode])
-
   const handleOrdersUpdated = useCallback(() => {
     updateOrders()
   }, [wallet, queryTokenId, queryBlockchainCode])
