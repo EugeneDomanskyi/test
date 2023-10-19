@@ -63,7 +63,6 @@ const handler = async (req, res) => {
   const network = CHAINS.find(chain => chain.id.toString() === chainId)
 
   if (!Object.keys(tokenAssets).length) {
-    console.log('fetch assets')
     const assetsResponse = await fetch('https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/assets.json')
     if (assetsResponse.ok) {
       const assets = await assetsResponse.json()
