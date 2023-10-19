@@ -133,7 +133,6 @@ function MyApp({ Component, pageProps, initialData, currentPage, currentAddress,
   useEffect(() => {
     Smartlook.init('cf71ed516173943775e4d8cc10245b95b9ed7de0')
     amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
-    console.log(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
   }, [])
   
   return (

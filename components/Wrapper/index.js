@@ -61,7 +61,7 @@ const Wrapper = ({ children, isMobile }) => {
         </WrapperCollections>
       ) : null}
 
-      {!isNfts && !isSwap && !isExchange && ! isMarket ? (
+      {!isNfts && !isSwap && !isExchange ? (
         children
       ) : null}
     </>
