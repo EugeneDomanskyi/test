@@ -145,9 +145,9 @@ function MyApp({ Component, pageProps, initialData, currentPage, currentAddress,
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
         <Provider store={storeRef}>
-          <Head route={ssRoute} currentPage={currentPage} currentSymbol={currentSymbol} marketInfo={marketInfo} />
+          <Head route={ssRoute} currentPage={currentPage} currentSymbol={currentSymbol} />
 
-          <Wrapper marketsList={marketsList}>
+          <Wrapper marketsList={marketsList} marketInfo={marketInfo}>
             <Component {...pageProps} />
           </Wrapper>
 
@@ -213,7 +213,7 @@ MyApp.getInitialProps = async ({ctx}) => {
       }
     }
   }
-  
+
   return {
     initialData: {
       blockchain: cookies.blockchain,

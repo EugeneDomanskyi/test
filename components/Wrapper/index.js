@@ -11,19 +11,20 @@ import Smartlook from 'smartlook-client'
 import { trackEvent } from '@/libs/analytics.lib'
 
 import $token from '@/store/token'
+import $app from '@/store/app'
 
 import Header from '@/components/Header'
-import Footer from '@/components/Footer'
 import WrapperTokens from '@/components/Wrapper/WrapperTokens'
 import WrapperCollections from '@/components/Wrapper/WrapperCollections'
 import App from '@/store/app'
 
-const Wrapper = ({ children, marketsList = [] }) => {
+const Wrapper = ({ children, marketsList = [], marketInfo }) => {
   const dispatch = useDispatch()
   const router = useRouter()
   const isNfts = router.asPath?.includes('nfts')
   const isSwap = router.pathname.includes('/swap')
   const isExchange = router.asPath?.includes('exchange')
+  const isMarket = router.asPath?.includes('market')
   const isEarn = router.pathname.includes('/earn')
 
   const { address, isConnected } = useAccount()
@@ -78,7 +79,7 @@ const Wrapper = ({ children, marketsList = [] }) => {
     <div style={{paddingTop: headerHeight, transition: '.4s'}}>
       <Header onHeightCounted={handleHeaderHeightCounted} />
 
-      {isExchange ? (
+      {isExchange || isMarket ? (
         <WrapperTokens>
           {children}
         </WrapperTokens>
@@ -90,7 +91,7 @@ const Wrapper = ({ children, marketsList = [] }) => {
         </WrapperCollections>
       ) : null}
 
-      {!isNfts && !isSwap && !isExchange ? (
+      {!isNfts && !isSwap && !isExchange && ! isMarket ? (
         children
       ) : null}
     </div>

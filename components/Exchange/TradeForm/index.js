@@ -86,12 +86,12 @@ const TradeForm = forwardRef(({current, type, fullWidth = null}, ref) => {
   useEffect(() => {
     if (!loading && current?.address) {
       if (currentTab === 'buy') {
-        setInitialPrice(lowestBuy?.price || current?.price)
+        setInitialPrice(lowestBuy?.price || current?.price || 0)
       } else {
-        setInitialPrice(lowestSell?.price || current?.price)
+        setInitialPrice(lowestSell?.price || current?.price || 0)
       }
     }
-  }, [loading, current?.address])
+  }, [loading, current?.price, lowestBuy, lowestSell])
 
   const setInitialPrice = price => {
     setLimitForm(state => ({

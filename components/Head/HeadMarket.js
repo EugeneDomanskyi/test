@@ -1,6 +1,9 @@
 import Head from 'next/head'
+import assetsFile from '@/public/files/assets_new.json'
 
-const HeadDefault = ({marketInfo}) => {
+const HeadMarket = ({route}) => {
+  const [address] = route.split('/').slice(-1)
+  const marketInfo = assetsFile.find(item => item.address === address)
   return (
     <Head>
       <title>{`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Chart & Marketcap | Tegro: The CEX-DEX`}</title>
@@ -13,4 +16,4 @@ const HeadDefault = ({marketInfo}) => {
   )
 }
 
-export default HeadDefault
+export default HeadMarket
