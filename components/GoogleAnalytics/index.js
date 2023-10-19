@@ -1,5 +1,5 @@
 const GoogleAnalytics = () => {
-  const gaId = 'G-M0XNNS9NJ7' // Prod GA ID
+  const gaId = 'G-7W1E3B1G5T' // Prod GA ID
   return (
     <>
       <script async defer src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>

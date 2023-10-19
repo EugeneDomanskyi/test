@@ -38,8 +38,7 @@ export const raffleSlice = createSlice({
     },
 
     all: (state, { payload }) => {
-      const filtered = payload.filter(item => item.id !== '0' && item.id !== '1')
-      state.all = filtered
+      state.all = payload
     },
 
     current: (state, { payload }) => {
@@ -205,7 +204,7 @@ const api = {
 const query = {
   campaigns: gql`
     query campaigns($skip: Int) {
-      campaigns(skip: $skip) {
+      campaigns(skip: $skip, where: {id_not_in: [0, 1]}) {
         id
         ipfsHash
         rewardAmount
@@ -258,7 +257,7 @@ const query = {
 
   userCampaignParticipants: gql`
     query userCampaignParticipants($id: String) {
-      userCampaignParticipants(where: {user_: {id: $id}}, orderBy: participatedTimestamp, orderDirection: desc) {
+      userCampaignParticipants(where: {and: [{user_: {id: $id}}, {campaign_: {id_not_in: [0, 1]}}]}, orderBy: participatedTimestamp, orderDirection: desc) {
         id
         isResolved
         rewardAmount
@@ -276,7 +275,7 @@ const query = {
 
   last: gql`
     query userCampaignParticipants {
-      userCampaignParticipants(orderBy: resolvedTimestamp, orderDirection: desc, where: {isResolved: true}) {
+      userCampaignParticipants(orderBy: resolvedTimestamp, orderDirection: desc, where: {and: [{isResolved: true}, {campaign_: {id_not_in: [0, 1]}}]}) {
         id
         rewardAmount
         participatedTransaction
