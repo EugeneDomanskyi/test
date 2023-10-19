@@ -1,6 +1,6 @@
 import Head from 'next/head'
 
-const HeadDefault = ({marketInfo}) => {
+const HeadMarket = ({marketInfo}) => {
   return (
     <Head>
       <title>{`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Chart & Marketcap | Tegro: The CEX-DEX`}</title>
@@ -13,4 +13,4 @@ const HeadDefault = ({marketInfo}) => {
   )
 }
 
-export default HeadDefault
+export default HeadMarket
