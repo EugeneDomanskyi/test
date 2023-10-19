@@ -25,6 +25,7 @@ const Header = ({onHeightCounted}) => {
   const { isMobile } = usePropsHelper()
 
   const isEarn = router.pathname.includes('/earn')
+  const isSticky = ! router.pathname.includes('/exchange')
 
   const dispatch = useDispatch()
 
@@ -40,6 +41,7 @@ const Header = ({onHeightCounted}) => {
   const [currentBalance, setCurrentBalance] = useState({amount: 0, symbol: ''})
   const [balanceLoading, setBalanceLoading] = useState(true)
   const [isBannerClosed, setIsBannerClosed] = useState(false)
+  const [showPromoBanner, setShowPromoBanner] = useState(true)
 
   useEffect(() => {
     if (headerRef.current) {
@@ -166,9 +168,27 @@ const Header = ({onHeightCounted}) => {
     setIsBannerClosed(true)
   }
 
+  const handlePromoBannerCloseClick = () => {
+    onHeightCounted(64)
+    setShowPromoBanner(! showPromoBanner)
+  }
+
   return (
-    <App.Flex column className={styles.container}>
+    <App.Flex column className={cn(styles.container, {[styles.sticky]: isSticky})}>
       <div ref={headerRef}>
+        <App.Flex center gap={16} className={cn(styles.promoBanner, {[styles.hide]: ! showPromoBanner})}>
+          <App.Flex center gap={4}>
+            <Image src="/images/raffle/case-small.png" width={24} height={22} alt="" style={{marginTop: 3}} />
+            <App.Text size={16} weight={600}>Psst! Here’s a $200 Case* For You!</App.Text>
+          </App.Flex>
+
+          <App.Text size={16} color="#FFCB04" weight={600} className={styles.promoLink}>OPEN FOR FREE!</App.Text>
+
+          <App.Flex className={styles.promoCloseButton} onClick={handlePromoBannerCloseClick}>
+            <App.Icon icon="cross" color="#fff" />
+          </App.Flex>
+        </App.Flex>
+
         {!wallet && isEarn && false ? (
           <App.Flex row center gap={8} className={[styles.banner, {[styles.closed]: isBannerClosed}]} onClick={handleBannerClick}>
             <Image src="/images/raffle/chest-small.png" width={24} height={24} alt="" />

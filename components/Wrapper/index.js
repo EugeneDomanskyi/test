@@ -75,7 +75,7 @@ const Wrapper = ({ children, marketsList = [] }) => {
   }
 
   return (
-    <>
+    <div style={{paddingTop: headerHeight, transition: '.4s'}}>
       <Header onHeightCounted={handleHeaderHeightCounted} />
 
       {isExchange ? (
@@ -93,7 +93,7 @@ const Wrapper = ({ children, marketsList = [] }) => {
       {!isNfts && !isSwap && !isExchange ? (
         children
       ) : null}
-    </>
+    </div>
   )
 }
 
