@@ -4,12 +4,12 @@ import { useRouter } from 'next/router'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
-
-import { putAssetsFile, getAssetsFile } from '@/libs/aws.lib'
+import useOrders from '@/myhooks/useOrders'
 
 import $app from '@/store/app'
 import $collection from '@/store/collection'
 import $exchange from '@/store/exchange'
+import $orders from '@/store/orders'
 import $token, { template, staticTemplate } from '@/store/token'
 
 const getApolloClient = (chain) => {
@@ -27,6 +27,8 @@ const WrapperTokens = ({ children }) => {
   const [queryBlockchainCode, queryTokenId] = router.query?.segments?.slice(-2) || []
 
   const { getBasicInfo, isContractAddress } = useWalletConnect()
+
+  const { updateOrders } = useOrders({tokenAddress: queryTokenId, type: 'tokens'})
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -377,32 +379,8 @@ const WrapperTokens = ({ children }) => {
   }, [activeInterval, queryTokenId, blockchain.code])
 
   // useEffect(() => {
-  //   if (queryTokenId && blockchain.code) {
-  //     getExchangeData(queryTokenId, blockchain.code)
-  //   }
+  //   updateOrders()
   // }, [queryTokenId, blockchain.code])
-
-  // const getExchangeData = (tokenId, blockchain) => {
-  //   $orders.api.get.tokens.trades({
-  //     address: tokenId,
-  //     blockchain: blockchain,
-  //     sortBy: 'createDateTime',
-  //     statuses: '[3]',
-  //     limit: 50,
-  //   }).then(res => {
-  //     dispatch($orders.set.trades({type: 'tokens', data: res}))
-  //   })
-
-  //   $orders.api.get.tokens.orderBook({
-  //     address: tokenId,
-  //     blockchain: blockchain,
-  //     sortBy: 'createDateTime',
-  //     statuses: '[1]',
-  //     limit: 500,
-  //   }).then(res => {
-  //     dispatch($orders.set.orderBook({type: 'tokens', data: res}))
-  //   })
-  // }
 
   return children
 }

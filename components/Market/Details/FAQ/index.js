@@ -37,7 +37,6 @@ const QuestFAQ = ({type}) => {
 
   const price = type === 'tokens' ? 'current price' : 'floor price'
   const volume = type === 'tokens' ? marketInfo?.tokenCount : marketInfo?.tvl
-  console.log('marketInfo.createdAt', marketInfo.createdAt);
   const launchDate = moment(marketInfo.createdAt).format('MMMM DD, YYYY')
 
   const FAQ = [
