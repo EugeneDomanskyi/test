@@ -23,7 +23,7 @@ const RaffleListMyItem = ({ item, number, onShare }) => {
   }
 
   const handleClickShare = () => {
-    trackEvent('Click Share My Case Opens', {
+    trackEvent('Click Share Cases History', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
     })
     const shareText = `🥳💸 Woohoo! I just won $${item.rewardAmount} in USDT from a case! You can win $USDT, $PEPE, $SHIB, $FLOKI, and other tokens in the $10000 Tegro Treasure Case series! 💰💰 Join me now! Unlock your first Tegro case 🎁 for FREE! 👀 Start here 👉`

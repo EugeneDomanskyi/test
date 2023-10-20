@@ -12,6 +12,38 @@
     background: no-repeat right top url('/images/raffle/top-background-1-m.png'), no-repeat center bottom url('/images/raffle/top-background-2.png');
     background-size: 190px 187px, auto;
   }
+  
+  .linkButton {
+    padding: 4px 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border-radius: 4px;
+    border: 1px solid #7204FF;
+    margin-top: 4px;
+    cursor: pointer;
+    transition: .4s;
+
+    &:hover {
+      background: #7204FF;
+    }
+  }
+
+  .firstTimeBanner {
+    position: relative;
+    height: 76px;
+    padding: 10px 16px 10px 32px;
+    align-items: center;
+    gap: 64px;
+    border-radius: 100px;
+    border: 1px solid #7204FF;
+    background: linear-gradient(180deg, #401698 0%, #0A0017 100%);
+    box-shadow: 0px 0.18631px 2.23569px 0px rgba(77, 53, 130, 0.04), 0px 0.44772px 5.37266px 0px rgba(77, 53, 130, 0.06), 0px 0.84302px 10.11625px 0px rgba(77, 53, 130, 0.07), 0px 1.5038px 18.04566px 0px rgba(77, 53, 130, 0.08), 0px 2.8127px 33.75242px 0px rgba(77, 53, 130, 0.10), 0px 6.73256px 80.7907px 0px rgba(77, 53, 130, 0.14), 0px 5px 16px 1px rgba(47, 8, 89, 0.05);
+
+    .firstTimeCase {
+      animation: rotateAndMove 2s linear infinite;
+    }
+  }
 
   .box {
     padding: 16px 32px;
@@ -20,39 +52,39 @@
     background: radial-gradient(107.32% 141.42% at 0% 0%, rgba(255, 255, 255, 0.40) 0%, rgba(255, 255, 255, 0.00) 100%);
     backdrop-filter: blur(21px);
     box-shadow: inset 1px 1px 0 #ffffff90, inset -1px -1px 0 #F53E0290;
+  }
 
-    .button {
-      position: relative;
-      z-index: 0;
-      padding: 16px 24px;
+  .button {
+    position: relative;
+    z-index: 0;
+    padding: 16px 24px;
+    border-radius: 100px;
+    border: 0.5px solid #ffffff90;
+    cursor: pointer;
+    overflow: hidden;
+    height: 40px;
+
+    &.primary {
+      background-color: #7204FF;
+      border-color: #7204FF;
+    }
+
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      background: radial-gradient(107.32% 141.42% at 0% 0%, rgba(255, 255, 255, 0.40) 0%, rgba(255, 255, 255, 0.00) 100%);
+      backdrop-filter: blur(21px);
       border-radius: 100px;
-      border: 0.5px solid #ffffff90;
-      cursor: pointer;
-      overflow: hidden;
-      height: 40px;
+      transition: all .2s ease 0s;
+      opacity: 0;
+    }
 
-      &.primary {
-        background-color: #7204FF;
-        border-color: #7204FF;
-      }
-
+    &:hover {
       &:after {
-        content: '';
-        display: block;
-        position: absolute;
-        z-index: -1;
-        inset: 0;
-        background: radial-gradient(107.32% 141.42% at 0% 0%, rgba(255, 255, 255, 0.40) 0%, rgba(255, 255, 255, 0.00) 100%);
-        backdrop-filter: blur(21px);
-        border-radius: 100px;
-        transition: all .2s ease 0s;
-        opacity: 0;
-      }
-
-      &:hover {
-        &:after {
-          opacity: 1;
-        }
+        opacity: 1;
       }
     }
   }
@@ -115,5 +147,42 @@
         white-space: nowrap;
       }
     }
+  }
+}
+
+@keyframes rotateAndMove {
+  0%, 100% {
+      transform: rotate(0deg);
+      margin-top: 0;
+  }
+
+  25% {
+      transform: rotate(0deg);
+      margin-top: -32px;
+  }
+
+  30% {
+      transform: rotate(-15deg);
+      margin-top: -32px;
+  }
+
+  40% {
+      transform: rotate(15deg);
+      margin-top: -32px;
+  }
+
+  50% {
+      transform: rotate(-15deg);
+      margin-top: -32px;
+  }
+
+  60% {
+      transform: rotate(15deg);
+      margin-top: -32px;
+  }
+
+  70% {
+      transform: rotate(0);
+      margin-top: -32px;
   }
 }

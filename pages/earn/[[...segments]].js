@@ -35,6 +35,7 @@ const RafflePage = () => {
   const pageBlockchains = useSelector($app.get.pageBlockchains('raffle'))
 
   const [campaignLoading, setCampaignLoading] = useState(true)
+  const [isFirstTimeUser, setIsFirstTimeUser] = useState(false)
 
   const apollo = useRef()
   const alchemy = useRef()
@@ -306,7 +307,7 @@ const RafflePage = () => {
       </Head>
       
       <App.Flex column>
-        <Raffle.Top loading={campaignLoading} />
+        <Raffle.Top loading={campaignLoading} isFirstTimeUser={isFirstTimeUser} />
         <Raffle.Banner />
         <Raffle.List loading={campaignLoading} onUpdateUserCases={getUserCases} onUpdateUserTKeys={getUserTKeys} getUserTKeysBalance={getUserTKeysBalance} />
       </App.Flex>

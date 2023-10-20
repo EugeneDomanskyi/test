@@ -188,10 +188,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
       const result = await $raffle.api.reward(enterCampaignHash.trim())
       if (result?.data) {
         const parsedRes = JSON.parse(result.data)
-    
-        console.log('parsedRes', parsedRes)
         const rewardAmount = parsedRes[enterCampaignHash]?.expectedRewardAmount === '0' ? '0' : parsedRes[enterCampaignHash]?.expectedRewardAmount*1
-        console.log('rewardAmount', rewardAmount)
     
         if (!rewardAmount) {
           setTimeout(() => {
@@ -211,7 +208,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
           setStep(step >= 4 ? 0 : step + 1)
           dispatch($modal.set.update({
               header: {
-                  title: 'Unlock Case',
+                  title: 'Unlocking Case',
               },
           }))
   
