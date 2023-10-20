@@ -139,7 +139,7 @@ function MyApp({ Component, pageProps, initialData, currentPage, currentAddress,
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
         <Provider store={storeRef}>
-          <Head route={ssRoute} currentPage={currentPage} currentSymbol={currentSymbol} marketInfo={marketInfo} />
+          <Head route={ssRoute} currentPage={currentPage} currentSymbol={currentSymbol} />
 
           <Wrapper isMobile={initialData.isMobile}>
             <Component {...pageProps} />
@@ -196,7 +196,7 @@ MyApp.getInitialProps = async ({ctx}) => {
     currentAddress = addrArr.split('?')[0]
     ssRoute = (ctx.req.url)
   }
-  
+
   return {
     initialData: {
       blockchain: cookies.blockchain,

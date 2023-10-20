@@ -16,8 +16,6 @@ import $raffle from '@/store/raffle'
 import App from '@/components/App'
 import Raffle from '@/components/Raffle'
 
-import styles from './styles.module.scss'
-
 const getApolloClient = (blockchain) => {
   const uri = blockchain?.raffle?.subgraph
   const client = new ApolloClient({
@@ -37,6 +35,7 @@ const RafflePage = () => {
   const pageBlockchains = useSelector($app.get.pageBlockchains('raffle'))
 
   const [campaignLoading, setCampaignLoading] = useState(true)
+  const [isFirstTimeUser, setIsFirstTimeUser] = useState(false)
 
   const apollo = useRef()
   const alchemy = useRef()
@@ -307,8 +306,8 @@ const RafflePage = () => {
         <meta name="twitter:image" content="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/tegro-earn.jpg" />
       </Head>
       
-      <App.Flex column className={styles.container}>
-        <Raffle.Top loading={campaignLoading} />
+      <App.Flex column>
+        <Raffle.Top loading={campaignLoading} isFirstTimeUser={isFirstTimeUser} />
         <Raffle.Banner />
         <Raffle.List loading={campaignLoading} onUpdateUserCases={getUserCases} onUpdateUserTKeys={getUserTKeys} getUserTKeysBalance={getUserTKeysBalance} />
       </App.Flex>
