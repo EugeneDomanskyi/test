@@ -95,7 +95,7 @@ const TradeForm = forwardRef(({current, type, version, fullWidth = null, onSubmi
         setInitialPrice(prevProps?.price || lowestSell?.price || current?.price)
       }
     }
-  }, [loading, current?.address, prevProps?.price])
+  }, [loading, current?.address, prevProps?.price, lowestBuy, lowestSell])
 
   useEffect(() => {
     if (prevProps?.side) {

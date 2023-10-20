@@ -245,7 +245,7 @@ export const CHAINS = [
     platform: 'polygon-pos',
     pages: ['nfts', 'tokens', 'raffle'],
     gasLimit: 250000,
-    usdtContract: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+    usdtContract: '0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
     wrapped: {
       contract: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
       name: 'Wrapped Matic',

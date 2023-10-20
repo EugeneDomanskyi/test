@@ -1,6 +1,6 @@
 import styles from './styles.module.scss'
 import { useSelector } from 'react-redux'
-import { useState, memo } from 'react'
+import { useState, memo, useEffect } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
@@ -13,6 +13,7 @@ import $modal from '@/store/modal'
 import App from '@/components/App'
 import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
+import useInterval from '@/myhooks/useInterval'
 
 const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
   const router = useRouter()
@@ -26,6 +27,14 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
   const [cancellingOrders, setCancellingOrders] = useState([])
   const [ordersType, setOrderTypes] = useState('open')
 
+  useEffect(() => {
+    if (wallet) {
+      getOrders()
+    } else {
+      dispatch($orders.set[type]([]))
+    }
+  }, [wallet, type, blockchain.code])
+
   const handlePressCancel = (order) => async (e) => {
     e.stopPropagation()
     if (order.status === 'completed' || order.status === 'cancelled') {
@@ -35,18 +44,6 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
     if (!network) {
       return
     }
-
-    // dispatch($modal.set.show({
-    //   show: true,
-    //   modal: 'Exchange/OrderCancel',
-    //   props: {
-    //     order: order,
-    //     blockchain: blockchain,
-    //     wallet: wallet,
-    //   }
-    // }))
-
-    // return
     
     const eventPost = {
       'Base Currency': order.baseCurrency,
@@ -94,11 +91,6 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
     }))
   }
 
-  const handlePressEdit = order => (e) => {
-    e.stopPropagation()
-
-  }
-
   const handleChangeSwitch = (value) => {
     setShowCollectionOrders(value)
   }
@@ -121,6 +113,20 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
     setHideCancelledOrders(value)
   }
 
+  const getOrders = async () => {
+    const res = await $orders.api.get[type]({
+      blockchain: blockchain.code,
+      maker: wallet,
+      includeCriteriaMetadata: true,
+      address: wallet,
+      sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
+      statuses: '[1,2,3]',
+    })
+    if (res) {
+      dispatch($orders.set[type](res))
+    }
+  }
+
   const filterByAddress = (order) => {
     return !showCollectionOrders || (order.contractAddress === current.address)
   }
@@ -128,6 +134,8 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
   const filteredByStatus = order => {
     return type !== 'tokens' || !hideCancelledOrders || (order.status !== 'cancelled')
   }
+
+  useInterval(getOrders, wallet ? 15000 : null)
 
   return (
     <App.Flex column className={styles.container}>

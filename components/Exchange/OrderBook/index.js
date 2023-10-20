@@ -1,8 +1,7 @@
 import styles from './styles.module.scss'
-import { memo } from 'react'
-import { useSelector } from 'react-redux'
+import { memo, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import cn from 'classnames'
-// import * as math from 'mathjs'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
@@ -15,11 +14,30 @@ const toLowerFixed = val => {
 }
 
 const OrderBook = ({type, onClickOrder}) => {
+  const dispatch = useDispatch()
+
   const orderBook = useSelector($orders.get.orderBook(type))
   const blockchain = useSelector($app.get.blockchain)
+  const currentToken = useSelector(({$token}) => $token.current)
+
+  const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(currentToken.address)
 
   const maxBuyVolume = orderBook.buy.reduce((acc, {quantity}) => acc + quantity*1, 0)
   const maxSellVolume = orderBook.sell.reduce((acc, {quantity}) => acc + quantity*1, 0)
+
+  useEffect(() => {
+    if (isAddress) {
+      $orders.api.get[type].orderBook({
+        collection: currentToken.address,
+        address: currentToken.address,
+        blockchain: blockchain.code,
+        sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
+        ...(type === 'nfts' ? {} : {statuses: '[1]'})
+      }).then(res => {
+        dispatch($orders.set.orderBook({type: type, data: res, tokenAddress: currentToken.address}))
+      })
+    }
+  }, [currentToken.address])
 
   const handleClick = (order, volume) => () => {
     onClickOrder({...order, price: order.priceFormatted, quantity: toLowerFixed(volume)})

@@ -29,7 +29,6 @@ export default function Markets({}) {
   const { isMobile } = usePropsHelper()
 
   const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
-  
   const { updateOrders } = useOrders({tokenAddress: queryMarketId, type: queryMarketType})
   const marketInfo = useSelector(({$app}) => $app.marketInfo)
 
@@ -56,7 +55,6 @@ export default function Markets({}) {
                   : <App.Flex column sx={{paddingTop: 32, width: '100%'}} gap={48}>
                       <Info type={queryMarketType} />
                       <TradeForm
-                        ref={tradeForm}
                         current={marketInfo}
                         type={queryMarketType}
                       />

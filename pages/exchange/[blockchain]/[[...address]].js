@@ -7,7 +7,6 @@ import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
 import useOrders from '@/myhooks/useOrders'
-import useInterval from '@/myhooks/useInterval'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
@@ -65,10 +64,6 @@ const Exchange = () => {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
     })
   }, [])
-
-  useEffect(() => {
-    updateOrders()
-  }, [wallet, queryTokenId, queryBlockchainCode])
 
   const handleOrdersUpdated = useCallback(() => {
     updateOrders()

@@ -31,19 +31,13 @@ function formatNumber(number) {
 
 export const template = (item, assets) => {
   const currency = 'USDT'
-
-  const overwrite = {
-    // ...basicToTemplate(item?.basic),
-    // ...infoToTemplate(item?.info),
-    // ...fullToTemplate(item?.full),
-  }
   const tickerValue = item.price_change_percentage_24h ? Math.abs(item.price_change_percentage_24h ?? 0).toFixed(2) : item.ticker?.value ?? 0
 
   const ticker = {
     value: tickerValue,
     type: tickerValue >= 0 ? 'plus' : 'minus',
   }
-  
+
   return {
     id: item?.id,
     // cgId: overwrite?.cgId ?? item?.cgId,
@@ -60,7 +54,7 @@ export const template = (item, assets) => {
     volume: numeral(item?.volumeUSD ?? item?.volume ?? 0).format('0.[0000]'),
     tvl: numeral(item?.totalValueLockedUSD ?? item?.tvl ?? 0).format('0.[0000]'),
     description: assets?.description ?? item?.description,
-    tokenCount: assets?.tokenCount ?? item?.totalSupply ?? 0,
+    tokenCount: item?.tokenCount ?? item?.totalSupply ?? 0,
     onSaleCount: assets?.onSaleCount ?? item?.onSaleCount ?? 0,
     discordUrl: null,
     externalUrl: assets?.externalUrl ?? item?.externalUrl,
@@ -97,73 +91,73 @@ export const staticTemplate = (item) => {
   }
 }
 
-const basicToTemplate = (item) => {
-  if (item) {
-    return {
-      id: item.id,
-      address: item.id,
-      name: item.name,
-      decimals: item.decimals,
-      symbol: item.symbol.toUpperCase(),
-      tokenCount: item.totalSupply,
-      volume: item.volumeUSD,
-      tvl: item.totalValueLockedUSD,
-    }
-  }
+// const basicToTemplate = (item) => {
+//   if (item) {
+//     return {
+//       id: item.id,
+//       address: item.id,
+//       name: item.name,
+//       decimals: item.decimals,
+//       symbol: item.symbol.toUpperCase(),
+//       tokenCount: item.totalSupply,
+//       volume: item.volumeUSD,
+//       tvl: item.totalValueLockedUSD,
+//     }
+//   }
 
-  return {}
-}
+//   return {}
+// }
 
-const infoToTemplate = (item) => {
-  if (item) {
-    return {
-      cgId: item.id,
-      symbol: item.symbol?.toUpperCase(),
-      image: item.image,
-      price: item.current_price,
-      high: item.high_24h,
-      low: item.low_24h,
-      volume: item.total_volume,
-      tokenCount: item.total_supply,
-      onSaleCount: item.circulating_supply,
-      ticker: {
-        value: Math.abs(item.price_change_percentage_24h ?? 0).toFixed(2),
-        type: ((item.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
-      },
-    }
-  }
+// const infoToTemplate = (item) => {
+//   if (item) {
+//     return {
+//       cgId: item.id,
+//       symbol: item.symbol?.toUpperCase(),
+//       image: item.image,
+//       price: item.current_price,
+//       high: item.high_24h,
+//       low: item.low_24h,
+//       volume: item.total_volume,
+//       tokenCount: item.total_supply,
+//       onSaleCount: item.circulating_supply,
+//       ticker: {
+//         value: Math.abs(item.price_change_percentage_24h ?? 0).toFixed(2),
+//         type: ((item.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
+//       },
+//     }
+//   }
 
-  return {}
-}
+//   return {}
+// }
 
-const fullToTemplate = (item) => {
-  if (item) {
-    return {
-      isFull: true,
-      cgId: item.id,
-      symbol: item.symbol.toUpperCase(),
-      image: item.image.large,
-      price: item.market_data?.current_price?.usd,
-      high: item.market_data?.high_24h?.usd,
-      low: item.market_data?.low_24h?.usd,
-      volume: item.market_data?.total_volume?.usd,
-      tvl: item.market_data?.total_value_locked,
-      description: item.description?.en,
-      tokenCount: item.market_data?.total_supply,
-      onSaleCount: item.market_data?.circulating_supply,
-      externalUrl: item.links?.homepage[0],
-      twitterUrl: item.links?.twitter_screen_name ? `https://twitter.com/${item.links?.twitter_screen_name}` : null,
-      ticker: {
-        value: Math.abs(item.market_data?.price_change_percentage_24h ?? 0).toFixed(2),
-        type: ((item.market_data?.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
-      },
-      genesis_date: item?.genesis_date,
-      marketCap: item.market_data?.total_supply * (item.market_data?.current_price?.usd ?? 0),
-    }
-  }
+// const fullToTemplate = (item) => {
+//   if (item) {
+//     return {
+//       isFull: true,
+//       cgId: item.id,
+//       symbol: item.symbol.toUpperCase(),
+//       image: item.image.large,
+//       price: item.market_data?.current_price?.usd,
+//       high: item.market_data?.high_24h?.usd,
+//       low: item.market_data?.low_24h?.usd,
+//       volume: item.market_data?.total_volume?.usd,
+//       tvl: item.market_data?.total_value_locked,
+//       description: item.description?.en,
+//       tokenCount: item.market_data?.total_supply,
+//       onSaleCount: item.market_data?.circulating_supply,
+//       externalUrl: item.links?.homepage[0],
+//       twitterUrl: item.links?.twitter_screen_name ? `https://twitter.com/${item.links?.twitter_screen_name}` : null,
+//       ticker: {
+//         value: Math.abs(item.market_data?.price_change_percentage_24h ?? 0).toFixed(2),
+//         type: ((item.market_data?.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
+//       },
+//       genesis_date: item?.genesis_date,
+//       marketCap: item.market_data?.total_supply * (item.market_data?.current_price?.usd ?? 0),
+//     }
+//   }
 
-  return {}
-}
+//   return {}
+// }
 
 export const tokenSlice = createSlice({
   name: '$token',
@@ -198,13 +192,6 @@ export const tokenSlice = createSlice({
 
     all: (state, { payload }) => {
       state.all = payload.map(token => template(token, state.assets[token.id]))
-      // if (state.current.id) {
-      //   const exist = state.all.find(item => item.id === state.current.id)
-      //   if (exist) {
-      //     const { price, high, low, volume, tvl, ticker } = exist
-      //     state.current = {...state.current, price, high, low, volume, tvl, ticker}
-      //   }
-      // }
     },
 
     updatedAll: (state, {payload}) => {
@@ -212,7 +199,11 @@ export const tokenSlice = createSlice({
     },
 
     searched: (state, { payload }) => {
-      state.searched = payload.map(template)
+      state.searched = payload.map(token => template(token, state.assets[token.id]))
+    },
+
+    updatedSearched: (state, {payload}) => {
+      state.searched = state.searched.map(token => template({...token, ...payload[token.id]}, state.assets[token.id]))
     },
 
     list: (state, { payload }) => {
