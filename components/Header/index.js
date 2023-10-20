@@ -175,7 +175,7 @@ const Header = ({onHeightCounted}) => {
   return (
     <App.Flex column className={cn(styles.container, {[styles.sticky]: isSticky})}>
       <div ref={headerRef}>
-        {/* <App.Flex center gap={16} className={cn(styles.promoBanner, {[styles.hide]: ! showPromoBanner})}>
+        <App.Flex center gap={16} className={cn(styles.promoBanner, {[styles.hide]: ! showPromoBanner})}>
           <App.Flex center gap={4}>
             <Image src="/images/raffle/case-small.png" width={24} height={22} alt="" style={{marginTop: 3}} />
             <App.Text size={16} weight={600}>Psst! Here’s a $200 Case* For You!</App.Text>
@@ -186,7 +186,7 @@ const Header = ({onHeightCounted}) => {
           <App.Flex className={styles.promoCloseButton} onClick={handlePromoBannerCloseClick}>
             <App.Icon icon="cross" color="#fff" />
           </App.Flex>
-        </App.Flex> */}
+        </App.Flex>
 
         {!wallet && isEarn && false ? (
           <App.Flex row center gap={8} className={[styles.banner, {[styles.closed]: isBannerClosed}]} onClick={handleBannerClick}>

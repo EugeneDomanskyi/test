@@ -35,7 +35,7 @@ const RafflePage = () => {
   const pageBlockchains = useSelector($app.get.pageBlockchains('raffle'))
 
   const [campaignLoading, setCampaignLoading] = useState(true)
-  const [isFirstTimeUser, setIsFirstTimeUser] = useState(false)
+  const [isFirstTimeUser, setIsFirstTimeUser] = useState(true)
 
   const apollo = useRef()
   const alchemy = useRef()
