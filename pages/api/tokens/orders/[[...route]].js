@@ -15,24 +15,14 @@ const options = {
   },
 }
 
-const getSymbol = async (address, client) => {
-  const abi = {
+const getInfo = async (address, client) => {
+  const abi = [{
     inputs:[],
     name: 'symbol',
     outputs: [{internalType: 'string', name: '', type: 'string'}],
     stateMutability: 'view',
     type: 'function'
-  }
-  const res = await client.readContract({
-    address: address,
-    abi: [abi],
-    functionName: 'symbol',
-  })
-  return res
-}
-
-const getDecimals = async (address, client) => {
-  const abi = {
+  }, {
     constant: true,
     inputs: [],
     name: 'decimals',
@@ -40,13 +30,24 @@ const getDecimals = async (address, client) => {
     payable: false,
     stateMutability: 'view',
     type: 'function'
-  }
-  const res = await client.readContract({
-    address: address,
-    abi: [abi],
-    functionName: 'decimals',
+  }]
+  const [symbol, decimals] = await client.multicall({
+    contracts: [
+      {
+        address: address,
+        abi: abi,
+        functionName: 'symbol',
+      }, {
+        address: address,
+        abi: abi,
+        functionName: 'decimals',
+      }
+    ]
   })
-  return res
+  return {
+    symbol: symbol.result,
+    decimals: decimals.result,
+  }
 }
 
 const queryBuilder = data => {
@@ -115,11 +116,10 @@ const handler = async (req, res) => {
           symbol: assets[address].symbol
         }
       } else {
-        const decimals = await getDecimals(address, client)
-        const symbol = await getSymbol(address, client)
+        const info = await getInfo(address, client)
         tokenInfo[address] = {
-          decimals: decimals,
-          symbol: symbol,
+          decimals: info.decimals,
+          symbol: info.symbol,
         }
       }
     }
