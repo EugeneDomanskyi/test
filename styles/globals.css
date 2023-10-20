@@ -94,6 +94,12 @@ body {
   background: #08051C;
 }
 
+body > div:first-child,
+div#__next,
+div#__next > div {
+  height: 100%;
+}
+
 body.modal-open {
   overflow: hidden;
 }
