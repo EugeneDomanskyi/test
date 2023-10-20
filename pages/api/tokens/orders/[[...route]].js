@@ -113,13 +113,15 @@ const handler = async (req, res) => {
       if (assets[address]) {
         tokenInfo[address] = {
           decimals: assets[address].decimals,
-          symbol: assets[address].symbol
+          symbol: assets[address].symbol,
+          address: address,
         }
       } else {
         const info = await getInfo(address, client)
         tokenInfo[address] = {
           decimals: info.decimals,
           symbol: info.symbol,
+          address: address,
         }
       }
     }
