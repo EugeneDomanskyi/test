@@ -57,4 +57,24 @@
       margin: 0;
     }
   }
+
+  &.mobile {
+    border-radius: 4px;
+    background: #19162D;
+    padding: 8px 10px;
+    border-color: transparent;
+    height: auto;
+
+    &.error {
+      border-color: #FF1D61;
+    }
+  
+    &.warning {
+      border-color: #FFD600;
+    }
+
+    .divider {
+      background-color: #332D52;
+    }
+  }
 }

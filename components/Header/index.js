@@ -233,54 +233,54 @@ const Header = () => {
               </App.Flex>
             ) : null}
             
-            { ! isEarn ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : null}
+            { ! isEarn ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : <App.Flex />}
             
-            {wallet ? (
-              isMobile ? (
-                <HeaderWalletMobile />
-              ) : (
-                <App.Flex sx={{ position: 'relative' }} id="wallet">
-                  <App.Flex row gap={16} className={styles.walletInfo}>
-                    {! isMobile ? (
-                      <App.Flex>
-                        {balanceLoading ? (
-                          <App.Flex center sx={{width: 90}}>
-                            <App.Loader />
-                          </App.Flex>
-                        ) : (
-                          <App.Flex center gap={4}>
-                            {isEarn ? <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" /> : null}
-                            <App.Text size={16} weight={500}>{ currentBalance.amount + ' ' + currentBalance.symbol }</App.Text>
-                          </App.Flex>
-                        )}
+            <App.Flex row align="center" gap={16}>
+              {wallet ? (
+                isMobile ? (
+                  <HeaderWalletMobile />
+                ) : (
+                  <App.Flex sx={{ position: 'relative' }} id="wallet">
+                    <App.Flex row gap={16} className={styles.walletInfo}>
+                      {! isMobile ? (
+                        <App.Flex>
+                          {balanceLoading ? (
+                            <App.Flex center sx={{width: 90}}>
+                              <App.Loader />
+                            </App.Flex>
+                          ) : (
+                            <App.Flex center gap={4}>
+                              {isEarn ? <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" /> : null}
+                              <App.Text size={16} weight={500}>{ currentBalance.amount + ' ' + currentBalance.symbol }</App.Text>
+                            </App.Flex>
+                          )}
+                        </App.Flex>
+                      ) : null}
+
+                      <App.Flex className={styles.walletAddressWrapper} onClick={handleMenuToggle}>
+                        <App.Text size={16} weight={500}>{shorterAddress(isMobile ? 4 : 6)}</App.Text>
                       </App.Flex>
-                    ) : null}
-
-                    <App.Flex className={styles.walletAddressWrapper} onClick={handleMenuToggle}>
-                      <App.Text size={16} weight={500}>{shorterAddress(isMobile ? 4 : 6)}</App.Text>
                     </App.Flex>
+
+                    <div className={cn(styles.menu, {[styles.active]: menuShow})}>
+                      <App.Button primary fullWidth onClick={handleDisconnect}>
+                      <App.Icon icon="logout" /> Disconnect
+                      </App.Button>
+                    </div>
                   </App.Flex>
+                )
+              ) : (
+                <App.Button primary large={!isMobile} onClick={handleConnectWallet}>
+                  Connect{!isMobile ? ' Wallet' : ''}
+                </App.Button>
+              )}
 
-                  <div className={cn(styles.menu, {[styles.active]: menuShow})}>
-                    <App.Button primary fullWidth onClick={handleDisconnect}>
-                    <App.Icon icon="logout" /> Disconnect
-                    </App.Button>
-                  </div>
-                </App.Flex>
-              )
-            ) : (
-              <App.Button primary large={!isMobile} onClick={handleConnectWallet}>
-                Connect{!isMobile ? ' Wallet' : ''}
-              </App.Button>
-            )}
-
-            { ! isMobile ? (
               <div className={cn(styles.mobileMenuButton, {[styles.show]: mobileMenuShow})} onClick={handleMobileMenuClick}>
                 <span></span>
                 <span></span>
                 <span></span>
               </div>
-            ) : null}
+            </App.Flex>
 
             <div className={cn(styles.mobileMenu, {[styles.show]: mobileMenuShow})}>
               <div className={styles.content}>

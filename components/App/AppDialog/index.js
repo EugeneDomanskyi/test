@@ -8,7 +8,7 @@ import AppIcon from '@/components/App/AppIcon'
 
 import styles from './styles.module.scss'
 
-const AppDialog = ({ children, open, size, hideHeader, title, subtitle, toTop, onClose }) => {
+const AppDialog = ({ children, open, size, hideHeader, hideClose, title, subtitle, toTop, onClose }) => {
   const [opened, setOpened] = useState(false)
 
   const layout = useRef(null)
@@ -51,21 +51,25 @@ const AppDialog = ({ children, open, size, hideHeader, title, subtitle, toTop, o
           <div className={cn(styles.wrapper, {[styles[size]]: size})}>
             {!hideHeader ? (
               <div className={styles.header}>
-                <div className={styles.closeButton} onClick={handleClose}>
-                  <AppIcon icon="cross" color="#fff" />
-                </div>
+                {!hideClose ? (
+                  <div className={styles.closeButton} onClick={handleClose}>
+                    <AppIcon icon="cross" color="#fff" />
+                  </div>
+                ) : null}
 
-                <AppFlex column gap={[16, 32]} className={styles.headerContent}>
-                  <AppFlex column align={['center', 'flex-start']} gap={[16, 8]}>
-                    {title ? (
-                      <AppText center size={20} weight={700} height={1}>{title}</AppText>
-                    ) : null}
+                {title || subtitle ? (
+                  <AppFlex column gap={[16, 32]} className={styles.headerContent}>
+                    <AppFlex column align={['center', 'flex-start']} gap={[16, 8]}>
+                      {title ? (
+                        <AppText center size={20} weight={700} height={1}>{title}</AppText>
+                      ) : null}
 
-                    {subtitle ? (
-                      <AppText center size={12} weight={400} height={1} color="#9996B1">{subtitle}</AppText>
-                    ) : null}
+                      {subtitle ? (
+                        <AppText center size={12} weight={400} height={1} color="#9996B1">{subtitle}</AppText>
+                      ) : null}
+                    </AppFlex>
                   </AppFlex>
-                </AppFlex>
+                ) : null}
               </div>
             ) : null}
 

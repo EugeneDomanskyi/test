@@ -93,4 +93,62 @@
     padding: 8px;
     border-radius: 12px;
   }
+
+  &.mobile {
+    width: 100%;
+    border-radius: 16px 16px 0px 0px;
+    background-color: #0E0B23;
+
+    .header {
+      position: relative;
+      z-index: 0;
+      padding: 0 20px;
+      height: 52px;
+
+      &:not(.result).buy {
+        border-bottom: 2px solid #53F19C;
+      }
+
+      &:not(.result).sell {
+        border-bottom: 2px solid #FF1D61;
+      }
+
+      .backButton {
+        position: absolute;
+        left: 20px;
+        transform: rotate(180deg);
+      }
+
+      .closeButton {
+        position: absolute;
+        right: 20px;
+      }
+    }
+
+    .content {
+      padding: 16px 16px 0;
+      min-height: auto;
+
+      &.sign {
+        padding: 24px 16px;
+      }
+
+      &.error {
+        padding: 24px 16px;
+
+        .cross {
+          width: 100px;
+          height: 100px;
+        }
+      }
+
+      &.result {
+        padding: 16px;
+      }
+
+      .steps {
+        margin-bottom: 16px;
+      }
+    }
+  }
 }

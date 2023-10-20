@@ -2,6 +2,7 @@ import styles from './styles.module.scss'
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Image from 'next/image'
+import cn from 'classnames'
 
 import $app from '@/store/app'
 import $modal from '@/store/modal'
@@ -40,7 +41,7 @@ const getDecimalsCount = string => {
 
 const MAX_DECIMALS = 5
 
-const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
+const TradeFormToken = forwardRef(({current, currentTab, version, formOption, prevProps, onSubmit}, ref) => {
   const dispatch = useDispatch()
   const { wallet, changeNetwork, getBalance } = useWalletConnect()
   
@@ -71,8 +72,13 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
   }))
 
   useEffect(() => {
-    handleSetPrice()
-  }, [orderBookId])
+    if (prevProps?.side) {
+      handleChangeForm('price')(prevProps.price)
+      handleChangeForm('amount')(prevProps.makerAmountFormatted)
+    } else {
+      handleSetPrice()
+    }
+  }, [orderBookId, prevProps])
 
   const fetchBalance = async () => {
     const [tokenBalance, usdtBalance] = await Promise.all([
@@ -105,6 +111,12 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
         }
         break
     }
+  }
+
+  const handleChangePrice = (type) => () => {
+    const step = 0.1
+    const newPrice = type == 'plus' ? (form.price * 1 + step) : (form.price * 1 - step)
+    handleChangeForm('price')(newPrice)
   }
 
   const handleChangeForm = field => value => {
@@ -160,19 +172,28 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
       ...usdtAsset,
       image: usdtAsset.logoURI,
     }
-    dispatch($modal.set.show({
-      show: true,
-      modal: 'Exchange/OrderProceed',
-      props: {
-        side: currentTab,
-        blockchain: blockchain,
-        makerAsset: currentTab === 'buy' ? current : usdtFormatted,
-        takerAsset: currentTab === 'buy' ? usdtFormatted : current,
-        makerAmountFormatted: form.amount,
-        takerAmountFormatted: numeral(form.amount*form.price).format('0.0[0000]'),
-        price: form.price,
+
+    const props = {
+      side: currentTab,
+      blockchain: blockchain,
+      makerAsset: currentTab === 'buy' ? current : usdtFormatted,
+      takerAsset: currentTab === 'buy' ? usdtFormatted : current,
+      makerAmountFormatted: form.amount,
+      takerAmountFormatted: numeral(form.amount*form.price).format('0.0[0000]'),
+      price: form.price,
+    }
+
+    if (version == 'mobile') {
+      if (onSubmit) {
+        onSubmit(props)
       }
-    }))
+    } else {
+      dispatch($modal.set.show({
+        show: true,
+        modal: 'Exchange/OrderProceed',
+        props,
+      }))
+    }
   }
 
   const handleTotalBlur = () => {
@@ -231,10 +252,10 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
           </App.Text>
         </App.Flex>
         <App.Flex className={styles.multipler} align="center" gap={8}>
-          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.25)}>25%</App.Text>
-          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.5)}>50%</App.Text>
-          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.75)}>75%</App.Text>
-          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(1)}>100%</App.Text>
+          <App.Text color="#5E5C6B" size={10} weight={700} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.25)}>25%</App.Text>
+          <App.Text color="#5E5C6B" size={10} weight={700} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.5)}>50%</App.Text>
+          <App.Text color="#5E5C6B" size={10} weight={700} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.75)}>75%</App.Text>
+          <App.Text color="#5E5C6B" size={10} weight={700} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(1)}>100%</App.Text>
         </App.Flex>
       </App.Flex>
     )
@@ -243,10 +264,10 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
   useInterval(fetchBalance, (wallet && blockchain && current?.address) ? 2000 : null)
 
   return (
-    <App.Flex column className={styles.form}>
+    <App.Flex column className={cn(styles.form, {[styles[version]]: version})}>
       <App.Flex justify="flex-end" align="center" sx={{marginBottom: 16}}>
-        <App.Text color="rgba(255,255,255,0.6)" size={10} weight={600} italic sx={{marginRight: 8}}>Hybrid Limit Order</App.Text>
-        <App.Icon icon="info" />
+        <App.Text color="rgba(255,255,255,0.6)" size={10} weight={600} italic sx={{marginRight: 8}}>Limit Order</App.Text>
+        <App.Icon icon="info" width={12} height={12} />
       </App.Flex>
       <App.Flex column sx={{marginBottom: 10}}>
         <App.Flex justify="center" flex={1} column sx={{position: 'relative'}}>
@@ -254,14 +275,35 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
             label="AT PRICE"
             currency={'USDT'}
             value={form.price}
+            version={version}
             warning={isWrongPrice}
             onBlur={handleBlurPrice}
-            onChange={handleChangeForm('price')} />
-          <App.Flex className={styles.priceSetter} onClick={handleSetPrice}>
-            <App.Text size={12} weight={600} color={currentTab === 'buy' ? '#53F19C' : '#FF1D61'}>
-              { currentTab === 'buy' ? 'LOWEST PRICE' : 'HIGHEST PRICE' }
-            </App.Text>
-          </App.Flex>
+            onChange={handleChangeForm('price')}
+          />
+          
+          {version == 'mobile' ? (
+            <App.Flex row gap={8} className={styles.priceSetter}>
+              <App.Flex row center onClick={handleSetPrice}>
+                <App.Text size={12} weight={600} color={currentTab === 'buy' ? '#53F19C' : '#FF1D61'}>
+                  { currentTab === 'buy' ? 'MIN' : 'MAX' }
+                </App.Text>
+              </App.Flex>
+
+              <App.Flex row center className={styles.buttonInput} onClick={handleChangePrice('plus')}>
+                <App.Icon icon="plus" />
+              </App.Flex>
+
+              <App.Flex row center className={styles.buttonInput} onClick={handleChangePrice('minus')}>
+                <App.Icon icon="minus" />
+              </App.Flex>
+            </App.Flex>
+          ) : (
+            <App.Flex className={styles.priceSetter} onClick={handleSetPrice}>
+              <App.Text size={12} weight={600} color={currentTab === 'buy' ? '#53F19C' : '#FF1D61'}>
+                { currentTab === 'buy' ? 'LOWEST PRICE' : 'HIGHEST PRICE' }
+              </App.Text>
+            </App.Flex>
+          )}
         </App.Flex>
         {
           isWrongPrice
@@ -275,9 +317,11 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
         <TradeInput
           label="AMOUNT"
           value={form.amount}
+          version={version}
           currency={current.symbol}
           onBlur={handleBlurAmount}
-          onChange={handleChangeForm('amount')} />
+          onChange={handleChangeForm('amount')}
+        />
         {
           currentTab === 'sell'
             ? renderBalance()
@@ -289,24 +333,33 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
           label="TOTAL"
           currency={'USDT'}
           value={form.total}
+          version={version}
           onBlur={handleTotalBlur}
-          onChange={handleChangeForm('total')} />
+          onChange={handleChangeForm('total')}
+        />
           {
             currentTab === 'buy'
               ? renderBalance()
               : null
           }
       </App.Flex>
-      <App.Button
-        sx={{backgroundColor: formOption.color, opacity: isDisabled ? 0.5 : 1,}}
-        className={styles.button}
-        disabled={isDisabled}
-        onClick={handleSubmit}>
-        <App.Text color="#09051D" size={15} weight={700}>
-          { formOption.title } {`${form.amount || 0}` } { current.symbol }
-        </App.Text>
-        { current?.image ? <Image src={current?.image} width={32} height={32} alt="" /> : null }
-      </App.Button>
+      {version == 'mobile' ? (
+        <App.Button xl fullWidth variant={currentTab == 'buy' ? 'success' : 'danger'} disabled={isDisabled} onClick={handleSubmit}>
+          {formOption.title}
+        </App.Button>
+      ) : (
+        <App.Button
+          sx={{backgroundColor: formOption.color, opacity: isDisabled ? 0.5 : 1,}}
+          className={styles.button}
+          disabled={isDisabled}
+          onClick={handleSubmit}
+        >
+          <App.Text color="#09051D" size={15} weight={700}>
+            { formOption.title } {`${form.amount || 0}` } { current.symbol }
+          </App.Text>
+          { current?.image ? <Image src={current?.image} width={32} height={32} alt="" /> : null }
+        </App.Button>
+      )}
     </App.Flex>
   )
 })

@@ -22,7 +22,7 @@ const TAB_OPTIONS = [
   {key: 'sell', title: 'SELL', color: 'rgb(206, 22, 93)'},
 ]
 
-const TradeForm = forwardRef(({current, type, fullWidth = null}, ref) => {
+const TradeForm = forwardRef(({current, type, version, fullWidth = null, onSubmit, prevProps}, ref) => {
   const { wallet, getBalance, changeNetwork } = useWalletConnect()
   const { getNftBalanceUser } = useTrade()
 
@@ -46,6 +46,10 @@ const TradeForm = forwardRef(({current, type, fullWidth = null}, ref) => {
       if (tokenFormRef.current) {
         tokenFormRef.current.setForm({amount: data.amount, price: data.price})
       }
+    },
+
+    setSide: (side) => {
+      handleChangeTab(side)
     }
   }))
 
@@ -86,12 +90,18 @@ const TradeForm = forwardRef(({current, type, fullWidth = null}, ref) => {
   useEffect(() => {
     if (!loading && current?.address) {
       if (currentTab === 'buy') {
-        setInitialPrice(lowestBuy?.price || current?.price)
+        setInitialPrice(prevProps?.price || lowestBuy?.price || current?.price)
       } else {
-        setInitialPrice(lowestSell?.price || current?.price)
+        setInitialPrice(prevProps?.price || lowestSell?.price || current?.price)
       }
     }
-  }, [loading, current?.address])
+  }, [loading, current?.address, prevProps?.price])
+
+  useEffect(() => {
+    if (prevProps?.side) {
+      handleChangeTab(prevProps?.side)
+    }
+  }, [prevProps])
 
   const setInitialPrice = price => {
     setLimitForm(state => ({
@@ -114,12 +124,14 @@ const TradeForm = forwardRef(({current, type, fullWidth = null}, ref) => {
   }
 
   return (
-    <App.Flex className={styles.container} sx={{width: fullWidth ? '100%' : 366}} column>
+    <App.Flex column className={cn(styles.container, {[styles[version]]: version})} sx={{width: fullWidth ? '100%' : 366}}>
       <App.Flex column>
         <Tabs
           options={TAB_OPTIONS}
           active={currentTab}
-          onChange={handleChangeTab} />
+          version={version}
+          onChange={handleChangeTab}
+        />
       </App.Flex>
       {
         type === 'nfts'
@@ -165,9 +177,13 @@ const TradeForm = forwardRef(({current, type, fullWidth = null}, ref) => {
                 <TradeFormToken
                   ref={tokenFormRef}
                   current={current}
+                  version={version}
                   userBalances={userBalances}
                   currentTab={currentTab}
-                  formOption={currentOption} />
+                  formOption={currentOption}
+                  prevProps={prevProps}
+                  onSubmit={onSubmit}
+                />
               )
           }
         })(type)

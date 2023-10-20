@@ -1,26 +1,36 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
+import dynamic from 'next/dynamic'
 import Image from 'next/image'
-import { getAccount } from '@wagmi/core'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
+import useUtils from '@/myhooks/utils'
+
+import $app from '@/store/app'
 
 import App from '@/components/App'
+import TradeFormWrapper from '@/components/Exchange/Mobile/TradeFormWrapper'
 
 import styles from './styles.module.scss'
+
+const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 
 const Mobile = ({ item }) => {
   const router = useRouter()
   const queryBlockchainCode = router.query.blockchain
 
-  const { wallet, getBalance, getPrice, connectorId } = useWalletConnect()
+  const { wallet, getBalance, getPrice } = useWalletConnect()
+  const { formatWithPrecision } = useUtils()
 
-  const assets = useSelector(({ $token }) => $token.assets)
+  const blockchain = useSelector($app.get.blockchain)
+  const infoList = useSelector(({ $token }) => $token.infoList)
 
   const [tab, setTab] = useState('charts')
   const [tabs, setTabs] = useState([])
   const [balance, setBalance] = useState({ currency: 0, usd: 0, usdt: 0, loading: true })
+  const [isTradeDialogOpen, setIsTradeDialogOpen] = useState(false)
+  const [tradeSide, setTradeSide] = useState()
 
   useEffect(() => {
     setTabs([
@@ -33,17 +43,44 @@ const Mobile = ({ item }) => {
     if ( ! wallet && tab == 'orders') {
       setTab('charts')
     }
+  }, [wallet])
 
+  useEffect(() => {
     if (wallet) {
       fetchBalance()
     }
-  }, [wallet])
+  }, [wallet, blockchain.code])
 
   const fetchBalance = async () => {
-    const tempBalance = {}
- 
-    //tempBalance.currency = await getBalance(item.id)
-    //tempBalance.currency = await getBalance(item.id)
+    const tempBalance = {
+      currency: 0,
+      usd: 0,
+      usdt: 0,
+      loading: true,
+    }
+
+    if (item.id) {
+      const currency = await getBalance(item.id)
+      if (currency) {
+        tempBalance.currency = currency
+      }
+    }
+
+    const cgId = infoList?.[blockchain.platform]?.[item.id]
+    if (cgId) {
+      const rate = await getPrice(cgId, 'usd')
+      tempBalance.usd = rate * tempBalance.currency
+    }
+
+    if (blockchain.usdtContract) {
+      const usdt = await getBalance(blockchain.usdtContract)
+      if (usdt) {
+        tempBalance.usdt = usdt
+      }
+    }
+
+    tempBalance.loading = false
+    setBalance(tempBalance)
   }
 
   const handleBack = () => {
@@ -55,9 +92,18 @@ const Mobile = ({ item }) => {
     setTab(value)
   }
 
+  const handleTradeFormOpen = (side) => () => {
+    setTradeSide(side)
+    setIsTradeDialogOpen(true)
+  }
+
+  const handleTradeDialogClose = () => {
+    setIsTradeDialogOpen(false)
+  }
+
   return (
-    <App.Flex column fullWidth gap={16}>
-      <App.Flex column fullWidth>
+    <App.Flex column full gap={16}>
+      <App.Flex column fullWidth height={106}>
         <App.Flex row align="center" className={styles.back} onClick={handleBack} fullWidth>
           <App.Icon icon="chevron-left" width={24} height={24} color="#fff" />
           <App.Text size={16}>Back</App.Text>
@@ -88,14 +134,66 @@ const Mobile = ({ item }) => {
       </App.Flex>
 
       <App.Flex column gap={16} sx={{ padding: '0 8px' }} flex={1}>
-        <App.Tabs options={tabs} active={tab} onChange={handleTabChange} height="auto" variant="mobile" />
+        <App.Tabs options={tabs} active={tab} onChange={handleTabChange} height={38} variant="mobile" />
 
-        <App.Flex flex={1}>
-          <App.Text>{connectorId}</App.Text>
+        <App.Flex column flex={1}>
+          {(currentTab => {
+            switch (currentTab) {
+              case 'charts':
+                return (
+                  <Chart type="tokens" version="mobile" showSwitch />
+                )
+              // case 'trades':
+              //   return (
+              //     <App.Flex column gap={GRID_GAP} width="100%">
+              //       <SidebarMobile
+              //         items={tokens}
+              //         searched={searched}
+              //         current={current}
+              //         sort={sort}
+              //         search={search}
+              //         searching={searching}
+              //         searchEmpty={searchEmpty}
+              //         pages={pages}
+              //         loading={tokenLoading}
+              //         onSort={handleSort}
+              //         onSearch={handleSearch}
+              //         onPage={handlePage}
+              //       />
+
+              //       <App.Flex column flex={1} sx={{ position: 'relative' }}>
+              //         <App.Flex column gap={GRID_GAP} className={styles.tradesContent}>
+              //           <OrderBook
+              //             type="tokens"
+              //             onClickOrder={handleClickOrder} />
+              //           <Sales
+              //             type="tokens"
+              //             onClickSale={handleClickOrder} />
+              //         </App.Flex>
+              //       </App.Flex>
+              //     </App.Flex>
+              //   )
+              // case 'orders':
+              //   return (
+              //     <Orders
+              //       current={current}
+              //       type="tokens"
+              //       onOrderCancelled={handleOrdersUpdated}
+              //       onClickOrder={handleClickOrder} />
+              //   )
+              // case 'buy_sell':
+              //   return (
+              //     <TradeForm
+              //       ref={tradeForm}
+              //       type="tokens"
+              //       current={current} />
+              //   )
+            }
+          })(tab)}
         </App.Flex>
       </App.Flex>
 
-      <App.Flex column>
+      <App.Flex column height={230} justify="flex-end">
         {wallet ? (
           <App.Flex column gap={8} sx={{ padding: '0 8px' }}>
             <App.Text szie={16} color="#878598" height={1}>My Balance</App.Text>
@@ -108,8 +206,8 @@ const Mobile = ({ item }) => {
                 </App.Flex>
 
                 <App.Flex column>
-                  <App.Text right size={16} weight={700}>465</App.Text>
-                  <App.Text right size={14} color="#5E5C6B">$658</App.Text>
+                  {balance.loading ? <App.Loader size={16} /> : <App.Text right size={16} weight={700}>{formatWithPrecision(balance.currency, 6, 1)}</App.Text>}
+                  {balance.loading ? <App.Loader size={14} /> : <App.Text right size={14} color="#5E5C6B">${formatWithPrecision(balance.usd, 6, 1)}</App.Text>}
                 </App.Flex>
               </App.Flex>
 
@@ -121,7 +219,7 @@ const Mobile = ({ item }) => {
                 </App.Flex>
 
                 <App.Flex column>
-                  <App.Text right size={16} weight={700}>$465</App.Text>
+                  {balance.loading ? <App.Loader size={16} /> : <App.Text right size={16} weight={700}>${formatWithPrecision(balance.usdt, 6, 1)}</App.Text>}
                 </App.Flex>
               </App.Flex>
             </App.Flex>
@@ -132,13 +230,21 @@ const Mobile = ({ item }) => {
 
         <App.Flex row gap={16} sx={{ padding: '16px' }}>
           <App.Flex flex={1}>
-            <App.Button xl fullWidth variant="success"><App.Text inline uppercase size={16} weight={700} color="#08051C">Buy</App.Text></App.Button>
+            <App.Button xl fullWidth variant="success" onClick={handleTradeFormOpen('buy')}>BUY</App.Button>
           </App.Flex>
 
           <App.Flex flex={1}>
-            <App.Button xl fullWidth variant="danger"><App.Text inline uppercase size={16} weight={700}>Sell</App.Text></App.Button>
+            <App.Button xl fullWidth variant="danger" onClick={handleTradeFormOpen('sell')}>SELL</App.Button>
           </App.Flex>
         </App.Flex>
+
+        <App.Dialog open={isTradeDialogOpen} hideHeader onClose={handleTradeDialogClose}>
+          <TradeFormWrapper
+            item={item}
+            side={tradeSide}
+            onClose={handleTradeDialogClose}
+          />
+        </App.Dialog>
       </App.Flex>
     </App.Flex>
   )

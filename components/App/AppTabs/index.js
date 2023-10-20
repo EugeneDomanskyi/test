@@ -25,7 +25,7 @@ const AppTabs = ({width = '100%', height = '100%', options, active, end, variant
       setBadgeWidth(optionRect.width)
       setBadgeLeft(optionRect.left - parentRect.left)
     }
-  }, [active, optionRefs.current])
+  }, [active, optionRefs.current, parentRef.current])
 
   const textStyle = () => {
     switch (variant) {

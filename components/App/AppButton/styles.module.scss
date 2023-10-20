@@ -136,6 +136,7 @@
     background-color: #0DC683;
     border-color: #0DC683;
     backdrop-filter: blur(12px);
+    color: #08051C;
 
     &.active:not(:disabled),
     &:hover:not(:disabled) {
@@ -145,6 +146,7 @@
     &.outlined {
       background-color: transparent;
       border-color: #0DC683;
+      color: #fff;
 
       &.active:not(:disabled),
       &:hover:not(:disabled) {

@@ -16,7 +16,7 @@ const HeaderWalletMobile = () => {
     switch (connectorId) {
       case 'metaMask': return '/images/metamask-logo.png'
       case 'walletConnect': return '/images/walletconnect-logo.png'
-      case 'magik': return '/images/magic-logo.png'
+      case 'magic': return '/images/magic-logo.png'
       case 'rainbow': return '/images/rainbow-logo.png'
       case 'coinbase': return '/images/coinbase-logo.png'
       case 'brave': return '/images/brave-logo.png'
@@ -37,7 +37,7 @@ const HeaderWalletMobile = () => {
   const shorterAddress = (size = 6) => {
     return wallet ? (wallet.slice(0, size) + '...' + wallet.slice(wallet.length - size)) : ''
   }
-console.log('isDisconnectOpen', isDisconnectOpen)
+
   return (
     <>
       <App.Flex row center gap={8}>
@@ -50,7 +50,7 @@ console.log('isDisconnectOpen', isDisconnectOpen)
         </App.Flex>
       </App.Flex>
 
-      <App.Dialog open={isDisconnectOpen} onClose={() => setIsDisconnectOpen(false)}>
+      <App.Dialog open={isDisconnectOpen} hideClose onClose={() => setIsDisconnectOpen(false)}>
         <App.Flex column>
           <App.Flex row center className={styles.box}>
             <App.Button primary large outlined rounded>

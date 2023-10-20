@@ -28,13 +28,10 @@
       background-color: #271574;
     }
   }
-}
 
-@media (max-width: 768px) {
-  .container {
-    width: 100%;
-    height: unset;
-    max-height: unset;
-    padding-bottom: 64px;
+  &.mobile {
+    height: auto;
+    min-height: auto;
+    max-height: none;
   }
 }

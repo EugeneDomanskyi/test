@@ -1,29 +1,39 @@
 .container {
-  flex: 1;
   background-color: #0E0B23;
   border: 1px solid #1D1937;
   border-radius: 2px;
   padding: 16px;
-  display: flex;
-  flex-direction: column;
 
-  @media (max-width: 768px) {
-    & {
-      padding-bottom: 85px;
+  &.mobile {
+    padding: 8px;
+    border-radius: 12px;
+    background-color: rgba(19, 14, 45, 0.32);
+  }
+
+  .intervalBox {
+    border-radius: 4px;
+    background: #1D163E;
+
+    .interval {
+      height: 36px;
+      padding: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    
+      &.active,
+      &:hover {
+        background-color: #271574;
+      }
     }
   }
-}
 
-.interval {
-  width: 35px;
-  height: 35px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-
-  &.active, &:hover {
-    background-color: #271574;
+  .switcher {
+    border-radius: 4px;
+    background: #1D163E;
+    height: 36px;
+    width: 40px;
   }
 }
