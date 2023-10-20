@@ -55,7 +55,7 @@ const RaffleBanner = () => {
   var settingsDesktop = {
     dots: true,
     arrows: true,
-    autoplay: false,
+    autoplay: true,
     infinite: true,
     speed: 500,
     autoplaySpeed: 5000,
