@@ -49,7 +49,6 @@ const Header = ({onHeightCounted}) => {
       if (headerHeight.height) {
         onHeightCounted(headerHeight.height)
       }
-      console.log('headerHeight', headerHeight);
     }
   }, [headerRef])
 

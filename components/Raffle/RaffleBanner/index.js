@@ -130,12 +130,12 @@ const RaffleBanner = () => {
                   <App.Icon icon="galxe-text" />
                 </App.Flex>
 
-                <App.Text size={22} weight={500} family="ClashDisplay" gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">Complete Objectives, Collect TKeys</App.Text>
+                <App.Text size={22} weight={500} family="ClashDisplay" gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">Earn Tkeys by completing tasks</App.Text>
               </App.Flex>
 
               <App.Flex width={240} height={56}>
                 <App.Button primary fullWidth onClick={handleButtonClick}>
-                  Visit Galxe
+                  Get TKeys
                   <App.Icon icon="galxe-icon" />
                 </App.Button>
               </App.Flex>
@@ -149,12 +149,12 @@ const RaffleBanner = () => {
               <App.Flex className={styles.mobileBlur} />
               <App.Flex column align="flex-start" gap={[16, 4]} sx={{zIndex: 1}}>
               <App.Text size={24} spacing={.72} height={1} family="ClashDisplay" sx={{ textShadow: '0px 2.85836px 2.85836px 0px rgba(0, 0, 0, 0.25)' }}>1</App.Text>
-                <App.Text size={12} weight={500} family="ClashDisplay" color="#fff">Complete Objectives, Collect TKeys</App.Text>
+                <App.Text size={12} weight={500} family="ClashDisplay" color="#fff">Earn Tkeys by completing tasks</App.Text>
               </App.Flex>
 
               <App.Flex width={[240, 120]} height={[56, 46]}>
                 <App.Button primary fullWidth onClick={handleButtonClick}>
-                  Visit Galxe
+                  Get TKeys
                   <App.Icon icon="galxe-icon" />
                 </App.Button>
               </App.Flex>

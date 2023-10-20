@@ -48,6 +48,15 @@ const Wrapper = ({ children, marketsList = [], marketInfo }) => {
   }, [address, isConnected])
 
   useEffect(() => {
+    if (router.query) {
+      const utmParams = Object.entries(router.query).filter(([key]) => key.startsWith('utm_')).reduce((acc, [key, value]) => ({...acc, [key]: value}), {})
+      if (Object.keys(utmParams).length) {
+        amplitude.getInstance().setUserProperties(utmParams)
+      }
+    }
+  }, [address, router.query])
+
+  useEffect(() => {
     const deviceId = localStorage.getItem('device_id')
     if (!deviceId) {
       localStorage.setItem('device_id', uuid())
@@ -72,7 +81,6 @@ const Wrapper = ({ children, marketsList = [], marketInfo }) => {
 
   const handleHeaderHeightCounted = (height) => {
     setHeaderHeight(height)
-    console.log('Header height is: ', height);
   }
 
   return (

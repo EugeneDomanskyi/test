@@ -79,7 +79,7 @@ const AppModal = () => {
 
   return (
     <div ref={layout} className={styles.layout}>
-      <div ref={content} className={cn(styles.content, {[styles.onTop]: props.onTop})} onClick={handleClose}>
+      <div ref={content} className={cn(styles.content, {[styles.onTop]: props?.onTop})} onClick={handleClose}>
         <div onClick={e => e.stopPropagation()}>
           <div className={cn(styles.wrapper, {[styles[props?.size]]: props?.size})}>
             {props?.header ? (
