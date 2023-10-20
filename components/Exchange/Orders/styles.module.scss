@@ -3,12 +3,13 @@
   overflow: hidden;
   height: 300px;
 
-  @media (max-width: 768px) {
-    & {
-      height: auto;
-      width: 100%;
-      padding-bottom: 69px;
-    }
+  &.mobile {
+    height: auto;
+    position: absolute;
+    inset: 0;
+    padding: 8px;
+    border-radius: 12px;
+    background-color: rgba(19, 14, 45, 0.32);
   }
 
   .header {

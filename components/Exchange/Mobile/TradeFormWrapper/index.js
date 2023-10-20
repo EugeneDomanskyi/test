@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 
 import App from '@/components/App'
@@ -6,11 +6,17 @@ import TradeForm from '@/components/Exchange/TradeForm'
 
 const OrderProceed = dynamic(import('@/components/Exchange/OrderProceed'), {ssr: false})
 
-const TradeFormWrapper = ({ item, side, onClose }) => {
+const TradeFormWrapper = forwardRef(({ item, side, onClose }, ref) => {
   const [tradeState, setTradeState] = useState('form')
   const [orderProps, setOrderProps] = useState({})
 
   const tradeForm = useRef()
+
+  useImperativeHandle(ref, () => ({
+    setForm: (data) => {
+      tradeForm.current.setForm(data)
+    }
+  }))
 
   useEffect(() => {
     if (side && tradeForm.current) {
@@ -63,6 +69,6 @@ const TradeFormWrapper = ({ item, side, onClose }) => {
       {ComponentCurrent()}
     </App.Flex>
   )
-}
+})
 
 export default TradeFormWrapper

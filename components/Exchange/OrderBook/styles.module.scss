@@ -11,6 +11,12 @@
       flex: 1;
     }
   }
+
+  &.mobile {
+    padding: 8px;
+    border-radius: 12px;
+    background-color: rgba(19, 14, 45, 0.32);
+  }
 }
 
 .row {

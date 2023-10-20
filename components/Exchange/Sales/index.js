@@ -1,14 +1,16 @@
 import { memo, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
-import styles from './styles.module.scss'
+import cn from 'classnames'
 
 import $orders from '@/store/orders'
 import $app from '@/store/app'
 
 import App from '@/components/App'
 
-const Sales = ({onClickSale, type}) => {
+import styles from './styles.module.scss'
+
+const Sales = ({onClickSale, version, type}) => {
   const dispatch = useDispatch()
 
   const trades = useSelector($orders.get.recentTrades(type, 50))
@@ -37,12 +39,15 @@ const Sales = ({onClickSale, type}) => {
   }
 
   return (
-    <App.Flex flex={[1, null]} column className={styles.container}>
-      <App.Flex column>
-        <App.Flex align="center" className={styles.header}>
-          <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600}>TRADES</App.Text>
+    <App.Flex flex={1} column className={cn(styles.container, {[styles[version]]: version})}>
+      {version != 'mobile' ? (
+        <App.Flex column>
+          <App.Flex align="center" className={styles.header}>
+            <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600}>TRADES</App.Text>
+          </App.Flex>
         </App.Flex>
-      </App.Flex>
+      ) : null}
+
       <App.Flex sx={{padding: '0 5px', height: 20}} justify="space-between" align="center">
         <App.Text flex={1} size={10} color="#908F99" weight={600}>Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
         <App.Text flex={1} size={10} color="#908F99" center weight={600}>Volume</App.Text>

@@ -244,6 +244,7 @@ const Exchange = () => {
         ) : (
           <Mobile
             item={current}
+            onOrdersUpdate={handleOrdersUpdated}
           />
         )
       )}

@@ -3,10 +3,13 @@
   background-color: #17142A;
   overflow: hidden;
 
-  @media (max-width: 768px) {
-    & {
-      flex: 1;
-    }
+  &.mobile {
+    height: auto;
+    position: absolute;
+    inset: 0;
+    padding: 8px;
+    border-radius: 12px;
+    background-color: rgba(19, 14, 45, 0.32);
   }
 
   .header {

@@ -15,7 +15,7 @@ import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useInterval from '@/myhooks/useInterval'
 
-const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
+const Orders = ({current, type, version, onOrderCancelled, onClickOrder}) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const orders = useSelector($orders.get[type])
@@ -138,7 +138,7 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
   useInterval(getOrders, wallet ? 15000 : null)
 
   return (
-    <App.Flex column className={styles.container}>
+    <App.Flex column className={cn(styles.container, {[styles[version]]: version})}>
       {
         type === 'tokens'
           ? <App.Flex sx={{height: 26, position: 'relative', marginBottom: 8}}>

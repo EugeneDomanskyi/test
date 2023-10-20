@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
@@ -11,12 +11,15 @@ import $app from '@/store/app'
 
 import App from '@/components/App'
 import TradeFormWrapper from '@/components/Exchange/Mobile/TradeFormWrapper'
+import OrderBook from '@/components/Exchange/OrderBook'
+import Sales from '@/components/Exchange/Sales'
+import Orders from '@/components/Exchange/Orders'
 
 import styles from './styles.module.scss'
 
 const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 
-const Mobile = ({ item }) => {
+const Mobile = ({ item, onOrdersUpdate }) => {
   const router = useRouter()
   const queryBlockchainCode = router.query.blockchain
 
@@ -31,6 +34,8 @@ const Mobile = ({ item }) => {
   const [balance, setBalance] = useState({ currency: 0, usd: 0, usdt: 0, loading: true })
   const [isTradeDialogOpen, setIsTradeDialogOpen] = useState(false)
   const [tradeSide, setTradeSide] = useState()
+
+  const tradeForm = useRef()
 
   useEffect(() => {
     setTabs([
@@ -101,6 +106,13 @@ const Mobile = ({ item }) => {
     setIsTradeDialogOpen(false)
   }
 
+  const handleClickOrder = useCallback(async order => {
+    setIsTradeDialogOpen(true)
+    setTimeout(() => {
+      tradeForm.current.setForm({formType: 'market', amount: order.quantity, price: order.price, side: order.side})
+    }, 300)
+  }, [])
+
   return (
     <App.Flex column full gap={16}>
       <App.Flex column fullWidth height={106}>
@@ -136,58 +148,26 @@ const Mobile = ({ item }) => {
       <App.Flex column gap={16} sx={{ padding: '0 8px' }} flex={1}>
         <App.Tabs options={tabs} active={tab} onChange={handleTabChange} height={38} variant="mobile" />
 
-        <App.Flex column flex={1}>
+        <App.Flex column flex={1} sx={{ position: 'relative' }}>
           {(currentTab => {
             switch (currentTab) {
               case 'charts':
                 return (
                   <Chart type="tokens" version="mobile" showSwitch />
                 )
-              // case 'trades':
-              //   return (
-              //     <App.Flex column gap={GRID_GAP} width="100%">
-              //       <SidebarMobile
-              //         items={tokens}
-              //         searched={searched}
-              //         current={current}
-              //         sort={sort}
-              //         search={search}
-              //         searching={searching}
-              //         searchEmpty={searchEmpty}
-              //         pages={pages}
-              //         loading={tokenLoading}
-              //         onSort={handleSort}
-              //         onSearch={handleSearch}
-              //         onPage={handlePage}
-              //       />
-
-              //       <App.Flex column flex={1} sx={{ position: 'relative' }}>
-              //         <App.Flex column gap={GRID_GAP} className={styles.tradesContent}>
-              //           <OrderBook
-              //             type="tokens"
-              //             onClickOrder={handleClickOrder} />
-              //           <Sales
-              //             type="tokens"
-              //             onClickSale={handleClickOrder} />
-              //         </App.Flex>
-              //       </App.Flex>
-              //     </App.Flex>
-              //   )
-              // case 'orders':
-              //   return (
-              //     <Orders
-              //       current={current}
-              //       type="tokens"
-              //       onOrderCancelled={handleOrdersUpdated}
-              //       onClickOrder={handleClickOrder} />
-              //   )
-              // case 'buy_sell':
-              //   return (
-              //     <TradeForm
-              //       ref={tradeForm}
-              //       type="tokens"
-              //       current={current} />
-              //   )
+              case 'orderbook':
+                return (
+                  <OrderBook type="tokens" version="mobile" onClickOrder={handleClickOrder} />
+                )
+              case 'trades':
+                return (
+                  <Sales type="tokens" version="mobile" onClickSale={handleClickOrder} />
+                )
+              case 'orders':
+                return (
+                  <Orders current={item} version="mobile" type="tokens" onOrderCancelled={onOrdersUpdate} onClickOrder={handleClickOrder} />
+                )
+              default: return null
             }
           })(tab)}
         </App.Flex>
@@ -240,6 +220,7 @@ const Mobile = ({ item }) => {
 
         <App.Dialog open={isTradeDialogOpen} hideHeader onClose={handleTradeDialogClose}>
           <TradeFormWrapper
+            ref={tradeForm}
             item={item}
             side={tradeSide}
             onClose={handleTradeDialogClose}

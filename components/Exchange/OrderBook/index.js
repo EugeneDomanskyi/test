@@ -13,7 +13,7 @@ const toLowerFixed = val => {
   return str.substring(0, str.indexOf('.') + 7)
 }
 
-const OrderBook = ({type, onClickOrder}) => {
+const OrderBook = ({type, version, onClickOrder}) => {
   const dispatch = useDispatch()
 
   const orderBook = useSelector($orders.get.orderBook(type))
@@ -44,10 +44,12 @@ const OrderBook = ({type, onClickOrder}) => {
   }
 
   return (
-    <App.Flex column flex={[1, null]} className={styles.card}>
-      <App.Flex className={styles.header} align="center">
-        <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600}>ORDER BOOK</App.Text>
-      </App.Flex>
+    <App.Flex column flex={[1, null]} className={cn(styles.card, {[styles[version]]: version})}>
+      {version != 'mobile' ? (
+        <App.Flex className={styles.header} align="center">
+          <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600}>ORDER BOOK</App.Text>
+        </App.Flex>
+      ) : null}
       <App.Flex gap={3}>
         <App.Flex column flex={1}>
           <App.Flex justify="space-between" align="center" sx={{padding: '0 8px', height: 20}}>
