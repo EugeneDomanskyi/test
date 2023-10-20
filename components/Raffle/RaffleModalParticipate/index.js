@@ -63,26 +63,15 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
     }
   }, [expectedReward])
 
-  // useEffect(() => {
-  //   if (errorContainerRef.current) {
-  //     console.log('showKeysError', showKeysError);
-  //     if (showKeysError) {
-  //       errorContainerRef.current.className += [styles.isOpen]
-  //     } else {
-  //       errorContainerRef.current.className += [styles.isClosing]
-  //     }
-  //   }
-  // }, [showKeysError, errorContainerRef])
-
   const handleClickOpen = async () => {
-    if (showKeysError) {
-      setCloseKeysError(true)
-      setShowKeysError(!showKeysError)
-    } else {
-      setCloseKeysError(false)
-      setShowKeysError(!showKeysError)
-    }
-    return
+    // if (showKeysError) {
+    //   setCloseKeysError(true)
+    //   setShowKeysError(!showKeysError)
+    // } else {
+    //   setCloseKeysError(false)
+    //   setShowKeysError(!showKeysError)
+    // }
+    // return
     const res = await onUpdateUserTKeys(item.tKeyRequired)
 
     if (res.length !== item.tKeyRequired*1) {
@@ -326,10 +315,10 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
                 </App.Flex>
               </App.Flex>
 
-              <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles.hiddenOnMobile)}>
+              {/* <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles.hiddenOnMobile)}>
                 <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
                 <App.Text size={12} height={1}>{balance}/{item.tKeyRequired} {item.tKeyRequired*1 === 1 ? 'TKey' : 'TKeys'} available</App.Text>
-              </App.Flex>
+              </App.Flex> */}
 
               <App.Flex className={styles.buttonWrapper}>
                 <App.Flex className={cn(styles.buttonText, {[styles.show]: ! showKeysError})}>

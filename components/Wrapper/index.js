@@ -35,7 +35,6 @@ const Wrapper = ({ children, marketsList = [], marketInfo }) => {
     if (isConnected && address) {
       const identifyObj = new amplitude.Identify()
       identifyObj.set('wallet', address)
-      console.log('identifyObj IN WALLET', identifyObj )
       amplitude.identify(identifyObj)
       Smartlook.identify(address)
       const network = getNetwork()

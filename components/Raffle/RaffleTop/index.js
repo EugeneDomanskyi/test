@@ -13,6 +13,7 @@ import { trackEvent } from '@/libs/analytics.lib'
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
+import Link from 'next/link'
 
 const RaffleTop = ({ loading, isFirstTimeUser }) => {
   const { wallet, connect } = useWalletConnect()
@@ -145,6 +146,12 @@ const RaffleTop = ({ loading, isFirstTimeUser }) => {
                         )}
                         <App.Text center size={[16, 10]} family="ClashDisplay" height={1.2} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">Prize Earned</App.Text>
                       </App.Flex>
+
+                      <Link href="/exchange">
+                        <App.Flex center className={cn(styles.button, styles.primary)}>
+                          <App.Text center size={[14, 12]} weight={700}>Trade Now</App.Text>
+                        </App.Flex>
+                      </Link>
     
                       <App.Flex column center>
                         <App.Flex row gap={8} center>
@@ -158,8 +165,9 @@ const RaffleTop = ({ loading, isFirstTimeUser }) => {
                         <App.Text center size={[16, 10]} family="ClashDisplay" height={1.2} gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">TKeys Balance</App.Text>
                       </App.Flex>
     
-                      <App.Flex center className={cn(styles.button, styles.primary)} onClick={handleMoreClick}>
-                        <App.Text center size={[14, 12]} weight={700}>Collect TKeys</App.Text>
+                      <App.Flex center gap={8} className={cn(styles.button, styles.primary)} onClick={handleMoreClick}>
+                        <App.Text center size={[14, 12]} weight={700}>Get TKeys</App.Text>
+                        <App.Icon icon="galxe-icon" />
                       </App.Flex>
                     </App.Flex>
                   ) : (
