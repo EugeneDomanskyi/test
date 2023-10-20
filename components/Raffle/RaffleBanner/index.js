@@ -145,10 +145,18 @@ const RaffleBanner = () => {
       ) : (
         <Slider {...settings}>
           <div>
-            <App.Flex className={styles.banner1} flex={1}>
-              <App.Flex column gap={3}>
-                <App.Text size={24} spacing={.72} height={1} family="ClashDisplay" sx={{ textShadow: '0px 2.85836px 2.85836px 0px rgba(0, 0, 0, 0.25)' }}>1 <App.Text inline size={14} spacing={.48} height={1} family="ClashDisplay">Collect TKeys!</App.Text></App.Text>
-                <App.Text size={12} color="rgba(255, 255, 255, 0.80)" height={1}>By completing tasks</App.Text>
+            <App.Flex justify="space-between" align="center" className={styles.galxeBanner}>
+              <App.Flex className={styles.mobileBlur} />
+              <App.Flex column align="flex-start" gap={[16, 4]} sx={{zIndex: 1}}>
+              <App.Text size={24} spacing={.72} height={1} family="ClashDisplay" sx={{ textShadow: '0px 2.85836px 2.85836px 0px rgba(0, 0, 0, 0.25)' }}>1</App.Text>
+                <App.Text size={12} weight={500} family="ClashDisplay" color="#fff">Complete Objectives, Collect TKeys</App.Text>
+              </App.Flex>
+
+              <App.Flex width={[240, 120]} height={[56, 46]}>
+                <App.Button primary fullWidth onClick={handleButtonClick}>
+                  Visit Galxe
+                  <App.Icon icon="galxe-icon" />
+                </App.Button>
               </App.Flex>
             </App.Flex>
           </div>
@@ -167,27 +175,6 @@ const RaffleBanner = () => {
               <App.Flex column gap={3}>
                 <App.Text size={24} spacing={.72} height={1} family="ClashDisplay" sx={{ textShadow: '0px 2.85836px 2.85836px 0px rgba(0, 0, 0, 0.25)' }}>3 <App.Text inline size={14} spacing={.48} height={1} family="ClashDisplay">Earn Rewards</App.Text></App.Text>
                 <App.Text size={12} color="rgba(255, 255, 255, 0.80)" height={1}>See your luck in action</App.Text>
-              </App.Flex>
-            </App.Flex>
-          </div>
-
-          <div>
-            <App.Flex justify="space-between" align="center" className={styles.galxeBanner}>
-              <App.Flex className={styles.mobileBlur} />
-              <App.Flex column align="flex-start" gap={[16, 4]} sx={{zIndex: 1}}>
-                <App.Flex gap={4}>
-                  <App.Icon icon="galxe-icon" />
-                  <App.Icon icon="galxe-text" />
-                </App.Flex>
-
-                <App.Text size={[22, 14]} weight={500} family="ClashDisplay" color="#fff">Complete Objectives, Collect TKeys</App.Text>
-              </App.Flex>
-
-              <App.Flex width={[240, 120]} height={[56, 46]}>
-                <App.Button primary fullWidth onClick={handleButtonClick}>
-                  Visit Galxe
-                  <App.Icon icon="galxe-icon" />
-                </App.Button>
               </App.Flex>
             </App.Flex>
           </div>
