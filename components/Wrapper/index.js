@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
 import { loadIntercom } from 'next-intercom'
@@ -16,6 +16,7 @@ import $app from '@/store/app'
 import Header from '@/components/Header'
 import WrapperTokens from '@/components/Wrapper/WrapperTokens'
 import WrapperCollections from '@/components/Wrapper/WrapperCollections'
+import App from '@/store/app'
 
 const Wrapper = ({ children, marketsList = [], marketInfo }) => {
   const dispatch = useDispatch()
@@ -27,6 +28,8 @@ const Wrapper = ({ children, marketsList = [], marketInfo }) => {
   const isEarn = router.pathname.includes('/earn')
 
   const { address, isConnected } = useAccount()
+
+  const [headerHeight, setHeaderHeight] = useState(64)
 
   useEffect(() => {
     if (isConnected && address) {
@@ -67,15 +70,14 @@ const Wrapper = ({ children, marketsList = [], marketInfo }) => {
     }
   }, [marketsList])
 
-  useEffect(() => {
-    if (marketInfo.id) {
-      dispatch($app.set.marketInfo(marketInfo))
-    }
-  }, [marketInfo])
+  const handleHeaderHeightCounted = (height) => {
+    setHeaderHeight(height)
+    console.log('Header height is: ', height);
+  }
 
   return (
-    <>
-      <Header />
+    <div style={{paddingTop: headerHeight, transition: '.4s'}}>
+      <Header onHeightCounted={handleHeaderHeightCounted} />
 
       {isExchange || isMarket ? (
         <WrapperTokens>
@@ -92,7 +94,7 @@ const Wrapper = ({ children, marketsList = [], marketInfo }) => {
       {!isNfts && !isSwap && !isExchange && ! isMarket ? (
         children
       ) : null}
-    </>
+    </div>
   )
 }
 

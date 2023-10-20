@@ -28,7 +28,7 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
 
   const tabs = [
     { key: 'browse', title: 'Browse Cases' },
-    { key: 'my', title: 'My Case Opens', disabled: ! wallet },
+    { key: 'my', title: 'Cases History', disabled: ! wallet },
   ]
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
   }
 
   const handleTabChange = (value) => {
-    trackEvent(value === 'my' ? 'Click My Case Opens' :  'Click Browse Case', {
+    trackEvent(value === 'my' ? 'Click Cases History' :  'Click Browse Case', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
       'Tkeys Quantity': balance,
     })

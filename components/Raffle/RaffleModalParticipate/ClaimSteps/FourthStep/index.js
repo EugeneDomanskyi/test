@@ -105,7 +105,7 @@ const FourthStep = ({campaign, onSubmit, onShare}) => {
         </App.Button>
         
         <App.Button primary sx={{width: 240, height: 56, fontSize: 16}} onClick={handleClickNextStep}>
-          Open Another USDT Case
+          Try Your Luck Again
         </App.Button>
       </App.Flex>
     </>
