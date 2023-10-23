@@ -31,6 +31,7 @@ const Header = ({onHeightCounted}) => {
 
   const balance = useSelector(({$raffle}) => $raffle.balance)
   const blockchain = useSelector($app.get.blockchain)
+  const loadingUser = useSelector(({ $raffle }) => $raffle.loadingUser)
 
   const headerRef = useRef(null)
 
@@ -39,7 +40,6 @@ const Header = ({onHeightCounted}) => {
   const [moreIsOpen, setMoreIsOpen] = useState(false)
   const [supportIsOpen, setSupportIsOpen] = useState(false)
   const [currentBalance, setCurrentBalance] = useState({amount: 0, symbol: ''})
-  const [balanceLoading, setBalanceLoading] = useState(true)
   const [isBannerClosed, setIsBannerClosed] = useState(false)
   const [showPromoBanner, setShowPromoBanner] = useState(true)
 
@@ -69,7 +69,6 @@ const Header = ({onHeightCounted}) => {
   useEffect(() => {
     if (isEarn) {
       setCurrentBalance({amount: balance, symbol: 'TKeys'})
-      setBalanceLoading(false)
     }
   }, [balance, isEarn])
 
@@ -278,7 +277,7 @@ const Header = ({onHeightCounted}) => {
                       ! isMobile
                         ? <App.Flex>
                             {
-                              balanceLoading
+                              loadingUser
                                 ? <App.Flex center sx={{width: 90}}>
                                     <App.Loader />
                                   </App.Flex>

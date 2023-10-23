@@ -64,7 +64,8 @@ const FourthStep = ({campaign, onSubmit, onShare}) => {
     trackEvent('Click Share Reward Won', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
     })
-    const shareText = `🥳💸 Woohoo! I just won $${prize.amount} in USDT from a case! You can win $USDT, $PEPE, $SHIB, $FLOKI, and other tokens in the $10000 Tegro Treasure Case series! 💰💰 Join me now! Unlock your first Tegro case 🎁 for FREE! 👀 Start here 👉`
+    // const shareText = `🥳💸 Woohoo! I just won $${prize.amount} USDT from a case! You can win $USDT, $PEPE, $SHIB, $FLOKI, and other tokens in the $10000 Tegro Treasure Case series! 💰💰 Join me now! Unlock your first Tegro case 🎁 for FREE! 👀 Start here 👉`
+    const shareText = `🎉 Woohoo! I just won $${prize.amount} USDT by opening a case in the $10,000+ @TegroFi Treasure Case series! \n\n#UnboxHappiness #TegroEarn \n\n Start your own winning streak here ⬇️⬇️\n`
     onShare(shareText)
   }
 
