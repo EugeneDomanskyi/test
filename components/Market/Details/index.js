@@ -13,9 +13,9 @@ import FAQ from '@/components/Market/Details/FAQ'
 export default function Details({marketInfo, type}) {
   return (
     <App.Flex column sx={{paddingTop: 64}} gap={96}>
-      <Info type={type} />
-      <LivePrice type={type} />
-      <Stats />
+      <Info type={type} marketInfo={marketInfo} />
+      <LivePrice type={type} marketInfo={marketInfo} />
+      <Stats marketInfo={marketInfo} />
       <About />
 
       {

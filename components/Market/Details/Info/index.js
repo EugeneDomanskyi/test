@@ -6,8 +6,8 @@ import App from '@/components/App'
 import DifferenceIndicator from '@/components/Market/DifferenceIndicator'
 const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 
-export default function Info({type}) {
-  const { marketInfo } = useSelector(({$app}) => $app)
+export default function Info({type, marketInfo}) {
+  // const { marketInfo } = useSelector(({$app}) => $app)
 
   return (
     <App.Flex column sx={{width: '100%'}} gap={16}>
