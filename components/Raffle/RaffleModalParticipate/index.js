@@ -64,24 +64,17 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   }, [expectedReward])
 
   const handleClickOpen = async () => {
-    // if (showKeysError) {
-    //   setCloseKeysError(true)
-    //   setShowKeysError(!showKeysError)
-    // } else {
-    //   setCloseKeysError(false)
-    //   setShowKeysError(!showKeysError)
-    // }
-    // return
     const res = await onUpdateUserTKeys(item.tKeyRequired)
 
     if (res.length !== item.tKeyRequired*1) {
-      setStep('error')
-      setErrorType('balance')
-      dispatch($modal.set.update({
-        header: {
-          title: 'Insufficient TKeys Balance',
-        },
-      }))
+      if (showKeysError) {
+        setCloseKeysError(true)
+        setShowKeysError(!showKeysError)
+      } else {
+        setCloseKeysError(false)
+        setShowKeysError(!showKeysError)
+      }
+      return
     }
     trackEvent('Click Unlock With TKeys', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',

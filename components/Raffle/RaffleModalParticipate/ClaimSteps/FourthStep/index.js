@@ -101,12 +101,12 @@ const FourthStep = ({campaign, onSubmit, onShare}) => {
       </App.Flex>
 
       <App.Flex gap={16}>
-        <App.Button outlined sx={{width: 107, height: 56, fontSize: 16, borderColor: '#7204FF'}} onClick={handleClickShare}>
-          Share
+        <App.Button outlined sx={{width: 107, height: 56, fontSize: 16}} onClick={handleClickNextStep}>
+          Open Again
         </App.Button>
-        
-        <App.Button primary sx={{width: 240, height: 56, fontSize: 16}} onClick={handleClickNextStep}>
-          Try Your Luck Again
+
+        <App.Button primary sx={{width: 240, height: 56, fontSize: 16, borderColor: '#7204FF'}} onClick={handleClickShare}>
+          Share & Earn 3 Tkeys
         </App.Button>
       </App.Flex>
     </>
