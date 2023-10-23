@@ -136,14 +136,12 @@ const Header = ({onHeightCounted}) => {
   }
 
   const handleGetBalance = async () => {
-    setBalanceLoading(true)
     if (! isEarn) {
       const balance = await getBalance('', true)
       if (balance) {
         const amount = balance.formatted*1
         setCurrentBalance({amount: amount.toFixed(4), symbol: balance.symbol})
       }
-      setBalanceLoading(false)
     }
   }
 

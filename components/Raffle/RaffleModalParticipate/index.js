@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
 import Image from 'next/image'
 import cn from 'classnames'
 import moment from 'moment'
@@ -27,6 +28,7 @@ import styles from './styles.module.scss'
 
 const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, onUpdateUserCases, onShare}) => {
   const dispatch = useDispatch()
+  const router = useRouter()
   const { propValue } = usePropsHelper()
   const { wallet, changeNetwork } = useWalletConnect()
   
@@ -179,6 +181,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
 
     if (step === 4) {
       handleCloseModal()
+      router.push('/earn/'+item.id, undefined, { scroll: false })
       return
     }
 

@@ -72,7 +72,6 @@ const FourthStep = ({campaign, onSubmit, onShare}) => {
   return (
     <>
       <audio ref={audioRef} src='/audio/roulette_win_original.wav'></audio>
-
       {
         showConfetti
           ? <App.Flex id="lottie-container" className={styles.confetti} />
