@@ -153,7 +153,7 @@ const Orders = ({current, type, version, onOrderCancelled, onClickOrder}) => {
             </App.Flex>
           ) : null
       }
-      <App.Flex sx={{height: 40, padding: '0 8px'}} align="center" justify="space-between">
+      <App.Flex height={40} align="center" justify="space-between">
         <App.Flex align="center" gap={8} flex={1}>
           <App.Switch
             width={40}

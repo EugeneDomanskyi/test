@@ -101,12 +101,6 @@ div#__next > div {
   height: 100%;
 }
 
-body > div:first-child,
-div#__next,
-div#__next > div {
-  height: 100%;
-}
-
 body.modal-open {
   overflow: hidden;
 }
