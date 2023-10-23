@@ -186,9 +186,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
     }
 
     if (step === 4) {
-      handleCloseModal()
-      router.push('/earn/'+item.id, undefined, { scroll: false })
-      return
+      setShowClaim(false)
     }
 
     setStep(step >= 4 ? 0 : step+1)
@@ -201,7 +199,6 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
       if (result?.data) {
         const parsedRes = JSON.parse(result.data)
         const rewardAmount = parsedRes[enterCampaignHash]?.expectedRewardAmount === '0' ? '0' : parsedRes[enterCampaignHash]?.expectedRewardAmount*1
-    
         if (!rewardAmount) {
           setTimeout(() => {
             fetchReward(enterCampaignHash, (maxTries - 1))
