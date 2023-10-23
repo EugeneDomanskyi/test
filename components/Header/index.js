@@ -21,7 +21,7 @@ import styles from './styles.module.scss'
 
 const Header = ({onHeightCounted}) => {
   const router = useRouter()
-  const { wallet, connect, disconnect, getBalance, changeNetwork, connectorId } = useWalletConnect()
+  const { wallet, connect, disconnect, getBalance, changeNetwork, getConnectorName } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
   const isEarn = router.pathname.includes('/earn')
@@ -95,6 +95,7 @@ const Header = ({onHeightCounted}) => {
 
       const result = await connect()
       if (result) {
+        await getConnectorName()
         console.log(connectorId, 123)
         trackEvent('Wallet Connect Success', {
           'Source': getPageName(),
