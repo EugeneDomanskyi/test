@@ -43,8 +43,8 @@ const RafflePage = () => {
   const prevWallet = useRef()
   const reward = useRef()
 
-  // const requiredChain = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
-  const requiredChain = 'polygon'
+  const requiredChain = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
+  // const requiredChain = 'polygon'
 
   useEffect(() => {
     trackEvent('Visit Raffle')
@@ -56,7 +56,7 @@ const RafflePage = () => {
         dispatch($app.set.code(requiredChain))
       }
     }
-  }, [blockchain.code])
+  }, [blockchain?.code])
   
   useEffect(() => {
     if (blockchain.code == requiredChain) {
@@ -297,13 +297,13 @@ const RafflePage = () => {
     <>
       <Head>
         <title>$10,000+ Tegro Treasure Case Series Live Now! | Tegro Earn</title>
-        <meta content="Join the $10,000+ Tegro Treasure Case Series today! Complete trading objectives to obtain TKeys and unlock cases to win exciting $USDT, $PEPE, $SHIB, $FLOKI, and other token rewards! Enter now." property="description" key="description" />
+        <meta content="WOAH! I just won rewards in $USDT, $PEPE, $SHIB, $FLOKI and other tokens by opening cases in the $10,000+ Tegro Treasure Case Series!" property="description" key="description" />
         <meta property="og:image" content="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/tegro-earn.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@TegroFi" />
         <meta name="twitter:title" content="$10,000+ Tegro Treasure Case Series Live Now! | Tegro Earn" />
-        <meta name="twitter:description" content="Join the $10,000+ Tegro Treasure Case Series today! Complete trading objectives to obtain TKeys and unlock cases to win exciting $USDT, $PEPE, $SHIB, $FLOKI, and other token rewards! Enter now." />
-        <meta name="twitter:image" content="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/tegro-earn.jpg" />
+        <meta name="twitter:description" content="WOAH! I just won rewards in $USDT, $PEPE, $SHIB, $FLOKI and other tokens by opening cases in the $10,000+ Tegro Treasure Case Series!" />
+        <meta name="twitter:image" content="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/earn_meta_image.jpg" />
       </Head>
       
       <App.Flex column>
