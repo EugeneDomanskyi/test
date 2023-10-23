@@ -157,7 +157,7 @@ const useWalletConnect = () => {
       try {
         // const chainId = chains.find(ch => ch.network == chainData.connect)?.id
         const result = await switchNetwork({ chainId: chainData.id })
-        console.log('result is', result)
+        // console.log('result is', result)
         return result.hasOwnProperty('id')
       } catch (error) {
         debugMessage('Change Network', error)

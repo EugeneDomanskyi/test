@@ -64,14 +64,14 @@ const FourthStep = ({campaign, onSubmit, onShare}) => {
     trackEvent('Click Share Reward Won', {
       'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
     })
-    const shareText = `🥳💸 Woohoo! I just won $${prize.amount} in USDT from a case! You can win $USDT, $PEPE, $SHIB, $FLOKI, and other tokens in the $10000 Tegro Treasure Case series! 💰💰 Join me now! Unlock your first Tegro case 🎁 for FREE! 👀 Start here 👉`
+    // const shareText = `🥳💸 Woohoo! I just won $${prize.amount} USDT from a case! You can win $USDT, $PEPE, $SHIB, $FLOKI, and other tokens in the $10000 Tegro Treasure Case series! 💰💰 Join me now! Unlock your first Tegro case 🎁 for FREE! 👀 Start here 👉`
+    const shareText = `🎉 Woohoo! I just won $${prize.amount} USDT by opening a case in the $10,000+ @TegroFi Treasure Case series! \n\n#UnboxHappiness #TegroEarn \n\n Start your own winning streak here ⬇️⬇️\n`
     onShare(shareText)
   }
 
   return (
     <>
       <audio ref={audioRef} src='/audio/roulette_win_original.wav'></audio>
-
       {
         showConfetti
           ? <App.Flex id="lottie-container" className={styles.confetti} />
@@ -100,12 +100,12 @@ const FourthStep = ({campaign, onSubmit, onShare}) => {
       </App.Flex>
 
       <App.Flex gap={16}>
-        <App.Button outlined sx={{width: 107, height: 56, fontSize: 16, borderColor: '#7204FF'}} onClick={handleClickShare}>
-          Share
+        <App.Button outlined sx={{width: 107, height: 56, fontSize: 16}} onClick={handleClickNextStep}>
+          Open Again
         </App.Button>
-        
-        <App.Button primary sx={{width: 240, height: 56, fontSize: 16}} onClick={handleClickNextStep}>
-          Try Your Luck Again
+
+        <App.Button primary sx={{width: 240, height: 56, fontSize: 16, borderColor: '#7204FF'}} onClick={handleClickShare}>
+          Share & Earn 3 Tkeys
         </App.Button>
       </App.Flex>
     </>
