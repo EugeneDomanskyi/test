@@ -56,7 +56,7 @@ const RafflePage = () => {
         dispatch($app.set.code(requiredChain))
       }
     }
-  }, [blockchain.code])
+  }, [blockchain?.code])
   
   useEffect(() => {
     if (blockchain.code == requiredChain) {
