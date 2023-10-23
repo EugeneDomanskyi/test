@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector } from 'react-redux'
 import Image from 'next/image'
@@ -11,11 +11,18 @@ import App from  '@/components/App'
 
 import styles from './styles.module.scss'
 
+const getRandomColor = () => {
+  const randomColor = Math.floor(Math.random()*16777215).toString(16)
+  return `#${randomColor}`
+}
+
 const SidebarItem = ({ item, isActive, withArrow, searching, onClick, onClose }) => {
   const router = useRouter()
   const isNfts = router.pathname.includes('/nfts')
 
   const blockchain = useSelector($app.get.blockchain)
+
+  const colors = useRef([getRandomColor(), getRandomColor()])
 
   const handleClick = () => {
     if (onClick) {
@@ -53,7 +60,9 @@ const SidebarItem = ({ item, isActive, withArrow, searching, onClick, onClose })
         {item.image ? (
           <Image src={item.image} priority width={72} height={72} className={styles.image} alt="" />
         ) : (
-          <div className={styles.emptyImage} />
+          <div className={styles.emptyImage} style={{background: `linear-gradient(0deg, ${colors.current[0]}, ${colors.current[1]})`}}>
+            <App.Text size={14} weight={600}>{ item.symbol }</App.Text>
+          </div>
         )}
 
         <App.Flex column sx={{ maxWidth: 170 }}>

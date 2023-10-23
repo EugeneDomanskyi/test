@@ -7,10 +7,10 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 import App from '@/components/App'
 import SectionTitle from '@/components/Market/SectionTitle'
 
-export default function LivePrice({type}) {
+export default function LivePrice({type, marketInfo}) {
   const { isMobile } = usePropsHelper()
 
-  const marketInfo = useSelector(({$app}) => $app.marketInfo)
+  // const marketInfo = useSelector(({$app}) => $app.marketInfo)
 
   const dateNow = moment().format('MMMM DD, YYYY')
   const price = type === 'tokens' ? 'current price' : 'floor price'

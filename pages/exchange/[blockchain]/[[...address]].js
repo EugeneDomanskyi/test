@@ -7,7 +7,6 @@ import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
 import useOrders from '@/myhooks/useOrders'
-import useInterval from '@/myhooks/useInterval'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
@@ -30,7 +29,8 @@ const GRID_GAP = 6
 
 const Exchange = () => {
   const router = useRouter()
-  const [queryBlockchainCode, queryTokenId] = router.query.segments || []
+  const [queryTokenId] = router.query.address || []
+  const queryBlockchainCode = router.query.blockchain
 
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
@@ -64,10 +64,6 @@ const Exchange = () => {
     })
   }, [])
 
-  useEffect(() => {
-    updateOrders()
-  }, [wallet, queryTokenId, queryBlockchainCode])
-
   const handleOrdersUpdated = useCallback(() => {
     updateOrders()
   }, [wallet, queryTokenId, queryBlockchainCode])
@@ -99,12 +95,6 @@ const Exchange = () => {
   const handlePage = useCallback((value) => {
     dispatch($token.set.pages({current: value ?? 1}))
   }, [])
-
-  const pollingOrders = () => {
-    updateOrders()
-  }
-
-  useInterval(pollingOrders, 15000)
 
   return (
     <App.Flex gap={GRID_GAP} className={styles.container}>

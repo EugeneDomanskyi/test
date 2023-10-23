@@ -1,9 +1,14 @@
-import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
-import useOrders from '@/myhooks/useOrders'
+import { CHAINS } from '@/config'
+import { getApolloClient, queries } from '@/api_services/graphql'
+import { template } from '@/store/token'
+import { getPrices } from '@/api_services/coingecko'
+import coingeckoAssets from '@/public/files/coingecko_ids'
+import $exchange from '@/store/exchange'
 
 import App from '@/components/App'
 import Market from '@/components/Market'
@@ -26,19 +31,54 @@ import assetsFile from '@/public/files/assets_new.json'
 
 const token = 'fc873434915ecf9e639339b325338f768e1f5b81fc88e3e4299641a3f87de70fcf93c09316c0d1e5146fa36171076ead7c5797f1d1882f35a9f60aaf5ec065ad7757b0615886847a307d3b25dbaadb42b98d63c59a39744667ff3f5438393a87f3b63ce948bfb260ac0041c44dbe0a10e1646dfa8f8d2c85abd18e45c0bb02c6'
 
+const getToken = async (url, id) => {
+  const client = getApolloClient(url)
+  const res = await client.query({
+    query: queries.tokenById,
+    variables: {id: id}
+  })
+  return res.data.token && res.data.token.symbol !== 'unknown' ? res.data.token : null
+}
+
 export default function Markets({}) {
+  const dispatch = useDispatch()
   const router = useRouter()
   const { isMobile } = usePropsHelper()
 
-  const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
-  
-  const { updateOrders } = useOrders({tokenAddress: queryMarketId, type: queryMarketType})
+  const activeInterval = useSelector(({$exchange}) => $exchange.interval)
+  const [marketInfo, setMarketInfo] = useState({})
 
-  const marketInfo = assetsFile.find(item => item.address === queryMarketId)
+  const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
+
+  console.log(marketInfo)
+
+  const currentChain = CHAINS.find(chain => chain.code === queryBlockchainCode)
 
   useEffect(() => {
-    updateOrders()
+    getMarket()
   }, [])
+
+  const getMarket = async () => {
+    const token = await getToken(currentChain.baseUniswapUrl, queryMarketId)
+    if (token) {
+      setMarketInfo(template(token))
+      const id = {[coingeckoAssets[currentChain.platform][token.id]]: token.id}
+      const prices = await getPrices(id)
+      setMarketInfo(template({...token, ...Object.values(prices)[0]}))
+    }
+  }
+
+  useEffect(() => {
+    if (marketInfo.id) {
+      $exchange.api.get.tokenChartData(marketInfo.id, currentChain.code, activeInterval.seconds).then(res => {
+        if (res) {
+          dispatch($exchange.set.chartData({type: 'tokens', data: res.data}))
+          return
+        }
+        dispatch($exchange.set.chartData({type: 'tokens', data: []}))
+      })
+    }
+  }, [marketInfo.id, activeInterval.seconds])
 
   return (
     <>
@@ -57,7 +97,7 @@ export default function Markets({}) {
                       </App.Flex>
                     </>
                   : <App.Flex column sx={{paddingTop: 32, width: '100%'}} gap={48}>
-                      <Info type={queryMarketType} />
+                      <Info type={queryMarketType} marketInfo={marketInfo} />
                       <TradeForm
                         current={marketInfo}
                         type={queryMarketType}
@@ -66,8 +106,8 @@ export default function Markets({}) {
                         type={queryMarketType}
                         onClickOrder={handleClickOrder}
                       />
-                      <LivePrice />
-                      <Stats />
+                      <LivePrice marketInfo={marketInfo} />
+                      <Stats marketInfo={marketInfo} />
                       <Trending />
                       <About />
                       <Images />

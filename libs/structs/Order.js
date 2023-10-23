@@ -445,13 +445,13 @@ class TOKEN extends Order {
             order.data,
             order.signature,
             '0x',
-            math.chain(order.willTakeMakingAmount).divide(side === 'sell' ? 1.000001 : 1).round().done(),
+            math.chain(order.willTakeMakingAmount).divide(side === 'sell' ? 1.00001 : 1).round().done(),
             '0',
             math.chain(order.willSpendTakingAmount).multiply(1.1).round().done(),
           ]
         })
 
-        console.log('params -> ', list, math.chain(willSpendAmountValue).multiply(side === 'buy' ? 1.00001 : 1).round().done())
+        console.log('params -> ', list, math.chain(willSpendAmountValue).multiply(side === 'buy' ? 1.0001 : 1).round().done())
 
         let haveEvent = false
 
@@ -490,7 +490,7 @@ class TOKEN extends Order {
           address: TEGRO_FILL_ORDERS_CONTRACTS[chainId],
           abi: TEGRO_ABI,
           functionName: 'fillMultipleOrders',
-          args: [list, math.chain(willSpendAmountValue).multiply(side === 'buy' ? 1.00001 : 1).round().done()],
+          args: [list, math.chain(willSpendAmountValue).multiply(side === 'buy' ? 1.0001 : 1).round().done()],
         }, (eventName, eventData) => {
           if (eventName === 'waiting') {
             callback('transaction_completed', {success: true, data: eventData})
@@ -553,6 +553,7 @@ class TOKEN extends Order {
         blockchain: network.code,
       }
       const res = await $orders.api.create.token(post)
+      console.log('res', res)
       if (res) {
         const data = {
           maker: post.data.maker,

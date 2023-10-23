@@ -10,6 +10,8 @@ const useOrders = ({tokenAddress, type}) => {
   const blockchain = useSelector($app.get.blockchain)
   const { wallet } = useWalletConnect()
 
+  const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(tokenAddress)
+
   const updateOrders = () => {
     if (wallet) {
       $orders.api.get[type]({
@@ -29,7 +31,7 @@ const useOrders = ({tokenAddress, type}) => {
       dispatch($orders.set[type]([]))
     }
 
-    if (tokenAddress) {
+    if (tokenAddress && isAddress) {
       $orders.api.get[type].orderBook({
         collection: tokenAddress,
         address: tokenAddress,

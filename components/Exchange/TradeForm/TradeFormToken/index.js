@@ -44,7 +44,7 @@ const TradeFormToken = forwardRef(({current, currentTab, formOption}, ref) => {
   const dispatch = useDispatch()
   const { wallet, changeNetwork, getBalance } = useWalletConnect()
   
-  const blockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
+  const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector($orders.get.orderBook('tokens'))
   const orderBookId = useSelector(({$orders}) => $orders.orderBookId)
 
