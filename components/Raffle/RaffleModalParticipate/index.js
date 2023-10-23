@@ -47,13 +47,17 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   const [errorType, setErrorType] = useState('')
   const [showKeysError, setShowKeysError] = useState(false)
   const [closeKeysError, setCloseKeysError] = useState(false)
+  const [rewards, setRewards] = useState([])
 
-  const rewards = [...item.rewardRange]
+  // const rewards = [...item.rewardRange]
 
   useEffect(() => {
     (async () => {
-      // const res = await $raffle.api.info(item.id)
-      // console.log('res', res);
+      const res = await $raffle.api.info(item.id)
+      const [data] = JSON.parse(res.data)
+      const rewardRange = data.info.rewardRange
+      setRewards(rewardRange)
+
       if (wallet) {
         const result = await checkIfApproved()
         setIsApproved(result)
@@ -290,14 +294,14 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
 
             <App.Flex gap={16} className={styles.rewardsContainer}>
               {
-                rewards.sort((a, b) => parseInt(a.range) - parseInt(b.range)).map((reward, index) => {
-                  const currentReward = item.odds.find(odd => odd.range === reward.range*1)
+                rewards.length && rewards.sort((a, b) => parseInt(a.range) - parseInt(b.range)).map((reward, index) => {
+                  const currentReward = item.rewardRange.find(range => range.range*1 === reward.range)
                   if (!currentReward) {
                     return
                   }
-                  const title = currentReward.title
-                  const odds = currentReward.odds
-                  const amount = reward.reward / 1000000
+                  const title = reward.title
+                  const odds = reward.odds
+                  const amount = currentReward.reward / 1000000
                   return (
                     <RaffleReward key={index} title={title} amount={`$${amount}`} additionalText={`Chances: ${odds}%`} />
                   )
