@@ -26,6 +26,7 @@ const Orders = ({current, type, version, onOrderCancelled, onClickOrder}) => {
   const [hideCancelledOrders, setHideCancelledOrders] = useState(true)
   const [cancellingOrders, setCancellingOrders] = useState([])
   const [ordersType, setOrderTypes] = useState('open')
+  const [openId, setOpenId] = useState()
 
   useEffect(() => {
     if (wallet) {
@@ -95,14 +96,8 @@ const Orders = ({current, type, version, onOrderCancelled, onClickOrder}) => {
     setShowCollectionOrders(value)
   }
 
-  const handleClick = order => () => {
-    // const [_, _seg1, seg2] = router.asPath.split('/')
-    // router.push(`${[seg2, order.contractAddress].join('/')}`, undefined, {scroll: false})
-    // onClickOrder({
-    //   quantity: order.quantity,
-    //   price: order.itemPrice,
-    //   side: order.side,
-    // })
+  const handleClick = (id) => () => {
+    setOpenId(id)
   }
 
   const handleChangeOrdersType = type => () => {
@@ -326,7 +321,7 @@ const Orders = ({current, type, version, onOrderCancelled, onClickOrder}) => {
             {orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map((order) => {
               return (
                 <App.Flex key={order.id} column fullWidth className={styles.orderContainer}>
-                  <App.Flex row align="center" fullWidth className={cn(styles.order, {[styles.disabled]: order.status === 'completed' || order.status === 'cancelled'})} onClick={handleClick(order)}>
+                  <App.Flex row align="center" fullWidth className={cn(styles.order, {[styles.disabled]: order.status === 'completed' || order.status === 'cancelled'})} onClick={handleClick(order.id)}>
                     <App.Flex width={20} fullHeight>
                       <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
                     </App.Flex>
@@ -373,7 +368,7 @@ const Orders = ({current, type, version, onOrderCancelled, onClickOrder}) => {
                     </App.Flex>
                   </App.Flex>
 
-                  <App.Flex align="center" justify="flex-end" className={cn(styles.hoverContent)}>
+                  <App.Flex align="center" justify="flex-end" className={cn(styles.hoverContent, {[styles.open]: openId == order.id})}>
                     <App.Text color="rgba(185, 184, 197, 1)" size={10} weight={500} sx={{marginRight: 12}}>{ order.time }</App.Text>
                     {
                       order.status !== 'open'

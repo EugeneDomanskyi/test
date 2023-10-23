@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import cn from 'classnames'
@@ -36,11 +36,15 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   const balance = useSelector(({$raffle}) => $raffle.balance)
   const tokenIds = useSelector(({ $raffle }) => $raffle.tokenIds)
 
+  const errorContainerRef = useRef(null)
+
   const [showClaim, setShowClaim] = useState(false)
   const [step, setStep] = useState(0)
   const [isApproved, setIsApproved] = useState(false)
   const [expectedReward, setExpectedReward] = useState(null)
   const [errorType, setErrorType] = useState('')
+  const [showKeysError, setShowKeysError] = useState(false)
+  const [closeKeysError, setCloseKeysError] = useState(false)
 
   const rewards = [...item.rewardRange]
 
@@ -60,6 +64,14 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   }, [expectedReward])
 
   const handleClickOpen = async () => {
+    // if (showKeysError) {
+    //   setCloseKeysError(true)
+    //   setShowKeysError(!showKeysError)
+    // } else {
+    //   setCloseKeysError(false)
+    //   setShowKeysError(!showKeysError)
+    // }
+    // return
     const res = await onUpdateUserTKeys(item.tKeyRequired)
 
     if (res.length !== item.tKeyRequired*1) {
@@ -154,7 +166,6 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
         'Market': 'USDT',
       })
 
-      console.log('enterCampaignHash', enterCampaignHash)
       dispatch($modal.set.update({
         header: {
           title: 'Blockchain Confirmation!',
@@ -162,7 +173,6 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
       }))
       
       getUserTKeysBalance()
-      // onUpdateUserCases(true)
       fetchReward(enterCampaignHash)
     }
 
@@ -188,10 +198,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
       const result = await $raffle.api.reward(enterCampaignHash.trim())
       if (result?.data) {
         const parsedRes = JSON.parse(result.data)
-    
-        console.log('parsedRes', parsedRes)
         const rewardAmount = parsedRes[enterCampaignHash]?.expectedRewardAmount === '0' ? '0' : parsedRes[enterCampaignHash]?.expectedRewardAmount*1
-        console.log('rewardAmount', rewardAmount)
     
         if (!rewardAmount) {
           setTimeout(() => {
@@ -211,7 +218,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
           setStep(step >= 4 ? 0 : step + 1)
           dispatch($modal.set.update({
               header: {
-                  title: 'Unlock Case',
+                  title: 'Unlocking Case',
               },
           }))
   
@@ -242,6 +249,10 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
     })
     const shareText = `🎁✨ Did you know? You can open cases on Tegro and share rewards worth 💰💰 $10,000 in $USDT, $PEPE, $SHIB, and other tokens! Unlock your first case for FREE! Start here 👉 `
     onShare(shareText)
+  }
+
+  const handleClickGetKeys = () => {
+    window.open('https://galxe.com/tegro/campaign/GC9QPUMqMz?utm_source=web', '_blank')
   }
 
   return (
@@ -296,15 +307,32 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
               }
             </App.Flex>
 
-            <App.Flex column gap={16}>
+            <App.Flex column center gap={16}>
+              <App.Flex className={cn(styles.errorBlock, {[styles.isOpen]: showKeysError, [styles.isClosing]: closeKeysError})}>
+                <App.Flex column center gap={12} className={styles.errorTextWrapper}>
+                  <App.Text size={14}>You don’t have enough TKeys to unlock this case</App.Text>
+                  <App.Text size={12} weight={400}>Complete tasks on Galxe to collect TKeys</App.Text>
+                </App.Flex>
+              </App.Flex>
+
               {/* <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles.hiddenOnMobile)}>
                 <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
-                <App.Text size={12} height={1}>{item.totalTransferred}/{item.rewardAmount} reward distributed</App.Text>
+                <App.Text size={12} height={1}>{balance}/{item.tKeyRequired} {item.tKeyRequired*1 === 1 ? 'TKey' : 'TKeys'} available</App.Text>
               </App.Flex> */}
 
-              <App.Button primary sx={{width: 240, height: 56, fontSize: 16, fontWeight: 600}} onClick={handleClickOpen}>
-                Unlock with {item.tKeyRequired +  ' ' + (item.tKeyRequired*1 === 1 ? 'TKey' : 'TKeys')}
-              </App.Button>
+              <App.Flex className={styles.buttonWrapper}>
+                <App.Flex className={cn(styles.buttonText, {[styles.show]: ! showKeysError})}>
+                  <App.Button primary sx={{width: 240, height: 56, fontSize: 16, fontWeight: 600}} onClick={handleClickOpen}>
+                    Unlock with {item.tKeyRequired +  ' ' + (item.tKeyRequired*1 === 1 ? 'TKey' : 'TKeys')}
+                  </App.Button>
+                </App.Flex>
+                
+                <App.Flex gap={8} className={cn(styles.buttonText, {[styles.show]: showKeysError})}>
+                  <App.Button primary sx={{width: 240, height: 56, fontSize: 16, fontWeight: 600}} onClick={handleClickGetKeys}>
+                    Get TKeys <App.Icon icon="galxe-icon" />
+                  </App.Button>
+                </App.Flex>
+              </App.Flex>
             </App.Flex>
           </App.Flex>
         </>

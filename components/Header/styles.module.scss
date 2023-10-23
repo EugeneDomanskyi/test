@@ -9,6 +9,52 @@
   border-bottom: 0.5px solid #311B92;
   // backdrop-filter: blur(6px);
 
+  &.sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .promoBanner {
+    padding: 4px 24px;
+    align-self: stretch;
+    background: linear-gradient(102deg, #631DFF 0%, #A91DFF 100%);
+    overflow: hidden;
+    transition: .4s;
+
+    &.hide {
+      margin-top: -32px;
+      visibility: hidden;
+    }
+
+    .promoLink {
+      margin-top: 1px;
+      transition: .4s;
+      cursor: pointer;
+      border-bottom: 1px solid transparent;
+      
+      &:hover {
+        border-bottom: 1px solid #FFCB04;
+      }
+    }
+
+    .promoCloseButton {
+      position: absolute;
+      right: 32px;
+      cursor: pointer;
+      transition: .4s;
+
+      &:hover {
+        opacity: .9;
+
+        & svg path {
+          fill: #1d1d1d;
+        }
+      }
+    }
+  }
+
   .banner {
     background: #7204FF url('/images/raffle/top-banner-background.png') center no-repeat;
     height: 30px;

@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import cn from 'classnames'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -20,17 +20,20 @@ import HeaderWalletMobile from '@/components/Header/HeaderWalletMobile'
 
 import styles from './styles.module.scss'
 
-const Header = () => {
+const Header = ({onHeightCounted}) => {
   const router = useRouter()
   const { wallet, connect, disconnect, getBalance } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
   const isEarn = router.pathname.includes('/earn')
+  const isSticky = ! router.pathname.includes('/exchange')
 
   const dispatch = useDispatch()
 
   const balance = useSelector(({$raffle}) => $raffle.balance)
   const blockchain = useSelector($app.get.blockchain)
+
+  const headerRef = useRef(null)
 
   const [menuShow, setMenuShow] = useState(false)
   const [mobileMenuShow, setMobileMenuShow] = useState(false)
@@ -39,6 +42,16 @@ const Header = () => {
   const [currentBalance, setCurrentBalance] = useState({amount: 0, symbol: ''})
   const [balanceLoading, setBalanceLoading] = useState(true)
   const [isBannerClosed, setIsBannerClosed] = useState(false)
+  const [showPromoBanner, setShowPromoBanner] = useState(true)
+
+  useEffect(() => {
+    if (headerRef.current) {
+      const headerHeight = headerRef.current.getBoundingClientRect()
+      if (headerHeight.height) {
+        onHeightCounted(headerHeight.height)
+      }
+    }
+  }, [headerRef])
 
   useEffect(() => {
     if (wallet && ! isEarn) {
@@ -155,131 +168,140 @@ const Header = () => {
     setIsBannerClosed(true)
   }
 
-  return (
-    <App.Flex column className={styles.container}>
-      {!wallet && isEarn && false ? (
-        <App.Flex row center gap={8} className={[styles.banner, {[styles.closed]: isBannerClosed}]} onClick={handleBannerClick}>
-          <Image src="/images/raffle/chest-small.png" width={24} height={24} alt="" />
-          <App.Text size={16} family="ClashDisplay" height={1}>Connect wallet to collect 2TKeys  for free to open cases</App.Text>
+  const handlePromoBannerCloseClick = () => {
+    onHeightCounted(64)
+    setShowPromoBanner(! showPromoBanner)
+  }
 
-          <App.Flex center className={styles.closeButton} onClick={handleBannerCloseClick}>
+  return (
+    <App.Flex column className={cn(styles.container, {[styles.sticky]: isSticky})}>
+      <div ref={headerRef}>
+        {/* <App.Flex center gap={16} className={cn(styles.promoBanner, {[styles.hide]: ! showPromoBanner})}>
+          <App.Flex center gap={4}>
+            <Image src="/images/raffle/case-small.png" width={24} height={22} alt="" style={{marginTop: 3}} />
+            <App.Text size={16} weight={600}>Psst! Here’s a $200 Case* For You!</App.Text>
+          </App.Flex>
+
+          <App.Text size={16} color="#FFCB04" weight={600} className={styles.promoLink}>OPEN FOR FREE!</App.Text>
+
+          <App.Flex className={styles.promoCloseButton} onClick={handlePromoBannerCloseClick}>
             <App.Icon icon="cross" color="#fff" />
           </App.Flex>
-        </App.Flex>
-      ) : null}
+        </App.Flex> */}
 
-      <App.Container fluid className={styles.containerHeader}>
-        <App.Flex row height="100%" align="center" justify="space-between" gap={[0, 12]}>
-          <App.Flex row height="100%" align="center" className={styles.navbarLeftWrapper}>
-            <Link href="/">
-              {isMobile ? (
-                <App.Icon icon="logo-tiger-head" />
-              ) : (
-                <div className={styles.logo}>
-                  <div className={styles.badge}>
-                    BETA
-                  </div>
-                  <App.Icon icon="tegro" width={117} height={25} />
-                </div>
-              )}
-            </Link>
-
-            <App.Flex row height="100%" align="center" className={styles.navItems}>
-              <Link href="/exchange" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/exchange')})}>
-                <App.Flex center height="100%">
-                  <App.Text size={16} weight={500}>Exchange</App.Text>
-                </App.Flex>
+        <App.Container fluid className={styles.containerHeader}>
+          <App.Flex row height="100%" align="center" justify="space-between" gap={[0, 16]}>
+            <App.Flex row height="100%" align="center" className={styles.navbarLeftWrapper}>
+              <Link href="/">
+                {
+                  isMobile
+                    ? <App.Icon icon="logo-tiger-head" />
+                    : <div className={styles.logo}>
+                        <div className={styles.badge}>
+                          BETA
+                        </div>
+                        <App.Icon icon="tegro" width={117} height={25} />
+                      </div>
+                }
               </Link>
 
-              <Link href="/earn" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/earn')})}>
-                <App.Flex center height="100%">
-                  <App.Text size={16} weight={500}>Earn</App.Text>
-                </App.Flex>
-              </Link>
+              <App.Flex row height="100%" align="center" className={styles.navItems}>
+                <Link href="/exchange" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/exchange')})}>
+                  <App.Flex center height="100%">
+                    <App.Text size={16} weight={500}>Exchange</App.Text>
+                  </App.Flex>
+                </Link>
 
-              <App.Flex id="menu-dropdown" className={cn(styles.navbarItem, styles.navbarDropdown, {[styles.active]: moreIsOpen})} onClick={() => setMoreIsOpen(!moreIsOpen)}>
-                <App.Flex center height="100%" gap={8}>
-                  <App.Text size={16} weight={500}>More</App.Text>
-                  <App.Icon icon='caret-down' color="#fff" className={styles.carret} />
-                </App.Flex>
+                <Link href="/earn" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/earn')})}>
+                  <App.Flex center height="100%">
+                    <App.Text size={16} weight={500}>Earn</App.Text>
+                  </App.Flex>
+                </Link>
 
-                <NavbarDropdown isOpen={moreIsOpen} onClose={() => setMoreIsOpen(!moreIsOpen)} />
+                <App.Flex id="menu-dropdown" className={cn(styles.navbarItem, styles.navbarDropdown, {[styles.active]: moreIsOpen})} onClick={() => setMoreIsOpen(!moreIsOpen)}>
+                  <App.Flex center height="100%" gap={8}>
+                    <App.Text size={16} weight={500}>More</App.Text>
+                    <App.Icon icon='caret-down' color="#fff" className={styles.carret} />
+                  </App.Flex>
+
+                  <NavbarDropdown isOpen={moreIsOpen} onClose={() => setMoreIsOpen(!moreIsOpen)} />
+                </App.Flex>
               </App.Flex>
             </App.Flex>
-          </App.Flex>
 
-          <App.Flex row align="center" className={styles.navbarRightWrapper}>
-            { ! isMobile ? (
-              <App.Flex id="support-dropdown" className={cn(styles.supportButton, {[styles.active]: supportIsOpen})} onClick={() => setSupportIsOpen(!supportIsOpen)}>
-                <App.Flex className={styles.linkWrapper}>
-                  <App.Flex className={cn(styles.linkButton, {[styles.active]: supportIsOpen})}>
-                    <App.Icon icon="question" />
-                  </App.Flex>
-                </App.Flex>
-
-                <App.Flex column gap={32} className={cn(styles.dropdownMenu, {[styles.isOpen]: supportIsOpen})}>
-                  <App.Flex column gap={16}>
-                    <App.Flex column gap={4}>
-                      <App.Text size={18} weight={600}>Get Instant Support</App.Text>
-                      <App.Text size={10} color="#B9B8C5">Join our Discord for assistance.</App.Text>
-                    </App.Flex>
-
-                    <App.Flex row align="center" gap={6} className={styles.support} onClick={handleClickDiscord}>
-                      <Image src="/images/discord-blue.png" width={24} height={24} alt="" />
-                      <App.Text size={16} weight={600} height={1}>Discord</App.Text>
+            <App.Flex row align="center" className={styles.navbarRightWrapper}>
+              { ! isMobile ? (
+                <App.Flex id="support-dropdown" className={cn(styles.supportButton, {[styles.active]: supportIsOpen})} onClick={() => setSupportIsOpen(!supportIsOpen)}>
+                  <App.Flex className={styles.linkWrapper}>
+                    <App.Flex className={cn(styles.linkButton, {[styles.active]: supportIsOpen})}>
+                      <App.Icon icon="question" />
                     </App.Flex>
                   </App.Flex>
-                </App.Flex>
-              </App.Flex>
-            ) : null}
-            
-            { ! isEarn ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : <App.Flex />}
-            
-            <App.Flex row align="center" gap={16}>
-              {wallet ? (
-                isMobile ? (
-                  <HeaderWalletMobile />
-                ) : (
-                  <App.Flex sx={{ position: 'relative' }} id="wallet">
-                    <App.Flex row gap={16} className={styles.walletInfo}>
-                      {! isMobile ? (
-                        <App.Flex>
-                          {balanceLoading ? (
-                            <App.Flex center sx={{width: 90}}>
-                              <App.Loader />
-                            </App.Flex>
-                          ) : (
-                            <App.Flex center gap={4}>
-                              {isEarn ? <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" /> : null}
-                              <App.Text size={16} weight={500}>{ currentBalance.amount + ' ' + currentBalance.symbol }</App.Text>
-                            </App.Flex>
-                          )}
-                        </App.Flex>
-                      ) : null}
 
-                      <App.Flex className={styles.walletAddressWrapper} onClick={handleMenuToggle}>
-                        <App.Text size={16} weight={500}>{shorterAddress(isMobile ? 4 : 6)}</App.Text>
+                  <App.Flex column gap={32} className={cn(styles.dropdownMenu, {[styles.isOpen]: supportIsOpen})}>
+                    <App.Flex column gap={16}>
+                      <App.Flex column gap={4}>
+                        <App.Text size={18} weight={600}>Get Instant Support</App.Text>
+                        <App.Text size={10} color="#B9B8C5">Join our Discord for assistance.</App.Text>
+                      </App.Flex>
+
+                      <App.Flex row align="center" gap={6} className={styles.support} onClick={handleClickDiscord}>
+                        <Image src="/images/discord-blue.png" width={24} height={24} alt="" />
+                        <App.Text size={16} weight={600} height={1}>Discord</App.Text>
                       </App.Flex>
                     </App.Flex>
-
-                    <div className={cn(styles.menu, {[styles.active]: menuShow})}>
-                      <App.Button primary fullWidth onClick={handleDisconnect}>
-                      <App.Icon icon="logout" /> Disconnect
-                      </App.Button>
-                    </div>
                   </App.Flex>
-                )
-              ) : (
-                <App.Button primary large={!isMobile} onClick={handleConnectWallet}>
-                  Connect{!isMobile ? ' Wallet' : ''}
-                </App.Button>
-              )}
+                </App.Flex>
+              ) : null}
 
-              <div className={cn(styles.mobileMenuButton, {[styles.show]: mobileMenuShow})} onClick={handleMobileMenuClick}>
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
+              { ! isEarn ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : <App.Flex />}
+              
+              <App.Flex row align="center" gap={16}>
+                {wallet ? (
+                  isMobile ? (
+                    <HeaderWalletMobile />
+                  ) : (
+                    <App.Flex sx={{ position: 'relative' }} id="wallet">
+                      <App.Flex row gap={16} className={styles.walletInfo}>
+                        {! isMobile ? (
+                          <App.Flex>
+                            {balanceLoading ? (
+                              <App.Flex center sx={{width: 90}}>
+                                <App.Loader />
+                              </App.Flex>
+                            ) : (
+                              <App.Flex center gap={4}>
+                                {isEarn ? <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" /> : null}
+                                <App.Text size={16} weight={500}>{ currentBalance.amount + ' ' + currentBalance.symbol }</App.Text>
+                              </App.Flex>
+                            )}
+                          </App.Flex>
+                        ) : null}
+
+                        <App.Flex className={styles.walletAddressWrapper} onClick={handleMenuToggle}>
+                          <App.Text size={16} weight={500}>{shorterAddress(isMobile ? 4 : 6)}</App.Text>
+                        </App.Flex>
+                      </App.Flex>
+
+                      <div className={cn(styles.menu, {[styles.active]: menuShow})}>
+                        <App.Button primary fullWidth onClick={handleDisconnect}>
+                        <App.Icon icon="logout" /> Disconnect
+                        </App.Button>
+                      </div>
+                    </App.Flex>
+                  )
+                ) : (
+                  <App.Button primary large={!isMobile} onClick={handleConnectWallet}>
+                    Connect{!isMobile ? ' Wallet' : ''}
+                  </App.Button>
+                )}
+
+                <div className={cn(styles.mobileMenuButton, {[styles.show]: mobileMenuShow})} onClick={handleMobileMenuClick}>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </App.Flex>
             </App.Flex>
 
             <div className={cn(styles.mobileMenu, {[styles.show]: mobileMenuShow})}>
@@ -416,8 +438,8 @@ const Header = () => {
               </div>
             </div>
           </App.Flex>
-        </App.Flex>
-      </App.Container>
+        </App.Container>
+      </div>
     </App.Flex>
   )
 }

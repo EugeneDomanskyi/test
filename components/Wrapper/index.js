@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { v4 as uuid } from 'uuid'
 import { useAccount } from 'wagmi'
@@ -11,6 +11,7 @@ import { trackEvent } from '@/libs/analytics.lib'
 import Header from '@/components/Header'
 import WrapperExchange from '@/components/Wrapper/WrapperExchange'
 import WrapperCollections from '@/components/Wrapper/WrapperCollections'
+import App from '@/store/app'
 
 const Wrapper = ({ children, isMobile }) => {
   const router = useRouter()
@@ -19,6 +20,8 @@ const Wrapper = ({ children, isMobile }) => {
   const isExchange = router.asPath?.includes('exchange')
 
   const { address, isConnected } = useAccount()
+
+  const [headerHeight, setHeaderHeight] = useState(64)
 
   useEffect(() => {
     if (isConnected && address) {
@@ -37,6 +40,15 @@ const Wrapper = ({ children, isMobile }) => {
   }, [address, isConnected])
 
   useEffect(() => {
+    if (router.query) {
+      const utmParams = Object.entries(router.query).filter(([key]) => key.startsWith('utm_')).reduce((acc, [key, value]) => ({...acc, [key]: value}), {})
+      if (Object.keys(utmParams).length) {
+        amplitude.getInstance().setUserProperties(utmParams)
+      }
+    }
+  }, [address, router.query])
+
+  useEffect(() => {
     const deviceId = localStorage.getItem('device_id')
     if (!deviceId) {
       localStorage.setItem('device_id', uuid())
@@ -45,9 +57,13 @@ const Wrapper = ({ children, isMobile }) => {
     trackEvent('Page Visited')
   }, [])
 
+  const handleHeaderHeightCounted = (height) => {
+    setHeaderHeight(height)
+  }
+  
   return (
-    <>
-      <Header />
+    <div style={{paddingTop: headerHeight, height: '100%', transition: '.4s'}}>
+      <Header onHeightCounted={handleHeaderHeightCounted} />
 
       {isExchange ? (
         <WrapperExchange isMobile={isMobile}>
@@ -64,7 +80,7 @@ const Wrapper = ({ children, isMobile }) => {
       {!isNfts && !isSwap && !isExchange ? (
         children
       ) : null}
-    </>
+    </div>
   )
 }
 

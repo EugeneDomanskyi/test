@@ -131,15 +131,17 @@ function MyApp({ Component, pageProps, initialData, currentPage, currentAddress,
   const storeRef = useRef(store(initialData)).current
 
   useEffect(() => {
-    Smartlook.init('cf71ed516173943775e4d8cc10245b95b9ed7de0')
     amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
+    if (process.env.NEXT_PUBLIC_APP_ENV !== 'local') {
+      Smartlook.init('cf71ed516173943775e4d8cc10245b95b9ed7de0')
+    }
   }, [])
   
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
         <Provider store={storeRef}>
-          <Head route={ssRoute} currentPage={currentPage} currentSymbol={currentSymbol} marketInfo={marketInfo} />
+          <Head route={ssRoute} currentPage={currentPage} currentSymbol={currentSymbol} />
 
           <Wrapper isMobile={initialData.isMobile}>
             <Component {...pageProps} />
@@ -196,7 +198,7 @@ MyApp.getInitialProps = async ({ctx}) => {
     currentAddress = addrArr.split('?')[0]
     ssRoute = (ctx.req.url)
   }
-  
+
   return {
     initialData: {
       blockchain: cookies.blockchain,
