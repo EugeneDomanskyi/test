@@ -212,7 +212,7 @@ const api = {
 const query = {
   campaigns: gql`
     query campaigns($skip: Int) {
-      campaigns(skip: $skip, where: {id_not_in: [0, 1]}) {
+      campaigns(skip: $skip, where: {id_not_in: [0, 1, 3]}) {
         id
         ipfsHash
         rewardAmount
