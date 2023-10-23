@@ -4,7 +4,7 @@ import cn from 'classnames'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
-import { trackEvent } from '@/libs/analytics.lib'
+import { trackEvent, getPageName } from '@/libs/analytics.lib'
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -21,7 +21,7 @@ import styles from './styles.module.scss'
 
 const Header = ({onHeightCounted}) => {
   const router = useRouter()
-  const { wallet, connect, disconnect, getBalance, changeNetwork } = useWalletConnect()
+  const { wallet, connect, disconnect, getBalance, changeNetwork, connectorId } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
   const isEarn = router.pathname.includes('/earn')
@@ -90,13 +90,14 @@ const Header = ({onHeightCounted}) => {
   const handleConnectWallet = async () => {
     if ( ! wallet) {
       trackEvent('Wallet Connect Clicked', {
-        'Wallet connected Status': 'Not Connected',
+        'Source': getPageName(),
       })
+
       const result = await connect()
       if (result) {
-        trackEvent('Wallet Connected Successfully', {
-          'Wallet connected Status': 'Connected',
-          'Wallet Address': result,
+        console.log(connectorId, 123)
+        trackEvent('Wallet Connect Success', {
+          'Source': getPageName(),
         })
       }
     }

@@ -8,7 +8,7 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 
 import $app from '@/store/app'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import { trackEvent, getPageName } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 
@@ -61,8 +61,9 @@ const RaffleTop = ({ loading, isFirstTimeUser }) => {
 
   const handleConnectWalletClick = async () => {
     trackEvent('Wallet Connect Clicked', {
-      'Wallet connected Status': 'Not Connected',
+      'Source': getPageName(),
     })
+
     if ( ! wallet) {
       const result = await connect()
       if (result) {

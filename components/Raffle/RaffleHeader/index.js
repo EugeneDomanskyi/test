@@ -4,7 +4,7 @@ import cn from 'classnames'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
-import { trackEvent } from '@/libs/analytics.lib'
+import { trackEvent, getPageName } from '@/libs/analytics.lib'
 
 import Link from 'next/link'
 
@@ -39,8 +39,9 @@ const RaffleHeader = () => {
   const handleConnectWallet = async () => {
     if ( ! wallet) {
       trackEvent('Wallet Connect Clicked', {
-        'Wallet connected Status': 'Not Connected'
+        'Source': getPageName(),
       })
+
       const result = await connect()
       if (result) {
         trackEvent('Wallet Connected Successfully', {
