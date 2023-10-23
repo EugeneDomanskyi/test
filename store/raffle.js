@@ -195,9 +195,17 @@ const api = {
   },
 
   reward: (hash) => {
+    const url = process.env.NEXT_PUBLIC_APP_ENV === 'local' ? 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status' : 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status-polygon'
     // const url = 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status'     // dev endpoint
-    const url = 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status-polygon'
+    // const url = 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status-polygon'
     return request(`${url}?transactions[]=${hash}`, 'GET', {api: 'remote'})
+  },
+
+  info: (campaignId) => {
+    // const chainId = process.env.NEXT_PUBLIC_APP_ENV === 'local' ? 80001 : 137
+    const chainId = 137
+    const url = 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/raffle_info'
+    return request(`${url}?campaignId[]=${campaignId}&chainId=${chainId}`, 'GET', {api: 'remote'})
   },
 }
 

@@ -52,6 +52,8 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
 
   useEffect(() => {
     (async () => {
+      // const res = await $raffle.api.info(item.id)
+      // console.log('res', res);
       if (wallet) {
         const result = await checkIfApproved()
         setIsApproved(result)
