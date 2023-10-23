@@ -11,15 +11,15 @@ const AppText = ({ children, html, inline, family, size, weight, style, color, g
     return cn(
       className,
       styles.text,
-      {[styles.nowrap]: nowrap},
-      {[styles.lines]: lines},
-      {[styles.uppercase]: uppercase},
-      {[styles.lowercase]: lowercase},
-      {[styles.capitalize]: capitalize},
-      {[styles.center]: center},
-      {[styles.italic]: italic},
-      {[styles.right]: right},
-      {[styles[variant]]: variant}
+      {[styles.nowrap]: propValue(nowrap)},
+      {[styles.lines]: propValue(lines)},
+      {[styles.uppercase]: propValue(uppercase)},
+      {[styles.lowercase]: propValue(lowercase)},
+      {[styles.capitalize]: propValue(capitalize)},
+      {[styles.center]: propValue(center)},
+      {[styles.italic]: propValue(italic)},
+      {[styles.right]: propValue(right)},
+      {[styles[variant]]: propValue(variant)}
     )
   }
 

@@ -72,7 +72,7 @@ const Mobile = ({ item, onOrdersUpdate }) => {
     }
 
     const cgId = infoList?.[blockchain.platform]?.[item.id]
-    if (cgId) {
+    if (cgId && tempBalance.currency > 0) {
       const rate = await getPrice(cgId, 'usd')
       tempBalance.usd = rate * tempBalance.currency
     }

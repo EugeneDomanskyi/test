@@ -1,21 +1,29 @@
 .card {
   background-color: #17142A;
+
   .header {
     background-color: #1C192F;
     height: 24px;
     padding: 0 8px;
   }
 
-  @media (max-width: 768px) {
-    & {
-      flex: 1;
-    }
+  .rowHeader {
+    height: 20px;
+    padding: 0 8px;
   }
 
   &.mobile {
-    padding: 8px;
     border-radius: 12px;
-    background-color: rgba(19, 14, 45, 0.32);
+    background-color: transparent;
+
+    .rowHeader {
+      height: 32px;
+      padding: 0 8px;
+    }
+
+    .row {
+      height: 32px;
+    }
   }
 }
 

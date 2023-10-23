@@ -48,10 +48,10 @@ const Sales = ({onClickSale, version, type}) => {
         </App.Flex>
       ) : null}
 
-      <App.Flex sx={{padding: '0 5px', height: 20}} justify="space-between" align="center">
-        <App.Text flex={1} size={10} color="#908F99" weight={600}>Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
-        <App.Text flex={1} size={10} color="#908F99" center weight={600}>Volume</App.Text>
-        <App.Text flex={1} size={10} color="#908F99" right weight={600}>Time</App.Text>
+      <App.Flex className={styles.rowHeader} justify="space-between" align="center">
+        <App.Text flex={1} size={[10, 12]} color="#908F99" weight={[600, 500]}>Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
+        <App.Text flex={1} size={[10, 12]} color="#908F99" center weight={[600, 500]}>Volume</App.Text>
+        <App.Text flex={1} size={[10, 12]} color="#908F99" right weight={[600, 500]}>Time</App.Text>
       </App.Flex>
       <App.Flex flex={1} column sx={{overflow: 'auto'}}>
         {

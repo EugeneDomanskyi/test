@@ -3,18 +3,14 @@
   background-color: #17142A;
   overflow: hidden;
 
-  &.mobile {
-    height: auto;
-    position: absolute;
-    inset: 0;
-    padding: 8px;
-    border-radius: 12px;
-    background-color: rgba(19, 14, 45, 0.32);
-  }
-
   .header {
     background-color: #1C192F;
     height: 24px;
+    padding: 0 8px;
+  }
+
+  .rowHeader {
+    height: 20px;
     padding: 0 8px;
   }
 
@@ -36,6 +32,26 @@
       &:after {
         background-color: rgba(255,255,255,0.1);
       }
+    }
+  }
+
+  &.mobile {
+    height: auto;
+    position: absolute;
+    inset: 0;
+    background-color: transparent;
+
+    .header {
+      background-color: transparent;
+      height: auto;
+    }
+
+    .rowHeader {
+      height: 32px;
+    }
+
+    .sale {
+      height: 32px;
     }
   }
 }

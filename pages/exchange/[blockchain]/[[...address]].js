@@ -226,7 +226,7 @@ const Exchange = () => {
           </App.Flex>
         </>
       ) : (
-        !queryTokenId ? (
+        !queryTokenId || queryTokenId == '0x' ? (
           <Sidebar
             items={tokens}
             searched={searched}

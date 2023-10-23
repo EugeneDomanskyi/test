@@ -166,9 +166,6 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
     if (!matchingLoaded) {
       return
     }
-    setStep('result')
-    setCurrentTab('fill_order') // : 'limit_order'
-    return
 
     setStep('sign')
     const allowances = []

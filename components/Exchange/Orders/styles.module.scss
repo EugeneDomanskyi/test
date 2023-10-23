@@ -3,15 +3,6 @@
   overflow: hidden;
   height: 300px;
 
-  &.mobile {
-    height: auto;
-    position: absolute;
-    inset: 0;
-    padding: 8px;
-    border-radius: 12px;
-    background-color: rgba(19, 14, 45, 0.32);
-  }
-
   .header {
     background-color: #1C192F;
     height: 24px;
@@ -101,6 +92,45 @@
       align-items: center;
       transform: translateX(100%);
       transition: transform .2s;
+    }
+  }
+
+  &.mobile {
+    height: auto;
+    position: absolute;
+    inset: 0;
+    background-color: transparent;
+
+    .badge {
+      background-image: linear-gradient(to right, #E792E4, #B545BE 34.167%, #7931CB 69.583%, #4D42C9 100%);
+    }
+
+    .orderContainer {
+      .hoverContent {
+        &.open {
+          transform: translateX(0%);
+        }
+      }
+    }
+
+    .order {
+      .side {
+        height: 100%;
+        width: 5px;
+      }
+  
+      .cancelButton {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        cursor: pointer;
+        justify-content: center;
+        align-items: center;
+        transform: translateX(100%);
+        transition: transform .2s;
+      }
     }
   }
 }

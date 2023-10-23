@@ -209,7 +209,7 @@ const WrapperExchange = ({children, isMobile}) => {
 
   // fetch chart data
   useEffect(() => {
-    if (currentToken?.id && currentToken.id === address && isAddress && !wrongAddress) {
+    if (currentToken?.id && currentToken.id === address && isAddress) {
       $exchange.api.get.tokenChartData(address, blockchain, activeInterval.seconds).then(res => {
         if (res) {
           dispatch($exchange.set.chartData({type: 'tokens', data: res.data}))
@@ -218,7 +218,7 @@ const WrapperExchange = ({children, isMobile}) => {
         dispatch($exchange.set.chartData({type: 'tokens', data: []}))
       })
     }
-  }, [address, wrongAddress, currentToken?.id, blockchain, activeInterval.seconds, isAddress])
+  }, [address, currentToken?.id, blockchain, activeInterval.seconds, isAddress])
 
   const searchTokens = async (searchText) => {
     dispatch($token.set.searching(true))

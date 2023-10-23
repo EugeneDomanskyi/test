@@ -52,9 +52,9 @@ const OrderBook = ({type, version, onClickOrder}) => {
       ) : null}
       <App.Flex gap={3}>
         <App.Flex column flex={1}>
-          <App.Flex justify="space-between" align="center" sx={{padding: '0 8px', height: 20}}>
-            <App.Text size={10} color="#908F99" weight={600}>Volume</App.Text>
-            <App.Text size={10} color="#908F99" weight={600}>Buy Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
+          <App.Flex justify="space-between" align="center" className={styles.rowHeader}>
+            <App.Text size={[10, 12]} color="#908F99" weight={[600, 500]}>Volume</App.Text>
+            <App.Text size={[10, 12]} color="#908F99" weight={[600, 500]}>Buy Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
           </App.Flex>
           {
             orderBook.buy.map((order, i) => {
@@ -70,9 +70,9 @@ const OrderBook = ({type, version, onClickOrder}) => {
           }
         </App.Flex>
         <App.Flex column flex={1}>
-          <App.Flex justify="space-between" align="center" sx={{padding: '0 8px', height: 20}}>
-            <App.Text size={10} color="#908F99" weight={600}>Sell Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
-            <App.Text size={10} color="#908F99" weight={600}>Volume</App.Text>
+          <App.Flex justify="space-between" align="center" className={styles.rowHeader}>
+            <App.Text size={[10, 12]} color="#908F99" weight={[600, 500]}>Sell Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
+            <App.Text size={[10, 12]} color="#908F99" weight={[600, 500]}>Volume</App.Text>
           </App.Flex>
           {
             orderBook.sell.map((order, i) => {
