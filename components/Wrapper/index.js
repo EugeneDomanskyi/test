@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useDispatch } from 'react-redux'
-import { loadIntercom } from 'next-intercom'
 import { v4 as uuid } from 'uuid'
 import { useAccount } from 'wagmi'
 import { getNetwork } from '@wagmi/core'
@@ -10,22 +8,16 @@ import Smartlook from 'smartlook-client'
 
 import { trackEvent } from '@/libs/analytics.lib'
 
-import $token from '@/store/token'
-import $app from '@/store/app'
-
 import Header from '@/components/Header'
-import WrapperTokens from '@/components/Wrapper/WrapperTokens'
+import WrapperExchange from '@/components/Wrapper/WrapperExchange'
 import WrapperCollections from '@/components/Wrapper/WrapperCollections'
 import App from '@/store/app'
 
-const Wrapper = ({ children, marketsList = [], marketInfo }) => {
-  const dispatch = useDispatch()
+const Wrapper = ({ children, isMobile }) => {
   const router = useRouter()
   const isNfts = router.asPath?.includes('nfts')
   const isSwap = router.pathname.includes('/swap')
   const isExchange = router.asPath?.includes('exchange')
-  const isMarket = router.asPath?.includes('market')
-  const isEarn = router.pathname.includes('/earn')
 
   const { address, isConnected } = useAccount()
 
@@ -62,35 +54,21 @@ const Wrapper = ({ children, marketsList = [], marketInfo }) => {
       localStorage.setItem('device_id', uuid())
     }
 
-    loadIntercom({
-      user_id: deviceId,
-      appId: process.env.NEXT_PUBLIC_INTERCOM_APP_ID,
-      ssr: false,
-      initWindow: false,
-      delay: 0,
-    })
-
     trackEvent('Page Visited')
   }, [])
-
-  useEffect(() => {
-    if (marketsList.length) {
-      dispatch($token.set.list(marketsList))
-    }
-  }, [marketsList])
 
   const handleHeaderHeightCounted = (height) => {
     setHeaderHeight(height)
   }
-
+  
   return (
     <div style={{paddingTop: headerHeight, transition: '.4s'}}>
       <Header onHeightCounted={handleHeaderHeightCounted} />
 
-      {isExchange || isMarket ? (
-        <WrapperTokens>
+      {isExchange ? (
+        <WrapperExchange isMobile={isMobile}>
           {children}
-        </WrapperTokens>
+        </WrapperExchange>
       ) : null}
 
       {isNfts || isSwap ? (
@@ -99,7 +77,7 @@ const Wrapper = ({ children, marketsList = [], marketInfo }) => {
         </WrapperCollections>
       ) : null}
 
-      {!isNfts && !isSwap && !isExchange && ! isMarket ? (
+      {!isNfts && !isSwap && !isExchange ? (
         children
       ) : null}
     </div>

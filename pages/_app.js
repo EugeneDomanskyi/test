@@ -3,7 +3,6 @@ import { Provider } from 'react-redux'
 import { ToastContainer } from 'react-toastify'
 import { createClient } from '@reservoir0x/reservoir-sdk'
 import nookies from 'nookies'
-import { getSelectorsByUserAgent } from 'react-device-detect'
 import amplitude from 'amplitude-js'
 import * as Sentry from '@sentry/nextjs'
 import Smartlook from 'smartlook-client'
@@ -14,8 +13,9 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
 import merge from 'lodash.merge'
-import { MagicConnectConnector } from '@everipedia/wagmi-magic-connector'
-
+// import { UniversalWalletConnector } from '@magiclabs/wagmi-connector'
+import * as MagicConnectors from '@magiclabs/wagmi-connector/dist/lib/connectors/universalWalletConnector'
+// console.log(MagicConnectors.UniversalWalletConnector)
 import { CHAINS } from '@/config'
 import store from '@/store'
 import $token from '@/store/token'
@@ -32,8 +32,6 @@ import '@rainbow-me/rainbowkit/styles.css'
 import '@/styles/globals.css'
 import '@/styles/roulette_design.css'
 
-import { getAssetsFile } from '@/libs/aws.lib'
-
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
     dsn: 'https://b6059579615abe9ca86108562cbeb308@o1399663.ingest.sentry.io/4505906094538752',
@@ -48,9 +46,6 @@ if (process.env.NODE_ENV === 'production') {
     replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
   })
 }
-
-let firstTimeLoaded = false
-let globalList = []
 
 createClient({
   chains: CHAINS,
@@ -79,7 +74,7 @@ const rainbowMagicConnector = ({ chains }) => ({
       }
     })
     
-    const connector = new MagicConnectConnector({
+    const connector = new MagicConnectors.UniversalWalletConnector({
       chains: chains,
       options: {
         apiKey: process.env.NEXT_PUBLIC_MAGIC_LINK_API_KEY,
@@ -132,12 +127,11 @@ const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
   },
 })
 
-amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
-
 function MyApp({ Component, pageProps, initialData, currentPage, currentAddress, currentSymbol, ssRoute, marketInfo, marketsList }) {
   const storeRef = useRef(store(initialData)).current
 
   useEffect(() => {
+    amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
     if (process.env.NEXT_PUBLIC_APP_ENV !== 'local') {
       Smartlook.init('cf71ed516173943775e4d8cc10245b95b9ed7de0')
     }
@@ -149,7 +143,7 @@ function MyApp({ Component, pageProps, initialData, currentPage, currentAddress,
         <Provider store={storeRef}>
           <Head route={ssRoute} currentPage={currentPage} currentSymbol={currentSymbol} />
 
-          <Wrapper marketsList={marketsList} marketInfo={marketInfo}>
+          <Wrapper isMobile={initialData.isMobile}>
             <Component {...pageProps} />
           </Wrapper>
 
@@ -163,11 +157,9 @@ function MyApp({ Component, pageProps, initialData, currentPage, currentAddress,
 
 MyApp.getInitialProps = async ({ctx}) => {
   const cookies = nookies.get(ctx)
-  
   let isMobile = false
   if (ctx.req?.headers?.['user-agent']) {
-    const res = getSelectorsByUserAgent(ctx.req?.headers?.['user-agent'])
-    isMobile = res?.isMobile
+    isMobile = ctx.req.headers['user-agent'].match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i)
   }
   let currentPage = ''
   let currentAddress = ''
@@ -198,22 +190,13 @@ MyApp.getInitialProps = async ({ctx}) => {
 
   let ssRoute = ''
   let marketInfo = {}
-  let marketsList = globalList
+  let marketsList = []
 
   if (ctx?.req) {
     const routeArr = ctx?.req?.url.split('/') || []
     const [addrArr] = routeArr.slice(-1)
     currentAddress = addrArr.split('?')[0]
     ssRoute = (ctx.req.url)
-    if (!firstTimeLoaded) {
-      const list = await getAssetsFile()
-      if (list && Array.isArray(list)) {
-        marketsList = list
-        globalList = list
-        marketInfo = list.find(item => item.address === currentAddress) || {}
-        firstTimeLoaded = true
-      }
-    }
   }
 
   return {

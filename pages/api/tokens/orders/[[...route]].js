@@ -1,8 +1,9 @@
 import { formatUnits } from 'viem'
 import * as math from 'mathjs'
+import { createPublicClient, http } from 'viem'
+import * as viemChains from 'viem/chains'
 import { CHAINS } from '../../../../config'
-// import { gql } from '@apollo/client'
-// import { ApolloClient, InMemoryCache } from '@apollo/client'
+import assets from '@/public/files/assets'
 
 const INCH_URL = 'https://limit-orders.1inch.io/v3.0'
 
@@ -12,6 +13,41 @@ const options = {
     'Accept': 'application/json',
     'content-type': 'application/json',
   },
+}
+
+const getInfo = async (address, client) => {
+  const abi = [{
+    inputs:[],
+    name: 'symbol',
+    outputs: [{internalType: 'string', name: '', type: 'string'}],
+    stateMutability: 'view',
+    type: 'function'
+  }, {
+    constant: true,
+    inputs: [],
+    name: 'decimals',
+    outputs: [{name: '', type: 'uint8'}],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function'
+  }]
+  const [symbol, decimals] = await client.multicall({
+    contracts: [
+      {
+        address: address,
+        abi: abi,
+        functionName: 'symbol',
+      }, {
+        address: address,
+        abi: abi,
+        functionName: 'decimals',
+      }
+    ]
+  })
+  return {
+    symbol: symbol.result,
+    decimals: decimals.result,
+  }
 }
 
 const queryBuilder = data => {
@@ -37,7 +73,7 @@ const formatter = (order, makerAsset, takerAsset, network) => {
   order.quoteCurrency = order.side === 'sell' ? makerAsset.symbol : takerAsset.symbol
   order.makerAsset = makerAsset
   order.takerAsset = takerAsset
-  order.image = order.side === 'sell' ? makerAsset.image : takerAsset.image
+  // order.image = order.side === 'sell' ? makerAsset.image : takerAsset.image
   order.contractAddress = order.side === 'buy' ? takerAsset.address : makerAsset.address
 
   const makingAmountFormatted = formatUnits(order.data.makingAmount, makerAsset.decimals)
@@ -52,8 +88,6 @@ const formatter = (order, makerAsset, takerAsset, network) => {
   return order
 }
 
-let tokenAssets = {}
-
 const handler = async (req, res) => {
   const [chainId, walletAddress] = req.query.route
   const query = queryBuilder({
@@ -61,29 +95,42 @@ const handler = async (req, res) => {
     sortBy: 'createDateTime'
   })
   const network = CHAINS.find(chain => chain.id.toString() === chainId)
-
-  if (!Object.keys(tokenAssets).length) {
-    const assetsResponse = await fetch('https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/assets.json')
-    if (assetsResponse.ok) {
-      const assets = await assetsResponse.json()
-      tokenAssets = assets.reduce((acc, item) => ({
-        ...acc,
-        [item.address?.toLowerCase()]: item
-      }), {})
-    } else {
-      res.status(400).json([])
-      return
-    }
-  }
+  
   const ordersResponse = await fetch(`${INCH_URL}/${chainId}/address/${walletAddress}${query}`, options)
 
   if (ordersResponse.ok) {
     const orders = await ordersResponse.json()
+    let tokenInfo = {}
+
+    const addresses = [...new Set(orders.flatMap(order => [order.data.makerAsset, order.data.takerAsset]))]
+    const chain = Object.values(viemChains).find(chain => chain.id.toString() === chainId)
+    const client = createPublicClient({ 
+      chain: chain,
+      transport: http()
+    })
+
+    for (let address of addresses) {
+      if (assets[address]) {
+        tokenInfo[address] = {
+          decimals: assets[address].decimals,
+          symbol: assets[address].symbol,
+          address: address,
+        }
+      } else {
+        const info = await getInfo(address, client)
+        tokenInfo[address] = {
+          decimals: info.decimals,
+          symbol: info.symbol,
+          address: address,
+        }
+      }
+    }
+
     const list = orders
       .filter(order => {
-        return tokenAssets[order.data.makerAsset.toLowerCase()] && tokenAssets[order.data.takerAsset.toLowerCase()]
+        return tokenInfo[order.data.makerAsset.toLowerCase()] && tokenInfo[order.data.takerAsset.toLowerCase()]
       })
-      .map(order => formatter(order, tokenAssets[order.data.makerAsset.toLowerCase()], tokenAssets[order.data.takerAsset.toLowerCase()], network))
+      .map(order => formatter(order, tokenInfo[order.data.makerAsset.toLowerCase()], tokenInfo[order.data.takerAsset.toLowerCase()], network))
 
     res.status(200).json(list)
     return

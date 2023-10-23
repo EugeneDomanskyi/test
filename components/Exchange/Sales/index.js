@@ -1,5 +1,5 @@
-import { memo } from 'react'
-import { useSelector } from 'react-redux'
+import { memo, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
 import styles from './styles.module.scss'
 
@@ -9,10 +9,28 @@ import $app from '@/store/app'
 import App from '@/components/App'
 
 const Sales = ({onClickSale, type}) => {
+  const dispatch = useDispatch()
+
   const trades = useSelector($orders.get.recentTrades(type, 50))
   const blockchain = useSelector($app.get.blockchain)
+  const currentToken = useSelector(({$token}) => $token.current)
+  const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(currentToken.address)
 
   let previousPrice = 0
+
+  useEffect(() => {
+    if (type === 'tokens' && isAddress) {
+      $orders.api.get.tokens.trades({
+        address: currentToken.address,
+        blockchain: blockchain.code,
+        sortBy: 'createDateTime',
+        statuses: '[3]',
+        limit: 100,
+      }).then(res => {
+        dispatch($orders.set.trades({type: 'tokens', data: res}))
+      })
+    }
+  }, [currentToken.address])
 
   const handleClick = sale => () => {
     onClickSale({quantity: sale.amount, price: sale.priceFormatted, side: sale.side})

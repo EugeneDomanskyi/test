@@ -5,9 +5,9 @@ import App from '@/components/App'
 
 const HomeTop = dynamic(import('@/components/Home/HomeTop'), { ssr: false })
 const HomeTable = dynamic(import('@/components/Home/HomeTable'), { ssr: false })
-const HomeEarn = dynamic(import('@/components/Home/HomeEarn'), { ssr: false })
-const HomeUsing = dynamic(import('@/components/Home/HomeUsing'), { ssr: false })
-const HomeGuide = dynamic(import('@/components/Home/HomeGuide'), { ssr: false })
+// const HomeEarn = dynamic(import('@/components/Home/HomeEarn'), { ssr: false })
+// const HomeUsing = dynamic(import('@/components/Home/HomeUsing'), { ssr: false })
+// const HomeGuide = dynamic(import('@/components/Home/HomeGuide'), { ssr: false })
 
 export default function Home() {
   const loading = useSelector(({ $collection }) => $collection.loading)

@@ -226,7 +226,7 @@ const api = {
     },
     tokenChartData: (buyAsset, blockchain, interval) => {
       const network = CHAINS.find(chain => chain.code === blockchain)
-      return fetch(`https://charts.1inch.io/v1.0/chart/aggregated/candle/${buyAsset}/${network.usdtContract}/${interval}/${network.id}`)
+      return fetch(`https://charts.1inch.io/v1.0/chart/aggregated/candle/${buyAsset}/${network.usdtContract}/${interval}/${network.id}`, {cache: 'force-cache'})
         .then(async res => res.ok ? await res.json() : null)
     }
   },
