@@ -205,7 +205,7 @@ const api = {
     const chainId = process.env.NEXT_PUBLIC_APP_ENV === 'local' ? 80001 : 137
     // const chainId = 137
     const url = 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/raffle_info/'
-    return request(`${url}/?campaignIds[]=${campaignId}&chainId=${chainId}`, 'GET', {api: 'remote'})
+    return request(`${url}?campaignIds[]=${campaignId}&chainId=${chainId}`, 'GET', {api: 'remote'})
   },
 }
 
