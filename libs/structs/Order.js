@@ -310,7 +310,10 @@ class NFT extends Order {
           wallet: walletClient,
           chainId,
           onProgress: NFT.onProgress(onComplete)
-        }).catch(reject)
+        }).catch(error => {
+          Order.showErrorMessage('Something went wrong, please try again later')
+          reject(error)
+        })
         return
       }
 
@@ -327,7 +330,10 @@ class NFT extends Order {
         wallet: walletClient,
         chainId,
         onProgress: NFT.onProgress(onComplete),
-      }).catch(reject)
+      }).catch((error) => {
+        Order.showErrorMessage('Something went wrong, please try again later')
+        reject(error)
+      })
     })
   }
 
