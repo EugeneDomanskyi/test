@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { ResponseCookies, RequestCookies } from 'next/dist/server/web/spec-extension/cookies'
 
 const DEFAULT_BLOCKCHAIN = 'ethereum'
+const VALID_BLOCKCHAINS = ['ethereum', 'polygon', 'arbitrum', 'bsc', 'avalanche']
 
 const applySetCookie = (req, res) => {
   const setCookies = new ResponseCookies(res.headers)
@@ -20,7 +21,11 @@ const middleware = (request) => {
   const isMobile = request.headers.get('user-agent').match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i)
   const [_, seg1, seg2, seg3] = request.nextUrl.pathname.split('/')
   if (seg1 === 'exchange') {
-    const blockchain = seg2 ?? request.cookies.get('blockchain')?.value ?? DEFAULT_BLOCKCHAIN
+    let blockchain = seg2 ?? request.cookies.get('blockchain')?.value ?? DEFAULT_BLOCKCHAIN
+    if (!VALID_BLOCKCHAINS.includes(blockchain)) {
+      blockchain = DEFAULT_BLOCKCHAIN
+    }
+    console.log(blockchain)
     response.cookies.delete('blockchain')
     response.cookies.set('blockchain', blockchain)
     applySetCookie(request, response)
