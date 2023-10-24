@@ -79,16 +79,16 @@ const SellModal = ({data}) => {
         break
     }
 
-    trackEvent('Create Order Submit', {
-      'Wallet connect Status': 'Connected',
-      'Order Type': 'Taker order',
-      'Network': data.blockchain.name,
+    trackEvent('Confirm Order Submit', {
+      'Base Currency': current.symbol,
+      'Quote Currency': 'USDT',
+      'Side': 'SELL',
+      'Quantity': data.amount,
       'Price': data.price,
-      'Quantity': tokenType === 'nfts' ? selectedAmount : data.amount,
-      'Total': tokenType === 'nfts' ? selectedAmount*data.price : data.amount*data.price,
-      'Side': 'Sell',
-      'Base Currency': tokenType === 'nfts' ? data.blockchain.currency : 'USDT',
-      'Quote Currency': current.name
+      'Total': data.total,
+      'Network': data.blockchain.code.toUpperCase(),
+      'Order Type': 'Taker',
+      'Step': '',
     })
   }
 
@@ -116,16 +116,16 @@ const SellModal = ({data}) => {
         break
     }
 
-    trackEvent('Create Order Submit', {
-      'Wallet connect Status': 'Connected',
-      'Order Type': 'Maker order',
-      'Network': data.blockchain.name,
+    trackEvent('Confirm Order Submit', {
+      'Base Currency': current.symbol,
+      'Quote Currency': 'USDT',
+      'Side': 'SELL',
+      'Quantity': data.amount,
       'Price': data.price,
-      'Quantity': tokenType === 'nfts' ? selectedAmount : data.amount,
-      'Total': tokenType === 'nfts' ? selectedAmount*data.price : data.amount*data.price,
-      'Side': 'Sell',
-      'Base Currency': tokenType === 'nfts' ? data.blockchain.currency : 'USDT',
-      'Quote Currency': current.name
+      'Total': data.total,
+      'Network': data.blockchain.code.toUpperCase(),
+      'Order Type': 'Maker',
+      'Step': '',
     })
   }
 
@@ -138,15 +138,14 @@ const SellModal = ({data}) => {
     }))
     setStep('complete')
     trackEvent('Create Order Success', {
-      'Wallet connect Status': 'Connected',
-      'Order Type': orderType,
-      'Network': data.blockchain.name,
+      'Base Currency': current.symbol,
+      'Quote Currency': 'USDT',
+      'Side': 'SELL',
+      'Quantity': data.amount,
       'Price': data.price,
-      'Quantity': tokenType === 'nfts' ? selectedAmount : data.amount,
-      'Total': tokenType === 'nfts' ? selectedAmount*data.price : data.amount*data.price,
-      'Side': 'Sell',
-      'Base Currency': tokenType === 'nfts' ? data.blockchain.currency : 'USDT',
-      'Quote Currency': current.name
+      'Total': data.total,
+      'Network': data.blockchain.code.toUpperCase(),
+      'Order Type': orderType.replace(' order', ''),
     })
   }
 

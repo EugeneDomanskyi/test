@@ -4,7 +4,7 @@ import cn from 'classnames'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
-import { trackEvent } from '@/libs/analytics.lib'
+import { trackEvent, getPageName } from '@/libs/analytics.lib'
 
 import Link from 'next/link'
 
@@ -15,7 +15,7 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const RaffleHeader = () => {
-  const { wallet, connect, disconnect } = useWalletConnect()
+  const { wallet, connect, disconnect, getConnectorName } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
   const dispatch = useDispatch()
@@ -39,13 +39,15 @@ const RaffleHeader = () => {
   const handleConnectWallet = async () => {
     if ( ! wallet) {
       trackEvent('Wallet Connect Clicked', {
-        'Wallet connected Status': 'Not Connected'
+        'Source': getPageName(),
       })
+
       const result = await connect()
       if (result) {
-        trackEvent('Wallet Connected Successfully', {
-          'Wallet connected Status': 'Connected',
-          'Wallet Address': result,
+        const walletName = await getConnectorName()
+        trackEvent('Wallet Connect Success', {
+          'Source': getPageName(),
+          'Type': walletName,
         })
       }
     }
@@ -63,15 +65,15 @@ const RaffleHeader = () => {
     }
   }
 
-  const handleDisconnect = () => {
-    trackEvent('Wallet Disconnect Clicked', {
-      'Wallet connected Status': wallet ? 'Connected' : 'Not Connected',
-      'Wallet Address': wallet || null,
-    })
+  const handleDisconnect = async () => {
+    const walletName = await getConnectorName()
+
     disconnect()
     setMenuShow(false)
-    trackEvent('Wallet Disconnect successfully', {
-      'Wallet connected Status': 'Not Connected'
+
+    trackEvent('Wallet Disconnect Success', {
+      'Source': getPageName(),
+      'Type': walletName,
     })
   }
 

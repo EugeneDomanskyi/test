@@ -1,11 +1,19 @@
 import { usePropsHelper } from '@/myhooks/props-helper'
 
+import { trackEvent } from '@/libs/analytics.lib'
+
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const LandingFooter = () => {
   const { isMobile } = usePropsHelper()
+
+  const handlePageEvent = (page) => () => {
+    trackEvent('Page Visited', {
+      'Page Name': page,
+    })
+  }
 
   return (
     <App.Flex className={styles.container}>
@@ -41,7 +49,7 @@ const LandingFooter = () => {
                 <App.Text size={[20, 16]} weight={700}>Resources</App.Text>
 
                 <App.Flex column gap={8}>
-                  <a href="https://blog.tegro.com/" target="_blank" rel="noreferrer">
+                  <a href="https://blog.tegro.com/" target="_blank" rel="noreferrer" onClick={handlePageEvent('Blog')}>
                     <App.Text inline size={[16, 12]} color="#4C69FF">Blog</App.Text>
                   </a>
 
@@ -49,11 +57,11 @@ const LandingFooter = () => {
                     <App.Text inline size={[16, 12]} color="#4C69FF">Tegronomics</App.Text>
                   </a>
 
-                  <a href="https://press.tegro.com/?utm_source=website" target="_blank" rel="noreferrer">
+                  <a href="https://press.tegro.com/?utm_source=website" target="_blank" rel="noreferrer" onClick={handlePageEvent('Press')}>
                     <App.Text inline size={[16, 12]} color="#4C69FF">Press Kit</App.Text>
                   </a>
 
-                  <a href="https://x-by-tegro.gitbook.io/x-by-tegro/" target="_blank" rel="noreferrer">
+                  <a href="https://x-by-tegro.gitbook.io/x-by-tegro/" target="_blank" rel="noreferrer" onClick={handlePageEvent('Gitbook')}>
                     <App.Text inline size={[16, 12]} color="#4C69FF">Gitbook</App.Text>
                   </a>
                 </App.Flex>

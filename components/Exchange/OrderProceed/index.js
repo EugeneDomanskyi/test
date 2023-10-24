@@ -8,6 +8,7 @@ import ProgressBar from 'progressbar.js'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import Order from '@/libs/structs/Order'
 import { INCH_CONTRACTS, TEGRO_FILL_ORDERS_CONTRACTS } from '@/config'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 import Tabs from './Tabs'
@@ -166,6 +167,17 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
     if (!matchingLoaded) {
       return
     }
+    trackEvent('Confirm Order Submit', {
+      'Base Currency': side === 'buy' ? makerAsset.symbol : takerAsset.symbol,
+      'Quote Currency': 'USDT',
+      'Side': side.toUpperCase(),
+      'Quantity': numeral(makerAmountFormatted).format('0.[00000]'),
+      'Price': numeral(price).format('0.[00000]'),
+      'Total': numeral(takerAmountFormatted).format('0.[00000]'),
+      'Network': blockchain.code.toUpperCase(),
+      'Order Type': (flowSteps.fill_order && flowSteps.place_order) ? 'Hybrid' : (flowSteps.fill_order ? 'Taker' : 'Maker'),
+      'Step': 'Confirm',
+    })
     setStep('sign')
     const allowances = []
     if (flowSteps.fill_order) {
@@ -180,6 +192,17 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
     }
     const allowanceResults = await Promise.all(allowances.map(fn => fn()))
     if (allowanceResults.every(res => res.success)) {
+      trackEvent('Confirm Order Submit', {
+        'Base Currency': side === 'buy' ? makerAsset.symbol : takerAsset.symbol,
+        'Quote Currency': 'USDT',
+        'Side': side.toUpperCase(),
+        'Quantity': numeral(makerAmountFormatted).format('0.[00000]'),
+        'Price': numeral(price).format('0.[00000]'),
+        'Total': numeral(takerAmountFormatted).format('0.[00000]'),
+        'Network': blockchain.code.toUpperCase(),
+        'Order Type': (flowSteps.fill_order && flowSteps.place_order) ? 'Hybrid' : (flowSteps.fill_order ? 'Taker' : 'Maker'),
+        'Step': 'Sign',
+      })
       if (flowSteps.fill_order) {
         setSignSteps(state => state.map(step => ({...step, current: step.key === 'fill_order'})))
         const fillOrderResult = await Order.TOKEN.fulfill({
@@ -197,6 +220,28 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
           setStep('error')
           return
         }
+        trackEvent('Confirm Order Submit', {
+          'Base Currency': side === 'buy' ? makerAsset.symbol : takerAsset.symbol,
+          'Quote Currency': 'USDT',
+          'Side': side.toUpperCase(),
+          'Quantity': numeral(makerAmountFormatted).format('0.[00000]'),
+          'Price': numeral(price).format('0.[00000]'),
+          'Total': numeral(takerAmountFormatted).format('0.[00000]'),
+          'Network': blockchain.code.toUpperCase(),
+          'Order Type': (flowSteps.fill_order && flowSteps.place_order) ? 'Hybrid' : (flowSteps.fill_order ? 'Taker' : 'Maker'),
+          'Step': 'Instant',
+        })
+        trackEvent('Create Taker Order Success', {
+          'Base Currency': side === 'buy' ? makerAsset.symbol : takerAsset.symbol,
+          'Quote Currency': 'USDT',
+          'Side': side.toUpperCase(),
+          'Quantity': numeral(makerAmountFormatted).format('0.[00000]'),
+          'Price': numeral(price).format('0.[00000]'),
+          'Total': numeral(takerAmountFormatted).format('0.[00000]'),
+          'Network': blockchain.code.toUpperCase(),
+          'Order Type': (flowSteps.fill_order && flowSteps.place_order) ? 'Hybrid' : (flowSteps.fill_order ? 'Taker' : 'Maker'),
+          'Step': 'Confirm',
+        })
       }
       if (flowSteps.place_order) {
         setSignSteps(state => state.map(step => ({...step, current: step.key === 'place_order'})))
@@ -214,8 +259,41 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
           setStep('error')
           return
         }
+        trackEvent('Confirm Order Submit', {
+          'Base Currency': side === 'buy' ? makerAsset.symbol : takerAsset.symbol,
+          'Quote Currency': 'USDT',
+          'Side': side.toUpperCase(),
+          'Quantity': numeral(makerAmountFormatted).format('0.[00000]'),
+          'Price': numeral(price).format('0.[00000]'),
+          'Total': numeral(takerAmountFormatted).format('0.[00000]'),
+          'Network': blockchain.code.toUpperCase(),
+          'Order Type': (flowSteps.fill_order && flowSteps.place_order) ? 'Hybrid' : (flowSteps.fill_order ? 'Taker' : 'Maker'),
+          'Step': 'Orderbook Entry',
+        })
+        trackEvent('Create Maker Order Success', {
+          'Base Currency': side === 'buy' ? makerAsset.symbol : takerAsset.symbol,
+          'Quote Currency': 'USDT',
+          'Side': side.toUpperCase(),
+          'Quantity': numeral(makerAmountFormatted).format('0.[00000]'),
+          'Price': numeral(price).format('0.[00000]'),
+          'Total': numeral(takerAmountFormatted).format('0.[00000]'),
+          'Network': blockchain.code.toUpperCase(),
+          'Order Type': (flowSteps.fill_order && flowSteps.place_order) ? 'Hybrid' : (flowSteps.fill_order ? 'Taker' : 'Maker'),
+          'Step': 'Confirm',
+        })
       }
       setStep('result')
+      trackEvent('Create Order Success', {
+        'Base Currency': side === 'buy' ? makerAsset.symbol : takerAsset.symbol,
+        'Quote Currency': 'USDT',
+        'Side': side.toUpperCase(),
+        'Quantity': numeral(makerAmountFormatted).format('0.[00000]'),
+        'Price': numeral(price).format('0.[00000]'),
+        'Total': numeral(takerAmountFormatted).format('0.[00000]'),
+        'Network': blockchain.code.toUpperCase(),
+        'Order Type': (flowSteps.fill_order && flowSteps.place_order) ? 'Hybrid' : (flowSteps.fill_order ? 'Taker' : 'Maker'),
+        'Step': 'Confirm',
+      })
       if (!flowSteps.fill_order || !flowSteps.place_order) {
         setCurrentTab(flowSteps.fill_order ? 'fill_order' : 'limit_order')
       }

@@ -34,10 +34,10 @@ const SwapModalInputList = ({ tokens, open, variant, onSelect, onClose }) => {
   }
 
   const handleSelect = (item) => () => {
-    trackEvent('Select Asset', {
-      'Network': blockchain.code.toUpperCase(),
-      'Token': item.name,
-    })
+    // trackEvent('Select Asset', {
+    //   'Network': blockchain.code.toUpperCase(),
+    //   'Token': item.name,
+    // })
     if (onSelect) {
       onSelect(item.code, variant)
     }

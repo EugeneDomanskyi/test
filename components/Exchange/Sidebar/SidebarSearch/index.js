@@ -42,9 +42,9 @@ const SidebarSearch = ({ search, loading, onSearch, ...props }) => {
       onSearch(searchQuery)
     }
 
-    trackEvent('Search Asset', {
+    trackEvent('Search Market', {
       'Network': blockchain.code.toUpperCase(),
-      'Search Term': searchQuery,
+      'Search term': searchQuery,
     })
   }
 

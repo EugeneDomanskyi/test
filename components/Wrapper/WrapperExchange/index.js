@@ -156,8 +156,11 @@ const WrapperExchange = ({children, isMobile}) => {
 
   useEffect(() => {
     if (storedBlockchain.code !== blockchain) {
+      const newBlockchain = ['ethereum', 'polygon', 'arbitrum', 'bsc', 'avalanche'].includes(storedBlockchain.code) ? storedBlockchain.code : blockchain
+      dispatch($app.set.code(newBlockchain))
       dispatch($token.set.loading(true))
-      router.replace(`/exchange/${storedBlockchain.code}/0x`)
+      router.replace(`/exchange/${newBlockchain}/0x`)
+      
     }
   }, [storedBlockchain, blockchain])
 
@@ -171,6 +174,9 @@ const WrapperExchange = ({children, isMobile}) => {
 
   // fetch list for blockchain
   useEffect(() => {
+    if (currentChain.code !== blockchain) {
+      return
+    }
     const post = {
       skip: (pages.current - 1) * 10,
       orderBy: orderBy,
@@ -178,7 +184,6 @@ const WrapperExchange = ({children, isMobile}) => {
       searchText: '',
       usdt: currentChain.usdtContract,
     }
-    
     getTokens(currentChain.baseUniswapUrl, post).then(async tokens => {
       dispatch($token.set.all(tokens))
       dispatch($token.set.pages({ next: (pages.current * 1 + 1) }))
@@ -200,7 +205,7 @@ const WrapperExchange = ({children, isMobile}) => {
       const prices = await getTokenDayDatas(currentChain.baseUniswapUrl, tokenIds)
       dispatch($token.set.updatedAll(prices))
     })
-  }, [currentChain.baseUniswapUrl, sort, pages.current])
+  }, [currentChain.baseUniswapUrl, sort, pages.current, currentChain.code, blockchain])
 
   // fetch current if address is correct
   useEffect(() => {

@@ -57,13 +57,6 @@ const Exchange = () => {
 
   const tradeForm = useRef(null)
 
-  useEffect(() => {
-    trackEvent('Tokens Clicked', {
-      'Network': blockchain.code.toUpperCase(),
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-    })
-  }, [])
-
   const handleOrdersUpdated = useCallback(() => {
     updateOrders()
   }, [wallet, queryTokenId, queryBlockchainCode])
