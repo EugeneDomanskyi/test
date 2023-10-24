@@ -163,8 +163,6 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
     onClose()
   }
 
-  console.log(makerAmountFormatted, takerAmountFormatted, price)
-
   const handleConfirm = async () => {
     if (!matchingLoaded) {
       return
