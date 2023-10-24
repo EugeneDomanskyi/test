@@ -142,10 +142,17 @@ const useWalletConnect = () => {
   const getConnectorName = async () => {
     const account = getAccount()
     if (account) {
-    //   switch (account?.connector?.id) {
-        
-    //   }
-    // }
+      switch (account?.connector?.id) {
+        case 'metaMask': return 'MetaMask'
+        case 'walletConnect': return 'WalletConnect'
+        case 'magic': return 'Magic.Link'
+        case 'rainbow': return 'Rainbow'
+        case 'coinbase': return 'CoinBase'
+        case 'brave': return 'Brave'
+        case 'safe': return 'Safe'
+        default: return account?.connector?.id
+      }
+    }
 
     return null
   }

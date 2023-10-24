@@ -50,23 +50,26 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose, onChangeNetwo
   }
 
   const handleBlockchainChange = async (val) => {
-    trackEvent('Switch Network', {
-      Network: val.toUpperCase(),
-    })
-    
-    dispatch($collection.set.clear())
-    dispatch($token.set.clear())
-    setMenuShow(false)
-    if (wallet) {
-      const network = await changeNetwork(val)
-      if (network) {
-        onChangeNetwork()
+    if (val != blockchain.code) {
+      trackEvent('Switch Network', {
+        'Old Network': blockchain.code.toUpperCase(),
+        'New Network': val.toUpperCase(),
+      })
+      
+      dispatch($collection.set.clear())
+      dispatch($token.set.clear())
+      setMenuShow(false)
+      if (wallet) {
+        const network = await changeNetwork(val)
+        if (network) {
+          onChangeNetwork()
+        }
       }
-    }
-    dispatch($app.set.code(val))
+      dispatch($app.set.code(val))
 
-    if (onMobileMenuClose) {
-      onMobileMenuClose()
+      if (onMobileMenuClose) {
+        onMobileMenuClose()
+      }
     }
   }
 

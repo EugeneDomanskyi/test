@@ -58,16 +58,16 @@ const TradeBuyModal = ({data}) => {
         break
     }
 
-    trackEvent('Create Order Submit', {
-      'Wallet connect Status': 'Connected',
-      'Order type': 'Taker order',
-      'Network': data.blockchain.name,
-      'Price': data.price,
+    trackEvent('Confirm Order Submit', {
+      'Base Currency': current.symbol,
+      'Quote Currency': 'USDT',
+      'Side': 'BUY',
       'Quantity': data.amount,
+      'Price': data.price,
       'Total': data.total,
-      'Side': 'Buy',
-      'Base Currency': tokenType === 'nfts' ? data.blockchain.currency : 'USDT',
-      'Quote Currency': current.name
+      'Network': data.blockchain.code.toUpperCase(),
+      'Order Type': 'Taker',
+      'Step': '',
     })
   }
 
@@ -101,16 +101,16 @@ const TradeBuyModal = ({data}) => {
       },
     }))
 
-    trackEvent('Create Order Submit', {
-      'Wallet connect Status': 'Connected',
-      'Order type': 'Maker order',
-      'Network': data.blockchain.name,
-      'Price': data.price,
+    trackEvent('Confirm Order Submit', {
+      'Base Currency': current.symbol,
+      'Quote Currency': 'USDT',
+      'Side': 'BUY',
       'Quantity': data.amount,
+      'Price': data.price,
       'Total': data.total,
-      'Side': 'Buy',
-      'Base Currency': tokenType === 'nfts' ? data.blockchain.currency : 'USDT',
-      'Quote Currency': current.name
+      'Network': data.blockchain.code.toUpperCase(),
+      'Order Type': 'Maker',
+      'Step': '',
     })
   }
 
@@ -123,15 +123,14 @@ const TradeBuyModal = ({data}) => {
     }))
     setStep('complete')
     trackEvent('Create Order Success', {
-      'Wallet connect Status': 'Connected',
-      'Order type': orderType,
-      'Network': data.blockchain.name,
-      'Price': data.price,
+      'Base Currency': current.symbol,
+      'Quote Currency': 'USDT',
+      'Side': 'BUY',
       'Quantity': data.amount,
+      'Price': data.price,
       'Total': data.total,
-      'Side': 'Buy',
-      'Base Currency': tokenType === 'nfts' ? data.blockchain.currency : 'USDT',
-      'Quote Currency': current.name
+      'Network': data.blockchain.code.toUpperCase(),
+      'Order Type': orderType.replace(' order', ''),
     })
   }
 

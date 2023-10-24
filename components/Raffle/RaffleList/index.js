@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
+import moment from 'moment'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 
@@ -59,25 +60,33 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
     }
   }, [queryCampaignId, campaigns])
 
+  const getTime = (item) => {
+    const end = item.endTimestamp * 1000
+    const current = moment().valueOf()
+    const duration = moment.duration(end - current, 'milliseconds')
+    return duration.humanize()
+  }
+
   const handleClose = () => {
     router.push('/earn', undefined, { scroll: false })
     getUserTKeysBalance()
   }
 
   const handleTabChange = (value) => {
-    trackEvent(value === 'my' ? 'Click Cases History' :  'Click Browse Case', {
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': balance,
-    })
+    if (value === 'my') {
+      trackEvent('View Case History')
+    }
     setTab(value)
   }
 
   const handleParticipate = async (item) => {
-    trackEvent('Click View Case', {
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': balance,
-      'TKeys Required': item.tKeyRequired,
+    trackEvent('View Case', {
+      'Name': item.title,
+      'Time Left': getTime(item),
+      'Tkey Cost': item.tKeyRequired,
+      'Case ID': item.id,
     })
+
     const address = await connect()
     if ( ! address) {
       return
@@ -107,11 +116,11 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
   }
 
   const handleSearch = (search) => {
-    trackEvent('Click Search', {
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': balance,
-      'Search Term': search,
-    })
+    // trackEvent('Click Search', {
+    //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+    //   'Tkeys Quantity': balance,
+    //   'Search Term': search,
+    // })
   }
 
   return (

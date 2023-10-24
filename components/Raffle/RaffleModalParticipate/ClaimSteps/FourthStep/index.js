@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import lottie from 'lottie-web'
 import Image from 'next/image'
+import moment from 'moment'
 import animationData from '@/public/animations/confetti_new.json'
 import styles from './styles.module.scss'
 
@@ -51,18 +52,23 @@ const FourthStep = ({campaign, onSubmit, onShare}) => {
   }, [audioRef])
 
   const handleClickNextStep = () => {
-    trackEvent('Click Open another USDT case', {
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': balance,
-      'TKeys Required': campaign.tKeyRequired,
-      'Market': 'USDT',
-    })
     onSubmit()
   }
 
+  const getTime = (item) => {
+    const end = item.endTimestamp * 1000
+    const current = moment().valueOf()
+    const duration = moment.duration(end - current, 'milliseconds')
+    return duration.humanize()
+  }
+
   const handleClickShare = () => {
-    trackEvent('Click Share Reward Won', {
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+    trackEvent('Click Case Share ', {
+      'Name': campaign.title,
+      'Time Left': getTime(campaign),
+      'Tkey Cost': campaign.tKeyRequired,
+      'Case ID': campaign.id,
+      'Page': 'Case History',
     })
     const shareText = `🥳💸 Woohoo! I just won $${prize.amount} in USDT from a case! You can win $USDT, $PEPE, $SHIB, $FLOKI, and other tokens in the $10000 Tegro Treasure Case series! 💰💰 Join me now! Unlock your first Tegro case 🎁 for FREE! 👀 Start here 👉`
     onShare(shareText)

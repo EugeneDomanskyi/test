@@ -28,17 +28,11 @@ const SidebarItem = ({ item, isActive, withArrow, searching, onClick, onClose })
     if (onClick) {
       onClick()
     } else {
-      trackEvent('Select Asset', {
+      trackEvent('View Market', {
+        'Base Currency': item.symbol,
+        'Quote Currency': 'USDT',
         'Network': blockchain.code.toUpperCase(),
-        'Token': item.name,
       })
-
-      if (searching) {
-        trackEvent('Search Select Asset', {
-          'Network': blockchain.code.toUpperCase(),
-          'Token': item.name,
-        })
-      }
 
       router.push(`/${isNfts ? 'nfts' : 'exchange'}/${blockchain.code}/${item.address}`, undefined, { scroll: false })
 
