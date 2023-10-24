@@ -5,13 +5,14 @@ import { useAccount } from 'wagmi'
 import { getNetwork } from '@wagmi/core'
 import amplitude from 'amplitude-js'
 import Smartlook from 'smartlook-client'
+import dynamic from 'next/dynamic'
 
 import { trackEvent } from '@/libs/analytics.lib'
 
 import Header from '@/components/Header'
-import WrapperExchange from '@/components/Wrapper/WrapperExchange'
-import WrapperCollections from '@/components/Wrapper/WrapperCollections'
-import App from '@/store/app'
+
+const WrapperExchange = dynamic(() => import('@/components/Wrapper/WrapperExchange'), {ssr: false})
+const WrapperCollections = dynamic(() => import('@/components/Wrapper/WrapperCollections'), {ssr: false})
 
 const Wrapper = ({ children, isMobile }) => {
   const router = useRouter()
