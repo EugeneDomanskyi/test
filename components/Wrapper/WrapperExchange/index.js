@@ -156,8 +156,11 @@ const WrapperExchange = ({children, isMobile}) => {
 
   useEffect(() => {
     if (storedBlockchain.code !== blockchain) {
+      let newBlockchain = ['ethereum', 'polygon', 'arbitrum', 'bsc', 'avalanche'].includes(storedBlockchain.code) ? storedBlockchain.code : blockchain
+      dispatch($app.set.code(newBlockchain))
       dispatch($token.set.loading(true))
-      router.replace(`/exchange/${storedBlockchain.code}/0x`)
+      router.replace(`/exchange/${newBlockchain}/0x`)
+      
     }
   }, [storedBlockchain, blockchain])
 
@@ -171,6 +174,9 @@ const WrapperExchange = ({children, isMobile}) => {
 
   // fetch list for blockchain
   useEffect(() => {
+    if (currentChain.code !== blockchain) {
+      return
+    }
     const post = {
       skip: (pages.current - 1) * 10,
       orderBy: orderBy,
