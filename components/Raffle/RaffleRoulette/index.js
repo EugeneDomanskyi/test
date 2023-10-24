@@ -11,18 +11,18 @@ const RaffleRoulette = ({autoStart = false, onPrizeDefined, campaign}) => {
 
   const prizes = []
 
-  campaign.rewardRange.map((reward, index) => {
-    const currentReward = campaign.odds.find(odd => odd.range === reward.range*1)
+  campaign.rewards.map((reward, index) => {
+    const currentReward = campaign.rewardRange.find(range => range.range*1 === reward.range)
     if (!currentReward) {
       return
     }
-    const title = currentReward.title
-    const amount = reward.reward / 1000000
+    const title = reward.title
+    const amount = currentReward.reward / 1000000
     
     prizes.push(
       {
         component: <RaffleReward title={title} amount={`${amount} USDT`} additionalText="Reward" size="large" />,
-        winner: reward.reward*1 === campaign.expectedReward
+        winner: currentReward.reward*1 === campaign.expectedReward
       }
     )
   })

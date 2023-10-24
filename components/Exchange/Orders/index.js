@@ -58,6 +58,8 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
     setCancellingOrders(state => [...state, order.id])
     order.cancel().then(() => {
       trackEvent('Cancel Order Success', eventPost)
+    }).catch(error => {
+      console.log(error)
     }).finally(() => {
       setCancellingOrders(state => state.filter(id => id !== order.id))
       onOrderCancelled()

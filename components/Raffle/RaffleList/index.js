@@ -110,8 +110,9 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
   }
 
   const getTweeButtonLink = (text) => {
-    const url = `${window.location.origin}/earn`
-    
+    // const url = `${window.location.origin}/earn`
+    const url = `https://bit.ly/3M8Tkh2`
+
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
   }
 

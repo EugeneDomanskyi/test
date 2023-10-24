@@ -43,8 +43,8 @@ const RafflePage = () => {
   const prevWallet = useRef()
   const reward = useRef()
 
-  // const requiredChain = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
-  const requiredChain = 'polygon'
+  const requiredChain = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
+  // const requiredChain = 'polygon'
 
   useEffect(() => {
     if (blockchain.code) {
@@ -52,7 +52,7 @@ const RafflePage = () => {
         dispatch($app.set.code(requiredChain))
       }
     }
-  }, [blockchain.code])
+  }, [blockchain?.code])
   
   useEffect(() => {
     if (blockchain.code == requiredChain) {
@@ -63,13 +63,25 @@ const RafflePage = () => {
         })
 
         if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('campaigns')) {
-          const campaigns = await getIpfsInfo(result.data.campaigns)
-          dispatch($raffle.set.all(campaigns.map(item => ({
-            ...item,
-            rewardAmount: item.rewardAmount / Math.pow(10, 6),
-            totalTransferred: item.totalTransferred / Math.pow(10, 6),
-            status: getStatus(item),
-          }))))
+          // const campaigns = await getIpfsInfo(result.data.campaigns)
+          const campaigns = result.data.campaigns
+          const campaignIds = result.data.campaigns.map(item => item.id)
+          const queryString = campaignIds.map(id => `campaignIds[]=${id}`).join('&')
+          const res = await $raffle.api.info(queryString)
+          const rewards = JSON.parse(res.data)
+          
+          dispatch($raffle.set.all(campaigns.map(item => {
+            const rewardInfo = rewards.find(reward => reward.campaign_id === item.id*1)
+            return {
+              ...item,
+              title: rewardInfo.info.title,
+              image: rewardInfo.info.image,
+              rewards: rewardInfo.info.rewardRange,
+              rewardAmount: item.rewardAmount / Math.pow(10, 6),
+              totalTransferred: item.totalTransferred / Math.pow(10, 6),
+              status: getStatus(item),
+            }
+          })))
         }
 
         const last = await apollo.current.query({
@@ -109,28 +121,28 @@ const RafflePage = () => {
     }
   }, [wallet, campaignLoading, blockchain.code])
 
-  const getUserSummary = async (hard = false) => {
-    if (hard) {
-      apollo.current = getApolloClient(blockchain)
-    }
+  // const getUserSummary = async (hard = false) => {
+  //   if (hard) {
+  //     apollo.current = getApolloClient(blockchain)
+  //   }
 
-    const result = await apollo.current.query({
-      query: $raffle.query.user,
-      variables: {
-        id: wallet,
-      },
-    })
+  //   const result = await apollo.current.query({
+  //     query: $raffle.query.user,
+  //     variables: {
+  //       id: wallet,
+  //     },
+  //   })
 
-    if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('user')) {
-      const user = result.data.user
-      if (user) {
-        dispatch($raffle.set.user({
-          ...user,
-          totalEarned: user.totalEarned / Math.pow(10, 6),
-        }))
-      }
-    }
-  }
+  //   if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('user')) {
+  //     const user = result.data.user
+  //     if (user) {
+  //       dispatch($raffle.set.user({
+  //         ...user,
+  //         totalEarned: user.totalEarned / Math.pow(10, 6),
+  //       }))
+  //     }
+  //   }
+  // }
 
   const getUserCases = async (hard = false) => {
     if (hard) {
@@ -204,47 +216,47 @@ const RafflePage = () => {
     }
   }
 
-  const getIpfsInfo = async (campaigns) => {
-    const client = new Web3Storage({ token: process.env.NEXT_PUBLIC_WEB3_STORAGE_API_KEY })
-    const promises = campaigns.map(item => {
-      const hash = hexToString(item.ipfsHash)
-      return client.get(hash)
-    })
+  // const getIpfsInfo = async (campaigns) => {
+  //   const client = new Web3Storage({ token: process.env.NEXT_PUBLIC_WEB3_STORAGE_API_KEY })
+  //   const promises = campaigns.map(item => {
+  //     const hash = hexToString(item.ipfsHash)
+  //     return client.get(hash)
+  //   })
 
-    const result = []
-    const responses = await Promise.all(promises)
-    for (const index in responses) {
-      const response = responses[index]
-      if (response.ok) {
-        const cid = response.url.split('/').pop()
-        const files = await response.files()
-        const file = files.find(item => item.name == 'info.json')
-        if (file) {
-          const info = await readIpfsInfo(file)
-          const campaign = campaigns[index]
-          result.push({
-            ...campaign,
-            ...info,
-          })
-        }
-      } else {
-        result.push({
-          id: 0,
-          ipfsHash: '0x00',
-          rewardAmount: 100000000,
-          totalTransferred: 0,
-          tKeyRequired: 3,
-          status: 'ACTIVE',
-          startTimestamp: 1695204437,
-          endTimestamp: 1695215237,
-          title: 'Unknown Campaign',
-          image: '/images/raffle/usdt.png',
-        })
-      }
-    }
+  //   const result = []
+  //   const responses = await Promise.all(promises)
+  //   for (const index in responses) {
+  //     const response = responses[index]
+  //     if (response.ok) {
+  //       const cid = response.url.split('/').pop()
+  //       const files = await response.files()
+  //       const file = files.find(item => item.name == 'info.json')
+  //       if (file) {
+  //         const info = await readIpfsInfo(file)
+  //         const campaign = campaigns[index]
+  //         result.push({
+  //           ...campaign,
+  //           ...info,
+  //         })
+  //       }
+  //     } else {
+  //       result.push({
+  //         id: 0,
+  //         ipfsHash: '0x00',
+  //         rewardAmount: 100000000,
+  //         totalTransferred: 0,
+  //         tKeyRequired: 3,
+  //         status: 'ACTIVE',
+  //         startTimestamp: 1695204437,
+  //         endTimestamp: 1695215237,
+  //         title: 'Unknown Campaign',
+  //         image: '/images/raffle/usdt.png',
+  //       })
+  //     }
+  //   }
 
-    return result
-  }
+  //   return result
+  // }
 
   const readIpfsInfo = (file) => {
     return new Promise((resolve, reject) => {
@@ -293,13 +305,13 @@ const RafflePage = () => {
     <>
       <Head>
         <title>$10,000+ Tegro Treasure Case Series Live Now! | Tegro Earn</title>
-        <meta content="Join the $10,000+ Tegro Treasure Case Series today! Complete trading objectives to obtain TKeys and unlock cases to win exciting $USDT, $PEPE, $SHIB, $FLOKI, and other token rewards! Enter now." property="description" key="description" />
+        <meta content="WOAH! I just won rewards in $USDT, $PEPE, $SHIB, $FLOKI and other tokens by opening cases in the $10,000+ Tegro Treasure Case Series!" property="description" key="description" />
         <meta property="og:image" content="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/tegro-earn.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@TegroFi" />
         <meta name="twitter:title" content="$10,000+ Tegro Treasure Case Series Live Now! | Tegro Earn" />
-        <meta name="twitter:description" content="Join the $10,000+ Tegro Treasure Case Series today! Complete trading objectives to obtain TKeys and unlock cases to win exciting $USDT, $PEPE, $SHIB, $FLOKI, and other token rewards! Enter now." />
-        <meta name="twitter:image" content="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/tegro-earn.jpg" />
+        <meta name="twitter:description" content="WOAH! I just won rewards in $USDT, $PEPE, $SHIB, $FLOKI and other tokens by opening cases in the $10,000+ Tegro Treasure Case Series!" />
+        <meta name="twitter:image" content="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/earn_meta_image.jpg" />
       </Head>
       
       <App.Flex column>

@@ -13,9 +13,7 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
 import merge from 'lodash.merge'
-// import { UniversalWalletConnector } from '@magiclabs/wagmi-connector'
 import * as MagicConnectors from '@magiclabs/wagmi-connector/dist/lib/connectors/universalWalletConnector'
-// console.log(MagicConnectors.UniversalWalletConnector)
 import { CHAINS } from '@/config'
 import store from '@/store'
 import $token from '@/store/token'
@@ -127,11 +125,13 @@ const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
   },
 })
 
+amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
+
 function MyApp({ Component, pageProps, initialData, currentPage, currentAddress, currentSymbol, ssRoute, marketInfo, marketsList }) {
   const storeRef = useRef(store(initialData)).current
 
   useEffect(() => {
-    amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
+    
     if (process.env.NEXT_PUBLIC_APP_ENV !== 'local') {
       Smartlook.init('cf71ed516173943775e4d8cc10245b95b9ed7de0')
     }

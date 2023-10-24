@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
 import Image from 'next/image'
 import cn from 'classnames'
 import moment from 'moment'
@@ -27,6 +28,7 @@ import styles from './styles.module.scss'
 
 const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, onUpdateUserCases, onShare}) => {
   const dispatch = useDispatch()
+  const router = useRouter()
   const { propValue } = usePropsHelper()
   const { wallet, changeNetwork } = useWalletConnect()
   
@@ -45,8 +47,9 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   const [errorType, setErrorType] = useState('')
   const [showKeysError, setShowKeysError] = useState(false)
   const [closeKeysError, setCloseKeysError] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const rewards = [...item.rewardRange]
+  const rewards = [...item.rewards]
 
   useEffect(() => {
     (async () => {
@@ -64,24 +67,18 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   }, [expectedReward])
 
   const handleClickOpen = async () => {
-    // if (showKeysError) {
-    //   setCloseKeysError(true)
-    //   setShowKeysError(!showKeysError)
-    // } else {
-    //   setCloseKeysError(false)
-    //   setShowKeysError(!showKeysError)
-    // }
-    // return
+    setLoading(true)
     const res = await onUpdateUserTKeys(item.tKeyRequired)
-
     if (res.length !== item.tKeyRequired*1) {
-      setStep('error')
-      setErrorType('balance')
-      dispatch($modal.set.update({
-        header: {
-          title: 'Insufficient TKeys Balance',
-        },
-      }))
+      if (showKeysError) {
+        setCloseKeysError(true)
+        setShowKeysError(!showKeysError)
+      } else {
+        setCloseKeysError(false)
+        setShowKeysError(!showKeysError)
+      }
+      setLoading(false)
+      return
     }
 
     trackEvent('Open Case', {
@@ -93,6 +90,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
 
     setStep(isApproved ? 1 : 0)
     setShowClaim(true)
+    setLoading(false)
     if (! isApproved) {
       dispatch($modal.set.update({
         header: {
@@ -206,8 +204,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
     }
 
     if (step === 4) {
-      handleCloseModal()
-      return
+      setShowClaim(false)
     }
 
     setStep(step >= 4 ? 0 : step+1)
@@ -220,7 +217,6 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
       if (result?.data) {
         const parsedRes = JSON.parse(result.data)
         const rewardAmount = parsedRes[enterCampaignHash]?.expectedRewardAmount === '0' ? '0' : parsedRes[enterCampaignHash]?.expectedRewardAmount*1
-    
         if (!rewardAmount) {
           setTimeout(() => {
             fetchReward(enterCampaignHash, (maxTries - 1))
@@ -318,14 +314,14 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
 
             <App.Flex gap={16} className={styles.rewardsContainer}>
               {
-                rewards.sort((a, b) => parseInt(a.range) - parseInt(b.range)).map((reward, index) => {
-                  const currentReward = item.odds.find(odd => odd.range === reward.range*1)
+                rewards.length && rewards.sort((a, b) => parseInt(a.range) - parseInt(b.range)).map((reward, index) => {
+                  const currentReward = item.rewardRange.find(range => range.range*1 === reward.range)
                   if (!currentReward) {
                     return
                   }
-                  const title = currentReward.title
-                  const odds = currentReward.odds
-                  const amount = reward.reward / 1000000
+                  const title = reward.title
+                  const odds = reward.odds
+                  const amount = currentReward.reward / 1000000
                   return (
                     <RaffleReward key={index} title={title} amount={`$${amount}`} additionalText={`Chances: ${odds}%`} />
                   )
@@ -349,7 +345,11 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
               <App.Flex className={styles.buttonWrapper}>
                 <App.Flex className={cn(styles.buttonText, {[styles.show]: ! showKeysError})}>
                   <App.Button primary sx={{width: 240, height: 56, fontSize: 16, fontWeight: 600}} onClick={handleClickOpen}>
-                    Unlock with {item.tKeyRequired +  ' ' + (item.tKeyRequired*1 === 1 ? 'TKey' : 'TKeys')}
+                    {
+                      loading
+                        ? <App.Loader />
+                        : `Unlock with ${item.tKeyRequired +  ' ' + (item.tKeyRequired*1 === 1 ? 'TKey' : 'TKeys')}`
+                    }
                   </App.Button>
                 </App.Flex>
                 

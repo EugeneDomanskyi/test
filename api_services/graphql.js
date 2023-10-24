@@ -36,5 +36,24 @@ export const queries = {
         totalValueLockedUSD
       }
     }
+  `,
+  tokenDayDatas: gql`
+    query tokenDayDatas($ids: [String]) {
+      tokenDayDatas(
+        where: {token_in: $ids}
+        orderBy: date
+        orderDirection: desc
+        first: 30
+      ) {
+        high
+        low
+        priceUSD
+        volumeUSD
+        date
+        token {
+          id
+        }
+      }
+    }
   `
 }
