@@ -32,8 +32,8 @@ const FourthStep = ({campaign, onSubmit, onShare}) => {
     })
 
     const currentPrize = campaign.rewardRange.find(item => item.reward*1 === campaign.expectedReward)
-    const currentOdds = campaign.odds.find(item => item.range === currentPrize.range*1)
-    setPrize({amount: currentPrize.reward / 1000000, title: currentOdds?.title})
+    const currentReward = campaign.rewards.find(item => item.range === currentPrize.range*1)
+    setPrize({amount: currentPrize.reward / 1000000, title: currentReward?.title})
 
     anim.onComplete = () => {
       setShowConfetti(false)
