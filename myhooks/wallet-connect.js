@@ -88,7 +88,7 @@ const useWalletConnect = () => {
   }, [address, connector?.id, isConnected])
 
   useEffect(() => {
-    setBlockchain(isConnected ? chain.name : null)
+    setBlockchain(isConnected ? chain : null)
   }, [chain, isConnected])
 
   useEffect(() => {
