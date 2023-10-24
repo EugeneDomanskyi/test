@@ -103,6 +103,12 @@ const Orders = ({current, type, onOrderCancelled, onClickOrder}) => {
   }
 
   const handleChangeOrdersType = type => () => {
+    trackEvent(`View ${type == 'open' ? 'Open' : 'Completed'} Order`, {
+      'Base Currency': current.symbol,
+      'Quote Currency': 'USDT',
+      'Network': blockchain.code.toUpperCase(),
+    })
+
     setOrderTypes(type)
   }
 
