@@ -31,7 +31,6 @@ const Header = ({onHeightCounted}) => {
 
   const balance = useSelector(({$raffle}) => $raffle.balance)
   const blockchain = useSelector($app.get.blockchain)
-  const loadingUser = useSelector(({ $raffle }) => $raffle.loadingUser)
 
   const headerRef = useRef(null)
 
@@ -42,6 +41,7 @@ const Header = ({onHeightCounted}) => {
   const [currentBalance, setCurrentBalance] = useState({amount: 0, symbol: ''})
   const [isBannerClosed, setIsBannerClosed] = useState(false)
   const [showPromoBanner, setShowPromoBanner] = useState(true)
+  const [balanceLoading, setBalanceLoading] = useState(true)
 
   useEffect(() => {
     if (headerRef.current) {
@@ -69,6 +69,7 @@ const Header = ({onHeightCounted}) => {
   useEffect(() => {
     if (isEarn) {
       setCurrentBalance({amount: balance, symbol: 'TKeys'})
+      setBalanceLoading(false)
     }
   }, [balance, isEarn])
 
@@ -136,13 +137,15 @@ const Header = ({onHeightCounted}) => {
   }
 
   const handleGetBalance = async () => {
+    setBalanceLoading(true)
     if (! isEarn) {
       const balance = await getBalance('', true)
-      if (balance) {
+      if (balance.formatted) {
         const amount = balance.formatted*1
         setCurrentBalance({amount: amount.toFixed(4), symbol: balance.symbol})
       }
     }
+    setBalanceLoading(false)
   }
 
   const handleClickDiscord = () => {
@@ -275,7 +278,7 @@ const Header = ({onHeightCounted}) => {
                       ! isMobile
                         ? <App.Flex>
                             {
-                              loadingUser
+                              balanceLoading
                                 ? <App.Flex center sx={{width: 90}}>
                                     <App.Loader />
                                   </App.Flex>
