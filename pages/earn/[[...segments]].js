@@ -67,13 +67,25 @@ const RafflePage = () => {
         })
 
         if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('campaigns')) {
-          const campaigns = await getIpfsInfo(result.data.campaigns)
-          dispatch($raffle.set.all(campaigns.map(item => ({
-            ...item,
-            rewardAmount: item.rewardAmount / Math.pow(10, 6),
-            totalTransferred: item.totalTransferred / Math.pow(10, 6),
-            status: getStatus(item),
-          }))))
+          // const campaigns = await getIpfsInfo(result.data.campaigns)
+          const campaigns = result.data.campaigns
+          const campaignIds = result.data.campaigns.map(item => item.id)
+          const queryString = campaignIds.map(id => `campaignIds[]=${id}`).join('&')
+          const res = await $raffle.api.info(queryString)
+          const rewards = JSON.parse(res.data)
+          
+          dispatch($raffle.set.all(campaigns.map(item => {
+            const rewardInfo = rewards.find(reward => reward.campaign_id === item.id*1)
+            return {
+              ...item,
+              title: rewardInfo.info.title,
+              image: rewardInfo.info.image,
+              rewards: rewardInfo.info.rewardRange,
+              rewardAmount: item.rewardAmount / Math.pow(10, 6),
+              totalTransferred: item.totalTransferred / Math.pow(10, 6),
+              status: getStatus(item),
+            }
+          })))
         }
 
         const last = await apollo.current.query({
@@ -113,28 +125,28 @@ const RafflePage = () => {
     }
   }, [wallet, campaignLoading, blockchain.code])
 
-  const getUserSummary = async (hard = false) => {
-    if (hard) {
-      apollo.current = getApolloClient(blockchain)
-    }
+  // const getUserSummary = async (hard = false) => {
+  //   if (hard) {
+  //     apollo.current = getApolloClient(blockchain)
+  //   }
 
-    const result = await apollo.current.query({
-      query: $raffle.query.user,
-      variables: {
-        id: wallet,
-      },
-    })
+  //   const result = await apollo.current.query({
+  //     query: $raffle.query.user,
+  //     variables: {
+  //       id: wallet,
+  //     },
+  //   })
 
-    if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('user')) {
-      const user = result.data.user
-      if (user) {
-        dispatch($raffle.set.user({
-          ...user,
-          totalEarned: user.totalEarned / Math.pow(10, 6),
-        }))
-      }
-    }
-  }
+  //   if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('user')) {
+  //     const user = result.data.user
+  //     if (user) {
+  //       dispatch($raffle.set.user({
+  //         ...user,
+  //         totalEarned: user.totalEarned / Math.pow(10, 6),
+  //       }))
+  //     }
+  //   }
+  // }
 
   const getUserCases = async (hard = false) => {
     if (hard) {
@@ -208,47 +220,47 @@ const RafflePage = () => {
     }
   }
 
-  const getIpfsInfo = async (campaigns) => {
-    const client = new Web3Storage({ token: process.env.NEXT_PUBLIC_WEB3_STORAGE_API_KEY })
-    const promises = campaigns.map(item => {
-      const hash = hexToString(item.ipfsHash)
-      return client.get(hash)
-    })
+  // const getIpfsInfo = async (campaigns) => {
+  //   const client = new Web3Storage({ token: process.env.NEXT_PUBLIC_WEB3_STORAGE_API_KEY })
+  //   const promises = campaigns.map(item => {
+  //     const hash = hexToString(item.ipfsHash)
+  //     return client.get(hash)
+  //   })
 
-    const result = []
-    const responses = await Promise.all(promises)
-    for (const index in responses) {
-      const response = responses[index]
-      if (response.ok) {
-        const cid = response.url.split('/').pop()
-        const files = await response.files()
-        const file = files.find(item => item.name == 'info.json')
-        if (file) {
-          const info = await readIpfsInfo(file)
-          const campaign = campaigns[index]
-          result.push({
-            ...campaign,
-            ...info,
-          })
-        }
-      } else {
-        result.push({
-          id: 0,
-          ipfsHash: '0x00',
-          rewardAmount: 100000000,
-          totalTransferred: 0,
-          tKeyRequired: 3,
-          status: 'ACTIVE',
-          startTimestamp: 1695204437,
-          endTimestamp: 1695215237,
-          title: 'Unknown Campaign',
-          image: '/images/raffle/usdt.png',
-        })
-      }
-    }
+  //   const result = []
+  //   const responses = await Promise.all(promises)
+  //   for (const index in responses) {
+  //     const response = responses[index]
+  //     if (response.ok) {
+  //       const cid = response.url.split('/').pop()
+  //       const files = await response.files()
+  //       const file = files.find(item => item.name == 'info.json')
+  //       if (file) {
+  //         const info = await readIpfsInfo(file)
+  //         const campaign = campaigns[index]
+  //         result.push({
+  //           ...campaign,
+  //           ...info,
+  //         })
+  //       }
+  //     } else {
+  //       result.push({
+  //         id: 0,
+  //         ipfsHash: '0x00',
+  //         rewardAmount: 100000000,
+  //         totalTransferred: 0,
+  //         tKeyRequired: 3,
+  //         status: 'ACTIVE',
+  //         startTimestamp: 1695204437,
+  //         endTimestamp: 1695215237,
+  //         title: 'Unknown Campaign',
+  //         image: '/images/raffle/usdt.png',
+  //       })
+  //     }
+  //   }
 
-    return result
-  }
+  //   return result
+  // }
 
   const readIpfsInfo = (file) => {
     return new Promise((resolve, reject) => {

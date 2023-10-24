@@ -47,17 +47,12 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   const [errorType, setErrorType] = useState('')
   const [showKeysError, setShowKeysError] = useState(false)
   const [closeKeysError, setCloseKeysError] = useState(false)
-  const [rewards, setRewards] = useState([])
+  const [loading, setLoading] = useState(false)
 
-  // const rewards = [...item.rewardRange]
+  const rewards = [...item.rewards]
 
   useEffect(() => {
     (async () => {
-      const res = await $raffle.api.info(item.id)
-      const [data] = JSON.parse(res.data)
-      const rewardRange = data.info.rewardRange
-      setRewards(rewardRange)
-
       if (wallet) {
         const result = await checkIfApproved()
         setIsApproved(result)
@@ -72,8 +67,8 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   }, [expectedReward])
 
   const handleClickOpen = async () => {
+    setLoading(true)
     const res = await onUpdateUserTKeys(item.tKeyRequired)
-
     if (res.length !== item.tKeyRequired*1) {
       if (showKeysError) {
         setCloseKeysError(true)
@@ -82,6 +77,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
         setCloseKeysError(false)
         setShowKeysError(!showKeysError)
       }
+      setLoading(false)
       return
     }
     trackEvent('Click Unlock With TKeys', {
@@ -92,6 +88,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
     })
     setStep(isApproved ? 1 : 0)
     setShowClaim(true)
+    setLoading(false)
     if (! isApproved) {
       dispatch($modal.set.update({
         header: {
@@ -322,7 +319,11 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
               <App.Flex className={styles.buttonWrapper}>
                 <App.Flex className={cn(styles.buttonText, {[styles.show]: ! showKeysError})}>
                   <App.Button primary sx={{width: 240, height: 56, fontSize: 16, fontWeight: 600}} onClick={handleClickOpen}>
-                    Unlock with {item.tKeyRequired +  ' ' + (item.tKeyRequired*1 === 1 ? 'TKey' : 'TKeys')}
+                    {
+                      loading
+                        ? <App.Loader />
+                        : `Unlock with ${item.tKeyRequired +  ' ' + (item.tKeyRequired*1 === 1 ? 'TKey' : 'TKeys')}`
+                    }
                   </App.Button>
                 </App.Flex>
                 
