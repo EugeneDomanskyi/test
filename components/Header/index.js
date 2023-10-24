@@ -4,7 +4,7 @@ import cn from 'classnames'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
-import { trackEvent } from '@/libs/analytics.lib'
+import { trackEvent, getPageName } from '@/libs/analytics.lib'
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -21,7 +21,7 @@ import styles from './styles.module.scss'
 
 const Header = ({onHeightCounted}) => {
   const router = useRouter()
-  const { wallet, connect, disconnect, getBalance, changeNetwork } = useWalletConnect()
+  const { wallet, connect, disconnect, getBalance, changeNetwork, getConnectorName } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
   const isEarn = router.pathname.includes('/earn')
@@ -31,7 +31,6 @@ const Header = ({onHeightCounted}) => {
 
   const balance = useSelector(({$raffle}) => $raffle.balance)
   const blockchain = useSelector($app.get.blockchain)
-  const loadingUser = useSelector(({ $raffle }) => $raffle.loadingUser)
 
   const headerRef = useRef(null)
 
@@ -42,6 +41,7 @@ const Header = ({onHeightCounted}) => {
   const [currentBalance, setCurrentBalance] = useState({amount: 0, symbol: ''})
   const [isBannerClosed, setIsBannerClosed] = useState(false)
   const [showPromoBanner, setShowPromoBanner] = useState(true)
+  const [balanceLoading, setBalanceLoading] = useState(true)
 
   useEffect(() => {
     if (headerRef.current) {
@@ -69,6 +69,7 @@ const Header = ({onHeightCounted}) => {
   useEffect(() => {
     if (isEarn) {
       setCurrentBalance({amount: balance, symbol: 'TKeys'})
+      setBalanceLoading(false)
     }
   }, [balance, isEarn])
 
@@ -86,16 +87,30 @@ const Header = ({onHeightCounted}) => {
     }
   }
 
+  const handlePageEvent = (page) => () => {
+    trackEvent('Page Visited', {
+      'Page Name': page,
+    })
+  }
+
+  const handleResourceEvent = (community) => () => {
+    trackEvent('Community Resources Visited', {
+      'Community': community,
+    })
+  }
+
   const handleConnectWallet = async () => {
     if ( ! wallet) {
       trackEvent('Wallet Connect Clicked', {
-        'Wallet connected Status': 'Not Connected',
+        'Source': getPageName(),
       })
+
       const result = await connect()
       if (result) {
-        trackEvent('Wallet Connected Successfully', {
-          'Wallet connected Status': 'Connected',
-          'Wallet Address': result,
+        const walletName = await getConnectorName()
+        trackEvent('Wallet Connect Success', {
+          'Source': getPageName(),
+          'Type': walletName,
         })
       }
     }
@@ -113,15 +128,15 @@ const Header = ({onHeightCounted}) => {
     }
   }
 
-  const handleDisconnect = () => {
-    trackEvent('Wallet Disconnect Clicked', {
-      'Wallet connected Status': wallet ? 'Connected' : 'Not Connected',
-      'Wallet Address': wallet || null,
-    })
+  const handleDisconnect = async () => {
+    const walletName = await getConnectorName()
+
     disconnect()
     setMenuShow(false)
-    trackEvent('Wallet Disconnect successfully', {
-      'Wallet connected Status': 'Not Connected',
+
+    trackEvent('Wallet Disconnect Success', {
+      'Source': getPageName(),
+      'Type': walletName,
     })
   }
 
@@ -136,17 +151,19 @@ const Header = ({onHeightCounted}) => {
   }
 
   const handleGetBalance = async () => {
+    setBalanceLoading(true)
     if (! isEarn) {
       const balance = await getBalance('', true)
-      if (balance) {
+      if (balance.formatted) {
         const amount = balance.formatted*1
         setCurrentBalance({amount: amount.toFixed(4), symbol: balance.symbol})
       }
     }
+    setBalanceLoading(false)
   }
 
   const handleClickDiscord = () => {
-    trackEvent('Click Support')
+    // trackEvent('Click Support')
     window.open("https://discord.com/channels/951018857533935627/1107789606612631602/1135635808087462009", '_blank')
   }
   
@@ -275,7 +292,7 @@ const Header = ({onHeightCounted}) => {
                       ! isMobile
                         ? <App.Flex>
                             {
-                              loadingUser
+                              balanceLoading
                                 ? <App.Flex center sx={{width: 90}}>
                                     <App.Loader />
                                   </App.Flex>
@@ -359,7 +376,7 @@ const Header = ({onHeightCounted}) => {
                     </App.Flex>
                   </Link>
 
-                  <a href="https://classic.tegro.com" target="_blank" rel="noreferrer" className={styles.link}>
+                  <a href="https://classic.tegro.com" target="_blank" rel="noreferrer" className={styles.link} onClick={handlePageEvent('Classic')}>
                     <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                       <App.Icon icon="menuClassic" />
                       <App.Text size={14} weight={700}>Classic Tegro Withdraw</App.Text>
@@ -377,21 +394,21 @@ const Header = ({onHeightCounted}) => {
                     </App.Flex>
                   </a>
 
-                  <a href="https://blog.tegro.com" target="_blank" rel="noreferrer" className={styles.link}>
+                  <a href="https://blog.tegro.com" target="_blank" rel="noreferrer" className={styles.link} onClick={handlePageEvent('Blog')}>
                     <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                       <App.Icon icon="menuBlog" />
                       <App.Text size={14} weight={700}>Blog</App.Text>
                     </App.Flex>
                   </a>
 
-                  <a href="https://x-by-tegro.gitbook.io/x-by-tegro/" target="_blank" rel="noreferrer" className={styles.link}>
+                  <a href="https://x-by-tegro.gitbook.io/x-by-tegro/" target="_blank" rel="noreferrer" className={styles.link} onClick={handlePageEvent('Gitbook')}>
                     <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                       <App.Icon icon="menuGitbook" />
                       <App.Text size={14} weight={700}>Gitbook</App.Text>
                     </App.Flex>
                   </a>
 
-                  <a href="https://press.tegro.com/" target="_blank" rel="noreferrer" className={styles.link}>
+                  <a href="https://press.tegro.com/" target="_blank" rel="noreferrer" className={styles.link} onClick={handlePageEvent('Press')}>
                     <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                       <App.Icon icon="menuPress" />
                       <App.Text size={14} weight={700}>Press</App.Text>
@@ -411,21 +428,21 @@ const Header = ({onHeightCounted}) => {
 
                   <App.Flex sx={{padding: '0 16px', paddingBottom: 64}} justify="space-between">
                     <App.Flex column gap={12} sx={{width: 140}}>
-                      <a href="https://twitter.com/tegrofi?utm_source=website" target="_blank" rel="noreferrer">
+                      <a href="https://twitter.com/tegrofi?utm_source=website" target="_blank" rel="noreferrer" onClick={handleResourceEvent('Twitter')}>
                         <App.Flex gap={4}>
                           <App.Icon icon="twitter-filled" />
                           <App.Text size={10} weight={500}>Twitter</App.Text>
                         </App.Flex>
                       </a>
                       
-                      <a href="https://discord.gg/tegro?utm_source=website" target="_blank" rel="noreferrer">
+                      <a href="https://discord.gg/tegro?utm_source=website" target="_blank" rel="noreferrer" onClick={handleResourceEvent('Discord')}>
                         <App.Flex gap={4}>
                           <App.Icon icon="discord-filled" />
                           <App.Text size={10} weight={500}>Discord</App.Text>
                         </App.Flex>
                       </a>
                       
-                      <a href="https://t.me/tegrochat?utm_source=website" target="_blank" rel="noreferrer">
+                      <a href="https://t.me/tegrochat?utm_source=website" target="_blank" rel="noreferrer" onClick={handleResourceEvent('Telegram')}>
                         <App.Flex gap={4}>
                           <App.Icon icon="telegram-filled" />
                           <App.Text size={10} weight={500}>Telegram</App.Text>
@@ -434,21 +451,21 @@ const Header = ({onHeightCounted}) => {
                     </App.Flex>
                     
                     <App.Flex column gap={12} sx={{width: 140}}>
-                      <a href="https://www.linkedin.com/company/tegrofi?utm_source=website" target="_blank" rel="noreferrer">
+                      <a href="https://www.linkedin.com/company/tegrofi?utm_source=website" target="_blank" rel="noreferrer" onClick={handleResourceEvent('LinkedIn')}>
                         <App.Flex gap={4}>
                           <App.Icon icon="linkedin-filled" />
                           <App.Text size={10} weight={500}>LinkedIn</App.Text>
                         </App.Flex>
                       </a>
                       
-                      <a href="https://tegro.substack.com/?utm_source=website" target="_blank" rel="noreferrer">
+                      <a href="https://tegro.substack.com/?utm_source=website" target="_blank" rel="noreferrer" onClick={handleResourceEvent('Substack')}>
                         <App.Flex gap={4}>
                           <App.Icon icon="substack-filled" />
                           <App.Text size={10} weight={500}>Substack</App.Text>
                         </App.Flex>
                       </a>
                       
-                      <a href="https://www.youtube.com/@tegrofi?utm_source=website" target="_blank" rel="noreferrer">
+                      <a href="https://www.youtube.com/@tegrofi?utm_source=website" target="_blank" rel="noreferrer" onClick={handleResourceEvent('Youtube')}>
                         <App.Flex gap={4}>
                           <App.Icon icon="youtube-filled" />
                           <App.Text size={10} weight={500}>Youtube</App.Text>

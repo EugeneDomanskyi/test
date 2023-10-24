@@ -80,13 +80,11 @@ const TradeFormMarket = ({current, currentTab, currentOption, userBalances, init
   }
 
   const handleBlurAmount = () => {
-    trackEvent('Add Amount', {
-      'Base Currency': blockchain.currency,
-      'Quote Currency': current.name,
+    trackEvent('Add Quantity', {
+      'Base Currency': current.symbol,
+      'Quote Currency': 'USDT',
       'Amount': amount,
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Wallet Address': wallet || null,
-      'Network': blockchain.name,
+      'Network': blockchain.code.toUpperCase(),
     })
   }
 

@@ -9,14 +9,11 @@ const OrderCancel = ({order, blockchain, wallet, onClose}) => {
     const eventPost = {
       'Base Currency': order.baseCurrency,
       'Quote Currency': order.quoteCurrency,
-      'Side': order.side,
+      'Side': order.side.toUpperCase(),
       'Quantity': order.quantity,
       'Price': order.itemPrice,
       'Total': order.price,
-      'Network': blockchain.name,
-      'Wallet connect Status': wallet ? 'Connected' : 'Not connected',
-      'Wallet Address': wallet || null,
-      'Order Type': 'Limit order',
+      'Network': blockchain.code.toUpperCase(),
     }
     trackEvent('Cancel Order Submit', eventPost)
     order.cancel().then(() => {

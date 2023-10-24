@@ -1,14 +1,23 @@
 import App from '@/components/App'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
+import { getPageName, trackEvent } from '@/libs/analytics.lib'
 
 import styles from './styles.module.scss'
 
 const HomeDisconnectModal = ({ onClose }) => {
-  const { wallet, disconnect } = useWalletConnect()
+  const { wallet, disconnect, getConnectorName } = useWalletConnect()
 
-  const handleDisconnect = () => {
+  const handleDisconnect = async () => {
+    const walletName = await getConnectorName()
+
     disconnect()
+
+    trackEvent('Wallet Disconnect Success', {
+      'Source': getPageName(),
+      'Type': walletName,
+    })
+
     onClose()
   }
 

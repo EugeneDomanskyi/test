@@ -22,10 +22,22 @@ const RaffleListMyItem = ({ item, number, onShare }) => {
     window.open(`${blockchain.raffle.txUrl}${tx}`, '_blank')
   }
 
+  const getTime = () => {
+    const end = item.endTimestamp * 1000
+    const current = moment().valueOf()
+    const duration = moment.duration(end - current, 'milliseconds')
+    return duration.humanize()
+  }
+
   const handleClickShare = () => {
-    trackEvent('Click Share Cases History', {
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
+    trackEvent('Click Case Share ', {
+      'Name': item.title,
+      'Time Left': getTime(),
+      'Tkey Cost': item.tKeyRequired,
+      'Case ID': item.id,
+      'Page': 'Case History',
     })
+
     const shareText = `🥳💸 Woohoo! I just won $${item.rewardAmount} in USDT from a case! You can win $USDT, $PEPE, $SHIB, $FLOKI, and other tokens in the $10000 Tegro Treasure Case series! 💰💰 Join me now! Unlock your first Tegro case 🎁 for FREE! 👀 Start here 👉`
     onShare(shareText)
   }

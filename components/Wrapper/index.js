@@ -7,7 +7,7 @@ import amplitude from 'amplitude-js'
 import Smartlook from 'smartlook-client'
 import dynamic from 'next/dynamic'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import { trackEvent, getPageName } from '@/libs/analytics.lib'
 
 import Header from '@/components/Header'
 
@@ -54,9 +54,13 @@ const Wrapper = ({ children, isMobile }) => {
     if (!deviceId) {
       localStorage.setItem('device_id', uuid())
     }
-
-    trackEvent('Page Visited')
   }, [])
+
+  useEffect(() => {
+    trackEvent('Page Visited', {
+      'Page Name': getPageName(),
+    })
+  }, [router.asPath])
 
   const handleHeaderHeightCounted = (height) => {
     setHeaderHeight(height)

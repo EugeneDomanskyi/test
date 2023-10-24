@@ -7,38 +7,61 @@ import styles from './styles.module.scss'
 const LandingPlatform = () => {
   const handleSocialClick = (social) => () => {
     let url = ''
+    let page = null
+    let community = null
 
     switch (social) {
       case 'twitter':
+        community = 'Twitter'
         url = 'https://twitter.com/tegrofi?utm_source=website'
         break
       case 'discord':
+        community = 'Discord'
         url = 'https://discord.gg/tegro?utm_source=website'
         break
       case 'telegram':
+        community = 'Telegram'
         url = 'https://t.me/tegrochat?utm_source=website'
         break
       case 'linkedin':
+        community = 'LinkedIn'
         url = 'https://www.linkedin.com/company/tegrofi?utm_source=website'
         break
       case 'facebook':
+        community = 'Facebook'
         url = 'https://www.facebook.com/tegroexchange?utm_source=website'
         break
       case 'instagram':
+        community = 'Instagram'
         url = 'https://www.instagram.com/tegro_exchange/?utm_source=website'
         break
       case 'substack':
+        community = 'Substack'
         url = 'https://tegro.substack.com/?utm_source=website'
         break
       case 'youtube':
+        community = 'Youtube'
         url = 'https://www.youtube.com/@tegrofi?utm_source=website'
         break
       case 'press':
+        page = 'Press'
         url = 'https://press.tegro.com?utm_source=website'
         break
       default:
         url = 'https://tegro.com/'
         break
+    }
+
+    if (page) {
+      trackEvent('Page Visited', {
+        'Page Name': page,
+      })
+    }
+
+    if (community) {
+      trackEvent('Community Resources Visited', {
+        'Community': community,
+      })
     }
 
     window.open(url, '_blank')

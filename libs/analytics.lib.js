@@ -34,6 +34,34 @@ export const getDevice = () => {
   return 'Desktop'
 }
 
+export const getPageName = () => {
+  if (window.location.pathname == '/') {
+    return 'Homepage'
+  }
+
+  if (window.location.pathname.includes('exchange')) {
+    return 'Exchange'
+  }
+
+  if (window.location.pathname.includes('earn')) {
+    return 'Earn'
+  }
+
+  if (window.location.pathname.includes('market')) {
+    return 'Market Page'
+  }
+
+  if (window.location.pathname.includes('nfts')) {
+    return 'NFT'
+  }
+
+  if (window.location.pathname.includes('swap')) {
+    return 'NFT Swap'
+  }
+
+  return window.location.pathname
+}
+
 export const trackEvent = (eventName, eventProperties) => {
   /* const data = {
     ...eventProperties,

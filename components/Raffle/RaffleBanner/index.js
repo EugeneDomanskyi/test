@@ -3,6 +3,7 @@ import Slider from 'react-slick'
 import cn from 'classnames'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
+import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 
@@ -90,6 +91,10 @@ const RaffleBanner = () => {
   }
 
   const handleButtonClick = () => {
+    trackEvent('Click Get Tkeys', {
+      'Source': 'Carousel',
+    })
+
     window.open('https://galxe.com/tegro/campaign/GC9QPUMqMz?utm_source=web', '_blank')
   }
 

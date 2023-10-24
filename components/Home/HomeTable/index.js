@@ -54,12 +54,6 @@ const HomeTable = () => {
   const handleSwap = (collection) => async (e) => {
     e.stopPropagation()
 
-    trackEvent('Swap Clicked', {
-      'Token': collection.name,
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Wallet Address': wallet || null,
-    })
-
     const address = await connect()
     if ( ! address) {
       return

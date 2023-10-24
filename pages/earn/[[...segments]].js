@@ -47,10 +47,6 @@ const RafflePage = () => {
   // const requiredChain = 'polygon'
 
   useEffect(() => {
-    trackEvent('Visit Raffle')
-  }, [])
-
-  useEffect(() => {
     if (blockchain.code) {
       if ( ! pageBlockchains.map(item => item.code).includes(blockchain.code) || blockchain.code != requiredChain) {
         dispatch($app.set.code(requiredChain))
