@@ -4,6 +4,7 @@ import { useState, memo, useEffect } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
+import moment from 'moment'
 import { useDispatch } from 'react-redux'
 
 import $app from '@/store/app'
@@ -71,7 +72,7 @@ const Orders = ({current, type, version, onOrderCancelled, onClickOrder}) => {
   const handlePressCopy = order => (e) => {
     e.stopPropagation()
     const [_, _seg1, seg2] = router.asPath.split('/')
-    router.push(`${[seg2, order.contractAddress].join('/')}`, undefined, {scroll: false})
+    router.push(`/${[_seg1, seg2, order.contractAddress].join('/')}`, undefined, {scroll: false})
     onClickOrder({
       quantity: order.quantity,
       price: order.itemPrice,
@@ -98,6 +99,10 @@ const Orders = ({current, type, version, onOrderCancelled, onClickOrder}) => {
 
   const handleClick = (id) => () => {
     setOpenId(id)
+  }
+
+  const handleClose = () => {
+    setOpenId(null)
   }
 
   const handleChangeOrdersType = type => () => {
@@ -319,6 +324,7 @@ const Orders = ({current, type, version, onOrderCancelled, onClickOrder}) => {
 
           <App.Flex column flex={1} gap={16} fullWidth sx={{overflow: 'auto'}}>
             {orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map((order) => {
+              console.log(moment(order))
               return (
                 <App.Flex key={order.id} column fullWidth className={styles.orderContainer}>
                   <App.Flex row align="center" fullWidth className={cn(styles.order, {[styles.disabled]: order.status === 'completed' || order.status === 'cancelled'})} onClick={handleClick(order.id)}>
@@ -368,49 +374,44 @@ const Orders = ({current, type, version, onOrderCancelled, onClickOrder}) => {
                     </App.Flex>
                   </App.Flex>
 
-                  <App.Flex align="center" justify="flex-end" className={cn(styles.hoverContent, {[styles.open]: openId == order.id})}>
-                    <App.Text color="rgba(185, 184, 197, 1)" size={10} weight={500} sx={{marginRight: 12}}>{ order.time }</App.Text>
-                    {
-                      order.status !== 'open'
-                        ? <App.Text color="#B9B8C5" size={10} weight={600} uppercase>
+                  <App.Flex align="center" justify="space-between" className={cn(styles.hoverContent, {[styles.open]: openId == order.id})}>
+                    <App.Flex row align="center" gap={16}>
+                      <App.Flex column>
+                        <App.Text size={12}>{ order.timeMoment.format('hh:mm:ss A') }</App.Text>
+                        <App.Text size={10} color="#5E5C6B">{ order.timeMoment.format('DD/MM/YYYY') }</App.Text>
+                      </App.Flex>
+
+                      <App.Flex className={styles.actionButton} center onClick={handlePressCopy(order)}>
+                        <App.Icon icon="copy" width={22} height={22} color="#6B6A77" />
+                      </App.Flex>
+                    </App.Flex>
+
+                    <App.Flex row align="center" gap={24}>
+                      {order.status === 'open' ? (
+                        cancellingOrders.includes(order.id) ? (
+                          <App.Flex center width={72}>
+                            <App.Loader />
+                          </App.Flex>
+                        ) : (
+                          <App.Button small variant="danger" onClick={handlePressCancel(order)}>CANCEL</App.Button>
+                        )
+                      ) : (
+                        <App.Flex row align="center" gap={16}>
+                          <App.Text color="#B9B8C5" size={12} uppercase>
                             { (order.status === 'completed' || order.status === 'cancelled') ? order.status : 'Cancel order' }
                           </App.Text>
-                        : null
-                    }
-                    
-                    <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressCopy(order)}>
-                      <App.Icon icon="copy" width={12} height={12} color="#B9B8C5" />
-                    </App.Flex>
-                    {
-                      order.status !== 'open'
-                        ? <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handleClickDetails(order)}>
-                            <App.Icon icon="order-details" />
-                          </App.Flex>
-                        : null
-                    }
-                    {/* {
-                      order.status === 'open'
-                        ? <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressEdit(order)}>
-                            <App.Icon icon="pencil" />
-                          </App.Flex>
-                        : null
-                    } */}
-                    {
-                      order.status === 'open'
-                        ? <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressCancel(order)}>
-                            <App.Icon icon="cross-circle" />
-                          </App.Flex>
-                        : null
-                    }
-                  </App.Flex>
 
-                  {
-                    cancellingOrders.includes(order.id)
-                      ? <App.Flex sx={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0}} align="center" justify="center">
-                          <App.Loader />
+                          <App.Flex center onClick={handleClickDetails(order)}>
+                            <App.Icon icon="order-details" width={22} height={22} color="#6B6A77" />
+                          </App.Flex>
                         </App.Flex>
-                      : null
-                  }
+                      )}
+
+                      <App.Flex className={styles.actionButton} center onClick={handleClose}>
+                        <App.Icon icon="cross" width={12} height={12} color="#fff" />
+                      </App.Flex>
+                    </App.Flex>
+                  </App.Flex>
                 </App.Flex>
               )
             })}

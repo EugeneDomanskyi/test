@@ -107,6 +107,16 @@
 
     .orderContainer {
       .hoverContent {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        width: calc(100% - 5px);
+        padding: 0 15px;
+        background: #100E24;
+        transform: translateX(100%);
+        transition: .2s;
+
         &.open {
           transform: translateX(0%);
         }
