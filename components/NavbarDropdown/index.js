@@ -13,6 +13,18 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const NavbarDropdown = ({isOpen, onClose}) => {
+  const handlePageEvent = (page) => () => {
+    trackEvent('Page Visited', {
+      'Page Name': page,
+    })
+  }
+
+  const handleResourceEvent = (community) => () => {
+    trackEvent('Community Resources Visited', {
+      'Community': community,
+    })
+  }
+  
   return (
     <App.Flex column gap={32} className={cn(styles.dropdownMenu, {[styles.isOpen]: isOpen})}>
       <App.Flex gap={24}>
@@ -46,7 +58,7 @@ const NavbarDropdown = ({isOpen, onClose}) => {
               </App.Flex>
             </Link>
             
-            <a href="https://classic.tegro.com/" target="_blank" rel="noreferrer">
+            <a href="https://classic.tegro.com/" target="_blank" rel="noreferrer" onClick={handlePageEvent('Classic')}>
               <App.Flex gap={8} className={styles.menuItem}>
                 <App.Flex>
                   <App.Icon icon="menuClassic" />
@@ -65,7 +77,7 @@ const NavbarDropdown = ({isOpen, onClose}) => {
           <App.Text size={14} weight={700} color="#B9B8C5">RESOURCES</App.Text>
 
           <App.Flex column gap={8}>
-            <a href="https://blog.tegro.com/" target="_blank" rel="noreferrer">
+            <a href="https://blog.tegro.com/" target="_blank" rel="noreferrer" onClick={handlePageEvent('Blog')}>
               <App.Flex gap={8} className={styles.menuItem}>
                 <App.Flex>
                   <App.Icon icon="menuBlog" />
@@ -78,7 +90,7 @@ const NavbarDropdown = ({isOpen, onClose}) => {
               </App.Flex>
             </a>
             
-            <a href="https://x-by-tegro.gitbook.io/x-by-tegro/" target="_blank" rel="noreferrer">
+            <a href="https://x-by-tegro.gitbook.io/x-by-tegro/" target="_blank" rel="noreferrer" onClick={handlePageEvent('Gitbook')}>
               <App.Flex gap={8} className={styles.menuItem}>
                 <App.Flex>
                   <App.Icon icon="menuGitbook" />
@@ -91,7 +103,7 @@ const NavbarDropdown = ({isOpen, onClose}) => {
               </App.Flex>
             </a>
             
-            <a href="https://press.tegro.com/" target="_blank" rel="noreferrer">
+            <a href="https://press.tegro.com/" target="_blank" rel="noreferrer" onClick={handlePageEvent('Press')}>
               <App.Flex gap={8} className={styles.menuItem}>
                 <App.Flex>
                   <App.Icon icon="menuPress" />
@@ -124,42 +136,42 @@ const NavbarDropdown = ({isOpen, onClose}) => {
         <App.Text>JOIN OUR COMMUNITY</App.Text>
         
         <App.Flex gap={16}>
-          <a href="https://twitter.com/tegrofi?utm_source=website" target="_blank" rel="noreferrer">
+          <a href="https://twitter.com/tegrofi?utm_source=website" target="_blank" rel="noreferrer" onClick={handleResourceEvent('Twitter')}>
             <App.Flex center gap={4} className={styles.socialLink}>
               <App.Icon icon="twitter-filled" />
               <App.Text size={10} weight={500}>Twitter</App.Text>
             </App.Flex>
           </a>
           
-          <a href="https://discord.gg/tegro?utm_source=website" target="_blank" rel="noreferrer">
+          <a href="https://discord.gg/tegro?utm_source=website" target="_blank" rel="noreferrer" onClick={handleResourceEvent('Discord')}>
             <App.Flex center gap={4} className={styles.socialLink}>
               <App.Icon icon="discord-filled" />
               <App.Text size={10} weight={500}>Discord</App.Text>
             </App.Flex>
           </a>
           
-          <a href="https://t.me/tegrochat?utm_source=website" target="_blank" rel="noreferrer">
+          <a href="https://t.me/tegrochat?utm_source=website" target="_blank" rel="noreferrer" onClick={handleResourceEvent('Telegram')}>
             <App.Flex center gap={4} className={styles.socialLink}>
               <App.Icon icon="telegram-filled" />
               <App.Text size={10} weight={500}>Telegram</App.Text>
             </App.Flex>
           </a>
           
-          <a href="https://www.linkedin.com/company/tegrofi?utm_source=website" target="_blank" rel="noreferrer">
+          <a href="https://www.linkedin.com/company/tegrofi?utm_source=website" target="_blank" rel="noreferrer" onClick={handleResourceEvent('LinkedIn')}>
             <App.Flex center gap={4} className={styles.socialLink}>
               <App.Icon icon="linkedin-filled" />
               <App.Text size={10} weight={500}>LinkedIn</App.Text>
             </App.Flex>
           </a>
           
-          <a href="https://tegro.substack.com/?utm_source=website" target="_blank" rel="noreferrer">
+          <a href="https://tegro.substack.com/?utm_source=website" target="_blank" rel="noreferrer" onClick={handleResourceEvent('Substack')}>
             <App.Flex center gap={4} className={styles.socialLink}>
               <App.Icon icon="substack-filled" />
               <App.Text size={10} weight={500}>Substack</App.Text>
             </App.Flex>
           </a>
           
-          <a href="https://www.youtube.com/@tegrofi?utm_source=website" target="_blank" rel="noreferrer">
+          <a href="https://www.youtube.com/@tegrofi?utm_source=website" target="_blank" rel="noreferrer" onClick={handleResourceEvent('Youtube')}>
             <App.Flex center gap={4} className={styles.socialLink}>
               <App.Icon icon="youtube-filled" />
               <App.Text size={10} weight={500}>Youtube</App.Text>

@@ -8,7 +8,7 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 
 import $app from '@/store/app'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import { trackEvent, getPageName } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
 
@@ -16,7 +16,7 @@ import styles from './styles.module.scss'
 import Link from 'next/link'
 
 const RaffleTop = ({ loading, isFirstTimeUser }) => {
-  const { wallet, connect } = useWalletConnect()
+  const { wallet, connect, getConnectorName } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
   const blockchain = useSelector($app.get.blockchain)
@@ -52,23 +52,24 @@ const RaffleTop = ({ loading, isFirstTimeUser }) => {
   }
 
   const handleMoreClick = () => {
-    trackEvent('Click Collect TKeys', {
-      'Wallet connect Status': 'Connected',
-      'Tkeys Quantity': balance,
+    trackEvent('Click Get Tkeys', {
+      'Source': 'Hero Banner',
     })
     window.open('https://galxe.com/tegro/campaign/GC9QPUMqMz?utm_source=web', '_blank')
   }
 
   const handleConnectWalletClick = async () => {
     trackEvent('Wallet Connect Clicked', {
-      'Wallet connected Status': 'Not Connected',
+      'Source': getPageName(),
     })
+
     if ( ! wallet) {
       const result = await connect()
       if (result) {
-        trackEvent('Wallet Connected Successfully', {
-          'Wallet connected Status': 'Connected',
-          'Wallet Address': result,
+        const walletName = await getConnectorName()
+        trackEvent('Wallet Connect Success', {
+          'Source': getPageName(),
+          'Type': walletName,
         })
       }
     }

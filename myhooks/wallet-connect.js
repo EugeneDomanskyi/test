@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useAccount, useNetwork, useWalletClient } from 'wagmi'
+import { useAccount, useNetwork, useWalletClient, usePublicClient } from 'wagmi'
 import { signMessage, disconnect as wagmiDisconnect, getNetwork, getAccount, switchNetwork, fetchBalance, fetchToken } from '@wagmi/core'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 
@@ -9,12 +9,14 @@ const useWalletConnect = () => {
   const debugMode = process.env.NEXT_PUBLIC_APP_ENV != 'production'
 
   const { openConnectModal, connectModalOpen } = useConnectModal()
-  const { address, isConnected } = useAccount()
+  const { address, isConnected, connector } = useAccount()
   const { chain, chains } = useNetwork()
   const { data: walletClient } = useWalletClient()
+  const publicClient = usePublicClient()
 
   const [modalOpen, setModalOpen] = useState(false)
   const [wallet, setWallet] = useState(null)
+  const [connectorId, setConnectorId] = useState(null)
   const [blockchain, setBlockchain] = useState('')
   const [blockchains, setBlockchains] = useState([])
   const [callback, setCallback] = useState({ success: null, failed: null })
@@ -82,7 +84,8 @@ const useWalletConnect = () => {
 
   useEffect(() => {
     setWallet(isConnected ? address.toLowerCase() : null)
-  }, [address, isConnected])
+    setConnectorId(isConnected ? connector?.id : null)
+  }, [address, connector?.id, isConnected])
 
   useEffect(() => {
     setBlockchain(isConnected ? chain.name : null)
@@ -134,6 +137,24 @@ const useWalletConnect = () => {
     }
 
     return 0
+  }
+
+  const getConnectorName = async () => {
+    const account = getAccount()
+    if (account) {
+      switch (account?.connector?.id) {
+        case 'metaMask': return 'MetaMask'
+        case 'walletConnect': return 'WalletConnect'
+        case 'magic': return 'Magic.Link'
+        case 'rainbow': return 'Rainbow'
+        case 'coinbase': return 'CoinBase'
+        case 'brave': return 'Brave'
+        case 'safe': return 'Safe'
+        default: return account?.connector?.id
+      }
+    }
+
+    return null
   }
 
   const scanUrl = (address, type = 'tx', chain) => {
@@ -205,9 +226,11 @@ const useWalletConnect = () => {
 
   return {
     wallet,
+    connectorId,
     blockchain,
     blockchains,
     walletClient,
+    publicClient,
     isContractAddress,
     connect,
     disconnect,
@@ -219,6 +242,7 @@ const useWalletConnect = () => {
     usdt,
     jsonRpcEndpoints,
     getBasicInfo,
+    getConnectorName,
   }
 }
 

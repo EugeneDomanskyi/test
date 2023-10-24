@@ -53,14 +53,6 @@ const Nfts = () => {
 
   const tradeForm = useRef(null)
 
-  useEffect(() => {
-    trackEvent(`NFT's Clicked`, {
-      'Network': blockchain.code.toUpperCase(),
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Wallet Address': wallet || null,
-    })
-  }, [])
-
   const handleOrdersUpdated = useCallback(() => {
     if (wallet) {
       $orders.api.get.nfts({

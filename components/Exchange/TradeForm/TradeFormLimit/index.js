@@ -172,34 +172,28 @@ const TradeFormLimit = ({current, type, initialForm, currentTab, currentOption, 
   const handleTotalBlur = () => {
     handleChangeForm('price')(form.total/form.amount)
     trackEvent('Add Total', {
-      'Base Currency': blockchain.currency,
-      'Quote Currency': current.name,
-      'Total': form.total,
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Wallet Address': wallet || null,
-      'Network': blockchain.name,
+      'Base Currency': current.symbol,
+      'Quote Currency': 'USDT',
+      'Price': form.price,
+      'Network': blockchain.code.toUpperCase(),
     })
   }
 
   const handleBlurPrice = () => {
     trackEvent('Add Price', {
-      'Base Currency': blockchain.currency,
-      'Quote Currency': current.name,
+      'Base Currency': current.symbol,
+      'Quote Currency': 'USDT',
       'Price': form.price,
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Wallet Address': wallet || null,
-      'Network': blockchain.name,
+      'Network': blockchain.code.toUpperCase(),
     })
   }
 
   const handleBlurAmount = () => {
-    trackEvent('Add Amount', {
-      'Base Currency': blockchain.currency,
-      'Quote Currency': current.name,
-      'Amount': form.amount,
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Wallet Address': wallet || null,
-      'Network': blockchain.name,
+    trackEvent('Add Quantity', {
+      'Base Currency': current.symbol,
+      'Quote Currency': 'USDT',
+      'Price': form.price,
+      'Network': blockchain.code.toUpperCase(),
     })
   }
 
