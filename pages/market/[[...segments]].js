@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
 import { CHAINS } from '@/config'
@@ -50,8 +51,6 @@ export default function Markets({}) {
 
   const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
 
-  console.log(marketInfo)
-
   const currentChain = CHAINS.find(chain => chain.code === queryBlockchainCode)
 
   useEffect(() => {
@@ -60,6 +59,7 @@ export default function Markets({}) {
 
   const getMarket = async () => {
     const token = await getToken(currentChain.baseUniswapUrl, queryMarketId)
+    console.log('token', token);
     if (token) {
       setMarketInfo(template(token))
       const id = {[coingeckoAssets[currentChain.platform][token.id]]: token.id}

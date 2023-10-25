@@ -1,7 +1,3 @@
-import { useSelector } from 'react-redux'
-
-import useWalletConnect from '@/myhooks/wallet-connect'
-
 import App from '@/components/App'
 import ClaimImage from '@/components/Raffle/RaffleModalParticipate/ClaimImage'
 import ClaimText from '@/components/Raffle/RaffleModalParticipate/ClaimText'
@@ -10,7 +6,7 @@ import { trackEvent } from '@/libs/analytics.lib'
 
 const errors = {
   'api' : {
-    title: 'There is an error occur on the server',
+    title: 'A server error has occurred',
     subTitle: 'Please try again later or contact our support.',
   },
   'balance' : {
@@ -20,10 +16,6 @@ const errors = {
 }
 
 const ErrorStep = ({onSubmit, type}) => {
-  const { wallet } = useWalletConnect()
-
-  const balance = useSelector(({$raffle}) => $raffle.balance)
-
   const handleClickNextStep = () => {
     trackEvent('Click Get Tkeys', {
       'Source': 'Case Details',

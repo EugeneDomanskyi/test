@@ -36,8 +36,6 @@ export default function Contracts(defaultGasLimit = null) {
       } catch (error) {
         errorCode = error?.code
         // errorData.error = error
-        console.log('prepareWriteContract error', error);
-        console.log('prepareWriteContract place', place);
         methods.debugMessage(error, `Prepare "${place}"`)
       }
 
@@ -60,6 +58,7 @@ export default function Contracts(defaultGasLimit = null) {
     },
 
     writeContract: async (config) => {
+      console.log('writeContract config', config);
       const place = config?.functionName
       if (config?.mode == 'prepared') {
         try {
@@ -67,6 +66,7 @@ export default function Contracts(defaultGasLimit = null) {
           return hash
         }
         catch (error) {
+          console.log('writeContract error:', error);
           return methods.debugMessage(error, `Write "${place}"`)
         }
       } else {
