@@ -6,7 +6,7 @@ import { getNetwork } from '@wagmi/core'
 import amplitude from 'amplitude-js'
 import Smartlook from 'smartlook-client'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import { trackEvent, getPageName } from '@/libs/analytics.lib'
 
 import Header from '@/components/Header'
 import WrapperExchange from '@/components/Wrapper/WrapperExchange'
@@ -53,9 +53,13 @@ const Wrapper = ({ children, isMobile }) => {
     if (!deviceId) {
       localStorage.setItem('device_id', uuid())
     }
-
-    trackEvent('Page Visited')
   }, [])
+
+  useEffect(() => {
+    trackEvent('Page Visited', {
+      'Page Name': getPageName(),
+    })
+  }, [router.asPath])
 
   const handleHeaderHeightCounted = (height) => {
     setHeaderHeight(height)

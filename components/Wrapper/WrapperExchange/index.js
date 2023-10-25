@@ -40,6 +40,40 @@ const getTokens = async (url, {skip, orderBy, orderDirection, searchText, usdt})
   return res.data.tokens
 }
 
+const getTokenDayDatas = async (url, ids) => {
+  const client = getApolloClient(url)
+  const res = await client.query({
+    query: queries.tokenDayDatas,
+    variables: {
+      ids: ids,
+    },
+  })
+  if (res.data.tokenDayDatas) {
+    return res.data.tokenDayDatas.reduce((acc, item, _, array) => {
+      const [lastDay, prevDay] = array.filter(day => day.token.id === item.token.id)
+      if (acc[item.token.id]) {
+        return acc
+      }
+      const priceChanged = prevDay?.priceUSD ? lastDay.priceUSD * 100 / prevDay?.priceUSD - 100 : 0
+      return {
+        ...acc,
+        [item.token.id]: {
+          price: Number(lastDay.priceUSD).toFixed(2),
+          high: Number(lastDay.high).toFixed(2),
+          low: Number(lastDay.low).toFixed(2),
+          volume: Number(lastDay.volumeUSD).toFixed(2),
+          ticker: {
+            value: priceChanged.toFixed(2),
+            type: priceChanged >= 0 ? 'plus' : 'minus',
+          },
+        }
+      }
+    }, {})
+    
+  }
+  return {}
+}
+
 const getToken = async (url, id) => {
   const client = getApolloClient(url)
   const res = await client.query({
@@ -122,8 +156,11 @@ const WrapperExchange = ({children, isMobile}) => {
 
   useEffect(() => {
     if (storedBlockchain.code !== blockchain) {
+      const newBlockchain = ['ethereum', 'polygon', 'arbitrum', 'bsc', 'avalanche'].includes(storedBlockchain.code) ? storedBlockchain.code : blockchain
+      dispatch($app.set.code(newBlockchain))
       dispatch($token.set.loading(true))
-      router.replace(`/exchange/${storedBlockchain.code}/0x`)
+      router.replace(`/exchange/${newBlockchain}/0x`)
+      
     }
   }, [storedBlockchain, blockchain])
 
@@ -137,6 +174,9 @@ const WrapperExchange = ({children, isMobile}) => {
 
   // fetch list for blockchain
   useEffect(() => {
+    if (currentChain.code !== blockchain) {
+      return
+    }
     const post = {
       skip: (pages.current - 1) * 10,
       orderBy: orderBy,
@@ -144,11 +184,11 @@ const WrapperExchange = ({children, isMobile}) => {
       searchText: '',
       usdt: currentChain.usdtContract,
     }
-    
     getTokens(currentChain.baseUniswapUrl, post).then(async tokens => {
       dispatch($token.set.all(tokens))
       dispatch($token.set.pages({ next: (pages.current * 1 + 1) }))
       dispatch($token.set.loading(false))
+
       const coingeckoIds = tokens.reduce((acc, token) => {
         const key = coingeckoAssets[currentChain.platform][token.id]
         return {
@@ -156,10 +196,16 @@ const WrapperExchange = ({children, isMobile}) => {
           ...(key ? {[key]: token.id} : null)
         }
       }, {})
-      const res = await getPrices(coingeckoIds)
-      dispatch($token.set.updatedAll(res))
+      const pricesCoingecko = await getPrices(coingeckoIds)
+      if (pricesCoingecko) {
+        dispatch($token.set.updatedAll(pricesCoingecko))
+        return
+      }
+      const tokenIds = tokens.map(token => token.id)
+      const prices = await getTokenDayDatas(currentChain.baseUniswapUrl, tokenIds)
+      dispatch($token.set.updatedAll(prices))
     })
-  }, [currentChain.baseUniswapUrl, sort, pages.current])
+  }, [currentChain.baseUniswapUrl, sort, pages.current, currentChain.code, blockchain])
 
   // fetch current if address is correct
   useEffect(() => {
@@ -199,8 +245,13 @@ const WrapperExchange = ({children, isMobile}) => {
           dispatch($token.set.updatedCurrent(exist))
         } else if (coingeckoAssets[currentChain.platform][currentToken.id]) {
           const id = {[coingeckoAssets[currentChain.platform][currentToken.id]]: currentToken.id}
-          getPrices(id).then(res => {
-            dispatch($token.set.updatedCurrent(res[currentToken.id]))
+          getPrices(id).then(async res => {
+            if (res) {
+              dispatch($token.set.updatedCurrent(res[currentToken.id]))
+            } else {
+              const prices = await getTokenDayDatas([currentToken.id])
+              dispatch($token.set.updatedCurrent(prices[currentToken.id]))
+            }
           })
         }
       }

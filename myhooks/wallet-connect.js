@@ -88,7 +88,7 @@ const useWalletConnect = () => {
   }, [address, connector?.id, isConnected])
 
   useEffect(() => {
-    setBlockchain(isConnected ? chain.name : null)
+    setBlockchain(isConnected ? chain : null)
   }, [chain, isConnected])
 
   useEffect(() => {
@@ -144,6 +144,24 @@ const useWalletConnect = () => {
     return 0
   }
 
+  const getConnectorName = async () => {
+    const account = getAccount()
+    if (account) {
+      switch (account?.connector?.id) {
+        case 'metaMask': return 'MetaMask'
+        case 'walletConnect': return 'WalletConnect'
+        case 'magic': return 'Magic.Link'
+        case 'rainbow': return 'Rainbow'
+        case 'coinbase': return 'CoinBase'
+        case 'brave': return 'Brave'
+        case 'safe': return 'Safe'
+        default: return account?.connector?.id
+      }
+    }
+
+    return null
+  }
+
   const scanUrl = (address, type = 'tx', chain) => {
     return `${chain.scanUrl}/${type}/${address}`
   }
@@ -165,7 +183,7 @@ const useWalletConnect = () => {
       try {
         // const chainId = chains.find(ch => ch.network == chainData.connect)?.id
         const result = await switchNetwork({ chainId: chainData.id })
-        console.log('result is', result)
+        // console.log('result is', result)
         return result.hasOwnProperty('id')
       } catch (error) {
         debugMessage('Change Network', error)
@@ -230,6 +248,7 @@ const useWalletConnect = () => {
     jsonRpcEndpoints,
     getAddress,
     getBasicInfo,
+    getConnectorName,
   }
 }
 

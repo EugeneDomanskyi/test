@@ -33,11 +33,6 @@ export const template = (item, assets) => {
   const currency = 'USDT'
   const tickerValue = item.price_change_percentage_24h ? Math.abs(item.price_change_percentage_24h ?? 0).toFixed(2) : item.ticker?.value ?? 0
 
-  const ticker = {
-    value: tickerValue,
-    type: tickerValue >= 0 ? 'plus' : 'minus',
-  }
-
   return {
     id: item?.id,
     // cgId: overwrite?.cgId ?? item?.cgId,
@@ -60,7 +55,7 @@ export const template = (item, assets) => {
     externalUrl: assets?.externalUrl ?? item?.externalUrl,
     twitterUrl: assets?.twitterUrl ?? item?.twitterUrl,
     openseaVerificationStatus: null,
-    ticker: ticker,
+    ticker: item?.ticker ?? {},
     isFull: assets?.isFull ?? item?.isFull,
     createdAt: assets?.genesis_date ?? item?.genesis_date,
     marketCap: assets?.marketCap ?? item.marketCap,

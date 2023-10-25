@@ -6,11 +6,11 @@ import styles from './styles.module.scss'
 
 const Footer = () => {
   const handleClick = (type) => () => {
-    switch (type) {
-      case 'tegro': return trackEvent('Dex Tegro Redirect')
-      case 'gitbook': return trackEvent('Dex Gitbook Redirect')
-      case 'twitter': return trackEvent('Dex Twitter Redirect')
-    }
+    // switch (type) {
+    //   case 'tegro': return trackEvent('Dex Tegro Redirect')
+    //   case 'gitbook': return trackEvent('Dex Gitbook Redirect')
+    //   case 'twitter': return trackEvent('Dex Twitter Redirect')
+    // }
   }
 
   return (

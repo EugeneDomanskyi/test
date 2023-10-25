@@ -117,10 +117,6 @@ const TradeForm = forwardRef(({current, type, version, fullWidth = null, onSubmi
 
   const handleChangeFormType = type => () => {
     setFormType(type)
-    trackEvent(`Select ${type} Order`, {
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Network': blockchain.code,
-    })
   }
 
   return (

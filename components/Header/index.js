@@ -4,7 +4,7 @@ import cn from 'classnames'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
-import { trackEvent } from '@/libs/analytics.lib'
+import { trackEvent, getPageName } from '@/libs/analytics.lib'
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -22,7 +22,7 @@ import styles from './styles.module.scss'
 
 const Header = ({onHeightCounted}) => {
   const router = useRouter()
-  const { wallet, connect, disconnect, getBalance } = useWalletConnect()
+  const { wallet, connect, disconnect, getBalance, getConnectorName } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
   const isEarn = router.pathname.includes('/earn')
@@ -40,9 +40,9 @@ const Header = ({onHeightCounted}) => {
   const [moreIsOpen, setMoreIsOpen] = useState(false)
   const [supportIsOpen, setSupportIsOpen] = useState(false)
   const [currentBalance, setCurrentBalance] = useState({amount: 0, symbol: ''})
-  const [balanceLoading, setBalanceLoading] = useState(true)
   const [isBannerClosed, setIsBannerClosed] = useState(false)
   const [showPromoBanner, setShowPromoBanner] = useState(true)
+  const [balanceLoading, setBalanceLoading] = useState(true)
 
   useEffect(() => {
     if (headerRef.current) {
@@ -68,7 +68,9 @@ const Header = ({onHeightCounted}) => {
   }, [])
 
   useEffect(() => {
-    if (isEarn) {
+    if (isEarn && ! balance) {
+      setBalanceLoading(true)
+    } else {
       setCurrentBalance({amount: balance, symbol: 'TKeys'})
       setBalanceLoading(false)
     }
@@ -88,16 +90,30 @@ const Header = ({onHeightCounted}) => {
     }
   }
 
+  const handlePageEvent = (page) => () => {
+    trackEvent('Page Visited', {
+      'Page Name': page,
+    })
+  }
+
+  const handleResourceEvent = (community) => () => {
+    trackEvent('Community Resources Visited', {
+      'Community': community,
+    })
+  }
+
   const handleConnectWallet = async () => {
     if ( ! wallet) {
       trackEvent('Wallet Connect Clicked', {
-        'Wallet connected Status': 'Not Connected',
+        'Source': getPageName(),
       })
+
       const result = await connect()
       if (result) {
-        trackEvent('Wallet Connected Successfully', {
-          'Wallet connected Status': 'Connected',
-          'Wallet Address': result,
+        const walletName = await getConnectorName()
+        trackEvent('Wallet Connect Success', {
+          'Source': getPageName(),
+          'Type': walletName,
         })
       }
     }
@@ -115,15 +131,15 @@ const Header = ({onHeightCounted}) => {
     }
   }
 
-  const handleDisconnect = () => {
-    trackEvent('Wallet Disconnect Clicked', {
-      'Wallet connected Status': wallet ? 'Connected' : 'Not Connected',
-      'Wallet Address': wallet || null,
-    })
+  const handleDisconnect = async () => {
+    const walletName = await getConnectorName()
+
     disconnect()
     setMenuShow(false)
-    trackEvent('Wallet Disconnect successfully', {
-      'Wallet connected Status': 'Not Connected',
+
+    trackEvent('Wallet Disconnect Success', {
+      'Source': getPageName(),
+      'Type': walletName,
     })
   }
 
@@ -141,16 +157,16 @@ const Header = ({onHeightCounted}) => {
     setBalanceLoading(true)
     if (! isEarn) {
       const balance = await getBalance('', true)
-      if (balance) {
+      if (balance.formatted) {
         const amount = balance.formatted*1
         setCurrentBalance({amount: amount.toFixed(4), symbol: balance.symbol})
       }
-      setBalanceLoading(false)
     }
+    setBalanceLoading(false)
   }
 
   const handleClickDiscord = () => {
-    trackEvent('Click Support')
+    // trackEvent('Click Support')
     window.open("https://discord.com/channels/951018857533935627/1107789606612631602/1135635808087462009", '_blank')
   }
   

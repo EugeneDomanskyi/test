@@ -25,10 +25,10 @@ const ErrorStep = ({onSubmit, type}) => {
   const balance = useSelector(({$raffle}) => $raffle.balance)
 
   const handleClickNextStep = () => {
-    trackEvent('Click Collect TKeys', {
-      'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-      'Tkeys Quantity': balance,
+    trackEvent('Click Get Tkeys', {
+      'Source': 'Case Details',
     })
+
     if (type === 'balance') {
       window.open('https://galxe.com/tegro/campaign/GC9QPUMqMz?utm_source=web', '_blank')
     }

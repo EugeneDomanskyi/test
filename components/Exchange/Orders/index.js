@@ -68,19 +68,18 @@ const Orders = ({current, global, type, version, onOrderCancelled, onClickOrder}
     const eventPost = {
       'Base Currency': order.baseCurrency,
       'Quote Currency': order.quoteCurrency,
-      'Side': order.side,
+      'Side': order.side.toUpperCase(),
       'Quantity': order.quantity,
       'Price': order.itemPrice,
       'Total': order.price,
-      'Network': blockchain.name,
-      'Wallet connect Status': wallet ? 'Connected' : 'Not connected',
-      'Wallet Address': wallet || null,
-      'Order Type': 'Limit order',
+      'Network': blockchain.code.toUpperCase(),
     }
     trackEvent('Cancel Order Submit', eventPost)
     setCancellingOrders(state => [...state, order.id])
     order.cancel().then(() => {
       trackEvent('Cancel Order Success', eventPost)
+    }).catch(error => {
+      console.log(error)
     }).finally(() => {
       setCancellingOrders(state => state.filter(id => id !== order.id))
       onOrderCancelled()
@@ -123,6 +122,12 @@ const Orders = ({current, global, type, version, onOrderCancelled, onClickOrder}
   }
 
   const handleChangeOrdersType = type => () => {
+    trackEvent(`View ${type == 'open' ? 'Open' : 'Completed'} Order`, {
+      'Base Currency': current.symbol,
+      'Quote Currency': 'USDT',
+      'Network': blockchain.code.toUpperCase(),
+    })
+
     setOrderTypes(type)
     setLoading(true)
   }

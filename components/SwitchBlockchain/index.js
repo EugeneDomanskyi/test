@@ -22,7 +22,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose, onChangeNetwo
   const isExchange = router.pathname.includes('/exchange')
   const isEarn = router.pathname.includes('/earn')
 
-  const { wallet, changeNetwork } = useWalletConnect()
+  const { wallet, changeNetwork, blockchain: walletBlockchain } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
   const dispatch = useDispatch()
@@ -39,6 +39,15 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose, onChangeNetwo
     }
   }, [])
 
+  useEffect(() => {
+    if (wallet) {
+      const isSupportedChain = pageBlockchains.find(chain => chain.code === walletBlockchain.code)
+      if ((blockchain.name !== walletBlockchain.name) && isSupportedChain) {
+        dispatch($app.set.code(walletBlockchain.code))
+      }
+    }    
+  }, [wallet, walletBlockchain])
+
   const handleClickOutside = (event) => {
     if (! event.target.closest('#blockchain')) {
       setMenuShow(false)
@@ -50,23 +59,26 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose, onChangeNetwo
   }
 
   const handleBlockchainChange = async (val) => {
-    trackEvent('Switch Network', {
-      Network: val.toUpperCase(),
-    })
-    
-    dispatch($collection.set.clear())
-    dispatch($token.set.clear())
-    setMenuShow(false)
-    if (wallet) {
-      const network = await changeNetwork(val)
-      if (network) {
-        onChangeNetwork()
+    if (val != blockchain.code) {
+      trackEvent('Switch Network', {
+        'Old Network': blockchain.code.toUpperCase(),
+        'New Network': val.toUpperCase(),
+      })
+      
+      dispatch($collection.set.clear())
+      dispatch($token.set.clear())
+      setMenuShow(false)
+      if (wallet) {
+        const network = await changeNetwork(val)
+        if (network) {
+          onChangeNetwork()
+        }
       }
-    }
-    dispatch($app.set.code(val))
+      dispatch($app.set.code(val))
 
-    if (onMobileMenuClose) {
-      onMobileMenuClose()
+      if (onMobileMenuClose) {
+        onMobileMenuClose()
+      }
     }
   }
 
