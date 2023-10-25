@@ -419,7 +419,7 @@ const Orders = ({current, global, type, version, onOrderCancelled, onClickOrder}
             </App.Flex>
 
             <App.Flex flex={1}>
-              <App.Button xl fullWidth primary onClick={handleCloseConfirmDialog}>Don't Cancel</App.Button>
+              <App.Button xl fullWidth primary onClick={handleCloseConfirmDialog}>Don&apos;t Cancel</App.Button>
             </App.Flex>
           </App.Flex>
         </App.Flex>
