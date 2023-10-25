@@ -10,6 +10,7 @@ import { CHAINS } from '@/config'
 import $token from '@/store/token'
 import $exchange from '@/store/exchange'
 import $app from '@/store/app'
+import { usePropsHelper } from '@/myhooks/props-helper'
 
 // const temp = coinmarketAssets.reduce((acc, token) => {
 //   const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(token.platform.token_address)
@@ -83,7 +84,9 @@ const getToken = async (url, id) => {
   return res.data.token && res.data.token.symbol !== 'unknown' ? res.data.token : null
 }
 
-const WrapperExchange = ({children, isMobile}) => {
+const WrapperExchange = ({children, _isMobile}) => {
+  const { isMobile } = usePropsHelper()
+  
   const router = useRouter()
   const dispatch = useDispatch()
 
