@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
 import cn from 'classnames'
@@ -13,6 +13,8 @@ import styles from './styles.module.scss'
 const Sales = ({onClickSale, version, type}) => {
   const dispatch = useDispatch()
 
+  const [loading, setLoading] = useState(true)
+
   const trades = useSelector($orders.get.recentTrades(type, 50))
   const blockchain = useSelector($app.get.blockchain)
   const currentToken = useSelector(({$token}) => $token.current)
@@ -22,6 +24,7 @@ const Sales = ({onClickSale, version, type}) => {
 
   useEffect(() => {
     if (type === 'tokens' && isAddress) {
+      setLoading(true)
       $orders.api.get.tokens.trades({
         address: currentToken.address,
         blockchain: blockchain.code,
@@ -30,6 +33,7 @@ const Sales = ({onClickSale, version, type}) => {
         limit: 100,
       }).then(res => {
         dispatch($orders.set.trades({type: 'tokens', data: res}))
+        setLoading(false)
       })
     }
   }, [currentToken.address])
@@ -38,7 +42,9 @@ const Sales = ({onClickSale, version, type}) => {
     onClickSale({quantity: sale.amount, price: sale.priceFormatted, side: sale.side})
   }
 
-  return (
+  return version == 'mobile' && loading ? (
+    <App.LoaderBlock flex={1} />
+  ) : (
     <App.Flex flex={1} column className={cn(styles.container, {[styles[version]]: version})}>
       {version != 'mobile' ? (
         <App.Flex column>

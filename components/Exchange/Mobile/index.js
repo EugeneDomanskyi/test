@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
@@ -19,25 +19,51 @@ import styles from './styles.module.scss'
 
 const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 
-const Mobile = ({ item, onOrdersUpdate }) => {
+const formatNumber = (number) => {
+  if (number < 1e3) {
+    return number.toString()
+  } else if (number < 1e6) {
+    return (number / 1e3).toFixed(1) + ' K'
+  } else if (number < 1e9) {
+    return (number / 1e6).toFixed(1) + ' M'
+  } else {
+    return (number / 1e9).toFixed(1) + ' B'
+  }
+}
+
+const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
   const router = useRouter()
   const queryBlockchainCode = router.query.blockchain
 
-  const { wallet, getBalance, getPrice } = useWalletConnect()
+  const { wallet, getAddress, getBalance, getPrice } = useWalletConnect()
   const { formatWithPrecision } = useUtils()
 
   const blockchain = useSelector($app.get.blockchain)
   const infoList = useSelector(({ $token }) => $token.infoList)
 
+  const [bottomHeight, setBottomHeight] = useState(91)
   const [tab, setTab] = useState('charts')
   const [tabs, setTabs] = useState([])
   const [balance, setBalance] = useState({ currency: 0, usd: 0, usdt: 0, loading: true })
   const [isTradeDialogOpen, setIsTradeDialogOpen] = useState(false)
   const [tradeSide, setTradeSide] = useState()
-
+  const [chartTop, setChartTop] = useState([])
+  
   const tradeForm = useRef()
 
+  useImperativeHandle(ref, () => ({
+    handleClickOrder: (order) => {
+      handleClickOrder(order)
+    }
+  }))
+
   useEffect(() => {
+    if (getAddress()) {
+      setBottomHeight(230)
+    } else {
+      setBottomHeight(91)
+    }
+
     setTabs([
       { key: 'charts', title: 'Charts' },
       { key: 'orderbook', title: 'Orderbook' },
@@ -49,6 +75,16 @@ const Mobile = ({ item, onOrdersUpdate }) => {
       setTab('charts')
     }
   }, [wallet])
+
+  useEffect(() => {
+    if (item?.id) {
+      setChartTop([
+        {value: formatNumber(item.volume ?? 0), text: 'Vol'},
+        {value: formatNumber(item.high ?? 0), text: 'High'},
+        {value: formatNumber(item.low ?? 0), text: 'Low'},
+      ])
+    }
+  }, [item?.id])
 
   useEffect(() => {
     if (wallet) {
@@ -153,7 +189,7 @@ const Mobile = ({ item, onOrdersUpdate }) => {
             switch (currentTab) {
               case 'charts':
                 return (
-                  <Chart type="tokens" version="mobile" showSwitch />
+                  <App.Flex className={styles.absolute}><Chart type="tokens" version="mobile" showSwitch top={chartTop} /></App.Flex>
                 )
               case 'orderbook':
                 return (
@@ -173,7 +209,7 @@ const Mobile = ({ item, onOrdersUpdate }) => {
         </App.Flex>
       </App.Flex>
 
-      <App.Flex column height={230} justify="flex-end">
+      <App.Flex column height={bottomHeight} justify="flex-end">
         {wallet ? (
           <App.Flex column gap={8} sx={{ padding: '0 8px' }}>
             <App.Text szie={16} color="#878598" height={1}>My Balance</App.Text>
@@ -229,6 +265,6 @@ const Mobile = ({ item, onOrdersUpdate }) => {
       </App.Flex>
     </App.Flex>
   )
-}
+})
 
 export default Mobile

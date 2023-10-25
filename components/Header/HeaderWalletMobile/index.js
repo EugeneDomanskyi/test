@@ -1,13 +1,17 @@
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import Image from 'next/image'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
+
+import $orders from '@/store/orders'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const HeaderWalletMobile = () => {
+  const dispatch = useDispatch()
   const { wallet, connectorId, disconnect } = useWalletConnect()
 
   const [isDisconnectOpen, setIsDisconnectOpen] = useState(false)
@@ -34,6 +38,10 @@ const HeaderWalletMobile = () => {
     setIsDisconnectOpen(false)
   }
 
+  const handleOrdersDialogOpen = () => {
+    dispatch($orders.set.myOrdersDialogOpen(true))
+  }
+
   const shorterAddress = (size = 6) => {
     return wallet ? (wallet.slice(0, size) + '...' + wallet.slice(wallet.length - size)) : ''
   }
@@ -41,7 +49,7 @@ const HeaderWalletMobile = () => {
   return (
     <>
       <App.Flex row center gap={8}>
-        <App.Flex center className={styles.ordersButton}>
+        <App.Flex center className={styles.ordersButton} onClick={handleOrdersDialogOpen}>
           <App.Icon icon="orders-mobile" />
         </App.Flex>
 

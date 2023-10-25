@@ -8,7 +8,7 @@ import AppIcon from '@/components/App/AppIcon'
 
 import styles from './styles.module.scss'
 
-const AppDialog = ({ children, open, size, hideHeader, hideClose, title, subtitle, toTop, onClose }) => {
+const AppDialog = ({ children, open, size, hideHeader, hideClose, title, subtitle, toTop, full, onClose }) => {
   const [opened, setOpened] = useState(false)
 
   const layout = useRef(null)
@@ -46,9 +46,9 @@ const AppDialog = ({ children, open, size, hideHeader, hideClose, title, subtitl
   
   return open || opened ? (
     <div ref={layout} className={styles.layout}>
-      <div ref={content} className={cn(styles.content, {[styles.toTop]: toTop})} onClick={handleClose}>
-        <div onClick={e => e.stopPropagation()}>
-          <div className={cn(styles.wrapper, {[styles[size]]: size})}>
+      <div ref={content} className={cn(styles.content, {[styles.toTop]: toTop}, {[styles.full]: full})} onClick={handleClose}>
+        <div onClick={e => e.stopPropagation()} style={full ? { width: '100%', height: '100%' } : null}>
+          <div className={cn(styles.wrapper, {[styles[size]]: size}, {[styles.full]: full})}>
             {!hideHeader ? (
               <div className={styles.header}>
                 {!hideClose ? (

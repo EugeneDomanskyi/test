@@ -106,6 +106,13 @@
     }
 
     .orderContainer {
+      border-top: solid #000 1px;
+      padding: 16px;
+
+      &:nth-of-type(odd) {
+        background-color: #0E0B23;
+      }
+
       .hoverContent {
         position: absolute;
         top: 0;
@@ -121,14 +128,38 @@
           transform: translateX(0%);
         }
       }
+
+      .progress {
+        width: 39px;
+        height: 39px;
+        position: relative;
+        z-index: 0;
+
+        .progressStroke {
+          position: absolute;
+          z-index: 0;
+          left: 0;
+          top: 0;
+        }
+
+        .progressFill {
+          position: absolute;
+          z-index: 1;
+          left: 0;
+          top: 0;
+        }
+
+        .progressText {
+          position: absolute;
+          z-index: 2;
+          inset: 0;
+        }
+      }
     }
 
-    .order {
-      .side {
-        height: 100%;
-        width: 5px;
-        border-radius: 2px;
-      }
+    .currency {
+      background-color: #161331;
+      padding: 0 12px;
     }
   }
 }

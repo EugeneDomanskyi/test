@@ -10,6 +10,7 @@ import useOrders from '@/myhooks/useOrders'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
+import $orders from '@/store/orders'
 
 import App from '@/components/App'
 import Sidebar from '@/components/Exchange/Sidebar'
@@ -39,6 +40,7 @@ const Exchange = () => {
   
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
+  const myOrdersDialogOpen = useSelector(({ $orders }) => $orders.myOrdersDialogOpen)
 
   const {
     tokens,
@@ -57,6 +59,7 @@ const Exchange = () => {
   const [mobileTabTrade, setMobileTabTrade] = useState(false)
 
   const tradeForm = useRef(null)
+  const mobileRef = useRef(null)
 
   useEffect(() => {
     trackEvent('Tokens Clicked', {
@@ -92,83 +95,16 @@ const Exchange = () => {
     dispatch($token.set.pages({current: value ?? 1}))
   }, [])
 
-  // const pollingOrders = () => {
-  //   updateOrders()
-  // }
+  const handleCloseOrdersDialog = () => {
+    dispatch($orders.set.myOrdersDialogOpen(false))
+  }
 
-  // useInterval(pollingOrders, 15000)
-
-  /* {
-    (tab => {
-      switch (tab) {
-        case 'markets':
-          return (
-            <Sidebar
-              items={tokens}
-              searched={searched}
-              current={current}
-              sort={sort}
-              search={search}
-              searching={searching}
-              searchEmpty={searchEmpty}
-              pages={pages}
-              loading={tokenLoading}
-              onSort={handleSort}
-              onSearch={handleSearch}
-              onPage={handlePage} />
-          )
-        case 'charts':
-          return (
-            <Chart type="tokens" />
-          )
-        case 'trades':
-          return (
-            <App.Flex column gap={GRID_GAP} width="100%">
-              <SidebarMobile
-                items={tokens}
-                searched={searched}
-                current={current}
-                sort={sort}
-                search={search}
-                searching={searching}
-                searchEmpty={searchEmpty}
-                pages={pages}
-                loading={tokenLoading}
-                onSort={handleSort}
-                onSearch={handleSearch}
-                onPage={handlePage}
-              />
-
-              <App.Flex column flex={1} sx={{ position: 'relative' }}>
-                <App.Flex column gap={GRID_GAP} className={styles.tradesContent}>
-                  <OrderBook
-                    type="tokens"
-                    onClickOrder={handleClickOrder} />
-                  <Sales
-                    type="tokens"
-                    onClickSale={handleClickOrder} />
-                </App.Flex>
-              </App.Flex>
-            </App.Flex>
-          )
-        case 'orders':
-          return (
-            <Orders
-              current={current}
-              type="tokens"
-              onOrderCancelled={handleOrdersUpdated}
-              onClickOrder={handleClickOrder} />
-          )
-        case 'buy_sell':
-          return (
-            <TradeForm
-              ref={tradeForm}
-              type="tokens"
-              current={current} />
-          )
-      }
-    })(mobileTab)
-  } */
+  const handleClickOrderMobile = (order) => {
+    setTimeout(() => {
+      mobileRef.current.handleClickOrder(order)
+      handleCloseOrdersDialog()
+    }, 300)
+  }
 
   return (
     <App.Flex gap={GRID_GAP} className={styles.container}>
@@ -226,27 +162,46 @@ const Exchange = () => {
           </App.Flex>
         </>
       ) : (
-        !queryTokenId || queryTokenId == '0x' ? (
-          <Sidebar
-            items={tokens}
-            searched={searched}
-            current={current}
-            sort={sort}
-            search={search}
-            searching={searching}
-            searchEmpty={searchEmpty}
-            pages={pages}
-            loading={tokenLoading}
-            onSort={handleSort}
-            onSearch={handleSearch}
-            onPage={handlePage}
-          />
-        ) : (
-          <Mobile
-            item={current}
-            onOrdersUpdate={handleOrdersUpdated}
-          />
-        )
+        <>
+          {!queryTokenId || queryTokenId == '0x' ? (
+            <Sidebar
+              items={tokens}
+              searched={searched}
+              current={current}
+              sort={sort}
+              search={search}
+              searching={searching}
+              searchEmpty={searchEmpty}
+              pages={pages}
+              loading={tokenLoading}
+              onSort={handleSort}
+              onSearch={handleSearch}
+              onPage={handlePage}
+            />
+          ) : (
+            <Mobile
+              ref={mobileRef}
+              item={current}
+              onOrdersUpdate={handleOrdersUpdated}
+            />
+          )}
+
+          <App.Dialog open={myOrdersDialogOpen} onClose={handleCloseOrdersDialog} hideHeader hideClose full>
+            <App.Flex column full>
+              <App.Flex row center fullWidth height={64} className={styles.ordersHeader}>
+                <App.Text center size={16} weight={700}>Orders</App.Text>
+
+                <App.Flex row center className={styles.ordersBack} onClick={handleCloseOrdersDialog}>
+                  <App.Icon icon="chevron-left" height={21} width={21} />
+                </App.Flex>
+              </App.Flex>
+
+              <App.Flex fullWidth flex={1} sx={{ position: 'relative' }}>
+                <Orders global version="mobile" type="tokens" onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrderMobile} />
+              </App.Flex>
+            </App.Flex>
+          </App.Dialog>
+        </>
       )}
     </App.Flex>
   )

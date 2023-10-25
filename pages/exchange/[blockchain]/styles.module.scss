@@ -18,3 +18,15 @@
     }
   }
 }
+
+.ordersHeader {
+  border-bottom: 1px solid #1D1B2B;
+  position: relative;
+  z-index: 0;
+
+  .ordersBack {
+    position: absolute;
+    z-index: 0;
+    left: 16px;
+  }
+}

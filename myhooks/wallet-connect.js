@@ -111,6 +111,11 @@ const useWalletConnect = () => {
     return CHAINS.find(chain => chain.code === currentChain)
   }
 
+  const getAddress = () => {
+    const account = getAccount()
+    return account?.address
+  }
+
   const getBalance = async (token, full = false) => {
     const wallet = await connect()
     if (wallet) {
@@ -223,6 +228,7 @@ const useWalletConnect = () => {
     scanUrl,
     usdt,
     jsonRpcEndpoints,
+    getAddress,
     getBasicInfo,
   }
 }

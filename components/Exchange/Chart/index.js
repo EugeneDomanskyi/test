@@ -70,6 +70,7 @@ const CHART_CONFIG = {
   leftPriceScale: {
     visible: false,
   },
+  autoSize: true,
 }
 
 const INTERVALS = [
@@ -81,7 +82,7 @@ const INTERVALS = [
   {key: '1w', count: 1, unit: 'weeks', seconds: 7*24*60*60},
 ]
 
-const TradeChart = ({type, version, showSwitch}) => {
+const TradeChart = ({type, version, showSwitch, top = []}) => {
   const dispatch = useDispatch()
   
   const activeInterval = useSelector(({$exchange}) => $exchange.interval)
@@ -113,13 +114,13 @@ const TradeChart = ({type, version, showSwitch}) => {
   }
 
   const buildChart = () => {
-    chartRef.current = LightweightCharts.createChart(containerRef.current, {
-      ...CHART_CONFIG,
-      width: wrapperRef.current.offsetWidth,
-      height: wrapperRef.current.offsetHeight,
-    })
-    candlestickSeriesRef.current = chartRef.current.addCandlestickSeries({...TYPES_SETTINGS['candlesticks']})
-    areaSeriesRef.current = chartRef.current.addAreaSeries({...TYPES_SETTINGS['area']})
+    if ( ! chartRef.current) {
+      chartRef.current = LightweightCharts.createChart(containerRef.current, {
+        ...CHART_CONFIG,
+      })
+      candlestickSeriesRef.current = chartRef.current.addCandlestickSeries({...TYPES_SETTINGS['candlesticks']})
+      areaSeriesRef.current = chartRef.current.addAreaSeries({...TYPES_SETTINGS['area']})
+    }
   }
 
   const updateChart = () => {
@@ -175,11 +176,22 @@ const TradeChart = ({type, version, showSwitch}) => {
   }
 
   return (
-    <App.Flex column gap={16} flex={1} className={cn(styles.container, {[styles[version]]: version})}>
+    <App.Flex column gap={8} flex={1} className={cn(styles.container, {[styles[version]]: version})}>
       {version != 'mobile' ? ComponentIntervals() : null}
 
-      <div ref={wrapperRef} style={{flex: 1}}>
-        <div ref={containerRef} />
+      {top && top.length ? (
+        <App.Flex row align="center" justify="space-between">
+          {top.map((item, index) => (
+            <App.Flex key={index} row gap={4} align="flex-end" sx={{ padding: '0 12px' }}>
+              <App.Text size={16} weight={700} color="rgba(255, 255, 255, 0.70)">{item.value}</App.Text>
+              <App.Text size={12} color="#5E5C6B">{item.text}</App.Text>
+            </App.Flex>
+          ))}
+        </App.Flex>
+      ) : null}
+
+      <div ref={wrapperRef} style={version == 'mobile' ? {height: `calc(100% - ${top.length ? '76px' : '44px'})`} : {flex: 1}}>
+        <div ref={containerRef} style={{ height: '100%' }} />
       </div>
 
       {version == 'mobile' ? ComponentIntervals() : null}
@@ -189,7 +201,9 @@ const TradeChart = ({type, version, showSwitch}) => {
 
 const isEqual = (prevProps, nextProps) => {
   return prevProps.type === nextProps.type &&
-    prevProps.variant === nextProps.variant
+    prevProps.variant === nextProps.variant &&
+    prevProps.showSwitch === nextProps.showSwitch &&
+    prevProps.top === nextProps.top
 }
 
 export default memo(TradeChart, isEqual)

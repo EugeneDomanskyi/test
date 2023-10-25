@@ -1,12 +1,13 @@
 import AppFlex from '@/components/App/AppFlex'
 import AppLoader from '@/components/App/AppLoader'
 
-const AppLoaderBlock = ({ height = 300, width = '100%', backgroundColor = 'rgba(0,0,0,0.3)', blur = 1, size = 40, color = '#fff', fixed = false }) => {
+const AppLoaderBlock = ({ height = 300, width = '100%', backgroundColor = 'rgba(0,0,0,0.3)', blur = 1, size = 40, color = '#fff', fixed = false, flex = 0 }) => {
   const styles = {
     ...(fixed ? {position: 'fixed', inset: 0} : null),
     backgroundColor: 'rgba(0,0,0,0.1)',
     backdropFilter: `blur(${blur}px)`,
     zIndex: 10,
+    flex: flex, 
   }
   return (
     <AppFlex center height={height} width={width} sx={styles}>

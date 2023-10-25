@@ -1,5 +1,4 @@
-import styles from './styles.module.scss'
-import { memo, useEffect } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import cn from 'classnames'
 
@@ -8,6 +7,8 @@ import $orders from '@/store/orders'
 
 import App from '@/components/App'
 
+import styles from './styles.module.scss'
+
 const toLowerFixed = val => {
   const str = val.toString()
   return str.substring(0, str.indexOf('.') + 7)
@@ -15,6 +16,8 @@ const toLowerFixed = val => {
 
 const OrderBook = ({type, version, onClickOrder}) => {
   const dispatch = useDispatch()
+
+  const [loading, setLoading] = useState(true)
 
   const orderBook = useSelector($orders.get.orderBook(type))
   const blockchain = useSelector($app.get.blockchain)
@@ -27,6 +30,7 @@ const OrderBook = ({type, version, onClickOrder}) => {
 
   useEffect(() => {
     if (isAddress) {
+      setLoading(true)
       $orders.api.get[type].orderBook({
         collection: currentToken.address,
         address: currentToken.address,
@@ -35,6 +39,7 @@ const OrderBook = ({type, version, onClickOrder}) => {
         ...(type === 'nfts' ? {} : {statuses: '[1]'})
       }).then(res => {
         dispatch($orders.set.orderBook({type: type, data: res, tokenAddress: currentToken.address}))
+        setLoading(false)
       })
     }
   }, [currentToken.address])
@@ -43,7 +48,9 @@ const OrderBook = ({type, version, onClickOrder}) => {
     onClickOrder({...order, price: order.priceFormatted, quantity: toLowerFixed(volume)})
   }
 
-  return (
+  return version == 'mobile' && loading ? (
+    <App.LoaderBlock flex={1} />
+  ) : (
     <App.Flex column flex={[1, null]} className={cn(styles.card, {[styles[version]]: version})}>
       {version != 'mobile' ? (
         <App.Flex className={styles.header} align="center">
