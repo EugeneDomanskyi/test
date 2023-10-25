@@ -59,7 +59,6 @@ export default function Markets({}) {
 
   const getMarket = async () => {
     const token = await getToken(currentChain.baseUniswapUrl, queryMarketId)
-    console.log('token', token);
     if (token) {
       setMarketInfo(template(token))
       const id = {[coingeckoAssets[currentChain.platform][token.id]]: token.id}

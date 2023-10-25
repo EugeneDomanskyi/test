@@ -58,7 +58,6 @@ export default function Contracts(defaultGasLimit = null) {
     },
 
     writeContract: async (config) => {
-      console.log('writeContract config', config);
       const place = config?.functionName
       if (config?.mode == 'prepared') {
         try {
@@ -66,7 +65,6 @@ export default function Contracts(defaultGasLimit = null) {
           return hash
         }
         catch (error) {
-          console.log('writeContract error:', error);
           return methods.debugMessage(error, `Write "${place}"`)
         }
       } else {
@@ -287,17 +285,6 @@ export default function Contracts(defaultGasLimit = null) {
       // if (config.error) {
       //   return config
       // }
-
-      console.log('enterCampaign config', config);
-      console.log('prepareWriteContract object', {
-        address: contract,
-        abi: abi.tkeys.enterCampaign,
-        functionName: 'enterCampaign',
-        args: [
-          campaignId,
-          tokenIds
-        ],
-      });
       const result = await methods.writeContract(config)
       return result
     },
