@@ -36,6 +36,8 @@ export default function Contracts(defaultGasLimit = null) {
       } catch (error) {
         errorCode = error?.code
         // errorData.error = error
+        console.log('prepareWriteContract error', error);
+        console.log('prepareWriteContract place', place);
         methods.debugMessage(error, `Prepare "${place}"`)
       }
 
@@ -286,6 +288,16 @@ export default function Contracts(defaultGasLimit = null) {
       //   return config
       // }
 
+      console.log('enterCampaign config', config);
+      console.log('prepareWriteContract object', {
+        address: contract,
+        abi: abi.tkeys.enterCampaign,
+        functionName: 'enterCampaign',
+        args: [
+          campaignId,
+          tokenIds
+        ],
+      });
       const result = await methods.writeContract(config)
       return result
     },
