@@ -69,9 +69,9 @@ const LandingPlatform = () => {
 
   return (
     <App.Flex className={styles.container}>
-      <video autoPlay loop muted>
+      {/* <video autoPlay loop muted>
         <source src={'/images/landing/reveal.webm'} type="video/webm" />
-      </video>
+      </video> */}
 
       <App.Container>
         <App.Flex column center gap={[36, 8]} sx={[{ padding: '70px 0' }, { padding: '50px 0' }]}>

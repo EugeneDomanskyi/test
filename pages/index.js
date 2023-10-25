@@ -7,8 +7,8 @@ const LandingPage = () => {
   return (
     <App.Flex column gap={[130, 70]} className={styles.container}>
       <Landing.Grid />
+      {/* <Landing.Slides /> */}
       <Landing.Head />
-      <Landing.Slides />
       <Landing.Platform />
       <Landing.Founders />
       <Landing.Footer />
