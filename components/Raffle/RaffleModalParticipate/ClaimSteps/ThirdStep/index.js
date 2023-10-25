@@ -25,8 +25,8 @@ const ThirdStep = ({campaign, onSubmit}) => {
 
       <App.Flex sx={{zIndex: 4}}>
         <ClaimText
-          title="Fingers crossed, Best of Luck!"
-          subTitle="This case can only be opened once"
+          title="🤞 Fingers crossed, Best of Luck! 🍀"
+          subTitle=""
         />
       </App.Flex>
     </>
