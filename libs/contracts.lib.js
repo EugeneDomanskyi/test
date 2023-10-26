@@ -285,7 +285,6 @@ export default function Contracts(defaultGasLimit = null) {
       // if (config.error) {
       //   return config
       // }
-
       const result = await methods.writeContract(config)
       return result
     },

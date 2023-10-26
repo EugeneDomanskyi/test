@@ -1,5 +1,7 @@
 import Image from 'next/image'
 
+import { trackEvent } from '@/libs/analytics.lib'
+
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
