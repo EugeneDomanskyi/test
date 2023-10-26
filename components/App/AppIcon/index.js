@@ -254,6 +254,15 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon === 'wallet2') {
+      return (
+        <svg width={width ?? 19} height={height ?? 20} viewBox="0 0 19 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#B9B8C5'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14.282 11.226a1.59 1.59 0 00-.475 1.29c.071.856.855 1.481 1.71 1.481h1.504v.942a2.983 2.983 0 01-2.977 2.977H4.956a2.983 2.983 0 01-2.977-2.977V9.611a2.983 2.983 0 012.977-2.976h9.088a2.983 2.983 0 012.977 2.976v1.14h-1.6c-.443 0-.846.175-1.14.475z" />
+          <path stroke={color ?? '#B9B8C5'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M1.98 10.324V6.706c0-.942.577-1.78 1.456-2.113l6.286-2.375a1.504 1.504 0 012.034 1.409v3.008M17.86 11.56v1.63a.813.813 0 01-.793.808h-1.551c-.855 0-1.639-.626-1.71-1.48a1.59 1.59 0 01.475-1.291c.293-.3.696-.475 1.14-.475h1.646a.813.813 0 01.792.807zM5.542 10h5.541" />
+        </svg>
+      )
+    }
+
     if (icon === 'etherscan') {
       return (
         <svg width={width ?? 12} height={height ?? 12} fill="none" viewBox="0 0 21 21" {...props}>

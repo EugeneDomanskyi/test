@@ -53,8 +53,8 @@ const HeaderWalletMobile = () => {
           <App.Icon icon="orders-mobile" />
         </App.Flex>
 
-        <App.Flex center className={styles.connectorButton} onClick={handleDisconnectDialogOpen}>
-          <Image src={getConnectorLogo()} width={30} height={30} alt="" />
+        <App.Flex center className={styles.ordersButton} onClick={handleDisconnectDialogOpen}>
+          <App.Icon icon="wallet2" />
         </App.Flex>
       </App.Flex>
 

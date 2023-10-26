@@ -43,7 +43,12 @@ const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
 
   const [bottomHeight, setBottomHeight] = useState(91)
   const [tab, setTab] = useState('charts')
-  const [tabs, setTabs] = useState([])
+  const [tabs, setTabs] = useState([
+    { key: 'charts', title: 'Charts' },
+    { key: 'orderbook', title: 'Orderbook' },
+    { key: 'trades', title: 'Trades' },
+    { key: 'orders', title: 'My Orders' },
+  ])
   const [balance, setBalance] = useState({ currency: 0, usd: 0, usdt: 0, loading: true })
   const [isTradeDialogOpen, setIsTradeDialogOpen] = useState(false)
   const [tradeSide, setTradeSide] = useState()
@@ -58,18 +63,18 @@ const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
   }))
 
   useEffect(() => {
-    if (getAddress()) {
-      setBottomHeight(230)
-    } else {
-      setBottomHeight(91)
-    }
+    // if (getAddress()) {
+    //   setBottomHeight(230)
+    // } else {
+    //   setBottomHeight(91)
+    // }
 
-    setTabs([
-      { key: 'charts', title: 'Charts' },
-      { key: 'orderbook', title: 'Orderbook' },
-      { key: 'trades', title: 'Trades' },
-      { key: 'orders', title: 'My Orders', disabled: !wallet },
-    ])
+    setTabs(tabs.map(item => {
+      if (item.key == 'orders') {
+        item.disabled = !wallet
+      }
+      return item
+    }))
 
     if ( ! wallet && tab == 'orders') {
       setTab('charts')
@@ -86,11 +91,11 @@ const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
     }
   }, [item?.id])
 
-  useEffect(() => {
-    if (wallet) {
-      fetchBalance()
-    }
-  }, [wallet, blockchain.code])
+  // useEffect(() => {
+  //   if (wallet) {
+  //     fetchBalance()
+  //   }
+  // }, [wallet, blockchain.code])
 
   const fetchBalance = async () => {
     const tempBalance = {
@@ -151,13 +156,12 @@ const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
 
   return (
     <App.Flex column full gap={16}>
-      <App.Flex column fullWidth height={106}>
-        <App.Flex row align="center" className={styles.back} onClick={handleBack} fullWidth>
-          <App.Icon icon="chevron-left" width={24} height={24} color="#fff" />
-          <App.Text size={16}>Back</App.Text>
-        </App.Flex>
+      <App.Flex row align="center" height={72} justify="space-between" sx={{ padding: 8 }}>
+        <App.Flex row align="center" gap={8}>
+          <App.Flex row align="center" className={styles.back} onClick={handleBack} fullWidth>
+            <App.Icon icon="chevron-left" width={24} height={24} color="#fff" />
+          </App.Flex>
 
-        <App.Flex row align="center" justify="space-between" sx={{ padding: '0 8px' }}>
           <App.Flex row align="center" gap={8}>
             {item.image ? (
               <Image src={item.image} priority width={50} height={50} className={styles.image} alt="" />
@@ -170,13 +174,13 @@ const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
               <App.Text nowrap size={12} color="#5E5C6B">{item.name}</App.Text>
             </App.Flex>
           </App.Flex>
+        </App.Flex>
 
-          <App.Flex column>
-            <App.Text right size={16} weight={600}>${ item.price }</App.Text>
-            <App.Flex row align="center" justify="flex-end" gap={2}>
-              <App.Icon icon="caret-down" width={10} height={10} color={item.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C'} style={{transform: `rotate(${item.ticker?.type == 'plus' ? '180deg' : '0deg'})`}} />
-              <App.Text size={12} color={item.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C'}>{ item.ticker?.value }%</App.Text>
-            </App.Flex>
+        <App.Flex column>
+          <App.Text right size={16} weight={600}>${ item.price }</App.Text>
+          <App.Flex row align="center" justify="flex-end" gap={2}>
+            <App.Icon icon="caret-down" width={10} height={10} color={item.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C'} style={{transform: `rotate(${item.ticker?.type == 'plus' ? '180deg' : '0deg'})`}} />
+            <App.Text size={12} color={item.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C'}>{ item.ticker?.value }%</App.Text>
           </App.Flex>
         </App.Flex>
       </App.Flex>
@@ -210,7 +214,7 @@ const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
       </App.Flex>
 
       <App.Flex column height={bottomHeight} justify="flex-end">
-        {wallet ? (
+        {/* {wallet ? (
           <App.Flex column gap={8} sx={{ padding: '0 8px' }}>
             <App.Text szie={16} color="#878598" height={1}>My Balance</App.Text>
 
@@ -240,7 +244,7 @@ const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
               </App.Flex>
             </App.Flex>
           </App.Flex>
-        ) : null}
+        ) : null} */}
 
         <App.Hr color="#1F1C30" />
 
