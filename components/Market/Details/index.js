@@ -36,7 +36,7 @@ export default function Details({marketInfo, type}) {
           : null
       }      
       <Resources />
-      <FAQ type={type} />
+      <FAQ type={type} marketInfo={marketInfo} />
     </App.Flex>
   )
 }

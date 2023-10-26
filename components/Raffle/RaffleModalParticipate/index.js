@@ -69,7 +69,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
   const handleClickOpen = async () => {
     setLoading(true)
     const res = await onUpdateUserTKeys(item.tKeyRequired)
-    if (res.length !== item.tKeyRequired*1) {
+    if (res.length < item.tKeyRequired*1) {
       if (showKeysError) {
         setCloseKeysError(true)
         setShowKeysError(!showKeysError)
@@ -269,7 +269,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
       'Page': 'Case Details',
     })
 
-    const shareText = `🎁✨ Did you know? You can open cases on Tegro and share rewards worth 💰💰 $10,000 in $USDT, $PEPE, $SHIB, and other tokens! Unlock your first case for FREE! Start here 👉 `
+    const shareText = `🎁✨ Did you know? You can open cases on Tegro and share rewards worth 💰💰 $10,000+ in $USDT, $PEPE, $SHIB, and other tokens! \n\n #UnboxHappiness and win BIG now! Start here 👇👇 \n\n`
     onShare(shareText)
   }
 
@@ -337,10 +337,10 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
                 </App.Flex>
               </App.Flex>
 
-              {/* <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles.hiddenOnMobile)}>
+              <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles.hiddenOnMobile)}>
                 <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
-                <App.Text size={12} height={1}>{balance}/{item.tKeyRequired} {item.tKeyRequired*1 === 1 ? 'TKey' : 'TKeys'} available</App.Text>
-              </App.Flex> */}
+                <App.Text size={12} height={1}>{balance} {balance*1 === 1 ? 'TKey' : 'TKeys'} available</App.Text>
+              </App.Flex>
 
               <App.Flex className={styles.buttonWrapper}>
                 <App.Flex className={cn(styles.buttonText, {[styles.show]: ! showKeysError})}>
