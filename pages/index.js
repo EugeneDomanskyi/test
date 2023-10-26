@@ -1,5 +1,6 @@
 import App from '@/components/App'
 import Landing from '@/components/Landing'
+import Raffle from '@/components/Raffle'
 
 import styles from './styles.module.scss'
 
@@ -9,6 +10,7 @@ const LandingPage = () => {
       <Landing.Grid />
       {/* <Landing.Slides /> */}
       <Landing.Head />
+      <Raffle.Top landing />
       <Landing.Platform />
       <Landing.Founders />
       <Landing.Footer />

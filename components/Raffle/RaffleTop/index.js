@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
 import Image from 'next/image'
 import cn from 'classnames'
 
@@ -15,7 +16,8 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 import Link from 'next/link'
 
-const RaffleTop = ({ loading, isFirstTimeUser }) => {
+const RaffleTop = ({ loading, isFirstTimeUser, landing = false }) => {
+  const router = useRouter()
   const { wallet, connect, getConnectorName } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
@@ -59,6 +61,10 @@ const RaffleTop = ({ loading, isFirstTimeUser }) => {
   }
 
   const handleConnectWalletClick = async () => {
+    if (landing) {
+      router.push('/earn')
+    }
+    
     trackEvent('Wallet Connect Clicked', {
       'Source': getPageName(),
     })
@@ -111,7 +117,7 @@ const RaffleTop = ({ loading, isFirstTimeUser }) => {
               </App.Flex> */}
 
               {
-                isFirstTimeUser
+                isFirstTimeUser || landing
                   ? <App.Flex justify="flex-start" className={styles.firstTimeBanner}>
                       <App.Flex center gap={8}>
                         <App.Text
