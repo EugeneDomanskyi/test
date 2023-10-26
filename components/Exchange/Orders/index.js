@@ -146,7 +146,7 @@ const Orders = ({current, global, type, version, onOrderCancelled, onClickOrder}
       statuses: '[1,2,3]',
     })
     if (res) {
-      dispatch($orders.set[type]([...res, ...res, ...res, ...res, ...res, ...res]))
+      dispatch($orders.set[type](res))
       setLoading(false)
     }
   }
