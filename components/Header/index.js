@@ -67,7 +67,7 @@ const Header = ({onHeightCounted}) => {
   useEffect(() => {
     if (isEarn && ! balance) {
       setBalanceLoading(true)
-    } else {
+    } else if (isEarn) {
       setCurrentBalance({amount: balance, symbol: 'TKeys'})
       setBalanceLoading(false)
     }

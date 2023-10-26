@@ -69,10 +69,10 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose, onChangeNetwo
       dispatch($token.set.clear())
       setMenuShow(false)
       if (wallet) {
-        const network = await changeNetwork(val)
-        if (network) {
-          onChangeNetwork()
-        }
+        // const network = await changeNetwork(val)
+        // if (network) {
+        //   onChangeNetwork()
+        // }
       }
       dispatch($app.set.code(val))
 
