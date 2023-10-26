@@ -30,8 +30,7 @@ const RaffleListBrowseItem = ({ item, onParticipate }) => {
 
         {item.status == 'Active' ? (
           <App.Flex row center gap={4} className={styles.tkeyBadge}>
-            <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
-            <App.Text size={[12, 10]} height={1}>{item.tKeyRequired +  ' ' + (item.tKeyRequired*1 === 1 ? 'TKey' : 'TKeys')}</App.Text>
+            <App.Text size={[12, 10]} height={1}>#{item.id}</App.Text>
           </App.Flex>
         ) : null}
       </App.Flex>
@@ -47,13 +46,19 @@ const RaffleListBrowseItem = ({ item, onParticipate }) => {
       </App.Flex>
 
       <App.Flex column justify="flex-end" gap={8} height={[74, 'auto']}>
-        <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles[item.status])} fullWidth>
-          <Image src="/images/raffle/usdt.png" width={16} height={16} alt="" />
-          {item.status == 'Upcoming' ? (
-            <App.Text size={12} height={1}>{item.rewardAmount} USDT available</App.Text>
-          ) : (
-            <App.Text size={12} height={1}>{item.totalTransferred}/{item.rewardAmount} USDT distributed</App.Text>
-          )}
+        <App.Flex row justify="space-between" gap={4} fullWidth>
+          <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles[item.status])}>
+            <Image src="/images/raffle/tkey-small.png" width={16} height={16} alt="" />
+            <App.Text size={12} height={1}>{item.tKeyRequired} Req</App.Text>
+          </App.Flex>
+          <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles[item.status])}>
+            <Image src="/images/raffle/usdt.png" width={16} height={16} alt="" />
+            {item.status == 'Upcoming' ? (
+              <App.Text size={12} height={1}>{item.rewardAmount} USDT available</App.Text>
+            ) : (
+              <App.Text size={12} height={1}>{item.totalTransferred}/{item.rewardAmount} USDT distributed</App.Text>
+            )}
+          </App.Flex>
         </App.Flex>
 
         {item.status == 'Active' ? (
