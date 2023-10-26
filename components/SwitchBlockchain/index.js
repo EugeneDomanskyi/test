@@ -43,7 +43,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose, onChangeNetwo
     if (wallet) {
       const isSupportedChain = pageBlockchains.find(chain => chain.code === walletBlockchain.code)
       if ((blockchain.name !== walletBlockchain.name) && isSupportedChain) {
-        dispatch($app.set.code(walletBlockchain.code))
+        // dispatch($app.set.code(walletBlockchain.code))
       }
     }    
   }, [wallet, walletBlockchain])
