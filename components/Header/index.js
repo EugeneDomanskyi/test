@@ -19,7 +19,7 @@ import NavbarDropdown from '@/components/NavbarDropdown'
 
 import styles from './styles.module.scss'
 
-const Header = ({onHeightCounted}) => {
+const Header = () => {
   const router = useRouter()
   const dispatch = useDispatch()
   const { wallet, connect, disconnect, getBalance, getConnectorName } = useWalletConnect()
@@ -40,15 +40,6 @@ const Header = ({onHeightCounted}) => {
   const [currentBalance, setCurrentBalance] = useState({amount: 0, symbol: ''})
   const [isBannerClosed, setIsBannerClosed] = useState(false)
   const [balanceLoading, setBalanceLoading] = useState(true)
-
-  useEffect(() => {
-    if (headerRef.current) {
-      const headerHeight = headerRef.current.getBoundingClientRect()
-      if (headerHeight.height) {
-        onHeightCounted(headerHeight.height)
-      }
-    }
-  }, [])
 
   useEffect(() => {
     if (wallet && ! isEarn) {

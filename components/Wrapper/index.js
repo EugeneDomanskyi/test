@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { v4 as uuid } from 'uuid'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
@@ -27,8 +27,6 @@ const Wrapper = ({ children, isMobile }) => {
   const { address, isConnected } = useAccount()
   const { chain } = useNetwork()
   const { isLoading, switchNetwork } = useSwitchNetwork()
-
-  const [headerHeight, setHeaderHeight] = useState(64)
 
   const storedBlockchain = useSelector($app.get.blockchain)
 
@@ -93,14 +91,10 @@ const Wrapper = ({ children, isMobile }) => {
       'Page Name': getPageName(),
     })
   }, [router.asPath])
-
-  const handleHeaderHeightCounted = (height) => {
-    setHeaderHeight(height)
-  }
   
   return (
-    <div style={{paddingTop: headerHeight, transition: '.4s'}}>
-      <Header onHeightCounted={handleHeaderHeightCounted} />
+    <div style={{paddingTop: 64, transition: '.4s'}}>
+      <Header />
 
       {isExchange ? (
         <WrapperExchange isMobile={isMobile}>
