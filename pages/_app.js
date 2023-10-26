@@ -64,26 +64,29 @@ const rainbowMagicConnector = ({ chains }) => ({
   iconUrl: '/images/icon-magic.png',
   iconBackground: '#fff',
   createConnector: () => {
-    const [initialChain] = chains.map((chain) => {
+    const formattedChains = chains.map((chain) => {
       const [rpcUrl] = chain.rpcUrls.public.http
       return {
         rpcUrl: rpcUrl,
         chainId: chain.id,
       }
     })
+    const [initialChain] = formattedChains
     
     const connector = new MagicConnectors.UniversalWalletConnector({
       chains: chains,
       options: {
+        networks: formattedChains,
         apiKey: process.env.NEXT_PUBLIC_MAGIC_LINK_API_KEY,
         magicSdkConfiguration: {
           network: initialChain,
         },
       },
-    });
+    })
+
     return {
       connector,
-    };
+    }
   },
 })
 
@@ -96,7 +99,7 @@ const { wallets: [popularWallets] } = getDefaultWallets({
 const connectors = connectorsForWallets([
   {
     groupName: 'Recommended',
-    wallets: [rainbowMagicConnector({ chains: CHAINS })],
+    wallets: [rainbowMagicConnector({ chains: chains })],
   },
   popularWallets
 ])
