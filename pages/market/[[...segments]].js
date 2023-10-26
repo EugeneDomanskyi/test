@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
 import { CHAINS } from '@/config'
@@ -49,8 +50,6 @@ export default function Markets({}) {
   const [marketInfo, setMarketInfo] = useState({})
 
   const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
-
-  console.log(marketInfo)
 
   const currentChain = CHAINS.find(chain => chain.code === queryBlockchainCode)
 

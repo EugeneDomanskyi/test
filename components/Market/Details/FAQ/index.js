@@ -8,12 +8,11 @@ import moment from 'moment'
 import App from '@/components/App'
 import SectionTitle from '@/components/Market/SectionTitle'
 
-const QuestFAQ = ({type}) => {
+const QuestFAQ = ({type, marketInfo}) => {
   const itemRefs = useRef([])
   const answers = useRef([])
 
   const [openItem, setOpenItem] = useState(null)
-  const { marketInfo } = useSelector(({$app}) => $app)
 
   const handleClickQuestion = num => () => {
     const isOpen = answers.current[num].getBoundingClientRect().height

@@ -22,7 +22,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose, onChangeNetwo
   const isExchange = router.pathname.includes('/exchange')
   const isEarn = router.pathname.includes('/earn')
 
-  const { wallet, changeNetwork } = useWalletConnect()
+  const { wallet, changeNetwork, blockchain: walletBlockchain } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
   const dispatch = useDispatch()
@@ -38,6 +38,15 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose, onChangeNetwo
       document.removeEventListener('click', handleClickOutside, false)
     }
   }, [])
+
+  useEffect(() => {
+    if (wallet) {
+      const isSupportedChain = pageBlockchains.find(chain => chain.code === walletBlockchain.code)
+      if ((blockchain.name !== walletBlockchain.name) && isSupportedChain) {
+        dispatch($app.set.code(walletBlockchain.code))
+      }
+    }    
+  }, [wallet, walletBlockchain])
 
   const handleClickOutside = (event) => {
     if (! event.target.closest('#blockchain')) {
