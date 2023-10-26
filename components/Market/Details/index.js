@@ -16,7 +16,7 @@ export default function Details({marketInfo, type}) {
       <Info type={type} marketInfo={marketInfo} />
       <LivePrice type={type} marketInfo={marketInfo} />
       <Stats marketInfo={marketInfo} />
-      <About />
+      <About marketInfo={marketInfo} />
 
       {
         marketInfo?.sampleImages
