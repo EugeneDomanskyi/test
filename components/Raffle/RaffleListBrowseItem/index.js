@@ -30,7 +30,7 @@ const RaffleListBrowseItem = ({ item, onParticipate }) => {
     if (item.status == 'Active') {
       const timerInterval = setInterval(() => {
         const remainingTime = calculateRemainingTime(item.endTimestamp)
-        const formatted = moment.utc(remainingTime.asMilliseconds()).format('DD[D]:HH[H]:mm[M]:ss[S]')
+        const formatted = moment.utc(remainingTime.asMilliseconds()).format('DD[D]:HH[H]:mm[M]')
         setTimer(formatted)
   
         if (remainingTime.asMilliseconds() <= 0) {
@@ -65,7 +65,7 @@ const RaffleListBrowseItem = ({ item, onParticipate }) => {
   }
 
   return (
-    <App.Flex column gap={32} className={cn(styles.box, styles[item.status])}>
+    <App.Flex column gap={[32, 16]} className={cn(styles.box, styles[item.status])}>
       <div className={styles.circle} />
 
       <App.Flex row align="center" justify="space-between">
@@ -82,9 +82,9 @@ const RaffleListBrowseItem = ({ item, onParticipate }) => {
         ) : null}
       </App.Flex>
 
-      <App.Flex row align="center" gap={[16, 8]}>
+      <App.Flex align="center" gap={[16, 8]} className={styles.caseTitle}>
         <App.Flex center sx={{ minWidth: propValue([64, 34], true) }}>
-          <Image src={item.image} width={propValue([64, 34], true)} height={propValue([64, 34], true)} alt="" />
+          <Image src={item.image} width={propValue([64, 44], true)} height={propValue([64, 44], true)} alt="" />
         </App.Flex>
 
         <App.Flex flex={1}>
@@ -95,15 +95,15 @@ const RaffleListBrowseItem = ({ item, onParticipate }) => {
       <App.Flex column justify="flex-end" gap={8} height={[74, 'auto']}>
         <App.Flex row justify="space-between" gap={4} fullWidth>
           <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles[item.status])}>
-            <Image src="/images/raffle/tkey-small.png" width={16} height={16} alt="" />
-            <App.Text size={12} height={1}>{item.tKeyRequired} Req</App.Text>
+            <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
+            <App.Text size={[12, 10]} height={1}>{item.tKeyRequired} <span className={styles.desktopVisible}>Req</span></App.Text>
           </App.Flex>
           <App.Flex row center gap={4} className={cn(styles.tkeyBadge, styles[item.status])}>
             <Image src="/images/raffle/usdt.png" width={16} height={16} alt="" />
             {item.status == 'Upcoming' ? (
-              <App.Text size={12} height={1}>{item.rewardAmount} USDT available</App.Text>
+              <App.Text size={[12, 10]} height={1}>{item.rewardAmount} USDT available</App.Text>
             ) : (
-              <App.Text size={12} height={1}>{item.totalTransferred}/{item.rewardAmount} USDT distributed</App.Text>
+              <App.Text size={[12, 10]} height={1}>{item.totalTransferred}/{item.rewardAmount} <span className={styles.desktopVisible}>USDT distributed</span> <span className={styles.mobileVisible}>dist.</span></App.Text>
             )}
           </App.Flex>
         </App.Flex>
