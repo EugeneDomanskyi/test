@@ -15,7 +15,7 @@ const RaffleListBrowseItem = ({ item, onParticipate }) => {
   // if (item.id*1 === 17) {
   //   item = {...item, status: 'Upcoming'}
   // }
-  // console.log('item', item);
+  // console.log('item', item)
 
   const calculateRemainingTime = (timestamp) => {
     const now = moment()
