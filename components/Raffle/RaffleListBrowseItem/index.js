@@ -12,8 +12,12 @@ import styles from './styles.module.scss'
 const RaffleListBrowseItem = ({ item, onParticipate }) => {
   const { propValue } = usePropsHelper()
 
-  // if (item.id*1 === 17) {
+  // if (item.id*1 === 18) {
   //   item = {...item, status: 'Upcoming'}
+  // }
+  // console.log('item', item)
+  // if (item.id*1 === 17) {
+  //   item = {...item, status: 'Active'}
   // }
   // console.log('item', item)
 
@@ -45,7 +49,7 @@ const RaffleListBrowseItem = ({ item, onParticipate }) => {
     if (item.status == 'Upcoming') {
       const timerInterval = setInterval(() => {
         const remainingTime = calculateRemainingTime(item.startTimestamp)
-        const formatted = moment.utc(remainingTime.asMilliseconds()).format('DD[D]:HH[H]:mm[M]:ss[S]')
+        const formatted = moment.utc(remainingTime.asMilliseconds()).format('DD[D]:HH[H]:mm[M]')
         setTimer(formatted)
   
         if (remainingTime.asMilliseconds() <= 0) {
