@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import moment from 'moment'
 import cn from 'classnames'
@@ -11,11 +12,56 @@ import styles from './styles.module.scss'
 const RaffleListBrowseItem = ({ item, onParticipate }) => {
   const { propValue } = usePropsHelper()
 
-  const getTime = () => {
-    const end = item.endTimestamp * 1000
-    const current = moment().valueOf()
-    const duration = moment.duration(end - current, 'milliseconds')
-    return duration.humanize()
+  // if (item.id*1 === 17) {
+  //   item = {...item, status: 'Upcoming'}
+  // }
+  // console.log('item', item);
+
+  const calculateRemainingTime = (timestamp) => {
+    const now = moment()
+    const end = moment(timestamp * 1000)
+    const duration = moment.duration(end.diff(now))
+    return duration
+  }
+
+  const [timer, setTimer] = useState(calculateRemainingTime(item.status === 'Active' ? item.endTimestamp : item.startTimestamp))
+
+  useEffect(() => {
+    if (item.status == 'Active') {
+      const timerInterval = setInterval(() => {
+        const remainingTime = calculateRemainingTime(item.endTimestamp)
+        const formatted = moment.utc(remainingTime.asMilliseconds()).format('DD[D]:HH[H]:mm[M]:ss[S]')
+        setTimer(formatted)
+  
+        if (remainingTime.asMilliseconds() <= 0) {
+          clearInterval(timerInterval)
+        }
+      }, 1000)
+  
+      return () => {
+        clearInterval(timerInterval)
+      }
+    }
+    if (item.status == 'Upcoming') {
+      const timerInterval = setInterval(() => {
+        const remainingTime = calculateRemainingTime(item.startTimestamp)
+        const formatted = moment.utc(remainingTime.asMilliseconds()).format('DD[D]:HH[H]:mm[M]:ss[S]')
+        setTimer(formatted)
+  
+        if (remainingTime.asMilliseconds() <= 0) {
+          clearInterval(timerInterval)
+        }
+      }, 1000)
+  
+      return () => {
+        clearInterval(timerInterval)
+      }
+    }
+  }, [item.endTimestamp, item.startTimestamp, timer])
+
+  const getClosedTime = () => {    
+    const date = moment(item.endTimestamp * 1000).format('Do MMMM YYYY')
+    return `Ended on ${date}`
   }
 
   return (
@@ -25,10 +71,11 @@ const RaffleListBrowseItem = ({ item, onParticipate }) => {
       <App.Flex row align="center" justify="space-between">
         <App.Flex row center gap={4} className={cn(styles.timeBadge, styles[item.status])}>
           <App.Flex center className={styles.dot} />
-          <App.Text size={[12, 10]} height={1}>{item.status == 'Active' ? `${getTime()} left` : item.status}</App.Text>
+          <App.Text size={[12, 10]} height={1}>{item.status == 'Closed' ? getClosedTime() : ( item.status === 'Active' ? 'Ends in ' : 'Starts in ') + timer}</App.Text>
+          {/* <App.Text size={[12, 10]} height={1}>{item.status == 'Active' ? `${getTime()} left` : item.status}</App.Text> */}
         </App.Flex>
 
-        {item.status == 'Active' ? (
+        {item.status !== 'Closed' ? (
           <App.Flex row center gap={4} className={styles.tkeyBadge}>
             <App.Text size={[12, 10]} height={1}>#{item.id}</App.Text>
           </App.Flex>
