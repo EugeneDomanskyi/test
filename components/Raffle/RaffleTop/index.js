@@ -126,9 +126,9 @@ const RaffleTop = ({ loading, isFirstTimeUser, landing = false }) => {
                           family="ClashDisplay"
                           gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)"
                         >
-                          Open your first $200* Case for
+                          Open* your first $$$ Case
                         </App.Text>
-                        <App.ShadowText color="#FFCB04" shadowColor="#FF7708" size={24} weight={600}>FREE!</App.ShadowText>
+                        <App.ShadowText color="#FFCB04" shadowColor="#FF7708" size={24} weight={600}>NOW!</App.ShadowText>
                       </App.Flex>
 
                       <App.Flex className={styles.firstTimeCase}>
@@ -140,7 +140,7 @@ const RaffleTop = ({ loading, isFirstTimeUser, landing = false }) => {
                       </App.Flex>
 
                       <App.Flex sx={{position: 'absolute', bottom: 4, left: 32}}>
-                        <App.Text size={10} weight={500} family="ClashDisplay" color="#B9B8C5">*Only applicable for first time users</App.Text>
+                        <App.Text size={10} weight={500} family="ClashDisplay" color="#B9B8C5">*TKeys are required to unlock cases.</App.Text>
                       </App.Flex>
                     </App.Flex>
                   : wallet ? (

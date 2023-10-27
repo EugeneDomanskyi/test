@@ -27,7 +27,7 @@ const LandingFounders = () => {
             <App.Text size={[20, 16]} center uppercase height={1}>Siddharth Menon</App.Text>
             <App.Text size={[13, 12]} center color="#B9B8C5">
               Founder & CEO<br />
-              Talks about #wazirx, #blockchain, and #cryptocurrencies
+              {/* Talks about #wazirx, #blockchain, and #cryptocurrencies */}
             </App.Text>
           </App.Flex>
 
@@ -55,7 +55,7 @@ const LandingFounders = () => {
             <App.Text size={[20, 16]} center uppercase height={1}>ASHISH RAWAT</App.Text>
             <App.Text size={[13, 12]} center color="#B9B8C5">
               Co-Founder and COO<br />
-              Talks about #wazirx, #blockchain, and #cryptocurrencies
+              {/* Talks about #wazirx, #blockchain, and #cryptocurrencies */}
             </App.Text>
           </App.Flex>
 
