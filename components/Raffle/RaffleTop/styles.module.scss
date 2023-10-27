@@ -5,6 +5,7 @@
   overflow: hidden;
   background: no-repeat right center url('/images/raffle/top-background-1.png'), no-repeat center bottom url('/images/raffle/top-background-2.png');
   background-size: contain, cover;
+  background-color: #08051C;
   padding: 64px 0;
 
   @media (max-width: 768px) {
@@ -91,6 +92,7 @@
 }
 
 .awards {
+  background-color: #08051C;
   animation: marquee 100s linear infinite;
 
   &:hover {

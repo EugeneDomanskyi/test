@@ -323,7 +323,7 @@ const RaffleModalParticipate = ({item, onUpdateUserTKeys, getUserTKeysBalance, o
                   const odds = reward.odds
                   const amount = currentReward.reward / 1000000
                   return (
-                    <RaffleReward key={index} title={title} amount={`$${amount}`} additionalText={`Chances: ${odds}%`} />
+                    <RaffleReward key={index} index={index} title={title} amount={`$${amount}`} additionalText={`Chances: ${odds}%`} />
                   )
                 })
               }
