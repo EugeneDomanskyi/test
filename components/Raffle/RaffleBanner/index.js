@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import Slider from 'react-slick'
 import cn from 'classnames'
 
@@ -8,7 +8,6 @@ import { trackEvent } from '@/libs/analytics.lib'
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
-import Image from 'next/image'
 
 const SampleNextArrow = (props) => {
   const { onClick } = props
@@ -37,8 +36,6 @@ const SamplePrevArrow = (props) => {
 const RaffleBanner = () => {
   const { isMobile } = usePropsHelper()
 
-  const slider = useRef(null)
-
   const [slide, setSlide] = useState(0)
 
   var settings = {
@@ -51,6 +48,15 @@ const RaffleBanner = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     pauseOnHover: false,
+    responsive: [
+      {
+        breakpoint: 991,
+        settings: {
+          arrows: false,
+          dots: true
+        }
+      },
+    ],
   }
 
   var settingsDesktop = {
@@ -101,7 +107,7 @@ const RaffleBanner = () => {
   return (
     <App.Container className={styles.container}>
       {!isMobile ? ( 
-        <Slider ref={slider} {...settingsDesktop}>
+        <Slider {...settingsDesktop}>
           <div>
             <App.Flex row fullWidth>
               <App.Flex className={styles.banner1} flex={1}>

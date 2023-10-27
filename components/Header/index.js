@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useState, useRef } from 'react'
 import cn from 'classnames'
+import { useNetwork } from 'wagmi'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
@@ -11,7 +12,6 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 
 import $modal from '@/store/modal'
-import $app from '@/store/app'
 
 import App from '@/components/App'
 import SwitchBlockchain from '@/components/SwitchBlockchain'
@@ -19,18 +19,17 @@ import NavbarDropdown from '@/components/NavbarDropdown'
 
 import styles from './styles.module.scss'
 
-const Header = ({onHeightCounted}) => {
+const Header = () => {
   const router = useRouter()
-  const { wallet, connect, disconnect, getBalance, changeNetwork, getConnectorName } = useWalletConnect()
+  const dispatch = useDispatch()
+  const { wallet, connect, disconnect, getBalance, getConnectorName } = useWalletConnect()
   const { isMobile } = usePropsHelper()
+  const { chain } = useNetwork()
 
   const isEarn = router.pathname.includes('/earn')
   const isSticky = ! router.pathname.includes('/exchange')
 
-  const dispatch = useDispatch()
-
   const balance = useSelector(({$raffle}) => $raffle.balance)
-  const blockchain = useSelector($app.get.blockchain)
 
   const headerRef = useRef(null)
 
@@ -40,23 +39,13 @@ const Header = ({onHeightCounted}) => {
   const [supportIsOpen, setSupportIsOpen] = useState(false)
   const [currentBalance, setCurrentBalance] = useState({amount: 0, symbol: ''})
   const [isBannerClosed, setIsBannerClosed] = useState(false)
-  const [showPromoBanner, setShowPromoBanner] = useState(true)
   const [balanceLoading, setBalanceLoading] = useState(true)
-
-  useEffect(() => {
-    if (headerRef.current) {
-      const headerHeight = headerRef.current.getBoundingClientRect()
-      if (headerHeight.height) {
-        onHeightCounted(headerHeight.height)
-      }
-    }
-  }, [headerRef])
 
   useEffect(() => {
     if (wallet && ! isEarn) {
       handleGetBalance()
     }
-  }, [wallet, isEarn, blockchain])
+  }, [wallet, isEarn, chain?.id])
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, false)
@@ -69,7 +58,7 @@ const Header = ({onHeightCounted}) => {
   useEffect(() => {
     if (isEarn && ! balance) {
       setBalanceLoading(true)
-    } else {
+    } else if (isEarn) {
       setCurrentBalance({amount: balance, symbol: 'TKeys'})
       setBalanceLoading(false)
     }
@@ -181,11 +170,6 @@ const Header = ({onHeightCounted}) => {
     e.preventDefault()
 
     setIsBannerClosed(true)
-  }
-
-  const handlePromoBannerCloseClick = () => {
-    onHeightCounted(64)
-    setShowPromoBanner(! showPromoBanner)
   }
 
   return (

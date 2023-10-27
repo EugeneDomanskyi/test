@@ -178,10 +178,10 @@ const RafflePage = () => {
   }
 
   const getUserTKeysBalance = async () => {
-    const network = await changeNetwork(blockchain.code)
-    if ( ! network) {
-      return
-    }
+    // const network = await changeNetwork(blockchain.code)
+    // if ( ! network) {
+    //   return
+    // }
 
     const balance = await alchemy.current.getNftsForOwnerCollectionCount(wallet, blockchain.raffle.contract)
     dispatch($raffle.set.balance(balance))

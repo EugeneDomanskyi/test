@@ -1,27 +1,58 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { v4 as uuid } from 'uuid'
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 import { getNetwork } from '@wagmi/core'
 import amplitude from 'amplitude-js'
 import Smartlook from 'smartlook-client'
+import dynamic from 'next/dynamic'
+import { useSelector, useDispatch } from 'react-redux'
 
 import { trackEvent, getPageName } from '@/libs/analytics.lib'
+import $app from '@/store/app'
+import { CHAINS } from '@/config'
 
 import Header from '@/components/Header'
-import WrapperExchange from '@/components/Wrapper/WrapperExchange'
-import WrapperCollections from '@/components/Wrapper/WrapperCollections'
-import App from '@/store/app'
+
+const WrapperExchange = dynamic(() => import('@/components/Wrapper/WrapperExchange'), {ssr: false})
+const WrapperCollections = dynamic(() => import('@/components/Wrapper/WrapperCollections'), {ssr: false})
 
 const Wrapper = ({ children, isMobile }) => {
   const router = useRouter()
+  const dispatch = useDispatch()
   const isNfts = router.asPath?.includes('nfts')
   const isSwap = router.pathname.includes('/swap')
   const isExchange = router.asPath?.includes('exchange')
 
   const { address, isConnected } = useAccount()
+  const { chain } = useNetwork()
+  const { isLoading, switchNetwork } = useSwitchNetwork()
 
-  const [headerHeight, setHeaderHeight] = useState(64)
+  const storedBlockchain = useSelector($app.get.blockchain)
+
+  const prevChain = useRef({stored: null})
+
+  // switch blockchain handler
+  useEffect(() => {
+    if (!isLoading && isConnected && storedBlockchain.id !== chain?.id && switchNetwork) {
+      if (storedBlockchain.id !== prevChain.current.stored) {
+        // switch from website
+        console.log('switch from website')
+        switchNetwork(storedBlockchain.id)
+        prevChain.current.stored = storedBlockchain.id
+        return
+      }
+      const network = CHAINS.find(network => network.id === chain.id)
+      dispatch($app.set.code(network.code))
+      prevChain.current.stored = network.id
+    }
+  }, [storedBlockchain?.id, chain?.id, isLoading, isConnected, switchNetwork])
+
+  useEffect(() => {
+    setTimeout(() => {
+      prevChain.current.stored = storedBlockchain.id
+    }, 1000)
+  }, [])
 
   useEffect(() => {
     if (isConnected && address) {
@@ -60,14 +91,10 @@ const Wrapper = ({ children, isMobile }) => {
       'Page Name': getPageName(),
     })
   }, [router.asPath])
-
-  const handleHeaderHeightCounted = (height) => {
-    setHeaderHeight(height)
-  }
   
   return (
-    <div style={{paddingTop: headerHeight, transition: '.4s'}}>
-      <Header onHeightCounted={handleHeaderHeightCounted} />
+    <div style={{paddingTop: 64, transition: '.4s'}}>
+      <Header />
 
       {isExchange ? (
         <WrapperExchange isMobile={isMobile}>
