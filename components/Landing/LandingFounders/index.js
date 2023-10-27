@@ -13,9 +13,9 @@ const LandingFounders = () => {
     <App.Flex column align="center" gap={16} className={styles.container}>
       <App.Text center size={[48, 32]} weight={800} height={1}>Founders</App.Text>
 
-      <App.Flex center width={['60%', '100%']}>
+      {/* <App.Flex center width={['60%', '100%']}>
         <App.Text center size={[16, 10]} height={1.2} color="#B9B8C5">Our founding team introduced cryptocurrency trading to 10 million Indians with WazirX - India&#39;s largest crypto exchange with $40B+ volumes. With Tegro, we&#39;re shaping the next wave of decentralized trading for Tokens and NFTs, targeting the next 100 million traders globally!</App.Text>
-      </App.Flex>
+      </App.Flex> */}
 
       <App.Flex row center gap={[28, 0]} fullWidth>
         <App.Flex column align="center" gap={24} className={styles.box}>
@@ -25,7 +25,10 @@ const LandingFounders = () => {
 
           <App.Flex column gap={8}>
             <App.Text size={[20, 16]} center uppercase height={1}>Siddharth Menon</App.Text>
-            <App.Text size={[13, 12]} center color="#B9B8C5" height={1}>Founder & CEO</App.Text>
+            <App.Text size={[13, 12]} center color="#B9B8C5">
+              Founder & CEO<br />
+              Talks about #wazirx, #blockchain, and #cryptocurrencies
+            </App.Text>
           </App.Flex>
 
           <App.Flex row center gap={16}>
@@ -50,7 +53,10 @@ const LandingFounders = () => {
 
           <App.Flex column gap={8}>
             <App.Text size={[20, 16]} center uppercase height={1}>ASHISH RAWAT</App.Text>
-            <App.Text size={[13, 12]} center color="#B9B8C5" height={1}>Co-Founder & COO</App.Text>
+            <App.Text size={[13, 12]} center color="#B9B8C5">
+              Co-Founder and COO<br />
+              Talks about #wazirx, #blockchain, and #cryptocurrencies
+            </App.Text>
           </App.Flex>
 
           <App.Flex row center gap={16}>
