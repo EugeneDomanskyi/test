@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import Image from 'next/image'
-import Slider, { slickGoTo } from 'react-slick'
+import Slider from 'react-slick'
 import cn from 'classnames'
+import { useRouter } from 'next/router'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
 
@@ -11,6 +12,7 @@ import styles from './styles.module.scss'
 
 const LandingSlides = () => {
   const { isMobile } = usePropsHelper()
+  const router = useRouter()
 
   const [slide, setSlide] = useState(0)
 
@@ -22,7 +24,7 @@ const LandingSlides = () => {
     slider.current.slickGoTo(index)
   }
 
-  var settings = {
+  const settings = {
     dots: false,
     arrows: false,
     autoplay: true,
@@ -35,6 +37,14 @@ const LandingSlides = () => {
     afterChange: (index) => setSlide(index)
   }
 
+  const handleClickTrading = () => {
+    router.push(`/exchange`)
+  }
+
+  const handleClickDocs = () => {
+    window.open('https://x-by-tegro.gitbook.io/x-by-tegro', '_blank')
+  }
+
   return (
     <App.Container className={styles.container}>
       <App.Flex column center fullWidth>
@@ -43,11 +53,11 @@ const LandingSlides = () => {
         </App.Flex>
         
         <App.Flex width={['40%', '60%']} center gap={16}>
-          <App.Button primary>
+          <App.Button primary onClick={handleClickTrading}>
             <App.Text center size={16} weight={600}>Start Trading</App.Text>
           </App.Button>
           
-          <App.Button outlined>
+          <App.Button outlined onClick={handleClickDocs}>
             <App.Text center size={16} weight={600}>Read Docs</App.Text>
           </App.Button>
         </App.Flex>

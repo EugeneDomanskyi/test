@@ -41,8 +41,34 @@
     background: linear-gradient(180deg, #401698 0%, #0A0017 100%);
     box-shadow: 0px 0.18631px 2.23569px 0px rgba(77, 53, 130, 0.04), 0px 0.44772px 5.37266px 0px rgba(77, 53, 130, 0.06), 0px 0.84302px 10.11625px 0px rgba(77, 53, 130, 0.07), 0px 1.5038px 18.04566px 0px rgba(77, 53, 130, 0.08), 0px 2.8127px 33.75242px 0px rgba(77, 53, 130, 0.10), 0px 6.73256px 80.7907px 0px rgba(77, 53, 130, 0.14), 0px 5px 16px 1px rgba(47, 8, 89, 0.05);
 
-    .firstTimeCase {
-      animation: rotateAndMove 2s linear infinite;
+    @media (max-width: 768px) {
+      flex-direction: column;
+      height: 100%;
+      gap: 8px;
+      padding: 10px 16px 24px 16px;
+      border-radius: 24px;
+    }
+
+    .caseContainer {
+      flex-direction: row;
+      // justify-content: ;
+
+      @media (max-width: 768px) {
+        flex-direction: row-reverse;
+        justify-content: space-between;
+        gap: 0;
+      }
+    }
+
+    .firstTimeCaseContainer {
+      width: 82px;
+      height: 100%;
+      position: relative;
+
+      .firstTimeCase {
+        animation: rotateAndMove 2s linear infinite;
+        position: absolute;
+      }
     }
   }
 
