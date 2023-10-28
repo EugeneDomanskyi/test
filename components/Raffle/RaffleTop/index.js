@@ -121,7 +121,7 @@ const RaffleTop = ({ loading, isFirstTimeUser, landing = false }) => {
                   ? <App.Flex justify="flex-start" className={styles.firstTimeBanner}>
                       <App.Flex center gap={8}>
                         <App.Text
-                          size={22}
+                          size={[22, 18]}
                           weight={500}
                           family="ClashDisplay"
                           gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)"
@@ -130,15 +130,17 @@ const RaffleTop = ({ loading, isFirstTimeUser, landing = false }) => {
                         </App.Text>
                         <App.ShadowText color="#FFCB04" shadowColor="#FF7708" size={24} weight={600}>NOW!</App.ShadowText>
                       </App.Flex>
+                      <App.Flex gap={64} align="center" className={styles.caseContainer}>
+                        <App.Flex column className={styles.firstTimeCaseContainer}>
+                          <App.Flex className={styles.firstTimeCase}>
+                            <Image src="/images/raffle/case-blue.png" width={86} height={82} alt="" />
+                          </App.Flex>
+                        </App.Flex>
 
-                      <App.Flex className={styles.firstTimeCase}>
-                        <Image src="/images/raffle/case-blue.png" width={86} height={82} alt="" />
+                        <App.Flex center className={cn(styles.button, styles.primary)} onClick={handleConnectWalletClick}>
+                          <App.Text center size={[14, 12]} weight={700}>Connect Wallet Now</App.Text>
+                        </App.Flex>
                       </App.Flex>
-
-                      <App.Flex center className={cn(styles.button, styles.primary)} onClick={handleConnectWalletClick}>
-                        <App.Text center size={[14, 12]} weight={700}>Connect Wallet Now</App.Text>
-                      </App.Flex>
-
                       <App.Flex sx={{position: 'absolute', bottom: 4, left: 32}}>
                         <App.Text size={10} weight={500} family="ClashDisplay" color="#B9B8C5">*TKeys are required to unlock cases.</App.Text>
                       </App.Flex>
