@@ -82,7 +82,14 @@ const Nfts = () => {
   }, [])
 
   const handleClickOrder = useCallback(order => {
-    tradeForm.current.setForm({formType: 'market', amount: order.quantity, side: order.side})
+    if (tradeForm.current) {
+      tradeForm.current.setForm({formType: 'market', amount: order.quantity, price: order.price, side: order.side})
+    } else {
+      setMobileTab('buy_sell')
+      setTimeout(() => {
+        tradeForm.current.setForm({formType: 'market', amount: order.quantity, price: order.price, side: order.side})
+      }, 300)
+    }
   }, [])
 
   const handleSort = useCallback((value) => {
@@ -206,7 +213,11 @@ const Nfts = () => {
           ) : null}
 
           {mobileTab == 'orders' ? (
-            <Orders onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
+            <Orders
+              current={current}
+              type="nfts"
+              onOrderCancelled={handleOrdersUpdated}
+              onClickOrder={handleClickOrder} />
           ) : null}
 
           {mobileTab == 'buy_sell' ? (

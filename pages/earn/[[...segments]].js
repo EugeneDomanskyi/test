@@ -178,10 +178,10 @@ const RafflePage = () => {
   }
 
   const getUserTKeysBalance = async () => {
-    const network = await changeNetwork(blockchain.code)
-    if ( ! network) {
-      return
-    }
+    // const network = await changeNetwork(blockchain.code)
+    // if ( ! network) {
+    //   return
+    // }
 
     const balance = await alchemy.current.getNftsForOwnerCollectionCount(wallet, blockchain.raffle.contract)
     dispatch($raffle.set.balance(balance))
@@ -306,7 +306,7 @@ const RafflePage = () => {
       <Head>
         <title>$10,000+ Tegro Treasure Case Series Live Now! | Tegro Earn</title>
         <meta content="WOAH! I just won rewards in $USDT, $PEPE, $SHIB, $FLOKI and other tokens by opening cases in the $10,000+ Tegro Treasure Case Series!" property="description" key="description" />
-        <meta property="og:image" content="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/tegro-earn.jpg" />
+        <meta property="og:image" content="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/earn_meta_image.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@TegroFi" />
         <meta name="twitter:title" content="$10,000+ Tegro Treasure Case Series Live Now! | Tegro Earn" />

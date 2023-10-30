@@ -163,7 +163,6 @@ const WrapperExchange = ({children, _isMobile}) => {
       dispatch($app.set.code(newBlockchain))
       dispatch($token.set.loading(true))
       router.replace(`/exchange/${newBlockchain}/0x`)
-      
     }
   }, [storedBlockchain, blockchain])
 

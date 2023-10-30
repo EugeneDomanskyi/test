@@ -63,6 +63,21 @@
       }
 
       &.mobile {
+        position: relative;
+        z-index: 0;
+
+        &:not(:last-of-type):after {
+          content: '';
+          display: block;
+          width: 1px;
+          position: absolute;
+          z-index: 0;
+          bottom: 25%;
+          top: 25%;
+          right: 0;
+          background: #1D1937;
+        }
+        
         &.disabled {
           opacity: .5;
         }

@@ -5,10 +5,7 @@ import Image from 'next/image'
 import cn from 'classnames'
 
 import { trackEvent } from '@/libs/analytics.lib'
-
-import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
-
 import $app from '@/store/app'
 import $collection from '@/store/collection'
 import $token from '@/store/token'
@@ -17,12 +14,11 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose, onChangeNetwork }) => {
+const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
   const router = useRouter()
   const isExchange = router.pathname.includes('/exchange')
   const isEarn = router.pathname.includes('/earn')
 
-  const { wallet, changeNetwork, blockchain: walletBlockchain } = useWalletConnect()
   const { isMobile } = usePropsHelper()
 
   const dispatch = useDispatch()
@@ -38,15 +34,6 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose, onChangeNetwo
       document.removeEventListener('click', handleClickOutside, false)
     }
   }, [])
-
-  useEffect(() => {
-    if (wallet) {
-      const isSupportedChain = pageBlockchains.find(chain => chain.code === walletBlockchain.code)
-      if ((blockchain.name !== walletBlockchain.name) && isSupportedChain) {
-        dispatch($app.set.code(walletBlockchain.code))
-      }
-    }    
-  }, [wallet, walletBlockchain])
 
   const handleClickOutside = (event) => {
     if (! event.target.closest('#blockchain')) {
@@ -68,12 +55,6 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose, onChangeNetwo
       dispatch($collection.set.clear())
       dispatch($token.set.clear())
       setMenuShow(false)
-      if (wallet) {
-        const network = await changeNetwork(val)
-        if (network) {
-          onChangeNetwork()
-        }
-      }
       dispatch($app.set.code(val))
 
       if (onMobileMenuClose) {
@@ -90,10 +71,10 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose, onChangeNetwo
           ! isMobile
             ? <>
                 <App.Text size={16} weight={700} className={styles.badgeTitle}>{blockchain.name}</App.Text>
+                <App.Icon icon="caret-down" color="#fff" />
               </>
             : null
         }
-        <App.Icon icon="caret-down" color="#fff" />
       </App.Flex>
 
       <div className={cn(styles.menu, {[styles.active]: menuShow})}>

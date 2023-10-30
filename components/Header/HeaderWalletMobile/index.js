@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import Image from 'next/image'
+import { useRouter } from 'next/router'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
+import { trackEvent, getPageName } from '@/libs/analytics.lib'
 
 import $orders from '@/store/orders'
 
@@ -11,8 +12,9 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const HeaderWalletMobile = () => {
+  const router = useRouter()
   const dispatch = useDispatch()
-  const { wallet, connectorId, disconnect } = useWalletConnect()
+  const { wallet, connectorId, disconnect, getConnectorName } = useWalletConnect()
 
   const [isDisconnectOpen, setIsDisconnectOpen] = useState(false)
 
@@ -33,12 +35,20 @@ const HeaderWalletMobile = () => {
     setIsDisconnectOpen(true)
   }
 
-  const handleDisconnect = () => {
+  const handleDisconnect = async () => {
+    const walletName = await getConnectorName()
+
     disconnect()
     setIsDisconnectOpen(false)
+
+    trackEvent('Wallet Disconnect Success', {
+      'Source': getPageName(),
+      'Type': walletName,
+    })
   }
 
   const handleOrdersDialogOpen = () => {
+    router.push('/exchange')
     dispatch($orders.set.myOrdersDialogOpen(true))
   }
 
@@ -48,13 +58,13 @@ const HeaderWalletMobile = () => {
 
   return (
     <>
-      <App.Flex row center gap={8}>
-        <App.Flex center className={styles.ordersButton} onClick={handleOrdersDialogOpen}>
-          <App.Icon icon="orders-mobile" />
-        </App.Flex>
-
+      <App.Flex row center gap={16}>
         <App.Flex center className={styles.ordersButton} onClick={handleDisconnectDialogOpen}>
           <App.Icon icon="wallet2" />
+        </App.Flex>
+
+        <App.Flex center className={styles.ordersButton} onClick={handleOrdersDialogOpen}>
+          <App.Icon icon="orders-mobile" />
         </App.Flex>
       </App.Flex>
 

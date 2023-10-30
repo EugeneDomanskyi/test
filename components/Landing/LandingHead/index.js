@@ -8,6 +8,7 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 import $app from '@/store/app'
 
 import App from '@/components/App'
+import Landing from '@/components/Landing'
 
 import styles from './styles.module.scss'
 
@@ -66,7 +67,8 @@ const LandingHead = () => {
   return (
     <App.Container className={styles.container}>
       <App.Flex column align="center" gap={24} fullWidth>
-        {isMobile ? (
+        <Landing.Slides />
+        {/* {isMobile ? (
           <img src="/images/landing/header.png" alt="" className={styles.image} />
         ) : (
           <video autoPlay loop muted className={styles.video}>
@@ -110,7 +112,7 @@ const LandingHead = () => {
               )}
             </App.Flex>
           </App.Flex>
-        </App.Flex>
+        </App.Flex> */}
       </App.Flex>
     </App.Container>
   )

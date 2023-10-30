@@ -43,12 +43,6 @@ const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
 
   const [bottomHeight, setBottomHeight] = useState(91)
   const [tab, setTab] = useState('charts')
-  const [tabs, setTabs] = useState([
-    { key: 'charts', title: 'Charts' },
-    { key: 'orderbook', title: 'Orderbook' },
-    { key: 'trades', title: 'Trades' },
-    { key: 'orders', title: 'My Orders' },
-  ])
   const [balance, setBalance] = useState({ currency: 0, usd: 0, usdt: 0, loading: true })
   const [isTradeDialogOpen, setIsTradeDialogOpen] = useState(false)
   const [tradeSide, setTradeSide] = useState()
@@ -56,30 +50,18 @@ const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
   
   const tradeForm = useRef()
 
+  const tabs = [
+    { key: 'charts', title: 'Charts' },
+    { key: 'orderbook', title: 'Orderbook' },
+    { key: 'trades', title: 'Trades' },
+    { key: 'orders', title: 'My Orders' },
+  ]
+
   useImperativeHandle(ref, () => ({
     handleClickOrder: (order) => {
       handleClickOrder(order)
     }
   }))
-
-  useEffect(() => {
-    // if (getAddress()) {
-    //   setBottomHeight(230)
-    // } else {
-    //   setBottomHeight(91)
-    // }
-
-    setTabs(tabs.map(item => {
-      if (item.key == 'orders') {
-        item.disabled = !wallet
-      }
-      return item
-    }))
-
-    if ( ! wallet && tab == 'orders') {
-      setTab('charts')
-    }
-  }, [wallet])
 
   useEffect(() => {
     if (item?.id) {

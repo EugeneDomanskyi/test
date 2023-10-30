@@ -16,9 +16,16 @@
     padding: 2px 4px;
   }
 
+  & svg {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+  }
+
   .title {
     font-size: 12px;
     font-weight: 400;
+    // color: #08051C;
   }
 
   .amount {
@@ -29,6 +36,7 @@
   .additionalText {
     font-size: 14px;
     font-weight: 500;
+    // color: #08051C;
   }
 
   &.large {

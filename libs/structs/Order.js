@@ -180,6 +180,7 @@ class NFT extends Order {
     this.price = data.price.amount.decimal
     this.side = data.side
     this.image = data.criteria.data.token?.image ?? data.criteria.data.collection?.image
+    this.status = data.status === 'active' ? 'open': data.status
   }
 
   get quantity () {
