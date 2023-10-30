@@ -213,7 +213,11 @@ const Nfts = () => {
           ) : null}
 
           {mobileTab == 'orders' ? (
-            <Orders onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrder} />
+            <Orders
+              current={current}
+              type="nfts"
+              onOrderCancelled={handleOrdersUpdated}
+              onClickOrder={handleClickOrder} />
           ) : null}
 
           {mobileTab == 'buy_sell' ? (
