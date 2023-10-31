@@ -312,7 +312,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
         {
           isWrongPrice
             ? <App.Text color="#FFD600" size={10} weight={500}>
-                {currentTab === 'buy' ? 'Price deviation is more than 10% above the last trade price.' : 'Price deviation is more than 10% below the last trade price.'}
+                {currentTab === 'buy' ? 'Price deviation is more than 10% above the last trade price.' : 'The price deviation is less than the last traded price.'}
               </App.Text>
             :  <App.Text color="#FFD600" size={10} weight={500}>&nbsp;</App.Text>
         }
