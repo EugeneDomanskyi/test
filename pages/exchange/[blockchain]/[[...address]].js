@@ -84,8 +84,8 @@ const Exchange = () => {
     dispatch($token.set.search(value))
   }, [])
 
-  const handlePage = useCallback((value) => {
-    dispatch($token.set.pages({current: value ?? 1}))
+  const handlePage = useCallback((value, append = false) => {
+    dispatch($token.set.pages({current: value ?? 1, append}))
   }, [])
 
   const handleCloseOrdersDialog = () => {
@@ -167,6 +167,7 @@ const Exchange = () => {
               searchEmpty={searchEmpty}
               pages={pages}
               loading={tokenLoading}
+              version="mobile"
               onSort={handleSort}
               onSearch={handleSearch}
               onPage={handlePage}

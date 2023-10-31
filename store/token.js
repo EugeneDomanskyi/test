@@ -173,6 +173,7 @@ export const tokenSlice = createSlice({
     pages: {
       history: [1],
       current: 1,
+      append: false,
     },
   },
 
@@ -186,7 +187,8 @@ export const tokenSlice = createSlice({
     },
 
     all: (state, { payload }) => {
-      state.all = payload.map(token => template(token, state.assets[token.id]))
+      const tokens = payload.map(token => template(token, state.assets[token.id]))
+      state.all = state.pages.append ? [...state.all, ...tokens] : tokens
     },
 
     updatedAll: (state, {payload}) => {
@@ -255,6 +257,7 @@ export const tokenSlice = createSlice({
       state.pages = {
         current,
         history,
+        append: payload?.append ?? false,
       }
     },
 
