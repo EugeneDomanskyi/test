@@ -1,5 +1,4 @@
-import styles from './styles.module.scss'
-import { memo, useEffect } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import cn from 'classnames'
 
@@ -8,13 +7,17 @@ import $orders from '@/store/orders'
 
 import App from '@/components/App'
 
+import styles from './styles.module.scss'
+
 const toLowerFixed = val => {
   const str = val.toString()
   return str.substring(0, str.indexOf('.') + 7)
 }
 
-const OrderBook = ({type, onClickOrder}) => {
+const OrderBook = ({type, version, onClickOrder}) => {
   const dispatch = useDispatch()
+
+  const [loading, setLoading] = useState(true)
 
   const orderBook = useSelector($orders.get.orderBook(type))
   const blockchain = useSelector($app.get.blockchain)
@@ -27,6 +30,7 @@ const OrderBook = ({type, onClickOrder}) => {
 
   useEffect(() => {
     if (isAddress) {
+      setLoading(true)
       $orders.api.get[type].orderBook({
         collection: currentToken.address,
         address: currentToken.address,
@@ -35,6 +39,7 @@ const OrderBook = ({type, onClickOrder}) => {
         ...(type === 'nfts' ? {} : {statuses: '[1]'})
       }).then(res => {
         dispatch($orders.set.orderBook({type: type, data: res, tokenAddress: currentToken.address}))
+        setLoading(false)
       })
     }
   }, [currentToken.address])
@@ -43,16 +48,20 @@ const OrderBook = ({type, onClickOrder}) => {
     onClickOrder({...order, price: order.priceFormatted, quantity: toLowerFixed(volume)})
   }
 
-  return (
-    <App.Flex column flex={[1, null]} className={styles.card}>
-      <App.Flex className={styles.header} align="center">
-        <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600}>ORDER BOOK</App.Text>
-      </App.Flex>
+  return version == 'mobile' && loading ? (
+    <App.LoaderBlock flex={1} />
+  ) : (
+    <App.Flex column flex={[1, null]} className={cn(styles.card, {[styles[version]]: version})}>
+      {version != 'mobile' ? (
+        <App.Flex className={styles.header} align="center">
+          <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600}>ORDER BOOK</App.Text>
+        </App.Flex>
+      ) : null}
       <App.Flex gap={3}>
         <App.Flex column flex={1}>
-          <App.Flex justify="space-between" align="center" sx={{padding: '0 8px', height: 20}}>
-            <App.Text size={10} color="#908F99" weight={600}>Volume</App.Text>
-            <App.Text size={10} color="#908F99" weight={600}>Buy Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
+          <App.Flex justify="space-between" align="center" className={styles.rowHeader}>
+            <App.Text size={[10, 12]} color="#908F99" weight={[600, 500]}>Volume</App.Text>
+            <App.Text size={[10, 12]} color="#908F99" weight={[600, 500]}>Buy Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
           </App.Flex>
           {
             orderBook.buy.map((order, i) => {
@@ -68,9 +77,9 @@ const OrderBook = ({type, onClickOrder}) => {
           }
         </App.Flex>
         <App.Flex column flex={1}>
-          <App.Flex justify="space-between" align="center" sx={{padding: '0 8px', height: 20}}>
-            <App.Text size={10} color="#908F99" weight={600}>Sell Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
-            <App.Text size={10} color="#908F99" weight={600}>Volume</App.Text>
+          <App.Flex justify="space-between" align="center" className={styles.rowHeader}>
+            <App.Text size={[10, 12]} color="#908F99" weight={[600, 500]}>Sell Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
+            <App.Text size={[10, 12]} color="#908F99" weight={[600, 500]}>Volume</App.Text>
           </App.Flex>
           {
             orderBook.sell.map((order, i) => {

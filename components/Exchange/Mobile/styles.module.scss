@@ -1,0 +1,29 @@
+.back {
+  cursor: pointer;
+}
+
+.image {
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px 0px rgba(21, 255, 114, 0.17);
+}
+
+.emptyImage {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  background: linear-gradient(0deg, #311B9200, #311B92);
+  box-shadow: 0px 4px 12px 0px rgba(21, 255, 114, 0.17);
+}
+
+.balanceBox {
+  border-radius: 12px;
+  border: 1px solid #1D1937;
+  background: #0E0B23;
+  padding: 16px;
+}
+
+.absolute {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+}

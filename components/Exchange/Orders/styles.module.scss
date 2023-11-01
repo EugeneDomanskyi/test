@@ -3,14 +3,6 @@
   overflow: hidden;
   height: 300px;
 
-  @media (max-width: 768px) {
-    & {
-      height: auto;
-      width: 100%;
-      padding-bottom: 69px;
-    }
-  }
-
   .header {
     background-color: #1C192F;
     height: 24px;
@@ -100,6 +92,75 @@
       align-items: center;
       transform: translateX(100%);
       transition: transform .2s;
+    }
+  }
+
+  &.mobile {
+    height: auto;
+    position: absolute;
+    inset: 0;
+    background-color: transparent;
+
+    .badge {
+      background-image: linear-gradient(to right, #E792E4, #B545BE 34.167%, #7931CB 69.583%, #4D42C9 100%);
+    }
+
+    .orderContainer {
+      border-top: solid #000 1px;
+      padding: 16px;
+      min-height: 124px;
+
+      &:nth-of-type(odd) {
+        background-color: #0E0B23;
+      }
+
+      .hoverContent {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        width: calc(100% - 5px);
+        padding: 0 15px;
+        background: #100E24;
+        transform: translateX(100%);
+        transition: .2s;
+
+        &.open {
+          transform: translateX(0%);
+        }
+      }
+
+      .progress {
+        width: 39px;
+        height: 39px;
+        position: relative;
+        z-index: 0;
+
+        .progressStroke {
+          position: absolute;
+          z-index: 0;
+          left: 0;
+          top: 0;
+        }
+
+        .progressFill {
+          position: absolute;
+          z-index: 1;
+          left: 0;
+          top: 0;
+        }
+
+        .progressText {
+          position: absolute;
+          z-index: 2;
+          inset: 0;
+        }
+      }
+    }
+
+    .currency {
+      background-color: #161331;
+      padding: 0 12px;
     }
   }
 }

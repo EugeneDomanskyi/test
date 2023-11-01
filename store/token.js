@@ -5,6 +5,7 @@ import numeral from 'numeral'
 import { request } from './index'
 
 import tokenAssets from '@/public/files/assets'
+import coingeckoIds from '@/public/files/coingecko_ids'
 
 function formatNumber(number) {
   if (!number) {
@@ -162,7 +163,7 @@ export const tokenSlice = createSlice({
     all: [],
     searched: [],
     list: [],
-    infoList: [],
+    infoList: coingeckoIds,
     current: {},
     loading: true,
     sort: 'VOLUME:DESC',
@@ -172,6 +173,7 @@ export const tokenSlice = createSlice({
     pages: {
       history: [1],
       current: 1,
+      append: false,
     },
   },
 
@@ -185,7 +187,8 @@ export const tokenSlice = createSlice({
     },
 
     all: (state, { payload }) => {
-      state.all = payload.map(token => template(token, state.assets[token.id]))
+      const tokens = payload.map(token => template(token, state.assets[token.id]))
+      state.all = state.pages.append ? [...state.all, ...tokens] : tokens
     },
 
     updatedAll: (state, {payload}) => {
@@ -254,6 +257,7 @@ export const tokenSlice = createSlice({
       state.pages = {
         current,
         history,
+        append: payload?.append ?? false,
       }
     },
 

@@ -10,6 +10,7 @@ import { CHAINS } from '@/config'
 import $token from '@/store/token'
 import $exchange from '@/store/exchange'
 import $app from '@/store/app'
+import { usePropsHelper } from '@/myhooks/props-helper'
 
 // const temp = coinmarketAssets.reduce((acc, token) => {
 //   const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(token.platform.token_address)
@@ -83,7 +84,9 @@ const getToken = async (url, id) => {
   return res.data.token && res.data.token.symbol !== 'unknown' ? res.data.token : null
 }
 
-const WrapperExchange = ({children, isMobile}) => {
+const WrapperExchange = ({children, _isMobile}) => {
+  const { isMobile } = usePropsHelper()
+  
   const router = useRouter()
   const dispatch = useDispatch()
 
@@ -259,7 +262,7 @@ const WrapperExchange = ({children, isMobile}) => {
 
   // fetch chart data
   useEffect(() => {
-    if (currentToken?.id && currentToken.id === address && isAddress && !wrongAddress) {
+    if (currentToken?.id && currentToken.id === address && isAddress) {
       $exchange.api.get.tokenChartData(address, blockchain, activeInterval.seconds).then(res => {
         if (res) {
           dispatch($exchange.set.chartData({type: 'tokens', data: res.data}))
@@ -268,7 +271,7 @@ const WrapperExchange = ({children, isMobile}) => {
         dispatch($exchange.set.chartData({type: 'tokens', data: []}))
       })
     }
-  }, [address, wrongAddress, currentToken?.id, blockchain, activeInterval.seconds, isAddress])
+  }, [address, currentToken?.id, blockchain, activeInterval.seconds, isAddress])
 
   const searchTokens = async (searchText) => {
     dispatch($token.set.searching(true))

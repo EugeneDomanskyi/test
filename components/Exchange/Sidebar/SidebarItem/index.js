@@ -47,7 +47,7 @@ const SidebarItem = ({ item, isActive, withArrow, searching, onClick, onClose })
       This collection belongs to a verified account and has significant interest or sales. <a href="https://support.opensea.io/hc/en-us/articles/360063519133-What-is-a-verified-account-or-badged-collection-" target="_blank">Learn more</a>
     </App.Text>
   )
-
+  
   return (
     <App.Flex row justify="space-between" align="center" onClick={handleClick} className={cn(styles.collection, {[styles.withArrow]: withArrow}, {[styles.active]: isActive && ! withArrow})}>
       <App.Flex row gap={8} align="center">
@@ -61,7 +61,7 @@ const SidebarItem = ({ item, isActive, withArrow, searching, onClick, onClose })
 
         <App.Flex column sx={{ maxWidth: 170 }}>
           <App.Flex row align="center" gap={4}>
-            <App.Text nowrap weight={700}>{item.name}</App.Text>
+            <App.Text nowrap uppercase weight={700}>{item.symbol}</App.Text>
             {item.openseaVerificationStatus == 'verified' ? (
               <App.Tooltip text={<TooltipText />} placement="right">
                 <App.Flex center width={12} height={12} sx={{ minWidth: 12 }}>
@@ -75,15 +75,19 @@ const SidebarItem = ({ item, isActive, withArrow, searching, onClick, onClose })
             ) : null}
           </App.Flex>
 
-          <App.Text nowrap size={10} className={styles.secondaryText}>{item.symbol}</App.Text>
+          <App.Text nowrap size={12} className={styles.secondaryText}>{item.name}</App.Text>
         </App.Flex>
       </App.Flex>
       
       <App.Flex column>
-        <App.Text right>{ item.price } { item.currency }</App.Text>
+        {item.price == '' ? (
+          <App.Loader size={14} />
+        ) : (
+          <App.Text right>${ item.price }</App.Text>
+        )}
         <App.Flex row align="center" justify="flex-end" gap={2}>
           <App.Icon icon="caret-down" width={10} height={10} color={item.ticker.type == 'minus' ? '#FF1D61' : '#53F19C'} style={{transform: `rotate(${item.ticker.type == 'plus' ? '180deg' : '0deg'})`}} />
-          <App.Text size={10} color={item.ticker.type == 'minus' ? '#FF1D61' : '#53F19C'}>{ item.ticker.value }%</App.Text>
+          <App.Text size={12} color={item.ticker.type == 'minus' ? '#FF1D61' : '#53F19C'}>{ item.ticker.value }%</App.Text>
         </App.Flex>
       </App.Flex>
 

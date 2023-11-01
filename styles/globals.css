@@ -92,6 +92,7 @@ body {
   color: #fff;
   font-family: 'Gilroy';
   background: #08051C;
+  height: 100%;
 }
 
 body > div:first-child,
