@@ -290,15 +290,13 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
 
     if (icon === 'twitter') {
       return (
-        <svg xmlns="http://www.w3.org/2000/svg" width={width ?? 28} height={height ?? 26} viewBox="0 0 28 26" fill="none" {...props} >
-          <path fill="url(#a)" d="M.068 0 10.76 14.34 0 26h2.422l9.42-10.208L19.455 26h8.242L16.4 10.853 26.417 0h-2.422L15.32 9.401 8.309 0H.068Zm3.56 1.79h3.787l16.719 22.42h-3.786L3.628 1.79Z"/>
-          <defs>
-            <linearGradient id="a" x1={13.848} x2={13.848} y1={0} y2={26} gradientUnits="userSpaceOnUse" >
-              <stop />
-              <stop offset={0} stopColor="#fff" stopOpacity={0.6} />
-              <stop offset={1} stopColor="#fff" stopOpacity={0.13} />
-            </linearGradient>
-          </defs>
+        <svg width={width ?? 28} height={height ?? 26} viewBox="0 0 28 26" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill="url(#paint0_linear_1768_11803)" d="M.068 0L10.76 14.34 0 26h2.422l9.42-10.208L19.455 26h8.242L16.4 10.853 26.417 0h-2.422L15.32 9.401 8.309 0H.068zm3.56 1.79h3.787l16.719 22.42h-3.786L3.628 1.79z" />
+          <defs> <linearGradient id="paint0_linear_1768_11803" x1="13.848" x2="13.848" y1="0" y2="26" gradientUnits="userSpaceOnUse">
+            <stop></stop>
+            <stop offset="0" stopColor="#fff" stopOpacity="0.6"></stop>
+            <stop offset="1" stopColor="#fff" stopOpacity="0.13"></stop>
+          </linearGradient></defs>
         </svg>
       )
     }
