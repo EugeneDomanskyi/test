@@ -48,8 +48,8 @@ const LandingSlides = () => {
   return (
     <App.Container className={styles.container}>
       <App.Flex column center fullWidth>
-        <App.Flex width={['40%', '60%']} sx={{paddingBottom: 32}}>
-          <App.Text center size={[64, 24]} weight={800} height={1.2}>The Ease of CEX, Now in a DEX</App.Text>
+        <App.Flex width={['40%', '100%']} sx={{paddingBottom: 32}}>
+          <App.Text center size={[64, 40]} weight={800} height={1.2}>The Ease of CEX, Now in a DEX</App.Text>
         </App.Flex>
         
         <App.Flex width={['40%', '60%']} center gap={16} className={styles.hideOnMobile}>
