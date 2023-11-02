@@ -16,7 +16,7 @@ const getRandomColor = () => {
   return `#${randomColor}`
 }
 
-const SidebarItem = ({ item, isActive, withArrow, searching, onClick, onClose }) => {
+const SidebarItem = ({ item, isActive, withArrow, searching, type, onClick, onClose }) => {
   const router = useRouter()
   const isNfts = router.pathname.includes('/nfts')
 
@@ -61,7 +61,7 @@ const SidebarItem = ({ item, isActive, withArrow, searching, onClick, onClose })
 
         <App.Flex column sx={{ maxWidth: 170 }}>
           <App.Flex row align="center" gap={4}>
-            <App.Text nowrap uppercase weight={700}>{item.symbol}</App.Text>
+            <App.Text nowrap uppercase weight={700}>{item.symbol}{type == 'tokens' ? (<App.Text inline color="#B9B8C5" size={10} weight={600} >/USDT</App.Text>) : null}</App.Text>
             {item.openseaVerificationStatus == 'verified' ? (
               <App.Tooltip text={<TooltipText />} placement="right">
                 <App.Flex center width={12} height={12} sx={{ minWidth: 12 }}>
@@ -101,6 +101,7 @@ const isEqual = (prevProps, nextProps) => {
     prevProps.isActive === nextProps.isActive &&
     prevProps.searching === nextProps.searching &&
     prevProps.withArrow === nextProps.withArrow &&
+    prevProps.type === nextProps.type &&
     prevProps.onClick === nextProps.onClick &&
     prevProps.onClose === nextProps.onClose
 }

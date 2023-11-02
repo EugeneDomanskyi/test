@@ -31,7 +31,7 @@ const formatNumber = (number) => {
   }
 }
 
-const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
+const Mobile = forwardRef(({ item, type, onOrdersUpdate }, ref) => {
   const router = useRouter()
   const queryBlockchainCode = router.query.blockchain
 
@@ -152,7 +152,7 @@ const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
             )}
 
             <App.Flex column>
-              <App.Text nowrap uppercase size={16} weight={600}>{item.symbol}</App.Text>
+              <App.Text nowrap uppercase size={16} weight={600}>{item.symbol}{type == 'tokens' ? (<App.Text inline color="#B9B8C5" size={10} weight={600} >/USDT</App.Text>) : null}</App.Text>
               <App.Text nowrap size={12} color="#5E5C6B">{item.name}</App.Text>
             </App.Flex>
           </App.Flex>

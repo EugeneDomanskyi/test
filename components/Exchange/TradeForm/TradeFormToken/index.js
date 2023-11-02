@@ -246,8 +246,8 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
     return (
       <App.Flex className={styles.balance}>
         <App.Flex flex={1} align="center" gap={4}>
-          <App.Icon icon="wallet" />
-          <App.Text size={10} color="rgba(255,255,255,0.6)">
+          <App.Icon icon="wallet" width={14} height={14} />
+          <App.Text size={12} weight={600} color="#B9B8C5">
             {
               currentTab === 'buy'
                 ? `${userBalances.usdt} USDT`
@@ -256,10 +256,10 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
           </App.Text>
         </App.Flex>
         <App.Flex className={styles.multipler} align="center" gap={8}>
-          <App.Text color="#5E5C6B" size={10} weight={700} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.25)}>25%</App.Text>
-          <App.Text color="#5E5C6B" size={10} weight={700} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.5)}>50%</App.Text>
-          <App.Text color="#5E5C6B" size={10} weight={700} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.75)}>75%</App.Text>
-          <App.Text color="#5E5C6B" size={10} weight={700} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(1)}>100%</App.Text>
+          <App.Text color="#B9B8C5" size={12} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.25)}>25%</App.Text>
+          <App.Text color="#B9B8C5" size={12} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.5)}>50%</App.Text>
+          <App.Text color="#B9B8C5" size={12} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.75)}>75%</App.Text>
+          <App.Text color="#B9B8C5" size={12} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(1)}>100%</App.Text>
         </App.Flex>
       </App.Flex>
     )
@@ -269,10 +269,15 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
 
   return (
     <App.Flex column className={cn(styles.form, {[styles[version]]: version})}>
-      <App.Flex justify="flex-end" align="center" sx={{marginBottom: 16}}>
-        <App.Text color="rgba(255,255,255,0.6)" size={10} weight={600} italic sx={{marginRight: 8}}>Limit Order</App.Text>
-        <App.Icon icon="info" width={12} height={12} />
-      </App.Flex>
+        <App.Flex justify="flex-end" align="center" sx={{marginBottom: 16}}>
+          <App.Tooltip placement="bottom-end" text={<App.Text size={12} color="#B9B8C5">Take control of your trades. Set your own price for buying or selling assets with this versatile trading tool.</App.Text>}>
+            <App.Flex row align="center" sx={{ cursor: 'pointer' }}>
+              <App.Text color="rgba(255,255,255,0.6)" size={10} weight={600} italic sx={{marginRight: 8}}>Limit Order</App.Text>
+              <App.Icon icon="info" width={12} height={12} />
+            </App.Flex>
+          </App.Tooltip>
+        </App.Flex>
+
       <App.Flex column sx={{marginBottom: 10}}>
         <App.Flex justify="center" flex={1} column sx={{position: 'relative'}}>
           <TradeInput

@@ -113,6 +113,7 @@ const Exchange = () => {
             searchEmpty={searchEmpty}
             pages={pages}
             loading={tokenLoading}
+            type="tokens"
             onSort={handleSort}
             onSearch={handleSearch}
             onPage={handlePage}
@@ -168,6 +169,7 @@ const Exchange = () => {
               pages={pages}
               loading={tokenLoading}
               version="mobile"
+              type="tokens"
               onSort={handleSort}
               onSearch={handleSearch}
               onPage={handlePage}
@@ -176,6 +178,7 @@ const Exchange = () => {
             <Mobile
               ref={mobileRef}
               item={current}
+              type='tokens'
               onOrdersUpdate={handleOrdersUpdated}
             />
           )}
