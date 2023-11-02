@@ -21,9 +21,9 @@ const OrderBook = ({type, version, onClickOrder}) => {
 
   const orderBook = useSelector($orders.get.orderBook(type))
   const blockchain = useSelector($app.get.blockchain)
-  const currentToken = useSelector(({$token}) => $token.current)
+  const current = type == 'nfts' ? useSelector(({$collection}) => $collection.current) : useSelector(({$token}) => $token.current)
 
-  const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(currentToken.address)
+  const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(current.address)
 
   const maxBuyVolume = orderBook.buy.reduce((acc, {quantity}) => acc + quantity*1, 0)
   const maxSellVolume = orderBook.sell.reduce((acc, {quantity}) => acc + quantity*1, 0)
@@ -32,17 +32,17 @@ const OrderBook = ({type, version, onClickOrder}) => {
     if (isAddress) {
       setLoading(true)
       $orders.api.get[type].orderBook({
-        collection: currentToken.address,
-        address: currentToken.address,
+        collection: current.address,
+        address: current.address,
         blockchain: blockchain.code,
         sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
         ...(type === 'nfts' ? {} : {statuses: '[1]'})
       }).then(res => {
-        dispatch($orders.set.orderBook({type: type, data: res, tokenAddress: currentToken.address}))
+        dispatch($orders.set.orderBook({type: type, data: res, tokenAddress: current.address}))
         setLoading(false)
       })
     }
-  }, [currentToken.address])
+  }, [current.address])
 
   const handleClick = (order, volume) => () => {
     onClickOrder({...order, price: order.priceFormatted, quantity: toLowerFixed(volume)})

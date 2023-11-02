@@ -1,13 +1,7 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
-
-import useWalletConnect from '@/myhooks/wallet-connect'
-import useUtils from '@/myhooks/utils'
-
-import $app from '@/store/app'
 
 import App from '@/components/App'
 import TradeFormWrapper from '@/components/Exchange/Mobile/TradeFormWrapper'
@@ -31,19 +25,11 @@ const formatNumber = (number) => {
   }
 }
 
-const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
+const Mobile = forwardRef(({ item, type, onOrdersUpdate }, ref) => {
   const router = useRouter()
   const queryBlockchainCode = router.query.blockchain
 
-  const { wallet, getAddress, getBalance, getPrice } = useWalletConnect()
-  const { formatWithPrecision } = useUtils()
-
-  const blockchain = useSelector($app.get.blockchain)
-  const infoList = useSelector(({ $token }) => $token.infoList)
-
-  const [bottomHeight, setBottomHeight] = useState(91)
   const [tab, setTab] = useState('charts')
-  const [balance, setBalance] = useState({ currency: 0, usd: 0, usdt: 0, loading: true })
   const [isTradeDialogOpen, setIsTradeDialogOpen] = useState(false)
   const [tradeSide, setTradeSide] = useState()
   const [chartTop, setChartTop] = useState([])
@@ -72,44 +58,6 @@ const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
       ])
     }
   }, [item?.id])
-
-  // useEffect(() => {
-  //   if (wallet) {
-  //     fetchBalance()
-  //   }
-  // }, [wallet, blockchain.code])
-
-  const fetchBalance = async () => {
-    const tempBalance = {
-      currency: 0,
-      usd: 0,
-      usdt: 0,
-      loading: true,
-    }
-
-    if (item.id) {
-      const currency = await getBalance(item.id)
-      if (currency) {
-        tempBalance.currency = currency
-      }
-    }
-
-    const cgId = infoList?.[blockchain.platform]?.[item.id]
-    if (cgId && tempBalance.currency > 0) {
-      const rate = await getPrice(cgId, 'usd')
-      tempBalance.usd = rate * tempBalance.currency
-    }
-
-    if (blockchain.usdtContract) {
-      const usdt = await getBalance(blockchain.usdtContract)
-      if (usdt) {
-        tempBalance.usdt = usdt
-      }
-    }
-
-    tempBalance.loading = false
-    setBalance(tempBalance)
-  }
 
   const handleBack = () => {
     const page = router.pathname.split('/').filter(item => item != '')[0]
@@ -151,8 +99,8 @@ const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
               <div className={styles.emptyImage} />
             )}
 
-            <App.Flex column>
-              <App.Text nowrap uppercase size={16} weight={600}>{item.symbol}</App.Text>
+            <App.Flex column sx={{ maxWidth: 170 }}>
+              <App.Text nowrap uppercase size={16} weight={600}>{item.symbol ?? item?.slug}</App.Text>
               <App.Text nowrap size={12} color="#5E5C6B">{item.name}</App.Text>
             </App.Flex>
           </App.Flex>
@@ -175,19 +123,19 @@ const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
             switch (currentTab) {
               case 'charts':
                 return (
-                  <App.Flex className={styles.absolute}><Chart type="tokens" version="mobile" showSwitch top={chartTop} /></App.Flex>
+                  <App.Flex className={styles.absolute}><Chart type={type} version="mobile" showSwitch top={chartTop} /></App.Flex>
                 )
               case 'orderbook':
                 return (
-                  <OrderBook type="tokens" version="mobile" onClickOrder={handleClickOrder} />
+                  <OrderBook type={type} version="mobile" onClickOrder={handleClickOrder} />
                 )
               case 'trades':
                 return (
-                  <Sales type="tokens" version="mobile" onClickSale={handleClickOrder} />
+                  <Sales type={type} version="mobile" onClickSale={handleClickOrder} />
                 )
               case 'orders':
                 return (
-                  <Orders current={item} version="mobile" type="tokens" onOrderCancelled={onOrdersUpdate} onClickOrder={handleClickOrder} />
+                  <Orders current={item} version="mobile" type={type} onOrderCancelled={onOrdersUpdate} onClickOrder={handleClickOrder} />
                 )
               default: return null
             }
@@ -195,39 +143,7 @@ const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
         </App.Flex>
       </App.Flex>
 
-      <App.Flex column height={bottomHeight} justify="flex-end">
-        {/* {wallet ? (
-          <App.Flex column gap={8} sx={{ padding: '0 8px' }}>
-            <App.Text szie={16} color="#878598" height={1}>My Balance</App.Text>
-
-            <App.Flex column gap={8} className={styles.balanceBox}>
-              <App.Flex row align="center" justify="space-between">
-                <App.Flex column>
-                  <App.Text size={16} weight={700}>{item.symbol}</App.Text>
-                  <App.Text size={14} color="#5E5C6B">{item.name}</App.Text>
-                </App.Flex>
-
-                <App.Flex column>
-                  {balance.loading ? <App.Loader size={16} /> : <App.Text right size={16} weight={700}>{formatWithPrecision(balance.currency, 6, 1)}</App.Text>}
-                  {balance.loading ? <App.Loader size={14} /> : <App.Text right size={14} color="#5E5C6B">${formatWithPrecision(balance.usd, 6, 1)}</App.Text>}
-                </App.Flex>
-              </App.Flex>
-
-              <App.Hr color="#1D1937" />
-
-              <App.Flex row align="center" justify="space-between">
-                <App.Flex column>
-                  <App.Text size={16} weight={700}>USDT</App.Text>
-                </App.Flex>
-
-                <App.Flex column>
-                  {balance.loading ? <App.Loader size={16} /> : <App.Text right size={16} weight={700}>${formatWithPrecision(balance.usdt, 6, 1)}</App.Text>}
-                </App.Flex>
-              </App.Flex>
-            </App.Flex>
-          </App.Flex>
-        ) : null} */}
-
+      <App.Flex column height={91} justify="flex-end">
         <App.Hr color="#1F1C30" />
 
         <App.Flex row gap={16} sx={{ padding: '16px' }}>
@@ -244,6 +160,7 @@ const Mobile = forwardRef(({ item, onOrdersUpdate }, ref) => {
           <TradeFormWrapper
             ref={tradeForm}
             item={item}
+            type={type}
             side={tradeSide}
             onClose={handleTradeDialogClose}
           />

@@ -176,6 +176,7 @@ const Exchange = () => {
             <Mobile
               ref={mobileRef}
               item={current}
+              type="tokens"
               onOrdersUpdate={handleOrdersUpdated}
             />
           )}

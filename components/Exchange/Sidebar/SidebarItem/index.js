@@ -61,7 +61,7 @@ const SidebarItem = ({ item, isActive, withArrow, searching, onClick, onClose })
 
         <App.Flex column sx={{ maxWidth: 170 }}>
           <App.Flex row align="center" gap={4}>
-            <App.Text nowrap uppercase weight={700}>{item.symbol}</App.Text>
+            <App.Text nowrap uppercase weight={700}>{item.symbol ?? item?.slug}</App.Text>
             {item.openseaVerificationStatus == 'verified' ? (
               <App.Tooltip text={<TooltipText />} placement="right">
                 <App.Flex center width={12} height={12} sx={{ minWidth: 12 }}>

@@ -56,7 +56,7 @@ export const collectionSlice = createSlice({
   name: '$collection',
 
   initialState: {
-    fetching: false,
+    fetching: true,
     all: [],
     searched: [],
     current: {},
@@ -68,6 +68,7 @@ export const collectionSlice = createSlice({
     pages: {
       history: ['init'],
       current: 'init',
+      append: false,
     },
     marketInfo: {},
   },
@@ -82,7 +83,8 @@ export const collectionSlice = createSlice({
     },
 
     all: (state, { payload }) => {
-      state.all = payload.map(template)
+      const collections = payload.map(template)
+      state.all = state.pages.append ? [...state.all, ...collections] : collections
     },
 
     searched: (state, { payload }) => {
@@ -154,6 +156,7 @@ export const collectionSlice = createSlice({
       state.pages = {
         current,
         history,
+        append: payload?.append ?? false,
       }
     },
 

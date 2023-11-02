@@ -17,8 +17,8 @@ const Sales = ({onClickSale, version, type}) => {
 
   const trades = useSelector($orders.get.recentTrades(type, 50))
   const blockchain = useSelector($app.get.blockchain)
-  const currentToken = useSelector(({$token}) => $token.current)
-  const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(currentToken.address)
+  const current = type == 'nfts' ? useSelector(({$collection}) => $collection.current) : useSelector(({$token}) => $token.current)
+  const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(current.address)
 
   let previousPrice = 0
 
@@ -26,7 +26,7 @@ const Sales = ({onClickSale, version, type}) => {
     if (type === 'tokens' && isAddress) {
       setLoading(true)
       $orders.api.get.tokens.trades({
-        address: currentToken.address,
+        address: current.address,
         blockchain: blockchain.code,
         sortBy: 'createDateTime',
         statuses: '[3]',
@@ -35,8 +35,10 @@ const Sales = ({onClickSale, version, type}) => {
         dispatch($orders.set.trades({type: 'tokens', data: res}))
         setLoading(false)
       })
+    } else {
+      setLoading(false)
     }
-  }, [currentToken.address])
+  }, [current.address])
 
   const handleClick = sale => () => {
     onClickSale({quantity: sale.amount, price: sale.priceFormatted, side: sale.side})

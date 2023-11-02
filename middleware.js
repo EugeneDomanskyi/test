@@ -21,7 +21,7 @@ const middleware = (request) => {
   const { device } = userAgent(request)
   const isMobile = device.type === 'mobile'
   const [_, seg1, seg2, seg3] = request.nextUrl.pathname.split('/')
-  if (seg1 === 'exchange') {
+  if (seg1 === 'exchange' || seg1 === 'nfts') {
     let blockchain = seg2 ?? request.cookies.get('blockchain')?.value ?? DEFAULT_BLOCKCHAIN
     if (!VALID_BLOCKCHAINS.includes(blockchain)) {
       blockchain = DEFAULT_BLOCKCHAIN
@@ -31,9 +31,9 @@ const middleware = (request) => {
     response.cookies.set('blockchain', blockchain)
     applySetCookie(request, response)
     if ((!seg2 || !seg3) && !isMobile) {
-      return NextResponse.redirect(new URL(`/exchange/${blockchain}/${seg3 ?? '0x'}`, request.url))
+      return NextResponse.redirect(new URL(`/${seg1}/${blockchain}/${seg3 ?? '0x'}`, request.url))
     } else if (isMobile && !seg2) {
-      return NextResponse.redirect(new URL(`/exchange/${blockchain}`, request.url))
+      return NextResponse.redirect(new URL(`/${seg1}/${blockchain}`, request.url))
     }
   }
   return response
