@@ -180,7 +180,7 @@ const WrapperExchange = ({children, _isMobile}) => {
       return
     }
     const post = {
-      skip: (pages.current - 1) * 10,
+      skip: (pages.current - 1) * 20,
       orderBy: orderBy,
       orderDirection: sortDirection.toLowerCase(),
       searchText: '',
@@ -198,6 +198,7 @@ const WrapperExchange = ({children, _isMobile}) => {
           ...(key ? {[key]: token.id} : null)
         }
       }, {})
+      
       const pricesCoingecko = await getPrices(coingeckoIds)
       if (pricesCoingecko) {
         dispatch($token.set.updatedAll(pricesCoingecko))

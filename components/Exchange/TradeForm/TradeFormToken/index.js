@@ -17,7 +17,7 @@ import TradeInput from '@/components/Exchange/TradeInput'
 import numeral from 'numeral'
 
 const trimLeadingZerosBeforeDecimal = number => {
-  return number.toString().replace(/^0+(?=\d+(\.\d*)?$)/, '')
+  return number.toString().replace(/^0+(?=\d+(\.\d*)?$)/, '').replace(/^\.(\d*)$/, '0.$1')
 }
 
 const checkPrice = (price, tab, marketPrice) => {

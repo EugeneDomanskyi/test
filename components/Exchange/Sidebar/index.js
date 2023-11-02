@@ -44,7 +44,7 @@ const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpt
       <div className={styles.cardBox}>
         <div className={styles.cardBoxContent} ref={mobileContainerRef} onScroll={handleScroll}>
           {loading ? (
-            [...new Array(10)].map((_, i) => {
+            [...new Array(20)].map((_, i) => {
               const isOdd = i%2
               return (
                 <div key={i} className={styles['card-loader']} style={{'--delay': `${i/(isOdd ? 20 : 5)}s`}} />
