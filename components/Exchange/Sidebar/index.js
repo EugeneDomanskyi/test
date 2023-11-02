@@ -91,16 +91,16 @@ const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpt
 }
 
 const isEqual = (prevProps, nextProps) => {
-  return JSON.stringify(prevProps.items) == JSON.stringify(nextProps.items) &&
-    JSON.stringify(prevProps.searched) == JSON.stringify(nextProps.searched) &&
-    JSON.stringify(prevProps.current) == JSON.stringify(nextProps.current) &&
-    prevProps.search == nextProps.search &&
-    prevProps.searching == nextProps.searching &&
-    prevProps.searchEmpty == nextProps.searchEmpty &&
-    prevProps.loading == nextProps.loading &&
-    prevProps.version == nextProps.version &&
-    prevProps.type == nextProps.type &&
-    prevProps.className == nextProps.className
+  return JSON.stringify(prevProps.items) == JSON.stringify(nextProps.items)
+    && JSON.stringify(prevProps.searched) == JSON.stringify(nextProps.searched)
+    && JSON.stringify(prevProps.current) == JSON.stringify(nextProps.current)
+    && prevProps.search == nextProps.search
+    && prevProps.searching == nextProps.searching
+    && prevProps.searchEmpty == nextProps.searchEmpty
+    && prevProps.loading == nextProps.loading
+    && prevProps.version == nextProps.version
+    && prevProps.type == nextProps.type
+    && prevProps.className == nextProps.className
 }
 
 export default memo(Sidebar, isEqual)
