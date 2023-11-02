@@ -9,7 +9,7 @@ import SidebarPagination from '@/components/Exchange/Sidebar/SidebarPagination'
 
 import styles from './styles.module.scss'
 
-const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpty, pages, loading, version, onSort, onSearch, onPage, onClose, className }) => {
+const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpty, pages, loading, version, type, onSort, onSearch, onPage, onClose, className }) => {
   const mobileContainerRef = useRef()
   const mobileNextRef = useRef()
 
@@ -44,7 +44,7 @@ const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpt
       <div className={styles.cardBox}>
         <div className={styles.cardBoxContent} ref={mobileContainerRef} onScroll={handleScroll}>
           {loading ? (
-            [...new Array(10)].map((_, i) => {
+            [...new Array(20)].map((_, i) => {
               const isOdd = i%2
               return (
                 <div key={i} className={styles['card-loader']} style={{'--delay': `${i/(isOdd ? 20 : 5)}s`}} />
@@ -62,6 +62,7 @@ const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpt
                         key={item.address}
                         item={item}
                         searching={searching}
+                        type={type}
                         isActive={current.address === item.address}
                         onClose={onClose}
                       />
@@ -90,15 +91,16 @@ const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpt
 }
 
 const isEqual = (prevProps, nextProps) => {
-  return JSON.stringify(prevProps.items) == JSON.stringify(nextProps.items) &&
-    JSON.stringify(prevProps.searched) == JSON.stringify(nextProps.searched) &&
-    JSON.stringify(prevProps.current) == JSON.stringify(nextProps.current) &&
-    prevProps.search == nextProps.search &&
-    prevProps.searching == nextProps.searching &&
-    prevProps.searchEmpty == nextProps.searchEmpty &&
-    prevProps.loading == nextProps.loading &&
-    prevProps.version == nextProps.version &&
-    prevProps.className == nextProps.className
+  return JSON.stringify(prevProps.items) == JSON.stringify(nextProps.items)
+    && JSON.stringify(prevProps.searched) == JSON.stringify(nextProps.searched)
+    && JSON.stringify(prevProps.current) == JSON.stringify(nextProps.current)
+    && prevProps.search == nextProps.search
+    && prevProps.searching == nextProps.searching
+    && prevProps.searchEmpty == nextProps.searchEmpty
+    && prevProps.loading == nextProps.loading
+    && prevProps.version == nextProps.version
+    && prevProps.type == nextProps.type
+    && prevProps.className == nextProps.className
 }
 
 export default memo(Sidebar, isEqual)

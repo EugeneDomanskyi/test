@@ -1,5 +1,5 @@
 .collection {
-  padding: 4px 16px;
+  padding: 8px 16px;
   cursor: pointer;
   transition: all .2s ease 0s;
   background: transparent;
@@ -22,8 +22,8 @@
   }
 
   .emptyImage {
-    width: 72px;
-    height: 72px;
+    width: 32px;
+    height: 32px;
     border-radius: 4px;
     background: linear-gradient(0deg, #311B9200, #311B92);
     display: flex;
@@ -33,7 +33,7 @@
   
   &:hover,
   &.active {
-    background: linear-gradient(-90deg, #311B9200, #311B92);
+    background: linear-gradient(-90deg, rgba(49, 27, 146, 0.00) 42.09%, #311B92 99.98%);
 
     .secondaryText {
       color: #B9B8C5;

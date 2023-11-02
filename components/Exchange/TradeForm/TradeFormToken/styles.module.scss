@@ -4,12 +4,13 @@
 
   .balance {
     margin-top: -2px;
-    border: 2px solid #272338;
-    height: 30px;
+    border: 1px solid #19162D;
+    height: 34px;
     padding: 0 8px;
+    border-radius: 0 0 4px 4px;
 
     .multipler {
-      border-left: 2px solid #272338;
+      border-left: 1px solid #19162D;
       padding-left: 8px;
     }
   }
@@ -42,12 +43,10 @@
     .balance {
       margin-top: -1px;
       border: 1px solid #272338;
-      height: 30px;
       padding: 0 10px;
       border-radius: 0 0 3px 3px;
   
       .multipler {
-        border-left: 1px solid #19162D;
         padding-left: 10px;
       }
     }
