@@ -218,7 +218,8 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
       console.log('result?', result);
       if (result?.data) {
         const parsedRes = JSON.parse(result.data)
-        const rewardAmount = parsedRes[enterCampaignHash]?.expectedRewardAmount === '0' ? '0' : parsedRes[enterCampaignHash]?.expectedRewardAmount * 1
+        const rewardAmount = parsedRes[enterCampaignHash]?.expectedRewardAmount !== '0' ? parsedRes[enterCampaignHash]?.expectedRewardAmount * 1 : parsedRes[enterCampaignHash]?.expectedRewardAmount
+        console.log('rewardAmount', rewardAmount);
         if (!rewardAmount) {
           setTimeout(() => {
             fetchReward(enterCampaignHash, (maxTries - 1))
@@ -233,12 +234,14 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
           }))
         } else {
           setExpectedReward(rewardAmount)
-
           setStep(step >= 4 ? 0 : step + 1)
           dispatch($modal.set.update({
             header: {
               title: 'Unlocking Case',
             },
+            content: {
+              padding: 0,
+            }
           }))
 
           dispatch($raffle.set.loading(false))
@@ -381,7 +384,7 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
             : null
         }
 
-        <App.Flex column gap={32} align="center" justify={step === 2 ? 'center' : 'space-between'} className={styles.content} sx={{ padding: step === 2 ? 0 : 32, height: 600 }}>
+        <App.Flex column gap={32} align="center" justify={step === 2 ? 'center' : 'space-between'} className={styles.content} sx={{ padding: step === 3 ? "32px 0" : 32, height: 600 }}>
           {
             (currentStep => {
               switch (currentStep) {

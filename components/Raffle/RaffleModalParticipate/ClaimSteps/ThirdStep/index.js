@@ -9,7 +9,7 @@ const ThirdStep = ({ campaign, onSubmit }) => {
   const handlePrizeDefined = () => {
     setTimeout(() => {
       onSubmit()
-    }, 1500)
+    }, 1000)
   }
 
   return (

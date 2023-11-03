@@ -1,13 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
 import lottie from 'lottie-web'
 import Image from 'next/image'
 import moment from 'moment'
 import animationData from '@/public/animations/confetti_new.json'
 import styles from './styles.module.scss'
 import cn from 'classnames'
-
-import useWalletConnect from '@/myhooks/wallet-connect'
 
 import { trackEvent } from '@/libs/analytics.lib'
 
@@ -20,8 +17,6 @@ const FourthStep = ({ campaign, onSubmit, onShare }) => {
 
   const [showConfetti, setShowConfetti] = useState(true)
   const [prize, setPrize] = useState({ amount: '', title: '' })
-
-  console.log('prize', prize);
 
   useEffect(() => {
     const currentPrize = campaign.rewardRange.find(item => item.reward * 1 === campaign.expectedReward)
