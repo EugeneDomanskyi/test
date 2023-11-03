@@ -38,12 +38,12 @@ export const queries = {
     }
   `,
   tokenDayDatas: gql`
-    query tokenDayDatas($ids: [String]) {
+    query tokenDayDatas($first: Int, $ids: [String]) {
       tokenDayDatas(
         where: {token_in: $ids}
         orderBy: date
         orderDirection: desc
-        first: 100
+        first: $first
       ) {
         high
         low

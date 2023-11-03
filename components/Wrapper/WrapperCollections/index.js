@@ -2,69 +2,129 @@ import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 
+import { CHAINS } from '@/config'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
+import { usePropsHelper } from '@/myhooks/props-helper'
 import useOrders from '@/myhooks/useOrders'
 import Stream from '@/libs/stream.lib'
 
 import $app from '@/store/app'
-import $token from '@/store/token'
 import $collection, { template } from '@/store/collection'
 import $exchange from '@/store/exchange'
 import $orders from '@/store/orders'
 
 const WrapperCollections = ({ children }) => {
+  const { isMobile } = usePropsHelper()
+
   const router = useRouter()
-  const [queryBlockchainCode, queryCollectionId] = router.query.segments?.slice(-2) || []
+  const [address] = router.query.address || []
+  const blockchain = router.query.blockchain
   const isNfts = router.pathname.includes('/nfts') || router.query.segments?.includes('nfts')
 
   const { wallet, network, isContractAddress } = useWalletConnect()
 
-  const { updateOrders } = useOrders({tokenAddress: queryCollectionId, type: 'nfts'})
+  const { updateOrders } = useOrders({tokenAddress: address, type: 'nfts'})
 
   const dispatch = useDispatch()
-  const blockchain = useSelector($app.get.blockchain)
+  const storedBlockchain = useSelector($app.get.blockchain)
   const pageBlockchains = useSelector($app.get.pageBlockchains('nfts'))
 
   const collections = useSelector(({ $collection }) => $collection.all)
   const searched = useSelector(({ $collection }) => $collection.searched)
   const current = useSelector(({ $collection }) => $collection.current)
   const searching = useSelector(({ $collection }) => $collection.searching)
-  const fetching = useSelector(({ $collection }) => $collection.fetching)
+  const loading = useSelector(({ $collection }) => $collection.loading)
   const sort = useSelector(({ $collection }) => $collection.sort)
   const search = useSelector(({ $collection }) => $collection.search)
   const pages = useSelector(({ $collection }) => $collection.pages)
 
+  const [wrongAddress, setWrongAddress] = useState(false)
   const [isBlockchain, setIsBlockchain] = useState(false)
 
   const sortRef = useRef(sort)
   const searchRef = useRef(search)
   const pageRef = useRef(pages.current)
-  const blockchainCode = useRef(blockchain.code)
+  const blockchainCode = useRef(storedBlockchain.code)
   const wsCollectionIds = useRef([])
+
+  const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(address)
+  const emptyAddress = address === '0x'
+
+  const currentChain = CHAINS.find(chain => chain.code === storedBlockchain.code)
+
+  const collectionsPerPage = 20
 
   const initWSConnection = (code) => {
     Stream.connect(code)
     Stream.on('collection.updated', (eventName, eventData) => {
       dispatch($collection.set.updateItem({
         ...eventData,
-        blockchain: blockchain.code,
-        currency: blockchain.currency,
+        blockchain: storedBlockchain.code,
+        currency: storedBlockchain.currency,
       }))
     })
   }
 
   useEffect(() => {
-    if (queryCollectionId && blockchain.code) {
-      initCollection(queryCollectionId, blockchain.code)
+    initWSConnection()
+    if (storedBlockchain.code !== blockchain) {
+      const newBlockchain = ['ethereum', 'polygon', 'arbitrum', 'bsc', 'avalanche'].includes(storedBlockchain.code) ? storedBlockchain.code : blockchain
+      dispatch($app.set.code(newBlockchain))
+      dispatch($collection.set.loading(true))
+      router.replace(`/nfts/${newBlockchain}/0x`)
     }
-  }, [queryCollectionId, blockchain.code])
+  }, [storedBlockchain, blockchain])
 
-  const initCollection = (queryCollectionId) => {
+  // fetch list for blockchain
+  useEffect(() => {
+    if (currentChain.code !== blockchain) {
+      return
+    }
+
+    getCollectionList()
+  }, [search, pages.current, currentChain.code, blockchain])
+
+  // fetch current if address is correct
+  useEffect(() => {
+    (async () => {
+      if (isAddress && (currentChain.code === blockchain) && current?.address !== address) {
+        const existInList = collections.find(collection => collection.id === address)
+        if (!existInList) {
+          const collection = await getCollection(address)
+          if (collection) {
+            dispatch($collection.set.current(collection))
+            return
+          }
+          setWrongAddress(true)
+          return
+        }
+        dispatch($collection.set.current(existInList))
+      } else if (!isAddress && !emptyAddress) {
+        setWrongAddress(true)
+      }
+    })()
+  }, [isAddress, blockchain, address, current?.address])
+
+  // set current from list
+  useEffect(() => {
+    if ((wrongAddress || !isAddress) && (storedBlockchain.code === blockchain) && collections.length && !isMobile && !loading) {
+      dispatch($collection.set.current(collections[0]))
+      router.replace(`/nfts/${blockchain}/${collections[0].id}`)
+    }
+  }, [wrongAddress, collections.length, blockchain, storedBlockchain.code, isMobile, loading])
+
+  useEffect(() => {
+    if (address && blockchain) {
+      initCollection(address, blockchain)
+    }
+  }, [address, blockchain])
+
+  const initCollection = (queryCollectionId, code) => {
     dispatch($exchange.set.loading(true))
     $exchange.api.get.sales({
       collection: queryCollectionId,
-      blockchain: blockchain.code,
+      blockchain: code,
       includeDeleted: false,
       includeTokenMetadata: false,
       sortDirection: 'desc',
@@ -95,7 +155,7 @@ const WrapperCollections = ({ children }) => {
 
   useEffect(() => {
     updateOrders()
-  }, [blockchain.code, wallet, queryCollectionId])
+  }, [blockchain, wallet, address])
 
   useEffect(() => {
     Stream.on('sale', (event, data) => {
@@ -123,58 +183,36 @@ const WrapperCollections = ({ children }) => {
   }, [wallet])
 
   useEffect(() => {
-    if (queryCollectionId) {
-      Stream.subscribe('sale.*', [queryCollectionId])
+    if (address) {
+      Stream.subscribe('sale.*', [address])
     }
 
     return () => {
       Stream.unsubscribe('sale.*')
     }
-  }, [queryCollectionId])
+  }, [address])
 
   useEffect(() => {
-    if (queryCollectionId && wallet) {
-      Stream.subscribe('bid.*', [queryCollectionId], {maker: wallet})
-      Stream.subscribe('ask.*', [queryCollectionId], {maker: wallet})
+    if (address && wallet) {
+      Stream.subscribe('bid.*', [address], {maker: wallet})
+      Stream.subscribe('ask.*', [address], {maker: wallet})
     }
     
     return () => {
       Stream.unsubscribe('bid.*')
       Stream.unsubscribe('ask.*')
     }
-  }, [queryCollectionId, wallet])
-
-  useEffect(() => {
-    if (router.isReady) {
-      const tempBlockhainCode = queryBlockchainCode ?? blockchain.code
-
-      if (tempBlockhainCode) {
-        if ( ! pageBlockchains.map(item => item.code).includes(tempBlockhainCode)) {
-          dispatch($app.set.code('ethereum'))
-        } else {
-          if (tempBlockhainCode != blockchain.code) {
-            dispatch($app.set.code(tempBlockhainCode))
-          }
-        }
-      }
-
-      setIsBlockchain(true)
-    }
-  }, [router.isReady, queryBlockchainCode])
-
-  useEffect(() => {
-    if (router.isReady && isBlockchain && (fetching || ! isNfts)) {
-      initWSConnection(blockchain.code)
-      getCollectionList()
-      dispatch($collection.set.fetching(false))
-    }
-  }, [router.isReady, fetching, isBlockchain])
+  }, [address, wallet])
 
   const getCollectionList = async () => {
-    dispatch($collection.set.loading(true))
+    if (search != '') {
+      dispatch($collection.set.loading(true))
+    } else {
+      dispatch($collection.set.searching(false))
+    }
 
     const result = await $collection.api.all(queryParams(
-      blockchain.code,
+      storedBlockchain.code,
       pages.current,
       sort,
       search
@@ -183,13 +221,11 @@ const WrapperCollections = ({ children }) => {
     if (result && result.hasOwnProperty('collections')) {
       const tempCollections = result.collections
 
-      dispatch($collection.set.pages({next: result?.continuation}))
-
       const tempAll = tempCollections.map(item => {
         return {
           ...item,
-          blockchain: blockchain.code,
-          currency: network(blockchain.code)?.currency,
+          blockchain: storedBlockchain.code,
+          currency: storedBlockchain.currency,
         }
       })
       
@@ -197,58 +233,18 @@ const WrapperCollections = ({ children }) => {
         dispatch($collection.set.searched([]))
         dispatch($collection.set.all(tempAll))
         dispatch($collection.set.searchEmpty(false))
-        
       } else {
         dispatch($collection.set.searched(tempAll))
         dispatch($collection.set.searching(true))
         dispatch($collection.set.searchEmpty(!tempAll.length))
       }
 
-      if (isNfts && ! current?.id) {
-        const [first] = tempCollections
-        router.replace(`/nfts/${blockchain.code}/${first.id}`, undefined, { scroll: false })
-      }
-
+      dispatch($collection.set.pages({next: result?.continuation}))
       wsSubscribe(tempAll.map(item => item.id))
     }
 
     dispatch($collection.set.loading(false))
   }
-
-  useEffect(() => {
-    (async () => {
-      if (router.isReady && isNfts) {
-        let tempCollectionId = null
-        const temp = window.location.pathname.split('/')
-        if (temp.length == 4) {
-          tempCollectionId = temp.pop().replace(/^\/|\/$/g, '') || null
-        }
-        
-        const realCollectionId = queryCollectionId ?? tempCollectionId
-        if ( ! realCollectionId && collections.length) {
-          let id = current?.id
-          if ( ! id) {
-            const [first] = collections
-            id = first.id
-          }
-          router.replace(`/nfts/${blockchain.code}/${id}`, undefined, { scroll: false })
-          return
-        }
-
-        if (realCollectionId) {
-          const currentCollection = await getCollection(realCollectionId)
-          dispatch($collection.set.current(currentCollection))
-          dispatch($app.set.marketInfo(currentCollection))
-
-          wsSubscribe([currentCollection.id])
-        }
-
-        if ( ! collections.length) {
-          dispatch($collection.set.fetching(true))
-        }
-      }
-    })()
-  }, [router.isReady, isNfts, queryCollectionId])
 
   const queryParams = (blockchainCode, page, sortType, searchQuery, customParams) => {
     const [sortBy] = sortType.split(':')
@@ -272,7 +268,7 @@ const WrapperCollections = ({ children }) => {
     const defaultParams = {
       blockchain: blockchainCode,
       sortBy: orderBy,
-      limit: 10,
+      limit: collectionsPerPage,
     }
 
     if (searchQuery != '') {
@@ -303,21 +299,21 @@ const WrapperCollections = ({ children }) => {
     if ( ! collection) {
       collection = searched.find(item => item.address == address)
     }
-
+    
     if ( ! collection) {
       const result = await $collection.api.all(queryParams(
-        blockchain.code,
+        storedBlockchain.code,
         null,
         sort,
         '',
         { id: address, limit: 1 }
       ))
-
+      
       if (result && result.hasOwnProperty('collections')) {
         if (result.collections.length) {
           const [current] = result.collections
-          current.blockchain = blockchain.code
-          current.currency = network(blockchain.code)?.currency
+          current.blockchain = storedBlockchain.code
+          current.currency = storedBlockchain.currency
           collection = template(current)
         } else {
           console.log('Collection was not found in current blockchain')
@@ -327,17 +323,6 @@ const WrapperCollections = ({ children }) => {
 
     return collection ?? {}
   }
-
-  useEffect(() => {
-    if (blockchain.code != blockchainCode.current) {
-      blockchainCode.current = blockchain.code
-      dispatch($collection.set.current({}))
-      dispatch($collection.set.fetching(true))
-      initWSConnection(blockchain.code)
-      dispatch($token.set.all([]))
-      dispatch($token.set.current({}))
-    }
-  }, [blockchain.code])
 
   useEffect(() => {
     if (sort != sortRef.current) {
@@ -366,25 +351,6 @@ const WrapperCollections = ({ children }) => {
 
     return sortedItems
   }
-
-  useEffect(() => {
-    if (search != searchRef.current) {
-      searchRef.current = search
-      if (search != '') {
-        dispatch($collection.set.fetching(true))
-      } else {
-        dispatch($collection.set.searching(false))
-        dispatch($collection.set.searchEmpty(false))
-      }
-    }
-  }, [search])
-
-  useEffect(() => {
-    if (pages.current != pageRef.current) {
-      pageRef.current = pages.current
-      dispatch($collection.set.fetching(true))
-    }
-  }, [pages])
 
   return children
 }

@@ -186,8 +186,8 @@ const TradeFormPlace = ({current, currentTab, currentOption, userBalances}) => {
     return (
       <App.Flex className={styles.balance}>
         <App.Flex flex={1} align="center" gap={4}>
-          <App.Icon icon="wallet" />
-          <App.Text size={10} color="rgba(255,255,255,0.6)">
+          <App.Icon icon="wallet" width={14} height={14} />
+          <App.Text size={12} weight={600} color="#B9B8C5">
             {
               currentTab === 'buy'
                 ? `${userBalances.usdt} USDT`
@@ -196,10 +196,10 @@ const TradeFormPlace = ({current, currentTab, currentOption, userBalances}) => {
           </App.Text>
         </App.Flex>
         <App.Flex className={styles.multipler} align="center" gap={8}>
-          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.25)}>25%</App.Text>
-          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.5)}>50%</App.Text>
-          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.75)}>75%</App.Text>
-          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(1)}>100%</App.Text>
+          <App.Text color="#B9B8C5" size={12} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.25)}>25%</App.Text>
+          <App.Text color="#B9B8C5" size={12} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.5)}>50%</App.Text>
+          <App.Text color="#B9B8C5" size={12} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.75)}>75%</App.Text>
+          <App.Text color="#B9B8C5" size={12} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(1)}>100%</App.Text>
         </App.Flex>
       </App.Flex>
     )
@@ -241,14 +241,8 @@ const TradeFormPlace = ({current, currentTab, currentOption, userBalances}) => {
               : null
           }
       </App.Flex>
-      <App.Button
-        sx={{backgroundColor: currentOption.color, opacity: isDisabled ? 0.5 : 1,}}
-        className={styles.button}
-        disabled={isDisabled}
-        onClick={handleSubmit}>
-        <App.Text color="#09051D" size={15} weight={700}>
-          { currentOption.title } {`${form.amount || 0}` } { current.symbol }
-        </App.Text>
+      <App.Button variant="success" xl fullWidth disabled={isDisabled} onClick={handleSubmit}>
+        { currentOption.title } {`${form.amount || 0}` } { current.symbol }
         { current?.image ? <Image src={current?.image} width={32} height={32} alt="" /> : null }
       </App.Button>
     </App.Flex>

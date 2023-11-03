@@ -61,7 +61,7 @@ const SidebarItem = ({ item, isActive, withArrow, searching, type, onClick, onCl
 
         <App.Flex column gap={2} sx={{ maxWidth: 170 }}>
           <App.Flex row align="center" gap={4}>
-            <App.Text nowrap uppercase weight={700} height={1}>{item.symbol}{type == 'tokens' ? (<App.Text inline color="#B9B8C5" size={12} weight={600} >/USDT</App.Text>) : null}</App.Text>
+            <App.Text nowrap uppercase weight={700} height={1}>{item.symbol ?? item?.slug}{type == 'tokens' ? (<App.Text inline color="#B9B8C5" size={12} weight={600} >/USDT</App.Text>) : null}</App.Text>
             {item.openseaVerificationStatus == 'verified' ? (
               <App.Tooltip text={<TooltipText />} placement="right">
                 <App.Flex center width={12} height={12} sx={{ minWidth: 12 }}>
