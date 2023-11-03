@@ -36,48 +36,33 @@ const getToken = async (url, id) => {
   const client = getApolloClient(url)
   const res = await client.query({
     query: queries.tokenById,
-    variables: {id: id}
+    variables: { id: id }
   })
   return res.data.token && res.data.token.symbol !== 'unknown' ? res.data.token : null
 }
 
-export default function Markets({}) {
+export default function Markets({ marketInfo, currentChain }) {
   const dispatch = useDispatch()
   const router = useRouter()
   const { isMobile } = usePropsHelper()
 
-  const activeInterval = useSelector(({$exchange}) => $exchange.interval)
-  const [marketInfo, setMarketInfo] = useState({})
+  const activeInterval = useSelector(({ $exchange }) => $exchange.interval)
 
   const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
 
-  const currentChain = CHAINS.find(chain => chain.code === queryBlockchainCode)
-
   useEffect(() => {
-    getMarket()
+    console.log('marketInfo', marketInfo);
   }, [])
-
-  const getMarket = async () => {
-    const tokenRes = await getToken(currentChain.baseUniswapUrl, queryMarketId)
-    const tokenInfo = await $token.api.coingecko.full({platform: queryBlockchainCode, address: queryMarketId})
-    const token = {...tokenRes, ...tokenInfo}
-    if (token) {
-      const full = staticTemplate(token)
-      setMarketInfo(full)
-      const id = {[coingeckoAssets[currentChain.platform][full.id]]: full.id}
-      const prices = await getPrices(id)
-      setMarketInfo({...full, ...Object.values(prices)[0]})
-    }
-  }
 
   useEffect(() => {
     if (marketInfo.id) {
+      dispatch($token.set.current(marketInfo))
       $exchange.api.get.tokenChartData(marketInfo.id, currentChain.code, activeInterval.seconds).then(res => {
         if (res) {
-          dispatch($exchange.set.chartData({type: 'tokens', data: res.data}))
+          dispatch($exchange.set.chartData({ type: 'tokens', data: res.data }))
           return
         }
-        dispatch($exchange.set.chartData({type: 'tokens', data: []}))
+        dispatch($exchange.set.chartData({ type: 'tokens', data: [] }))
       })
     }
   }, [marketInfo.id, activeInterval.seconds])
@@ -90,57 +75,88 @@ export default function Markets({}) {
         <meta name="keywords" content="keyword1, keyword2, keyword3" />
         <meta property="og:title" content={`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Chart & Marketcap | Tegro: The CEX-DEX`} />
         <meta property="og:description" content={`Buy, sell, and trade ${marketInfo.symbol ?? 'USDT'} or ${marketInfo.name} instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${marketInfo.name} at the best prices.`} />
-        {/* <meta property="og:image" content="https://example.com/image.jpg" /> */}
       </Head>
       <App.Container>
         <App.Flex sx={{ paddingBottom: 48, paddingTop: 64, overflow: 'hidden' }} gap={32}>
           {
             marketInfo
-              ? ! isMobile
-                  ? <>
-                      <App.Flex column sx={{flex: .8}}>
-                        <Market.Details type={queryMarketType} marketInfo={marketInfo} />
-                      </App.Flex>
-    
-                      <App.Flex column  sx={{flex: .3}} gap={48}>
-                        <Market.Trading type={queryMarketType} marketInfo={marketInfo} />
-                      </App.Flex>
-                    </>
-                  : <App.Flex column sx={{paddingTop: 32, width: '100%'}} gap={48}>
-                      <Info type={queryMarketType} marketInfo={marketInfo} />
-                      <TradeForm
+              ? !isMobile
+                ? <>
+                  <App.Flex column sx={{ flex: .8 }}>
+                    <Market.Details type={queryMarketType} marketInfo={marketInfo} />
+                  </App.Flex>
+
+                  <App.Flex column sx={{ flex: .3 }} gap={48}>
+                    <Market.Trading type={queryMarketType} marketInfo={marketInfo} />
+                  </App.Flex>
+                </>
+                : <App.Flex column sx={{ paddingTop: 32, width: '100%' }} gap={48}>
+                  <Info type={queryMarketType} marketInfo={marketInfo} />
+                  {
+                    marketInfo.price
+                      ? <TradeForm
                         current={marketInfo}
                         type={queryMarketType}
                       />
-                      <OrderBook
-                        type={queryMarketType}
-                        onClickOrder={handleClickOrder}
-                      />
-                      <LivePrice marketInfo={marketInfo} />
-                      <Stats marketInfo={marketInfo} />
-                      <Trending />
-                      <About />
-                      <Images />
-                      <Ad />
-                      {
-                        marketInfo.team
-                          ? <Team />
-                          : null
-                      }
-                      {
-                        marketInfo.invedtors
-                          ? <Investors />
-                          : null
-                      }
-                      
-                      <Resources />
-                      <Analysis />
-                      <FAQ />
-                    </App.Flex>
+                      : null
+                  }
+                  <OrderBook
+                    type={queryMarketType}
+                    onClickOrder={handleClickOrder}
+                  />
+                  <LivePrice marketInfo={marketInfo} />
+                  <Stats marketInfo={marketInfo} />
+                  <Trending />
+                  <About />
+                  <Images />
+                  <Ad />
+                  {
+                    marketInfo.team
+                      ? <Team />
+                      : null
+                  }
+                  {
+                    marketInfo.invedtors
+                      ? <Investors />
+                      : null
+                  }
+
+                  <Resources />
+                  <Analysis />
+                  <FAQ />
+                </App.Flex>
               : null
           }
         </App.Flex>
       </App.Container>
     </>
   )
+}
+
+export async function getServerSideProps({ query }) {
+  const blockchainCode = query.segments[1]
+  const marketId = query.segments[2]
+  const currentChain = CHAINS.find(chain => chain.code === blockchainCode)
+  let marketInfo = {}
+
+  const tokenRes = await getToken(currentChain.baseUniswapUrl, marketId)
+  const tokenInfo = await $token.api.coingecko.full({ platform: blockchainCode, address: marketId })
+  const token = { ...tokenRes, ...tokenInfo }
+  if (token) {
+    const full = staticTemplate(token)
+    marketInfo = full
+    const id = { [coingeckoAssets[currentChain.platform][full.id]]: full.id }
+    const prices = await getPrices(id)
+
+    if (prices) {
+      marketInfo = ({ ...full, ...prices[marketId] })
+    }
+  }
+
+  return {
+    props: {
+      marketInfo,
+      currentChain
+    },
+  }
 }
