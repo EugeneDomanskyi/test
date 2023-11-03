@@ -21,7 +21,7 @@ const OrderBook = ({type, version, onClickOrder}) => {
 
   const orderBook = useSelector($orders.get.orderBook(type))
   const blockchain = useSelector($app.get.blockchain)
-  const current = type == 'nfts' ? useSelector(({$collection}) => $collection.current) : useSelector(({$token}) => $token.current)
+  const current = useSelector(({$token, $collection}) => type == 'nfts' ? $collection.current : $token.current)
 
   const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(current.address)
 
