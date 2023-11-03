@@ -322,18 +322,20 @@ const WrapperExchange = ({children, _isMobile}) => {
     
     const pricesCoingecko = await getPrices(coingeckoIds)
     let tokenIds = []
+    let prices = {}
     if (pricesCoingecko) {
       if (!notCoingeckoIds.length) {
         return pricesCoingecko
       } else {
+        prices = pricesCoingecko
         tokenIds = notCoingeckoIds
       }
     } else {
       tokenIds = tokens.map(token => token.id)
     }
 
-    const prices = await getTokenDayDatas(currentChain.baseUniswapUrl, tokenIds)
-    return prices
+    const uniswapPrices = await getTokenDayDatas(currentChain.baseUniswapUrl, tokenIds)
+    return {...prices, ...uniswapPrices}
   }
 
   const searchTokens = async (searchText) => {

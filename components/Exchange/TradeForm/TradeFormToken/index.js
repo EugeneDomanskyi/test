@@ -51,6 +51,9 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
 
   const [form, setForm] = useState({price: '', amount: '1', total: '0'})
   const [userBalances, setUserBalances] = useState({token: 0, usdt: 0})
+  const [wasUserBalance, setWasUserBalance] = useState(false)
+  const [wasUserInput, setWasUserInput] = useState(false)
+  const [isErrorBalance, setIsErrorBalance] = useState(false)
 
   const isWrongPrice = checkPrice(form.price, currentTab, current.price)
   const isDisabled = !(form.amount*1) || !(form.price*1) || !(form.total*1)
@@ -72,13 +75,25 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
   }))
 
   useEffect(() => {
+    setWasUserBalance(false)
+    setWasUserInput(false)
+    setIsErrorBalance(false)
+  }, [current])
+
+  useEffect(() => {
     if (prevProps?.side) {
       handleChangeForm('price')(prevProps.price)
       handleChangeForm('amount')(prevProps.makerAmountFormatted)
     } else {
-      handleSetPrice()
+      handleSetPrice(false)
     }
   }, [orderBookId, prevProps])
+
+  useEffect(() => {
+    if (wasUserBalance) {
+      setIsErrorBalance(currentTab == 'buy' && (form.total * 1 > userBalances.usdt * 1) || currentTab == 'sell' && (form.amount * 1 > userBalances.token * 1))
+    }
+  }, [form.total, form.amount, currentTab, wasUserBalance])
 
   const fetchBalance = async () => {
     const [tokenBalance, usdtBalance] = await Promise.all([
@@ -86,28 +101,29 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
       getBalance(blockchain.usdtContract)
     ])
     setUserBalances({usdt: usdtBalance, token: tokenBalance})
+    setWasUserBalance(true)
   }
 
-  const handleSetPrice = () => {
+  const handleSetPrice = (inputByUser = true) => {
     switch (currentTab) {
       case 'buy':
         const [cheapestOrder] = orderBook.sell
         if (cheapestOrder && cheapestOrder.priceFormatted) {
-          handleChangeForm('price')(cheapestOrder.priceFormatted.toString())
+          handleChangeForm('price', inputByUser)(cheapestOrder.priceFormatted.toString())
         } else if (current.price) {
-          handleChangeForm('price')(current.price)
+          handleChangeForm('price', inputByUser)(current.price)
         } else {
-          handleChangeForm('price')('')
+          handleChangeForm('price', inputByUser)('')
         }
         break
       case 'sell':
         const [expensiveOrder] = orderBook.buy
         if (expensiveOrder && expensiveOrder.priceFormatted) {
-          handleChangeForm('price')(expensiveOrder.priceFormatted.toString())
+          handleChangeForm('price', inputByUser)(expensiveOrder.priceFormatted.toString())
         } else if (current.price) {
-          handleChangeForm('price')(current.price)
+          handleChangeForm('price', inputByUser)(current.price)
         } else {
-          handleChangeForm('price')('')
+          handleChangeForm('price', inputByUser)('')
         }
         break
     }
@@ -116,10 +132,14 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
   const handleChangePrice = (type) => () => {
     const step = 0.1
     const newPrice = type == 'plus' ? (form.price * 1 + step) : (form.price * 1 - step)
-    handleChangeForm('price')(newPrice)
+    handleChangeForm('price', true)(newPrice)
   }
 
-  const handleChangeForm = field => value => {
+  const handleChangeForm = (field, inputByUser = false) => value => {
+    if (inputByUser) {
+      setWasUserInput(true)
+    }
+
     value = trimLeadingZerosBeforeDecimal(value)
     const decimalRegExp = /^(?=.*\d)\d*(?:\.\d*)?$/
     if (!decimalRegExp.test(value) && value) {
@@ -162,6 +182,11 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
   const handleSubmit = async () => {
     const network = await changeNetwork(blockchain.code)
     if (!network) {
+      return
+    }
+
+    if (isErrorBalance) {
+      setWasUserInput(true)
       return
     }
     
@@ -236,18 +261,18 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
 
   const handleClickMultipler = (percentage) => () => {
     if (currentTab === 'buy') {
-      handleChangeForm('total')(userBalances.usdt * percentage)
+      handleChangeForm('total', true)(userBalances.usdt * percentage)
     } else {
-      handleChangeForm('amount')(userBalances.token * percentage)
+      handleChangeForm('amount', true)(userBalances.token * percentage)
     }
   }
 
   const renderBalance = () => {
     return (
-      <App.Flex className={styles.balance}>
+      <App.Flex className={cn(styles.balance, {[styles.error]: isErrorBalance && wasUserInput})}>
         <App.Flex flex={1} align="center" gap={4}>
-          <App.Icon icon="wallet" width={14} height={14} />
-          <App.Text size={12} weight={600} color="#B9B8C5">
+          <App.Icon icon="wallet" width={14} height={14} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} />
+          <App.Text size={12} weight={600}  color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'}>
             {
               currentTab === 'buy'
                 ? `${userBalances.usdt} USDT`
@@ -287,7 +312,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
             version={version}
             warning={isWrongPrice}
             onBlur={handleBlurPrice}
-            onChange={handleChangeForm('price')}
+            onChange={handleChangeForm('price', true)}
           />
           
           {version == 'mobile' ? (
@@ -328,14 +353,21 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
           value={form.amount}
           version={version}
           currency={current.symbol}
+          error={currentTab == 'sell' && isErrorBalance && wasUserInput}
           onBlur={handleBlurAmount}
-          onChange={handleChangeForm('amount')}
+          onChange={handleChangeForm('amount', true)}
         />
         {
           currentTab === 'sell'
             ? renderBalance()
             : null
         }
+
+        {currentTab == 'sell' && isErrorBalance && wasUserInput ? (
+          <App.Flex sx={{ paddingTop: 8 }}>
+            <App.Text size={12} weight={600}  color="#FF1D61">Insufficient funds in your wallet to make this purchase</App.Text>
+          </App.Flex>
+        ): null}
       </App.Flex>
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
@@ -343,24 +375,31 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
           currency={'USDT'}
           value={form.total}
           version={version}
+          error={currentTab == 'buy' && isErrorBalance && wasUserInput}
           onBlur={handleTotalBlur}
-          onChange={handleChangeForm('total')}
+          onChange={handleChangeForm('total', true)}
         />
           {
             currentTab === 'buy'
               ? renderBalance()
               : null
           }
+
+        {currentTab == 'buy' && isErrorBalance && wasUserInput ? (
+          <App.Flex sx={{ paddingTop: 8 }}>
+            <App.Text size={12} weight={600}  color="#FF1D61">Insufficient funds in your wallet to make this purchase</App.Text>
+          </App.Flex>
+        ): null}
       </App.Flex>
       {version == 'mobile' ? (
-        <App.Button xl fullWidth variant={currentTab == 'buy' ? 'success' : 'danger'} disabled={isDisabled} onClick={handleSubmit}>
+        <App.Button xl fullWidth variant={currentTab == 'buy' ? 'success' : 'danger'} disabled={isDisabled || (isErrorBalance && wasUserInput)} onClick={handleSubmit}>
           {formOption.title}
         </App.Button>
       ) : (
         <App.Button
-          sx={{backgroundColor: formOption.color, opacity: isDisabled ? 0.5 : 1,}}
+          sx={{backgroundColor: formOption.color, opacity: (isDisabled || (isErrorBalance && wasUserInput)) ? 0.5 : 1,}}
           className={styles.button}
-          disabled={isDisabled}
+          disabled={isDisabled || (isErrorBalance && wasUserInput)}
           onClick={handleSubmit}
         >
           <App.Text color="#09051D" size={15} weight={700}>
