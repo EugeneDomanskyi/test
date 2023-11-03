@@ -53,6 +53,8 @@ const WrapperCollections = ({ children }) => {
 
   const currentChain = CHAINS.find(chain => chain.code === storedBlockchain.code)
 
+  const collectionsPerPage = 20
+
   const initWSConnection = (code) => {
     Stream.connect(code)
     Stream.on('collection.updated', (eventName, eventData) => {
@@ -129,7 +131,6 @@ const WrapperCollections = ({ children }) => {
       limit: 800,
     }).then(sales => {
       if (sales) {
-        console.log(sales)
         dispatch($exchange.set.sales(sales))
         dispatch($orders.set.trades({type: 'nfts', data: sales}))
       }
@@ -267,7 +268,7 @@ const WrapperCollections = ({ children }) => {
     const defaultParams = {
       blockchain: blockchainCode,
       sortBy: orderBy,
-      limit: 10,
+      limit: collectionsPerPage,
     }
 
     if (searchQuery != '') {

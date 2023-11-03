@@ -38,7 +38,7 @@ const BuyModalComplete = ({type, currentCollection, amount, price, blockchain, o
       </App.Flex>
 
       <App.Flex center className={cn(styles.box, styles.borderTop)}>
-        <App.Button primary large onClick={handleComplete} sx={{ width: isMobile ? '100%' : 200 }}>Got It</App.Button>
+        <App.Button primary xl fullWidth onClick={handleComplete}>Got It</App.Button>
       </App.Flex>
     </App.Flex>
   )

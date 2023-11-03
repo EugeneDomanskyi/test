@@ -155,7 +155,7 @@ const TradeFormMarket = ({current, currentTab, currentOption, userBalances, init
           currency={`NFT${amount > 1 ? `s` : ''}`}
           onBlur={handleBlurAmount}
           onChange={handleChangeAmount} />
-        <App.Text color="#B9B8C5" size={10} sx={{marginLeft: 'auto', marginTop: 5}}>
+        <App.Text color="#B9B8C5" size={12} weight={600} sx={{marginLeft: 'auto', marginTop: 5}}>
           NFTs available: {currentTab === 'buy' ? onSaleNft.length : userNfts.length}
         </App.Text>
       </App.Flex>
@@ -169,27 +169,21 @@ const TradeFormMarket = ({current, currentTab, currentOption, userBalances, init
       </App.Flex>
       <App.Flex column sx={{marginBottom: 24}}>
         <TradeInput
-          label="MARKET PRICE"
+          label="PRICE"
           currency={blockchain?.currency}
           readOnly={true}
           value={totalPrice} />
         <App.Flex align="center" gap={4} className={styles.balance}>
-          <App.Icon icon="wallet" />
-          <App.Text color="#B9B8C5" size={10}>
+          <App.Icon icon="wallet" width={14} height={14} />
+          <App.Text color="#B9B8C5" size={12} weight={600}>
             {
               `${userBalances.native} ${blockchain?.currency}`
             }
           </App.Text>
         </App.Flex>
       </App.Flex>
-      <App.Button
-        sx={{backgroundColor: currentOption.color, opacity: isDisabled ? 0.5 : 1, cursor: isDisabled ? 'default' : 'pointer'}}
-        className={styles.button}
-        disabled={isDisabled}
-        onClick={handleSubmit}>
-        <App.Text color="#09051D" size={15} weight={700}>
-          { currentOption.title } {`${amount || 0}`} { `NFT${amount > 1 ? `s` : ''}` }
-        </App.Text>
+      <App.Button xl variant={currentTab == 'buy' ? 'success' : 'danger'} fullWidth disabled={isDisabled} onClick={handleSubmit}>
+        { currentOption.title } {`${amount || 0}`} { `NFT${amount > 1 ? `s` : ''}` }
         { current?.image ? <Image src={current?.image} width={32} height={32} alt="" /> : null }
       </App.Button>
     </App.Flex>

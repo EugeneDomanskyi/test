@@ -25,8 +25,7 @@ const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpt
       const nextRect = mobileNextRef.current.getBoundingClientRect()
 
       const containerBottom = containerRect.top + containerRect.height
-
-      if (containerBottom - nextRect.top <= 82) {
+      if (nextRect.top - containerBottom <= 50) {
         if (onPage) {
           onPage(pages.next, true)
         }
@@ -69,7 +68,7 @@ const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpt
                     )
                   })}
 
-                  {version == 'mobile' && pages.next ? (
+                  {version == 'mobile' && pages.next && ! searching ? (
                     <div ref={mobileNextRef}>
                       <App.Flex center full>
                         <App.Loader size={40} />
