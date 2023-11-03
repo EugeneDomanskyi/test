@@ -1,4 +1,4 @@
-import AppIcon from '@/components/App/AppIcon'
+import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
@@ -39,7 +39,7 @@ const AppAddress = ({ address, short, small, muted, noCopy, url, align = 'left' 
 
       {!noCopy ? (
         <span className={styles.copy} onClick={handleCopy}>
-          <AppIcon icon="copy" />
+          <App.Icon icon="copy" />
         </span>
       ) : null}
     </div>
