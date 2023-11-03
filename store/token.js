@@ -66,23 +66,23 @@ export const staticTemplate = (item) => {
   const currency = 'USDT'
 
   return {
-    id: item?.id,
-    cgId: item?.cgId,
-    address: item?.address,
+    id: item?.contract_address,
+    cgId: item?.id,
+    address: item?.contract_address,
     decimals: item?.decimals,
-    image: item?.image,
+    image: item?.image.large,
     name: item?.name,
     blockchain: item?.blockchain,
     symbol: item?.symbol,
     currency: currency,
-    description: item?.description,
-    tokenCount: item?.tokenCount ?? 0,
+    description: item?.description?.en,
+    tokenCount: item.market_data?.total_supply ?? 0,
     discordUrl: item?.discordUrl,
-    externalUrl: item?.externalUrl,
-    twitterUrl: item?.twitterUrl,
-    openseaVerificationStatus: item?.openseaVerificationStatus === 'verified',
-    marketCap: item?.marketCap,
-    createdAt: item?.createdAt,
+    externalUrl: item.links?.homepage[0],
+    twitterUrl: item.links?.twitter_screen_name ? `https://twitter.com/${item.links?.twitter_screen_name}` : null,
+    // openseaVerificationStatus: item?.openseaVerificationStatus === 'verified',
+    marketCap: item.market_data?.total_supply * (item.market_data?.current_price?.usd ?? 0),
+    createdAt: item?.genesis_date,
   }
 }
 
@@ -125,7 +125,7 @@ export const staticTemplate = (item) => {
 //   return {}
 // }
 
-// const fullToTemplate = (item) => {
+// export const fullToTemplate = (item) => {
 //   if (item) {
 //     return {
 //       isFull: true,

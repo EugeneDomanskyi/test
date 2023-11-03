@@ -6,7 +6,7 @@ import Head from 'next/head'
 import { usePropsHelper } from '@/myhooks/props-helper'
 import { CHAINS } from '@/config'
 import { getApolloClient, queries } from '@/api_services/graphql'
-import { template } from '@/store/token'
+import $token, { fullToTemplate, staticTemplate } from '@/store/token'
 import { getPrices } from '@/api_services/coingecko'
 import coingeckoAssets from '@/public/files/coingecko_ids'
 import $exchange from '@/store/exchange'
@@ -58,12 +58,15 @@ export default function Markets({}) {
   }, [])
 
   const getMarket = async () => {
-    const token = await getToken(currentChain.baseUniswapUrl, queryMarketId)
+    const tokenRes = await getToken(currentChain.baseUniswapUrl, queryMarketId)
+    const tokenInfo = await $token.api.coingecko.full({platform: queryBlockchainCode, address: queryMarketId})
+    const token = {...tokenRes, ...tokenInfo}
     if (token) {
-      setMarketInfo(template(token))
-      const id = {[coingeckoAssets[currentChain.platform][token.id]]: token.id}
+      const full = staticTemplate(token)
+      setMarketInfo(full)
+      const id = {[coingeckoAssets[currentChain.platform][full.id]]: full.id}
       const prices = await getPrices(id)
-      setMarketInfo(template({...token, ...Object.values(prices)[0]}))
+      setMarketInfo({...full, ...Object.values(prices)[0]})
     }
   }
 
@@ -81,6 +84,14 @@ export default function Markets({}) {
 
   return (
     <>
+      <Head>
+        <title>{`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Chart & Marketcap | Tegro: The CEX-DEX`}</title>
+        <meta name="description" content={`Buy, sell, and trade ${marketInfo.symbol ?? 'USDT'} or ${marketInfo.name} instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${marketInfo.name} at the best prices.`} />
+        <meta name="keywords" content="keyword1, keyword2, keyword3" />
+        <meta property="og:title" content={`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Chart & Marketcap | Tegro: The CEX-DEX`} />
+        <meta property="og:description" content={`Buy, sell, and trade ${marketInfo.symbol ?? 'USDT'} or ${marketInfo.name} instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${marketInfo.name} at the best prices.`} />
+        {/* <meta property="og:image" content="https://example.com/image.jpg" /> */}
+      </Head>
       <App.Container>
         <App.Flex sx={{ paddingBottom: 48, paddingTop: 64, overflow: 'hidden' }} gap={32}>
           {
