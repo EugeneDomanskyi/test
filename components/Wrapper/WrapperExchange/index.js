@@ -47,7 +47,7 @@ const getTokenDayDatas = async (url, ids) => {
     query: queries.tokenDayDatas,
     variables: {
       ids: ids,
-      first: ids.length * 3,
+      first: ids.length > 0 ? (ids.length * 3) : 1,
     },
   })
   if (res.data.tokenDayDatas) {
