@@ -1,0 +1,50 @@
+.timeBadge {
+  padding: 8px;
+  border-radius: 100px;
+  background: rgba(6, 56, 47, 0.60);
+  backdrop-filter: blur(2px);
+
+  @media (max-width: 768px) {
+    padding: 6px;
+  }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #53F19C3D;
+
+    &:before {
+      content: '';
+      display: block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #53F19C;
+    }
+  }
+
+  &.Closed {
+    background: rgba(77, 14, 39, 0.60);
+
+    .dot {
+      background: #FF1D613D;
+
+      &:before {
+        background: #FF1D61;
+      }
+    }
+  }
+
+  &.Upcoming {
+    background: rgba(255, 214, 0, 0.40);
+
+    .dot {
+      background: #FFD6003D;
+
+      &:before {
+        background: #FFD600;
+      }
+    }
+  }
+}
