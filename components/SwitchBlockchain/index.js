@@ -71,10 +71,10 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
           ! isMobile
             ? <>
                 <App.Text size={16} weight={700} className={styles.badgeTitle}>{blockchain.name}</App.Text>
+                <App.Icon icon="caret-down" color="#fff" />
               </>
             : null
         }
-        <App.Icon icon="caret-down" color="#fff" />
       </App.Flex>
 
       <div className={cn(styles.menu, {[styles.active]: menuShow})}>

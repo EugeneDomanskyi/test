@@ -48,7 +48,8 @@ export const ordersSlice = createSlice({
     trades: {
       nfts: [],
       tokens: [],
-    }
+    },
+    myOrdersDialogOpen: false,
   },
 
   reducers: {
@@ -64,7 +65,10 @@ export const ordersSlice = createSlice({
     },
     trades: (state, {payload}) => {
       state.trades[payload.type] = payload.data
-    }
+    },
+    myOrdersDialogOpen: (state, {payload}) => {
+      state.myOrdersDialogOpen = payload
+    },
   },
 })
 

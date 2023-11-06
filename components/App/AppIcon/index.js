@@ -90,6 +90,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon == 'chevron-right2') {
+      return (
+        <svg width={width ?? 7} height={width ?? 12} viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#5E5C6B'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M1 1l5 5-5 5" />
+        </svg>
+      )
+    }
+
     if (icon == 'chevron-down') {
       return (
         <svg width={width ?? 16} height={width ?? 17} viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -240,8 +248,17 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
 
     if (icon === 'wallet') {
       return (
-        <svg width={width ?? 10} height={height ?? 10} fill="none" {...props}>
+        <svg width={width ?? 10} height={height ?? 10} viewBox="0 0 10 10" fill="none" {...props}>
           <path fill={color ?? '#B9B8C5'} d="M8.75 7.5v.417a.833.833 0 0 1-.833.833H2.083a.833.833 0 0 1-.833-.833V2.083a.833.833 0 0 1 .833-.833h5.834a.833.833 0 0 1 .833.833V2.5H5a.833.833 0 0 0-.833.833v3.334A.833.833 0 0 0 5 7.5m0-.833h4.167V3.333H5m1.667 2.292a.625.625 0 1 1 0-1.25.625.625 0 0 1 0 1.25Z" />
+        </svg>
+      )
+    }
+
+    if (icon === 'wallet2') {
+      return (
+        <svg width={width ?? 19} height={height ?? 20} viewBox="0 0 19 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#B9B8C5'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14.282 11.226a1.59 1.59 0 00-.475 1.29c.071.856.855 1.481 1.71 1.481h1.504v.942a2.983 2.983 0 01-2.977 2.977H4.956a2.983 2.983 0 01-2.977-2.977V9.611a2.983 2.983 0 012.977-2.976h9.088a2.983 2.983 0 012.977 2.976v1.14h-1.6c-.443 0-.846.175-1.14.475z" />
+          <path stroke={color ?? '#B9B8C5'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M1.98 10.324V6.706c0-.942.577-1.78 1.456-2.113l6.286-2.375a1.504 1.504 0 012.034 1.409v3.008M17.86 11.56v1.63a.813.813 0 01-.793.808h-1.551c-.855 0-1.639-.626-1.71-1.48a1.59 1.59 0 01.475-1.291c.293-.3.696-.475 1.14-.475h1.646a.813.813 0 01.792.807zM5.542 10h5.541" />
         </svg>
       )
     }
@@ -273,15 +290,13 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
 
     if (icon === 'twitter') {
       return (
-        <svg xmlns="http://www.w3.org/2000/svg" width={width ?? 28} height={height ?? 26} viewBox="0 0 28 26" fill="none" {...props} >
-          <path fill="url(#a)" d="M.068 0 10.76 14.34 0 26h2.422l9.42-10.208L19.455 26h8.242L16.4 10.853 26.417 0h-2.422L15.32 9.401 8.309 0H.068Zm3.56 1.79h3.787l16.719 22.42h-3.786L3.628 1.79Z" />
-          <defs>
-            <linearGradient id="a" x1={13.848} x2={13.848} y1={0} y2={26} gradientUnits="userSpaceOnUse" >
-              <stop />
-              <stop offset={0} stopColor="#fff" stopOpacity={0.6} />
-              <stop offset={1} stopColor="#fff" stopOpacity={0.13} />
-            </linearGradient>
-          </defs>
+        <svg width={width ?? 28} height={height ?? 26} viewBox="0 0 28 26" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill="url(#paint0_linear_1768_11803)" d="M.068 0L10.76 14.34 0 26h2.422l9.42-10.208L19.455 26h8.242L16.4 10.853 26.417 0h-2.422L15.32 9.401 8.309 0H.068zm3.56 1.79h3.787l16.719 22.42h-3.786L3.628 1.79z" />
+          <defs> <linearGradient id="paint0_linear_1768_11803" x1="13.848" x2="13.848" y1="0" y2="26" gradientUnits="userSpaceOnUse">
+            <stop></stop>
+            <stop offset="0" stopColor="#fff" stopOpacity="0.6"></stop>
+            <stop offset="1" stopColor="#fff" stopOpacity="0.13"></stop>
+          </linearGradient></defs>
         </svg>
       )
     }
@@ -454,6 +469,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
         <svg xmlns="http://www.w3.org/2000/svg" width={width ?? 31} height={height ?? 30} viewBox="0 0 31 30" fill="none" {...props}>
           <path fill="#53F19C" d="M13.114.664c1.035-.885 2.73-.885 3.78 0l2.369 2.04c.45.39 1.29.704 1.89.704h2.549a2.906 2.906 0 0 1 2.894 2.894v2.55c0 .585.315 1.44.705 1.89l2.04 2.368c.884 1.035.884 2.73 0 3.78l-2.04 2.369c-.39.45-.705 1.29-.705 1.89v2.549a2.906 2.906 0 0 1-2.894 2.894h-2.55c-.585 0-1.44.315-1.89.705l-2.369 2.04c-1.035.884-2.729.884-3.779 0l-2.37-2.04c-.45-.39-1.289-.705-1.889-.705H6.261a2.906 2.906 0 0 1-2.894-2.894v-2.564c0-.585-.315-1.425-.69-1.875L.652 16.875c-.87-1.035-.87-2.715 0-3.75l2.025-2.384c.375-.45.69-1.29.69-1.874V6.302A2.906 2.906 0 0 1 6.26 3.408h2.594c.585 0 1.44-.315 1.89-.705l2.37-2.04Z" />
           <path fill="#06382F" d="M16 9.667a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm-.24 3.18c-.793.066-2.96 1.793-2.96 1.793-.133.1-.093.093.013.28.107.18.094.193.22.107a40 40 0 0 1 .72-.454c1.414-.906.227 1.187-.38 4.714-.24 1.746 1.334.846 1.74.58.4-.26 1.474-1 1.58-1.074.147-.1.04-.18-.073-.346-.08-.114-.16-.034-.16-.034-.433.287-1.227.887-1.333.507-.127-.38.686-2.987 1.133-4.78.073-.427.273-1.36-.5-1.293Z" />
+        </svg>
+      )
+    }
+
+    if (icon === 'info-i') {
+      return (
+        <svg width={width ?? 5} height={height ?? 9} viewBox="0 0 5 9" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill={color ?? '#53F19C'} d="M3.833 0c-.31 0-.606.089-.825.247-.22.158-.342.373-.342.597 0 .223.123.438.342.596.219.158.515.247.825.247.31 0 .606-.089.825-.247.219-.158.342-.373.342-.596C5 .62 4.877.405 4.658.247A1.425 1.425 0 003.833 0zm-.28 2.682C2.627 2.74.099 4.195.099 4.195c-.156.084-.11.079.015.236.125.152.109.163.257.09.155-.073.412-.19.84-.382 1.65-.765.265 1-.443 3.976-.28 1.473 1.556.714 2.03.489.467-.22 1.72-.844 1.844-.905.171-.085.047-.152-.085-.293-.094-.095-.187-.028-.187-.028-.506.242-1.432.748-1.556.427-.148-.32.801-2.519 1.322-4.032.086-.36.32-1.147-.583-1.09z" />
         </svg>
       )
     }
@@ -1228,6 +1251,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon === 'orders-mobile') {
+      return (
+        <svg width={width ?? 17} height={height ?? 18} viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill={color ?? '#B9B8C5'} fillRule="evenodd" clipRule="evenodd" d="M1.948 6.875a4.424 4.424 0 013.42-4.312l-.192.32a.531.531 0 00.91.547l.744-1.24a.531.531 0 00-.455-.804 5.486 5.486 0 00-5.49 5.49.531.531 0 101.063 0zm14.166 4.25a.531.531 0 10-1.062 0 4.424 4.424 0 01-3.42 4.313l.192-.32a.531.531 0 00-.91-.547l-.745 1.24a.531.531 0 00.456.804 5.486 5.486 0 005.49-5.49zM9.988 5.997V4.43l2.005 1.159v2.007l-1.577-.874-.003-.001a.847.847 0 01-.293-.313.875.875 0 01-.132-.411zm4.637.726l-1.57.87V5.586l1.998-1.16v1.57a.87.87 0 01-.134.41.878.878 0 01-.294.316zM12.926 2.53l1.675.929-2.079 1.208-2.087-1.207 1.676-.929a.923.923 0 01.411-.084.89.89 0 01.403.083h.001zm-.404-1.145c.303 0 .636.06.915.214l.002.001 1.699.941c.3.164.537.431.699.707.162.277.277.613.277.949v1.799c0 .338-.119.675-.28.95-.163.275-.4.54-.694.704l-1.7.942c-.282.158-.617.221-.923.221-.305 0-.64-.063-.92-.222l-1.696-.94a1.897 1.897 0 01-.699-.706 1.924 1.924 0 01-.277-.949v-1.8c0-.337.118-.674.28-.95.163-.274.4-.54.694-.704l1.706-.945c.28-.151.614-.212.917-.212zM1.948 12.223v1.566c0 .103.04.255.131.411a.848.848 0 00.293.312l.003.002 1.57.87V13.38l-1.997-1.158zm3.06 3.165l1.576-.874a.876.876 0 00.295-.315.87.87 0 00.133-.41v-1.572L5.008 13.38v2.009zm1.553-4.137l-1.673-.927a.922.922 0 00-.41-.084.889.889 0 00-.404.083l-1.68.93 2.082 1.206 2.085-1.208zM5.394 9.39a1.966 1.966 0 00-.916-.213c-.303 0-.637.061-.916.215l-1.702.943c-.294.163-.532.43-.694.704-.162.275-.28.612-.28.95v1.8c0 .335.115.672.277.948.161.276.4.543.699.707l1.696.94c.28.159.615.222.92.222.305 0 .64-.064.922-.22l.001-.001 1.7-.942c.294-.163.53-.43.693-.704.162-.275.28-.612.28-.95v-1.8c0-.335-.114-.672-.276-.948a1.898 1.898 0 00-.7-.707L5.4 9.393l-.006-.003z" />
+        </svg>
+      )
+    }
+
     if (icon === 'reward-zero') {
       return (
         <svg xmlns="http://www.w3.org/2000/svg" width={width ?? 157} height={height ?? 101} viewBox="0 0 157 101" fill="none">
@@ -1243,6 +1274,23 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
               <stop offset="1" stopColor="#E6E6E6" stop-opacity="0.84" />
             </linearGradient>
           </defs>
+        </svg>
+      )
+    }
+
+    if (icon === 'chart-candles') {
+      return (
+        <svg width={width ?? 18} height={height ?? 23} viewBox="8.54 5.835 17.882 22.258" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path stroke="#EB3169" strokeLinecap="round" strokeMiterlimit="10" strokeWidth="0.578" d="M9.186 17.11L9.17 27.784" />
+          <rect width="1.257" height="8.377" x="8.536" y="18.309" fill="#EB3169" rx="0.289" />
+          <path stroke="#EB3169" strokeLinecap="round" strokeMiterlimit="10" strokeWidth="0.578" d="M17.035 16.179l-.017 10.673" />
+          <rect width="1.257" height="8.377" x="16.385" y="17.377" fill="#EB3169" rx="0.289" />
+          <path stroke="#53F19C" strokeLinecap="round" strokeMiterlimit="10" strokeOpacity="0.5" strokeWidth="0.578" d="M12.935 9.535l-.016 10.674" />
+          <rect width="1.257" height="5.784" x="12.306" y="11.929" fill="#53F19C" fillOpacity="0.5" rx="0.289" />
+          <path stroke="#53F19C" strokeLinecap="round" strokeMiterlimit="10" strokeOpacity="0.5" strokeWidth="0.578" d="M21.374 9.535l-.016 10.674" />
+          <rect width="1.257" height="5.784" x="20.746" y="11.929" fill="#53F19C" fillOpacity="0.5" rx="0.289" />
+          <path stroke="#53F19C" strokeLinecap="round" strokeMiterlimit="10" strokeOpacity="0.5" strokeWidth="0.578" d="M25.735 6.21l-.016 10.674" />
+          <rect width="1.257" height="5.784" x="25.106" y="8.604" fill="#53F19C" fillOpacity="0.5" rx="0.289" />
         </svg>
       )
     }
@@ -1266,6 +1314,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon === 'chart-area') {
+      return (
+        <svg width={width ?? 22} height={height ?? 17} viewBox="6.362 9.379 21.781 16.229" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill={color ?? '#53F19C'} d="M28.143 9.38h-5.766v1.202h3.826l-3.242 3.874-6.136-.09-2.547 5.768-4.508-.977-3.408 5.847 1.04.604 2.966-5.089 4.614.999 2.622-5.937 5.913.084 3.423-4.09v3.573h1.203V9.379z" />
+        </svg>
+      )
+    }
+
     if (icon === 'reward-uncommon') {
       return (
         <svg xmlns="http://www.w3.org/2000/svg" width={width ?? 157} height={height ?? 101} viewBox="0 0 157 101" fill="none">
@@ -1276,6 +1332,31 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
               <stop offset="1" stopColor="#CBC6C5" />
             </linearGradient>
           </defs>
+        </svg>
+      )
+    }
+
+    if (icon === 'plus') {
+      return (
+        <svg width={width ?? 12} height={height ?? 13} viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill={color ?? '#5E5C6B'} d="M6.74 1.24a.74.74 0 10-1.48 0v4.52H.74a.74.74 0 100 1.48h4.52v4.52a.74.74 0 001.48 0V7.24h4.52a.74.74 0 000-1.48H6.74V1.24z" />
+        </svg>
+      )
+    }
+
+    if (icon === 'minus') {
+      return (
+        <svg width={width ?? 12} height={height ?? 3} viewBox="0 0 12 3" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill={color ?? '#5E5C6B'} fillRule="evenodd" d="M0 1.5C0 1.086.331.75.74.75h10.52c.409 0 .74.336.74.75s-.331.75-.74.75H.74A.745.745 0 010 1.5z" clipRule="evenodd" />
+        </svg>
+      )
+    }
+
+    if (icon === 'trash') {
+      return (
+        <svg width={width ?? 18} height={height ?? 20} viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill={color ?? '#6A6877'} d="M16.85 2.235h-4.755V.585A.585.585 0 0011.51 0H6.072a.585.585 0 00-.584.584v1.651H.584a.585.585 0 000 1.169h.962v10.128c0 3.302 2.183 5.99 4.867 5.99h4.758c2.683 0 4.866-2.688 4.866-5.99V3.404h.813a.584.584 0 100-1.169zM6.657 1.17h4.269v1.066h-4.27V1.169zm8.211 12.362c0 2.658-1.658 4.821-3.697 4.821H6.413c-2.04 0-3.698-2.163-3.698-4.82V3.403h12.153v10.127z" />
+          <path fill={color ?? '#6A6877'} d="M5.16 5.934a.584.584 0 00-.584.584v8.433a.584.584 0 101.17 0V6.518a.584.584 0 00-.585-.584zM8.907 5.934a.584.584 0 00-.584.584v8.433a.584.584 0 101.169 0V6.518a.585.585 0 00-.585-.584zM12.271 15.536a.584.584 0 00.585-.585V6.518a.584.584 0 10-1.169 0v8.433c0 .323.261.585.585.585z" />
         </svg>
       )
     }

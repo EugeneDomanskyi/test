@@ -93,7 +93,7 @@ const Wrapper = ({ children, isMobile }) => {
   }, [router.asPath])
   
   return (
-    <div style={{paddingTop: 64, transition: '.4s'}}>
+    <div style={{height: '100%', paddingTop: 64, transition: '.4s'}}>
       <Header />
 
       {isExchange ? (

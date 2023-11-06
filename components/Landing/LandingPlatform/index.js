@@ -76,9 +76,9 @@ const LandingPlatform = () => {
       </video> */}
 
       <App.Container>
-        <App.Flex column center gap={[36, 8]} sx={[{ padding: '70px 0' }, { padding: '50px 0' }]}>
-          <App.Flex row center width="50%">
-            <App.Text center size={[96, 24]} weight={300} height={1.2}>A Platform Built For Everyone</App.Text>
+        <App.Flex column center gap={36} sx={[{ padding: '70px 0' }, { padding: '0' }]}>
+          <App.Flex row center width={['50%', '100%']}>
+            <App.Text center size={[96, 40]} weight={300} height={1.2}>A Platform Built For Everyone</App.Text>
           </App.Flex>
 
           <App.Flex direction={['row', 'column']} gap={[48, 24]} fullWidth>

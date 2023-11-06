@@ -388,6 +388,7 @@ class TOKEN extends Order {
     this.quantityFilled = data.quantityFilled
     this.status = data.status
     this.time = moment(data.createDateTime).format('DD MMM, HH:mm')
+    this.timeMoment = moment(data.createDateTime)
   }
 
   get itemPrice () {

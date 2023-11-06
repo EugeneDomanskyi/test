@@ -26,7 +26,7 @@ export const queries = {
   `,
   tokens:  gql`
     query tokens($skip: Int!, $orderBy: String, $orderDirection: String, $searchText: String, $usdt: String) {
-      tokens(first: 10, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: { and: [{totalValueLockedUSD_gt: 0}, {derivedETH_gt: 0}, {id_not: $usdt}, {or: [{ name_contains_nocase: $searchText }, { symbol_contains_nocase: $searchText }, { id: $searchText }]}] }) {
+      tokens(first: 20, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: { and: [{totalValueLockedUSD_gt: 0}, {derivedETH_gt: 0}, {id_not: $usdt}, {or: [{ name_contains_nocase: $searchText }, { symbol_contains_nocase: $searchText }, { id: $searchText }]}] }) {
         id
         name
         symbol
@@ -38,12 +38,12 @@ export const queries = {
     }
   `,
   tokenDayDatas: gql`
-    query tokenDayDatas($ids: [String]) {
+    query tokenDayDatas($first: Int, $ids: [String]) {
       tokenDayDatas(
         where: {token_in: $ids}
         orderBy: date
         orderDirection: desc
-        first: 30
+        first: $first
       ) {
         high
         low

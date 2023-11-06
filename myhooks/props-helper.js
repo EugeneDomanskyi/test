@@ -22,6 +22,7 @@ export const usePropsHelper = () => {
   }
 
   useEffect(() => {
+    handleWindowResize()
     window.addEventListener('resize', handleWindowResize)
     return () => {
       window.removeEventListener('resize', handleWindowResize)
@@ -33,18 +34,22 @@ export const usePropsHelper = () => {
   }
 
   const propValue = (value, hasNotPx = false) => {
-    if (typeof value == 'object' || typeof value == 'array') {
-      if (value.hasOwnProperty(0) && value.hasOwnProperty(1)) {
-        const result = isMobile ? value[1] : value[0]
-        return isNumber(result) && ! hasNotPx ? (result + 'px') : result
+    if (value) {
+      if (typeof value == 'object' || typeof value == 'array') {
+        if (value.hasOwnProperty(0) && value.hasOwnProperty(1)) {
+          const result = isMobile ? value[1] : value[0]
+          return isNumber(result) && ! hasNotPx ? (result + 'px') : result
+        }
       }
-    }
-  
-    if (typeof value == 'string' || typeof value == 'number') {
+    
+      if (typeof value == 'string' || typeof value == 'number') {
+        return isNumber(value) && ! hasNotPx ? (value + 'px') : value
+      }
+    
       return isNumber(value) && ! hasNotPx ? (value + 'px') : value
     }
-  
-    return isNumber(value) && ! hasNotPx ? (value + 'px') : value
+
+    return value
   }
 
   return { isMobile, isNumber, propValue }

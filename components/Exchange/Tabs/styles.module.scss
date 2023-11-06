@@ -1,15 +1,42 @@
 .container {
   height: 40px;
   position: relative;
+
   .option {
     cursor: pointer;
     border-bottom: 4px solid #1D1937;
+
+    &.active {
+      background: #19162D;
+    }
   }
+
   .badge {
     height: 4px;
     position: absolute;
     bottom: 0;
     left: 0;
     transition: transform .2s;
+  }
+
+  &.mobile {
+    height: 52px;
+
+    .option {
+      border-bottom: 2px solid #5E5C6B;
+      background: #0E0B23;
+
+      &.buy {
+        border-radius: 20px 0 0 0;
+      }
+
+      &.sell {
+        border-radius: 0 20px 0 0;
+      }
+    }
+
+    .badge {
+      height: 2px;
+    }
   }
 }

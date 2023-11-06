@@ -3,11 +3,28 @@ import cn from 'classnames'
 
 import App from '@/components/App'
 
-const Tabs = ({options, active, onChange}) => {
+const Tabs = ({options, active, version, onChange}) => {
   const currentOption = options.find(opt => opt.key === active)
   const currentIndex = options.findIndex(opt => opt.key === active)
+
+  const optionStyle = () => {
+    if (active == 'buy') {
+      return {
+        color: '#5E5C6B',
+        active: version == 'mobile' ? '#53F19C' : 'rgba(255,255,255,0.87)',
+        size: version == 'mobile' ? 16 : 12,
+      }
+    } else {
+      return {
+        color: '#5E5C6B',
+        active: version == 'mobile' ? '#FF1D61' : 'rgba(255,255,255,0.87)',
+        size: version == 'mobile' ? 16 : 12,
+      }
+    }
+  }
+
   return (
-    <App.Flex className={styles.container}>
+    <App.Flex className={cn(styles.container, {[styles[version]]: version})}>
       {
         options.map(option => {
           const isActive = option.key === active
@@ -18,9 +35,9 @@ const Tabs = ({options, active, onChange}) => {
               align="center"
               justify="center"
               onClick={() => onChange(option.key)}
-              sx={{backgroundColor: isActive ? '#1C192F' : 'transparent'}}
-              className={styles.option}>
-              <App.Text color={isActive ? 'rgba(255,255,255,0.87)' : '#5E5C6B'} size={12} weight={600}>{ option.title }</App.Text>
+              className={cn(styles.option, styles[active], {[styles.active]: isActive})}
+            >
+              <App.Text color={isActive ? optionStyle().active : optionStyle().color} size={optionStyle().size} weight={600}>{ option.title }</App.Text>
             </App.Flex>
           )
         })

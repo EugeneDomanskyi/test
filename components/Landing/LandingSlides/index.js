@@ -48,11 +48,11 @@ const LandingSlides = () => {
   return (
     <App.Container className={styles.container}>
       <App.Flex column center fullWidth>
-        <App.Flex width={['40%', '60%']} sx={{paddingBottom: 32}}>
-          <App.Text center size={[64, 24]} weight={800} height={1.2}>The Ease of CEX, Now in a DEX</App.Text>
+        <App.Flex width={['40%', '100%']} sx={{paddingBottom: 32}}>
+          <App.Text center size={[64, 40]} weight={800} height={1.2}>The Ease of CEX, Now in a DEX</App.Text>
         </App.Flex>
         
-        <App.Flex width={['40%', '60%']} center gap={16}>
+        <App.Flex width={['40%', '60%']} center gap={16} className={styles.hideOnMobile}>
           <App.Button primary onClick={handleClickTrading}>
             <App.Text center size={16} weight={600}>Start Trading</App.Text>
           </App.Button>
@@ -60,6 +60,20 @@ const LandingSlides = () => {
           <App.Button outlined onClick={handleClickDocs}>
             <App.Text center size={16} weight={600}>Read Docs</App.Text>
           </App.Button>
+        </App.Flex>
+
+        <App.Flex row center gap={16} className={cn(styles.buttons, styles.showOnMobile)}>
+          <App.Flex flex={1}>
+            <App.Button primary xl fullWidth onClick={handleClickTrading}>
+              Start Trading
+            </App.Button>
+          </App.Flex>
+          
+          <App.Flex flex={1}>
+            <App.Button primary xl fullWidth outlined onClick={handleClickDocs}>
+              Read Docs
+            </App.Button>
+          </App.Flex>
         </App.Flex>
 
         {!isMobile ? (

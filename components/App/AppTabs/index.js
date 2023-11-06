@@ -25,13 +25,21 @@ const AppTabs = ({width = '100%', height = '100%', options, active, end, variant
       setBadgeWidth(optionRect.width)
       setBadgeLeft(optionRect.left - parentRect.left)
     }
-  }, [active, optionRefs.current])
+  }, [active, optionRefs.current, parentRef.current])
+
+  const textStyle = () => {
+    switch (variant) {
+      case 'classic': return { size: 20, weight: 700 }
+      case 'back': return { size: 12, weight: 500 }
+      default: return { size: 14, weight: 500 }
+    }
+  }
 
   return (
     <App.Flex row width={width} height={height} align="center" justify="space-between" className={cn(styles.container, styles[variant])}>
       <div ref={parentRef} className={cn(styles.options, styles[variant])}>
         {variant != 'classic' ? (
-          <div className={styles.badge} style={{width: `${badgeWidth}px`, left: `${badgeLeft}px`}} />
+          <div className={cn(styles.badge, styles[variant])} style={{width: `${badgeWidth}px`, left: `${badgeLeft}px`}} />
         ) : null}
 
         {options.map((option, index) => {
@@ -39,7 +47,7 @@ const AppTabs = ({width = '100%', height = '100%', options, active, end, variant
           return (
             <div key={index} ref={(element) => optionRefs.current[index] = element} className={cn(styles.option, styles[variant], styles[option?.variant], {[styles.disabled]: option.disabled}, {[styles.active]: isActive})} onClick={() => ! option.disabled ? onChange(option.key) : null}>
               <div className={styles.optionInner}>
-                <App.Text center size={variant == 'classic' ? 20 : variant == 'back' ? 12 : 14} weight={variant == 'classic' ? 700 : 500} height={1} className={cn(styles.optionText, {[styles.active]: isActive})}>{ option.title }</App.Text>
+                <App.Text center size={textStyle().size} weight={textStyle().weight} height={1} className={cn(styles.optionText, {[styles.active]: isActive})}>{ option.title }</App.Text>
               </div>
             </div>
           )
