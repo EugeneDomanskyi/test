@@ -42,6 +42,14 @@ const SidebarItem = ({ item, isActive, withArrow, searching, type, onClick, onCl
     }
   }
 
+  const getSymbolForLogo = () => {
+    if (item.symbol.length > 4) {
+      return item.symbol.slice(0, 4) + '.'
+    }
+
+    return item.symbol
+  }
+
   const TooltipText = () => (
     <App.Text color="#B9B8C5">
       This collection belongs to a verified account and has significant interest or sales. <a href="https://support.opensea.io/hc/en-us/articles/360063519133-What-is-a-verified-account-or-badged-collection-" target="_blank">Learn more</a>
@@ -55,7 +63,7 @@ const SidebarItem = ({ item, isActive, withArrow, searching, type, onClick, onCl
           <Image src={item.image} priority width={32} height={32} className={styles.image} alt="" />
         ) : (
           <div className={styles.emptyImage} style={{background: `linear-gradient(0deg, ${colors.current[0]}, ${colors.current[1]})`}}>
-            <App.Text center size={10} weight={600} nowrap>{ item.symbol }</App.Text>
+            <App.Text center size={10} weight={600}>{ getSymbolForLogo() }</App.Text>
           </div>
         )}
 
