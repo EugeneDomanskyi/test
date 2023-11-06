@@ -12,6 +12,14 @@ import App from '@/components/App'
 import ClaimText from '@/components/Raffle/RaffleModalParticipate/ClaimText'
 import RaffleReward from '@/components/Raffle/RaffleModalParticipate/RaffleReward'
 
+const winColors = {
+  Common: '#8D99AE',
+  Uncommon: '#BFD200',
+  Rare: '#61A5C2',
+  Mythical: '#E0AAFF',
+  Legendary: '#FFCB04',
+}
+
 const FourthStep = ({ campaign, onSubmit, onShare }) => {
   const audioRef = useRef(null)
 
@@ -90,7 +98,8 @@ const FourthStep = ({ campaign, onSubmit, onShare }) => {
         </App.Flex>
 
         <App.Flex>
-          <App.ShadowText color="#FFCB04" shadowColor="#FF7708" center size={26} weight={700}>YOU HAVE WON!</App.ShadowText>
+          <App.Icon icon="reward-win-text" color={winColors[prize.title]} />
+          {/* <App.ShadowText color="#FFCB04" shadowColor="#FF7708" center size={26} weight={700}>YOU HAVE WON!</App.ShadowText> */}
         </App.Flex>
 
         <App.Flex column center gap={8} sx={{ position: 'relative' }}>

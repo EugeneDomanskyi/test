@@ -384,7 +384,7 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
             : null
         }
 
-        <App.Flex column gap={32} align="center" justify={step === 2 ? 'center' : 'space-between'} className={styles.content} sx={{ padding: step === 3 ? "32px 0" : 32, height: 600 }}>
+        <App.Flex column gap={16} align="center" justify={step === 2 ? 'center' : 'space-between'} className={styles.content} sx={{ padding: step === 3 ? "32px 0" : 32, height: 600 }}>
           {
             (currentStep => {
               switch (currentStep) {
