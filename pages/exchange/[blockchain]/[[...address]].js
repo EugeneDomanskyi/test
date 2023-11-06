@@ -78,6 +78,7 @@ const Exchange = () => {
 
   const handleSort = useCallback((value) => {
     dispatch($token.set.sort(value))
+    dispatch($token.set.pages({current: 1}))
   }, [])
 
   const handleSearch = useCallback((value) => {
