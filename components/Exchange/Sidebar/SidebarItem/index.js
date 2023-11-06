@@ -55,7 +55,7 @@ const SidebarItem = ({ item, isActive, withArrow, searching, type, onClick, onCl
           <Image src={item.image} priority width={32} height={32} className={styles.image} alt="" />
         ) : (
           <div className={styles.emptyImage} style={{background: `linear-gradient(0deg, ${colors.current[0]}, ${colors.current[1]})`}}>
-            <App.Text size={10} weight={600}>{ item.symbol }</App.Text>
+            <App.Text center size={10} weight={600} nowrap>{ item.symbol }</App.Text>
           </div>
         )}
 
