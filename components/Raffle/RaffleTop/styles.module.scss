@@ -45,13 +45,12 @@
       flex-direction: column;
       height: 100%;
       gap: 8px;
-      padding: 10px 16px 24px 16px;
+      padding: 10px 16px 32px 16px;
       border-radius: 24px;
     }
 
     .caseContainer {
       flex-direction: row;
-      // justify-content: ;
 
       @media (max-width: 768px) {
         flex-direction: row-reverse;
@@ -64,7 +63,11 @@
       width: 82px;
       height: 100%;
       position: relative;
-      top: -32px;
+      top: -46px;
+
+      @media (max-width: 768px) {
+        top: -27px;
+      }
 
       .firstTimeCase {
         animation: rotateAndMove 2s linear infinite;

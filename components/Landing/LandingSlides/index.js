@@ -63,7 +63,7 @@ const LandingSlides = () => {
             <App.Icon icon="chevron-circle" />
           </App.Button>
 
-          <App.Flex center className={styles.banner}>
+          <App.Flex center className={styles.banner} onClick={handleDuneClick}>
             <App.Flex className={styles.bannerInner} />
 
             <App.Flex justify="flex-start" align="center" gap={8}>
@@ -85,17 +85,18 @@ const LandingSlides = () => {
           </App.Flex>
 
           <App.Flex flex={1}>
-            <App.Flex className={styles.banner} flex={[1, null]}>
+            <App.Flex center className={styles.banner} onClick={handleDuneClick}>
               <App.Flex className={styles.bannerInner} />
 
-              <App.Flex column gap={4} justify={['flex-start', 'space-between']} className={styles.bannerContent}>
-                <App.Text>All Time Trading Volume</App.Text>
-                <App.Text>$360K</App.Text>
+              <App.Flex justify="flex-start" align="center" gap={8}>
+                <App.Flex column gap={4} className={styles.bannerContent}>
+                  <App.Text size={10}>All Time Trading Volume</App.Text>
+                  <App.Text size={16} weight={700} height={1}>$360K</App.Text>
+                </App.Flex>
+
+                <App.Icon icon="landing-diagram" />
               </App.Flex>
             </App.Flex>
-            {/* <App.Button primary xl fullWidth outlined onClick={handleClickDocs}>
-              Read Docs
-            </App.Button> */}
           </App.Flex>
         </App.Flex>
 
@@ -150,7 +151,7 @@ const LandingSlides = () => {
 
                     <App.Flex column gap={8} width={250} sx={{ margin: "180px 0 0 30px" }}>
                       <App.Text size={20} weight={500} height={1.2}>Gasless Creations</App.Text>
-                      <App.Text color="#B9B8C5" style="italic">Create Orders Without consequences & without worrying about platform fees.</App.Text>
+                      <App.Text color="#B9B8C5" style="italic">Create orders without consequences & without worrying about platform fees.</App.Text>
                     </App.Flex>
                   </App.Flex>
                 </App.Flex>
@@ -160,8 +161,8 @@ const LandingSlides = () => {
                 <App.Flex row gap={50}>
                   <App.Flex row justify="flex-end" flex={1}>
                     <App.Flex column align="flex-end" gap={8} width={260} sx={{ margin: "325px -145px 0 0" }}>
-                      <App.Text right size={20} weight={500} height={1.2}>Non-Custodial Orders</App.Text>
-                      <App.Text right color="#B9B8C5" style="italic">Your Keys, Your Assets. Trade Tokens and NFTs securely without giving up control over them!</App.Text>
+                      <App.Text right size={20} weight={500} height={1.2}>Custody Less Orders</App.Text>
+                      <App.Text right color="#B9B8C5" style="italic">Your keys, your tokens. Trade confidently without giving up control over your assets</App.Text>
                     </App.Flex>
 
                     <App.Flex center>
@@ -170,8 +171,8 @@ const LandingSlides = () => {
                   </App.Flex>
 
                   <App.Flex row flex={1}>
-                    <App.Flex center sx={{ marginTop: 5 }}>
-                      <Image src="/images/landing/slide-multichain.png" width={312} height={279} alt="" />
+                    <App.Flex center sx={{ marginTop: 72 }}>
+                      <Image src="/images/landing/slide-multichain2.png" width={312} height={411} alt="" />
                     </App.Flex>
 
                     <App.Flex column gap={8} width={250} sx={{ margin: "120px 0 0 30px" }}>
@@ -257,8 +258,8 @@ const LandingSlides = () => {
 
               <div>
                 <App.Flex row align="center" className={cn(styles.slide, { [styles.active]: slide == 5 })}>
-                  <App.Flex center>
-                    <Image src="/images/landing/slide-multichain.png" width={204} height={182} alt="" />
+                  <App.Flex center sx={{ marginTop: -32 }}>
+                    <Image src="/images/landing/slide-multichain2.png" width={224} height={287} alt="" />
                   </App.Flex>
 
                   <App.Flex column gap={8} width={150} sx={{ margin: "0 0 0 10px" }}>

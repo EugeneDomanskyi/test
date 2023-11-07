@@ -41,6 +41,16 @@
   backdrop-filter: blur(9.5px);
   height: 50px;
   width: 196px;
+  cursor: pointer;
+  transition: .3s;
+
+  &:hover {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.2) 0.15%, rgba(255, 255, 255, 0.08) 99.84%);
+  }
+
+  @media (max-width: 768px) {
+    height: 58px;
+  }
 
   .bannerInner {
     position: absolute;
