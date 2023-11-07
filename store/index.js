@@ -6,13 +6,13 @@ import { CHAINS } from '@/config'
 import $modal from './modal'
 import $app, { appSlice } from './app'
 import $exchange from './exchange'
-import $collection from './collection'
+import $collection, { collectionSlice } from './collection'
 import $token, { tokenSlice } from './token'
 import $nft from './nft'
 import $orders from './orders'
 import $raffle from './raffle'
 
-const createStore = initialData => {
+const createStore = (initialData, page, info) => {
   return configureStore({
     reducer: {
       $modal: $modal.reducer,
@@ -34,7 +34,12 @@ const createStore = initialData => {
       $token: {
         ...tokenSlice.getInitialState(),
         list: initialData.marketsList,
-      }
+        current: (page == 'exchange' ? info : {}),
+      },
+      $collection: {
+        ...collectionSlice.getInitialState(),
+        current: (page == 'nfts' ? info : {}),
+      },
     }
   })
 }

@@ -16,8 +16,8 @@ import merge from 'lodash.merge'
 import * as MagicConnectors from '@magiclabs/wagmi-connector/dist/lib/connectors/universalWalletConnector'
 import { CHAINS } from '@/config'
 import store from '@/store'
-import $token from '@/store/token'
-import $collection from '@/store/collection'
+import $token, {fullToTemplate, template as tokenTemplate} from '@/store/token'
+import $collection, {template as collectionTemplate} from '@/store/collection'
 
 import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
@@ -130,8 +130,8 @@ const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
 
 amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
 
-function MyApp({ Component, pageProps, initialData, currentPage, currentAddress, currentSymbol, ssRoute, marketInfo, marketsList }) {
-  const storeRef = useRef(store(initialData)).current
+function MyApp({ Component, pageProps, initialData, currentInfo, currentPage, currentAddress, currentSymbol, ssRoute, marketInfo, marketsList }) {
+  const storeRef = useRef(store(initialData, currentPage, currentInfo)).current
 
   useEffect(() => {
     if (process.env.NEXT_PUBLIC_APP_ENV !== 'local') {
@@ -143,7 +143,7 @@ function MyApp({ Component, pageProps, initialData, currentPage, currentAddress,
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
         <Provider store={storeRef}>
-          <Head route={ssRoute} currentPage={currentPage} currentSymbol={currentSymbol} />
+          <Head route={ssRoute} currentInfo={currentInfo} currentPage={currentPage} currentSymbol={currentSymbol} />
 
           <Wrapper isMobile={initialData.isMobile}>
             <Component {...pageProps} />
@@ -163,6 +163,7 @@ MyApp.getInitialProps = async ({ctx}) => {
   if (ctx.req?.headers?.['user-agent']) {
     isMobile = ctx.req.headers['user-agent'].match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i)
   }
+  let currentInfo = {}
   let currentPage = ''
   let currentAddress = ''
   let currentSymbol = ''
@@ -171,13 +172,15 @@ MyApp.getInitialProps = async ({ctx}) => {
     
     currentPage = page
     currentAddress = address
-    if (currentPage === 'tokens') {
+    if (currentPage === 'exchange') {
       if (blockchain && address) {
         const network = CHAINS.find(chain => chain.code === blockchain)
         if (network) {
           const res = await $token.api.coingecko.full({platform: network.platform, address: address})
           if (res) {
             currentSymbol = res.symbol.toUpperCase()
+            res.blockchain = blockchain
+            currentInfo = tokenTemplate(fullToTemplate(res, res.detail_platforms[network.platform]))
           }
         }
       }
@@ -186,6 +189,8 @@ MyApp.getInitialProps = async ({ctx}) => {
       if (res && Array.isArray(res?.collections) && res?.collections.length) {
         const [current] = res.collections
         currentSymbol = current.name
+        current.blockchain = blockchain
+        currentInfo = collectionTemplate(current)
       }
     }
   }
@@ -207,6 +212,7 @@ MyApp.getInitialProps = async ({ctx}) => {
       isMobile,
       marketsList,
     },
+    currentInfo,
     currentPage,
     currentAddress,
     currentSymbol,

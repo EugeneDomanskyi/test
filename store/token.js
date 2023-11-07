@@ -125,34 +125,41 @@ export const staticTemplate = (item) => {
 //   return {}
 // }
 
-// const fullToTemplate = (item) => {
-//   if (item) {
-//     return {
-//       isFull: true,
-//       cgId: item.id,
-//       symbol: item.symbol.toUpperCase(),
-//       image: item.image.large,
-//       price: item.market_data?.current_price?.usd,
-//       high: item.market_data?.high_24h?.usd,
-//       low: item.market_data?.low_24h?.usd,
-//       volume: item.market_data?.total_volume?.usd,
-//       tvl: item.market_data?.total_value_locked,
-//       description: item.description?.en,
-//       tokenCount: item.market_data?.total_supply,
-//       onSaleCount: item.market_data?.circulating_supply,
-//       externalUrl: item.links?.homepage[0],
-//       twitterUrl: item.links?.twitter_screen_name ? `https://twitter.com/${item.links?.twitter_screen_name}` : null,
-//       ticker: {
-//         value: Math.abs(item.market_data?.price_change_percentage_24h ?? 0).toFixed(2),
-//         type: ((item.market_data?.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
-//       },
-//       genesis_date: item?.genesis_date,
-//       marketCap: item.market_data?.total_supply * (item.market_data?.current_price?.usd ?? 0),
-//     }
-//   }
+export const fullToTemplate = (item, platform, blockchain) => {
+  if (item) {
+    return {
+      id: platform?.contract_address,
+      address: platform?.contract_address,
+      decimals: platform?.decimal_place,
+      name: item?.name,
+      symbol: item?.symbol,
+      blockchain: item?.blockchain,
 
-//   return {}
-// }
+      isFull: true,
+      cgId: item.id,
+      symbol: item.symbol.toUpperCase(),
+      image: item.image.large,
+      price: item.market_data?.current_price?.usd,
+      high: item.market_data?.high_24h?.usd,
+      low: item.market_data?.low_24h?.usd,
+      volume: item.market_data?.total_volume?.usd,
+      tvl: item.market_data?.total_value_locked,
+      description: item.description?.en,
+      tokenCount: item.market_data?.total_supply,
+      onSaleCount: item.market_data?.circulating_supply,
+      externalUrl: item.links?.homepage[0],
+      twitterUrl: item.links?.twitter_screen_name ? `https://twitter.com/${item.links?.twitter_screen_name}` : null,
+      ticker: {
+        value: Math.abs(item.market_data?.price_change_percentage_24h ?? 0).toFixed(2),
+        type: ((item.market_data?.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
+      },
+      genesis_date: item?.genesis_date,
+      marketCap: item.market_data?.total_supply * (item.market_data?.current_price?.usd ?? 0),
+    }
+  }
+
+  return {}
+}
 
 export const tokenSlice = createSlice({
   name: '$token',
