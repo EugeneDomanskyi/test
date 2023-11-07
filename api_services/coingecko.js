@@ -3,10 +3,10 @@ const COINGECKO_URL = 'https://api.coingecko.com/api/v3'
 export const getPrices = async (ids) => {
   const stringIds = Object.keys(ids).join(',')
   try {
-    const res = await fetch(`${COINGECKO_URL}/coins/markets?vs_currency=usd&ids=${stringIds}&order=market_cap_desc&per_page=20&page=1&sparkline=false&locale=en&precision=5`, { cache: 'force-cache' })
-    // if (!res.ok) {
-    //   return null
-    // }
+    const res = await fetch(`${COINGECKO_URL}/coins/markets?vs_currency=usd&ids=${stringIds}&order=market_cap_desc&per_page=${Object.keys(ids).length}&page=1&sparkline=false&locale=en&precision=5`, { cache: 'force-cache' })
+    if (!res.ok) {
+      return null
+    }
     const json = await res.json()
     console.log('json', json);
     const result = json.reduce((acc, meta) => {

@@ -6,13 +6,14 @@ import dynamic from 'next/dynamic'
 import $app from '@/store/app'
 import $collection from '@/store/collection'
 import $orders from '@/store/orders'
+
 import { trackEvent } from '@/libs/analytics.lib'
 import { usePropsHelper } from '@/myhooks/props-helper'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
 import Sidebar from '@/components/Exchange/Sidebar'
-import SidebarMobile from '@/components/Exchange/Sidebar/SidebarMobile'
+import Mobile from '@/components/Exchange/Mobile'
 import OrderBook from '@/components/Exchange/OrderBook'
 import Sales from '@/components/Exchange/Sales'
 import TradeForm from '@/components/Exchange/TradeForm'
@@ -28,7 +29,8 @@ const GRID_GAP = 6
 
 const Nfts = () => {
   const router = useRouter()
-  const [_, collectionId] = router.query?.segments || []
+  const [queryCollectionId] = router.query.address || []
+  const queryBlockchainCode = router.query.blockchain
 
   const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
@@ -47,11 +49,13 @@ const Nfts = () => {
   const searching = useSelector(({$collection}) => $collection.searching)
   const searchEmpty = useSelector(({$collection}) => $collection.searchEmpty)
   const pages = useSelector($collection.get.pages)
+  const myOrdersDialogOpen = useSelector(({ $orders }) => $orders.myOrdersDialogOpen)
 
   const [mobileTab, setMobileTab] = useState('markets')
   const [mobileTabTrade, setMobileTabTrade] = useState(false)
 
   const tradeForm = useRef(null)
+  const mobileRef = useRef(null)
 
   const handleOrdersUpdated = useCallback(() => {
     if (wallet) {
@@ -67,14 +71,14 @@ const Nfts = () => {
     }
 
     $orders.api.get.nfts.orderBook({
-      collection: collectionId,
+      collection: queryCollectionId,
       blockchain: blockchain.code,
     }).then(res => {
       if (res) {
         dispatch($orders.set.orderBook({type: 'nfts', data: res}))
       }
     })
-  }, [wallet, collectionId, blockchain.code])
+  }, [wallet, queryCollectionId, blockchain.code])
 
   const handleMobileTabChange = useCallback((tab) => {
     setMobileTabTrade(false)
@@ -100,9 +104,20 @@ const Nfts = () => {
     dispatch($collection.set.search(value))
   }, [])
 
-  const handlePage = useCallback((value) => {
-    dispatch($collection.set.pages({current: value ?? 1}))
+  const handlePage = useCallback((value, append = false) => {
+    dispatch($collection.set.pages({current: value ?? 1, append}))
   }, [])
+
+  const handleCloseOrdersDialog = () => {
+    dispatch($orders.set.myOrdersDialogOpen(false))
+  }
+
+  const handleClickOrderMobile = (order) => {
+    setTimeout(() => {
+      mobileRef.current.handleClickOrder(order)
+      handleCloseOrdersDialog()
+    }, 300)
+  }
 
   return (
     <App.Flex gap={GRID_GAP} className={styles.container}>
@@ -161,7 +176,7 @@ const Nfts = () => {
         </>
       ) : (
         <>
-          {mobileTab == 'markets' ? (
+          {!queryCollectionId || queryCollectionId == '0x' ? (
             <Sidebar
               items={collections}
               searched={searched}
@@ -172,13 +187,37 @@ const Nfts = () => {
               searchEmpty={searchEmpty}
               pages={pages}
               loading={collectionLoading}
+              version="mobile"
               onSort={handleSort}
               onSearch={handleSearch}
               onPage={handlePage}
             />
-          ) : null}
+          ) : (
+            <Mobile
+              ref={mobileRef}
+              item={current}
+              type="nfts"
+              onOrdersUpdate={handleOrdersUpdated}
+            />
+          )}
 
-          {mobileTab == 'charts' ? (
+          <App.Dialog open={myOrdersDialogOpen} onClose={handleCloseOrdersDialog} hideHeader hideClose full>
+            <App.Flex column full>
+              <App.Flex row center fullWidth height={64} className={styles.ordersHeader}>
+                <App.Text center size={16} weight={700}>Orders</App.Text>
+
+                <App.Flex row center className={styles.ordersBack} onClick={handleCloseOrdersDialog}>
+                  <App.Icon icon="chevron-left" height={21} width={21} />
+                </App.Flex>
+              </App.Flex>
+
+              <App.Flex fullWidth flex={1} sx={{ position: 'relative' }}>
+                <Orders global version="mobile" type="nfts" onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrderMobile} />
+              </App.Flex>
+            </App.Flex>
+          </App.Dialog>
+
+          {/* {mobileTab == 'charts' ? (
             <Chart type="nfts" />
           ) : null}
 
@@ -225,20 +264,9 @@ const Nfts = () => {
               ref={tradeForm}
               type="nfts"
               current={current} />
-          ) : null}
-
-          <MobileTabsBar
-            isConnected={Boolean(wallet)}
-            active={mobileTab}
-            actvieTrade={mobileTabTrade}
-            onTabChange={handleMobileTabChange}
-          />
+          ) : null} */}
         </>
       )}
-
-      {/* {exchangeLoading ? (
-        <App.LoaderBlock size={100} color="#7204FF" fixed height="100%" />
-      ) : null} */}
     </App.Flex>
   )
 }

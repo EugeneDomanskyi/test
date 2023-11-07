@@ -21,9 +21,9 @@ const BuyModalConfirm = ({price, amount, total, onConfirm}) => {
         <App.Text color="#B9B8C5" weight={600} size={12}>{ total }</App.Text>
       </App.Flex>
       <App.Flex className={styles.footer}>
-        <App.Flex justify="center" align="center" className={styles.button} onClick={onConfirm}>
-          <App.Text color="#09051D" size={15} weight={700}>CONFIRM BUY</App.Text>
-        </App.Flex>
+        <App.Button xl variant="success" fullWidth onClick={onConfirm}>
+          CONFIRM BUY
+        </App.Button>
       </App.Flex>
     </App.Flex>
   )

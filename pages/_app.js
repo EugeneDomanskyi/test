@@ -183,7 +183,7 @@ MyApp.getInitialProps = async ({ctx}) => {
       }
     } else if (currentPage === 'nfts') {
       const res = await $collection.api.all({ id: address, limit: 1, blockchain: blockchain })
-      if (res && Array.isArray(res?.collections)) {
+      if (res && Array.isArray(res?.collections) && res?.collections.length) {
         const [current] = res.collections
         currentSymbol = current.name
       }

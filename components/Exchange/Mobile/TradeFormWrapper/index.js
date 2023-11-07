@@ -6,7 +6,7 @@ import TradeForm from '@/components/Exchange/TradeForm'
 
 const OrderProceed = dynamic(import('@/components/Exchange/OrderProceed'), {ssr: false})
 
-const TradeFormWrapper = forwardRef(({ item, side, onClose }, ref) => {
+const TradeFormWrapper = forwardRef(({ item, side, type, onClose }, ref) => {
   const [tradeState, setTradeState] = useState('form')
   const [orderProps, setOrderProps] = useState({})
 
@@ -44,7 +44,7 @@ const TradeFormWrapper = forwardRef(({ item, side, onClose }, ref) => {
       case 'form': return (
         <TradeForm
           ref={tradeForm}
-          type="tokens"
+          type={type}
           version="mobile"
           fullWidth
           current={item}

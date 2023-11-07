@@ -7,6 +7,7 @@ import RaffleListMy from '@/components/Raffle/RaffleListMy'
 import RaffleRoulette from '@/components/Raffle/RaffleRoulette'
 import RaffleSort from '@/components/Raffle/RaffleSort'
 import RaffleSearch from '@/components/Raffle/RaffleSearch'
+import RaffleTimer from '@/components/Raffle/RaffleTimer'
 
 export default {
   Header: RaffleHeader,
@@ -18,4 +19,5 @@ export default {
   Roulette: RaffleRoulette,
   Sort: RaffleSort,
   Search: RaffleSearch,
+  Timer: RaffleTimer,
 }

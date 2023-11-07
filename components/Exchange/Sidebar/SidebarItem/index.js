@@ -42,6 +42,14 @@ const SidebarItem = ({ item, isActive, withArrow, searching, type, onClick, onCl
     }
   }
 
+  const getSymbolForLogo = () => {
+    if (item.symbol.length > 4) {
+      return item.symbol.slice(0, 4) + '.'
+    }
+
+    return item.symbol
+  }
+
   const TooltipText = () => (
     <App.Text color="#B9B8C5">
       This collection belongs to a verified account and has significant interest or sales. <a href="https://support.opensea.io/hc/en-us/articles/360063519133-What-is-a-verified-account-or-badged-collection-" target="_blank">Learn more</a>
@@ -55,13 +63,13 @@ const SidebarItem = ({ item, isActive, withArrow, searching, type, onClick, onCl
           <Image src={item.image} priority width={32} height={32} className={styles.image} alt="" />
         ) : (
           <div className={styles.emptyImage} style={{background: `linear-gradient(0deg, ${colors.current[0]}, ${colors.current[1]})`}}>
-            <App.Text size={10} weight={600}>{ item.symbol }</App.Text>
+            <App.Text center size={10} weight={600}>{ getSymbolForLogo() }</App.Text>
           </div>
         )}
 
         <App.Flex column gap={2} sx={{ maxWidth: 170 }}>
           <App.Flex row align="center" gap={4}>
-            <App.Text nowrap uppercase weight={700} height={1}>{item.symbol}{type == 'tokens' ? (<App.Text inline color="#B9B8C5" size={12} weight={600} >/USDT</App.Text>) : null}</App.Text>
+            <App.Text nowrap uppercase weight={700} height={1}>{item.symbol ?? item?.slug}{type == 'tokens' ? (<App.Text inline color="#B9B8C5" size={12} weight={600} >/USDT</App.Text>) : null}</App.Text>
             {item.openseaVerificationStatus == 'verified' ? (
               <App.Tooltip text={<TooltipText />} placement="right">
                 <App.Flex center width={12} height={12} sx={{ minWidth: 12 }}>

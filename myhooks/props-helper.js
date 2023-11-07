@@ -22,6 +22,7 @@ export const usePropsHelper = () => {
   }
 
   useEffect(() => {
+    handleWindowResize()
     window.addEventListener('resize', handleWindowResize)
     return () => {
       window.removeEventListener('resize', handleWindowResize)
