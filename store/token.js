@@ -70,7 +70,7 @@ export const staticTemplate = (item) => {
     cgId: item?.id,
     address: item?.contract_address,
     decimals: item?.decimals,
-    image: item?.image.large,
+    image: item?.image?.large ?? '',
     name: item?.name,
     // blockchain: item?.blockchain,
     symbol: item?.symbol,

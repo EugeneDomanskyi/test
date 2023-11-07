@@ -141,15 +141,18 @@ export async function getServerSideProps({ query }) {
 
   const tokenRes = await getToken(currentChain.baseUniswapUrl, marketId)
   const tokenInfo = await $token.api.coingecko.full({ platform: blockchainCode, address: marketId })
-  const token = { ...tokenRes, ...tokenInfo }
-  if (token) {
-    const full = staticTemplate(token)
-    marketInfo = full
-    const id = { [coingeckoAssets[currentChain.platform][full.id]]: full.id }
-    const prices = await getPrices(id)
 
-    if (prices) {
-      marketInfo = ({ ...full, ...prices[marketId] })
+  if (tokenInfo) {
+    const token = { ...tokenRes, ...tokenInfo }
+    if (token) {
+      const full = staticTemplate(token)
+      marketInfo = full
+      const id = { [coingeckoAssets[currentChain.platform][full.id]]: full.id }
+      const prices = await getPrices(id)
+
+      if (prices) {
+        marketInfo = ({ ...full, ...prices[marketId] })
+      }
     }
   }
 
