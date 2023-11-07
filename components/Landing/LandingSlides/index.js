@@ -43,23 +43,38 @@ const LandingSlides = () => {
 
   const handleClickDocs = () => {
     window.open('https://x-by-tegro.gitbook.io/x-by-tegro', '_blank')
+
+  }
+
+  const handleDuneClick = () => {
+    window.open('https://dune.com/ashtegro/tegro', '_blank')
   }
 
   return (
     <App.Container className={styles.container}>
       <App.Flex column center fullWidth>
-        <App.Flex width={['40%', '100%']} sx={{paddingBottom: 32}}>
+        <App.Flex width={['40%', '100%']} sx={{ paddingBottom: 32 }}>
           <App.Text center size={[64, 40]} weight={800} height={1.2}>The Ease of CEX, Now in a DEX</App.Text>
         </App.Flex>
-        
+
         <App.Flex width={['40%', '60%']} center gap={16} className={styles.hideOnMobile}>
-          <App.Button primary onClick={handleClickTrading}>
+          <App.Button primary sx={{ paddingLeft: 32, paddingRight: 32, height: 50 }} onClick={handleClickTrading}>
             <App.Text center size={16} weight={600}>Start Trading</App.Text>
+            <App.Icon icon="chevron-circle" />
           </App.Button>
-          
-          <App.Button outlined onClick={handleClickDocs}>
-            <App.Text center size={16} weight={600}>Read Docs</App.Text>
-          </App.Button>
+
+          <App.Flex center className={styles.banner}>
+            <App.Flex className={styles.bannerInner} />
+
+            <App.Flex justify="flex-start" align="center" gap={8}>
+              <App.Flex column gap={4} className={styles.bannerContent}>
+                <App.Text size={10}>All Time Trading Volume</App.Text>
+                <App.Text size={16} weight={700} height={1}>$360K</App.Text>
+              </App.Flex>
+
+              <App.Icon icon="landing-diagram" />
+            </App.Flex>
+          </App.Flex>
         </App.Flex>
 
         <App.Flex row center gap={16} className={cn(styles.buttons, styles.showOnMobile)}>
@@ -68,11 +83,19 @@ const LandingSlides = () => {
               Start Trading
             </App.Button>
           </App.Flex>
-          
+
           <App.Flex flex={1}>
-            <App.Button primary xl fullWidth outlined onClick={handleClickDocs}>
+            <App.Flex className={styles.banner} flex={[1, null]}>
+              <App.Flex className={styles.bannerInner} />
+
+              <App.Flex column gap={4} justify={['flex-start', 'space-between']} className={styles.bannerContent}>
+                <App.Text>All Time Trading Volume</App.Text>
+                <App.Text>$360K</App.Text>
+              </App.Flex>
+            </App.Flex>
+            {/* <App.Button primary xl fullWidth outlined onClick={handleClickDocs}>
               Read Docs
-            </App.Button>
+            </App.Button> */}
           </App.Flex>
         </App.Flex>
 
@@ -164,7 +187,7 @@ const LandingSlides = () => {
           <div className={styles.slider}>
             <Slider ref={item => (slider.current = item)} {...settings}>
               <div>
-                <App.Flex row align="center" className={cn(styles.slide, {[styles.active]: slide == 0})}>
+                <App.Flex row align="center" className={cn(styles.slide, { [styles.active]: slide == 0 })}>
                   <App.Flex column align="flex-end" gap={8} width={150} sx={{ margin: "0 -15px 0 0" }}>
                     <App.Text right size={12} weight={600} height={1.2}>Orderbooks</App.Text>
                     <App.Text right size={10} color="#B9B8C5" style="italic">Leverage market depth in real-time. Take advantage of Token and NFT support and resistance points instantly.</App.Text>
@@ -177,7 +200,7 @@ const LandingSlides = () => {
               </div>
 
               <div>
-                <App.Flex row align="center" className={cn(styles.slide, {[styles.active]: slide == 1})}>
+                <App.Flex row align="center" className={cn(styles.slide, { [styles.active]: slide == 1 })}>
                   <App.Flex center sx={{ marginLeft: '-15px' }}>
                     <Image src="/images/landing/slide-form.png" width={254} height={311} alt="" />
                   </App.Flex>
@@ -190,7 +213,7 @@ const LandingSlides = () => {
               </div>
 
               <div>
-                <App.Flex row className={cn(styles.slide, {[styles.active]: slide == 2})}>
+                <App.Flex row className={cn(styles.slide, { [styles.active]: slide == 2 })}>
                   <App.Flex column align="flex-end" gap={8} width={150} sx={{ margin: "175px -40px 0 0" }}>
                     <App.Text right size={12} weight={600} height={1.2}>Permissionless Markets</App.Text>
                     <App.Text right size={10} color="#B9B8C5" style="italic">Any Token or NFT, just one search away. Discover new and trending markets, in detail, as they emerge.</App.Text>
@@ -203,7 +226,7 @@ const LandingSlides = () => {
               </div>
 
               <div>
-                <App.Flex row align="center" className={cn(styles.slide, {[styles.active]: slide == 3})}>
+                <App.Flex row align="center" className={cn(styles.slide, { [styles.active]: slide == 3 })}>
                   <App.Flex center>
                     <Image src="/images/landing/slide-order.png" width={204} height={158} alt="" />
                   </App.Flex>
@@ -218,7 +241,7 @@ const LandingSlides = () => {
               </div>
 
               <div>
-                <App.Flex row className={cn(styles.slide, {[styles.active]: slide == 4})}>
+                <App.Flex row className={cn(styles.slide, { [styles.active]: slide == 4 })}>
                   <App.Flex column align="flex-end" gap={8} width={150} sx={{ margin: "155px -55px 0 0" }}>
                     <App.Text right size={12} weight={600} height={1.2}>Custody Less Orders</App.Text>
                     <App.Text right size={10} color="#B9B8C5" style="italic">
@@ -233,7 +256,7 @@ const LandingSlides = () => {
               </div>
 
               <div>
-                <App.Flex row align="center" className={cn(styles.slide, {[styles.active]: slide == 5})}>
+                <App.Flex row align="center" className={cn(styles.slide, { [styles.active]: slide == 5 })}>
                   <App.Flex center>
                     <Image src="/images/landing/slide-multichain.png" width={204} height={182} alt="" />
                   </App.Flex>
@@ -252,8 +275,8 @@ const LandingSlides = () => {
 
         <App.Flex center gap={12}>
           {Array(slideCount).fill(1).map((item, index) => (
-            <App.Flex key={index} className={cn(styles.circle, {[styles.active]: slide == index})} onClick={handleSlide(index)}>
-            <Image src={`/images/landing/dot${slide == index ? '-active' : ''}.png`} width={12} height={12} alt="" />
+            <App.Flex key={index} className={cn(styles.circle, { [styles.active]: slide == index })} onClick={handleSlide(index)}>
+              <Image src={`/images/landing/dot${slide == index ? '-active' : ''}.png`} width={12} height={12} alt="" />
             </App.Flex>
           ))}
         </App.Flex>

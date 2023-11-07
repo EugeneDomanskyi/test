@@ -52,16 +52,12 @@ const LandingHead = () => {
         totalVolume += (response.data.totalVolume.volume * 1)
       }
     }
-    
+
     setVolume(totalVolume.toFixed(2))
   }
 
   const handleXClick = () => {
     window.open('https://x.tegro.com', '_blank')
-  }
-
-  const handleDuneClick = () => {
-    window.open('https://dune.com/ashtegro/tegro', '_blank')
   }
 
   return (
