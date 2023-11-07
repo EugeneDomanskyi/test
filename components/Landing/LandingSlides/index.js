@@ -37,68 +37,9 @@ const LandingSlides = () => {
     afterChange: (index) => setSlide(index)
   }
 
-  const handleClickTrading = () => {
-    router.push(`/exchange`)
-  }
-
-  const handleClickDocs = () => {
-    window.open('https://x-by-tegro.gitbook.io/x-by-tegro', '_blank')
-
-  }
-
-  const handleDuneClick = () => {
-    window.open('https://dune.com/ashtegro/tegro', '_blank')
-  }
-
   return (
     <App.Container className={styles.container}>
       <App.Flex column center fullWidth>
-        <App.Flex width={['40%', '100%']} sx={{ paddingBottom: 32 }}>
-          <App.Text center size={[64, 40]} weight={800} height={1.2}>The Ease of CEX, Now in a DEX</App.Text>
-        </App.Flex>
-
-        <App.Flex width={['40%', '60%']} center gap={16} className={styles.hideOnMobile}>
-          <App.Button primary sx={{ paddingLeft: 32, paddingRight: 32, height: 50 }} onClick={handleClickTrading}>
-            <App.Text center size={16} weight={600}>Start Trading</App.Text>
-            <App.Icon icon="chevron-circle" />
-          </App.Button>
-
-          <App.Flex center className={styles.banner} onClick={handleDuneClick}>
-            <App.Flex className={styles.bannerInner} />
-
-            <App.Flex justify="flex-start" align="center" gap={8}>
-              <App.Flex column gap={4} className={styles.bannerContent}>
-                <App.Text size={10}>All Time Trading Volume</App.Text>
-                <App.Text size={16} weight={700} height={1}>$360K</App.Text>
-              </App.Flex>
-
-              <App.Icon icon="landing-diagram" />
-            </App.Flex>
-          </App.Flex>
-        </App.Flex>
-
-        <App.Flex row center gap={16} className={cn(styles.buttons, styles.showOnMobile)}>
-          <App.Flex flex={1}>
-            <App.Button primary xl fullWidth onClick={handleClickTrading}>
-              Start Trading
-            </App.Button>
-          </App.Flex>
-
-          <App.Flex flex={1}>
-            <App.Flex center className={styles.banner} onClick={handleDuneClick}>
-              <App.Flex className={styles.bannerInner} />
-
-              <App.Flex justify="flex-start" align="center" gap={8}>
-                <App.Flex column gap={4} className={styles.bannerContent}>
-                  <App.Text size={10}>All Time Trading Volume</App.Text>
-                  <App.Text size={16} weight={700} height={1}>$360K</App.Text>
-                </App.Flex>
-
-                <App.Icon icon="landing-diagram" />
-              </App.Flex>
-            </App.Flex>
-          </App.Flex>
-        </App.Flex>
 
         {!isMobile ? (
           <div className={styles.slider}>
