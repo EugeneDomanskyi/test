@@ -16,11 +16,11 @@ const Head = ({ route, ...props }) => {
     }
 
     if (currentRoute.includes('exchange')) {
-      return <HeadExchange route={currentRoute} />
+      return <HeadExchange {...props} />
     }
 
     if (currentRoute.includes('nfts')) {
-      return <HeadNfts route={currentRoute} />
+      return <HeadNfts {...props} />
     }
 
     return <HeadDefault {...props} />
