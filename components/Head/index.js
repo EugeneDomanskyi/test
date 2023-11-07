@@ -2,6 +2,8 @@ import { useRouter } from 'next/router'
 
 import HeadDefault from './HeadDefault'
 import HeadMarket from './HeadMarket'
+import HeadExchange from './HeadExchange'
+import HeadNfts from './HeadNfts'
 
 const Head = ({ route, ...props }) => {
   const router = useRouter()
@@ -11,6 +13,14 @@ const Head = ({ route, ...props }) => {
 
     if (currentRoute.includes('market')) {
       return <HeadMarket route={currentRoute} />
+    }
+
+    if (currentRoute.includes('exchange')) {
+      return <HeadExchange route={currentRoute} />
+    }
+
+    if (currentRoute.includes('nfts')) {
+      return <HeadNfts route={currentRoute} />
     }
 
     return <HeadDefault {...props} />
