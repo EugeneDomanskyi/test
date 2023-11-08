@@ -14,8 +14,8 @@ import { CHAINS } from '@/config'
 
 import Header from '@/components/Header'
 
-const WrapperExchange = dynamic(() => import('@/components/Wrapper/WrapperExchange'), {ssr: false})
-const WrapperCollections = dynamic(() => import('@/components/Wrapper/WrapperCollections'), {ssr: false})
+const WrapperExchange = dynamic(() => import('@/components/Wrapper/WrapperExchange'), { ssr: false })
+const WrapperCollections = dynamic(() => import('@/components/Wrapper/WrapperCollections'), { ssr: false })
 
 const Wrapper = ({ children, isMobile }) => {
   const router = useRouter()
@@ -30,7 +30,7 @@ const Wrapper = ({ children, isMobile }) => {
 
   const storedBlockchain = useSelector($app.get.blockchain)
 
-  const prevChain = useRef({stored: null})
+  const prevChain = useRef({ stored: null })
 
   // switch blockchain handler
   useEffect(() => {
@@ -43,8 +43,11 @@ const Wrapper = ({ children, isMobile }) => {
         return
       }
       const network = CHAINS.find(network => network.id === chain.id)
-      dispatch($app.set.code(network.code))
-      prevChain.current.stored = network.id
+      console.log('network', network);
+      if (network) {
+        dispatch($app.set.code(network.code))
+        prevChain.current.stored = network.id
+      }
     }
   }, [storedBlockchain?.id, chain?.id, isLoading, isConnected, switchNetwork])
 
@@ -72,7 +75,7 @@ const Wrapper = ({ children, isMobile }) => {
 
   useEffect(() => {
     if (router.query) {
-      const utmParams = Object.entries(router.query).filter(([key]) => key.startsWith('utm_')).reduce((acc, [key, value]) => ({...acc, [key]: value}), {})
+      const utmParams = Object.entries(router.query).filter(([key]) => key.startsWith('utm_')).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
       if (Object.keys(utmParams).length) {
         amplitude.getInstance().setUserProperties(utmParams)
       }
@@ -91,9 +94,9 @@ const Wrapper = ({ children, isMobile }) => {
       'Page Name': getPageName(),
     })
   }, [router.asPath])
-  
+
   return (
-    <div style={{height: '100%', paddingTop: 64, transition: '.4s'}}>
+    <div style={{ height: '100%', paddingTop: 64, transition: '.4s' }}>
       <Header />
 
       {isExchange ? (

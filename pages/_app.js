@@ -16,8 +16,8 @@ import merge from 'lodash.merge'
 import * as MagicConnectors from '@magiclabs/wagmi-connector/dist/lib/connectors/universalWalletConnector'
 import { CHAINS } from '@/config'
 import store from '@/store'
-import $token, {fullToTemplate, template as tokenTemplate} from '@/store/token'
-import $collection, {template as collectionTemplate} from '@/store/collection'
+import $token, { fullToTemplate, template as tokenTemplate } from '@/store/token'
+import $collection, { template as collectionTemplate } from '@/store/collection'
 
 import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
@@ -52,10 +52,10 @@ createClient({
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   CHAINS, [
-    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }),
-    infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_ID }),
-    publicProvider(),
-  ]
+  alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }),
+  infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_ID }),
+  publicProvider(),
+]
 )
 
 const rainbowMagicConnector = ({ chains }) => ({
@@ -72,7 +72,7 @@ const rainbowMagicConnector = ({ chains }) => ({
       }
     })
     const [initialChain] = formattedChains
-    
+
     const connector = new MagicConnectors.UniversalWalletConnector({
       chains: chains,
       options: {
@@ -111,7 +111,7 @@ const wagmiConfig = createConfig({
   webSocketPublicClient,
 })
 
-const RainbowTheme = merge(darkTheme({overlayBlur: 'small'}), {
+const RainbowTheme = merge(darkTheme({ overlayBlur: 'small' }), {
   colors: {
     accentColor: '#6753d1',
     actionButtonSecondaryBackground: '#fff',
@@ -138,7 +138,7 @@ function MyApp({ Component, pageProps, initialData, currentInfo, currentPage, cu
       Smartlook.init('cf71ed516173943775e4d8cc10245b95b9ed7de0')
     }
   }, [])
-  
+
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
@@ -157,7 +157,7 @@ function MyApp({ Component, pageProps, initialData, currentInfo, currentPage, cu
   )
 }
 
-MyApp.getInitialProps = async ({ctx}) => {
+MyApp.getInitialProps = async ({ ctx }) => {
   const cookies = nookies.get(ctx)
   let isMobile = false
   if (ctx.req?.headers?.['user-agent']) {
@@ -169,14 +169,15 @@ MyApp.getInitialProps = async ({ctx}) => {
   let currentSymbol = ''
   if (ctx?.req) {
     const [_, page, blockchain, address] = ctx.req.url.split('/')
-    
+
     currentPage = page
     currentAddress = address
     if (currentPage === 'exchange') {
       if (blockchain && address) {
         const network = CHAINS.find(chain => chain.code === blockchain)
         if (network) {
-          const res = await $token.api.coingecko.full({platform: network.platform, address: address})
+          const res = await $token.api.coingecko.full({ platform: network.platform, address: address })
+          console.log('res', res);
           if (res) {
             currentSymbol = res.symbol.toUpperCase()
             res.blockchain = blockchain

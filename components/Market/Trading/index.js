@@ -7,17 +7,21 @@ import Analysis from '@/components/Market/Trading/Analysis'
 
 import App from '@/components/App'
 
-export default function Trading({type, marketInfo}) {
+export default function Trading({ type, marketInfo }) {
   const tradeForm = useRef(null)
 
   const handleClickOrder = useCallback(order => {
-    tradeForm.current.setForm({formType: 'market', amount: order.quantity, side: order.side})
+    tradeForm.current.setForm({ formType: 'market', amount: order.quantity, side: order.side })
   }, [])
 
   return (
-    <App.Flex column justify="center" sx={{paddingTop: 64}} gap={96}>
+    <App.Flex column justify="center" sx={{ paddingTop: 64 }} gap={96}>
       <App.Flex column gap={16}>
-        <TradeForm ref={tradeForm} type={type} current={marketInfo} fullWidth />
+        {
+          marketInfo.price
+            ? <TradeForm ref={tradeForm} type={type} current={marketInfo} fullWidth />
+            : null
+        }
         <OrderBook type={type} onClickOrder={handleClickOrder} />
       </App.Flex>
 
