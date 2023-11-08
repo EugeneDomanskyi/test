@@ -11,12 +11,12 @@ function formatNumber(number) {
   if (!number) {
     return ''
   }
-  const str = (number*1)?.toFixed(20)
+  const str = (number * 1)?.toFixed(20)
   let lastIndex = -1;
 
   for (let i = str.length - 1; i >= 0; i--) {
     if (str[i] !== '0') {
-      lastIndex = i+1;
+      lastIndex = i + 1;
       break;
     }
   }
@@ -66,23 +66,23 @@ export const staticTemplate = (item) => {
   const currency = 'USDT'
 
   return {
-    id: item?.id,
-    cgId: item?.cgId,
-    address: item?.address,
+    id: item?.contract_address,
+    cgId: item?.id,
+    address: item?.contract_address,
     decimals: item?.decimals,
-    image: item?.image,
+    image: item?.image?.large ?? '',
     name: item?.name,
-    blockchain: item?.blockchain,
+    // blockchain: item?.blockchain,
     symbol: item?.symbol,
     currency: currency,
-    description: item?.description,
-    tokenCount: item?.tokenCount ?? 0,
-    discordUrl: item?.discordUrl,
-    externalUrl: item?.externalUrl,
-    twitterUrl: item?.twitterUrl,
-    openseaVerificationStatus: item?.openseaVerificationStatus === 'verified',
-    marketCap: item?.marketCap,
-    createdAt: item?.createdAt,
+    description: item?.description?.en,
+    tokenCount: item.market_data?.total_supply ?? 0,
+    discordUrl: item?.discordUrl ?? null,
+    externalUrl: item.links?.homepage[0],
+    twitterUrl: item.links?.twitter_screen_name ? `https://twitter.com/${item.links?.twitter_screen_name}` : null,
+    // openseaVerificationStatus: item?.openseaVerificationStatus === 'verified',
+    marketCap: item.market_data?.total_supply * (item.market_data?.current_price?.usd ?? 0),
+    createdAt: item?.genesis_date,
   }
 }
 
@@ -125,34 +125,41 @@ export const staticTemplate = (item) => {
 //   return {}
 // }
 
-// const fullToTemplate = (item) => {
-//   if (item) {
-//     return {
-//       isFull: true,
-//       cgId: item.id,
-//       symbol: item.symbol.toUpperCase(),
-//       image: item.image.large,
-//       price: item.market_data?.current_price?.usd,
-//       high: item.market_data?.high_24h?.usd,
-//       low: item.market_data?.low_24h?.usd,
-//       volume: item.market_data?.total_volume?.usd,
-//       tvl: item.market_data?.total_value_locked,
-//       description: item.description?.en,
-//       tokenCount: item.market_data?.total_supply,
-//       onSaleCount: item.market_data?.circulating_supply,
-//       externalUrl: item.links?.homepage[0],
-//       twitterUrl: item.links?.twitter_screen_name ? `https://twitter.com/${item.links?.twitter_screen_name}` : null,
-//       ticker: {
-//         value: Math.abs(item.market_data?.price_change_percentage_24h ?? 0).toFixed(2),
-//         type: ((item.market_data?.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
-//       },
-//       genesis_date: item?.genesis_date,
-//       marketCap: item.market_data?.total_supply * (item.market_data?.current_price?.usd ?? 0),
-//     }
-//   }
+export const fullToTemplate = (item, platform, blockchain) => {
+  if (item) {
+    return {
+      id: platform?.contract_address,
+      address: platform?.contract_address,
+      decimals: platform?.decimal_place,
+      name: item?.name,
+      symbol: item?.symbol,
+      blockchain: item?.blockchain,
 
-//   return {}
-// }
+      isFull: true,
+      cgId: item.id,
+      symbol: item.symbol.toUpperCase(),
+      image: item.image.large,
+      price: item.market_data?.current_price?.usd,
+      high: item.market_data?.high_24h?.usd,
+      low: item.market_data?.low_24h?.usd,
+      volume: item.market_data?.total_volume?.usd,
+      tvl: item.market_data?.total_value_locked,
+      description: item.description?.en,
+      tokenCount: item.market_data?.total_supply,
+      onSaleCount: item.market_data?.circulating_supply,
+      externalUrl: item.links?.homepage[0],
+      twitterUrl: item.links?.twitter_screen_name ? `https://twitter.com/${item.links?.twitter_screen_name}` : null,
+      ticker: {
+        value: Math.abs(item.market_data?.price_change_percentage_24h ?? 0).toFixed(2),
+        type: ((item.market_data?.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
+      },
+      genesis_date: item?.genesis_date,
+      marketCap: item.market_data?.total_supply * (item.market_data?.current_price?.usd ?? 0),
+    }
+  }
+
+  return {}
+}
 
 export const tokenSlice = createSlice({
   name: '$token',
@@ -191,16 +198,16 @@ export const tokenSlice = createSlice({
       state.all = state.pages.append ? [...state.all, ...tokens] : tokens
     },
 
-    updatedAll: (state, {payload}) => {
-      state.all = state.all.map(token => template({...token, ...payload[token.id]}, state.assets[token.id]))
+    updatedAll: (state, { payload }) => {
+      state.all = state.all.map(token => template({ ...token, ...payload[token.id] }, state.assets[token.id]))
     },
 
     searched: (state, { payload }) => {
       state.searched = payload.map(token => template(token, state.assets[token.id]))
     },
 
-    updatedSearched: (state, {payload}) => {
-      state.searched = state.searched.map(token => template({...token, ...payload[token.id]}, state.assets[token.id]))
+    updatedSearched: (state, { payload }) => {
+      state.searched = state.searched.map(token => template({ ...token, ...payload[token.id] }, state.assets[token.id]))
     },
 
     list: (state, { payload }) => {
@@ -215,8 +222,8 @@ export const tokenSlice = createSlice({
       state.current = template(payload, state.assets[payload.id])
     },
 
-    updatedCurrent: (state, {payload}) => {
-      state.current = template({...state.current, ...payload}, state.assets[payload.id])
+    updatedCurrent: (state, { payload }) => {
+      state.current = template({ ...state.current, ...payload }, state.assets[payload.id])
     },
 
     update: (state, { payload }) => {
@@ -310,23 +317,23 @@ const getters = {
 const api = {
   coingecko: {
     list: (params) => {
-      return request('coins/list', 'GET', {api: 'coingecko', ...params})
+      return request('coins/list', 'GET', { api: 'coingecko', ...params })
     },
 
     local: () => {
-      return request('files/coingecko-tokens.json', 'GET', {api: 'local'})
+      return request('files/coingecko-tokens.json', 'GET', { api: 'local' })
     },
 
     info: (params) => {
-      return request('coins/markets', 'GET', {api: 'coingecko', ...params})
+      return request('coins/markets', 'GET', { api: 'coingecko', ...params })
     },
 
-    full: ({platform, address, ...params}) => {
-      return request(`coins/${platform}/contract/${address}`, 'GET', {api: 'coingecko', ...params})
+    full: ({ platform, address, ...params }) => {
+      return request(`coins/${platform}/contract/${address}`, 'GET', { api: 'coingecko', ...params })
     },
 
     top: (params) => {
-      return request('search/trending', 'GET', {api: 'coingecko', ...params})
+      return request('search/trending', 'GET', { api: 'coingecko', ...params })
     },
   },
 }
