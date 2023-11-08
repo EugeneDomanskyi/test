@@ -186,7 +186,6 @@ const getters = {
 const api = {
   get: {
     tokens: ({ address, blockchain }) => {
-      console.log('address', address);
       const network = CHAINS.find(chain => chain.code === blockchain)
       return fetch(`/api/tokens/orders/${network.id}/${address}`).then(async res => {
         const json = await res.json()
