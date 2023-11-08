@@ -2,7 +2,6 @@ import { useRef, useState } from 'react'
 import Image from 'next/image'
 import Slider from 'react-slick'
 import cn from 'classnames'
-import { useRouter } from 'next/router'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
 
@@ -12,7 +11,6 @@ import styles from './styles.module.scss'
 
 const LandingSlides = () => {
   const { isMobile } = usePropsHelper()
-  const router = useRouter()
 
   const [slide, setSlide] = useState(0)
 

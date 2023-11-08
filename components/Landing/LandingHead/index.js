@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
+import { useRouter } from 'next/router'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 import cn from 'classnames'
 
@@ -23,6 +23,7 @@ const getApolloClient = (uri) => {
 }
 
 const LandingHead = () => {
+  const router = useRouter()
   const { isMobile } = usePropsHelper()
 
   const [volume, setVolume] = useState(0)
