@@ -38,14 +38,14 @@ const HeadExchange = ({ currentInfo }) => {
       <meta property="og:type" content="website" />
       <meta property="og:title" content={getTitle()} />
       <meta property="og:description" content={getDescription()} />
-      <meta property="og:image" content="" />
+      <meta property="og:image" content="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/exchange-og-image.png" />
 
       <meta name="twitter:card" content="summary_large_image" />
       <meta property="twitter:domain" content="tegro.com" />
       <meta property="twitter:url" content={getUrl()} />
       <meta name="twitter:title" content={getTitle()} />
       <meta name="twitter:description" content={getDescription()} />
-      <meta name="twitter:image" content="" />
+      <meta name="twitter:image" content="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/exchange-og-image.png" />
     </Head>
   )
 }
