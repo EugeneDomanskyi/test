@@ -130,7 +130,7 @@ const Info = ({ current, location }) => {
                   <App.Flex column className={styles.card}>
                     <App.Flex align="center" gap={4}>
                       <App.Text color="#B9B8C5" size={10} weight={400}>Total Supply</App.Text>
-                      <App.Tooltip placement="bottom-start" text={<App.Text center color="#B9B8C5">The maximum amount of {type === 'nfts' ? 'NFTs' : 'tokens'} there will ever exist in its lifetime. The total number of {type === 'tokens' ? 'tokens' : 'NFTs'} available</App.Text>}>
+                      <App.Tooltip placement="bottom-start" text={<App.Text center color="#B9B8C5">The maximum amount of {type === 'nfts' ? 'NFTs' : 'tokens'} there will ever exist in its lifetime. The total number of {type === 'nfts' ? 'NFTs' : 'tokens'} available</App.Text>}>
                         <App.Icon icon="info" width={12} height={12} />
                       </App.Tooltip>
                     </App.Flex>
