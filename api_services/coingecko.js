@@ -8,7 +8,6 @@ export const getPrices = async (ids) => {
       return null
     }
     const json = await res.json()
-    console.log('json', json);
     const result = json.reduce((acc, meta) => {
       const { current_price, high_24h, low_24h, price_change_percentage_24h, total_volume, image } = meta
       const tickerValue = Math.abs(price_change_percentage_24h).toFixed(2)
