@@ -9,7 +9,7 @@ export const getPrices = async (ids) => {
     }
     const json = await res.json()
     const result = json.reduce((acc, meta) => {
-      const { current_price, high_24h, low_24h, price_change_percentage_24h, total_volume, image } = meta
+      const { current_price, high_24h, low_24h, price_change_percentage_24h, total_volume, total_supply, image } = meta
       const tickerValue = Math.abs(price_change_percentage_24h).toFixed(2)
       return {
         ...acc,
@@ -18,6 +18,7 @@ export const getPrices = async (ids) => {
           high: high_24h,
           low: low_24h,
           volume: total_volume,
+          tokenCount: total_supply,
           ticker: {
             value: tickerValue,
             type: tickerValue >= 0 ? 'plus' : 'minus',

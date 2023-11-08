@@ -43,7 +43,6 @@ const Wrapper = ({ children, isMobile }) => {
         return
       }
       const network = CHAINS.find(network => network.id === chain.id)
-      console.log('network', network);
       if (network) {
         dispatch($app.set.code(network.code))
         prevChain.current.stored = network.id
