@@ -13,7 +13,7 @@ export default function About({marketInfo}) {
       <SectionTitle>About { marketInfo.name }</SectionTitle>
       
       <App.Text size={isMobile ? 14 : 16} weight={500} color="#B9B8C5">
-        { marketInfo?.description }
+        <div style={{ whiteSpace: 'pre-line' }} dangerouslySetInnerHTML={{__html: marketInfo?.description}} />
       </App.Text>
     </App.Flex>
   )

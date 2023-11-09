@@ -23,7 +23,7 @@ export default function Details({marketInfo, type}) {
           : null
       }
       
-      <Ad />
+      {/* <Ad /> */}
       {
         marketInfo?.team
           ? <Team marketInfo={marketInfo} />

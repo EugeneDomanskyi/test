@@ -54,14 +54,23 @@ export default function Markets({ marketData, currentChain }) {
   const [marketInfo, setMarketInfo] = useState(marketData)
 
   useEffect(() => {
+    console.log('marketInfo', marketInfo);
+  }, [marketInfo])
+
+  useEffect(() => {
     if (marketData.id) {
       dispatch($token.set.current(marketInfo))
       $markets.api.strapi(marketInfo.id, token).then(res => {
         if (res.data && res.data.length) {
           const info = res.data[0].attributes
+          console.log('info', info);
           const resources = info?.project_data.project.resources.length ? info?.project_data.project.resources : null
           const investors = info?.project_data.project.investors && info?.project_data.project.investors !== "null" ? info?.project_data.project.investors : null
           const team = info?.project_data.project.creator.length ? info?.project_data.project.creator : null
+          const description = info?.token_metadata.token.long_description ?? null
+          const parent_collection_name = info?.token_metadata.token.parent_collection_name ?? null
+          const project_name = info?.token_metadata.token.project_name ?? null
+          
           setMarketInfo(state => (
             {
               ...state,
@@ -69,15 +78,31 @@ export default function Markets({ marketData, currentChain }) {
               resources: resources,
               investors: investors,
               team: team,
+              ...(description ? {description: description} : null),
+              ...(parent_collection_name ? {parent_collection_name: parent_collection_name} : null),
+              ...(project_name ? {project_name: project_name} : null),
             }
           ))
         }
       })
       $exchange.api.get.tokenChartData(marketInfo.id, currentChain.code, activeInterval.seconds).then(res => {
         if (res) {
+          setMarketInfo(state => (
+            {
+              ...state,
+              charts: true,
+            }
+          ))
           dispatch($exchange.set.chartData({ type: 'tokens', data: res.data }))
           return
         }
+
+        setMarketInfo(state => (
+          {
+            ...state,
+            charts: null,
+          }
+        ))
         dispatch($exchange.set.chartData({ type: 'tokens', data: [] }))
       })
     }
@@ -125,7 +150,7 @@ export default function Markets({ marketData, currentChain }) {
                   <Trending />
                   <About />
                   <Images />
-                  <Ad />
+                  {/* <Ad /> */}
                   {
                     marketInfo.team
                       ? <Team />

@@ -8,7 +8,7 @@ import moment from 'moment'
 import App from '@/components/App'
 import SectionTitle from '@/components/Market/SectionTitle'
 
-const QuestFAQ = ({type, marketInfo}) => {
+const MarketFAQ = ({type, marketInfo}) => {
   const itemRefs = useRef([])
   const answers = useRef([])
 
@@ -34,7 +34,8 @@ const QuestFAQ = ({type, marketInfo}) => {
     }
   }
 
-  const price = type === 'tokens' ? 'current price' : 'floor price'
+  const priceText = type === 'tokens' ? 'current price' : 'floor price'
+  const price = marketInfo?.price
   const volume = type === 'tokens' ? marketInfo?.tokenCount : marketInfo?.tvl
   const launchDate = moment(marketInfo.createdAt).format('MMMM DD, YYYY')
 
@@ -43,25 +44,41 @@ const QuestFAQ = ({type, marketInfo}) => {
       question: `What is ${ marketInfo.name }?`,
       answer: marketInfo.description,
     },
-    {
-      question: `What is the ${ price } of ${ marketInfo.name }?`,
-      answer: `The ${ price } of ${ marketInfo.name } is $${ marketInfo.price }.`,
-    },
-    {
-      question: `What is the total supply of ${ marketInfo.name }`,
-      answer: `${ marketInfo.name } has a total circulating supply of ${ volume }.`,
-    },
-    {
-      question: `What is the the total market cap of ${ marketInfo.name }?`,
-      answer: `${ marketInfo.name } has a total market cap of ${ marketInfo.marketCap ?? marketInfo.tvl }.`
-    },
+    ...(
+      marketInfo.price
+        ? [{
+            question: `What is the ${priceText} of ${marketInfo.name}?`,
+            answer: `The ${priceText} of ${marketInfo.name} is $${marketInfo.price}.`,
+          }]
+      : []
+    ),
+    ...(
+      volume
+        ? [{
+            question: `What is the total supply of ${ marketInfo.name }`,
+            answer: `${ marketInfo.name } has a total circulating supply of ${ volume }.`,
+          }]
+        : []
+    ),
+    ...(
+      marketInfo.marketCap || marketInfo.tvl
+        ? [{
+            question: `What is the the total market cap of ${ marketInfo.name }?`,
+            answer: `${ marketInfo.name } has a total market cap of ${ marketInfo.marketCap ?? marketInfo.tvl }.`
+          }]
+        : []
+    ),
+    ...(
+      marketInfo.onSaleCount && marketInfo.volume
+        ? [{
+            question: `What is the 24 hour global trading volume of ${ marketInfo.name }?`,
+            answer: `In the past 24 hours, the total trading volume of ${ marketInfo.name } is ${ marketInfo.volume + (marketInfo.onSaleCount ? ` with ${ marketInfo.onSaleCount } sales` : '') }.`,
+          }]
+        : []
+    ),
     {
       question: `Where can I buy, sell, and trade ${ marketInfo.name }?`,
       answer: `The best place to buy, sell, and trade ${ marketInfo.name } is Tegro: The CEX-DEX. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${ marketInfo.name } at the best prices.`,
-    },
-    {
-      question: `What is the 24 hour global trading volume of ${ marketInfo.name }?`,
-      answer: `In the past 24 hours, the total trading volume of ${ marketInfo.name } is ${ marketInfo.volume + (marketInfo.onSaleCount ? ` with ${ marketInfo.onSaleCount } sales` : '') }.`,
     },
   ]
 
@@ -107,4 +124,4 @@ const QuestFAQ = ({type, marketInfo}) => {
   )
 }
 
-export default QuestFAQ
+export default MarketFAQ

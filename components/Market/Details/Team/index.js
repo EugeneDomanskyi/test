@@ -35,11 +35,11 @@ export default function Team({marketInfo}) {
                   
                   <App.Flex gap={16}>
                     {
-                      item.links.map(link => {
+                      item.links.map((link, i) => {
                         const name = link.name ? link.name.toLowerCase() : ''
                         return (
                           name 
-                            ? <App.Flex sx={{cursor: 'pointer'}} onClick={() => handleClickLink(link.url)}>
+                            ? <App.Flex key={i} sx={{cursor: 'pointer'}} onClick={() => handleClickLink(link.url)}>
                                 <App.Icon icon={name} />
                               </App.Flex>
                             : null
