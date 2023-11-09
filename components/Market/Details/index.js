@@ -17,7 +17,6 @@ export default function Details({marketInfo, type}) {
       <LivePrice type={type} marketInfo={marketInfo} />
       <Stats marketInfo={marketInfo} />
       <About marketInfo={marketInfo} />
-
       {
         marketInfo?.sampleImages
           ? <Images />
@@ -27,15 +26,19 @@ export default function Details({marketInfo, type}) {
       <Ad />
       {
         marketInfo?.team
-          ? <Team />
+          ? <Team marketInfo={marketInfo} />
           : null
       }
       {
         marketInfo?.investors
-          ? <Investors />
+          ? <Investors marketInfo={marketInfo} />
           : null
       }      
-      <Resources />
+      {
+        marketInfo?.resources
+          ? <Resources marketInfo={marketInfo} />
+          : null
+      }
       <FAQ type={type} marketInfo={marketInfo} />
     </App.Flex>
   )

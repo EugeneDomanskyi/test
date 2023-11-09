@@ -11,6 +11,7 @@ import $token, { tokenSlice } from './token'
 import $nft from './nft'
 import $orders from './orders'
 import $raffle from './raffle'
+import $markets from './markets'
 
 const createStore = (initialData, page, info) => {
   return configureStore({
@@ -23,6 +24,7 @@ const createStore = (initialData, page, info) => {
       $nft: $nft.reducer,
       $orders: $orders.reducer,
       $raffle: $raffle.reducer,
+      $markets: $markets.reducer,
     },
 
     preloadedState: {

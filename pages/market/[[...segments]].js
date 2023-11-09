@@ -10,6 +10,7 @@ import $token, { staticTemplate } from '@/store/token'
 import { getPrices } from '@/api_services/coingecko'
 import coingeckoAssets from '@/public/files/coingecko_ids'
 import $exchange from '@/store/exchange'
+import $markets from '@/store/markets'
 
 import App from '@/components/App'
 import Market from '@/components/Market'
@@ -41,7 +42,7 @@ const getToken = async (url, id) => {
   return res.data.token && res.data.token.symbol !== 'unknown' ? res.data.token : null
 }
 
-export default function Markets({ marketInfo, currentChain }) {
+export default function Markets({ marketData, currentChain }) {
   const dispatch = useDispatch()
   const router = useRouter()
   const { isMobile } = usePropsHelper()
@@ -50,13 +51,28 @@ export default function Markets({ marketInfo, currentChain }) {
 
   const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
 
-  useEffect(() => {
-    console.log('marketInfo', marketInfo);
-  }, [])
+  const [marketInfo, setMarketInfo] = useState(marketData)
 
   useEffect(() => {
-    if (marketInfo.id) {
+    if (marketData.id) {
       dispatch($token.set.current(marketInfo))
+      $markets.api.strapi(marketInfo.id, token).then(res => {
+        if (res.data && res.data.length) {
+          const info = res.data[0].attributes
+          const resources = info?.project_data.project.resources.length ? info?.project_data.project.resources : null
+          const investors = info?.project_data.project.investors && info?.project_data.project.investors !== "null" ? info?.project_data.project.investors : null
+          const team = info?.project_data.project.creator.length ? info?.project_data.project.creator : null
+          setMarketInfo(state => (
+            {
+              ...state,
+              sampleImages: info?.token_metadata.token.nft_gallery ?? null,
+              resources: resources,
+              investors: investors,
+              team: team,
+            }
+          ))
+        }
+      })
       $exchange.api.get.tokenChartData(marketInfo.id, currentChain.code, activeInterval.seconds).then(res => {
         if (res) {
           dispatch($exchange.set.chartData({ type: 'tokens', data: res.data }))
@@ -65,14 +81,14 @@ export default function Markets({ marketInfo, currentChain }) {
         dispatch($exchange.set.chartData({ type: 'tokens', data: [] }))
       })
     }
-  }, [marketInfo.id, activeInterval.seconds])
+  }, [marketData, activeInterval.seconds])
 
   return (
     <>
       <Head>
         <title>{`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Chart & Marketcap | Tegro: The CEX-DEX`}</title>
         <meta name="description" content={`Buy, sell, and trade ${marketInfo.symbol ?? 'USDT'} or ${marketInfo.name} instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${marketInfo.name} at the best prices.`} />
-        <meta name="keywords" content="keyword1, keyword2, keyword3" />
+        <meta name="keywords" content={`${marketInfo.symbol ?? 'USDT'}, ${marketInfo.name}`} />
         <meta property="og:title" content={`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Chart & Marketcap | Tegro: The CEX-DEX`} />
         <meta property="og:description" content={`Buy, sell, and trade ${marketInfo.symbol ?? 'USDT'} or ${marketInfo.name} instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${marketInfo.name} at the best prices.`} />
       </Head>
@@ -137,7 +153,7 @@ export async function getServerSideProps({ query }) {
   const blockchainCode = query.segments[1]
   const marketId = query.segments[2]
   const currentChain = CHAINS.find(chain => chain.code === blockchainCode)
-  let marketInfo = {}
+  let marketData = {}
 
   const tokenRes = await getToken(currentChain.baseUniswapUrl, marketId)
   const tokenInfo = await $token.api.coingecko.full({ platform: blockchainCode, address: marketId })
@@ -146,19 +162,19 @@ export async function getServerSideProps({ query }) {
     const token = { ...tokenRes, ...tokenInfo }
     if (token) {
       const full = staticTemplate(token)
-      marketInfo = full
+      marketData = full
       const id = { [coingeckoAssets[currentChain.platform][full.id]]: full.id }
       const prices = await getPrices(id)
 
       if (prices) {
-        marketInfo = ({ ...full, ...prices[marketId] })
+        marketData = ({ ...full, ...prices[marketId] })
       }
     }
   }
 
   return {
     props: {
-      marketInfo,
+      marketData,
       currentChain
     },
   }

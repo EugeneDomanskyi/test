@@ -4,10 +4,10 @@ import styles from './styles.module.scss'
 import App from '@/components/App'
 import SectionTitle from '@/components/Market/SectionTitle'
 
-export default function Team() {
-  const { current, currentMarketSeoInfo } = useSelector(({$collection}) => $collection)
-
-  const team = currentMarketSeoInfo?.project_data?.length ? currentMarketSeoInfo?.project_data[0].team : null
+export default function Team({marketInfo}) {
+  const handleClickLink = (url) => {
+    window.open(url, '_blank')
+  }
 
   return (
     <App.Flex column sx={{width: '100%'}} gap={8}>
@@ -15,11 +15,11 @@ export default function Team() {
       
       <App.Flex className={styles.container}>
         {
-          team && Object.values(team).map((item, index) => {
+          marketInfo.team.map((item, index) => {
             return (
               <App.Flex key={index} className={styles.teamItem}>
                 <App.Flex className={styles.teamImage}>
-                  <img src={item.pfp} alt="" />
+                  <img src={item.image} alt="" />
                 </App.Flex>
                 
                 <App.Flex column gap={8}>
@@ -34,9 +34,18 @@ export default function Team() {
                   </App.Flex>
                   
                   <App.Flex gap={16}>
-                    <App.Icon icon="telegram" />
-                    <App.Icon icon="youtube" />
-                    <App.Icon icon="discord" />
+                    {
+                      item.links.map(link => {
+                        const name = link.name ? link.name.toLowerCase() : ''
+                        return (
+                          name 
+                            ? <App.Flex sx={{cursor: 'pointer'}} onClick={() => handleClickLink(link.url)}>
+                                <App.Icon icon={name} />
+                              </App.Flex>
+                            : null
+                        )
+                      })
+                    }
                   </App.Flex>
                 </App.Flex>
               </App.Flex>
@@ -45,12 +54,12 @@ export default function Team() {
         }
       </App.Flex>
 
-      <App.Flex justify="center" align="center" sx={{marginTop: 8}} >
+      {/* <App.Flex justify="center" align="center" sx={{marginTop: 8}} >
         <App.Text size={16} weight={500} color="#4C69FF">
           View all team members
         </App.Text>
         <App.Icon icon="link-arrow" />
-      </App.Flex>
+      </App.Flex> */}
     </App.Flex>
   )
 }
