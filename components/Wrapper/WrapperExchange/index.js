@@ -12,33 +12,29 @@ import $exchange from '@/store/exchange'
 import $app from '@/store/app'
 import { usePropsHelper } from '@/myhooks/props-helper'
 
-// const temp = coinmarketAssets.reduce((acc, token) => {
-//   const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(token.platform.token_address)
-//   if (!isAddress) {
-//     return acc
-//   }
-//   const platform = token.platform.slug
-//   const platformData = {...acc[platform], [token.platform.token_address]: token.id}
-//   return {
-//     ...acc,
-//     [platform]: platformData
-//   }
-// }, {})
+const getTokens = async (chain, post) => {
+  if (chain?.useBackend) {
+    const result = await $token.api.backend.all(post)
+    if (result) {
+      console.log('1234556', result)
+      return result
+    }
 
-
-const getTokens = async (url, {skip, orderBy, orderDirection, searchText, usdt}) => {
-  const client = getApolloClient(url)
-  const res = await client.query({
-    query: queries.tokens,
-    variables: {
-      skip: skip,
-      orderBy: orderBy,
-      orderDirection: orderDirection,
-      searchText: searchText,
-      usdt: usdt,
-    },
-  })
-  return res.data.tokens
+    return []
+  } else {
+    const client = getApolloClient(chain.baseUniswapUrl)
+    const res = await client.query({
+      query: queries.tokens,
+      variables: {
+        skip: post.skip,
+        orderBy: post.orderBy,
+        orderDirection: post.orderDirection,
+        searchText: post.searchText,
+        usdt: post.usdt,
+      },
+    })
+    return res.data.tokens
+  }
 }
 
 const getTokenDayDatas = async (url, ids) => {
@@ -114,13 +110,29 @@ const getTokenDayDatas = async (url, ids) => {
   return {}
 }
 
-const getToken = async (url, id) => {
-  const client = getApolloClient(url)
+const getToken = async (chain, id) => {
+  const client = getApolloClient(chain.baseUniswapUrl)
   const res = await client.query({
     query: queries.tokenById,
     variables: {id: id}
   })
   return res.data.token && res.data.token.symbol !== 'unknown' ? res.data.token : null
+
+  // const post = {
+  //   page: 1,
+  //   pageSize: 1,
+  //   chainId: chain.id,
+  //   filterCol: 'ContractAddress',
+  //   filterVal: id,
+  // }
+  
+  // const result = $token.api.backend.all(post)
+  // if (result) {
+  //   console.log(result)
+  //   return result
+  // }
+
+  // return null
 }
 
 const WrapperExchange = ({children, _isMobile}) => {
@@ -159,47 +171,9 @@ const WrapperExchange = ({children, _isMobile}) => {
     orderBy = 'derivedETH'
   }
 
-  // useEffect(() => {
-    
-  //   const temp = Object.entries(assets).reduce((acc, [address, token]) => {
-  //     const updated = tempAssets[address] ? {...token, ...tempAssets[address]} : token
-  //     return {
-  //       ...acc,
-  //      [address]: updated
-  //     }
-  //   }, {})
-  //   console.log(temp)
-  //   const temp = Object.values(data.data).reduce((acc, token) => {
-  //     if (!token.platform?.token_address) {
-  //       return acc
-  //     }
-  //     const info = {
-  //       "id": token.platform.token_address,
-  //       "address": token.platform.token_address,
-  //       "image": token.logo,
-  //       "name": token.name,
-  //       "symbol": token.symbol,
-  //       "currency": "USDT",
-  //       "description": token.description,
-  //       "discordUrl": null,
-  //       ...(token.urls && Array.isArray(token.urls.website) ? {"externalUrl": token.urls.website[0]} : {}),
-  //       ...(token.twitter_username ? {"twitterUrl": `https://twitter.com/${token.twitter_username}`} : {}),
-  //       "openseaVerificationStatus": false
-  //   }
-  //     return {
-  //       ...acc,
-  //       [token.platform.token_address.toLowerCase()]: info
-  //     }
-  //   }, {})
-  //   console.log(coinmarketAssets.ethereum)
-  //   const ids = Object.values(coinmarketAssets.ethereum).slice(0, 100)
-  //   console.log(`https://pro-api.coinmarketcap.com/v1/cryptocurrency/info?id=${ids.join(',')}`)
-  //   console.log(temp)
-  // }, [])
-
   useEffect(() => {
     if (storedBlockchain.code !== blockchain) {
-      const newBlockchain = ['ethereum', 'polygon', 'arbitrum', 'bsc', 'avalanche'].includes(storedBlockchain.code) ? storedBlockchain.code : blockchain
+      const newBlockchain = ['ethereum', 'polygon', 'mumbai', 'arbitrum', 'bsc', 'avalanche'].includes(storedBlockchain.code) ? storedBlockchain.code : blockchain
       dispatch($app.set.code(newBlockchain))
       dispatch($token.set.loading(true))
       router.replace(`/exchange/${newBlockchain}/0x`)
@@ -219,14 +193,27 @@ const WrapperExchange = ({children, _isMobile}) => {
     if (currentChain.code !== blockchain) {
       return
     }
-    const post = {
-      skip: (pages.current - 1) * tokensPerPage,
-      orderBy: orderBy,
-      orderDirection: sortDirection.toLowerCase(),
-      searchText: '',
-      usdt: currentChain.usdtContract,
+
+    let post = {}
+    if (currentChain?.useBackend) {
+      post = {
+        page: pages.current,
+        pageSize: tokensPerPage,
+        chainId: currentChain.id,
+        sortBy: orderBy,
+        sortOrder: sortDirection.toLowerCase(),
+      }
+    } else {
+      post = {
+        skip: (pages.current - 1) * tokensPerPage,
+        orderBy: orderBy,
+        orderDirection: sortDirection.toLowerCase(),
+        searchText: '',
+        usdt: currentChain.usdtContract,
+      }
     }
-    getTokens(currentChain.baseUniswapUrl, post).then(async tokens => {
+
+    getTokens(currentChain, post).then(async tokens => {
       dispatch($token.set.all(tokens))
       dispatch($token.set.pages({ next: (pages.current * 1 + 1) }))
       dispatch($token.set.loading(false))
@@ -242,7 +229,7 @@ const WrapperExchange = ({children, _isMobile}) => {
       if (isAddress && (currentChain.code === blockchain) && currentToken?.id !== address) {
         const existInList = tokenList.find(token => token.id === address)
         if (!existInList) {
-          const token = await getToken(currentChain.baseUniswapUrl, address)
+          const token = await getToken(currentChain, address)
           if (token) {
             dispatch($token.set.current(token))
             return
@@ -359,7 +346,18 @@ const WrapperExchange = ({children, _isMobile}) => {
         searchText: searchText,
         usdt: currentChain.usdtContract,
       }
-      results = await getTokens(currentChain.baseUniswapUrl, post)
+
+      // const post = {
+      //   page: 1,
+      //   pageSize: tokensPerPage,
+      //   chainId: currentChain.id,
+      //   sortBy: orderBy,
+      //   sortOrder: sortDirection.toLowerCase(),
+      //   filterCol: 'name',
+      //   filterVal: searchText,
+      // }
+
+      results = await getTokens(currentChain, post)
     }
     dispatch($token.set.searched(results))
     dispatch($token.set.loading(false))

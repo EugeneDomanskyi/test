@@ -120,70 +120,68 @@ const TradeForm = forwardRef(({current, type, version, fullWidth = null, onSubmi
   }
 
   return (
-    <App.Flex column className={cn(styles.container, {[styles[version]]: version})} sx={{width: fullWidth ? '100%' : 366}}>
-      <App.Flex column>
-        <Tabs
-          options={TAB_OPTIONS}
-          active={currentTab}
-          version={version}
-          onChange={handleChangeTab}
-        />
-      </App.Flex>
-      {
-        type === 'nfts'
-          ? <App.Flex gap={16} sx={{padding: '24px 16px'}}>
-              <App.Button className={cn(styles.formTypeButton, {[styles.active]: formType === 'limit'})} onClick={handleChangeFormType('limit')}>
-                {
-                  formType === 'limit' ? <App.Icon icon="check" /> : null
-                }
-                <App.Text color={formType === 'limit' ? '#fff' : '#5E5C6B'} weight={600} size={12}>Place Order</App.Text>
-              </App.Button>
-              <App.Button className={cn(styles.formTypeButton, {[styles.active]: formType === 'market'})} onClick={handleChangeFormType('market')}>
-                {
-                  formType === 'market' ? <App.Icon icon="check" /> : null
-                }
-                <App.Text color={formType === 'market' ? '#fff' : '#5E5C6B'} weight={600} size={12}>{currentTab === 'buy' ? 'Buy ' : 'Sell ' }Now</App.Text>
-              </App.Button>
-            </App.Flex>
-          : <App.Flex sx={{marginBottom: 16}} />
-      }
-      {
-        (type => {
-          switch (type) {
-            case 'nfts':
-              return (
-                formType === 'market'
-                  ? <TradeFormMarket
-                      current={current}
-                      type={type}
-                      initialForm={marketForm}
-                      userBalances={userBalances}
-                      currentTab={currentTab}
-                      currentOption={currentOption} />
-                  : <TradeFormLimit
-                      current={current}
-                      type={type}
-                      currentTab={currentTab}
-                      currentOption={currentOption}
-                      userBalances={userBalances}
-                      initialForm={limitForm} />
-              )
-            case 'tokens':
-              return (
-                <TradeFormToken
-                  ref={tokenFormRef}
+    <App.Flex column className={cn(styles.container, {[styles[version]]: version})} sx={{width: fullWidth ? '100%' : 324}}>
+      <Tabs
+        options={TAB_OPTIONS}
+        active={currentTab}
+        version={version}
+        onChange={handleChangeTab}
+      />
+
+      {type === 'nfts' ? (
+        <App.Flex gap={16} sx={{padding: '24px 16px'}}>
+          <App.Button className={cn(styles.formTypeButton, {[styles.active]: formType === 'limit'})} onClick={handleChangeFormType('limit')}>
+            {formType === 'limit' ? <App.Icon icon="check" /> : null}
+            <App.Text color={formType === 'limit' ? '#fff' : '#5E5C6B'} weight={600} size={12}>Place Order</App.Text>
+          </App.Button>
+
+          <App.Button className={cn(styles.formTypeButton, {[styles.active]: formType === 'market'})} onClick={handleChangeFormType('market')}>
+            {formType === 'market' ? <App.Icon icon="check" /> : null}
+            <App.Text color={formType === 'market' ? '#fff' : '#5E5C6B'} weight={600} size={12}>{currentTab === 'buy' ? 'Buy ' : 'Sell ' }Now</App.Text>
+          </App.Button>
+        </App.Flex>
+      ) : null}
+
+      {(type => {
+        switch (type) {
+          case 'nfts':
+            return (
+              formType === 'market' ? (
+                <TradeFormMarket
                   current={current}
-                  version={version}
+                  type={type}
+                  initialForm={marketForm}
                   userBalances={userBalances}
                   currentTab={currentTab}
-                  formOption={currentOption}
-                  prevProps={prevProps}
-                  onSubmit={onSubmit}
+                  currentOption={currentOption}
+                />
+              ) : (
+                <TradeFormLimit
+                  current={current}
+                  type={type}
+                  currentTab={currentTab}
+                  currentOption={currentOption}
+                  userBalances={userBalances}
+                  initialForm={limitForm}
                 />
               )
-          }
-        })(type)
-      }
+            )
+
+          case 'tokens':
+            return (
+              <TradeFormToken
+                ref={tokenFormRef}
+                current={current}
+                version={version}
+                userBalances={userBalances}
+                currentTab={currentTab}
+                formOption={currentOption}
+                prevProps={prevProps}
+                onSubmit={onSubmit}
+              />
+            )
+        }
+      })(type)}
     </App.Flex>
   )
 })

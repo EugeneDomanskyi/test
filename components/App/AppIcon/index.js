@@ -25,6 +25,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon == 'copy2') {
+      return (
+        <svg width={width ?? 10} height={height ?? 10} viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill={color ?? '#5E5C6B'} d="M8.797 8.682h-5.21V2.955h5.21m0-.819h-5.21c-.252 0-.493.087-.67.24a.766.766 0 00-.278.579v5.727c0 .217.1.425.277.578.178.154.419.24.67.24h5.21c.252 0 .493-.086.67-.24a.766.766 0 00.278-.578V2.955c0-.217-.1-.426-.277-.579a1.028 1.028 0 00-.67-.24zM7.376.5H1.692c-.252 0-.493.086-.67.24a.766.766 0 00-.278.578v5.727h.948V1.318h5.684V.5z" />
+        </svg>
+      )
+    }
+
     if (icon == 'lock-star-fill') {
       return (
         <svg width={width ?? 25} height={height ?? 25} viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -46,6 +54,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       return (
         <svg width={width ?? 17} height={height ?? 16} viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <path stroke={color ?? '#605884'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.333" d="M8.902 3.332v9.333M13.569 8l-4.667 4.667L4.235 8" />
+        </svg>
+      )
+    }
+
+    if (icon == 'arrow-down2') {
+      return (
+        <svg width={width ?? 7} height={height ?? 8} viewBox="0 0 7 8" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" d="M.75 4l2.5 2.5L5.75 4M3.25 6.495V.5" />
         </svg>
       )
     }
@@ -1423,6 +1439,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
               <stop offset="1" stop-color="#9699B5"/>
             </linearGradient>
           </defs>
+        </svg>
+      )
+    }
+
+    if (icon === 'link') {
+      return (
+        <svg width={width ?? 9} height={height ?? 9} viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill={color ?? '#5E5C6B'} d="M3.405 5.397a.421.421 0 010 .615.436.436 0 01-.614 0 2.165 2.165 0 010-3.06L4.323 1.42a2.165 2.165 0 013.06 0 2.165 2.165 0 010 3.06l-.645.645a2.99 2.99 0 00-.173-1.048l.203-.207a1.29 1.29 0 000-1.835 1.29 1.29 0 00-1.835 0L3.405 3.562a1.29 1.29 0 000 1.835zm1.22-1.835a.436.436 0 01.615 0 2.165 2.165 0 010 3.06L3.708 8.154a2.165 2.165 0 01-3.06 0 2.165 2.165 0 010-3.06l.645-.644c-.004.354.052.71.174 1.051l-.204.204a1.29 1.29 0 000 1.835 1.29 1.29 0 001.835 0l1.528-1.528a1.29 1.29 0 000-1.835.421.421 0 010-.615z" />
         </svg>
       )
     }

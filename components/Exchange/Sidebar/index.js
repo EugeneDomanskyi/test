@@ -5,7 +5,6 @@ import App from '@/components/App'
 import SidebarSearch from '@/components/Exchange/Sidebar/SidebarSearch'
 import SidebarSort from '@/components/Exchange/Sidebar/SidebarSort'
 import SidebarItem from '@/components/Exchange/Sidebar/SidebarItem'
-import SidebarPagination from '@/components/Exchange/Sidebar/SidebarPagination'
 
 import styles from './styles.module.scss'
 
@@ -35,8 +34,10 @@ const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpt
 
   return (
     <App.Flex column className={cn(styles.container, styles[className])}>
-      <App.Flex column gap={16} sx={{ padding: 16 }}>
-        <SidebarSearch search={search} loading={loading} onSearch={onSearch} />
+      <App.Flex column>
+        <App.Flex center full sx={{ padding: '8px 10px' }}>
+          <SidebarSearch search={search} loading={loading} onSearch={onSearch} />
+        </App.Flex>
         <SidebarSort sort={sort} loading={loading} onSort={onSort} />
       </App.Flex>
 
@@ -81,10 +82,6 @@ const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpt
           )}
         </div>
       </div>
-
-      {/* {!searching && version != 'mobile' ? (
-        <SidebarPagination pages={pages} loading={loading} onPage={onPage} />
-      ) : null} */}
     </App.Flex>
   )
 }

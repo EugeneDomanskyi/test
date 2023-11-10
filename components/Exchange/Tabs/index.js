@@ -10,14 +10,14 @@ const Tabs = ({options, active, version, onChange}) => {
   const optionStyle = () => {
     if (active == 'buy') {
       return {
-        color: '#5E5C6B',
-        active: version == 'mobile' ? '#53F19C' : 'rgba(255,255,255,0.87)',
+        color: '#B9B8C5',
+        active: version == 'mobile' ? '#53F19C' : '#fff',
         size: version == 'mobile' ? 16 : 12,
       }
     } else {
       return {
-        color: '#5E5C6B',
-        active: version == 'mobile' ? '#FF1D61' : 'rgba(255,255,255,0.87)',
+        color: '#B9B8C5',
+        active: version == 'mobile' ? '#FF1D61' : '#fff',
         size: version == 'mobile' ? 16 : 12,
       }
     }

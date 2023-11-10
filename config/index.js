@@ -47,7 +47,7 @@ const TEST_NETWORKS = [
         apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
         coingecko: '',
         platform: '',
-        pages: ['raffle'],
+        pages: ['raffle', 'tokens'],
         usdtContract: '0xA02f6adc7926efeBBd59Fd43A84f4E0c0c91e832',
         wrapped: {
             contract: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
@@ -230,6 +230,7 @@ export const CHAINS = [
       name: 'Wrapped Ether',
       shortName: 'WETH',
     },
+    useBackend: false,
   }, {
     ...polygon,
     code: 'polygon',

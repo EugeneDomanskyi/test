@@ -182,6 +182,17 @@ MyApp.getInitialProps = async ({ctx}) => {
             res.blockchain = blockchain
             currentInfo = tokenTemplate(fullToTemplate(res, res.detail_platforms[network.platform]))
           }
+
+          // const post = {
+          //   page: 1,
+          //   pageSize: 1,
+          //   chainId: network.id,
+          //   filterCol: 'ContractAddress',
+          //   filterVal: address,
+          // }
+
+          // const result = await $token.api.backend.all(post)
+          // console.log(result)
         }
       }
     } else if (currentPage === 'nfts') {

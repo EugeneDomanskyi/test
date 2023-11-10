@@ -9,144 +9,102 @@ import $app from '@/store/app'
 import { trackEvent } from '@/libs/analytics.lib'
 
 import App from '@/components/App'
-import { WebIcon, TwitterIcon, DiscordIcon } from '@/components/Icons/exchange'
 
-const Info = ({ current, location }) => {
+const Info = ({ current, type }) => {
   const blockchain = useSelector($app.get.blockchain)
   const { high, low } = useSelector($exchange.get.highLow({count: 24, unit: 'hours'}))
-
-  const [_, type] = location.split('/')
 
   const scanLink = `${blockchain.scanUrl}/address/${current.address}`
 
   const handleClickLink = (type) => () => {
-    trackEvent(`Click ${type} Redirect`, {
-      Markets: current.name,
-    })
+    if (current?.externalUrl) {
+      trackEvent(`Click ${type} Redirect`, {
+        Markets: current.name,
+      })
+
+      if (type == 'website') {
+        window.open(current.externalUrl, '_blank')
+      } else {
+        window.open(scanLink, '_blank')
+      }
+    }
   }
 
-  const handleClickDetails = (type) => () => {
-    trackEvent(`Click ${type} Redirect`, {
-      Markets: current.name,
-    })
+  const handleCopy = () => {
+    navigator.clipboard.writeText(current.address)
   }
 
   return (
-    <App.Flex className={styles.container} gap={6}>
-      {
-        current
-          ? <>
-              <App.Flex>
-                {
-                  current?.image
-                    ? <Image
-                        width={162}
-                        height={162}
-                        priority
-                        alt=""
-                        className={styles.image}
-                        src={current?.image} />
-                    : <div className={styles.emptyImage} />
-                }
-              </App.Flex>
-              
-              <App.Flex flex={1} column className={styles.content}>
-                <App.Flex column gap={8} flex={1}>
-                  <App.Flex align="center" justify="space-between">
-                    <App.Flex align="center" gap={8}>
-                      <App.Text weight={700} uppercase size={20}>{ current?.name }</App.Text>
-                      {
-                        current?.openseaVerificationStatus === 'verified'
-                          ? <App.Tooltip text={<App.Text>This collection belongs to a verified account and has significant interest or sales. <a href="https://support.opensea.io/hc/en-us/articles/360063519133-What-is-a-verified-account-or-badged-collection-" target="_blank">Learn more</a></App.Text>}>
-                              <App.Icon icon="verified" />
-                            </App.Tooltip>
-                          : null
-                      }
+    <App.Flex row align="center" className={styles.container}>
+      {current ? (
+        <>
+          <App.Flex row align="center" gap={40}>
+            <App.Flex row center gap={8}>
+              {current?.image ? (
+                <Image src={current?.image} width={36} height={36} alt="" />
+              ) : (
+                <div className={styles.emptyImage} />
+              )}
 
-                      {/* <Link href={`/market/${type}/${blockchain.code}/${current.address}`}>
-                        <App.Button onClick={handleClickDetails} sx={{paddingTop: 4, paddingBottom: 4}}>
-                          <App.Text size={12}>More Details</App.Text>
-                        </App.Button>
-                      </Link> */}
-                    </App.Flex>
-                    <App.Flex align="center">
-                      <Link href={scanLink} target="_blank" onClick={handleClickLink(blockchain?.code)} style={{marginRight: 8}}>
-                        <App.Icon width={15} height={15} icon={blockchain?.code === 'polygon' ? 'polyscan' : 'etherscan'} />
-                      </Link>
-                      {
-                        current?.externalUrl
-                          ? <Link href={current?.externalUrl ?? ''} onClick={handleClickLink('website')} target="_blank" style={{marginRight: 5}}>
-                              <WebIcon />
-                            </Link>
-                          : null
-                      }
-                      {
-                        current?.twitterUrl
-                          ? <Link href={current?.twitterUrl ?? ''} onClick={handleClickLink('twitter')} target="_blank" style={{marginRight: 8}}>
-                              <TwitterIcon />
-                            </Link>
-                          : null
-                      }
-                      {
-                        current?.discordUrl
-                          ? <Link href={current?.discordUrl ?? ''} onClick={handleClickLink('discord')} target="_blank">
-                              <DiscordIcon />
-                            </Link>
-                          : null
-                      }
-                    </App.Flex>
-                  </App.Flex>
-                  <App.Text lines={2} size={12} weight={500} color="#B9B8C5">{ current?.description }</App.Text>
-                  <App.Flex sx={{marginTop: 'auto'}} gap={16}>
-                    <App.Flex column className={styles.card}>
-                      <App.Text color="#B9B8C5" size={10} weight={400}>Price</App.Text>
-                      <App.Number size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.price } { current?.currency }</App.Number>
-                    </App.Flex>
-                    <App.Flex column className={styles.card}>
-                      <App.Text color="#B9B8C5" size={10} weight={400}>24h Price Change</App.Text>
-                      <App.Flex align="center" gap={4}>
-                        <App.Icon style={{transform: `rotate(${current?.ticker?.type == 'minus' ? '0' : '180'}deg)`}} icon="caret-down" color={current?.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C' } />
-                        <App.Text size={16} weight={500} color={current?.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C' }>{ current?.ticker?.value }%</App.Text>
-                      </App.Flex>
-                    </App.Flex>
-                    <App.Flex column className={styles.card}>
-                      <App.Flex align="center" gap={4}>
-                        <App.Text color="#B9B8C5" size={10} weight={400}>24h Volume</App.Text>
-                        <App.Tooltip placement="bottom" text={<App.Text center color="#B9B8C5">A measure of how much {type === 'tokens' ? 'tokens' : 'NFTs'} was traded in the last 24 hours </App.Text>}>
-                          <App.Icon icon="info" width={12} height={12} />
-                        </App.Tooltip>
-                      </App.Flex>
-                      <App.Text size={16} weight={700}>{ current?.volume }</App.Text>
-                    </App.Flex>
-                    <App.Flex column className={styles.card}>
-                      <App.Text color="#B9B8C5" size={10} weight={400}>24h High</App.Text>
-                      <App.Number size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.high ?? high } { current?.currency }</App.Number>
-                    </App.Flex>
-                    <App.Flex column className={styles.card}>
-                      <App.Text color="#B9B8C5" size={10} weight={400}>24h Low</App.Text>
-                      <App.Number size={16} weight={700} sx={{whiteSpace: 'nowrap'}}>{ current?.low ?? low } { current?.currency }</App.Number>
-                    </App.Flex>
-                    <App.Flex column className={styles.card}>
-                      <App.Flex align="center" gap={4}>
-                        <App.Text color="#B9B8C5" size={10} weight={400}>Total Supply</App.Text>
-                        <App.Tooltip placement="bottom-start" text={<App.Text center color="#B9B8C5">The maximum amount of {type === 'tokens' ? 'tokens' : 'NFTs'} there will ever exist in its lifetime. The total number of {type === 'tokens' ? 'tokens' : 'NFTs'} available</App.Text>}>
-                          <App.Icon icon="info" width={12} height={12} />
-                        </App.Tooltip>
-                      </App.Flex>
-                      <App.Number size={16} weight={700}>{ current?.tokenCount }</App.Number>
-                    </App.Flex>
-                  </App.Flex>
+              <App.Flex column gap={4}>
+                <App.Flex row align="center" gap={8}>
+                  <App.Text size={16} weight={600} uppercase height={1}>{ current?.symbol ?? current?.slug }{type == 'tokens' ? '/USDT' : ''}</App.Text>
+                  <App.Text size={12} color="#5E5C6B" nowrap sx={{ cursor: 'pointer' }} height={1} onClick={handleClickLink('website')}>{ current?.name } {current?.externalUrl ? <App.Icon icon="link" /> : null}</App.Text>
                 </App.Flex>
+
+                {current?.address ? (
+                  <App.Flex row align="center" gap={4}>
+                    <Image src={`/images/icon-${blockchain.code}.png`} width={12} height={12} alt="" />
+                    <App.Text size={12} color="#5E5C6B" nowrap height={1} onClick={handleClickLink(blockchain?.code)} sx={{ cursor: 'pointer' }}>{ blockchain?.name }: {[current.address.slice(0, 7), current.address.slice(-7)].join('...')}</App.Text>
+                    <App.Flex center sx={{ cursor: 'pointer' }} onClick={handleCopy}>
+                      <App.Icon icon="copy2" />
+                    </App.Flex>
+                  </App.Flex>
+                ) : null}
               </App.Flex>
-            </>
-          : null
-      }
+            </App.Flex>
+
+            <App.Flex column gap={6}>
+              <App.Number size={16} weight={600} height={1} color="#53F19C">{ current?.price }</App.Number>
+              <App.Number size={12} height={1} color="#5E5C6B">${ current?.price }</App.Number>
+            </App.Flex>
+          </App.Flex>
+
+          <div className={styles.line} />
+          
+          <App.Flex row align="center" gap={40}>
+            <App.Flex column gap={6}>
+              <App.Number nowrap size={12} height={1} color="#5E5C6B">24h Change</App.Number>
+              <App.Flex align="center" gap={4}>
+                <App.Icon style={{transform: `rotate(${current?.ticker?.type == 'minus' ? '0' : '180'}deg)`}} icon="caret-down" color={current?.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C' } width={10} height={10} />
+                <App.Text size={12} height={1} color={current?.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C' }>{ current?.ticker?.value }%</App.Text>
+              </App.Flex>
+            </App.Flex>
+
+            <App.Flex column gap={6}>
+              <App.Number nowrap size={12} height={1} color="#5E5C6B">24h High</App.Number>
+              <App.Number size={12} height={1} color="#B9B8C5">{ current?.high ?? high }</App.Number>
+            </App.Flex>
+
+            <App.Flex column gap={6}>
+              <App.Number nowrap size={12} height={1} color="#5E5C6B">24h Low</App.Number>
+              <App.Number size={12} height={1} color="#B9B8C5">{ current?.low ?? low }</App.Number>
+            </App.Flex>
+
+            <App.Flex column gap={6}>
+              <App.Number nowrap size={12} height={1} color="#5E5C6B">24h Volume (USDT)</App.Number>
+              <App.Number size={12} height={1} color="#B9B8C5">{ current?.tokenCount }</App.Number>
+            </App.Flex>
+          </App.Flex>
+        </>
+      ) : null}
     </App.Flex>
   )
 }
 
 const isEqual = (prevProps, nextProps) => {
-  return prevProps.current === nextProps.current && prevProps.location === nextProps.location
+  return prevProps.current === nextProps.current
+    && prevProps.type === nextProps.type
 }
 
 export default memo(Info, isEqual)

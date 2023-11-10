@@ -53,9 +53,9 @@ const SidebarSearch = ({ search, loading, onSearch, ...props }) => {
       value={localSearch}
       type="text"
       labelFixed
-      placeholder="Search by name or paste address"
+      placeholder="Search"
       onChange={handleSearchChange}
-      start={<App.Icon icon="search" color={localSearch.trim() != '' ? '#fff' : null } />}
+      start={<App.Icon icon="search" color={localSearch.trim() != '' ? '#fff' : '#5E5C6B' } />}
       end={localSearch.trim() != '' && loading ? <App.Loader size={12} /> : null}
       size="small"
       variant="search"

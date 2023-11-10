@@ -182,20 +182,19 @@ const Orders = ({current, global, type, version, onOrderCancelled, onClickOrder}
     <App.Flex column className={cn(styles.container, {[styles[version]]: version})}>
       {
         type === 'tokens'
-          ? <App.Flex height={[26, 32]} sx={{position: 'relative', marginBottom: 8}}>
-              <App.Flex flex={1} justify="center" align="center" sx={{cursor: 'pointer'}} onClick={handleChangeOrdersType('open')}>
-                <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'open' ? '#fff' : 'rgba(185, 184, 197, 0.8)'}>Open Orders</App.Text>
+          ? <App.Flex className={styles.header}>
+              <App.Flex flex={1} center className={cn(styles.tab, {[styles.active]: ordersType === 'open'})} onClick={handleChangeOrdersType('open')}>
+                <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'open' ? '#fff' : '#5E5C6B'} height={1}>Open Orders</App.Text>
               </App.Flex>
-              <App.Flex flex={1} justify="center" align="center" sx={{cursor: 'pointer'}} onClick={handleChangeOrdersType('closed')}>
-                <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'closed' ? '#fff' : 'rgba(185, 184, 197, 0.8)'}>Completed Orders</App.Text>
+              <App.Flex flex={1} center className={cn(styles.tab, {[styles.active]: ordersType === 'closed'})} onClick={handleChangeOrdersType('closed')}>
+                <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'closed' ? '#fff' : '#5E5C6B'} height={1}>Completed Orders</App.Text>
               </App.Flex>
+
               <div className={styles.badge} style={{transform: `translateX(${ordersType === 'open' ? 0 : 100}%)`}} />
             </App.Flex>
           : version != 'mobile' ? (
-            <App.Flex column>
-              <App.Flex className={styles.header} align="center">
-                <App.Text size={[12, 14]} uppercase={[true, null]} color="rgba(255,255,255,0.8)" weight={600}>My Orders</App.Text>
-              </App.Flex>
+            <App.Flex className={styles.header} align="center">
+              <App.Text size={[12, 14]} uppercase={[true, null]} weight={600} height={1}>My Orders</App.Text>
             </App.Flex>
           ) : null
       }
@@ -214,52 +213,52 @@ const Orders = ({current, global, type, version, onOrderCancelled, onClickOrder}
         </App.Flex>
       ) : (
         <>
-          <App.Flex height={40} align="center" justify="space-between" sx={global ? {padding: '0 8px'} : null}>
+          <App.Flex align="center" justify="space-between" sx={{padding: 8}}>
             { ! global ? (
               <App.Flex align="center" gap={8} flex={1}>
                 <App.Switch
                   width={40}
                   height={20}
                   checked={showCollectionOrders}
-                  onChange={handleChangeSwitch} />
-                {
-                  type === 'nfts'
-                    ? <Image alt="" src={current?.image} width={20} height={20} />
-                    : <App.Flex>
-                        <App.Text color="#B9B8C5" size={[10, 12]} weight={600}>{current?.symbol} / USDT</App.Text>
-                      </App.Flex>
-                }
+                  onChange={handleChangeSwitch}
+                />
+
+                {type === 'nfts' ? (
+                  <Image alt="" src={current?.image} width={20} height={20} />
+                ) : (
+                  <App.Text color="#B9B8C5" size={[10, 12]} weight={600} height={1}>{current?.symbol} - USDT Orders</App.Text>
+                )}
               </App.Flex>
             ) : null}
 
-            {
-              type === 'tokens' && ordersType === 'closed'
-                ? <App.Flex align="center" gap={8} flex={1}>
-                    <App.Switch
-                      width={40}
-                      height={20}
-                      checked={hideCancelledOrders}
-                      onChange={handleHideCancelledOrders} />
-                    <App.Text color="#B9B8C5" size={[10, 12]} weight={600}>{version != 'mobile' ? 'Hide All Cancelled Orders' : 'Hide Cancelled Orders'}</App.Text>
-                  </App.Flex>
-                : null
-            }
+            {type === 'tokens' && ordersType === 'closed' ? (
+              <App.Flex align="center" gap={8} flex={1}>
+                <App.Switch
+                  width={40}
+                  height={20}
+                  checked={hideCancelledOrders}
+                  onChange={handleHideCancelledOrders}
+                />
+
+                <App.Text color="#B9B8C5" size={[10, 12]} weight={600} height={1}>{version != 'mobile' ? 'Hide All Cancelled Orders' : 'Hide Cancelled Orders'}</App.Text>
+              </App.Flex>
+            ) : null}
           </App.Flex>
 
           {version != 'mobile' ? (
             <>
-              <App.Flex align="center" sx={{height: 20, borderBottom: '1px solid rgba(94, 92, 107, 0.3)'}}>
-                <App.Flex column sx={{width: 60}} align="center">
-                  <App.Text size={10} weight={600} color="#B9B8C5" center>Asset</App.Text>
+              <App.Flex align="center" sx={{borderBottom: '1px solid #19162D'}}>
+                <App.Flex column sx={{width: 60, padding: '4px 8px 10px'}} align="center">
+                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Asset</App.Text>
                 </App.Flex>
-                <App.Flex column sx={{width: 60}} align="center">
-                  <App.Text size={10} weight={600} color="#B9B8C5" center>Qty</App.Text>
+                <App.Flex column sx={{width: 60, padding: '4px 8px 10px'}} align="center">
+                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Qty</App.Text>
                 </App.Flex>
-                <App.Flex column flex={1} align="center">
-                  <App.Text size={10} weight={600} color="#B9B8C5" center>Price</App.Text>
+                <App.Flex column flex={1} sx={{padding: '4px 8px 10px'}} align="center">
+                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Price</App.Text>
                 </App.Flex>
-                <App.Flex column flex={1} align="center">
-                  <App.Text size={10} weight={600} color="#B9B8C5">Total</App.Text>
+                <App.Flex column flex={1} sx={{padding: '4px 8px 10px'}} align="center">
+                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Total</App.Text>
                 </App.Flex>
               </App.Flex>
 
@@ -271,80 +270,67 @@ const Orders = ({current, global, type, version, onOrderCancelled, onClickOrder}
                       <App.Flex column className={styles.orderContainer}>
                         <App.Flex align="center" className={cn(styles.order, {[styles.disabled]: order.status === 'completed' || order.status === 'cancelled'})}>
                           <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
-                          <App.Flex column align="center" justify="center" sx={{width: 60}}>
-                            {
-                              order.image && type === 'nfts'
-                                ? <Image alt="" src={order.image} width={35} height={35} />
-                                : order.quoteCurrency
-                                  ? <App.Flex column>
-                                      <App.Text size={10} weight={600} center>{ order.quoteCurrency }</App.Text>
-                                      <div style={{width: '100%', height: 1, background: '#5E5C6B'}} />
-                                      <App.Text color="#5E5C6B" size={9} weight={600} center>{ order.baseCurrency }</App.Text>
-                                    </App.Flex>
-                                  : null
-                            }
+                          <App.Flex column align="center" justify="center" sx={{width: 60, padding: 8}}>
+                            {order.image && type === 'nfts' ? (
+                              <Image alt="" src={order.image} width={35} height={35} />
+                            ) : (
+                              order.quoteCurrency ? (
+                                <App.Flex column gap={4}>
+                                  <App.Text size={12} weight={600} center height={1}>{ order.quoteCurrency }</App.Text>
+                                  <div style={{width: '100%', minWidth: 20, height: 1, background: '#5E5C6B'}} />
+                                  <App.Text color="#5E5C6B" size={8} weight={600} center height={1}>{ order.baseCurrency }</App.Text>
+                                </App.Flex>
+                              ) : null
+                            )}
                           </App.Flex>
-                          <App.Flex column sx={{width: 60}} align="center" justify="center">
-                            <App.Text size={12} weight={600} center>{ order.quantityFilled }</App.Text>
-                            <App.Text size={10} weight={600} center color="rgba(94, 92, 107, 1)">{ order.quantity }</App.Text>
+
+                          <App.Flex column sx={{width: 60, padding: 8}} align="center" justify="center">
+                            <App.Flex column gap={4}>
+                              <App.Text size={12} weight={600} center height={1}>{ order.quantityFilled }</App.Text>
+                              <div style={{width: '100%', minWidth: 20, height: 1, background: '#5E5C6B'}} />
+                              <App.Text color="#5E5C6B" size={8} weight={600} center height={1}>{ order.quantity }</App.Text>
+                            </App.Flex>
                           </App.Flex>
-                          <App.Flex flex={1} column align="center" justify="center">
-                            <App.Text size={12} weight={600} center color="rgba(185, 184, 197, 0.8)">{ order.itemPrice } { order.baseCurrency }</App.Text>
+
+                          <App.Flex flex={1} column sx={{padding: 8}} align="center" justify="center">
+                            <App.Text size={12} weight={600} center color="#B9B8C5" height={1}>${ order.itemPrice }</App.Text>
                           </App.Flex>
-                          <App.Flex flex={1} column align="center" justify="center" sx={{position: 'relative', height: '100%', overflow: 'hidden'}}>
-                            <App.Text size={12} weight={600}>{ order.price } { order.baseCurrency }</App.Text>
-                            
-                            {/* <App.Flex className={styles.cancelButton} sx={{backgroundColor: order.status === 'completed' ? '#063834' : 'rgb(77, 14, 39)'}} onClick={handlePressCancel(order)}>
-                              <App.Text size={12} color={order.status === 'completed' ? 'rgb(83, 241, 156)' : 'rgb(235, 49, 105)'} className={styles.statusText}>
-                                {
-                                  (order.status === 'completed' || order.status === 'cancelled') ? order.status : 'Cancel order'
-                                }
-                              </App.Text>
-                            </App.Flex> */}
+
+                          <App.Flex flex={1} column align="center" justify="center" sx={{padding: 8, position: 'relative', height: '100%', overflow: 'hidden'}}>
+                            <App.Text size={12} weight={600}>${ order.price }</App.Text>
                           </App.Flex>
                         </App.Flex>
+
                         <App.Flex align="center" justify="flex-end" className={cn(styles.hoverContent)}>
-                          <App.Text color="rgba(185, 184, 197, 1)" size={10} weight={500} sx={{marginRight: 12}}>{ order.time }</App.Text>
-                          {
-                            order.status !== 'open'
-                              ? <App.Text color="#B9B8C5" size={10} weight={600} uppercase>
-                                  { (order.status === 'completed' || order.status === 'cancelled') ? order.status : 'Cancel order' }
-                                </App.Text>
-                              : null
-                          }
+                          <App.Text color="rgba(185, 184, 197, 1)" size={10} weight={500} sx={{marginRight: 12}} height={1}>{ order.time }</App.Text>
+                          {order.status !== 'open' ? (
+                            <App.Text color="#B9B8C5" size={10} weight={600} uppercase height={1}>
+                              {(order.status === 'completed' || order.status === 'cancelled') ? order.status : 'Cancel order'}
+                            </App.Text>
+                          ) : null}
                           
                           <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressCopy(order)}>
                             <App.Icon icon="copy" width={12} height={12} color="#B9B8C5" />
                           </App.Flex>
-                          {
-                            order.status !== 'open'
-                              ? <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handleClickDetails(order)}>
-                                  <App.Icon icon="order-details" />
-                                </App.Flex>
-                              : null
-                          }
-                          {/* {
-                            order.status === 'open'
-                              ? <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressEdit(order)}>
-                                  <App.Icon icon="pencil" />
-                                </App.Flex>
-                              : null
-                          } */}
-                          {
-                            order.status === 'open'
-                              ? <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressCancel(order)}>
-                                  <App.Icon icon="cross-circle" />
-                                </App.Flex>
-                              : null
-                          }
+
+                          {order.status !== 'open' ? (
+                            <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handleClickDetails(order)}>
+                              <App.Icon icon="order-details" />
+                            </App.Flex>
+                          ) : null}
+
+                          {order.status === 'open' ? (
+                            <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressCancel(order)}>
+                              <App.Icon icon="cross-circle" />
+                            </App.Flex>
+                          ) : null}
                         </App.Flex>
-                        {
-                          cancellingOrders.includes(order.id)
-                            ? <App.Flex sx={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0}} align="center" justify="center">
-                                <App.Loader />
-                              </App.Flex>
-                            : null
-                        }
+
+                        {cancellingOrders.includes(order.id) ? (
+                          <App.Flex sx={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0}} align="center" justify="center">
+                            <App.Loader />
+                          </App.Flex>
+                        ) : null}
                       </App.Flex>
                     </App.Flex>
                   )

@@ -49,7 +49,7 @@ export const template = (item, assets) => {
     volume: numeral(item?.volumeUSD ?? item?.volume ?? 0).format('0.[0000]'),
     tvl: numeral(item?.totalValueLockedUSD ?? item?.tvl ?? 0).format('0.[0000]'),
     description: assets?.description ?? item?.description,
-    tokenCount: item?.tokenCount ?? item?.totalSupply ?? 0,
+    tokenCount: item?.tokenCount ?? 0,
     onSaleCount: assets?.onSaleCount ?? item?.onSaleCount ?? 0,
     discordUrl: null,
     externalUrl: assets?.externalUrl ?? item?.externalUrl,
@@ -125,7 +125,7 @@ export const staticTemplate = (item) => {
 //   return {}
 // }
 
-export const fullToTemplate = (item, platform, blockchain) => {
+export const fullToTemplate = (item, platform) => {
   if (item) {
     return {
       id: platform?.contract_address,
@@ -334,6 +334,12 @@ const api = {
 
     top: (params) => {
       return request('search/trending', 'GET', {api: 'coingecko', ...params})
+    },
+  },
+
+  backend: {
+    all: (params) => {
+      return request('token/list', 'GET', {api: 'backend', ...params})
     },
   },
 }

@@ -1,8 +1,8 @@
 .container {
-  padding: 24px 24px 0;
-  min-height: 100%;
-  // position: relative;
-  // z-index: 10;
+  padding: 24px;
+  height: 100%;
+  width: 100%;
+  min-height: 640px;
 
   @media (max-width: 768px) {
     & {
@@ -29,4 +29,10 @@
     z-index: 0;
     left: 16px;
   }
+}
+
+.card {
+  border-radius: 4px;
+  border: 1px solid #19162D;
+  background: #0E0B23;
 }

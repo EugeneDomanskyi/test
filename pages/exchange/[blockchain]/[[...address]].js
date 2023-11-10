@@ -19,7 +19,7 @@ import SidebarMobile from '@/components/Exchange/Sidebar/SidebarMobile'
 import OrderBook from '@/components/Exchange/OrderBook'
 import Sales from '@/components/Exchange/Sales'
 import TradeForm from '@/components/Exchange/TradeForm'
-import CollectionInfo from '@/components/Exchange/Info'
+import Info from '@/components/Exchange/Info'
 import Orders from '@/components/Exchange/Orders'
 import MobileTabsBar from '@/components/Exchange/MobileTabsBar'
 
@@ -27,7 +27,7 @@ import styles from './styles.module.scss'
 
 const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 
-const GRID_GAP = 6
+const GRID_GAP = 8
 
 const Exchange = () => {
   const router = useRouter()
@@ -120,39 +120,39 @@ const Exchange = () => {
             onPage={handlePage}
           />
 
-          <App.Flex column flex={1} gap={GRID_GAP}>
-            <CollectionInfo
-              current={current}
-              location={router.asPath} />
-
-            <App.Flex gap={GRID_GAP}>
-              <App.Flex flex={1} column gap={GRID_GAP}>
+          <App.Flex column gap={GRID_GAP} fullHeight sx={{ width: 'calc(100% - 237px - 8px)' }}>
+            <App.Flex row fullWidth gap={GRID_GAP} height="55%">
+              <App.Flex column className={styles.card} fullHeight sx={{ width: 'calc(100% - 324px - 8px)' }}>
+                <Info current={current} type="tokens" />
                 <Chart type="tokens" />
-
-                <App.Flex gap={GRID_GAP}>
-                  <OrderBook
-                    type="tokens"
-                    onClickOrder={handleClickOrder} />
-                  <Sales
-                    type="tokens"
-                    onClickSale={handleClickOrder} />
-                </App.Flex>
               </App.Flex>
 
-              <App.Flex column gap={GRID_GAP}>
-                <App.Flex>
-                  <TradeForm
-                    ref={tradeForm}
-                    type="tokens"
-                    current={current} />
-                </App.Flex>
+              <TradeForm
+                ref={tradeForm}
+                type="tokens"
+                current={current}
+              />
+            </App.Flex>
 
-                <Orders
-                  current={current}
+            <App.Flex row fullWidth gap={GRID_GAP} height="45%">
+              <App.Flex gap={GRID_GAP} fullHeight sx={{ width: 'calc(100% - 324px - 8px)' }}>
+                <OrderBook
                   type="tokens"
-                  onOrderCancelled={handleOrdersUpdated}
-                  onClickOrder={handleClickOrder} />
+                  onClickOrder={handleClickOrder}
+                />
+
+                <Sales
+                  type="tokens"
+                  onClickSale={handleClickOrder}
+                />
               </App.Flex>
+
+              <Orders
+                current={current}
+                type="tokens"
+                onOrderCancelled={handleOrdersUpdated}
+                onClickOrder={handleClickOrder}
+              />
             </App.Flex>
           </App.Flex>
         </>
