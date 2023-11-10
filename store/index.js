@@ -65,10 +65,6 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
     },
   }
 
-  if (api == 'backend') {
-    options.mode = 'no-cors'
-  }
-
   if ( ! api) {
     options.headers['x-api-key'] = process.env.NEXT_PUBLIC_RESERVOIR_API_KEY
   }

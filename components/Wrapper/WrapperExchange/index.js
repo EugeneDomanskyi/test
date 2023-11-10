@@ -16,8 +16,15 @@ const getTokens = async (chain, post) => {
   if (chain?.useBackend) {
     const result = await $token.api.backend.all(post)
     if (result) {
-      console.log('1234556', result)
-      return result
+      return result.map(item => ({
+        id: item.ContractAddress.toLowerCase(),
+        name: item.Name,
+        symbol: item.Symbol,
+        decimals: item.Decimals,
+        totalSupply: null,
+        volumeUSD: null,
+        totalValueLockedUSD: null,
+      }))
     }
 
     return []
@@ -111,28 +118,38 @@ const getTokenDayDatas = async (url, ids) => {
 }
 
 const getToken = async (chain, id) => {
-  const client = getApolloClient(chain.baseUniswapUrl)
-  const res = await client.query({
-    query: queries.tokenById,
-    variables: {id: id}
-  })
-  return res.data.token && res.data.token.symbol !== 'unknown' ? res.data.token : null
+  if (chain?.useBackend) {
+    const post = {
+      page: 1,
+      pageSize: 1,
+      chainId: chain.id,
+      filterCol: 'ContractAddress',
+      filterVal: id,
+    }
+    
+    const result = $token.api.backend.all(post)
+    if (result && result.length) {
+      const [item] = result
+      return {
+        id: item.ContractAddress.toLowerCase(),
+        name: item.Name,
+        symbol: item.Symbol,
+        decimals: item.Decimals,
+        totalSupply: null,
+        volumeUSD: null,
+        totalValueLockedUSD: null,
+      }
+    }
 
-  // const post = {
-  //   page: 1,
-  //   pageSize: 1,
-  //   chainId: chain.id,
-  //   filterCol: 'ContractAddress',
-  //   filterVal: id,
-  // }
-  
-  // const result = $token.api.backend.all(post)
-  // if (result) {
-  //   console.log(result)
-  //   return result
-  // }
-
-  // return null
+    return null
+  } else {
+    const client = getApolloClient(chain.baseUniswapUrl)
+    const res = await client.query({
+      query: queries.tokenById,
+      variables: {id: id}
+    })
+    return res.data.token && res.data.token.symbol !== 'unknown' ? res.data.token : null
+  }
 }
 
 const WrapperExchange = ({children, _isMobile}) => {
@@ -200,8 +217,8 @@ const WrapperExchange = ({children, _isMobile}) => {
         page: pages.current,
         pageSize: tokensPerPage,
         chainId: currentChain.id,
-        sortBy: orderBy,
-        sortOrder: sortDirection.toLowerCase(),
+        sortBy: 'name',
+        sortOrder: 'asc',
       }
     } else {
       post = {
@@ -306,22 +323,29 @@ const WrapperExchange = ({children, _isMobile}) => {
 
       return acc
     }, [])
-    
-    const pricesCoingecko = await getPrices(coingeckoIds)
+
     let tokenIds = []
     let prices = {}
-    if (pricesCoingecko) {
-      if (!notCoingeckoIds.length) {
-        return pricesCoingecko
+    if (coingeckoIds.length) {
+      const pricesCoingecko = await getPrices(coingeckoIds)
+      if (pricesCoingecko) {
+        if (!notCoingeckoIds.length) {
+          return pricesCoingecko
+        } else {
+          prices = pricesCoingecko
+          tokenIds = notCoingeckoIds
+        }
       } else {
-        prices = pricesCoingecko
-        tokenIds = notCoingeckoIds
+        tokenIds = tokens.map(token => token.id)
       }
     } else {
       tokenIds = tokens.map(token => token.id)
     }
 
-    const uniswapPrices = await getTokenDayDatas(currentChain.baseUniswapUrl, tokenIds)
+    let uniswapPrices = {}
+    if (currentChain.baseUniswapUrl) {
+      uniswapPrices = await getTokenDayDatas(currentChain.baseUniswapUrl, tokenIds)
+    }
     return {...prices, ...uniswapPrices}
   }
 

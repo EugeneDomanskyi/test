@@ -176,23 +176,27 @@ MyApp.getInitialProps = async ({ctx}) => {
       if (blockchain && address) {
         const network = CHAINS.find(chain => chain.code === blockchain)
         if (network) {
-          const res = await $token.api.coingecko.full({platform: network.platform, address: address})
-          if (res) {
-            currentSymbol = res.symbol.toUpperCase()
-            res.blockchain = blockchain
-            currentInfo = tokenTemplate(fullToTemplate(res, res.detail_platforms[network.platform]))
+          if (network?.useBackend) {
+            const post = {
+              page: 1,
+              pageSize: 1,
+              chainId: network.id,
+              filterCol: 'contractaddress',
+              filterVal: address,
+            }
+
+            const result = await $token.api.backend.all(post)
+            if (result && result.length) {
+              console.log(result)
+            }
+          } else {
+            const res = await $token.api.coingecko.full({platform: network.platform, address: address})
+            if (res) {
+              currentSymbol = res.symbol.toUpperCase()
+              res.blockchain = blockchain
+              currentInfo = tokenTemplate(fullToTemplate(res, res.detail_platforms[network.platform]))
+            }
           }
-
-          // const post = {
-          //   page: 1,
-          //   pageSize: 1,
-          //   chainId: network.id,
-          //   filterCol: 'ContractAddress',
-          //   filterVal: address,
-          // }
-
-          // const result = await $token.api.backend.all(post)
-          // console.log(result)
         }
       }
     } else if (currentPage === 'nfts') {
