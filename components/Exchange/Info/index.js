@@ -17,16 +17,16 @@ const Info = ({ current, type }) => {
   const scanLink = `${blockchain.scanUrl}/address/${current.address}`
 
   const handleClickLink = (type) => () => {
-    if (current?.externalUrl) {
-      trackEvent(`Click ${type} Redirect`, {
-        Markets: current.name,
-      })
-
-      if (type == 'website') {
+    trackEvent(`Click ${type} Redirect`, {
+      Markets: current.name,
+    })
+    
+    if (type == 'website') {
+      if (current?.externalUrl) {
         window.open(current.externalUrl, '_blank')
-      } else {
-        window.open(scanLink, '_blank')
       }
+    } else {
+      window.open(scanLink, '_blank')
     }
   }
 

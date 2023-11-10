@@ -231,7 +231,6 @@ export const CHAINS = [
       name: 'Wrapped Ether',
       shortName: 'WETH',
     },
-    useBackend: true,
   }, {
     ...polygon,
     code: 'polygon',

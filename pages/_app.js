@@ -181,13 +181,51 @@ MyApp.getInitialProps = async ({ctx}) => {
               page: 1,
               pageSize: 1,
               chainId: network.id,
-              filterCol: 'contractaddress',
+              filterCol: 'contract_address',
               filterVal: address,
             }
 
             const result = await $token.api.backend.all(post)
             if (result && result.length) {
-              console.log(result)
+              const [item] = result
+              const token = {
+                id: item.ContractAddress,
+                name: item.Name,
+                symbol: item.Symbol,
+                decimals: item.Decimals,
+                totalSupply: null,
+                volumeUSD: null,
+                totalValueLockedUSD: null,
+              }
+
+              currentSymbol = token.symbol.toUpperCase()
+              const res = await $token.api.coingecko.full({platform: network.platform, address: address})
+              if (res) {
+                const fullToken = {
+                  ...token,
+                  blockchain,
+                  isFull: true,
+                  image: res.image.large,
+                  price: res.market_data?.current_price?.usd,
+                  high: res.market_data?.high_24h?.usd,
+                  low: res.market_data?.low_24h?.usd,
+                  volume: res.market_data?.total_volume?.usd,
+                  tvl: res.market_data?.total_value_locked,
+                  description: res.description?.en,
+                  tokenCount: res.market_data?.total_supply,
+                  onSaleCount: res.market_data?.circulating_supply,
+                  externalUrl: res.links?.homepage[0],
+                  twitterUrl: res.links?.twitter_screen_name ? `https://twitter.com/${res.links?.twitter_screen_name}` : null,
+                  ticker: {
+                    value: Math.abs(res.market_data?.price_change_percentage_24h ?? 0).toFixed(2),
+                    type: ((res.market_data?.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
+                  },
+                  genesis_date: res?.genesis_date,
+                  marketCap: res.market_data?.total_supply * (res.market_data?.current_price?.usd ?? 0),
+                }
+                res.blockchain = blockchain
+                currentInfo = tokenTemplate(fullToken)
+              }
             }
           } else {
             const res = await $token.api.coingecko.full({platform: network.platform, address: address})

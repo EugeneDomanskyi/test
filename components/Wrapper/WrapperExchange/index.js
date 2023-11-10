@@ -17,7 +17,7 @@ const getTokens = async (chain, post) => {
     const result = await $token.api.backend.all(post)
     if (result) {
       return result.map(item => ({
-        id: item.ContractAddress.toLowerCase(),
+        id: item.ContractAddress,
         name: item.Name,
         symbol: item.Symbol,
         decimals: item.Decimals,
@@ -305,24 +305,28 @@ const WrapperExchange = ({children, _isMobile}) => {
   }, [address, currentToken?.id, blockchain, activeInterval.seconds, isAddress])
 
   const fetchPrices = async (tokens) => {
-    const coingeckoIds = tokens.reduce((acc, token) => {
-      const key = coingeckoAssets[currentChain.platform][token.id]
-      return {
-        ...acc,
-        ...(key ? {[key]: token.id} : null)
-      }
-    }, {})
+    let coingeckoIds = []
+    let notCoingeckoIds = []
+    if (coingeckoAssets[currentChain.platform]) {
+      coingeckoIds = tokens.reduce((acc, token) => {
+        const key = coingeckoAssets[currentChain.platform][token.id]
+        return {
+          ...acc,
+          ...(key ? {[key]: token.id} : null)
+        }
+      }, {})
 
-    const notCoingeckoIds = tokens.reduce((acc, token) => {
-      const key = coingeckoAssets[currentChain.platform][token.id]
-      if ( ! key) {
-        const newAcc = [...acc]
-        newAcc.push(token.id)
-        return newAcc
-      }
-
-      return acc
-    }, [])
+      notCoingeckoIds = tokens.reduce((acc, token) => {
+        const key = coingeckoAssets[currentChain.platform][token.id]
+        if ( ! key) {
+          const newAcc = [...acc]
+          newAcc.push(token.id)
+          return newAcc
+        }
+  
+        return acc
+      }, [])
+    }
 
     let tokenIds = []
     let prices = {}
@@ -352,34 +356,50 @@ const WrapperExchange = ({children, _isMobile}) => {
   const searchTokens = async (searchText) => {
     dispatch($token.set.searching(true))
     dispatch($token.set.loading(true))
+
     const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(searchText)
     let results = []
     if (isAddress) {
-      const res = await fetchToken({address: searchText, chainId: currentChain.id})
-      const tokenData = {
-        ...res,
-        totalSupply: res.totalSupply.formatted,
-        id: res.address,
-      }
-      results = [tokenData]
-    } else {
-      const post = {
-        skip: 0,
-        orderBy: orderBy,
-        orderDirection: sortDirection.toLowerCase(),
-        searchText: searchText,
-        usdt: currentChain.usdtContract,
-      }
+      if (currentChain?.useBackend) {
+        const post = {
+          page: 1,
+          pageSize: 1,
+          chainId: currentChain.id,
+          filterCol: 'contract_address',
+          filterVal: searchText,
+        }
 
-      // const post = {
-      //   page: 1,
-      //   pageSize: tokensPerPage,
-      //   chainId: currentChain.id,
-      //   sortBy: orderBy,
-      //   sortOrder: sortDirection.toLowerCase(),
-      //   filterCol: 'name',
-      //   filterVal: searchText,
-      // }
+        results = await getTokens(currentChain, post)
+      } else {
+        const res = await fetchToken({address: searchText, chainId: currentChain.id})
+        const tokenData = {
+          ...res,
+          totalSupply: res.totalSupply.formatted,
+          id: res.address,
+        }
+        results = [tokenData]
+      }
+    } else {
+      let post = {}
+      if (currentChain?.useBackend) {
+        post = {
+          page: pages.current,
+          pageSize: tokensPerPage,
+          chainId: currentChain.id,
+          sortBy: 'name',
+          sortOrder: 'asc',
+          filterCol: 'name',
+          filterVal: searchText,
+        }
+      } else {
+        post = {
+          skip: 0,
+          orderBy: orderBy,
+          orderDirection: sortDirection.toLowerCase(),
+          searchText: searchText,
+          usdt: currentChain.usdtContract,
+        }
+      }
 
       results = await getTokens(currentChain, post)
     }

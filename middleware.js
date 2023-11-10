@@ -2,7 +2,7 @@ import { NextResponse, userAgent } from 'next/server'
 import { ResponseCookies, RequestCookies } from 'next/dist/server/web/spec-extension/cookies'
 
 const DEFAULT_BLOCKCHAIN = 'ethereum'
-const VALID_BLOCKCHAINS = ['ethereum', 'polygon', 'arbitrum', 'bsc', 'avalanche']
+const VALID_BLOCKCHAINS = ['ethereum', 'polygon', 'mumbai', 'arbitrum', 'bsc', 'avalanche']
 
 const applySetCookie = (req, res) => {
   const setCookies = new ResponseCookies(res.headers)

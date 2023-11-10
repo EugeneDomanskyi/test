@@ -69,7 +69,7 @@ const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpt
                     )
                   })}
 
-                  {pages.next && ! searching ? (
+                  {pages.next && ! searching && items.length == 20 ? (
                     <div ref={mobileNextRef}>
                       <App.Flex center full>
                         <App.Loader size={40} />
