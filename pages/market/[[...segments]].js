@@ -63,7 +63,6 @@ export default function Markets({ marketData, currentChain }) {
       $markets.api.strapi(marketInfo.id, token).then(res => {
         if (res.data && res.data.length) {
           const info = res.data[0].attributes
-          console.log('info', info);
           const resources = info?.project_data.project.resources.length ? info?.project_data.project.resources : null
           const investors = info?.project_data.project.investors && info?.project_data.project.investors !== "null" ? info?.project_data.project.investors : null
           const team = info?.project_data.project.creator.length ? info?.project_data.project.creator : null

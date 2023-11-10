@@ -73,7 +73,7 @@ export const staticTemplate = (item) => {
     image: item?.image?.large ?? '',
     name: item?.name,
     // blockchain: item?.blockchain,
-    symbol: item?.symbol,
+    symbol: item?.symbol ? item?.symbol.toUpperCase() : '',
     currency: currency,
     description: item?.description?.en,
     tokenCount: item.market_data?.total_supply ?? 0,
