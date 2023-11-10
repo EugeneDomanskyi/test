@@ -107,13 +107,13 @@ const MarketFAQ = ({type, marketInfo}) => {
                       <div className={cn(styles.plus, {[styles.open]: openItem === i})} />
                     </div>
                   </div>
-                  <div className={styles.title}>{ item.question }</div>
+                  <h3 className={styles.title}>{ item.question }</h3>
                 </div>
                 <div className={styles.answer} ref={ref => answers.current[i] = ref}>
                   <div>
                     <div style={{width: 44, marginRight: 16}} />
                   </div>
-                  <div dangerouslySetInnerHTML={{__html: item.answer}} />
+                  <div style={{ whiteSpace: 'pre-line' }} dangerouslySetInnerHTML={{__html: item.answer}} />
                 </div>
               </div>
             )

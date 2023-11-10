@@ -70,7 +70,7 @@ export default function Markets({ marketData, currentChain }) {
           const description = info?.token_metadata.token.long_description ?? null
           const parent_collection_name = info?.token_metadata.token.parent_collection_name ?? null
           const project_name = info?.token_metadata.token.project_name ?? null
-          
+
           setMarketInfo(state => (
             {
               ...state,
@@ -108,14 +108,18 @@ export default function Markets({ marketData, currentChain }) {
     }
   }, [marketData, activeInterval.seconds])
 
+  const handleClickOrder = () => {
+    console.log();
+  }
+
   return (
     <>
       <Head>
-        <title>{`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Chart & Marketcap | Tegro: The CEX-DEX`}</title>
-        <meta name="description" content={`Buy, sell, and trade ${marketInfo.symbol ?? 'USDT'} or ${marketInfo.name} instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${marketInfo.name} at the best prices.`} />
+        <title>{`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Index, Live Chart, Marketcap & News | Tegro: The CEX-DEX`}</title>
+        <meta name="description" content={`Use Tegro: The CEX-DEX for real-time ${marketInfo.symbol ?? 'USDT'} prices and market data, ${marketInfo.name} orderbooks and the best ${marketInfo.symbol ?? 'USDT'} spot trading chart to buy, sell and trade instantly.`} />
         <meta name="keywords" content={`${marketInfo.symbol ?? 'USDT'}, ${marketInfo.name}`} />
-        <meta property="og:title" content={`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Chart & Marketcap | Tegro: The CEX-DEX`} />
-        <meta property="og:description" content={`Buy, sell, and trade ${marketInfo.symbol ?? 'USDT'} or ${marketInfo.name} instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${marketInfo.name} at the best prices.`} />
+        <meta property="og:title" content={`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Index, Live Chart, Marketcap & News | Tegro: The CEX-DEX`} />
+        <meta property="og:description" content={`Use Tegro: The CEX-DEX for real-time ${marketInfo.symbol ?? 'USDT'} prices and market data, ${marketInfo.name} orderbooks and the best ${marketInfo.symbol ?? 'USDT'} spot trading chart to buy, sell and trade instantly.`} />
       </Head>
       <App.Container>
         <App.Flex sx={{ paddingBottom: 48, paddingTop: 64, overflow: 'hidden' }} gap={32}>
