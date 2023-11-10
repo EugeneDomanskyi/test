@@ -1,0 +1,9 @@
+
+{
+  "redirects": [
+    {
+      "source": "/blog/:path*",
+      "destination": "https://blog.tegro.com/:path*"
+    }
+  ]
+}
