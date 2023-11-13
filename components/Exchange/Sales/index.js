@@ -63,7 +63,7 @@ const Sales = ({onClickSale, version, type}) => {
 
         <App.Flex flex={1} column sx={{overflow: 'auto'}}>
           {
-            trades.map(sale => {
+            trades.slice(0, 10).map(sale => {
               const price = sale.priceFormatted
               let color = {
                 price: '#53F19C',
@@ -82,9 +82,9 @@ const Sales = ({onClickSale, version, type}) => {
               return (
                 <App.Flex key={sale.id || sale.signature} column>
                   <App.Flex  justify="space-between" align="center" className={styles.sale} sx={{backgroundColor: color.row}} onClick={handleClick({...sale, side: color.side})}>
-                    <App.Text flex={1} size={12} color={color.price} height={1}>${ price }</App.Text>
-                    <App.Text flex={1} size={12} weight={600} color="rgba(255,255,255,0.8)" center height={1}>{ sale.amount }</App.Text>
-                    <App.Text flex={1} size={12} color="rgba(255,255,255,0.8)" right height={1}>{ moment(sale.timestamp*1000).format('hh:mm:ss A') }</App.Text>
+                    <App.Text flex={1} size={12} color={color.price} height={1}>{ price }</App.Text>
+                    <App.Text flex={1} size={12} weight={600} center height={1}>{ sale.amount }</App.Text>
+                    <App.Text flex={1} size={12} right height={1}>{ moment(sale.timestamp*1000).format('hh:mm:ss A') }</App.Text>
                   </App.Flex>
                 </App.Flex>
               )

@@ -38,7 +38,7 @@ const Info = ({ current, type }) => {
     <App.Flex row align="center" className={styles.container}>
       {current ? (
         <>
-          <App.Flex row align="center" gap={40}>
+          <App.Flex row align="center" className={styles.gap}>
             <App.Flex row center gap={8}>
               {current?.image ? (
                 <Image src={current?.image} width={36} height={36} alt="" />
@@ -72,9 +72,9 @@ const Info = ({ current, type }) => {
 
           <div className={styles.line} />
           
-          <App.Flex row align="center" gap={40}>
+          <App.Flex row align="center" className={styles.gap}>
             <App.Flex column gap={6}>
-              <App.Number nowrap size={12} height={1} color="#5E5C6B">24h Change</App.Number>
+              <App.Text nowrap size={12} height={1} color="#5E5C6B">24h Change</App.Text>
               <App.Flex align="center" gap={4}>
                 <App.Icon style={{transform: `rotate(${current?.ticker?.type == 'minus' ? '0' : '180'}deg)`}} icon="caret-down" color={current?.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C' } width={10} height={10} />
                 <App.Text size={12} height={1} color={current?.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C' }>{ current?.ticker?.value }%</App.Text>
@@ -82,18 +82,18 @@ const Info = ({ current, type }) => {
             </App.Flex>
 
             <App.Flex column gap={6}>
-              <App.Number nowrap size={12} height={1} color="#5E5C6B">24h High</App.Number>
+              <App.Text nowrap size={12} height={1} color="#5E5C6B">24h High</App.Text>
               <App.Number size={12} height={1} color="#B9B8C5">{ current?.high ?? high }</App.Number>
             </App.Flex>
 
             <App.Flex column gap={6}>
-              <App.Number nowrap size={12} height={1} color="#5E5C6B">24h Low</App.Number>
+              <App.Text nowrap size={12} height={1} color="#5E5C6B">24h Low</App.Text>
               <App.Number size={12} height={1} color="#B9B8C5">{ current?.low ?? low }</App.Number>
             </App.Flex>
 
             <App.Flex column gap={6}>
-              <App.Number nowrap size={12} height={1} color="#5E5C6B">24h Volume (USDT)</App.Number>
-              <App.Number size={12} height={1} color="#B9B8C5">{ current?.tokenCount }</App.Number>
+              <App.Text nowrap size={12} height={1} color="#5E5C6B">24h Volume (USDT)</App.Text>
+              <App.Number size={12} height={1} color="#B9B8C5">{ current?.volume }</App.Number>
             </App.Flex>
           </App.Flex>
         </>

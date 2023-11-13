@@ -176,7 +176,7 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
   }
 
   return (
-    <App.Flex column gap={[0, 8]} flex={1} className={cn(styles.container, {[styles[version]]: version})}>
+    <App.Flex column gap={[0, 8]} className={cn(styles.container, {[styles[version]]: version})}>
       {version != 'mobile' ? ComponentIntervals() : null}
 
       {top && top.length ? (
@@ -190,7 +190,7 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
         </App.Flex>
       ) : null}
 
-      <div ref={wrapperRef} style={version == 'mobile' ? {height: `calc(100% - ${top.length ? '76px' : '44px'})`} : {flex: 1, position: 'relative', zIndex: 0}}>
+      <div ref={wrapperRef} style={version == 'mobile' ? {height: `calc(100% - ${top.length ? '76px' : '44px'})`} : {height: '100%', position: 'relative', zIndex: 0}}>
         <div ref={containerRef} style={{ height: '100%' }} />
       </div>
 

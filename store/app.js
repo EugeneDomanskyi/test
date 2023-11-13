@@ -10,7 +10,12 @@ export const appSlice = createSlice({
     socketConnected: false,
     code: null,
     blockchains: CHAINS,
-    marketInfo: []
+    marketInfo: [],
+    size: {
+      isMobile: false,
+      windowWidth: null,
+      windowHeight: null,
+    }
   },
 
   reducers: {
@@ -21,8 +26,12 @@ export const appSlice = createSlice({
     socketConnected: (state, { payload }) => {
       state.socketConnected = payload
     },
-    isMobile: (state, { payload }) => {
-      state.isMobile = payload
+    size: (state, { payload }) => {
+      state.size = {
+        isMobile: payload?.isMobile ?? (payload?.width ? payload.width <= 768 : false),
+        windowWidth: payload?.width,
+        windowHeight: payload?.height,
+      }
     },
     marketInfo: (state, { payload }) => {
       state.marketInfo = payload

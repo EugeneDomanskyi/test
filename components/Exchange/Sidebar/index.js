@@ -16,6 +16,10 @@ const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpt
 
   useEffect(() => {
     handleScroll()
+    window.addEventListener('resize', handleScroll)
+    return () => {
+      window.removeEventListener('resize', handleScroll)
+    }
   }, [mobileNextRef.current])
 
   const handleScroll = () => {

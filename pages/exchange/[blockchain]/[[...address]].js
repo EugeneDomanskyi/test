@@ -1,27 +1,24 @@
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import dynamic from 'next/dynamic'
+import cn from 'classnames'
 
-import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { usePropsHelper } from '@/myhooks/props-helper'
 import useOrders from '@/myhooks/useOrders'
 
-import $app from '@/store/app'
 import $token from '@/store/token'
 import $orders from '@/store/orders'
 
 import App from '@/components/App'
 import Sidebar from '@/components/Exchange/Sidebar'
 import Mobile from '@/components/Exchange/Mobile'
-import SidebarMobile from '@/components/Exchange/Sidebar/SidebarMobile'
 import OrderBook from '@/components/Exchange/OrderBook'
 import Sales from '@/components/Exchange/Sales'
 import TradeForm from '@/components/Exchange/TradeForm'
 import Info from '@/components/Exchange/Info'
 import Orders from '@/components/Exchange/Orders'
-import MobileTabsBar from '@/components/Exchange/MobileTabsBar'
 
 import styles from './styles.module.scss'
 
@@ -34,13 +31,13 @@ const Exchange = () => {
   const [queryTokenId] = router.query.address || []
   const queryBlockchainCode = router.query.blockchain
 
-  const { isMobile } = usePropsHelper()
   const { wallet } = useWalletConnect()
   const { updateOrders } = useOrders({tokenAddress: queryTokenId, type: 'tokens'})
   
   const dispatch = useDispatch()
-  const blockchain = useSelector($app.get.blockchain)
   const myOrdersDialogOpen = useSelector(({ $orders }) => $orders.myOrdersDialogOpen)
+  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
+  const windowWidth = useSelector(({ $app }) => $app.size.windowWidth)
 
   const {
     tokens,
@@ -55,9 +52,6 @@ const Exchange = () => {
 
   const pages = useSelector($token.get.pages)
 
-  const [mobileTab, setMobileTab] = useState('markets')
-  const [mobileTabTrade, setMobileTabTrade] = useState(false)
-
   const tradeForm = useRef(null)
   const mobileRef = useRef(null)
 
@@ -69,7 +63,6 @@ const Exchange = () => {
     if (tradeForm.current) {
       tradeForm.current.setForm({formType: 'market', amount: order.quantity, price: order.price, side: order.side})
     } else {
-      setMobileTab('buy_sell')
       setTimeout(() => {
         tradeForm.current.setForm({formType: 'market', amount: order.quantity, price: order.price, side: order.side})
       }, 300)
@@ -120,9 +113,9 @@ const Exchange = () => {
             onPage={handlePage}
           />
 
-          <App.Flex column gap={GRID_GAP} fullHeight sx={{ width: 'calc(100% - 237px - 8px)' }}>
-            <App.Flex row fullWidth gap={GRID_GAP} height="55%">
-              <App.Flex column className={styles.card} fullHeight sx={{ width: 'calc(100% - 324px - 8px)' }}>
+          <App.Flex column gap={GRID_GAP} className={styles.partRight}>
+            <App.Flex row gap={GRID_GAP} className={styles.partRightTop}>
+              <App.Flex column className={cn(styles.card, styles.partRightTopChart)}>
                 <Info current={current} type="tokens" />
                 <Chart type="tokens" />
               </App.Flex>
@@ -134,8 +127,8 @@ const Exchange = () => {
               />
             </App.Flex>
 
-            <App.Flex row fullWidth gap={GRID_GAP} height="45%">
-              <App.Flex gap={GRID_GAP} fullHeight sx={{ width: 'calc(100% - 324px - 8px)' }}>
+            <App.Flex row gap={GRID_GAP} className={styles.partRightBottom}>
+              <App.Flex gap={GRID_GAP} className={styles.partRightBottomSales}>
                 <OrderBook
                   type="tokens"
                   onClickOrder={handleClickOrder}

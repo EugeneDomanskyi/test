@@ -29,7 +29,9 @@ const createStore = (initialData, page, info) => {
       $app: {
         ...appSlice.getInitialState(),
         code: initialData.blockchain || 'ethereum',
-        isMobile: initialData.isMobile,
+        size: {
+          isMobile: initialData.isMobile,
+        },
       },
       $token: {
         ...tokenSlice.getInitialState(),
