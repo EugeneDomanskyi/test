@@ -15,7 +15,8 @@ const Info = ({ current, location }) => {
   const blockchain = useSelector($app.get.blockchain)
   const { high, low } = useSelector($exchange.get.highLow({ count: 24, unit: 'hours' }))
 
-  const [_, type] = location.split('/')
+  const [_, queryType] = location.split('/')
+  const type = queryType === 'nfts' ? queryType : 'tokens'
 
   const scanLink = `${blockchain.scanUrl}/address/${current.address}`
 
@@ -63,11 +64,15 @@ const Info = ({ current, location }) => {
                         : null
                     }
 
-                    {/* <Link href={`/market/${type}/${blockchain.code}/${current.address}`}>
-                        <App.Button onClick={handleClickDetails} sx={{paddingTop: 4, paddingBottom: 4}}>
-                          <App.Text size={12}>More Details</App.Text>
-                        </App.Button>
-                      </Link> */}
+                    {
+                      type === 'tokens'
+                        ? <Link href={`/market/${type}/${blockchain.code}/${current.address}`}>
+                            <App.Button onClick={handleClickDetails} sx={{paddingTop: 4, paddingBottom: 4}}>
+                              <App.Text size={12}>More Details</App.Text>
+                            </App.Button>
+                          </Link>
+                        : null
+                    }
                   </App.Flex>
                   <App.Flex align="center">
                     <Link href={scanLink} target="_blank" onClick={handleClickLink(blockchain?.code)} style={{ marginRight: 8 }}>
