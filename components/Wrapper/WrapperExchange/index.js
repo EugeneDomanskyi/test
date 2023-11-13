@@ -17,7 +17,7 @@ const getTokens = async (chain, post) => {
     const result = await $token.api.backend.all(post)
     if (result) {
       return result.map(item => ({
-        id: item.ContractAddress,
+        id: item.ContractAddress.toLowerCase(),
         name: item.Name,
         symbol: item.Symbol,
         decimals: item.Decimals,

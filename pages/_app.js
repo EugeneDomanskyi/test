@@ -189,7 +189,7 @@ MyApp.getInitialProps = async ({ctx}) => {
             if (result && result.length) {
               const [item] = result
               const token = {
-                id: item.ContractAddress,
+                id: item.ContractAddress.toLowerCase(),
                 name: item.Name,
                 symbol: item.Symbol,
                 decimals: item.Decimals,
