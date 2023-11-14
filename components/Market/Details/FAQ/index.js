@@ -35,14 +35,23 @@ const MarketFAQ = ({type, marketInfo}) => {
   }
 
   const priceText = type === 'tokens' ? 'current price' : 'floor price'
-  const price = marketInfo?.price
   const volume = type === 'tokens' ? marketInfo?.tokenCount : marketInfo?.tvl
   const launchDate = moment(marketInfo.createdAt).format('MMMM DD, YYYY')
+  let availableNetworks = ''
+  const platforms =  marketInfo.availablePlatforms
+
+  if (platforms.length > 1) {
+    const lastItem = platforms.pop(); // Remove the last item from the array
+    const stringWithCommas = platforms.join(', ') + ' and ' + lastItem;
+    availableNetworks = stringWithCommas
+  } else if (platforms.length === 1) {
+    availableNetworks = platforms[0]
+  }
 
   const FAQ = [
     {
-      question: `What is ${ marketInfo.name }?`,
-      answer: marketInfo.description,
+      question: `On which network(s) is ${ marketInfo.name } available?`,
+      answer: `${ marketInfo.name } is available on ${availableNetworks}`,
     },
     ...(
       marketInfo.price
@@ -80,16 +89,24 @@ const MarketFAQ = ({type, marketInfo}) => {
       question: `Where can I buy, sell, and trade ${ marketInfo.name }?`,
       answer: `The best place to buy, sell, and trade ${ marketInfo.name } is Tegro: The CEX-DEX. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${ marketInfo.name } at the best prices.`,
     },
+    ...(
+      marketInfo.createdAt
+        ? [{
+            question: `When was ${ marketInfo.name } launched?`,
+            answer: `${ marketInfo.name } was first created on ${ launchDate }.`
+          }]
+        : []
+    ),
   ]
 
-  if (marketInfo.createdAt) {
-    FAQ.push(
-      {
-        question: `When was ${ marketInfo.name } launched?`,
-        answer: `${ marketInfo.name } was first created on ${ launchDate }.`
-      }
-    )
-  }
+  // if (marketInfo.createdAt) {
+  //   FAQ.push(
+  //     {
+  //       question: `When was ${ marketInfo.name } launched?`,
+  //       answer: `${ marketInfo.name } was first created on ${ launchDate }.`
+  //     }
+  //   )
+  // }
 
   return (
     <App.Flex column sx={{width: '100%'}} gap={8}>
@@ -107,13 +124,13 @@ const MarketFAQ = ({type, marketInfo}) => {
                       <div className={cn(styles.plus, {[styles.open]: openItem === i})} />
                     </div>
                   </div>
-                  <h3 className={styles.title}>{ item.question }</h3>
+                  <h2 className={styles.title}>{ item.question }</h2>
                 </div>
                 <div className={styles.answer} ref={ref => answers.current[i] = ref}>
                   <div>
                     <div style={{width: 44, marginRight: 16}} />
                   </div>
-                  <div style={{ whiteSpace: 'pre-line' }} dangerouslySetInnerHTML={{__html: item.answer}} />
+                  <h3 style={{ whiteSpace: 'pre-line' }} dangerouslySetInnerHTML={{__html: item.answer}} />
                 </div>
               </div>
             )

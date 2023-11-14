@@ -72,7 +72,6 @@ export const staticTemplate = (item) => {
     decimals: item?.decimals,
     image: item?.image?.large ?? '',
     name: item?.name,
-    // blockchain: item?.blockchain,
     symbol: item?.symbol ? item?.symbol.toUpperCase() : '',
     currency: currency,
     description: item?.description?.en,
@@ -80,9 +79,9 @@ export const staticTemplate = (item) => {
     discordUrl: item?.discordUrl ?? null,
     externalUrl: item.links?.homepage[0],
     twitterUrl: item.links?.twitter_screen_name ? `https://twitter.com/${item.links?.twitter_screen_name}` : null,
-    // openseaVerificationStatus: item?.openseaVerificationStatus === 'verified',
     marketCap: item.market_data?.total_supply * (item.market_data?.current_price?.usd ?? 0),
     createdAt: item?.genesis_date,
+    availablePlatforms: [],
   }
 }
 

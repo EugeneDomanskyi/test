@@ -42,7 +42,7 @@ const getToken = async (url, id) => {
   return res.data.token && res.data.token.symbol !== 'unknown' ? res.data.token : null
 }
 
-export default function Markets({ marketData, currentChain }) {
+export default function Markets({ marketData, currentChain, platforms }) {
   const dispatch = useDispatch()
   const router = useRouter()
   const { isMobile } = usePropsHelper()
@@ -54,8 +54,29 @@ export default function Markets({ marketData, currentChain }) {
   const [marketInfo, setMarketInfo] = useState(marketData)
 
   useEffect(() => {
-    console.log('marketInfo', marketInfo);
-  }, [marketInfo])
+    if (platforms) {
+      const availablePlatforms = Object.keys(platforms).map(platformKey => {
+        const network = CHAINS.find(chain => chain.platform === platformKey);
+        if (network) {
+          return network.name
+        }
+      }).filter(name => name)
+  
+      // console.log('availablePlatforms', availablePlatforms);
+  
+      if (availablePlatforms) {
+        setMarketInfo(state => ({...state, availablePlatforms}))
+      }
+    }
+    test()
+  }, [platforms])
+
+  const test = async () => {
+    const tokenInfo = await $token.api.coingecko.full({ platform: queryBlockchainCode, address: queryMarketId })
+    const tokenRes = await getToken(currentChain.baseUniswapUrl, queryMarketId)
+    console.log('tokenInfo', tokenInfo);
+    console.log('tokenRes', tokenRes);
+  }
 
   useEffect(() => {
     if (marketData.id) {
@@ -184,7 +205,7 @@ export async function getServerSideProps({ query }) {
   let marketData = {}
 
   const tokenRes = await getToken(currentChain.baseUniswapUrl, marketId)
-  const tokenInfo = await $token.api.coingecko.full({ platform: blockchainCode, address: marketId })
+  const tokenInfo = await $token.api.coingecko.full({ platform: currentChain.platform, address: marketId })
 
   if (tokenInfo) {
     const token = { ...tokenRes, ...tokenInfo }
@@ -195,7 +216,7 @@ export async function getServerSideProps({ query }) {
       const prices = await getPrices(id)
 
       if (prices) {
-        marketData = ({ ...full, ...prices[marketId] })
+        marketData = { ...marketData, ...prices[marketId]}
       }
     }
   }
@@ -203,7 +224,8 @@ export async function getServerSideProps({ query }) {
   return {
     props: {
       marketData,
-      currentChain
+      currentChain,
+      platforms: tokenInfo ? tokenInfo.platforms : null,
     },
   }
 }

@@ -63,7 +63,6 @@ const Info = ({ current, location }) => {
                         </App.Tooltip>
                         : null
                     }
-
                     {
                       type === 'tokens'
                         ? <Link href={`/market/${type}/${blockchain.code}/${current.address}`}>
