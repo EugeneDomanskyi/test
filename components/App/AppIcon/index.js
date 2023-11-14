@@ -1450,6 +1450,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
         </svg>
       )
     }
+
+    if (icon === 'external-link') {
+      return (
+        <svg width={width ?? 9} height={height ?? 9} viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill={color ?? '#4C69FF'} d="M4.905.787v.889H6.5L2.131 6.045l.627.627 4.369-4.37v1.596h.889V.788m-.89 7.11H.906V1.676h3.11V.787H.906c-.494 0-.89.4-.89.889v6.222a.889.889 0 00.89.89h6.222a.889.889 0 00.889-.89v-3.11h-.89v3.11z" />
+        </svg>
+      )
+    }
   }
 
   return getIcon()

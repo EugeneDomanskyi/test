@@ -127,7 +127,7 @@ const Exchange = () => {
               />
             </App.Flex>
 
-            <App.Flex row gap={GRID_GAP} className={styles.partRightBottom}>
+            <App.Flex gap={GRID_GAP} className={styles.partRightBottom}>
               <App.Flex gap={GRID_GAP} className={styles.partRightBottomSales}>
                 <OrderBook
                   type="tokens"

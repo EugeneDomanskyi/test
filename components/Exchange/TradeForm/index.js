@@ -120,7 +120,7 @@ const TradeForm = forwardRef(({current, type, version, fullWidth = null, onSubmi
   }
 
   return (
-    <App.Flex column className={cn(styles.container, {[styles[version]]: version})} sx={{width: fullWidth ? '100%' : 324}}>
+    <App.Flex column className={cn(styles.container, {[styles[version]]: version})}>
       <Tabs
         options={TAB_OPTIONS}
         active={currentTab}

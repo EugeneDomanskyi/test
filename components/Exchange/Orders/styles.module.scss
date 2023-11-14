@@ -7,6 +7,10 @@
   border: solid #19162D 1px;
   border-radius: 4px;
 
+  @media (max-width: 950px) {
+    width: 100%;
+  }
+
   .header {
     background-color: #1C192F;
     border-radius: 4px 4px 0 0;
