@@ -186,6 +186,7 @@ MyApp.getInitialProps = async ({ctx}) => {
             }
 
             const result = await $token.api.backend.all(post)
+            console.log(result)
             if (result && result.length) {
               const [item] = result
               const token = {
@@ -193,10 +194,12 @@ MyApp.getInitialProps = async ({ctx}) => {
                 name: item.Name,
                 symbol: item.Symbol,
                 decimals: item.Decimals,
+                image: `https://storage.googleapis.com/token-assets/assets/${network.code}/${item.ContractAddress.toLowerCase()}.png`,
                 totalSupply: null,
                 volumeUSD: null,
                 totalValueLockedUSD: null,
               }
+              currentInfo = tokenTemplate(token)
 
               currentSymbol = token.symbol.toUpperCase()
               const res = await $token.api.coingecko.full({platform: network.platform, address: address})
@@ -205,7 +208,6 @@ MyApp.getInitialProps = async ({ctx}) => {
                   ...token,
                   blockchain,
                   isFull: true,
-                  image: res.image.large,
                   price: res.market_data?.current_price?.usd,
                   high: res.market_data?.high_24h?.usd,
                   low: res.market_data?.low_24h?.usd,

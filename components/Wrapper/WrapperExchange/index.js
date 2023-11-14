@@ -14,34 +14,47 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 
 const getTokens = async (chain, post) => {
   if (chain?.useBackend) {
-    const result = await $token.api.backend.all(post)
+    const result = await $token.api.backend.all({
+      page: post.currentPage,
+      pageSize: post.perPage,
+      chainId: chain.id,
+      sortBy: 'name',
+      sortOrder: 'asc',
+      filterVal: post?.searchText,
+      filterCol: post?.searchField,
+    })
+
     if (result) {
       return result.map(item => ({
         id: item.ContractAddress.toLowerCase(),
         name: item.Name,
         symbol: item.Symbol,
         decimals: item.Decimals,
+        image: `https://storage.googleapis.com/token-assets/assets/${chain.code}/${item.ContractAddress.toLowerCase()}.png`,
         totalSupply: null,
         volumeUSD: null,
         totalValueLockedUSD: null,
       }))
     }
-
-    return []
   } else {
     const client = getApolloClient(chain.baseUniswapUrl)
     const res = await client.query({
       query: queries.tokens,
       variables: {
-        skip: post.skip,
+        skip: (post.currentPage - 1) * post.perPage,
         orderBy: post.orderBy,
         orderDirection: post.orderDirection,
-        searchText: post.searchText,
-        usdt: post.usdt,
+        searchText: post?.searchText || '',
+        usdt: chain.usdtContract,
       },
     })
-    return res.data.tokens
+
+    if (res?.data && res.data.hasOwnProperty('tokens')) {
+      return res.data.tokens
+    }
   }
+
+  return []
 }
 
 const getTokenDayDatas = async (url, ids) => {
@@ -117,41 +130,6 @@ const getTokenDayDatas = async (url, ids) => {
   return {}
 }
 
-const getToken = async (chain, id) => {
-  if (chain?.useBackend) {
-    const post = {
-      page: 1,
-      pageSize: 1,
-      chainId: chain.id,
-      filterCol: 'ContractAddress',
-      filterVal: id,
-    }
-    
-    const result = $token.api.backend.all(post)
-    if (result && result.length) {
-      const [item] = result
-      return {
-        id: item.ContractAddress.toLowerCase(),
-        name: item.Name,
-        symbol: item.Symbol,
-        decimals: item.Decimals,
-        totalSupply: null,
-        volumeUSD: null,
-        totalValueLockedUSD: null,
-      }
-    }
-
-    return null
-  } else {
-    const client = getApolloClient(chain.baseUniswapUrl)
-    const res = await client.query({
-      query: queries.tokenById,
-      variables: {id: id}
-    })
-    return res.data.token && res.data.token.symbol !== 'unknown' ? res.data.token : null
-  }
-}
-
 const WrapperExchange = ({children, _isMobile}) => {
   const { isMobile } = usePropsHelper()
   
@@ -207,37 +185,26 @@ const WrapperExchange = ({children, _isMobile}) => {
 
   // fetch list for blockchain
   useEffect(() => {
-    if (currentChain.code !== blockchain) {
-      return
-    }
-
-    let post = {}
-    if (currentChain?.useBackend) {
-      post = {
-        page: pages.current,
-        pageSize: tokensPerPage,
-        chainId: currentChain.id,
-        sortBy: 'name',
-        sortOrder: 'asc',
+    (async () => {
+      if (currentChain.code !== blockchain) {
+        return
       }
-    } else {
-      post = {
-        skip: (pages.current - 1) * tokensPerPage,
+
+      const post = {
+        currentPage: pages.current,
+        perPage: tokensPerPage,
         orderBy: orderBy,
         orderDirection: sortDirection.toLowerCase(),
-        searchText: '',
-        usdt: currentChain.usdtContract,
       }
-    }
 
-    getTokens(currentChain, post).then(async tokens => {
+      const tokens = await getTokens(currentChain, post)
       dispatch($token.set.all(tokens))
       dispatch($token.set.pages({ next: (pages.current * 1 + 1) }))
       dispatch($token.set.loading(false))
 
       const prices = await fetchPrices(tokens)
       dispatch($token.set.updatedAll(prices))
-    })
+    })()
   }, [currentChain.baseUniswapUrl, sort, pages.current, currentChain.code, blockchain])
 
   // fetch current if address is correct
@@ -246,7 +213,16 @@ const WrapperExchange = ({children, _isMobile}) => {
       if (isAddress && (currentChain.code === blockchain) && currentToken?.id !== address) {
         const existInList = tokenList.find(token => token.id === address)
         if (!existInList) {
-          const token = await getToken(currentChain, address)
+          const post = {
+            currentPage: 1,
+            perPage: 1,
+            orderBy: orderBy,
+            orderDirection: sortDirection.toLowerCase(),
+            searchText: address,
+            searchField: 'contract_address',
+          }
+
+          const [token] = await getTokens(currentChain, post)
           if (token) {
             dispatch($token.set.current(token))
             return
@@ -358,51 +334,16 @@ const WrapperExchange = ({children, _isMobile}) => {
     dispatch($token.set.loading(true))
 
     const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(searchText)
-    let results = []
-    if (isAddress) {
-      if (currentChain?.useBackend) {
-        const post = {
-          page: 1,
-          pageSize: 1,
-          chainId: currentChain.id,
-          filterCol: 'contract_address',
-          filterVal: searchText,
-        }
-
-        results = await getTokens(currentChain, post)
-      } else {
-        const res = await fetchToken({address: searchText, chainId: currentChain.id})
-        const tokenData = {
-          ...res,
-          totalSupply: res.totalSupply.formatted,
-          id: res.address,
-        }
-        results = [tokenData]
-      }
-    } else {
-      let post = {}
-      if (currentChain?.useBackend) {
-        post = {
-          page: pages.current,
-          pageSize: tokensPerPage,
-          chainId: currentChain.id,
-          sortBy: 'name',
-          sortOrder: 'asc',
-          filterCol: 'name',
-          filterVal: searchText,
-        }
-      } else {
-        post = {
-          skip: 0,
-          orderBy: orderBy,
-          orderDirection: sortDirection.toLowerCase(),
-          searchText: searchText,
-          usdt: currentChain.usdtContract,
-        }
-      }
-
-      results = await getTokens(currentChain, post)
+    const post = {
+      currentPage: 1,
+      perPage: tokensPerPage,
+      orderBy: orderBy,
+      orderDirection: sortDirection.toLowerCase(),
+      searchText: searchText,
+      searchField: isAddress ? 'contract_address' : 'name',
     }
+
+    const results = await getTokens(currentChain, post)
     dispatch($token.set.searched(results))
     dispatch($token.set.loading(false))
 
