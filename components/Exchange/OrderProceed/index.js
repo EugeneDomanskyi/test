@@ -672,7 +672,7 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                           return (
                             <App.Flex column className={styles.tabContent}>
                               {
-                                !results.place_order.success
+                                results.place_order.success
                                   ? <App.Flex column align={version == 'mobile' ? 'flex-start' : 'center'}>
                                       <App.Flex justify="center" align="center" sx={{marginBottom: 8}}>
                                         <App.Text size={16} weight={700} sx={{marginRight: 4}}>Order In Progress</App.Text>
