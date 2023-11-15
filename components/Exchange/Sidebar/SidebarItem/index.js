@@ -43,7 +43,7 @@ const SidebarItem = ({ item, isActive, withArrow, searching, type, onClick, onCl
   }
 
   const getSymbolForLogo = () => {
-    if (item.symbol.length > 4) {
+    if (item?.symbol?.length > 4) {
       return item.symbol.slice(0, 4) + '.'
     }
 

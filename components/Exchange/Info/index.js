@@ -2,7 +2,6 @@ import styles from './styles.module.scss'
 import { memo, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Image from 'next/image'
-import Link from 'next/link'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import $exchange from '@/store/exchange'
@@ -15,7 +14,7 @@ import App from '@/components/App'
 const Info = ({ current, type }) => {
   const { getPrice } = useWalletConnect()
   const blockchain = useSelector($app.get.blockchain)
-  const { high, low } = useSelector($exchange.get.highLow({count: 24, unit: 'hours'}))
+  const { high, low } = useSelector($exchange.get.highLow({ count: 24, unit: 'hours' }))
 
   const [usdPrice, setUsdPrice] = useState(current.price)
 

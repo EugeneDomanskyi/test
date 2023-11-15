@@ -18,23 +18,23 @@ import TradeFormMarket from '@/components/Exchange/TradeForm/TradeFormMarket'
 import TradeFormToken from '@/components/Exchange/TradeForm/TradeFormToken'
 
 const TAB_OPTIONS = [
-  {key: 'buy', title: 'BUY', color: 'rgb(13, 198, 109)'},
-  {key: 'sell', title: 'SELL', color: 'rgb(206, 22, 93)'},
+  { key: 'buy', title: 'BUY', color: 'rgb(13, 198, 109)' },
+  { key: 'sell', title: 'SELL', color: 'rgb(206, 22, 93)' },
 ]
 
-const TradeForm = forwardRef(({current, type, version, fullWidth = null, onSubmit, prevProps}, ref) => {
+const TradeForm = forwardRef(({ current, type, version, fullWidth = null, onSubmit, prevProps }, ref) => {
   const { wallet, getBalance, changeNetwork } = useWalletConnect()
   const { getNftBalanceUser } = useTrade()
 
   const orderBook = useSelector($exchange.get.orderBook)
-  const loading = useSelector(({$exchange}) => $exchange.loadingCollectionData)
+  const loading = useSelector(({ $exchange }) => $exchange.loadingCollectionData)
   const blockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
 
   const [currentTab, setCurrentTab] = useState('buy')
   const [formType, setFormType] = useState('market')
-  const [userBalances, setUserBalances] = useState({native: 0, wrapped: 0, token: 0, usdt: 0})
-  const [limitForm, setLimitForm] = useState({price: '0', amount: '1', total: '0'})
-  const [marketForm, setMarketForm] = useState({amount: '1'})
+  const [userBalances, setUserBalances] = useState({ native: 0, wrapped: 0, token: 0, usdt: 0 })
+  const [limitForm, setLimitForm] = useState({ price: '0', amount: '1', total: '0' })
+  const [marketForm, setMarketForm] = useState({ amount: '1' })
 
   const tokenFormRef = useRef(null)
 
@@ -42,9 +42,9 @@ const TradeForm = forwardRef(({current, type, version, fullWidth = null, onSubmi
     setForm: (data) => {
       handleChangeTab(data.side)
       // setFormType(data.formType)
-      setMarketForm({amount: data.amount.toString()})
+      setMarketForm({ amount: data.amount.toString() })
       if (tokenFormRef.current) {
-        tokenFormRef.current.setForm({amount: data.amount, price: data.price})
+        tokenFormRef.current.setForm({ amount: data.amount, price: data.price })
       }
     },
 
@@ -64,13 +64,13 @@ const TradeForm = forwardRef(({current, type, version, fullWidth = null, onSubmi
         switch (type) {
           case 'nfts':
             getNftBalanceUser(current.address, wallet).then(res => {
-              setUserBalances(state => ({...state, token: res}))
+              setUserBalances(state => ({ ...state, token: res }))
             })
             getBalance().then(res => {
-              setUserBalances(state => ({...state, native: res}))
+              setUserBalances(state => ({ ...state, native: res }))
             })
             getBalance(blockchain.wrapped.contract).then(res => {
-              setUserBalances(state => ({...state, wrapped: res}))
+              setUserBalances(state => ({ ...state, wrapped: res }))
             })
             break
           // case 'tokens':

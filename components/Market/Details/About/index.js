@@ -5,10 +5,8 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 import App from '@/components/App'
 import SectionTitle from '@/components/Market/SectionTitle'
 
-export default function About() {
+export default function About({marketInfo}) {
   const { isMobile } = usePropsHelper()
-
-  const { marketInfo } = useSelector(({$app}) => $app)
 
   return (
     <App.Flex column gap={8}>
