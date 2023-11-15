@@ -11,6 +11,12 @@
       width: 100%;
       height: 514px;
     }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 500;
+      margin: 0;
+    }
   }
 
   .circle {
@@ -26,6 +32,11 @@
       .slide {
         width: 100%;
         height: 290px;
+      }
+
+      h2 {
+        font-size: 14px;
+        font-weight: 600;
       }
     }
 

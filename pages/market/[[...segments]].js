@@ -65,7 +65,7 @@ export default function Markets({ marketInfo, currentChain }) {
         dispatch($exchange.set.chartData({ type: 'tokens', data: [] }))
       })
     }
-  }, [marketInfo.id, activeInterval.seconds])
+  }, [marketInfo?.id, activeInterval.seconds])
 
   return (
     <>

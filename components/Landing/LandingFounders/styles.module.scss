@@ -2,6 +2,13 @@
   position: relative;
   z-index: 1;
 
+  h2 {
+    font-size: 48px;
+    font-weight: 800;
+    margin: 0;
+    text-align: center;
+  }
+
   .box {
     width: 310px;
     position: relative;
@@ -52,6 +59,10 @@
 
 @media (max-width: 768px) {
   .container {
+    h2 {
+      font-size: 32px;
+    }
+
     .box {
       width: 50%;
       padding: 15px;

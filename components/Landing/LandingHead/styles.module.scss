@@ -3,6 +3,13 @@
   z-index: 8;
   padding-top: 100px;
 
+  h1 {
+    font-size: 64px;
+    font-weight: 800;
+    text-align: center;
+    margin: 0;
+  }
+
   .video {
     width: 720px;
     height:360px;
@@ -62,6 +69,10 @@
 
 @media (max-width: 768px) {
   .container {
+    h1 {
+      font-size: 40px;
+    }
+
     .video {
       width: 100%;
       height: auto;

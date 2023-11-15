@@ -78,7 +78,8 @@ const LandingPlatform = () => {
       <App.Container>
         <App.Flex column center gap={36} sx={[{ padding: '70px 0' }, { padding: '0' }]}>
           <App.Flex row center width={['50%', '100%']}>
-            <App.Text center size={[96, 40]} weight={300} height={1.2}>A Platform Built For Everyone</App.Text>
+            {/* <App.Text center size={[96, 40]} weight={300} height={1.2}>A Platform Built For Everyone</App.Text> */}
+            <h2>A Platform Built For Everyone</h2>
           </App.Flex>
 
           <App.Flex direction={['row', 'column']} gap={[48, 24]} fullWidth>
@@ -87,7 +88,7 @@ const LandingPlatform = () => {
 
               <App.Flex column gap={[24, 8]} justify={['flex-start', 'space-between']} className={styles.bannerContent}>
                 <App.Flex column gap={[8, 24]}>
-                  <App.Text center size={[24, 18]} weight={700} height={1}>Our Community</App.Text>
+                  <h3>Our Community</h3>
                   <App.Text center size={[14, 12]} color="#B9B8C5" height={1.2}>Connect, Collaborate, Celebrate. Join the Tegro Tribe today!</App.Text>
                 </App.Flex>
 
@@ -124,7 +125,7 @@ const LandingPlatform = () => {
 
               <App.Flex column gap={[24, 8]} justify={['flex-start', 'space-between']} className={styles.bannerContent}>
                 <App.Flex column gap={8}>
-                  <App.Text center size={[24, 18]} weight={700} height={1}>Press</App.Text>
+                  <h3>Press</h3>
                   <App.Text center size={[14, 12]} color="#B9B8C5" height={1.2}>Breaking news and latest updates. Dive into our story as it unfolds!</App.Text>
                 </App.Flex>
 

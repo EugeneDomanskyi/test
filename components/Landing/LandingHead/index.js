@@ -74,7 +74,8 @@ const LandingHead = () => {
     <App.Container className={styles.container}>
       <App.Flex column align="center" gap={24} fullWidth>
         <App.Flex width={['40%', '100%']} sx={{ paddingBottom: 32 }}>
-          <App.Text center size={[64, 40]} weight={800} height={1.2}>The Ease of CEX, Now in a DEX</App.Text>
+          {/* <App.Text center size={[64, 40]} weight={800} height={1.2}>The Ease of CEX, Now in a DEX</App.Text> */}
+          <h1 className={styles.title}>The Ease of CEX, Now in a DEX</h1>
         </App.Flex>
 
         <App.Flex width={['40%', '60%']} center gap={16} className={styles.hideOnMobile}>

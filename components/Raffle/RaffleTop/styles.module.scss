@@ -8,12 +8,26 @@
   background-color: #08051C;
   padding: 64px 0;
 
+  h2 {
+    font-size: 48px;
+    font-weight: 500;
+    font-family: "ClashDisplay";
+    background: linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+  }
+
   @media (max-width: 768px) {
     padding: 34px 0;
     background: no-repeat right top url('/images/raffle/top-background-1-m.png'), no-repeat center bottom url('/images/raffle/top-background-2.png');
     background-size: 190px 187px, auto;
+
+    h2 {
+      font-size: 24px;
+    }
   }
-  
+
   .linkButton {
     padding: 4px 8px;
     justify-content: center;

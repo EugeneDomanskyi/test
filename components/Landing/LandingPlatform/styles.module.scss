@@ -2,6 +2,20 @@
   position: relative;
   z-index: 1;
 
+  h2 {
+    font-size: 96px;
+    font-weight: 300;
+    margin: 0;
+    text-align: center;
+  }
+
+  h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
+  }
+
   video {
     position: absolute;
     top: 0;
@@ -70,6 +84,14 @@
 
 @media (max-width: 768px) {
   .container {
+    h2 {
+      font-size: 40px;
+    }
+    
+    h3 {
+      font-size: 18px;
+    }
+
     video {
       display: none;
     }
