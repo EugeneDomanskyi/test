@@ -176,14 +176,6 @@ MyApp.getInitialProps = async ({ ctx }) => {
       if (blockchain && address) {
         const network = CHAINS.find(chain => chain.code === blockchain)
         if (network) {
-<<<<<<< HEAD
-          const res = await $token.api.coingecko.full({ platform: network.platform, address: address })
-          console.log('res', res);
-          if (res) {
-            currentSymbol = res.symbol.toUpperCase()
-            res.blockchain = blockchain
-            currentInfo = tokenTemplate(fullToTemplate(res, res.detail_platforms[network.platform]))
-=======
           if (network?.useBackend) {
             const post = {
               page: 1,
@@ -194,7 +186,6 @@ MyApp.getInitialProps = async ({ ctx }) => {
             }
 
             const result = await $token.api.backend.all(post)
-            console.log(result)
             if (result && result.length) {
               const [item] = result
               const token = {
@@ -244,7 +235,6 @@ MyApp.getInitialProps = async ({ ctx }) => {
               res.blockchain = blockchain
               currentInfo = tokenTemplate(fullToTemplate(res, res.detail_platforms[network.platform]))
             }
->>>>>>> 1724c5cd283dabd02eaf9544dcdda9a1ae22e3d6
           }
         }
       }

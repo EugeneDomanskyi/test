@@ -33,8 +33,9 @@ const CHART_CONFIG = {
       type: LightweightCharts.ColorType.Solid,
       color: 'rgba(255, 255, 255, 0.0)'
     },
-    textColor: 'rgba(161, 159, 255, 0.4)',
+    textColor: '#B9B8C5',
     fontFamily: 'GilroyRegular',
+    fontSize: 12,
   },
   lineStyle: 0,
   grid: {
@@ -160,7 +161,7 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
             const isActive = activeInterval.key === interval.key
             return (
               <App.Flex key={i} center flex={1} onClick={handleChangeInterval(interval)} className={cn(styles.interval, {[styles.active]: isActive})}>
-                <App.Text color={isActive ? 'rgba(255,255,255,0.87)' : "#ACA3D3"} size={14}>{ interval.key.toUpperCase() }</App.Text>
+                <App.Text color={isActive ? '#fff' : '#B9B8C5'} size={12}>{ interval.key.toUpperCase() }</App.Text>
               </App.Flex>
             )
           })}

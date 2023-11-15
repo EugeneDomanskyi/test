@@ -1,5 +1,5 @@
 .collection {
-  padding: 4px 12px;
+  padding: 8px 12px;
   cursor: pointer;
   transition: all .2s ease 0s;
   background: transparent;
@@ -19,13 +19,9 @@
     z-index: 1;
   }
 
-  .secondaryText {
-    color: #5E5C6B;
-  }
-
   .emptyImage {
-    width: 32px;
-    height: 32px;
+    width: 26px;
+    height: 26px;
     border-radius: 4px;
     background: linear-gradient(0deg, #311B9200, #311B92);
     display: flex;
@@ -37,10 +33,6 @@
   &:hover,
   &.active {
     background: linear-gradient(-90deg, rgba(49, 27, 146, 0.00) 42.09%, #311B92 99.98%);
-
-    .secondaryText {
-      color: #B9B8C5;
-    }
 
     .emptyImage {
       background: #16132C;

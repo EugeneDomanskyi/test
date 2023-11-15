@@ -135,13 +135,17 @@ const useWalletConnect = () => {
   }
 
   const getPrice = async (from, to) => {
-    const result = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${from}&vs_currencies=${to}`)
-    if (result && result.status == 200) {
-      const json = await result.json()
-      return json[from][to]
-    }
+    try {
+      const result = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${from}&vs_currencies=${to}`)
+      if (result && result.status == 200) {
+        const json = await result.json()
+        return json[from][to]
+      }
 
-    return 0
+      return 0
+    } catch (error) {
+      return 0
+    }
   }
 
   const getConnectorName = async () => {

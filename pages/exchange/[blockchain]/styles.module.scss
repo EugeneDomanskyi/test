@@ -2,15 +2,12 @@
   padding: 8px;
   height: 100%;
   width: 100%;
-<<<<<<< HEAD
   min-height: 820px;
+  max-height: 920px;
 
   @media (max-width: 1100px) {
     height: auto;
   }
-=======
-  min-height: 760px;
->>>>>>> 1724c5cd283dabd02eaf9544dcdda9a1ae22e3d6
 
   @media (max-width: 768px) {
     padding: 0;
@@ -33,6 +30,10 @@
       width: 100%;
       height: calc(100% - 372px - 8px);
       flex-direction: row;
+
+      @media (max-width: 1400px) {
+        height: calc(100% - 326px - 8px);
+      }
 
       @media (max-width: 1100px) {
         height: 400px;

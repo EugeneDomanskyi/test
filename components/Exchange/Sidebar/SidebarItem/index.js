@@ -60,7 +60,7 @@ const SidebarItem = ({ item, isActive, withArrow, searching, type, onClick, onCl
     <App.Flex row justify="space-between" align="center" onClick={handleClick} className={cn(styles.collection, {[styles.withArrow]: withArrow}, {[styles.active]: isActive && ! withArrow})}>
       <App.Flex row gap={4} align="center">
         {item.image ? (
-          <Image src={item.image} priority width={32} height={32} className={styles.image} alt="" />
+          <Image src={item.image} priority width={26} height={26} className={styles.image} alt="" />
         ) : (
           <div className={styles.emptyImage} style={{background: `linear-gradient(0deg, ${colors.current[0]}, ${colors.current[1]})`}}>
             <App.Text center size={10} weight={600}>{ getSymbolForLogo() }</App.Text>
@@ -69,7 +69,7 @@ const SidebarItem = ({ item, isActive, withArrow, searching, type, onClick, onCl
 
         <App.Flex column gap={2} sx={{ maxWidth: 100 }}>
           <App.Flex row align="center" gap={4}>
-            <App.Text nowrap uppercase size={12} weight={600} height={1}>{item.symbol ?? item?.slug}{type == 'tokens' ? (<App.Text inline size={10} weight={600} className={styles.secondaryText}>/USDT</App.Text>) : null}</App.Text>
+            <App.Text nowrap uppercase size={12} weight={600} height={1}>{item.symbol ?? item?.slug}{type == 'tokens' ? (<App.Text inline size={10} weight={600} color="#B9B8C5">/USDT</App.Text>) : null}</App.Text>
             {item.openseaVerificationStatus == 'verified' ? (
               <App.Tooltip text={<TooltipText />} placement="right">
                 <App.Flex center width={10} height={10} sx={{ minWidth: 10 }}>
@@ -83,7 +83,7 @@ const SidebarItem = ({ item, isActive, withArrow, searching, type, onClick, onCl
             ) : null}
           </App.Flex>
 
-          <App.Text nowrap size={10} height={1} className={styles.secondaryText}>{item.name}</App.Text>
+          <App.Text nowrap size={10} height={1} color="#B9B8C5">{item.name}</App.Text>
         </App.Flex>
       </App.Flex>
       
