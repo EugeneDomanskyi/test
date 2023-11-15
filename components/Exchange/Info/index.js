@@ -19,6 +19,7 @@ const Info = ({ current, type }) => {
   const [usdPrice, setUsdPrice] = useState(current.price)
 
   const scanLink = `${blockchain.scanUrl}/address/${current.address}`
+  const websiteLink = current.symbol == 'WETH' ? scanLink : current?.externalUrl
 
   useEffect(() => {
     if (current.id) {
@@ -44,8 +45,8 @@ const Info = ({ current, type }) => {
       Markets: current.name,
     })
 
-    if (current?.externalUrl && type == 'website') {
-      window.open(current.externalUrl, '_blank')
+    if (websiteLink && type == 'website') {
+      window.open(websiteLink, '_blank')
     }
   }
 
@@ -68,18 +69,24 @@ const Info = ({ current, type }) => {
               <App.Flex column gap={4}>
                 <App.Flex row align="center" gap={8}>
                   <App.Text size={16} weight={600} uppercase height={1}>{ current?.symbol ?? current?.slug }{type == 'tokens' ? '/USDT' : ''}</App.Text>
-                  <App.Text size={12} color={current?.externalUrl ? '#4C69FF' : '#B9B8C5'} nowrap sx={{ cursor: 'pointer' }} height={1} onClick={handleClickLink('website')}>{ current?.name } {current?.externalUrl ? <App.Icon icon="external-link" /> : null}</App.Text>
+                  <App.Text size={12} color={websiteLink ? '#4C69FF' : '#B9B8C5'} nowrap sx={{ cursor: 'pointer' }} height={1} onClick={handleClickLink('website')}>{ current?.name } {websiteLink ? <App.Icon icon="external-link" /> : null}</App.Text>
                 </App.Flex>
 
                 {current?.address ? (
                   <App.Flex row align="center" gap={4}>
                     <Image src={`/images/icon-${blockchain.code}.png`} width={12} height={12} alt="" />
-                    <a href={scanLink} target="_blank" rel="noreferrer">
-                      <App.Text inline size={12} weight={600} color="#B9B8C5" nowrap height={1} onClick={handleClickLink(blockchain?.code)} sx={{ cursor: 'pointer' }}>{ blockchain?.name }: {[current.address.slice(0, 7), current.address.slice(-7)].join('...')}</App.Text>
-                    </a>
-                    <App.Flex center sx={{ cursor: 'pointer' }} onClick={handleCopy}>
-                      <App.Icon icon="copy2" color="#B9B8C5" />
-                    </App.Flex>
+                      <App.Text inline size={12} weight={600} color="#B9B8C5" nowrap height={1} onClick={handleClickLink(blockchain?.code)} sx={{ cursor: 'pointer' }}>{ blockchain?.name }{current.symbol != 'WETH' ? ':' : ''}</App.Text>
+                      {current?.symbol != 'WETH' ? (
+                        <a href={scanLink} target="_blank" rel="noreferrer" style={{ lineHeight: 0 }}>
+                            <App.Text inline size={12} weight={600} color="#B9B8C5" nowrap height={1} onClick={handleClickLink(blockchain?.code)} sx={{ cursor: 'pointer' }}>{[current.address.slice(0, 7), current.address.slice(-7)].join('...')}</App.Text>
+                        </a>
+                      ) : null}
+
+                    {current?.symbol != 'WETH' ? (
+                      <App.Flex center sx={{ cursor: 'pointer' }} onClick={handleCopy}>
+                        <App.Icon icon="copy2" color="#B9B8C5" />
+                      </App.Flex>
+                    ) : null}
                   </App.Flex>
                 ) : null}
               </App.Flex>
