@@ -38,7 +38,7 @@ const MarketFAQ = ({type, marketInfo}) => {
   const volume = type === 'tokens' ? marketInfo?.tokenCount : marketInfo?.tvl
   const launchDate = moment(marketInfo.createdAt).format('MMMM DD, YYYY')
   let availableNetworks = ''
-  const platforms =  [...marketInfo.availablePlatforms]
+  const platforms =  marketInfo.availablePlatforms ? [...marketInfo.availablePlatforms] : []
 
   if (platforms.length > 1) {
     const lastItem = platforms.pop()
@@ -49,10 +49,14 @@ const MarketFAQ = ({type, marketInfo}) => {
   }
 
   const FAQ = [
-    {
-      question: `On which network(s) is ${ marketInfo.name } available?`,
-      answer: `${ marketInfo.name } is available on ${availableNetworks}`,
-    },
+    ...(
+      availableNetworks
+        ? [{
+            question: `On which network(s) is ${ marketInfo.name } available?`,
+            answer: `${ marketInfo.name } is available on ${availableNetworks}`,
+          }]
+        : []
+    ),
     ...(
       marketInfo.price
         ? [{
