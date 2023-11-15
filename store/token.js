@@ -8,9 +8,6 @@ import tokenAssets from '@/public/files/assets'
 import coingeckoIds from '@/public/files/coingecko_ids'
 
 function formatNumber(number) {
-  if (typeof number != 'number') {
-    return ''
-  }
   const str = (number * 1)?.toFixed(20)
   let lastIndex = -1;
 
