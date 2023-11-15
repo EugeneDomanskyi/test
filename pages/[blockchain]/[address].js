@@ -29,8 +29,6 @@ import Investors from '@/components/Market/Details/Investors'
 import Resources from '@/components/Market/Details/Resources'
 import FAQ from '@/components/Market/Details/FAQ'
 
-import assetsFile from '@/public/files/assets_new.json'
-
 const token = 'fc873434915ecf9e639339b325338f768e1f5b81fc88e3e4299641a3f87de70fcf93c09316c0d1e5146fa36171076ead7c5797f1d1882f35a9f60aaf5ec065ad7757b0615886847a307d3b25dbaadb42b98d63c59a39744667ff3f5438393a87f3b63ce948bfb260ac0041c44dbe0a10e1646dfa8f8d2c85abd18e45c0bb02c6'
 
 const getToken = async (url, id) => {
@@ -49,11 +47,16 @@ export default function Markets({ marketData, currentChain, platforms }) {
 
   const activeInterval = useSelector(({ $exchange }) => $exchange.interval)
 
-  const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
+  // const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
+  const isNfts = router.asPath?.includes('nfts')
+  const type = isNfts ? 'nfts' : 'tokens'
+  const queryBlockchainCode = router.query.blockchain
+  const queryMarketId = router.query.address
 
   const [marketInfo, setMarketInfo] = useState(marketData)
 
   useEffect(() => {
+    
     if (marketData) {
       setMarketInfo(marketData)
     }
@@ -137,25 +140,25 @@ export default function Markets({ marketData, currentChain, platforms }) {
               ? !isMobile
                 ? <>
                   <App.Flex column sx={{ flex: .8 }}>
-                    <Market.Details type={queryMarketType} marketInfo={marketInfo} />
+                    <Market.Details type={type} marketInfo={marketInfo} />
                   </App.Flex>
 
                   <App.Flex column sx={{ flex: .3 }} gap={48}>
-                    <Market.Trading type={queryMarketType} marketInfo={marketInfo} />
+                    <Market.Trading type={type} marketInfo={marketInfo} />
                   </App.Flex>
                 </>
                 : <App.Flex column sx={{ paddingTop: 32, width: '100%' }} gap={48}>
-                  <Info type={queryMarketType} marketInfo={marketInfo} />
+                  <Info type={type} marketInfo={marketInfo} />
                   {
                     marketInfo.price
                       ? <TradeForm
                         current={marketInfo}
-                        type={queryMarketType}
+                        type={type}
                       />
                       : null
                   }
                   <OrderBook
-                    type={queryMarketType}
+                    type={type}
                     onClickOrder={handleClickOrder}
                   />
                   <LivePrice marketInfo={marketInfo} />
@@ -188,8 +191,8 @@ export default function Markets({ marketData, currentChain, platforms }) {
 }
 
 export async function getServerSideProps({ query }) {
-  const blockchainCode = query.segments[1]
-  const marketId = query.segments[2]
+  const blockchainCode = query.blockchain
+  const marketId = query.address
   const currentChain = CHAINS.find(chain => chain.code === blockchainCode)
   let marketData = {}
 
@@ -223,7 +226,6 @@ export async function getServerSideProps({ query }) {
     props: {
       marketData,
       currentChain,
-      platforms: tokenInfo ? tokenInfo.platforms : null,
     },
   }
 }

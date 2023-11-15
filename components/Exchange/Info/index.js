@@ -65,7 +65,7 @@ const Info = ({ current, location }) => {
                     }
                     {
                       type === 'tokens'
-                        ? <Link href={`/market/${type}/${blockchain.code}/${current.address}`}>
+                        ? <Link href={`/${blockchain.code}/${current.address}`}>
                             <App.Button onClick={handleClickDetails} sx={{paddingTop: 4, paddingBottom: 4}}>
                               <App.Text size={12}>More Details</App.Text>
                             </App.Button>
