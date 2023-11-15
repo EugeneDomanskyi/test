@@ -218,13 +218,13 @@ const Header = () => {
                   </App.Flex>
                 </Link>
 
-                <App.Flex id="menu-dropdown" className={cn(styles.navbarItem, styles.navbarDropdown, {[styles.active]: moreIsOpen})} onClick={() => setMoreIsOpen(!moreIsOpen)}>
+                <App.Flex id="menu-dropdown" className={cn(styles.navbarItem, styles.navbarDropdown, {[styles.active]: moreIsOpen})} onMouseEnter={() => setMoreIsOpen(true)} onMouseLeave={() => setMoreIsOpen(false)}>
                   <App.Flex center height="100%" gap={8}>
                     <App.Text size={16} weight={500}>More</App.Text>
                     <App.Icon icon='caret-down' color="#fff" className={styles.carret} />
                   </App.Flex>
 
-                  <NavbarDropdown isOpen={moreIsOpen} onClose={() => setMoreIsOpen(!moreIsOpen)} />
+                  <NavbarDropdown isOpen={moreIsOpen} />
                 </App.Flex>
               </App.Flex>
             </App.Flex>

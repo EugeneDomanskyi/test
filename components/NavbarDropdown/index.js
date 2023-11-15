@@ -26,7 +26,7 @@ const NavbarDropdown = ({isOpen, onClose}) => {
   }
   
   return (
-    <App.Flex column gap={32} className={cn(styles.dropdownMenu, {[styles.isOpen]: isOpen})}>
+    <App.Flex column gap={32} className={cn(styles.dropdownMenu, {[styles.isOpen]: isOpen})} onMouseLeave={onClose}>
       <App.Flex gap={24}>
         <App.Flex column gap={24}>
           <App.Text size={14} weight={700} color="#B9B8C5">EXCHANGE</App.Text>
