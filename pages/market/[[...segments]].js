@@ -54,22 +54,11 @@ export default function Markets({ marketData, currentChain, platforms }) {
   const [marketInfo, setMarketInfo] = useState(marketData)
 
   useEffect(() => {
-    if (platforms) {
-      const availablePlatforms = Object.keys(platforms).map(platformKey => {
-        const network = CHAINS.find(chain => chain.platform === platformKey);
-        if (network) {
-          return network.name
-        }
-      }).filter(name => name)
-  
-      // console.log('availablePlatforms', availablePlatforms);
-  
-      if (availablePlatforms) {
-        setMarketInfo(state => ({...state, availablePlatforms}))
-      }
+    if (marketData) {
+      setMarketInfo(marketData)
     }
-    test()
-  }, [platforms])
+    // test()
+  }, [marketData])
 
   const test = async () => {
     const tokenInfo = await $token.api.coingecko.full({ platform: queryBlockchainCode, address: queryMarketId })
@@ -209,9 +198,18 @@ export async function getServerSideProps({ query }) {
 
   if (tokenInfo) {
     const token = { ...tokenRes, ...tokenInfo }
+    const platforms = tokenInfo.platforms
+    const availablePlatforms = Object.keys(platforms).filter(platformKey => {
+      const network = CHAINS.find(chain => chain.platform === platformKey);
+      return network
+    }).map(item => {
+      const network = CHAINS.find(chain => chain.platform === item);
+      return network.name
+    })
+
     if (token) {
       const full = staticTemplate(token)
-      marketData = full
+      marketData = {...full, availablePlatforms}
       const id = { [coingeckoAssets[currentChain.platform][full.id]]: full.id }
       const prices = await getPrices(id)
 

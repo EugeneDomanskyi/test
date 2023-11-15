@@ -38,11 +38,11 @@ const MarketFAQ = ({type, marketInfo}) => {
   const volume = type === 'tokens' ? marketInfo?.tokenCount : marketInfo?.tvl
   const launchDate = moment(marketInfo.createdAt).format('MMMM DD, YYYY')
   let availableNetworks = ''
-  const platforms =  marketInfo.availablePlatforms
+  const platforms =  [...marketInfo.availablePlatforms]
 
   if (platforms.length > 1) {
-    const lastItem = platforms.pop(); // Remove the last item from the array
-    const stringWithCommas = platforms.join(', ') + ' and ' + lastItem;
+    const lastItem = platforms.pop()
+    const stringWithCommas = platforms.join(', ') + ' and ' + lastItem
     availableNetworks = stringWithCommas
   } else if (platforms.length === 1) {
     availableNetworks = platforms[0]
@@ -78,7 +78,7 @@ const MarketFAQ = ({type, marketInfo}) => {
         : []
     ),
     ...(
-      marketInfo.onSaleCount && marketInfo.volume
+      marketInfo.onSaleCount || marketInfo.volume
         ? [{
             question: `What is the 24 hour global trading volume of ${ marketInfo.name }?`,
             answer: `In the past 24 hours, the total trading volume of ${ marketInfo.name } is ${ marketInfo.volume + (marketInfo.onSaleCount ? ` with ${ marketInfo.onSaleCount } sales` : '') }.`,
@@ -98,15 +98,6 @@ const MarketFAQ = ({type, marketInfo}) => {
         : []
     ),
   ]
-
-  // if (marketInfo.createdAt) {
-  //   FAQ.push(
-  //     {
-  //       question: `When was ${ marketInfo.name } launched?`,
-  //       answer: `${ marketInfo.name } was first created on ${ launchDate }.`
-  //     }
-  //   )
-  // }
 
   return (
     <App.Flex column sx={{width: '100%'}} gap={8}>
