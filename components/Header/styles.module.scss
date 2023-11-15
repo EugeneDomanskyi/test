@@ -410,12 +410,11 @@
     left: 100vw;
     right: 0;
     bottom: 0;
-    height: calc(100vh - 64px);
+    height: 100%;
     z-index: 1;
     overflow: auto;
     background: linear-gradient(180deg, #0B0D1F 0%, #08051C 100%);;
     transition: .3s;
-    touch-action: none;
     display: none;
 
     @media (max-width: 991px) {

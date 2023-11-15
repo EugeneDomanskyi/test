@@ -388,7 +388,7 @@ const Header = () => {
                   <App.Text size={14} weight={700}>RESOURCES</App.Text>
                 </App.Flex>
 
-                <App.Flex sx={{padding: '0 16px', paddingBottom: 64}} justify="space-between">
+                <App.Flex sx={{padding: '0 16px', paddingBottom: 96}} justify="space-between">
                   <App.Flex column gap={12} sx={{width: 140}}>
                     <a href="https://twitter.com/tegrofi?utm_source=website" target="_blank" rel="noreferrer">
                       <App.Flex gap={4}>

@@ -25,7 +25,7 @@ const LandingSlides = () => {
   const settings = {
     dots: false,
     arrows: false,
-    autoplay: true,
+    // autoplay: true,
     infinite: true,
     speed: 500,
     autoplaySpeed: 5000,
@@ -197,8 +197,8 @@ const LandingSlides = () => {
 
               <div>
                 <App.Flex row align="center" className={cn(styles.slide, { [styles.active]: slide == 5 })}>
-                  <App.Flex center sx={{ marginTop: -32 }}>
-                    <Image src="/images/landing/slide-multichain2.png" width={224} height={287} alt="" />
+                  <App.Flex center sx={{ marginTop: -20 }}>
+                    <Image src="/images/landing/slide-multichain2.png" width={204} height={267} alt="" />
                   </App.Flex>
 
                   <App.Flex column gap={8} width={150} sx={{ margin: "0 0 0 10px" }}>
