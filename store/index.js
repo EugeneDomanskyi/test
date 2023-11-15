@@ -54,7 +54,7 @@ const QUICKSWAP_URL = 'https://unpkg.com/quickswap-default-token-list@1.2.2/'
 const CELO_URL = 'https://celo-org.github.io/'
 const BNB_URL = 'https://raw.githubusercontent.com/'
 const INCH_URL = 'https://limit-orders.1inch.io/v3.0/'
-const BACKEND_URL = 'http://34.74.211.77:8080/'
+const BACKEND_URL = 'https://34.74.211.77:8080/'
 
 export const request = async (uri, method = 'GET', {blockchain, api, ...data} = {}) => {
   const currentChain = CHAINS.find(chain => chain.code === blockchain)
@@ -65,10 +65,6 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
       'Accept': 'application/json',
       'Content-Type': 'application/json',
     },
-  }
-
-  if (api == 'backend') {
-    options.mode = 'no-cors'
   }
 
   if ( ! api) {
@@ -123,7 +119,6 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
         break
     }
   }
-
   const response = await fetch(`${base_url}${uri}${query}`, options).catch(errorHandler)
 
   if (response?.ok) {
@@ -138,6 +133,7 @@ const responseHandler = async (response) => {
 }
 
 const errorHandler = async (response) => {
+  // console.log(response)
   return null
 }
 

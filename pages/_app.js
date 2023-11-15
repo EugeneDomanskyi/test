@@ -176,24 +176,76 @@ MyApp.getInitialProps = async ({ ctx }) => {
       if (blockchain && address) {
         const network = CHAINS.find(chain => chain.code === blockchain)
         if (network) {
+<<<<<<< HEAD
           const res = await $token.api.coingecko.full({ platform: network.platform, address: address })
           console.log('res', res);
           if (res) {
             currentSymbol = res.symbol.toUpperCase()
             res.blockchain = blockchain
             currentInfo = tokenTemplate(fullToTemplate(res, res.detail_platforms[network.platform]))
+=======
+          if (network?.useBackend) {
+            const post = {
+              page: 1,
+              pageSize: 1,
+              chainId: network.id,
+              filterCol: 'contract_address',
+              filterVal: address,
+            }
+
+            const result = await $token.api.backend.all(post)
+            console.log(result)
+            if (result && result.length) {
+              const [item] = result
+              const token = {
+                id: item.ContractAddress.toLowerCase(),
+                name: item.Name,
+                symbol: item.Symbol,
+                decimals: item.Decimals,
+                image: `https://storage.googleapis.com/token-assets/assets/${network.code}/${item.ContractAddress.toLowerCase()}.png`,
+                totalSupply: null,
+                volumeUSD: null,
+                totalValueLockedUSD: null,
+              }
+              currentInfo = tokenTemplate(token)
+
+              currentSymbol = token.symbol.toUpperCase()
+              const res = await $token.api.coingecko.full({platform: network.platform, address: address})
+              if (res) {
+                const fullToken = {
+                  ...token,
+                  blockchain,
+                  isFull: true,
+                  price: res.market_data?.current_price?.usd,
+                  high: res.market_data?.high_24h?.usd,
+                  low: res.market_data?.low_24h?.usd,
+                  volume: res.market_data?.total_volume?.usd,
+                  tvl: res.market_data?.total_value_locked,
+                  description: res.description?.en,
+                  tokenCount: res.market_data?.total_supply,
+                  onSaleCount: res.market_data?.circulating_supply,
+                  externalUrl: res.links?.homepage[0],
+                  twitterUrl: res.links?.twitter_screen_name ? `https://twitter.com/${res.links?.twitter_screen_name}` : null,
+                  ticker: {
+                    value: Math.abs(res.market_data?.price_change_percentage_24h ?? 0).toFixed(2),
+                    type: ((res.market_data?.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
+                  },
+                  genesis_date: res?.genesis_date,
+                  marketCap: res.market_data?.total_supply * (res.market_data?.current_price?.usd ?? 0),
+                }
+                res.blockchain = blockchain
+                currentInfo = tokenTemplate(fullToken)
+              }
+            }
+          } else {
+            const res = await $token.api.coingecko.full({platform: network.platform, address: address})
+            if (res) {
+              currentSymbol = res.symbol.toUpperCase()
+              res.blockchain = blockchain
+              currentInfo = tokenTemplate(fullToTemplate(res, res.detail_platforms[network.platform]))
+            }
+>>>>>>> 1724c5cd283dabd02eaf9544dcdda9a1ae22e3d6
           }
-
-          // const post = {
-          //   page: 1,
-          //   pageSize: 1,
-          //   chainId: network.id,
-          //   filterCol: 'ContractAddress',
-          //   filterVal: address,
-          // }
-
-          // const result = await $token.api.backend.all(post)
-          // console.log(result)
         }
       }
     } else if (currentPage === 'nfts') {

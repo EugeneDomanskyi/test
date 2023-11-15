@@ -339,7 +339,7 @@ const api = {
 
   backend: {
     all: (params) => {
-      return request('token/list', 'GET', {api: 'backend', ...params})
+      return request('token/list/', 'GET', {api: 'backend', ...params})
     },
   },
 }

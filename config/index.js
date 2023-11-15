@@ -62,6 +62,7 @@ const TEST_NETWORKS = [
             txUrl: 'https://mumbai.polygonscan.com/tx/',
             rewardEndpoint: 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status',
         },
+        useBackend: true,
     },
 ]
 
@@ -230,7 +231,6 @@ export const CHAINS = [
       name: 'Wrapped Ether',
       shortName: 'WETH',
     },
-    useBackend: false,
   }, {
     ...polygon,
     code: 'polygon',
