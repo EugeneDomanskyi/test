@@ -27,6 +27,7 @@ const Header = () => {
   const { isMobile } = usePropsHelper()
   const { chain } = useNetwork()
 
+  const isLanding = router.pathname == '/'
   const isEarn = router.pathname.includes('/earn')
   const isSticky = ! router.pathname.includes('/exchange')
 
@@ -254,7 +255,7 @@ const Header = () => {
                 </App.Flex>
               ) : null}
 
-              { ! isEarn ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : <App.Flex />}
+              { ! isEarn && !isLanding ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : <App.Flex />}
               
               <App.Flex row align="center" gap={16}>
                 {wallet ? (
