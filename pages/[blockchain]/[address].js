@@ -5,10 +5,8 @@ import Head from 'next/head'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
 import { CHAINS } from '@/config'
-import { getApolloClient, queries } from '@/api_services/graphql'
-import $token, { staticTemplate } from '@/store/token'
-import { getPrices } from '@/api_services/coingecko'
-import coingeckoAssets from '@/public/files/coingecko_ids'
+import { fetchPrices, getTokens, getFull } from '@/api_services/tokens'
+import $token, { template } from '@/store/token'
 import $exchange from '@/store/exchange'
 import $markets from '@/store/markets'
 
@@ -31,16 +29,7 @@ import FAQ from '@/components/Market/Details/FAQ'
 
 const token = 'fc873434915ecf9e639339b325338f768e1f5b81fc88e3e4299641a3f87de70fcf93c09316c0d1e5146fa36171076ead7c5797f1d1882f35a9f60aaf5ec065ad7757b0615886847a307d3b25dbaadb42b98d63c59a39744667ff3f5438393a87f3b63ce948bfb260ac0041c44dbe0a10e1646dfa8f8d2c85abd18e45c0bb02c6'
 
-const getToken = async (url, id) => {
-  const client = getApolloClient(url)
-  const res = await client.query({
-    query: queries.tokenById,
-    variables: { id: id }
-  })
-  return res.data.token && res.data.token.symbol !== 'unknown' ? res.data.token : null
-}
-
-export default function Markets({ marketData, currentChain }) {
+export default function Markets({ currentInfo, currentChain }) {
   const dispatch = useDispatch()
   const router = useRouter()
   const { isMobile } = usePropsHelper()
@@ -49,32 +38,21 @@ export default function Markets({ marketData, currentChain }) {
 
   const isNfts = router.asPath?.includes('nfts')
   const type = isNfts ? 'nfts' : 'tokens'
-  const queryMarketId = router.query.address
 
-  const [marketInfo, setMarketInfo] = useState(marketData)
+  const [marketInfo, setMarketInfo] = useState(currentInfo)
 
   // useEffect(() => {
-  //   console.log('marketData', marketData);
-  //   // if (marketData) {
-  //   //   setMarketInfo(marketData)
+  //   console.log('currentInfo', currentInfo);
+  //   // if (currentInfo) {
+  //   //   setMarketInfo(currentInfo)
   //   // }
-  //   test()
-  // }, [marketData])
-
-  const test = async () => {
-    const tokenInfo = await $token.api.coingecko.full({ platform: currentChain.platform, address: queryMarketId })
-    const tokenRes = await getToken(currentChain.baseUniswapUrl, queryMarketId)
-    // const token = { ...tokenRes, ...tokenInfo }
-    const token = { ...tokenInfo, ...tokenRes }
-    console.log('tokenInfo', tokenInfo);
-    console.log('tokenRes', tokenRes);
-    console.log('token', token);
-  }
+  //   // test()
+  // }, [currentInfo])
 
   useEffect(() => {
-    if (marketData.id) {
-      dispatch($token.set.current(marketData))
-      $markets.api.strapi(marketData.id, token).then(res => {
+    if (currentInfo.id) {
+      dispatch($token.set.current(currentInfo))
+      $markets.api.strapi(currentInfo.id, token).then(res => {
         if (res.data && res.data.length) {
           const info = res.data[0].attributes
           const resources = info?.project_data.project.resources.length ? info?.project_data.project.resources : null
@@ -119,7 +97,7 @@ export default function Markets({ marketData, currentChain }) {
         dispatch($exchange.set.chartData({ type: 'tokens', data: [] }))
       })
     }
-  }, [marketData?.id, activeInterval.seconds])
+  }, [currentInfo?.id, activeInterval.seconds])
 
   const handleClickOrder = () => {
     console.log();
@@ -200,39 +178,52 @@ export default function Markets({ marketData, currentChain }) {
 
 export async function getServerSideProps({ query }) {
   const blockchainCode = query.blockchain
-  const marketId = query.address
+  const address = query.address
   const currentChain = CHAINS.find(chain => chain.code === blockchainCode)
-  let marketData = {}
+  let currentInfo = {}
 
-  const tokenRes = await getToken(currentChain.baseUniswapUrl, marketId)
-  const tokenInfo = await $token.api.coingecko.full({ platform: currentChain.platform, address: marketId })
+  if (currentChain) {
+    const post = {
+      currentPage: 1,
+      perPage: 1,
+      orderBy: 'name',
+      orderDirection: 'asc',
+      searchText: address,
+      searchField: 'contract_address',
+    }
 
-  if (tokenInfo) {
-    const token = {...tokenInfo, ...tokenRes}
-    const platforms = tokenInfo.platforms
-    const availablePlatforms = Object.keys(platforms).filter(platformKey => {
-      const network = CHAINS.find(chain => chain.platform === platformKey);
-      return network
-    }).map(item => {
-      const network = CHAINS.find(chain => chain.platform === item);
-      return network.name
-    })
-
+    const [token] = await getTokens(currentChain, post)
     if (token) {
-      const full = staticTemplate(token)
-      marketData = {...full, availablePlatforms}
-      const id = { [coingeckoAssets[currentChain.platform][full.id]]: full.id }
-      const prices = await getPrices(id)
-
-      if (prices) {
-        marketData = { ...marketData, ...prices[marketId]}
+      currentInfo = {
+        ...token,
+        blockchain: currentChain.code,
       }
+      // currentSymbol = token.symbol.toUpperCase()
+
+      const prices = await fetchPrices(currentChain, [token])
+      if (prices[token.id]) {
+        currentInfo = {
+          ...currentInfo,
+          ...prices[token.id],
+        }
+      }
+
+      const full = await getFull(currentChain, token)
+
+      if (full) {
+        currentInfo = {
+          ...currentInfo,
+          ...full,
+        }
+      }
+
+      currentInfo = template(currentInfo)
     }
   }
 
   return {
     props: {
-      marketData,
+      currentInfo,
       currentChain,
     },
   }

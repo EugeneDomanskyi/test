@@ -59,27 +59,27 @@ export const template = (item, assets) => {
   }
 }
 
-export const staticTemplate = (item) => {
-  const currency = 'USDT'
-  return {
-    id: item?.id,
-    // cgId: item?.id,
-    address: item?.id,
-    decimals: item?.decimals,
-    image: item?.image?.large ?? '',
-    name: item?.name,
-    symbol: item?.symbol ? item?.symbol.toUpperCase() : '',
-    currency: currency,
-    description: item?.description?.en,
-    tokenCount: item.market_data?.total_supply ?? 0,
-    discordUrl: item?.discordUrl ?? null,
-    externalUrl: item.links?.homepage[0],
-    twitterUrl: item.links?.twitter_screen_name ? `https://twitter.com/${item.links?.twitter_screen_name}` : null,
-    marketCap: item.market_data?.total_supply * (item.market_data?.current_price?.usd ?? 0),
-    createdAt: item?.genesis_date,
-    availablePlatforms: [],
-  }
-}
+// export const staticTemplate = (item) => {
+//   const currency = 'USDT'
+//   return {
+//     id: item?.id,
+//     // cgId: item?.id,
+//     address: item?.id,
+//     decimals: item?.decimals,
+//     image: item?.image?.large ?? '',
+//     name: item?.name,
+//     symbol: item?.symbol ? item?.symbol.toUpperCase() : '',
+//     currency: currency,
+//     description: item?.description?.en,
+//     tokenCount: item.market_data?.total_supply ?? 0,
+//     discordUrl: item?.discordUrl ?? null,
+//     externalUrl: item.links?.homepage[0],
+//     twitterUrl: item.links?.twitter_screen_name ? `https://twitter.com/${item.links?.twitter_screen_name}` : null,
+//     marketCap: item.market_data?.total_supply * (item.market_data?.current_price?.usd ?? 0),
+//     createdAt: item?.genesis_date,
+//     availablePlatforms: [],
+//   }
+// }
 
 // const basicToTemplate = (item) => {
 //   if (item) {

@@ -116,7 +116,6 @@ const formatter = (order, makerDecimals, takerDecimals) => {
 
 const handler = async (req, res) => {
   const [chainId, usdtAsset, tokenAsset] = req.query.route
-  
   const query = {
     buy: queryBuilder({
       makerAsset: usdtAsset,
