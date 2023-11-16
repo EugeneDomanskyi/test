@@ -10,6 +10,7 @@ import $token, { staticTemplate } from '@/store/token'
 import { getPrices } from '@/api_services/coingecko'
 import coingeckoAssets from '@/public/files/coingecko_ids'
 import $exchange from '@/store/exchange'
+import $markets from '@/store/markets'
 
 import App from '@/components/App'
 import Market from '@/components/Market'
@@ -28,8 +29,6 @@ import Investors from '@/components/Market/Details/Investors'
 import Resources from '@/components/Market/Details/Resources'
 import FAQ from '@/components/Market/Details/FAQ'
 
-import assetsFile from '@/public/files/assets_new.json'
-
 const token = 'fc873434915ecf9e639339b325338f768e1f5b81fc88e3e4299641a3f87de70fcf93c09316c0d1e5146fa36171076ead7c5797f1d1882f35a9f60aaf5ec065ad7757b0615886847a307d3b25dbaadb42b98d63c59a39744667ff3f5438393a87f3b63ce948bfb260ac0041c44dbe0a10e1646dfa8f8d2c85abd18e45c0bb02c6'
 
 const getToken = async (url, id) => {
@@ -41,40 +40,98 @@ const getToken = async (url, id) => {
   return res.data.token && res.data.token.symbol !== 'unknown' ? res.data.token : null
 }
 
-export default function Markets({ marketInfo, currentChain }) {
+export default function Markets({ marketData, currentChain, platforms }) {
   const dispatch = useDispatch()
   const router = useRouter()
   const { isMobile } = usePropsHelper()
 
   const activeInterval = useSelector(({ $exchange }) => $exchange.interval)
 
-  const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
+  // const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
+  const isNfts = router.asPath?.includes('nfts')
+  const type = isNfts ? 'nfts' : 'tokens'
+  const queryBlockchainCode = router.query.blockchain
+  const queryMarketId = router.query.address
+
+  const [marketInfo, setMarketInfo] = useState(marketData)
 
   useEffect(() => {
-    console.log('marketInfo', marketInfo);
-  }, [])
+    
+    if (marketData) {
+      setMarketInfo(marketData)
+    }
+    // test()
+  }, [marketData])
+
+  const test = async () => {
+    const tokenInfo = await $token.api.coingecko.full({ platform: queryBlockchainCode, address: queryMarketId })
+    const tokenRes = await getToken(currentChain.baseUniswapUrl, queryMarketId)
+    console.log('tokenInfo', tokenInfo);
+    console.log('tokenRes', tokenRes);
+  }
 
   useEffect(() => {
-    if (marketInfo.id) {
+    if (marketData.id) {
       dispatch($token.set.current(marketInfo))
+      $markets.api.strapi(marketInfo.id, token).then(res => {
+        if (res.data && res.data.length) {
+          const info = res.data[0].attributes
+          const resources = info?.project_data.project.resources.length ? info?.project_data.project.resources : null
+          const investors = info?.project_data.project.investors && info?.project_data.project.investors !== "null" ? info?.project_data.project.investors : null
+          const team = info?.project_data.project.creator.length ? info?.project_data.project.creator : null
+          const description = info?.token_metadata.token.long_description ?? null
+          const parent_collection_name = info?.token_metadata.token.parent_collection_name ?? null
+          const project_name = info?.token_metadata.token.project_name ?? null
+
+          setMarketInfo(state => (
+            {
+              ...state,
+              sampleImages: info?.token_metadata.token.nft_gallery ?? null,
+              resources: resources,
+              investors: investors,
+              team: team,
+              ...(description ? {description: description} : null),
+              ...(parent_collection_name ? {parent_collection_name: parent_collection_name} : null),
+              ...(project_name ? {project_name: project_name} : null),
+            }
+          ))
+        }
+      })
       $exchange.api.get.tokenChartData(marketInfo.id, currentChain.code, activeInterval.seconds).then(res => {
         if (res) {
+          setMarketInfo(state => (
+            {
+              ...state,
+              charts: true,
+            }
+          ))
           dispatch($exchange.set.chartData({ type: 'tokens', data: res.data }))
           return
         }
+
+        setMarketInfo(state => (
+          {
+            ...state,
+            charts: null,
+          }
+        ))
         dispatch($exchange.set.chartData({ type: 'tokens', data: [] }))
       })
     }
-  }, [marketInfo.id, activeInterval.seconds])
+  }, [marketData, activeInterval.seconds])
+
+  const handleClickOrder = () => {
+    console.log();
+  }
 
   return (
     <>
       <Head>
-        <title>{`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Chart & Marketcap | Tegro: The CEX-DEX`}</title>
-        <meta name="description" content={`Buy, sell, and trade ${marketInfo.symbol ?? 'USDT'} or ${marketInfo.name} instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${marketInfo.name} at the best prices.`} />
-        <meta name="keywords" content="keyword1, keyword2, keyword3" />
-        <meta property="og:title" content={`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Chart & Marketcap | Tegro: The CEX-DEX`} />
-        <meta property="og:description" content={`Buy, sell, and trade ${marketInfo.symbol ?? 'USDT'} or ${marketInfo.name} instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${marketInfo.name} at the best prices.`} />
+        <title>{`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Index, Live Chart, Marketcap & News | Tegro: The CEX-DEX`}</title>
+        <meta name="description" content={`Use Tegro: The CEX-DEX for real-time ${marketInfo.symbol ?? 'USDT'} prices and market data, ${marketInfo.name} orderbooks and the best ${marketInfo.symbol ?? 'USDT'} spot trading chart to buy, sell and trade instantly.`} />
+        <meta name="keywords" content={`${marketInfo.symbol ?? 'USDT'}, ${marketInfo.name}`} />
+        <meta property="og:title" content={`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Index, Live Chart, Marketcap & News | Tegro: The CEX-DEX`} />
+        <meta property="og:description" content={`Use Tegro: The CEX-DEX for real-time ${marketInfo.symbol ?? 'USDT'} prices and market data, ${marketInfo.name} orderbooks and the best ${marketInfo.symbol ?? 'USDT'} spot trading chart to buy, sell and trade instantly.`} />
       </Head>
       <App.Container>
         <App.Flex sx={{ paddingBottom: 48, paddingTop: 64, overflow: 'hidden' }} gap={32}>
@@ -83,25 +140,25 @@ export default function Markets({ marketInfo, currentChain }) {
               ? !isMobile
                 ? <>
                   <App.Flex column sx={{ flex: .8 }}>
-                    <Market.Details type={queryMarketType} marketInfo={marketInfo} />
+                    <Market.Details type={type} marketInfo={marketInfo} />
                   </App.Flex>
 
                   <App.Flex column sx={{ flex: .3 }} gap={48}>
-                    <Market.Trading type={queryMarketType} marketInfo={marketInfo} />
+                    <Market.Trading type={type} marketInfo={marketInfo} />
                   </App.Flex>
                 </>
                 : <App.Flex column sx={{ paddingTop: 32, width: '100%' }} gap={48}>
-                  <Info type={queryMarketType} marketInfo={marketInfo} />
+                  <Info type={type} marketInfo={marketInfo} />
                   {
                     marketInfo.price
                       ? <TradeForm
                         current={marketInfo}
-                        type={queryMarketType}
+                        type={type}
                       />
                       : null
                   }
                   <OrderBook
-                    type={queryMarketType}
+                    type={type}
                     onClickOrder={handleClickOrder}
                   />
                   <LivePrice marketInfo={marketInfo} />
@@ -109,7 +166,7 @@ export default function Markets({ marketInfo, currentChain }) {
                   <Trending />
                   <About />
                   <Images />
-                  <Ad />
+                  {/* <Ad /> */}
                   {
                     marketInfo.team
                       ? <Team />
@@ -134,32 +191,41 @@ export default function Markets({ marketInfo, currentChain }) {
 }
 
 export async function getServerSideProps({ query }) {
-  const blockchainCode = query.segments[1]
-  const marketId = query.segments[2]
+  const blockchainCode = query.blockchain
+  const marketId = query.address
   const currentChain = CHAINS.find(chain => chain.code === blockchainCode)
-  let marketInfo = {}
+  let marketData = {}
 
   const tokenRes = await getToken(currentChain.baseUniswapUrl, marketId)
-  const tokenInfo = await $token.api.coingecko.full({ platform: blockchainCode, address: marketId })
+  const tokenInfo = await $token.api.coingecko.full({ platform: currentChain.platform, address: marketId })
 
   if (tokenInfo) {
     const token = { ...tokenRes, ...tokenInfo }
+    const platforms = tokenInfo.platforms
+    const availablePlatforms = Object.keys(platforms).filter(platformKey => {
+      const network = CHAINS.find(chain => chain.platform === platformKey);
+      return network
+    }).map(item => {
+      const network = CHAINS.find(chain => chain.platform === item);
+      return network.name
+    })
+
     if (token) {
       const full = staticTemplate(token)
-      marketInfo = full
+      marketData = {...full, availablePlatforms}
       const id = { [coingeckoAssets[currentChain.platform][full.id]]: full.id }
       const prices = await getPrices(id)
 
       if (prices) {
-        marketInfo = ({ ...full, ...prices[marketId] })
+        marketData = { ...marketData, ...prices[marketId]}
       }
     }
   }
 
   return {
     props: {
-      marketInfo,
-      currentChain
+      marketData,
+      currentChain,
     },
   }
 }

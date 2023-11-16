@@ -81,9 +81,13 @@ export default function Info({type, marketInfo}) {
           : null
       }
 
-      <App.Flex sx={{height: 443}}>
-        <Chart type={type} />
-      </App.Flex>
+      {
+        marketInfo.charts
+          ? <App.Flex sx={{height: 443}}>
+              <Chart type={type} />
+            </App.Flex>
+          : null
+      }
     </App.Flex>
   )
 }

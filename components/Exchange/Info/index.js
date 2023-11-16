@@ -20,7 +20,7 @@ const Info = ({ current, type }) => {
   const [usdPrice, setUsdPrice] = useState(current.price)
 
   const scanLink = `${blockchain.scanUrl}/address/${current.address}`
-  const websiteLink = `/market/${type}/${blockchain.code}/${current.address}`
+  const websiteLink = `/${blockchain.code}/${current.address}`
 
   useEffect(() => {
     if (current.id) {

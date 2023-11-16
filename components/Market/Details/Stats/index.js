@@ -17,25 +17,38 @@ export default function Stats({marketInfo}) {
       
       <App.Flex column sx={{width: '100%'}} gap={isMobile ? 16 : 32}>
         <App.Flex sx={{width: '100%'}} className={styles.container}>
-          <App.Flex className={styles.statBlock} column>
-            <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Floor Price</App.Text>
-            <App.Text size={isMobile ? 20 : 24} weight={700}>${ marketInfo.price }</App.Text>
-          </App.Flex>
-
-          <App.Flex className={styles.statBlock} column>
-            <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">24H Volume</App.Text>
-            <App.Text size={isMobile ? 20 : 24} weight={700}>${ marketInfo.volume }</App.Text>
-          </App.Flex>
-
-          <App.Flex className={styles.statBlock} column>
-            <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Total Supply</App.Text>
-            <App.Text size={isMobile ? 20 : 24} weight={700}>{ marketInfo.tokenCount }</App.Text>
-          </App.Flex>
-
-          <App.Flex className={styles.statBlock} column>
-            <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Market Cap</App.Text>
-            <App.Text size={isMobile ? 20 : 24} weight={700}>${ marketInfo.marketCap }</App.Text>
-          </App.Flex>
+          {
+            marketInfo.price 
+              ? <App.Flex className={styles.statBlock} column>
+                  <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Floor Price</App.Text>
+                  <App.Text size={isMobile ? 20 : 24} weight={700}>${ marketInfo.price }</App.Text>
+                </App.Flex>
+              : null
+          }
+          {
+            marketInfo.volume 
+              ? <App.Flex className={styles.statBlock} column>
+                  <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">24H Volume</App.Text>
+                  <App.Text size={isMobile ? 20 : 24} weight={700}>${ marketInfo.volume }</App.Text>
+                </App.Flex>
+              : null
+          }
+          {
+            marketInfo.tokenCount 
+              ? <App.Flex className={styles.statBlock} column>
+                  <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Total Supply</App.Text>
+                  <App.Text size={isMobile ? 20 : 24} weight={700}>{ marketInfo.tokenCount }</App.Text>
+                </App.Flex>
+              : null
+          }
+          {
+            marketInfo.marketCap 
+              ? <App.Flex className={styles.statBlock} column>
+                  <App.Text size={isMobile ? 12 : 14} weight={500} color="#B9B8C5">Market Cap</App.Text>
+                  <App.Text size={isMobile ? 20 : 24} weight={700}>${ marketInfo.marketCap }</App.Text>
+                </App.Flex>
+              : null
+          }
         </App.Flex>
 
         {/* <App.Flex justify="flex-end">
