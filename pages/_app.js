@@ -6,15 +6,17 @@ import nookies from 'nookies'
 import amplitude from 'amplitude-js'
 import * as Sentry from '@sentry/nextjs'
 import Smartlook from 'smartlook-client'
+import merge from 'lodash.merge'
 
 import { getDefaultWallets, RainbowKitProvider, darkTheme, connectorsForWallets } from '@rainbow-me/rainbowkit'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
-import merge from 'lodash.merge'
 import * as MagicConnectors from '@magiclabs/wagmi-connector/dist/lib/connectors/universalWalletConnector'
+
 import { CHAINS } from '@/config'
+import { fetchPrices, getTokens } from '@/api_services/tokens'
 import store from '@/store'
 import $token, { fullToTemplate, template as tokenTemplate } from '@/store/token'
 import $collection, { template as collectionTemplate } from '@/store/collection'
@@ -174,67 +176,34 @@ MyApp.getInitialProps = async ({ ctx }) => {
     currentAddress = (address ?? '').toLowerCase()
     if (currentPage === 'exchange') {
       if (blockchain && address) {
-        const network = CHAINS.find(chain => chain.code === blockchain)
-        if (network) {
-          if (network?.useBackend) {
-            const post = {
-              page: 1,
-              pageSize: 1,
-              chainId: network.id,
-              filterCol: 'contract_address',
-              filterVal: address,
+        const currentChain = CHAINS.find(chain => chain.code === blockchain)
+        if (currentChain) {
+          const post = {
+            currentPage: 1,
+            perPage: 1,
+            orderBy: 'name',
+            orderDirection: 'asc',
+            searchText: address,
+            searchField: 'contract_address',
+          }
+
+          const [token] = await getTokens(currentChain, post)
+          if (token) {
+            currentInfo = {
+              ...token,
+              blockchain: currentChain.code,
+            }
+            currentSymbol = token.symbol.toUpperCase()
+
+            const prices = await fetchPrices(currentChain, [token])
+            if (prices[token.id]) {
+              currentInfo = {
+                ...currentInfo,
+                ...prices[token.id],
+              }
             }
 
-            const result = await $token.api.backend.all(post)
-            if (result && result.length) {
-              const [item] = result
-              const token = {
-                id: item.ContractAddress.toLowerCase(),
-                name: item.Name,
-                symbol: item.Symbol,
-                decimals: item.Decimals,
-                image: `https://storage.googleapis.com/token-assets/assets/${network.code}/${item.ContractAddress.toLowerCase()}.png`,
-                totalSupply: null,
-                volumeUSD: null,
-                totalValueLockedUSD: null,
-              }
-              currentInfo = tokenTemplate(token)
-              
-              currentSymbol = token.symbol.toUpperCase()
-              const res = await $token.api.coingecko.full({platform: network.platform, address: address})
-              if (res) {
-                const fullToken = {
-                  ...token,
-                  blockchain,
-                  isFull: true,
-                  price: res.market_data?.current_price?.usd,
-                  high: res.market_data?.high_24h?.usd,
-                  low: res.market_data?.low_24h?.usd,
-                  volume: res.market_data?.total_volume?.usd,
-                  tvl: res.market_data?.total_value_locked,
-                  description: res.description?.en,
-                  tokenCount: res.market_data?.total_supply,
-                  onSaleCount: res.market_data?.circulating_supply,
-                  externalUrl: res.links?.homepage[0],
-                  twitterUrl: res.links?.twitter_screen_name ? `https://twitter.com/${res.links?.twitter_screen_name}` : null,
-                  ticker: {
-                    value: Math.abs(res.market_data?.price_change_percentage_24h ?? 0).toFixed(2),
-                    type: ((res.market_data?.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
-                  },
-                  genesis_date: res?.genesis_date,
-                  marketCap: res.market_data?.total_supply * (res.market_data?.current_price?.usd ?? 0),
-                }
-                res.blockchain = blockchain
-                currentInfo = tokenTemplate(fullToken)
-              }
-            }
-          } else {
-            const res = await $token.api.coingecko.full({platform: network.platform, address: address})
-            if (res) {
-              currentSymbol = res.symbol.toUpperCase()
-              res.blockchain = blockchain
-              currentInfo = tokenTemplate(fullToTemplate(res, res.detail_platforms[network.platform]))
-            }
+            currentInfo = tokenTemplate(currentInfo)
           }
         }
       }
