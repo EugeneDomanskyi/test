@@ -1,6 +1,16 @@
 .container {
   padding-bottom: 32px;
 
+  h2 {
+    font-size: 24px;
+    margin: 0;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 500;
+  }
+
   .item {
     padding-left: 28px;
     padding-right: 28px;

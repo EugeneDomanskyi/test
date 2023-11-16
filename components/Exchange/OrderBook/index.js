@@ -54,45 +54,49 @@ const OrderBook = ({ type, version, onClickOrder }) => {
     <App.Flex column flex={[1, null]} className={cn(styles.card, { [styles[version]]: version })}>
       {version != 'mobile' ? (
         <App.Flex className={styles.header} align="center">
-          <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600}>ORDER BOOK</App.Text>
+          <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600} height={1}>ORDER BOOK</App.Text>
         </App.Flex>
       ) : null}
-      <App.Flex gap={3}>
+      
+      <App.Flex gap={2} height={version != 'mobile' ? 'calc(100% - 32px)' : '100%'}>
         <App.Flex column flex={1}>
           <App.Flex justify="space-between" align="center" className={styles.rowHeader}>
-            <App.Text size={[10, 12]} color="#908F99" weight={[600, 500]}>Volume</App.Text>
-            <App.Text size={[10, 12]} color="#908F99" weight={[600, 500]}>Buy Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
+            <App.Text size={[10, 12]} color="#B9B8C5" weight={[600, 500]} height={1}>Volume</App.Text>
+            <App.Text size={[10, 12]} color="#B9B8C5" weight={[600, 500]} height={1}>Buy Price</App.Text>
           </App.Flex>
-          {
-            orderBook.buy.map((order, i) => {
+          
+          <App.Flex flex={1} column sx={{overflow: 'auto'}}>
+            {orderBook.buy.map((order, i) => {
               const width = order.volume * 100 / maxBuyVolume
               return (
-                <App.Flex key={i} justify="space-between" align="center" className={styles.row} onClick={handleClick({ ...order, side: 'sell' }, order.volume)}>
-                  <div className={cn(styles.fill, styles.buy)} style={{ width }} />
-                  <App.Text size={12} color="#53f19c" weight={600} sx={{ position: 'relative' }}>{order.volume}</App.Text>
-                  <App.Text size={12} sx={{ position: 'relative' }} weight={600} color="rgba(255,255,255,0.8)">{order.priceFormatted}</App.Text>
+                <App.Flex key={i} justify="space-between" align="center" className={styles.row} onClick={handleClick({...order, side: 'sell'}, order.volume)}>
+                  <div className={cn(styles.fill, styles.buy)} style={{width}} />
+                  <App.Text size={12} sx={{position: 'relative'}} height={1}>{ order.volume }</App.Text>
+                  <App.Text size={12} sx={{position: 'relative'}} color="#53f19c" height={1}>{ order.priceFormatted }</App.Text>
                 </App.Flex>
               )
-            })
-          }
+            })}
+          </App.Flex>
         </App.Flex>
+
         <App.Flex column flex={1}>
           <App.Flex justify="space-between" align="center" className={styles.rowHeader}>
-            <App.Text size={[10, 12]} color="#908F99" weight={[600, 500]}>Sell Price ({type === 'nfts' ? blockchain.wrapped.shortName : 'USDT'})</App.Text>
-            <App.Text size={[10, 12]} color="#908F99" weight={[600, 500]}>Volume</App.Text>
+            <App.Text size={[10, 12]} color="#B9B8C5" weight={[600, 500]} height={1}>Sell Price</App.Text>
+            <App.Text size={[10, 12]} color="#B9B8C5" weight={[600, 500]} height={1}>Volume</App.Text>
           </App.Flex>
-          {
-            orderBook.sell.map((order, i) => {
+
+          <App.Flex flex={1} column sx={{overflow: 'auto'}}>
+            {orderBook.sell.map((order, i) => {
               const width = order.volume * 100 / maxSellVolume
               return (
-                <App.Flex key={i} justify="space-between" align="center" className={styles.row} onClick={handleClick({ ...order, side: 'buy' }, order.volume)}>
-                  <div className={cn(styles.fill, styles.sell)} style={{ width }} />
-                  <App.Text size={12} sx={{ position: 'relative' }} weight={600} color="rgba(255,255,255,0.8)">{order.priceFormatted}</App.Text>
-                  <App.Text size={12} color="#eb3169" weight={600} sx={{ position: 'relative' }}>{order.volume}</App.Text>
+                <App.Flex key={i} justify="space-between" align="center" className={styles.row} onClick={handleClick({...order, side: 'buy'}, order.volume)}>
+                  <div className={cn(styles.fill, styles.sell)} style={{width}} />
+                  <App.Text size={12} sx={{position: 'relative'}} color="#eb3169" height={1}>{ order.priceFormatted }</App.Text>
+                  <App.Text size={12} sx={{position: 'relative'}} height={1}>{ order.volume }</App.Text>
                 </App.Flex>
               )
-            })
-          }
+            })}
+          </App.Flex>
         </App.Flex>
       </App.Flex>
     </App.Flex>

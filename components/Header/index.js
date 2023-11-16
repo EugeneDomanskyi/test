@@ -11,6 +11,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
+import { CHAINS } from '@/config'
+
 import $modal from '@/store/modal'
 
 import App from '@/components/App'
@@ -27,6 +29,11 @@ const Header = () => {
   const { isMobile } = usePropsHelper()
   const { chain } = useNetwork()
 
+  const path = router.asPath.split('/')
+  const blockchain = path[1]
+  const isMarket = CHAINS.some(chain => chain.code === blockchain)
+
+  const isLanding = router.pathname == '/'
   const isEarn = router.pathname.includes('/earn')
   const isSticky = ! router.pathname.includes('/exchange')
 
@@ -39,7 +46,6 @@ const Header = () => {
   const [moreIsOpen, setMoreIsOpen] = useState(false)
   const [supportIsOpen, setSupportIsOpen] = useState(false)
   const [currentBalance, setCurrentBalance] = useState({amount: 0, symbol: ''})
-  const [isBannerClosed, setIsBannerClosed] = useState(false)
   const [balanceLoading, setBalanceLoading] = useState(true)
 
   useEffect(() => {
@@ -158,20 +164,6 @@ const Header = () => {
     // trackEvent('Click Support')
     window.open("https://discord.com/channels/951018857533935627/1107789606612631602/1135635808087462009", '_blank')
   }
-  
-  const handleBannerClick = (e) => {
-    e.stopPropagation()
-    e.preventDefault()
-
-    handleConnectWallet()
-  }
-
-  const handleBannerCloseClick = (e) => {
-    e.stopPropagation()
-    e.preventDefault()
-
-    setIsBannerClosed(true)
-  }
 
   return (
     <App.Flex column className={cn(styles.container, {[styles.sticky]: isSticky})}>
@@ -254,7 +246,7 @@ const Header = () => {
                 </App.Flex>
               ) : null}
 
-              { ! isEarn ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : <App.Flex />}
+              { ! isEarn && ! isLanding && ! isMarket ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : <App.Flex />}
               
               <App.Flex row align="center" gap={16}>
                 {wallet ? (

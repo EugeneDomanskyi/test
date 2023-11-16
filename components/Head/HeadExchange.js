@@ -8,10 +8,10 @@ const HeadExchange = ({ currentInfo }) => {
   const getTitle = () => {
     if (initCurrent?.id) {
       let ticker = ''
-      if (initCurrent?.ticker) {
+      if (initCurrent?.ticker?.value && initCurrent.ticker.value * 1 != 0) {
         ticker = `${initCurrent.ticker.type == 'plus' ? '▲' : '▼'} ${initCurrent.ticker.value}%`
       }
-      return `$${initCurrent.price} ${initCurrent.symbol}/USDT ${ticker} | Trade ${initCurrent.name} at best price on Tegro: The CEX-DEX`
+      return (initCurrent.price ? (`$${initCurrent.price} ${initCurrent.symbol}/USDT ${ticker} | `) : '') + `Trade ${initCurrent.name} at best price on Tegro: The CEX-DEX`
     }
 
     return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'

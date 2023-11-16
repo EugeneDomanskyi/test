@@ -7,16 +7,18 @@ import DifferenceIndicator from '@/components/Market/DifferenceIndicator'
 const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 
 export default function Info({type, marketInfo}) {
-  // const { marketInfo } = useSelector(({$app}) => $app)
-
   return (
     <App.Flex column sx={{width: '100%'}} gap={16}>
       <App.Flex className={styles.container}>
         <App.Flex column gap={22}>
           <App.Flex className={styles.infoContainer} gap={10}>
-            <App.Flex className={styles.imageBlock}>
-              <img src={marketInfo?.image} alt="" />
-            </App.Flex>
+            {
+              marketInfo?.image
+                ? <App.Flex className={styles.imageBlock}>
+                    <img src={marketInfo?.image} alt="" />
+                  </App.Flex>
+                : null
+            }
             
             <App.Flex column gap={10} className={styles.nameBlock}>
               <div className={styles.nameTitle}>
@@ -81,9 +83,13 @@ export default function Info({type, marketInfo}) {
           : null
       }
 
-      <App.Flex sx={{height: 443}}>
-        <Chart type={type} />
-      </App.Flex>
+      {
+        marketInfo.charts
+          ? <App.Flex sx={{height: 443}}>
+              <Chart type={type} />
+            </App.Flex>
+          : null
+      }
     </App.Flex>
   )
 }

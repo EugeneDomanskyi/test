@@ -95,10 +95,27 @@ $borderRadius: 12px;
   /* variant: search */
   &.search {
     .input {
-      background-color: #1C192F;
+      background-color: #1c192e;
+      padding-left: 16px;
+
+      .input_input {
+        font-size: 12px;
+        line-height: 24px;
+        padding: 10px 16px 10px 0;
+
+        &::placeholder {
+          color: #5E5C6B;
+          font-size: 12px;
+          line-height: 24px;
+          font-feature-settings: 'clig' off, 'liga' off;
+          text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+          opacity: 1;
+        }
+      }
 
       .input_fieldset {
-        border-radius: 3px;
+        border-radius: 4px;
+        border-color: transparent;
       }
     }
 
@@ -108,7 +125,7 @@ $borderRadius: 12px;
         &.input_focused,
         &.input_disabled {
           .input_fieldset {
-            border-color: #311B92;
+            border-color: transparent;
           }
         }
       }

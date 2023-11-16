@@ -65,8 +65,6 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
     amount: getDecimalsCount(form.amount),
   }
 
-  // console.log(countOfDecimals)
-
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
       handleChangeForm('price')(data.price.toString())
@@ -271,20 +269,17 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
     return (
       <App.Flex className={cn(styles.balance, {[styles.error]: isErrorBalance && wasUserInput})}>
         <App.Flex flex={1} align="center" gap={4}>
-          <App.Icon icon="wallet" width={14} height={14} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} />
-          <App.Text size={12} weight={600}  color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'}>
-            {
-              currentTab === 'buy'
-                ? `${userBalances.usdt} USDT`
-                : `${userBalances.token} ${current.symbol}`
-            }
+          <App.Icon icon="wallet" width={10} height={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} />
+          <App.Text size={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} height={1}>
+            {currentTab === 'buy' ? `${userBalances.usdt} USDT` : `${userBalances.token} ${current.symbol}`}
           </App.Text>
         </App.Flex>
+
         <App.Flex className={styles.multipler} align="center" gap={8}>
-          <App.Text color="#B9B8C5" size={12} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.25)}>25%</App.Text>
-          <App.Text color="#B9B8C5" size={12} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.5)}>50%</App.Text>
-          <App.Text color="#B9B8C5" size={12} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(0.75)}>75%</App.Text>
-          <App.Text color="#B9B8C5" size={12} weight={600} sx={{cursor: 'pointer'}} onClick={handleClickMultipler(1)}>100%</App.Text>
+          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} height={1} onClick={handleClickMultipler(0.25)}>25%</App.Text>
+          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} height={1} onClick={handleClickMultipler(0.5)}>50%</App.Text>
+          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} height={1} onClick={handleClickMultipler(0.75)}>75%</App.Text>
+          <App.Text color="#B9B8C5" size={10} weight={600} sx={{cursor: 'pointer'}} height={1} onClick={handleClickMultipler(1)}>100%</App.Text>
         </App.Flex>
       </App.Flex>
     )
@@ -293,121 +288,113 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
   useInterval(fetchBalance, (wallet && blockchain && current?.address) ? 2000 : null)
 
   return (
-    <App.Flex column className={cn(styles.form, {[styles[version]]: version})}>
-        <App.Flex justify="flex-end" align="center" sx={{marginBottom: 16}}>
-          <App.Tooltip placement="bottom-end" text={<App.Text size={12} color="#B9B8C5">Take control of your trades. Set your own price for buying or selling assets with this versatile trading tool.</App.Text>}>
-            <App.Flex row align="center" sx={{ cursor: 'pointer' }}>
-              <App.Text color="rgba(255,255,255,0.6)" size={10} weight={600} italic sx={{marginRight: 8}}>Limit Order</App.Text>
-              <App.Icon icon="info" width={12} height={12} />
-            </App.Flex>
-          </App.Tooltip>
-        </App.Flex>
+    <App.Flex column gap={16} className={cn(styles.form, {[styles[version]]: version})}>
+      <App.Flex justify="flex-end" align="center">
+        <App.Tooltip placement="bottom-end" text={<App.Text size={12} color="#B9B8C5">Take control of your trades. Set your own price for buying or selling assets with this versatile trading tool.</App.Text>}>
+          <App.Flex row align="center" sx={{ cursor: 'pointer' }}>
+            <App.Text color="rgba(255,255,255,0.6)" size={12} weight={600} italic sx={{marginRight: 8}}>Limit Order</App.Text>
+            <App.Icon icon="info" width={12} height={12} />
+          </App.Flex>
+        </App.Tooltip>
+      </App.Flex>
 
-      <App.Flex column sx={{marginBottom: 10}}>
-        <App.Flex justify="center" flex={1} column sx={{position: 'relative'}}>
-          <TradeInput
-            label="AT PRICE"
-            currency={'USDT'}
-            value={form.price}
-            version={version}
-            warning={isWrongPrice}
-            onBlur={handleBlurPrice}
-            onChange={handleChangeForm('price', true)}
-          />
-          
-          {version == 'mobile' ? (
-            <App.Flex row gap={8} className={styles.priceSetter}>
-              <App.Flex row center onClick={handleSetPrice}>
-                <App.Text size={12} weight={600} color={currentTab === 'buy' ? '#53F19C' : '#FF1D61'}>
-                  { currentTab === 'buy' ? 'MIN' : 'MAX' }
+      <App.Flex column gap={5}>
+        <App.Flex column>
+          <App.Flex justify="center" flex={1} column sx={{position: 'relative'}}>
+            <TradeInput
+              label="AT PRICE"
+              currency={'USDT'}
+              value={form.price}
+              version={version}
+              warning={isWrongPrice}
+              onBlur={handleBlurPrice}
+              onChange={handleChangeForm('price', true)}
+            />
+            
+            {version == 'mobile' ? (
+              <App.Flex row gap={8} className={styles.priceSetter}>
+                <App.Flex row center onClick={handleSetPrice}>
+                  <App.Text size={12} weight={600} color={currentTab === 'buy' ? '#53F19C' : '#FF1D61'}>
+                    { currentTab === 'buy' ? 'MIN' : 'MAX' }
+                  </App.Text>
+                </App.Flex>
+
+                <App.Flex row center className={styles.buttonInput} onClick={handleChangePrice('plus')}>
+                  <App.Icon icon="plus" />
+                </App.Flex>
+
+                <App.Flex row center className={styles.buttonInput} onClick={handleChangePrice('minus')}>
+                  <App.Icon icon="minus" />
+                </App.Flex>
+              </App.Flex>
+            ) : (
+              <App.Flex className={styles.priceSetter} onClick={handleSetPrice}>
+                <App.Text size={10} weight={600} color={currentTab === 'buy' ? '#53F19C' : '#FF1D61'} height={1}>
+                  { currentTab === 'buy' ? 'LOWEST PRICE' : 'HIGHEST PRICE' }
                 </App.Text>
               </App.Flex>
+            )}
+          </App.Flex>
 
-              <App.Flex row center className={styles.buttonInput} onClick={handleChangePrice('plus')}>
-                <App.Icon icon="plus" />
-              </App.Flex>
-
-              <App.Flex row center className={styles.buttonInput} onClick={handleChangePrice('minus')}>
-                <App.Icon icon="minus" />
-              </App.Flex>
-            </App.Flex>
-          ) : (
-            <App.Flex className={styles.priceSetter} onClick={handleSetPrice}>
-              <App.Text size={12} weight={600} color={currentTab === 'buy' ? '#53F19C' : '#FF1D61'}>
-                { currentTab === 'buy' ? 'LOWEST PRICE' : 'HIGHEST PRICE' }
-              </App.Text>
-            </App.Flex>
-          )}
-        </App.Flex>
-        {
-          isWrongPrice
-            ? <App.Text color="#FFD600" size={10} weight={500}>
+          <App.Flex sx={{ paddingTop: 4 }}>
+            {isWrongPrice ? (
+              <App.Text color="#FFD600" size={10} height={1}>
                 {currentTab === 'buy' ? 'Price deviation is more than 10% above the last trade price.' : 'The price deviation is less than the last traded price.'}
               </App.Text>
-            :  <App.Text color="#FFD600" size={10} weight={500}>&nbsp;</App.Text>
-        }
-      </App.Flex>
-      <App.Flex column sx={{marginBottom: 24}}>
-        <TradeInput
-          label="AMOUNT"
-          value={form.amount}
-          version={version}
-          currency={current.symbol}
-          error={currentTab == 'sell' && isErrorBalance && wasUserInput}
-          onBlur={handleBlurAmount}
-          onChange={handleChangeForm('amount', true)}
-        />
-        {
-          currentTab === 'sell'
-            ? renderBalance()
-            : null
-        }
-
-        {currentTab == 'sell' && isErrorBalance && wasUserInput ? (
-          <App.Flex sx={{ paddingTop: 8 }}>
-            <App.Text size={12} weight={600}  color="#FF1D61">Insufficient funds in your wallet to make this purchase</App.Text>
+            ) : (
+              <App.Text color="#FFD600" size={10} height={1}>&nbsp;</App.Text>
+            )}
           </App.Flex>
-        ): null}
-      </App.Flex>
-      <App.Flex column sx={{marginBottom: 24}}>
-        <TradeInput
-          label="TOTAL"
-          currency={'USDT'}
-          value={form.total}
-          version={version}
-          error={currentTab == 'buy' && isErrorBalance && wasUserInput}
-          onBlur={handleTotalBlur}
-          onChange={handleChangeForm('total', true)}
-        />
-          {
-            currentTab === 'buy'
-              ? renderBalance()
-              : null
-          }
+        </App.Flex>
 
-        {currentTab == 'buy' && isErrorBalance && wasUserInput ? (
-          <App.Flex sx={{ paddingTop: 8 }}>
-            <App.Text size={12} weight={600}  color="#FF1D61">Insufficient funds in your wallet to make this purchase</App.Text>
+        <App.Flex column>
+          <TradeInput
+            label="AMOUNT"
+            value={form.amount}
+            version={version}
+            currency={current.symbol}
+            error={currentTab == 'sell' && isErrorBalance && wasUserInput}
+            onBlur={handleBlurAmount}
+            onChange={handleChangeForm('amount', true)}
+          />
+
+          {currentTab === 'sell' ? renderBalance(): null}
+
+          <App.Flex sx={{ paddingTop: 4 }}>
+            {currentTab == 'sell' && isErrorBalance && wasUserInput ? (
+              <App.Text size={10} weight={600} color="#FF1D61" height={1}>Insufficient funds in your wallet to make this purchase</App.Text>
+            ): (
+              <App.Text color="#FFD600" size={10} height={1}>&nbsp;</App.Text>
+            )}
           </App.Flex>
-        ): null}
+        </App.Flex>
+
+        <App.Flex column>
+          <TradeInput
+            label="TOTAL"
+            currency={'USDT'}
+            value={form.total}
+            version={version}
+            error={currentTab == 'buy' && isErrorBalance && wasUserInput}
+            onBlur={handleTotalBlur}
+            onChange={handleChangeForm('total', true)}
+          />
+
+          {currentTab === 'buy' ? renderBalance() : null}
+
+          <App.Flex sx={{ paddingTop: 4 }}>
+            {currentTab == 'buy' && isErrorBalance && wasUserInput ? (
+              <App.Text size={10} weight={600} color="#FF1D61" height={1}>Insufficient funds in your wallet to make this purchase</App.Text>
+            ): (
+              <App.Text color="#FFD600" size={10} height={1}>&nbsp;</App.Text>
+            )}
+          </App.Flex>
+        </App.Flex>
       </App.Flex>
-      {version == 'mobile' ? (
-        <App.Button xl fullWidth variant={currentTab == 'buy' ? 'success' : 'danger'} disabled={isDisabled || (isErrorBalance && wasUserInput)} onClick={handleSubmit}>
-          {formOption.title}
-        </App.Button>
-      ) : (
-        <App.Button
-          sx={{backgroundColor: formOption.color, opacity: (isDisabled || (isErrorBalance && wasUserInput)) ? 0.5 : 1,}}
-          className={styles.button}
-          disabled={isDisabled || (isErrorBalance && wasUserInput)}
-          onClick={handleSubmit}
-        >
-          <App.Text color="#09051D" size={15} weight={700}>
-            { formOption.title } {`${form.amount || 0}` } { current.symbol }
-          </App.Text>
-          { current?.image ? <Image src={current?.image} width={32} height={32} alt="" /> : null }
-        </App.Button>
-      )}
+
+      <App.Button xl fullWidth variant={currentTab == 'buy' ? 'success' : 'danger'} disabled={isDisabled || (isErrorBalance && wasUserInput)} onClick={handleSubmit}>
+        {formOption.title}
+      </App.Button>
     </App.Flex>
   )
 })

@@ -33,13 +33,14 @@ const CHART_CONFIG = {
       type: LightweightCharts.ColorType.Solid,
       color: 'rgba(255, 255, 255, 0.0)'
     },
-    textColor: 'rgba(161, 159, 255, 0.4)',
-    fontFamily: 'Gilroy',
+    textColor: '#B9B8C5',
+    fontFamily: 'GilroyRegular',
+    fontSize: 12,
   },
   lineStyle: 0,
   grid: {
     vertLines: { color: 'rgba(161, 159, 255, 0)' },
-    horzLines: { color: 'rgba(161, 159, 255, 0.4)', style: 3 },
+    horzLines: { color: 'rgba(161, 159, 255, 0.3)', style: 3 },
   },
   timeScale: {
     borderColor: 'rgba(161, 159, 255, 0.2)',
@@ -98,9 +99,15 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
   const chartRef = useRef(null)
   const candlestickSeriesRef = useRef([])
   const areaSeriesRef = useRef([])
+  const optionsRef = useRef()
 
   useEffect(() => {
     buildChart()
+
+    // window.addEventListener('resize', updateChartConfig)
+    // return () => {
+    //   window.removeEventListener('resize', updateChartConfig)
+    // }
   }, [])
 
   useEffect(() => {
@@ -108,6 +115,40 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
       updateChart()
     }
   }, [chartData, variant])
+
+  // const updateChartConfig = () => {
+  //   if (chartRef.current) {
+  //     const options = getResizeOptions()
+  //     if (JSON.stringify(options) != JSON.stringify(optionsRef.current)) {
+  //       chartRef.current.applyOptions(options)
+  //       optionsRef.current = options
+  //     }
+  //   }
+  // }
+
+  // const getResizeOptions = () => {
+  //   const props = {
+  //     layout: {
+  //       background: {
+  //         type: LightweightCharts.ColorType.Solid,
+  //         color: 'rgba(255, 255, 255, 0.0)'
+  //       },
+  //       textColor: '#B9B8C5',
+  //       fontFamily: 'GilroyRegular',
+  //       fontSize: 12,
+  //     },
+  //   }
+
+  //   if (typeof window !== 'undefined') {
+  //     const {innerWidth} = window
+      
+  //     if (innerWidth >= 1500) {
+  //       props.layout.fontSize = 14
+  //     }
+  //   }
+  
+  //   return props
+  // }
 
   const handleChangeInterval = (interval) => () => {
     dispatch($exchange.set.interval(interval))
@@ -117,6 +158,7 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
     if ( ! chartRef.current) {
       chartRef.current = LightweightCharts.createChart(containerRef.current, {
         ...CHART_CONFIG,
+        //...getResizeOptions(),
       })
       candlestickSeriesRef.current = chartRef.current.addCandlestickSeries({...TYPES_SETTINGS['candlesticks']})
       areaSeriesRef.current = chartRef.current.addAreaSeries({...TYPES_SETTINGS['area']})
@@ -154,13 +196,13 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
 
   const ComponentIntervals = () => {
     return (
-      <App.Flex row align="center" justify="space-between" gap={16}>
+      <App.Flex row align="center" justify="space-between" gap={16} className={styles.intervalContainer}>
         <App.Flex row align="center" flex={[null, 1]} className={styles.intervalBox}>
           {INTERVALS.map((interval, i) => {
             const isActive = activeInterval.key === interval.key
             return (
               <App.Flex key={i} center flex={1} onClick={handleChangeInterval(interval)} className={cn(styles.interval, {[styles.active]: isActive})}>
-                <App.Text weight={500} color={isActive ? 'rgba(255,255,255,0.87)' : "#ACA3D3"} size={14}>{ interval.key.toUpperCase() }</App.Text>
+                <App.Text color={isActive ? '#fff' : '#B9B8C5'} size={12}>{ interval.key.toUpperCase() }</App.Text>
               </App.Flex>
             )
           })}
@@ -176,7 +218,7 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
   }
 
   return (
-    <App.Flex column gap={8} flex={1} className={cn(styles.container, {[styles[version]]: version})}>
+    <App.Flex column gap={[0, 8]} className={cn(styles.container, {[styles[version]]: version})}>
       {version != 'mobile' ? ComponentIntervals() : null}
 
       {top && top.length ? (
@@ -190,7 +232,7 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
         </App.Flex>
       ) : null}
 
-      <div ref={wrapperRef} style={version == 'mobile' ? {height: `calc(100% - ${top.length ? '76px' : '44px'})`} : {flex: 1}}>
+      <div ref={wrapperRef} style={version == 'mobile' ? {height: `calc(100% - ${top.length ? '76px' : '44px'})`} : {height: '100%', position: 'relative', zIndex: 0}}>
         <div ref={containerRef} style={{ height: '100%' }} />
       </div>
 
@@ -200,10 +242,10 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
 }
 
 const isEqual = (prevProps, nextProps) => {
-  return prevProps.type === nextProps.type &&
-    prevProps.variant === nextProps.variant &&
-    prevProps.showSwitch === nextProps.showSwitch &&
-    prevProps.top === nextProps.top
+  return prevProps.type === nextProps.type
+    && prevProps.version === nextProps.version
+    && prevProps.showSwitch === nextProps.showSwitch
+    && prevProps.top === nextProps.top
 }
 
 export default memo(TradeChart, isEqual)

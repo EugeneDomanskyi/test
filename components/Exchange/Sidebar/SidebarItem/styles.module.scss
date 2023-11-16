@@ -1,15 +1,17 @@
 .collection {
-  padding: 8px 16px;
+  padding: 8px 12px;
   cursor: pointer;
   transition: all .2s ease 0s;
   background: transparent;
   position: relative;
   z-index: 0;
+  background-color: #08051C;
+  overflow: hidden;
 
   &:nth-of-type(odd) {
-    background-color: #0E0B23;
     border-top: solid #000 1px;
     border-bottom: solid #000 1px;
+    background-color: #0E0B23;
   }
 
   & > * {
@@ -17,13 +19,9 @@
     z-index: 1;
   }
 
-  .secondaryText {
-    color: #5E5C6B;
-  }
-
   .emptyImage {
-    width: 32px;
-    height: 32px;
+    width: 26px;
+    height: 26px;
     border-radius: 4px;
     background: linear-gradient(0deg, #311B9200, #311B92);
     display: flex;
@@ -35,10 +33,6 @@
   &:hover,
   &.active {
     background: linear-gradient(-90deg, rgba(49, 27, 146, 0.00) 42.09%, #311B92 99.98%);
-
-    .secondaryText {
-      color: #B9B8C5;
-    }
 
     .emptyImage {
       background: #16132C;
@@ -76,21 +70,21 @@
   }
 
   .glow {
-    width: 164px;
+    width: 125px;
     height: 19px;
     position: absolute;
     z-index: 0;
-    right: 0px;
-    bottom: 30px;
+    right: -16.5px;
+    top: 0.5px;
     opacity: 0.5;
-    filter: blur(22px);
+    filter: blur(14.5px);
 
     &.plus {
-      background: linear-gradient(270deg, #00FF75 0%, rgba(44, 248, 138, 0.48) 28.02%, rgba(83, 241, 156, 0.00) 89.56%);
+      background: linear-gradient(270deg, rgba(0, 255, 117, 0.60) 0%, rgba(44, 248, 138, 0.29) 28.02%, rgba(83, 241, 156, 0.00) 89.56%);
     }
 
     &.minus {
-      background: linear-gradient(270deg, #FF1D61 0%, rgba(255, 29, 97, 0.46) 28.97%, rgba(255, 29, 97, 0.00) 81.04%);
+      background: linear-gradient(270deg, rgba(255, 0, 77, 0.60) 0%, rgba(248, 44, 80, 0.29) 28.02%, rgba(241, 83, 121, 0.00) 89.56%);
     }
   }
 }

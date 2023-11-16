@@ -6,17 +6,19 @@ import nookies from 'nookies'
 import amplitude from 'amplitude-js'
 import * as Sentry from '@sentry/nextjs'
 import Smartlook from 'smartlook-client'
+import merge from 'lodash.merge'
 
 import { getDefaultWallets, RainbowKitProvider, darkTheme, connectorsForWallets } from '@rainbow-me/rainbowkit'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
-import merge from 'lodash.merge'
 import * as MagicConnectors from '@magiclabs/wagmi-connector/dist/lib/connectors/universalWalletConnector'
+
 import { CHAINS } from '@/config'
+import { fetchPrices, getTokens } from '@/api_services/tokens'
 import store from '@/store'
-import $token, { fullToTemplate, template as tokenTemplate } from '@/store/token'
+import { template as tokenTemplate } from '@/store/token'
 import $collection, { template as collectionTemplate } from '@/store/collection'
 
 import App from '@/components/App'
@@ -171,17 +173,37 @@ MyApp.getInitialProps = async ({ ctx }) => {
     const [_, page, blockchain, address] = ctx.req.url.split('/')
 
     currentPage = page
-    currentAddress = address
+    currentAddress = (address ?? '').toLowerCase()
     if (currentPage === 'exchange') {
       if (blockchain && address) {
-        const network = CHAINS.find(chain => chain.code === blockchain)
-        if (network) {
-          const res = await $token.api.coingecko.full({ platform: network.platform, address: address })
-          console.log('res', res);
-          if (res) {
-            currentSymbol = res.symbol.toUpperCase()
-            res.blockchain = blockchain
-            currentInfo = tokenTemplate(fullToTemplate(res, res.detail_platforms[network.platform]))
+        const currentChain = CHAINS.find(chain => chain.code === blockchain)
+        if (currentChain) {
+          const post = {
+            currentPage: 1,
+            perPage: 1,
+            orderBy: 'name',
+            orderDirection: 'asc',
+            searchText: address,
+            searchField: 'contract_address',
+          }
+
+          const [token] = await getTokens(currentChain, post)
+          if (token) {
+            currentInfo = {
+              ...token,
+              blockchain: currentChain.code,
+            }
+            currentSymbol = token.symbol.toUpperCase()
+
+            const prices = await fetchPrices(currentChain, [token])
+            if (prices[token.id]) {
+              currentInfo = {
+                ...currentInfo,
+                ...prices[token.id],
+              }
+            }
+
+            currentInfo = tokenTemplate(currentInfo)
           }
         }
       }

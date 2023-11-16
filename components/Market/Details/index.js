@@ -14,28 +14,44 @@ export default function Details({marketInfo, type}) {
   return (
     <App.Flex column sx={{paddingTop: 64}} gap={96}>
       <Info type={type} marketInfo={marketInfo} />
-      <LivePrice type={type} marketInfo={marketInfo} />
-      <Stats marketInfo={marketInfo} />
-      <About marketInfo={marketInfo} />
 
+      {
+        marketInfo.price
+          ? <LivePrice type={type} marketInfo={marketInfo} />
+          : null
+      }
+      
+      {
+        marketInfo.price || marketInfo.volume || marketInfo.tokenCount || marketInfo.marketCap 
+          ? <Stats marketInfo={marketInfo} />
+          : null
+      }
+      {
+        marketInfo.description
+          ? <About marketInfo={marketInfo} />
+          : null
+      }
       {
         marketInfo?.sampleImages
           ? <Images />
           : null
       }
-      
-      <Ad />
+      {/* <Ad /> */}
       {
         marketInfo?.team
-          ? <Team />
+          ? <Team marketInfo={marketInfo} />
           : null
       }
       {
         marketInfo?.investors
-          ? <Investors />
+          ? <Investors marketInfo={marketInfo} />
           : null
       }      
-      <Resources />
+      {
+        marketInfo?.resources
+          ? <Resources marketInfo={marketInfo} />
+          : null
+      }
       <FAQ type={type} marketInfo={marketInfo} />
     </App.Flex>
   )

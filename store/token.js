@@ -8,9 +8,6 @@ import tokenAssets from '@/public/files/assets'
 import coingeckoIds from '@/public/files/coingecko_ids'
 
 function formatNumber(number) {
-  if (!number) {
-    return ''
-  }
   const str = (number * 1)?.toFixed(20)
   let lastIndex = -1;
 
@@ -31,14 +28,12 @@ function formatNumber(number) {
 
 export const template = (item, assets) => {
   const currency = 'USDT'
-  const tickerValue = item.price_change_percentage_24h ? Math.abs(item.price_change_percentage_24h ?? 0).toFixed(2) : item.ticker?.value ?? 0
 
   return {
     id: item?.id,
-    // cgId: overwrite?.cgId ?? item?.cgId,
     address: assets?.address ?? item?.id,
     decimals: assets?.decimals ?? item?.decimals,
-    image: assets?.image ?? item?.image,
+    image: assets?.image ?? (item?.image ?? null),
     name: assets?.name ?? item?.name,
     blockchain: assets?.blockchain ?? item?.blockchain,
     symbol: assets?.symbol ?? item?.symbol,
@@ -48,118 +43,42 @@ export const template = (item, assets) => {
     currency: currency,
     volume: numeral(item?.volumeUSD ?? item?.volume ?? 0).format('0.[0000]'),
     tvl: numeral(item?.totalValueLockedUSD ?? item?.tvl ?? 0).format('0.[0000]'),
-    description: assets?.description ?? item?.description,
+    description: assets?.description ?? (item?.description ?? null),
     tokenCount: item?.tokenCount ?? 0,
     onSaleCount: assets?.onSaleCount ?? item?.onSaleCount ?? 0,
     discordUrl: null,
-    externalUrl: assets?.externalUrl ?? item?.externalUrl,
-    twitterUrl: assets?.twitterUrl ?? item?.twitterUrl,
+    externalUrl: assets?.externalUrl ?? item?.externalUrl ?? null,
+    twitterUrl: assets?.twitterUrl ?? item?.twitterUrl ?? null,
     openseaVerificationStatus: null,
     ticker: item?.ticker ?? {},
-    isFull: assets?.isFull ?? item?.isFull,
-    createdAt: assets?.genesis_date ?? item?.genesis_date,
-    marketCap: assets?.marketCap ?? item.marketCap,
+    isFull: assets?.isFull ?? item?.isFull ?? null,
+    createdAt: assets?.genesis_date ?? item?.genesis_date ?? null,
+    marketCap: assets?.marketCap ?? item.marketCap ?? null,
+    availablePlatforms: item?.availablePlatforms ?? [],
   }
 }
 
-export const staticTemplate = (item) => {
-  const currency = 'USDT'
-
-  return {
-    id: item?.contract_address,
-    cgId: item?.id,
-    address: item?.contract_address,
-    decimals: item?.decimals,
-    image: item?.image?.large ?? '',
-    name: item?.name,
-    // blockchain: item?.blockchain,
-    symbol: item?.symbol,
-    currency: currency,
-    description: item?.description?.en,
-    tokenCount: item.market_data?.total_supply ?? 0,
-    discordUrl: item?.discordUrl ?? null,
-    externalUrl: item.links?.homepage[0],
-    twitterUrl: item.links?.twitter_screen_name ? `https://twitter.com/${item.links?.twitter_screen_name}` : null,
-    // openseaVerificationStatus: item?.openseaVerificationStatus === 'verified',
-    marketCap: item.market_data?.total_supply * (item.market_data?.current_price?.usd ?? 0),
-    createdAt: item?.genesis_date,
-  }
-}
-
-// const basicToTemplate = (item) => {
-//   if (item) {
-//     return {
-//       id: item.id,
-//       address: item.id,
-//       name: item.name,
-//       decimals: item.decimals,
-//       symbol: item.symbol.toUpperCase(),
-//       tokenCount: item.totalSupply,
-//       volume: item.volumeUSD,
-//       tvl: item.totalValueLockedUSD,
-//     }
+// export const staticTemplate = (item) => {
+//   const currency = 'USDT'
+//   return {
+//     id: item?.id,
+//     // cgId: item?.id,
+//     address: item?.id,
+//     decimals: item?.decimals,
+//     image: item?.image?.large ?? '',
+//     name: item?.name,
+//     symbol: item?.symbol ? item?.symbol.toUpperCase() : '',
+//     currency: currency,
+//     description: item?.description?.en,
+//     tokenCount: item.market_data?.total_supply ?? 0,
+//     discordUrl: item?.discordUrl ?? null,
+//     externalUrl: item.links?.homepage[0],
+//     twitterUrl: item.links?.twitter_screen_name ? `https://twitter.com/${item.links?.twitter_screen_name}` : null,
+//     marketCap: item.market_data?.total_supply * (item.market_data?.current_price?.usd ?? 0),
+//     createdAt: item?.genesis_date,
+//     availablePlatforms: [],
 //   }
-
-//   return {}
 // }
-
-// const infoToTemplate = (item) => {
-//   if (item) {
-//     return {
-//       cgId: item.id,
-//       symbol: item.symbol?.toUpperCase(),
-//       image: item.image,
-//       price: item.current_price,
-//       high: item.high_24h,
-//       low: item.low_24h,
-//       volume: item.total_volume,
-//       tokenCount: item.total_supply,
-//       onSaleCount: item.circulating_supply,
-//       ticker: {
-//         value: Math.abs(item.price_change_percentage_24h ?? 0).toFixed(2),
-//         type: ((item.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
-//       },
-//     }
-//   }
-
-//   return {}
-// }
-
-export const fullToTemplate = (item, platform, blockchain) => {
-  if (item) {
-    return {
-      id: platform?.contract_address,
-      address: platform?.contract_address,
-      decimals: platform?.decimal_place,
-      name: item?.name,
-      symbol: item?.symbol,
-      blockchain: item?.blockchain,
-
-      isFull: true,
-      cgId: item.id,
-      symbol: item.symbol.toUpperCase(),
-      image: item.image.large,
-      price: item.market_data?.current_price?.usd,
-      high: item.market_data?.high_24h?.usd,
-      low: item.market_data?.low_24h?.usd,
-      volume: item.market_data?.total_volume?.usd,
-      tvl: item.market_data?.total_value_locked,
-      description: item.description?.en,
-      tokenCount: item.market_data?.total_supply,
-      onSaleCount: item.market_data?.circulating_supply,
-      externalUrl: item.links?.homepage[0],
-      twitterUrl: item.links?.twitter_screen_name ? `https://twitter.com/${item.links?.twitter_screen_name}` : null,
-      ticker: {
-        value: Math.abs(item.market_data?.price_change_percentage_24h ?? 0).toFixed(2),
-        type: ((item.market_data?.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
-      },
-      genesis_date: item?.genesis_date,
-      marketCap: item.market_data?.total_supply * (item.market_data?.current_price?.usd ?? 0),
-    }
-  }
-
-  return {}
-}
 
 export const tokenSlice = createSlice({
   name: '$token',
@@ -334,6 +253,12 @@ const api = {
 
     top: (params) => {
       return request('search/trending', 'GET', { api: 'coingecko', ...params })
+    },
+  },
+
+  backend: {
+    all: (params) => {
+      return request('token/list/', 'GET', {api: 'backend', ...params})
     },
   },
 }

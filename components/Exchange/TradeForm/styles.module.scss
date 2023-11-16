@@ -1,13 +1,14 @@
 .container {
-  // width: 366px;
-  height: 500px;
-  min-height: 450px;
-  max-height: calc(100vh - 64px - 162px - 24px - 16px - 24px);
-  // flex: 1;
+  width: 324px;
+  min-width: 324px;
   overflow: hidden;
   background-color: #0E0B23;
-  border: 1px solid #1D1937;
-  border-radius: 2px;
+  border: 1px solid #19162D;
+  border-radius: 4px;
+
+  @media (max-width: 950px) {
+    width: 100%;
+  }
 
   .formTypeButton {
     border-width: 1px;
@@ -33,5 +34,10 @@
     height: auto;
     min-height: auto;
     max-height: none;
+  }
+
+  &.markets {
+    width: 100%;
+    min-width: unset;
   }
 }

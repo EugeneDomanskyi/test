@@ -84,8 +84,8 @@ export const trackEvent = (eventName, eventProperties) => {
     IsBrowser: true,
     OS: getOS(),
     Device: getDevice(),
-    Source: `${subDomain.charAt(0).toUpperCase()}${subDomain.slice(1)}`,
-    'Page': `${segments[1].charAt(0).toUpperCase()}${segments[1].slice(1)}`,
+    // Source: `${subDomain.charAt(0).toUpperCase()}${subDomain.slice(1)}`,
+    // 'Page': `${segments[1].charAt(0).toUpperCase()}${segments[1].slice(1)}`,
   }
   amplitude.getInstance().logEvent(eventName, data)
 }

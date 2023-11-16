@@ -13,9 +13,10 @@ import $token from '@/store/token'
 export default function Trending() {
   const router = useRouter()
   const { getPrice, network } = useWalletConnect()
-
-
-  const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
+  
+  const isNfts = router.asPath?.includes('nfts')
+  const queryMarketType = isNfts ? 'nfts' : 'tokens'
+  const queryBlockchainCode = router.query.blockchain
 
   const [trending, setTrending] = useState([])
   
@@ -44,15 +45,17 @@ export default function Trending() {
       const result = await $token.api.coingecko.top()
       const rate = await getPrice('bitcoin', 'usd')
 
-      topResults = result.coins.map(item => {
-        item = item.item        
-        return {
-          name: item.name,
-          price: (rate * item.price_btc).toFixed(4),
-          symbol: item.symbol,
-          image: item.small
-        }
-      })
+      if (result) {
+        topResults = result.coins.map(item => {
+          item = item.item        
+          return {
+            name: item.name,
+            price: (rate * item.price_btc).toFixed(4),
+            symbol: item.symbol,
+            image: item.small
+          }
+        })
+      }
     }
     setTrending(topResults)
   }

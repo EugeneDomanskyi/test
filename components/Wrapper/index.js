@@ -8,8 +8,8 @@ import Smartlook from 'smartlook-client'
 import dynamic from 'next/dynamic'
 import { useSelector, useDispatch } from 'react-redux'
 
-import { trackEvent, getPageName } from '@/libs/analytics.lib'
 import $app from '@/store/app'
+import { trackEvent, getPageName } from '@/libs/analytics.lib'
 import { CHAINS } from '@/config'
 
 import Header from '@/components/Header'
@@ -17,7 +17,7 @@ import Header from '@/components/Header'
 const WrapperExchange = dynamic(() => import('@/components/Wrapper/WrapperExchange'), { ssr: false })
 const WrapperCollections = dynamic(() => import('@/components/Wrapper/WrapperCollections'), { ssr: false })
 
-const Wrapper = ({ children, isMobile }) => {
+const Wrapper = ({ children, _isMobile }) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const isNfts = router.asPath?.includes('nfts')
@@ -29,6 +29,7 @@ const Wrapper = ({ children, isMobile }) => {
   const { isLoading, switchNetwork } = useSwitchNetwork()
 
   const storedBlockchain = useSelector($app.get.blockchain)
+  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
   const prevChain = useRef({ stored: null })
 
@@ -86,6 +87,13 @@ const Wrapper = ({ children, isMobile }) => {
     if (!deviceId) {
       localStorage.setItem('device_id', uuid())
     }
+
+    handleWindowResize()
+    window.addEventListener('resize', handleWindowResize)
+
+    return () => {
+      window.removeEventListener('resize', handleWindowResize)
+    }
   }, [])
 
   useEffect(() => {
@@ -94,8 +102,21 @@ const Wrapper = ({ children, isMobile }) => {
     })
   }, [router.asPath])
 
+  const getWindowSize = () => {
+    if (typeof window !== 'undefined') {
+      const {innerWidth, innerHeight} = window
+      return {width: innerWidth, height: innerHeight}
+    }
+  
+    return {width: null, height: null}
+  }
+
+  const handleWindowResize = () => {
+    dispatch($app.set.size(getWindowSize()))
+  }
+
   return (
-    <div style={{ height: '100%', paddingTop: 64, transition: '.4s' }}>
+    <div style={{height: '100%', paddingTop: 64, transition: '.4s', overflowX: 'hidden'}}>
       <Header />
 
       {isExchange ? (

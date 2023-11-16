@@ -1,12 +1,13 @@
 .container {
-  height: 40px;
   position: relative;
 
   .option {
     cursor: pointer;
     border-bottom: 4px solid #1D1937;
+    padding: 10px 24px;
 
-    &.active {
+    &.active,
+    &:hover {
       background: #19162D;
     }
   }

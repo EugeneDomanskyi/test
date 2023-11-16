@@ -11,6 +11,12 @@
   font-display: swap;
 }
 @font-face {
+  font-family: "GilroyRegular";
+  src: url("/fonts/Gilroy/Gilroy-Regular.ttf") format("truetype");
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
   font-family: "Gilroy";
   src: url("/fonts/Gilroy/Gilroy-Medium.ttf") format("truetype");
   font-weight: 500;
@@ -106,7 +112,7 @@ body.modal-open {
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-thumb {

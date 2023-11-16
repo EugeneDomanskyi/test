@@ -1,39 +1,58 @@
 .container {
-  background-color: #0E0B23;
-  border: 1px solid #1D1937;
-  border-radius: 2px;
   padding: 16px;
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: calc(100% - 72px);
+
+  @media (max-width: 1400px) {
+    height: calc(100% - 118px);
+  }
+
+  .intervalContainer {
+    position: absolute;
+    z-index: 2;
+    left: 16px;
+    top: 16px;
+
+    .intervalBox {
+      .interval {
+        height: 32px;
+        padding: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+      
+        &.active,
+        &:hover {
+          background-color: #271574;
+        }
+      }
+    }
+
+    .switcher {
+      border-radius: 4px;
+      background: #1D163E;
+      height: 32px;
+      width: 40px;
+    }
+  }
 
   &.mobile {
     padding: 8px;
     border-radius: 12px;
     background-color: rgba(19, 14, 45, 0.32);
-  }
+    height: 100%;
 
-  .intervalBox {
-    border-radius: 4px;
-    background: #1D163E;
+    .intervalContainer {
+      position: static;
 
-    .interval {
-      height: 36px;
-      padding: 8px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-    
-      &.active,
-      &:hover {
-        background-color: #271574;
+      .intervalBox {
+        border-radius: 4px;
+        background: #1D163E;
       }
     }
-  }
-
-  .switcher {
-    border-radius: 4px;
-    background: #1D163E;
-    height: 36px;
-    width: 40px;
   }
 }

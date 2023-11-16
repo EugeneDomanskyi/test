@@ -11,6 +11,7 @@ import $token, { tokenSlice } from './token'
 import $nft from './nft'
 import $orders from './orders'
 import $raffle from './raffle'
+import $markets from './markets'
 
 const createStore = (initialData, page, info) => {
   return configureStore({
@@ -23,13 +24,16 @@ const createStore = (initialData, page, info) => {
       $nft: $nft.reducer,
       $orders: $orders.reducer,
       $raffle: $raffle.reducer,
+      $markets: $markets.reducer,
     },
 
     preloadedState: {
       $app: {
         ...appSlice.getInitialState(),
         code: initialData.blockchain || 'ethereum',
-        isMobile: initialData.isMobile,
+        size: {
+          isMobile: initialData.isMobile,
+        },
       },
       $token: {
         ...tokenSlice.getInitialState(),
@@ -52,6 +56,7 @@ const QUICKSWAP_URL = 'https://unpkg.com/quickswap-default-token-list@1.2.2/'
 const CELO_URL = 'https://celo-org.github.io/'
 const BNB_URL = 'https://raw.githubusercontent.com/'
 const INCH_URL = 'https://limit-orders.1inch.io/v3.0/'
+const BACKEND_URL = 'https://34.74.211.77:8080/'
 
 export const request = async (uri, method = 'GET', {blockchain, api, ...data} = {}) => {
   const currentChain = CHAINS.find(chain => chain.code === blockchain)
@@ -60,7 +65,7 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
     method,
     headers: {
       'Accept': 'application/json',
-      'content-type': 'application/json',
+      'Content-Type': 'application/json',
     },
   }
 
@@ -86,6 +91,9 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
         break
       case 'local':
         base_url = '/'
+        break
+      case 'backend':
+        base_url = BACKEND_URL
         break
       case 'coingecko':
         base_url = COINGECKO_URL
@@ -113,7 +121,6 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
         break
     }
   }
-
   const response = await fetch(`${base_url}${uri}${query}`, options).catch(errorHandler)
 
   if (response?.ok) {
@@ -128,6 +135,7 @@ const responseHandler = async (response) => {
 }
 
 const errorHandler = async (response) => {
+  // console.log(response)
   return null
 }
 
