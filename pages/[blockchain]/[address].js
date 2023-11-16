@@ -198,7 +198,6 @@ export async function getServerSideProps({ query }) {
         ...token,
         blockchain: currentChain.code,
       }
-      // currentSymbol = token.symbol.toUpperCase()
 
       const prices = await fetchPrices(currentChain, [token])
       if (prices[token.id]) {

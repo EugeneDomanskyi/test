@@ -56,6 +56,7 @@ export const template = (item, assets) => {
     isFull: assets?.isFull ?? item?.isFull,
     createdAt: assets?.genesis_date ?? item?.genesis_date,
     marketCap: assets?.marketCap ?? item.marketCap,
+    availablePlatforms: item?.availablePlatforms ?? [],
   }
 }
 

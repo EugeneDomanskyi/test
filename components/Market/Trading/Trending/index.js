@@ -45,15 +45,17 @@ export default function Trending() {
       const result = await $token.api.coingecko.top()
       const rate = await getPrice('bitcoin', 'usd')
 
-      topResults = result.coins.map(item => {
-        item = item.item        
-        return {
-          name: item.name,
-          price: (rate * item.price_btc).toFixed(4),
-          symbol: item.symbol,
-          image: item.small
-        }
-      })
+      if (result) {
+        topResults = result.coins.map(item => {
+          item = item.item        
+          return {
+            name: item.name,
+            price: (rate * item.price_btc).toFixed(4),
+            symbol: item.symbol,
+            image: item.small
+          }
+        })
+      }
     }
     setTrending(topResults)
   }

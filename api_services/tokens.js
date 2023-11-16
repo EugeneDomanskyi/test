@@ -2,6 +2,8 @@ import { getApolloClient, queries } from '@/api_services/graphql'
 import { getPrices } from '@/api_services/coingecko'
 import coingeckoAssets from '@/public/files/coingecko_ids'
 
+import { CHAINS } from '@/config'
+
 import $token from '@/store/token'
 
 export const getTokens = async (chain, post) => {
@@ -51,7 +53,16 @@ export const getTokens = async (chain, post) => {
 
 export const getFull = async (chain, token) => {
   const result = await $token.api.coingecko.full({platform: chain.platform, address: token.id})
+
   if (result) {
+    const availablePlatforms = Object.keys(result.platforms).filter(platformKey => {
+      const network = CHAINS.find(chain => chain.platform === platformKey);
+      return network
+    }).map(item => {
+      const network = CHAINS.find(chain => chain.platform === item);
+      return network.name
+    })
+
     return {
       ...token,
       isFull: true,
@@ -74,6 +85,7 @@ export const getFull = async (chain, token) => {
       twitterUrl: result.links?.twitter_screen_name ? `https://twitter.com/${result.links?.twitter_screen_name}` : null,
       genesis_date: result?.genesis_date,
       marketCap: result.market_data?.total_supply * (result.market_data?.current_price?.usd ?? 0),
+      availablePlatforms: availablePlatforms,
     }
   }
 
