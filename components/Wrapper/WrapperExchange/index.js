@@ -27,7 +27,7 @@ const WrapperExchange = ({children, _isMobile}) => {
   const [wrongAddress, setWrongAddress] = useState(false)
 
   const [urlAddress] = router.query.address || []
-  const address = urlAddress.toLowerCase()
+  const address = urlAddress ? urlAddress?.toLowerCase() : ''
   const blockchain = router.query.blockchain
   const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(address)
   const emptyAddress = address === '0x'
