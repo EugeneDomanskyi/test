@@ -18,7 +18,7 @@ import * as MagicConnectors from '@magiclabs/wagmi-connector/dist/lib/connectors
 import { CHAINS } from '@/config'
 import { fetchPrices, getTokens } from '@/api_services/tokens'
 import store from '@/store'
-import $token, { fullToTemplate, template as tokenTemplate } from '@/store/token'
+import { template as tokenTemplate } from '@/store/token'
 import $collection, { template as collectionTemplate } from '@/store/collection'
 
 import App from '@/components/App'

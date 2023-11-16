@@ -41,9 +41,17 @@ const Info = ({ current, type }) => {
   }
 
   const handleClickLink = (type) => () => {
-    trackEvent(`Click ${type} Redirect`, {
-      Markets: current.name,
-    })
+    if (type == 'market-page') {
+      trackEvent(`Page Visited`, {
+        'Page Name': 'Market Page',
+        'Market': `${ current?.symbol ?? current?.slug }${type == 'tokens' ? '/USDT' : ''} (${current.name})`,
+        'Network': blockchain.name,
+      })
+    } else {
+      trackEvent(`Click ${type} Redirect`, {
+        Markets: current.name,
+      })
+    }
   }
 
   const handleCopy = () => {
@@ -66,7 +74,7 @@ const Info = ({ current, type }) => {
                 <App.Flex row align="center" gap={8}>
                   <App.Text size={16} weight={600} uppercase height={1}>{ current?.symbol ?? current?.slug }{type == 'tokens' ? '/USDT' : ''}</App.Text>
                   <a href={websiteLink} style={{ lineHeight: 0 }} target="_blank" rel="noreferrer">
-                    <App.Text size={12} color={websiteLink ? '#4C69FF' : '#B9B8C5'} nowrap height={1} onClick={handleClickLink('website')}>{ current?.name } <App.Icon icon="external-link" /></App.Text>
+                    <App.Text size={12} color={websiteLink ? '#4C69FF' : '#B9B8C5'} nowrap height={1} onClick={handleClickLink('market-page')}>{ current?.name } <App.Icon icon="external-link" /></App.Text>
                   </a>
                 </App.Flex>
 
