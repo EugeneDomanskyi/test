@@ -36,7 +36,6 @@ export default function Details({marketInfo, type}) {
           ? <Images />
           : null
       }
-      
       {/* <Ad /> */}
       {
         marketInfo?.team

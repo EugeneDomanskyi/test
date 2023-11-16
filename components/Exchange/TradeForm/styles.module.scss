@@ -35,4 +35,9 @@
     min-height: auto;
     max-height: none;
   }
+
+  &.markets {
+    width: 100%;
+    min-width: unset;
+  }
 }

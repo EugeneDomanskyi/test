@@ -13,9 +13,10 @@ import $token from '@/store/token'
 export default function Trending() {
   const router = useRouter()
   const { getPrice, network } = useWalletConnect()
-
-
-  const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
+  
+  const isNfts = router.asPath?.includes('nfts')
+  const queryMarketType = isNfts ? 'nfts' : 'tokens'
+  const queryBlockchainCode = router.query.blockchain
 
   const [trending, setTrending] = useState([])
   

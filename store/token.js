@@ -61,11 +61,10 @@ export const template = (item, assets) => {
 
 export const staticTemplate = (item) => {
   const currency = 'USDT'
-
   return {
-    id: item?.contract_address,
-    cgId: item?.id,
-    address: item?.contract_address,
+    id: item?.id,
+    // cgId: item?.id,
+    address: item?.id,
     decimals: item?.decimals,
     image: item?.image?.large ?? '',
     name: item?.name,

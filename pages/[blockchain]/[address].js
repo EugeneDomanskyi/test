@@ -40,14 +40,13 @@ const getToken = async (url, id) => {
   return res.data.token && res.data.token.symbol !== 'unknown' ? res.data.token : null
 }
 
-export default function Markets({ marketData, currentChain, platforms }) {
+export default function Markets({ marketData, currentChain }) {
   const dispatch = useDispatch()
   const router = useRouter()
   const { isMobile } = usePropsHelper()
 
   const activeInterval = useSelector(({ $exchange }) => $exchange.interval)
 
-  // const [queryMarketType, queryBlockchainCode, queryMarketId] = router.query.segments || []
   const isNfts = router.asPath?.includes('nfts')
   const type = isNfts ? 'nfts' : 'tokens'
   const queryBlockchainCode = router.query.blockchain
@@ -55,25 +54,28 @@ export default function Markets({ marketData, currentChain, platforms }) {
 
   const [marketInfo, setMarketInfo] = useState(marketData)
 
-  useEffect(() => {
-    
-    if (marketData) {
-      setMarketInfo(marketData)
-    }
-    // test()
-  }, [marketData])
+  // useEffect(() => {
+  //   console.log('marketData', marketData);
+  //   // if (marketData) {
+  //   //   setMarketInfo(marketData)
+  //   // }
+  //   test()
+  // }, [marketData])
 
   const test = async () => {
-    const tokenInfo = await $token.api.coingecko.full({ platform: queryBlockchainCode, address: queryMarketId })
+    const tokenInfo = await $token.api.coingecko.full({ platform: currentChain.platform, address: queryMarketId })
     const tokenRes = await getToken(currentChain.baseUniswapUrl, queryMarketId)
+    // const token = { ...tokenRes, ...tokenInfo }
+    const token = { ...tokenInfo, ...tokenRes }
     console.log('tokenInfo', tokenInfo);
     console.log('tokenRes', tokenRes);
+    console.log('token', token);
   }
 
   useEffect(() => {
     if (marketData.id) {
-      dispatch($token.set.current(marketInfo))
-      $markets.api.strapi(marketInfo.id, token).then(res => {
+      dispatch($token.set.current(marketData))
+      $markets.api.strapi(marketData.id, token).then(res => {
         if (res.data && res.data.length) {
           const info = res.data[0].attributes
           const resources = info?.project_data.project.resources.length ? info?.project_data.project.resources : null
@@ -118,7 +120,7 @@ export default function Markets({ marketData, currentChain, platforms }) {
         dispatch($exchange.set.chartData({ type: 'tokens', data: [] }))
       })
     }
-  }, [marketData, activeInterval.seconds])
+  }, [marketData?.id, activeInterval.seconds])
 
   const handleClickOrder = () => {
     console.log();
@@ -139,49 +141,56 @@ export default function Markets({ marketData, currentChain, platforms }) {
             marketInfo
               ? !isMobile
                 ? <>
-                  <App.Flex column sx={{ flex: .8 }}>
-                    <Market.Details type={type} marketInfo={marketInfo} />
-                  </App.Flex>
+                    <App.Flex column sx={{ flex: .8 }}>
+                      <Market.Details type={type} marketInfo={marketInfo} />
+                    </App.Flex>
 
-                  <App.Flex column sx={{ flex: .3 }} gap={48}>
-                    <Market.Trading type={type} marketInfo={marketInfo} />
+                    <App.Flex column sx={{ flex: .3 }} gap={48}>
+                      <Market.Trading type={type} marketInfo={marketInfo} />
+                    </App.Flex>
+                  </>
+                : <App.Flex column sx={{ paddingTop: 32, width: '100%', height: '100%' }} gap={48}>
+                    <Info type={type} marketInfo={marketInfo} />
+                    {
+                      marketInfo.price
+                        ? <TradeForm
+                            current={marketInfo}
+                            type={type}
+                          />
+                        : null
+                    }
+                    <OrderBook
+                      type={type}
+                      onClickOrder={handleClickOrder}
+                    />
+                    <LivePrice marketInfo={marketInfo} />
+                    <Stats marketInfo={marketInfo} />
+                    <Trending />
+                    <About marketInfo={marketInfo} />
+                    {
+                      marketInfo?.sampleImages
+                        ? <Images />
+                        : null
+                    }
+                    {/* <Ad /> */}
+                    {
+                      marketInfo.team
+                        ? <Team />
+                        : null
+                    }
+                    {
+                      marketInfo.invedtors
+                        ? <Investors />
+                        : null
+                    }
+                    {
+                      marketInfo?.resources
+                        ? <Resources marketInfo={marketInfo} />
+                        : null
+                    }
+                    {/* <Analysis /> */}
+                    <FAQ marketInfo={marketInfo} />
                   </App.Flex>
-                </>
-                : <App.Flex column sx={{ paddingTop: 32, width: '100%' }} gap={48}>
-                  <Info type={type} marketInfo={marketInfo} />
-                  {
-                    marketInfo.price
-                      ? <TradeForm
-                        current={marketInfo}
-                        type={type}
-                      />
-                      : null
-                  }
-                  <OrderBook
-                    type={type}
-                    onClickOrder={handleClickOrder}
-                  />
-                  <LivePrice marketInfo={marketInfo} />
-                  <Stats marketInfo={marketInfo} />
-                  <Trending />
-                  <About />
-                  <Images />
-                  {/* <Ad /> */}
-                  {
-                    marketInfo.team
-                      ? <Team />
-                      : null
-                  }
-                  {
-                    marketInfo.invedtors
-                      ? <Investors />
-                      : null
-                  }
-
-                  <Resources />
-                  <Analysis />
-                  <FAQ />
-                </App.Flex>
               : null
           }
         </App.Flex>
@@ -200,7 +209,7 @@ export async function getServerSideProps({ query }) {
   const tokenInfo = await $token.api.coingecko.full({ platform: currentChain.platform, address: marketId })
 
   if (tokenInfo) {
-    const token = { ...tokenRes, ...tokenInfo }
+    const token = {...tokenInfo, ...tokenRes}
     const platforms = tokenInfo.platforms
     const availablePlatforms = Object.keys(platforms).filter(platformKey => {
       const network = CHAINS.find(chain => chain.platform === platformKey);

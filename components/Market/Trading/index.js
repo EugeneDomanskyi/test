@@ -24,7 +24,7 @@ export default function Trading({ type, marketInfo }) {
       <App.Flex column gap={16}>
         {
           marketInfo.price
-            ? <TradeForm ref={tradeForm} type={type} current={marketInfo} fullWidth />
+            ? <TradeForm ref={tradeForm} type={type} current={marketInfo} version="markets" fullWidth />
             : null
         }
         

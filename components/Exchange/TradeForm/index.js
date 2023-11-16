@@ -188,6 +188,7 @@ const TradeForm = forwardRef(({ current, type, version, fullWidth = null, onSubm
 
 const isEqual = (prev, next) => {
   return JSON.stringify(prev.current) === JSON.stringify(next.current)
+    && prev.version === next.version
 }
 
 export default memo(TradeForm, isEqual)

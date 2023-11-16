@@ -15,7 +15,7 @@ export default function Resources({marketInfo}) {
 
       <App.Flex className={styles.container}>
         {
-          marketInfo.resources.map((item, index) => {
+          marketInfo?.resources && marketInfo.resources.map((item, index) => {
             return (
               <App.Flex key={index} align="center" className={styles.link} onClick={() => handleClickLink(item.url)}>
                 <App.Text size={16} weight={500}>{item.title}</App.Text> 
