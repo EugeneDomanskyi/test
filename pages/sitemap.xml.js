@@ -7,7 +7,7 @@ function generateSiteMap(markets, origin) {
        .map(market => {
          return `
        <url>
-           <loc>${`${origin}/market/tokens/${market.blockchain}/${market.address}`}</loc>
+           <loc>${`${origin}/${market.blockchain}/${market.address}`}</loc>
        </url>
      `
        })
