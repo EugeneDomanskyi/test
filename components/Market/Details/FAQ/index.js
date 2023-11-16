@@ -68,7 +68,7 @@ const MarketFAQ = ({type, marketInfo}) => {
     ...(
       volume
         ? [{
-            question: `What is the total supply of ${ marketInfo.name }`,
+            question: `What is the total supply of ${ marketInfo.name }?`,
             answer: `${ marketInfo.name } has a total circulating supply of ${ volume }.`,
           }]
         : []
