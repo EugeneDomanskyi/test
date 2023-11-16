@@ -1,145 +1,13 @@
 import { useEffect, memo, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchToken } from '@wagmi/core'
 
-import coingeckoAssets from '@/public/files/coingecko_ids'
-import { getApolloClient, queries } from '@/api_services/graphql'
-import { getPrices } from '@/api_services/coingecko'
+import { getTokens, fetchPrices } from '@/api_services/tokens'
 import { CHAINS } from '@/config'
 import $token from '@/store/token'
 import $exchange from '@/store/exchange'
 import $app from '@/store/app'
 import { usePropsHelper } from '@/myhooks/props-helper'
-
-const getTokens = async (chain, post) => {
-  if (chain?.useBackend) {
-    const result = await $token.api.backend.all({
-      page: post.currentPage,
-      pageSize: post.perPage,
-      chainId: chain.id,
-      sortBy: 'name',
-      sortOrder: 'asc',
-      filterVal: post?.searchText,
-      filterCol: post?.searchField,
-    })
-
-    if (result) {
-      return result.map(item => ({
-        id: item.ContractAddress.toLowerCase(),
-        name: item.Name,
-        symbol: item.Symbol,
-        decimals: item.Decimals,
-        image: `https://storage.googleapis.com/token-assets/assets/${chain.code}/${item.ContractAddress.toLowerCase()}.png`,
-        totalSupply: null,
-        volumeUSD: null,
-        totalValueLockedUSD: null,
-      }))
-    }
-  } else {
-    const client = getApolloClient(chain.baseUniswapUrl)
-    const res = await client.query({
-      query: queries.tokens,
-      variables: {
-        skip: (post.currentPage - 1) * post.perPage,
-        orderBy: post.orderBy,
-        orderDirection: post.orderDirection,
-        searchText: post?.searchText || '',
-        usdt: chain.usdtContract,
-      },
-    })
-
-    if (res?.data && res.data.hasOwnProperty('tokens')) {
-      return res.data.tokens
-    }
-  }
-
-  return []
-}
-
-const getTokenDayDatas = async (url, ids) => {
-  const client = getApolloClient(url)
-  const res = await client.query({
-    query: queries.tokenDayDatas,
-    variables: {
-      ids: ids,
-      first: ids.length > 0 ? (ids.length * 3) : 1,
-    },
-  })
-  if (res.data.tokenDayDatas) {
-    const prices = res.data.tokenDayDatas.reduce((acc, item, _, array) => {
-      const [lastDay, prevDay] = array.filter(day => day.token.id === item.token.id)
-      if (acc[item.token.id]) {
-        return acc
-      }
-
-      if (prevDay?.date && lastDay?.date) {
-        const priceChanged = prevDay?.priceUSD ? lastDay.priceUSD * 100 / prevDay?.priceUSD - 100 : 0
-        return {
-          ...acc,
-          [item.token.id]: {
-            price: Number(lastDay.priceUSD).toFixed(2),
-            high: Number(lastDay.high).toFixed(2),
-            low: Number(lastDay.low).toFixed(2),
-            volume: Number(lastDay.volumeUSD).toFixed(2),
-            ticker: {
-              value: priceChanged.toFixed(2),
-              type: priceChanged >= 0 ? 'plus' : 'minus',
-            },
-          }
-        }
-      } else {
-        return acc
-      }
-    }, {})
-    
-    const usedIds = Object.keys(prices)
-    const unusedIds = ids.filter(id => !usedIds.includes(id))
-    if (unusedIds.length) {
-      for (const id of unusedIds) {
-        const res = await client.query({
-          query: queries.tokenDayDatas,
-          variables: {
-            ids: [id],
-            first: 2,
-          },
-        })
-
-        if (res?.data?.tokenDayDatas) {
-          const [lastDay, prevDay] = res.data.tokenDayDatas
-          if (prevDay?.date && lastDay?.date) {
-            const priceChanged = prevDay?.priceUSD ? lastDay.priceUSD * 100 / prevDay?.priceUSD - 100 : 0
-            prices[id] = {
-              price: Number(lastDay.priceUSD).toFixed(2),
-              high: Number(lastDay.high).toFixed(2),
-              low: Number(lastDay.low).toFixed(2),
-              volume: Number(lastDay.volumeUSD).toFixed(2),
-              ticker: {
-                value: priceChanged.toFixed(2),
-                type: priceChanged >= 0 ? 'plus' : 'minus',
-              },
-            }
-          } else {
-            prices[id] = {
-              price: 0,
-              high: 0,
-              low: 0,
-              volume: 0,
-              ticker: {
-                value: 0,
-                type: 'plus',
-              },
-            }
-          }
-        }
-      }
-    }
-
-    return prices
-  }
-
-  return {}
-}
 
 const WrapperExchange = ({children, _isMobile}) => {
   const { isMobile } = usePropsHelper()
@@ -213,7 +81,7 @@ const WrapperExchange = ({children, _isMobile}) => {
       dispatch($token.set.all(tokens))
       dispatch($token.set.pages({ next: (pages.current * 1 + 1) }))
 
-      const prices = await fetchPrices(tokens)
+      const prices = await fetchPrices(currentChain, tokens)
       dispatch($token.set.updatedAll(prices))
 
       dispatch($token.set.loading(false))
@@ -267,20 +135,10 @@ const WrapperExchange = ({children, _isMobile}) => {
           if (exist) {
             dispatch($token.set.updatedCurrent(exist))
           } else {
-            const prices = await fetchPrices([currentToken])
+            const prices = await fetchPrices(currentChain, [currentToken])
             dispatch($token.set.updatedCurrent(prices[currentToken.id]))
           }
         }
-
-        // if (!currentToken.externalUrl && !currentToken.isFull) {
-        //   const result = await $token.api.coingecko.full({platform: storedBlockchain.platform, address: currentToken.id})
-        //   if (result) {
-        //     dispatch($token.set.updatedCurrent({
-        //       ...currentToken,
-        //       externalUrl: result.links?.homepage[0],
-        //     }))
-        //   }
-        // }
       }
     })()
   }, [tokenList, currentToken?.address, address])
@@ -297,55 +155,6 @@ const WrapperExchange = ({children, _isMobile}) => {
       })
     }
   }, [address, currentToken?.id, blockchain, activeInterval.seconds, isAddress])
-
-  const fetchPrices = async (tokens) => {
-    let coingeckoIds = {}
-    let notCoingeckoIds = {}
-    if (coingeckoAssets[currentChain.platform]) {
-      coingeckoIds = tokens.reduce((acc, token) => {
-        const key = coingeckoAssets[currentChain.platform][token.id]
-        return {
-          ...acc,
-          ...(key ? {[key]: token.id} : null)
-        }
-      }, {})
-
-      notCoingeckoIds = tokens.reduce((acc, token) => {
-        const key = coingeckoAssets[currentChain.platform][token.id]
-        if ( ! key) {
-          const newAcc = [...acc]
-          newAcc.push(token.id)
-          return newAcc
-        }
-  
-        return acc
-      }, [])
-    }
-
-    let tokenIds = []
-    let prices = {}
-    if (Object.keys(coingeckoIds).length) {
-      const pricesCoingecko = await getPrices(coingeckoIds)
-      if (pricesCoingecko) {
-        if (!Object.keys(notCoingeckoIds).length) {
-          return pricesCoingecko
-        } else {
-          prices = pricesCoingecko
-          tokenIds = Object.values(notCoingeckoIds)
-        }
-      } else {
-        tokenIds = tokens.map(token => token.id)
-      }
-    } else {
-      tokenIds = tokens.map(token => token.id)
-    }
-
-    let uniswapPrices = {}
-    if (currentChain.baseUniswapUrl) {
-      uniswapPrices = await getTokenDayDatas(currentChain.baseUniswapUrl, tokenIds)
-    }
-    return {...prices, ...uniswapPrices}
-  }
 
   const searchTokens = async (searchText) => {
     dispatch($token.set.searching(true))
@@ -364,7 +173,7 @@ const WrapperExchange = ({children, _isMobile}) => {
     const results = await getTokens(currentChain, post)
     dispatch($token.set.searched(results))
 
-    const prices = await fetchPrices(results)
+    const prices = await fetchPrices(currentChain, results)
     dispatch($token.set.updatedSearched(prices))
 
     dispatch($token.set.loading(false))
