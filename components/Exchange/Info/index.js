@@ -10,7 +10,6 @@ import { trackEvent } from '@/libs/analytics.lib'
 
 import coingeckoAssets from '@/public/files/coingecko_ids'
 import App from '@/components/App'
-import Link from 'next/link'
 
 const Info = ({ current, type }) => {
   const { getPrice } = useWalletConnect()
@@ -20,7 +19,7 @@ const Info = ({ current, type }) => {
   const [usdPrice, setUsdPrice] = useState(current.price)
 
   const scanLink = `${blockchain.scanUrl}/address/${current.address}`
-  const websiteLink = `/${blockchain.code}/${current.address}`
+  const websiteLink = `${window.location.origin}/${blockchain.code}/${current.address}`
 
   useEffect(() => {
     if (current.id) {
@@ -66,9 +65,9 @@ const Info = ({ current, type }) => {
               <App.Flex column gap={4}>
                 <App.Flex row align="center" gap={8}>
                   <App.Text size={16} weight={600} uppercase height={1}>{ current?.symbol ?? current?.slug }{type == 'tokens' ? '/USDT' : ''}</App.Text>
-                  <Link href={websiteLink} style={{ lineHeight: 0 }}>
+                  <a href={websiteLink} style={{ lineHeight: 0 }} target="_blank" rel="noreferrer">
                     <App.Text size={12} color={websiteLink ? '#4C69FF' : '#B9B8C5'} nowrap height={1} onClick={handleClickLink('website')}>{ current?.name } <App.Icon icon="external-link" /></App.Text>
-                  </Link>
+                  </a>
                 </App.Flex>
 
                 {current?.address ? (
