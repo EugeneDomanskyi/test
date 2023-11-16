@@ -49,7 +49,6 @@ export default function Markets({ marketData, currentChain }) {
 
   const isNfts = router.asPath?.includes('nfts')
   const type = isNfts ? 'nfts' : 'tokens'
-  const queryBlockchainCode = router.query.blockchain
   const queryMarketId = router.query.address
 
   const [marketInfo, setMarketInfo] = useState(marketData)
