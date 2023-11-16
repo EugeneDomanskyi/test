@@ -3,6 +3,18 @@
   z-index: 8;
   padding-top: 100px;
 
+  .title {
+    padding-bottom: 32px;
+  }
+
+  @media (max-width: 768px) {
+    padding-top: 32px;
+
+    .title {
+      padding-bottom: 8px;
+    }
+  }
+
   .video {
     width: 720px;
     height:360px;
@@ -53,7 +65,7 @@
     background: #08051C;
     padding: 16px;
     position: fixed;
-    z-index: 0;
+    z-index: 10;
     bottom: 0;
     left: 0;
     right: 0;
