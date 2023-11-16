@@ -76,7 +76,7 @@ export const getFull = async (chain, token) => {
         value: Math.abs(result.market_data?.price_change_percentage_24h ?? 0).toFixed(2),
         type: ((result.market_data?.price_change_percentage_24h ?? 0) >= 0) ? 'plus' : 'minus',
       },
-      image: result.image.large,
+      image: result.image?.large ?? null,
 
       description: result.description?.en,
       tokenCount: result.market_data?.total_supply,

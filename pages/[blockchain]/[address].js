@@ -215,7 +215,7 @@ export async function getServerSideProps({ query }) {
           ...full,
         }
       }
-
+      
       currentInfo = template(currentInfo)
     }
   }
