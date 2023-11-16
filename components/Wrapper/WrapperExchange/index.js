@@ -158,7 +158,8 @@ const WrapperExchange = ({children, _isMobile}) => {
 
   const [wrongAddress, setWrongAddress] = useState(false)
 
-  const [address] = router.query.address || []
+  const [urlAddress] = router.query.address || []
+  const address = urlAddress.toLowerCase()
   const blockchain = router.query.blockchain
   const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(address)
   const emptyAddress = address === '0x'
@@ -271,15 +272,15 @@ const WrapperExchange = ({children, _isMobile}) => {
           }
         }
 
-        if (!currentToken.externalUrl && !currentToken.isFull) {
-          const result = await $token.api.coingecko.full({platform: storedBlockchain.platform, address: currentToken.id})
-          if (result) {
-            dispatch($token.set.updatedCurrent({
-              ...currentToken,
-              externalUrl: result.links?.homepage[0],
-            }))
-          }
-        }
+        // if (!currentToken.externalUrl && !currentToken.isFull) {
+        //   const result = await $token.api.coingecko.full({platform: storedBlockchain.platform, address: currentToken.id})
+        //   if (result) {
+        //     dispatch($token.set.updatedCurrent({
+        //       ...currentToken,
+        //       externalUrl: result.links?.homepage[0],
+        //     }))
+        //   }
+        // }
       }
     })()
   }, [tokenList, currentToken?.address, address])

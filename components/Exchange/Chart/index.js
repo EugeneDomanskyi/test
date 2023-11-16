@@ -99,9 +99,15 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
   const chartRef = useRef(null)
   const candlestickSeriesRef = useRef([])
   const areaSeriesRef = useRef([])
+  const optionsRef = useRef()
 
   useEffect(() => {
     buildChart()
+
+    // window.addEventListener('resize', updateChartConfig)
+    // return () => {
+    //   window.removeEventListener('resize', updateChartConfig)
+    // }
   }, [])
 
   useEffect(() => {
@@ -109,6 +115,40 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
       updateChart()
     }
   }, [chartData, variant])
+
+  // const updateChartConfig = () => {
+  //   if (chartRef.current) {
+  //     const options = getResizeOptions()
+  //     if (JSON.stringify(options) != JSON.stringify(optionsRef.current)) {
+  //       chartRef.current.applyOptions(options)
+  //       optionsRef.current = options
+  //     }
+  //   }
+  // }
+
+  // const getResizeOptions = () => {
+  //   const props = {
+  //     layout: {
+  //       background: {
+  //         type: LightweightCharts.ColorType.Solid,
+  //         color: 'rgba(255, 255, 255, 0.0)'
+  //       },
+  //       textColor: '#B9B8C5',
+  //       fontFamily: 'GilroyRegular',
+  //       fontSize: 12,
+  //     },
+  //   }
+
+  //   if (typeof window !== 'undefined') {
+  //     const {innerWidth} = window
+      
+  //     if (innerWidth >= 1500) {
+  //       props.layout.fontSize = 14
+  //     }
+  //   }
+  
+  //   return props
+  // }
 
   const handleChangeInterval = (interval) => () => {
     dispatch($exchange.set.interval(interval))
@@ -118,6 +158,7 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
     if ( ! chartRef.current) {
       chartRef.current = LightweightCharts.createChart(containerRef.current, {
         ...CHART_CONFIG,
+        //...getResizeOptions(),
       })
       candlestickSeriesRef.current = chartRef.current.addCandlestickSeries({...TYPES_SETTINGS['candlesticks']})
       areaSeriesRef.current = chartRef.current.addAreaSeries({...TYPES_SETTINGS['area']})
@@ -201,10 +242,10 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
 }
 
 const isEqual = (prevProps, nextProps) => {
-  return prevProps.type === nextProps.type &&
-    prevProps.variant === nextProps.variant &&
-    prevProps.showSwitch === nextProps.showSwitch &&
-    prevProps.top === nextProps.top
+  return prevProps.type === nextProps.type
+    && prevProps.version === nextProps.version
+    && prevProps.showSwitch === nextProps.showSwitch
+    && prevProps.top === nextProps.top
 }
 
 export default memo(TradeChart, isEqual)

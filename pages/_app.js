@@ -171,7 +171,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
     const [_, page, blockchain, address] = ctx.req.url.split('/')
 
     currentPage = page
-    currentAddress = address
+    currentAddress = (address ?? '').toLowerCase()
     if (currentPage === 'exchange') {
       if (blockchain && address) {
         const network = CHAINS.find(chain => chain.code === blockchain)
@@ -199,7 +199,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
                 totalValueLockedUSD: null,
               }
               currentInfo = tokenTemplate(token)
-
+              
               currentSymbol = token.symbol.toUpperCase()
               const res = await $token.api.coingecko.full({platform: network.platform, address: address})
               if (res) {
