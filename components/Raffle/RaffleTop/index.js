@@ -96,7 +96,7 @@ const RaffleTop = ({ loading, isFirstTimeUser, landing = false }) => {
         <App.Container>
           <App.Flex column gap={[64, 32]}>
             <App.Flex align="flex-start" column width={['auto', 232]}>
-              <App.Text size={[48, 24]} height={1.2} family="ClashDisplay" gradient="linear-gradient(151deg, #FFF -0.73%, rgba(255, 255, 255, 0.50) 132.2%)">Rewards Worth $10,000+<br />Up For Grabs</App.Text>
+              <h2>Rewards Worth $10,000+<br />Up For Grabs</h2>
               <App.Text size={[16, 14]} height={1.6} family="ClashDisplay">Use TKeys to open cases and win $USDT, $PEPE, $SHIB & more</App.Text>
               <App.Flex gap={8} className={styles.linkButton} onClick={handleClickMore}>
                 <App.Text size={14} height={1.6}>Read More</App.Text>

@@ -46,7 +46,7 @@ const LandingSlides = () => {
                 <App.Flex row className={styles.slide}>
                   <App.Flex row justify="flex-end" flex={1}>
                     <App.Flex column align="flex-end" gap={8} width={250} sx={{ margin: "145px -50px 0 0" }}>
-                      <App.Text right size={20} weight={500} height={1.2}>Order Books</App.Text>
+                      <h2>Order Books</h2>
                       <App.Text right color="#B9B8C5" style="italic">Leverage market depth in real-time.</App.Text>
                     </App.Flex>
 
@@ -61,7 +61,7 @@ const LandingSlides = () => {
                     </App.Flex>
 
                     <App.Flex column gap={8} width={250} sx={{ margin: "320px 0 0 -50px" }}>
-                      <App.Text size={20} weight={500} height={1.2}>Limit Orders with Auto Order Matching</App.Text>
+                      <h2>Limit Orders with Auto Order Matching</h2>
                       <App.Text color="#B9B8C5" style="italic">Trade ERC 20 tokens at the best price always.</App.Text>
                     </App.Flex>
                   </App.Flex>
@@ -72,7 +72,7 @@ const LandingSlides = () => {
                 <App.Flex row gap={50}>
                   <App.Flex row justify="flex-end" flex={1}>
                     <App.Flex column align="flex-end" gap={8} width={250} sx={{ margin: "325px -60px 0 0" }}>
-                      <App.Text right size={20} weight={500} height={1.2}>Permission Less Markets</App.Text>
+                      <h2>Permission Less Markets</h2>
                       <App.Text right color="#B9B8C5" style="italic">
                         Any token, just one search away. Discover new and trending projects, in-detail, as they emerge.
                       </App.Text>
@@ -89,7 +89,7 @@ const LandingSlides = () => {
                     </App.Flex>
 
                     <App.Flex column gap={8} width={250} sx={{ margin: "180px 0 0 30px" }}>
-                      <App.Text size={20} weight={500} height={1.2}>Gasless Creations</App.Text>
+                      <h2>Gasless Creations</h2>
                       <App.Text color="#B9B8C5" style="italic">Create orders without consequences & without worrying about platform fees.</App.Text>
                     </App.Flex>
                   </App.Flex>
@@ -100,7 +100,7 @@ const LandingSlides = () => {
                 <App.Flex row gap={50}>
                   <App.Flex row justify="flex-end" flex={1}>
                     <App.Flex column align="flex-end" gap={8} width={260} sx={{ margin: "325px -145px 0 0" }}>
-                      <App.Text right size={20} weight={500} height={1.2}>Custody Less Orders</App.Text>
+                      <h2>Custody Less Orders</h2>
                       <App.Text right color="#B9B8C5" style="italic">Your keys, your tokens. Trade confidently without giving up control over your assets</App.Text>
                     </App.Flex>
 
@@ -115,7 +115,7 @@ const LandingSlides = () => {
                     </App.Flex>
 
                     <App.Flex column gap={8} width={250} sx={{ margin: "120px 0 0 30px" }}>
-                      <App.Text size={20} weight={500} height={1.2}>Multichain Support</App.Text>
+                      <h2>Multichain Support</h2>
                       <App.Text color="#B9B8C5" style="italic">Any chain, we support it. One-stop-shop to trade tokens and NFTs efficiently across any blockchain.</App.Text>
                     </App.Flex>
                   </App.Flex>
@@ -129,7 +129,7 @@ const LandingSlides = () => {
               <div>
                 <App.Flex row align="center" className={cn(styles.slide, { [styles.active]: slide == 0 })}>
                   <App.Flex column align="flex-end" gap={8} width={150} sx={{ margin: "0 -15px 0 0" }}>
-                    <App.Text right size={12} weight={600} height={1.2}>Orderbooks</App.Text>
+                    <h2>Orderbooks</h2>
                     <App.Text right size={10} color="#B9B8C5" style="italic">Leverage market depth in real-time. Take advantage of Token and NFT support and resistance points instantly.</App.Text>
                   </App.Flex>
 
@@ -146,7 +146,7 @@ const LandingSlides = () => {
                   </App.Flex>
 
                   <App.Flex column gap={8} width={150} sx={{ margin: "0 0 0 -30px" }}>
-                    <App.Text size={12} weight={600} height={1.2}>Limit Orders with Auto-Order Matching</App.Text>
+                    <h2>Limit Orders with Auto-Order Matching</h2>
                     <App.Text size={10} color="#B9B8C5" style="italic">Trade Tokens and NFTs efficiently. Use Market or Limit orders to buy and sell in bulk or to time the market better!</App.Text>
                   </App.Flex>
                 </App.Flex>
@@ -155,7 +155,7 @@ const LandingSlides = () => {
               <div>
                 <App.Flex row className={cn(styles.slide, { [styles.active]: slide == 2 })}>
                   <App.Flex column align="flex-end" gap={8} width={150} sx={{ margin: "175px -40px 0 0" }}>
-                    <App.Text right size={12} weight={600} height={1.2}>Permissionless Markets</App.Text>
+                    <h2>Permissionless Markets</h2>
                     <App.Text right size={10} color="#B9B8C5" style="italic">Any Token or NFT, just one search away. Discover new and trending markets, in detail, as they emerge.</App.Text>
                   </App.Flex>
 
@@ -172,7 +172,7 @@ const LandingSlides = () => {
                   </App.Flex>
 
                   <App.Flex column gap={8} width={150} sx={{ margin: "0 0 0 10px" }}>
-                    <App.Text size={12} weight={600} height={1.2}>Gasless Creations</App.Text>
+                    <h2>Gasless Creations</h2>
                     <App.Text size={10} color="#B9B8C5" style="italic">
                       Create orders without consequences & without worrying about platform fees.
                     </App.Text>
@@ -183,7 +183,7 @@ const LandingSlides = () => {
               <div>
                 <App.Flex row className={cn(styles.slide, { [styles.active]: slide == 4 })}>
                   <App.Flex column align="flex-end" gap={8} width={150} sx={{ margin: "155px -55px 0 0" }}>
-                    <App.Text right size={12} weight={600} height={1.2}>Custody Less Orders</App.Text>
+                    <h2>Custody Less Orders</h2>
                     <App.Text right size={10} color="#B9B8C5" style="italic">
                       Your keys, your tokens. Trade confidently without giving up control over your Assets.
                     </App.Text>
@@ -197,12 +197,12 @@ const LandingSlides = () => {
 
               <div>
                 <App.Flex row align="center" className={cn(styles.slide, { [styles.active]: slide == 5 })}>
-                  <App.Flex center sx={{ marginTop: -20 }}>
+                  <App.Flex center sx={{ marginTop: -32 }}>
                     <Image src="/images/landing/slide-multichain2.png" width={204} height={267} alt="" />
                   </App.Flex>
 
                   <App.Flex column gap={8} width={150} sx={{ margin: "0 0 0 10px" }}>
-                    <App.Text size={12} weight={600} height={1.2}>Multichain</App.Text>
+                    <h2>Multichain</h2>
                     <App.Text size={10} color="#B9B8C5" style="italic">
                       Any chain, we support it. One-stop-shop to trade tokens on any blockchain.
                     </App.Text>

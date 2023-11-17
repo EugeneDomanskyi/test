@@ -5,8 +5,9 @@ import GoogleAnalytics from '@/components/GoogleAnalytics'
 class MyDocument extends Document {
   render() {
     return (
-      <Html>
+      <Html lang="en">
         <Head>
+          <link rel="canonical" href="https://www.tegro.com" />
           <GoogleAnalytics />
         </Head>
         
