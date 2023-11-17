@@ -7,7 +7,7 @@ function generateSiteMap(markets, origin) {
        .map(market => {
          return `
        <url>
-           <loc>${`${origin}/${market.blockchain}/${market.address}`}</loc>
+           <loc>${`${origin}/${market.blockchain}/${market.id}`}</loc>
        </url>
      `
        })
@@ -23,10 +23,10 @@ function SiteMap() {
 export async function getServerSideProps({ res, req }) {
   const origin = `${req.headers['x-forwarded-proto']}://${req.headers.host}`;
 
-  const marketList = await getAssetsFile()
-  const markets = marketList.map(item => {
-    return {address: item.address, blockchain: item.blockchain}
-  })
+  const markets = await getAssetsFile()
+  // const markets = marketList.map(item => {
+  //   return {address: item.address, blockchain: item.blockchain}
+  // })
 
   const sitemap = generateSiteMap(markets, origin)
 

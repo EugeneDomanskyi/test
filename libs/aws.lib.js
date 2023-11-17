@@ -5,7 +5,8 @@ const accessKey = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY
 const secretKey = process.env.NEXT_PUBLIC_AWS_SECRET_KEY
 const region = process.env.NEXT_PUBLIC_AWS_REGION
 const bucketName = 'tegro-imagekit-tora'
-const jsonFileName = 'assets.json'
+const jsonFileName = 'ids-sitemap.json'
+// const jsonFileName = 'assets.json'
 
 const client = new AWS.S3({
   credentials: {
