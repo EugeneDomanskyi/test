@@ -114,7 +114,7 @@ const Wrapper = ({ children, _isMobile }) => {
   const handleWindowResize = () => {
     dispatch($app.set.size(getWindowSize()))
   }
-
+console.log('Wrapper')
   return (
     <div style={{height: '100%', paddingTop: 64, transition: '.4s', overflowX: 'hidden'}}>
       <Header />

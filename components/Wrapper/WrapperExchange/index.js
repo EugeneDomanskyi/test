@@ -178,7 +178,7 @@ const WrapperExchange = ({children, _isMobile}) => {
 
     dispatch($token.set.loading(false))
   }
-
+  console.log('Wrapper Exchange')
   return children
 }
 

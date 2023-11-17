@@ -92,7 +92,7 @@ const Exchange = () => {
       handleCloseOrdersDialog()
     }, 300)
   }
-
+console.log('Exchange Page')
   return (
     <App.Flex gap={GRID_GAP} className={styles.container}>
       {!isMobile ? (
