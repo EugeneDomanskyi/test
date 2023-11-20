@@ -39,6 +39,7 @@ export default function Trending() {
           price: item.floorAsk?.price?.amount?.usd ?? 0,
           symbol: item.floorAsk?.price?.currency?.symbol,
           image: item.image,
+          coin_id: item.coin_id ?? null,
         }
       })
     } else {
@@ -52,11 +53,15 @@ export default function Trending() {
             name: item.name,
             price: (rate * item.price_btc).toFixed(4),
             symbol: item.symbol,
-            image: item.small
+            image: item.small,
+            coin_id: item.coin_id,
           }
         })
+
+        
       }
     }
+    console.log('topResults', topResults);
     setTrending(topResults)
   }
 
