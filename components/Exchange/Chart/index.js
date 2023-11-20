@@ -1,5 +1,5 @@
-import styles from './styles.module.scss'
 import { useRef, useEffect, memo, useState } from 'react'
+import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
 import cn from 'classnames'
@@ -8,6 +8,8 @@ import * as LightweightCharts from 'lightweight-charts'
 import $exchange from '@/store/exchange'
 
 import App from '@/components/App'
+
+import styles from './styles.module.scss'
 
 const TYPES_SETTINGS = {
   candlesticks: {
@@ -84,12 +86,17 @@ const INTERVALS = [
 ]
 
 const TradeChart = ({type, version, showSwitch, top = []}) => {
+  const router = useRouter()
+  const [urlAddress] = router.query.address || []
+  const address = urlAddress ? urlAddress?.toLowerCase() : ''
+  const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(address)
+  const urlBlockchain = router.query.blockchain
+
   const dispatch = useDispatch()
-  
   const activeInterval = useSelector(({$exchange}) => $exchange.interval)
+  const current = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.current : $collection.current)
   const kLineData = useSelector($exchange.get.kLineData(activeInterval))
   const tokenChartData = useSelector($exchange.get.chartData)
-
   const chartData = type === 'nfts' ? kLineData : tokenChartData
 
   const [variant, setVariant] = useState('candlesticks')
@@ -99,15 +106,9 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
   const chartRef = useRef(null)
   const candlestickSeriesRef = useRef([])
   const areaSeriesRef = useRef([])
-  const optionsRef = useRef()
 
   useEffect(() => {
     buildChart()
-
-    // window.addEventListener('resize', updateChartConfig)
-    // return () => {
-    //   window.removeEventListener('resize', updateChartConfig)
-    // }
   }, [])
 
   useEffect(() => {
@@ -116,39 +117,20 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
     }
   }, [chartData, variant])
 
-  // const updateChartConfig = () => {
-  //   if (chartRef.current) {
-  //     const options = getResizeOptions()
-  //     if (JSON.stringify(options) != JSON.stringify(optionsRef.current)) {
-  //       chartRef.current.applyOptions(options)
-  //       optionsRef.current = options
-  //     }
-  //   }
-  // }
+  useEffect(() => {
+    if (current?.id && current.id === address && isAddress) {
+      if (type == 'tokens') {
+        fetchTokenChartData()
+      } else {
+        // Fetch NFTs chart data
+      }
+    }
+  }, [address, current?.id, urlBlockchain, activeInterval.seconds, isAddress])
 
-  // const getResizeOptions = () => {
-  //   const props = {
-  //     layout: {
-  //       background: {
-  //         type: LightweightCharts.ColorType.Solid,
-  //         color: 'rgba(255, 255, 255, 0.0)'
-  //       },
-  //       textColor: '#B9B8C5',
-  //       fontFamily: 'GilroyRegular',
-  //       fontSize: 12,
-  //     },
-  //   }
-
-  //   if (typeof window !== 'undefined') {
-  //     const {innerWidth} = window
-      
-  //     if (innerWidth >= 1500) {
-  //       props.layout.fontSize = 14
-  //     }
-  //   }
-  
-  //   return props
-  // }
+  const fetchTokenChartData = async () => {
+    const result = await $exchange.api.get.tokenChartData(address, urlBlockchain, activeInterval.seconds)
+    dispatch($exchange.set.chartData({type: 'tokens', data: ((result && result?.data) ? result.data : [])}))
+  }
 
   const handleChangeInterval = (interval) => () => {
     dispatch($exchange.set.interval(interval))
@@ -158,7 +140,6 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
     if ( ! chartRef.current) {
       chartRef.current = LightweightCharts.createChart(containerRef.current, {
         ...CHART_CONFIG,
-        //...getResizeOptions(),
       })
       candlestickSeriesRef.current = chartRef.current.addCandlestickSeries({...TYPES_SETTINGS['candlesticks']})
       areaSeriesRef.current = chartRef.current.addAreaSeries({...TYPES_SETTINGS['area']})

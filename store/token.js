@@ -99,6 +99,7 @@ export const tokenSlice = createSlice({
     pages: {
       history: [1],
       current: 1,
+      perPage: 20,
       append: false,
     },
   },
@@ -182,6 +183,7 @@ export const tokenSlice = createSlice({
 
       state.pages = {
         current,
+        perPage: state.pages.perPage,
         history,
         append: payload?.append ?? false,
       }
@@ -190,7 +192,9 @@ export const tokenSlice = createSlice({
     clear: (state) => {
       state.pages = {
         current: 1,
+        perPage: state.pages.perPage,
         history: [1],
+        append: false,
       }
 
       state.search = ''

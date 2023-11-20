@@ -1,10 +1,16 @@
 import { memo, useEffect, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
+import $token from '@/store/token'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const SidebarSort = ({ sort, loading, onSort }) => {
+const SidebarSort = ({ type, onSort }) => {
+  const dispatch = useDispatch()
+  const loading = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.loading : $collection.loading)
+  const sort = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.sort : $collection.sort)
   const [sortBy, sortDirection] = sort.split(':')
 
   const sorting = useRef(false)
@@ -20,8 +26,13 @@ const SidebarSort = ({ sort, loading, onSort }) => {
       sorting.current = true
       const newSort = (field === sortBy) ? `${field}:${sortDirection === 'ASC' ? 'DESC' : 'ASC'}` : `${field}:ASC`
 
-      if (onSort) {
-        onSort(newSort)
+      if (type == 'tokens') {
+        dispatch($token.set.sort(newSort))
+        dispatch($token.set.pages({current: 1}))
+      } else {
+        if (onSort) {
+          onSort(newSort)
+        }
       }
     }
   }
@@ -59,9 +70,8 @@ const SidebarSort = ({ sort, loading, onSort }) => {
 }
 
 const isEqual = (prevProps, nextProps) => {
-  return prevProps.sort == nextProps.sort &&
-  prevProps.loading == nextProps.loading &&
-  prevProps.onSort == nextProps.onSort
+  return prevProps.type == nextProps.type
+    && prevProps.onSort == nextProps.onSort
 }
 
 export default  memo(SidebarSort, isEqual)

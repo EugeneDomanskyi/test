@@ -16,9 +16,10 @@ import { trackEvent, getPageName } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useInterval from '@/myhooks/useInterval'
 
-const Orders = ({current, global, type, version, onOrderCancelled, onClickOrder}) => {
+const Orders = ({global, type, version, onOrderCancelled, onClickOrder}) => {
   const router = useRouter()
   const dispatch = useDispatch()
+  const current = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.current : $collection.current)
   const orders = useSelector($orders.get[type])
   const blockchain = useSelector($app.get.blockchain)
   const { wallet, changeNetwork, connect, getConnectorName } = useWalletConnect()
@@ -457,7 +458,6 @@ const Orders = ({current, global, type, version, onOrderCancelled, onClickOrder}
 const isEqual = (prev, next) => {
   return prev.onClickOrder === next.onClickOrder
     && prev.onOrderCancelled === next.onOrderCancelled
-    && prev.current?.address === next.current?.address
     && prev.type === next.type
     && prev.global === next.global
     && prev.version === next.version

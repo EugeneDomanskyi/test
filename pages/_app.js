@@ -147,7 +147,7 @@ function MyApp({ Component, pageProps, initialData, currentInfo, currentPage, cu
         <Provider store={storeRef}>
           <Head route={ssRoute} currentInfo={currentInfo} currentPage={currentPage} currentSymbol={currentSymbol} />
 
-          <Wrapper isMobile={initialData.isMobile}>
+          <Wrapper>
             <Component {...pageProps} />
           </Wrapper>
 
@@ -161,10 +161,7 @@ function MyApp({ Component, pageProps, initialData, currentInfo, currentPage, cu
 
 MyApp.getInitialProps = async ({ ctx }) => {
   const cookies = nookies.get(ctx)
-  let isMobile = false
-  if (ctx.req?.headers?.['user-agent']) {
-    isMobile = ctx.req.headers['user-agent'].match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i)
-  }
+
   let currentInfo = {}
   let currentPage = ''
   let currentAddress = ''
@@ -232,7 +229,6 @@ MyApp.getInitialProps = async ({ ctx }) => {
   return {
     initialData: {
       blockchain: cookies.blockchain,
-      isMobile,
       marketsList,
     },
     currentInfo,

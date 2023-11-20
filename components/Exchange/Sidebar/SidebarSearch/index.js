@@ -1,16 +1,32 @@
 import { memo, useEffect, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { trackEvent } from '@/libs/analytics.lib'
+import { fetchPrices, getTokens } from '@/api_services/tokens'
 
 import $app from '@/store/app'
+import $token from '@/store/token'
 
 import App from '@/components/App'
 
-const SidebarSearch = ({ search, loading, onSearch, ...props }) => {
+const SidebarSearch = ({ type, search, onSearch, ...props }) => {
+  const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
+  const loading = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.loading : $collection.loading)
+  const sort = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.sort : $collection.sort)
+  const tokensPerPage = useSelector(({ $token }) => $token.pages.perPage)
 
-  const [localSearch, setLocalSearch] = useState(search)
+  const [sortBy, sortDirection] = sort.split(':')
+  let orderBy = sortBy.toLowerCase()
+  if (type == 'tokens' && orderBy == 'volume') {
+    orderBy = 'volumeUSD'
+  }
+
+  if (type == 'tokens' && orderBy == 'price') {
+    orderBy = 'derivedETH'
+  }
+
+  const [localSearch, setLocalSearch] = useState('')
 
   let timeoutId = useRef(null)
 
@@ -25,8 +41,14 @@ const SidebarSearch = ({ search, loading, onSearch, ...props }) => {
       setLocalSearch(value)
       clearTimeout(timeoutId.current)
 
-      if (value.trim() == '' && onSearch) {
-        onSearch('')
+      if (value.trim() == '') {
+        if (type == 'tokens') {
+          dispatch($token.set.searching(false))
+        } else {
+          if (onSearch) {
+            onSearch('')
+          }
+        }
       }
 
       if (value.trim().length >= 3) {
@@ -38,14 +60,41 @@ const SidebarSearch = ({ search, loading, onSearch, ...props }) => {
   }
 
   const handleSearch = (searchQuery) => {
-    if (onSearch) {
-      onSearch(searchQuery)
+    if (type == 'tokens') {
+      searchTokens(searchQuery)
+    } else {
+      if (onSearch) {
+        onSearch(searchQuery)
+      }
     }
 
     trackEvent('Search Market', {
       'Network': blockchain.code.toUpperCase(),
       'Search term': searchQuery,
     })
+  }
+
+  const searchTokens = async (searchText) => {
+    dispatch($token.set.searching(true))
+    dispatch($token.set.loading(true))
+
+    const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(searchText)
+    const post = {
+      currentPage: 1,
+      perPage: tokensPerPage,
+      orderBy: orderBy,
+      orderDirection: sortDirection.toLowerCase(),
+      searchText: searchText,
+      searchField: isAddress ? 'contract_address' : 'name',
+    }
+
+    const tokens = await getTokens(blockchain, post)
+    dispatch($token.set.searched(tokens))
+
+    const prices = await fetchPrices(blockchain, tokens)
+    dispatch($token.set.updatedSearched(prices))
+
+    dispatch($token.set.loading(false))
   }
 
   return (

@@ -1,25 +1,97 @@
-import styles from './styles.module.scss'
 import { memo, useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
+import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
-import $exchange from '@/store/exchange'
-import $app from '@/store/app'
 import { trackEvent } from '@/libs/analytics.lib'
+
+import $app from '@/store/app'
+import $exchange from '@/store/exchange'
+import $token from '@/store/token'
 
 import coingeckoAssets from '@/public/files/coingecko_ids'
 import App from '@/components/App'
 
-const Info = ({ current, type }) => {
+import styles from './styles.module.scss'
+import { fetchPrices, getTokens } from '@/api_services/tokens'
+
+const Info = ({ type }) => {
+  const router = useRouter()
+  const [urlAddress] = router.query.address || []
+  const address = urlAddress ? urlAddress?.toLowerCase() : ''
+  const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(address)
+  const urlBlockchain = router.query.blockchain
+
   const { getPrice } = useWalletConnect()
+
+  const dispatch = useDispatch()
+  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const blockchain = useSelector($app.get.blockchain)
+  const current = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.current : $collection.current)
+  const list = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.all : $collection.all)
+  const loading = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.loading : $collection.loading)
   const { high, low } = useSelector($exchange.get.highLow({ count: 24, unit: 'hours' }))
 
   const [usdPrice, setUsdPrice] = useState(current.price)
 
   const scanLink = `${blockchain.scanUrl}/address/${current.address}`
-  const websiteLink = `${window.location.origin}/${blockchain.code}/${current.address}`
+  const websiteLink = `https://tegro.com/${blockchain.code}/${current.address}`
+
+  useEffect(() => {
+    if (!isAddress && blockchain.code === urlBlockchain && list.length && !isMobile && !loading) {
+      if (type == 'tokens') {
+        dispatch($token.set.current(list[0]))
+        router.replace(`/exchange/${urlBlockchain}/${list[0].id}`)
+      } else {
+        dispatch($collection.set.current(list[0]))
+        router.replace(`/nfts/${urlBlockchain}/${list[0].id}`)
+      }
+    }
+  }, [isAddress, list, urlBlockchain, blockchain.code, isMobile, loading])
+
+  useEffect(() => {
+    if (isAddress && blockchain.code === urlBlockchain && current?.id !== address) {
+      if (type == 'tokens') {
+        fetchToken()
+      } else {
+        // Fetch collection
+      }
+    }
+  }, [isAddress, urlBlockchain, blockchain.code, address, current?.id])
+
+  const fetchToken = async () => {
+    const existInList = list.find(item => item.id === address)
+    if (!existInList) {
+      const post = {
+        currentPage: 1,
+        perPage: 1,
+        orderBy: 'name',
+        orderDirection: 'asc',
+        searchText: address,
+        searchField: 'contract_address',
+      }
+
+      const [token] = await getTokens(blockchain, post)
+      if (token) {
+        let currentToken = {
+          ...token,
+        }
+
+        const prices = await fetchPrices(blockchain, [token])
+        if (prices[token.id]) {
+          currentToken = {
+            ...currentToken,
+            ...prices[token.id],
+          }
+        }
+
+        dispatch($token.set.current(currentToken))
+      }
+    } else {
+      dispatch($token.set.current(existInList))
+    }
+  }
 
   useEffect(() => {
     if (current.id) {
@@ -133,8 +205,7 @@ const Info = ({ current, type }) => {
 }
 
 const isEqual = (prevProps, nextProps) => {
-  return prevProps.current === nextProps.current
-    && prevProps.type === nextProps.type
+  return prevProps.type === nextProps.type
 }
 
 export default memo(Info, isEqual)
