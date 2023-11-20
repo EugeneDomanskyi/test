@@ -138,7 +138,7 @@ const Mobile = forwardRef(({ type, onOrdersUpdate }, ref) => {
                 )
               case 'orders':
                 return (
-                  <Orders current={item} version="mobile" type={type} onOrderCancelled={onOrdersUpdate} onClickOrder={handleClickOrder} />
+                  <Orders current={item} version="mobile" type={type} onClickOrder={handleClickOrder} />
                 )
               default: return null
             }

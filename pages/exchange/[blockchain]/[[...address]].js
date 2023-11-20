@@ -1,11 +1,10 @@
-import { useRef, useCallback } from 'react'
+import { useRef, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import dynamic from 'next/dynamic'
 import cn from 'classnames'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
-import useOrders from '@/myhooks/useOrders'
+import { trackEvent, getPageName } from '@/libs/analytics.lib'
 
 import $orders from '@/store/orders'
 
@@ -27,11 +26,7 @@ const GRID_GAP = 8
 const Exchange = () => {
   const router = useRouter()
   const [queryTokenId] = router.query.address || []
-  const queryBlockchainCode = router.query.blockchain
 
-  const { wallet } = useWalletConnect()
-  const { updateOrders } = useOrders({tokenAddress: queryTokenId, type: 'tokens'})
-  
   const dispatch = useDispatch()
   const myOrdersDialogOpen = useSelector(({ $orders }) => $orders.myOrdersDialogOpen)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
@@ -39,9 +34,11 @@ const Exchange = () => {
   const tradeForm = useRef(null)
   const mobileRef = useRef(null)
 
-  const handleOrdersUpdated = useCallback(() => {
-    updateOrders()
-  }, [wallet, queryTokenId, queryBlockchainCode])
+  useEffect(() => {
+    trackEvent('Page Visited', {
+      'Page Name': getPageName(),
+    })
+  }, [])
 
   const handleClickOrder = useCallback(async order => {
     if (tradeForm.current) {
@@ -100,7 +97,6 @@ const Exchange = () => {
 
               <Orders
                 type="tokens"
-                onOrderCancelled={handleOrdersUpdated}
                 onClickOrder={handleClickOrder}
               />
             </App.Flex>
@@ -117,7 +113,6 @@ const Exchange = () => {
             <Mobile
               ref={mobileRef}
               type="tokens"
-              onOrdersUpdate={handleOrdersUpdated}
             />
           )}
 
@@ -132,7 +127,7 @@ const Exchange = () => {
               </App.Flex>
 
               <App.Flex fullWidth flex={1} sx={{ position: 'relative' }}>
-                <Orders global version="mobile" type="tokens" onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrderMobile} />
+                <Orders global version="mobile" type="tokens" onClickOrder={handleClickOrderMobile} />
               </App.Flex>
             </App.Flex>
           </App.Dialog>

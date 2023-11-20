@@ -1,11 +1,14 @@
 import { memo, useRef } from 'react'
 import { useRouter } from 'next/router'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import cn from 'classnames'
 
-import $app from '@/store/app'
 import { trackEvent } from '@/libs/analytics.lib'
+
+import $app from '@/store/app'
+import $token from '@/store/token'
+import $collection from '@/store/collection'
 
 import App from  '@/components/App'
 
@@ -19,6 +22,7 @@ const getRandomColor = () => {
 const SidebarItem = ({ item, type }) => {
   const router = useRouter()
 
+  const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const current = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.current : $collection.current)
 
@@ -31,7 +35,13 @@ const SidebarItem = ({ item, type }) => {
       'Network': blockchain.code.toUpperCase(),
     })
 
-    router.push(`/${type == 'nfts' ? 'nfts' : 'exchange'}/${blockchain.code}/${item.address}`, undefined, { scroll: false })
+    if (type == 'tokens') {
+      dispatch($token.set.current(item))
+      router.push(`/exchange/${blockchain.code}/${item.address}`, undefined, { scroll: false })
+    } else {
+      dispatch($collection.set.current(item))
+      router.push(`/nfts/${blockchain.code}/${item.address}`, undefined, { scroll: false })
+    }
   }
 
   const getSymbolForLogo = () => {

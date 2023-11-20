@@ -88,7 +88,7 @@ const WrapperCollections = ({ children }) => {
   // fetch current if address is correct
   useEffect(() => {
     (async () => {
-      if (isAddress && (currentChain.code === blockchain) && current?.address !== address) {
+      if (isAddress && (currentChain.code === blockchain) && !current?.address) {
         const existInList = collections.find(collection => collection.id === address)
         if (!existInList) {
           const collection = await getCollection(address)

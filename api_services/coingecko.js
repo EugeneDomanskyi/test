@@ -23,7 +23,7 @@ export const getPrices = async (ids) => {
             value: tickerValue,
             type: tickerValue >= 0 ? 'plus' : 'minus',
           },
-          image: image
+          image: image.replace('/large/', '/small/')
         }
       }
     }, {})

@@ -52,7 +52,7 @@ const Info = ({ type }) => {
   }, [isAddress, list, urlBlockchain, blockchain.code, isMobile, loading])
 
   useEffect(() => {
-    if (isAddress && blockchain.code === urlBlockchain && current?.id !== address) {
+    if (isAddress && blockchain.code === urlBlockchain && !current?.id) {
       if (type == 'tokens') {
         fetchToken()
       } else {
@@ -130,7 +130,7 @@ const Info = ({ type }) => {
   const handleCopy = () => {
     navigator.clipboard.writeText(current.address)
   }
-
+  
   return (
     <App.Flex row align="center" className={styles.container}>
       {current ? (
