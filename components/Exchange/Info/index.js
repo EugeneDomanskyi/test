@@ -5,16 +5,17 @@ import Image from 'next/image'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { trackEvent } from '@/libs/analytics.lib'
+import { fetchPrices, getTokens } from '@/api_services/tokens'
 
 import $app from '@/store/app'
 import $exchange from '@/store/exchange'
 import $token from '@/store/token'
+import $collection from '@/store/collection'
 
 import coingeckoAssets from '@/public/files/coingecko_ids'
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
-import { fetchPrices, getTokens } from '@/api_services/tokens'
 
 const Info = ({ type }) => {
   const router = useRouter()

@@ -16,7 +16,7 @@ const getRandomColor = () => {
   return `#${randomColor}`
 }
 
-const SidebarItem = ({ item, type, onClick, onClose }) => {
+const SidebarItem = ({ item, type }) => {
   const router = useRouter()
 
   const blockchain = useSelector($app.get.blockchain)
@@ -25,21 +25,13 @@ const SidebarItem = ({ item, type, onClick, onClose }) => {
   const colors = useRef([getRandomColor(), getRandomColor()])
 
   const handleClick = () => {
-    if (onClick) {
-      onClick()
-    } else {
-      trackEvent('View Market', {
-        'Base Currency': item.symbol,
-        'Quote Currency': 'USDT',
-        'Network': blockchain.code.toUpperCase(),
-      })
+    trackEvent('View Market', {
+      'Base Currency': item.symbol,
+      'Quote Currency': 'USDT',
+      'Network': blockchain.code.toUpperCase(),
+    })
 
-      router.push(`/${type == 'nfts' ? 'nfts' : 'exchange'}/${blockchain.code}/${item.address}`, undefined, { scroll: false })
-
-      if (onClose) {
-        onClose()
-      }
-    }
+    router.push(`/${type == 'nfts' ? 'nfts' : 'exchange'}/${blockchain.code}/${item.address}`, undefined, { scroll: false })
   }
 
   const getSymbolForLogo = () => {
@@ -101,10 +93,8 @@ const SidebarItem = ({ item, type, onClick, onClose }) => {
 }
 
 const isEqual = (prevProps, nextProps) => {
-  return  prevProps.item === nextProps.item
+  return prevProps.item === nextProps.item
     && prevProps.type === nextProps.type
-    && prevProps.onClick === nextProps.onClick
-    && prevProps.onClose === nextProps.onClose
 }
 
 export default memo(SidebarItem, isEqual)

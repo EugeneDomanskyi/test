@@ -5,6 +5,9 @@ import cn from 'classnames'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
+import $collection from '@/store/collection'
+
+import { fetchPrices, getTokens } from '@/api_services/tokens'
 
 import App from '@/components/App'
 import SidebarSearch from '@/components/Exchange/Sidebar/SidebarSearch'
@@ -12,9 +15,8 @@ import SidebarSort from '@/components/Exchange/Sidebar/SidebarSort'
 import SidebarItem from '@/components/Exchange/Sidebar/SidebarItem'
 
 import styles from './styles.module.scss'
-import { fetchPrices, getTokens } from '@/api_services/tokens'
 
-const Sidebar = ({ version, type, onSort, onSearch, onPage, onClose, className }) => {
+const Sidebar = ({ version, type }) => {
   const router = useRouter()
   const urlBlockchain = router.query.blockchain
 
@@ -73,9 +75,7 @@ const Sidebar = ({ version, type, onSort, onSearch, onPage, onClose, className }
         if (type == 'tokens') {
           dispatch($token.set.pages({current: pages.next ?? 1, append: true}))
         } else {
-          if (onPage) {
-            onPage(pages.next, true)
-          }
+          dispatch($collection.set.pages({current: pages.next ?? 'init', append: true}))
         }
       }
     }
@@ -100,12 +100,12 @@ const Sidebar = ({ version, type, onSort, onSearch, onPage, onClose, className }
   }
 
   return (
-    <App.Flex column className={cn(styles.container, styles[className], styles[version])}>
+    <App.Flex column className={cn(styles.container, styles[version])}>
       <App.Flex column>
         <App.Flex center full sx={{ padding: '8px 10px' }}>
-          <SidebarSearch type={type} onSearch={onSearch} />
+          <SidebarSearch type={type} />
         </App.Flex>
-        <SidebarSort type={type} onSort={onSort} />
+        <SidebarSort type={type} />
       </App.Flex>
 
       <div className={styles.cardBox}>
@@ -129,7 +129,6 @@ const Sidebar = ({ version, type, onSort, onSearch, onPage, onClose, className }
                         key={item.id}
                         item={item}
                         type={type}
-                        onClose={onClose}
                       />
                     )
                   })}

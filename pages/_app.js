@@ -99,10 +99,10 @@ const { wallets: [popularWallets] } = getDefaultWallets({
 })
 
 const connectors = connectorsForWallets([
-  {
-    groupName: 'Recommended',
-    wallets: [rainbowMagicConnector({ chains: chains })],
-  },
+  // {
+  //   groupName: 'Recommended',
+  //   wallets: [rainbowMagicConnector({ chains: chains })],
+  // },
   popularWallets
 ])
 

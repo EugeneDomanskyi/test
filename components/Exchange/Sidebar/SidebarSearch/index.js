@@ -6,10 +6,11 @@ import { fetchPrices, getTokens } from '@/api_services/tokens'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
+import $collection from '@/store/collection'
 
 import App from '@/components/App'
 
-const SidebarSearch = ({ type, search, onSearch, ...props }) => {
+const SidebarSearch = ({ type, ...props }) => {
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const loading = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.loading : $collection.loading)
@@ -30,12 +31,6 @@ const SidebarSearch = ({ type, search, onSearch, ...props }) => {
 
   let timeoutId = useRef(null)
 
-  useEffect(() => {
-    if (search == '') {
-      setLocalSearch('')
-    }
-  }, [search])
-
   const handleSearchChange = (value) => {
     if ( ! loading) {
       setLocalSearch(value)
@@ -45,9 +40,8 @@ const SidebarSearch = ({ type, search, onSearch, ...props }) => {
         if (type == 'tokens') {
           dispatch($token.set.searching(false))
         } else {
-          if (onSearch) {
-            onSearch('')
-          }
+          dispatch($collection.set.search(''))
+          dispatch($collection.set.searching(false))
         }
       }
 
@@ -63,9 +57,7 @@ const SidebarSearch = ({ type, search, onSearch, ...props }) => {
     if (type == 'tokens') {
       searchTokens(searchQuery)
     } else {
-      if (onSearch) {
-        onSearch(searchQuery)
-      }
+      dispatch($collection.set.search(searchQuery))
     }
 
     trackEvent('Search Market', {
@@ -118,9 +110,7 @@ const SidebarSearch = ({ type, search, onSearch, ...props }) => {
 }
 
 const isEqual = (prevProps, nextProps) => {
-  return prevProps.search == nextProps.search &&
-    prevProps.loading == nextProps.loading &&
-    prevProps.onSearch == nextProps.onSearch
+  return prevProps.type == nextProps.type
 }
 
 export default memo(SidebarSearch, isEqual)

@@ -2,12 +2,13 @@ import { memo, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import $token from '@/store/token'
+import $collection from '@/store/collection'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const SidebarSort = ({ type, onSort }) => {
+const SidebarSort = ({ type }) => {
   const dispatch = useDispatch()
   const loading = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.loading : $collection.loading)
   const sort = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.sort : $collection.sort)
@@ -30,9 +31,7 @@ const SidebarSort = ({ type, onSort }) => {
         dispatch($token.set.sort(newSort))
         dispatch($token.set.pages({current: 1}))
       } else {
-        if (onSort) {
-          onSort(newSort)
-        }
+        dispatch($collection.set.sort(newSort))
       }
     }
   }
@@ -71,7 +70,6 @@ const SidebarSort = ({ type, onSort }) => {
 
 const isEqual = (prevProps, nextProps) => {
   return prevProps.type == nextProps.type
-    && prevProps.onSort == nextProps.onSort
 }
 
 export default  memo(SidebarSort, isEqual)
