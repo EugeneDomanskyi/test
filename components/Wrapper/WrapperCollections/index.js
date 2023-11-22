@@ -68,22 +68,22 @@ const WrapperCollections = ({ children }) => {
 
   useEffect(() => {
     initWSConnection()
-    if (storedBlockchain.code !== blockchain) {
+    if (isNfts && storedBlockchain.code !== blockchain) {
       const newBlockchain = ['ethereum', 'polygon', 'arbitrum', 'bsc', 'avalanche'].includes(storedBlockchain.code) ? storedBlockchain.code : blockchain
       dispatch($app.set.code(newBlockchain))
       dispatch($collection.set.loading(true))
       router.replace(`/nfts/${newBlockchain}/0x`)
     }
-  }, [storedBlockchain, blockchain])
+  }, [isNfts, storedBlockchain, blockchain])
 
   // fetch list for blockchain
   useEffect(() => {
-    if (currentChain.code !== blockchain) {
+    if (isNfts && currentChain.code !== blockchain) {
       return
     }
 
     getCollectionList()
-  }, [search, pages.current, currentChain.code, blockchain])
+  }, [isNfts, search, pages.current, currentChain.code, blockchain])
 
   // fetch current if address is correct
   useEffect(() => {
@@ -108,11 +108,11 @@ const WrapperCollections = ({ children }) => {
 
   // set current from list
   useEffect(() => {
-    if ((wrongAddress || !isAddress) && (storedBlockchain.code === blockchain) && collections.length && !isMobile && !loading) {
+    if (isNfts && (wrongAddress || !isAddress) && (storedBlockchain.code === blockchain) && collections.length && !isMobile && !loading) {
       dispatch($collection.set.current(collections[0]))
       router.replace(`/nfts/${blockchain}/${collections[0].id}`)
     }
-  }, [wrongAddress, collections.length, blockchain, storedBlockchain.code, isMobile, loading])
+  }, [isNfts, wrongAddress, collections.length, blockchain, storedBlockchain.code, isMobile, loading])
 
   useEffect(() => {
     if (address && blockchain) {
