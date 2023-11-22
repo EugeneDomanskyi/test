@@ -1,11 +1,14 @@
 import { memo, useRef } from 'react'
 import { useRouter } from 'next/router'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import cn from 'classnames'
 
-import $app from '@/store/app'
 import { trackEvent } from '@/libs/analytics.lib'
+
+import $app from '@/store/app'
+import $token from '@/store/token'
+import $collection from '@/store/collection'
 
 import App from  '@/components/App'
 
@@ -16,29 +19,28 @@ const getRandomColor = () => {
   return `#${randomColor}`
 }
 
-const SidebarItem = ({ item, isActive, withArrow, searching, type, onClick, onClose }) => {
+const SidebarItem = ({ item, type }) => {
   const router = useRouter()
-  const isNfts = router.pathname.includes('/nfts')
 
+  const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
+  const current = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.current : $collection.current)
 
   const colors = useRef([getRandomColor(), getRandomColor()])
 
   const handleClick = () => {
-    if (onClick) {
-      onClick()
+    trackEvent('View Market', {
+      'Base Currency': item.symbol,
+      'Quote Currency': 'USDT',
+      'Network': blockchain.code.toUpperCase(),
+    })
+
+    if (type == 'tokens') {
+      dispatch($token.set.current(item))
+      router.push(`/exchange/${blockchain.code}/${item.address}`, undefined, { scroll: false })
     } else {
-      trackEvent('View Market', {
-        'Base Currency': item.symbol,
-        'Quote Currency': 'USDT',
-        'Network': blockchain.code.toUpperCase(),
-      })
-
-      router.push(`/${isNfts ? 'nfts' : 'exchange'}/${blockchain.code}/${item.address}`, undefined, { scroll: false })
-
-      if (onClose) {
-        onClose()
-      }
+      dispatch($collection.set.current(item))
+      router.push(`/nfts/${blockchain.code}/${item.address}`, undefined, { scroll: false })
     }
   }
 
@@ -57,7 +59,7 @@ const SidebarItem = ({ item, isActive, withArrow, searching, type, onClick, onCl
   )
   
   return (
-    <App.Flex row justify="space-between" align="center" onClick={handleClick} className={cn(styles.collection, {[styles.withArrow]: withArrow}, {[styles.active]: isActive && ! withArrow})}>
+    <App.Flex row justify="space-between" align="center" onClick={handleClick} className={cn(styles.collection, {[styles.active]: (current.id == item.id)})}>
       <App.Flex row gap={4} align="center">
         {item.image ? (
           <Image src={item.image} priority width={26} height={26} className={styles.image} alt="" />
@@ -76,10 +78,6 @@ const SidebarItem = ({ item, isActive, withArrow, searching, type, onClick, onCl
                   <App.Icon icon="check-cloud-fill" />
                 </App.Flex>
               </App.Tooltip>
-            ) : null}
-
-            {withArrow ? (
-              <App.Icon icon="caret-down" />
             ) : null}
           </App.Flex>
 
@@ -105,13 +103,8 @@ const SidebarItem = ({ item, isActive, withArrow, searching, type, onClick, onCl
 }
 
 const isEqual = (prevProps, nextProps) => {
-  return JSON.stringify(prevProps.item) === JSON.stringify(nextProps.item) &&
-    prevProps.isActive === nextProps.isActive &&
-    prevProps.searching === nextProps.searching &&
-    prevProps.withArrow === nextProps.withArrow &&
-    prevProps.type === nextProps.type &&
-    prevProps.onClick === nextProps.onClick &&
-    prevProps.onClose === nextProps.onClose
+  return prevProps.item === nextProps.item
+    && prevProps.type === nextProps.type
 }
 
 export default memo(SidebarItem, isEqual)

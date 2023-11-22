@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
+import { trackEvent, getPageName } from '@/libs/analytics.lib'
 import { CHAINS } from '@/config'
 import { fetchPrices, getTokens, getFull } from '@/api_services/tokens'
 import $token, { template } from '@/store/token'
@@ -40,6 +41,12 @@ export default function Markets({ currentInfo, currentChain }) {
   const type = isNfts ? 'nfts' : 'tokens'
 
   const [marketInfo, setMarketInfo] = useState(currentInfo)
+
+  useEffect(() => {
+    trackEvent('Page Visited', {
+      'Page Name': getPageName(),
+    })
+  }, [])
 
   // useEffect(() => {
   //   console.log('currentInfo', currentInfo);

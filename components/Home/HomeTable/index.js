@@ -36,10 +36,6 @@ const HomeTable = () => {
   const list = (searching) ? searched : collections
   const [orderBy, order] = sort.toLowerCase().split(':')
 
-  const handleSearch = useCallback((value) => {
-    dispatch($collection.set.search(value))
-  }, [])
-
   const handleSort = useCallback((field) => () => {
     const isAsc = orderBy === field && order === 'asc'
     const newOrder = isAsc ? 'desc' : 'asc'
@@ -85,7 +81,7 @@ const HomeTable = () => {
     <div className={styles.container}>
       <App.Container className={styles.content}>
         <App.Flex column align="flex-end" gap={16}>
-          <SidebarSearch sx={{ width: 300 }} search={search} loading={loading} onSearch={handleSearch} />
+          <SidebarSearch sx={{ width: 300 }} />
 
           <App.Flex width="100%">
             <TableContainer>
