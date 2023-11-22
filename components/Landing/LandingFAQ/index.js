@@ -1,12 +1,9 @@
 import styles from './styles.module.scss'
 import { useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { gsap } from 'gsap'
 import cn from 'classnames'
-import moment from 'moment'
 
 import App from '@/components/App'
-import SectionTitle from '@/components/Market/SectionTitle'
 
 const LandingFAQ = ({}) => {
   const itemRefs = useRef([])
@@ -59,7 +56,7 @@ const LandingFAQ = ({}) => {
       `,
     },
     {
-      question: 'How to trade ETH, LINK, SHIB, PEPE, and other tokens on Tegro?',
+      question: 'How to trade ETH, LINK, SHIB, PEPE and other tokens on Tegro?',
       answer: `You can trade hundreds of tokens, including <a href="https://tegro.com/exchange/ethereum/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2">Ethereum</a>, <a href="https://tegro.com/exchange/ethereum/0x514910771af9ca656af840dff83e8264ecf986ca">Chainlink</a>, <a href="https://tegro.com/exchange/ethereum/0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce">Shiba Inu</a>, <a href="https://tegro.com/exchange/ethereum/0x6982508145454ce325ddbe47a25d4ec3d2311933">Pepecoin</a> and more on Tegro. You simply have to connect your wallet to begin trading!`,
     },
     {
@@ -72,7 +69,6 @@ const LandingFAQ = ({}) => {
     <App.Container sx={{zIndex: 1}}>
       <App.Flex column gap={8} className={styles.container}>
         <h2 className={styles.sectionTitle}>Frequently Asked Questions</h2>
-        {/* <h2 style={{marginTop: 0,fontSize: 18}}>Everything you need to know about</h2> */}
         
         <div className={styles.faqContainer}>
           {
