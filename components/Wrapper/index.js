@@ -23,6 +23,7 @@ const Wrapper = ({ children, _isMobile }) => {
   const isNfts = router.asPath?.includes('nfts')
   const isSwap = router.pathname.includes('/swap')
   const isExchange = router.asPath?.includes('exchange')
+  const isCampaign = router.asPath?.includes('campaign')
 
   const { address, isConnected } = useAccount()
   const { chain } = useNetwork()
@@ -116,8 +117,12 @@ const Wrapper = ({ children, _isMobile }) => {
   }
 
   return (
-    <div style={{height: '100%', paddingTop: 64, transition: '.4s', overflowX: 'hidden'}}>
-      <Header />
+    <div style={{height: '100%', paddingTop: isCampaign ? 0 : 64, transition: '.4s', overflowX: 'hidden'}}>
+      {
+        ! isCampaign
+          ? <Header />
+          : null
+      }
 
       {isExchange ? (
         <WrapperExchange isMobile={isMobile}>
