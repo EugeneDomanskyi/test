@@ -13,6 +13,7 @@ const LandingPage = () => {
       <Raffle.Top landing />
       <Landing.Platform />
       <Landing.Founders />
+      <Landing.FAQ />
       <Landing.Footer />
     </App.Flex>
   )
