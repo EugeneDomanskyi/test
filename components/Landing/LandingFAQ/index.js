@@ -71,7 +71,7 @@ const LandingFAQ = ({}) => {
   return (
     <App.Container sx={{zIndex: 1}}>
       <App.Flex column gap={8} className={styles.container}>
-        <h1>FAQs</h1>
+        <h2 className={styles.sectionTitle}>Frequently Asked Questions</h2>
         {/* <h2 style={{marginTop: 0,fontSize: 18}}>Everything you need to know about</h2> */}
         
         <div className={styles.faqContainer}>
@@ -85,13 +85,13 @@ const LandingFAQ = ({}) => {
                         <div className={cn(styles.plus, {[styles.open]: openItem === i})} />
                       </div>
                     </div>
-                    <h2 className={styles.title}>{ item.question }</h2>
+                    <h3 className={styles.title}>{ item.question }</h3>
                   </div>
                   <div className={styles.answer} ref={ref => answers.current[i] = ref}>
                     <div>
                       <div style={{width: 44, marginRight: 16}} />
                     </div>
-                    <h3 style={{ whiteSpace: 'pre-line' }} dangerouslySetInnerHTML={{__html: item.answer}} />
+                    <p style={{ whiteSpace: 'pre-line' }} dangerouslySetInnerHTML={{__html: item.answer}} />
                   </div>
                 </div>
               )
