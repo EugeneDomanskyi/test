@@ -1,4 +1,5 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
@@ -25,9 +26,11 @@ const formatNumber = (number) => {
   }
 }
 
-const Mobile = forwardRef(({ item, type, onOrdersUpdate }, ref) => {
+const Mobile = forwardRef(({ type, onOrdersUpdate }, ref) => {
   const router = useRouter()
   const queryBlockchainCode = router.query.blockchain
+
+  const item = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.current : $collection.current)
 
   const [tab, setTab] = useState('charts')
   const [isTradeDialogOpen, setIsTradeDialogOpen] = useState(false)
@@ -135,7 +138,7 @@ const Mobile = forwardRef(({ item, type, onOrdersUpdate }, ref) => {
                 )
               case 'orders':
                 return (
-                  <Orders current={item} version="mobile" type={type} onOrderCancelled={onOrdersUpdate} onClickOrder={handleClickOrder} />
+                  <Orders current={item} version="mobile" type={type} onClickOrder={handleClickOrder} />
                 )
               default: return null
             }
