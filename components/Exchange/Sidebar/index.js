@@ -29,6 +29,7 @@ const Sidebar = ({ version, type }) => {
   const sort = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.sort : $collection.sort)
   const pages = useSelector(type == 'tokens' ? $token.get.pages : $collection.get.pages)
   const tokensPerPage = useSelector(({ $token }) => $token.pages.perPage)
+  const current = useSelector(({$token, $collection}) => type === 'tokens' ? $token.current :  $collection.current)
 
   const mobileContainerRef = useRef()
   const mobileNextRef = useRef()
@@ -56,6 +57,17 @@ const Sidebar = ({ version, type }) => {
       // Fetch collections
     }
   }, [blockchain.code, sort, pages.current, urlBlockchain])
+
+  useEffect(() => {
+    if (!loading && current?.id) {
+      const exist = all.find(item => item.id === current.id)
+      if (!exist) {
+        console.log([current, ...all])
+        dispatch($token.set.all([current, ...all]))
+      }
+      
+    }
+  }, [current?.id, loading])
 
   useEffect(() => {
     handleScroll()
@@ -92,7 +104,6 @@ const Sidebar = ({ version, type }) => {
     const tokens = await getTokens(blockchain, post)
     dispatch($token.set.all(tokens))
     dispatch($token.set.pages({ next: (pages.current * 1 + 1) }))
-
     const prices = await fetchPrices(blockchain, tokens)
     dispatch($token.set.updatedAll(prices))
 
