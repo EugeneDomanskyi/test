@@ -28,6 +28,7 @@ export const getTokens = async (chain, post) => {
         totalSupply: null,
         volumeUSD: null,
         totalValueLockedUSD: null,
+        blockchain: chain.code,
       }))
     }
   } else {
@@ -44,7 +45,10 @@ export const getTokens = async (chain, post) => {
     })
 
     if (res?.data && res.data.hasOwnProperty('tokens')) {
-      return res.data.tokens
+      return res.data.tokens.map(item => ({
+        ...item,
+        blockchain: chain.code,
+      }))
     }
   }
 

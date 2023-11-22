@@ -1,5 +1,13 @@
-import { memo, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
 import cn from 'classnames'
+
+import $app from '@/store/app'
+import $token from '@/store/token'
+import $collection from '@/store/collection'
+
+import { fetchPrices, getTokens } from '@/api_services/tokens'
 
 import App from '@/components/App'
 import SidebarSearch from '@/components/Exchange/Sidebar/SidebarSearch'
@@ -8,11 +16,46 @@ import SidebarItem from '@/components/Exchange/Sidebar/SidebarItem'
 
 import styles from './styles.module.scss'
 
-const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpty, pages, loading, version, type, onSort, onSearch, onPage, onClose, className }) => {
+const Sidebar = ({ version, type }) => {
+  const router = useRouter()
+  const urlBlockchain = router.query.blockchain
+
+  const dispatch = useDispatch()
+  const blockchain = useSelector($app.get.blockchain)
+  const all = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.all : $collection.all)
+  const searched = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.searched : $collection.searched)
+  const loading = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.loading : $collection.loading)
+  const searching = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.searching : $collection.searching)
+  const sort = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.sort : $collection.sort)
+  const pages = useSelector(type == 'tokens' ? $token.get.pages : $collection.get.pages)
+  const tokensPerPage = useSelector(({ $token }) => $token.pages.perPage)
+
   const mobileContainerRef = useRef()
   const mobileNextRef = useRef()
 
-  const list = searching ? searched : items
+  const list = searching ? searched : all
+
+  const [sortBy, sortDirection] = sort.split(':')
+  let orderBy = sortBy.toLowerCase()
+  if (type == 'tokens' && orderBy == 'volume') {
+    orderBy = 'volumeUSD'
+  }
+
+  if (type == 'tokens' && orderBy == 'price') {
+    orderBy = 'derivedETH'
+  }
+
+  useEffect(() => {
+    if (blockchain.code !== urlBlockchain) {
+      return
+    }
+
+    if (type == 'tokens') {
+      fetchTokensList()
+    } else {
+      // Fetch collections
+    }
+  }, [blockchain.code, sort, pages.current, urlBlockchain])
 
   useEffect(() => {
     handleScroll()
@@ -29,20 +72,40 @@ const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpt
 
       const containerBottom = containerRect.top + containerRect.height
       if (nextRect.top - containerBottom <= 50) {
-        if (onPage) {
-          onPage(pages.next, true)
+        if (type == 'tokens') {
+          dispatch($token.set.pages({current: pages.next ?? 1, append: true}))
+        } else {
+          dispatch($collection.set.pages({current: pages.next ?? 'init', append: true}))
         }
       }
     }
   }
 
+  const fetchTokensList = async () => {
+    const post = {
+      currentPage: pages.current,
+      perPage: tokensPerPage,
+      orderBy: orderBy,
+      orderDirection: sortDirection.toLowerCase(),
+    }
+
+    const tokens = await getTokens(blockchain, post)
+    dispatch($token.set.all(tokens))
+    dispatch($token.set.pages({ next: (pages.current * 1 + 1) }))
+
+    const prices = await fetchPrices(blockchain, tokens)
+    dispatch($token.set.updatedAll(prices))
+
+    dispatch($token.set.loading(false))
+  }
+
   return (
-    <App.Flex column className={cn(styles.container, styles[className])}>
+    <App.Flex column className={cn(styles.container, styles[version])}>
       <App.Flex column>
         <App.Flex center full sx={{ padding: '8px 10px' }}>
-          <SidebarSearch search={search} loading={loading} onSearch={onSearch} />
+          <SidebarSearch type={type} />
         </App.Flex>
-        <SidebarSort sort={sort} loading={loading} onSort={onSort} />
+        <SidebarSort type={type} />
       </App.Flex>
 
       <div className={styles.cardBox}>
@@ -63,17 +126,14 @@ const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpt
                   {list.map((item, i) => {
                     return (
                       <SidebarItem
-                        key={item.address}
+                        key={item.id}
                         item={item}
-                        searching={searching}
                         type={type}
-                        isActive={current.address === item.address}
-                        onClose={onClose}
                       />
                     )
                   })}
 
-                  {pages.next && ! searching && items.length == 20 ? (
+                  {pages.next && ! searching && (all.length % 20 == 0) ? (
                     <div ref={mobileNextRef}>
                       <App.Flex center full>
                         <App.Loader size={40} />
@@ -90,17 +150,4 @@ const Sidebar = ({ items, searched, current, sort, search, searching, searchEmpt
   )
 }
 
-const isEqual = (prevProps, nextProps) => {
-  return JSON.stringify(prevProps.items) == JSON.stringify(nextProps.items)
-    && JSON.stringify(prevProps.searched) == JSON.stringify(nextProps.searched)
-    && JSON.stringify(prevProps.current) == JSON.stringify(nextProps.current)
-    && prevProps.search == nextProps.search
-    && prevProps.searching == nextProps.searching
-    && prevProps.searchEmpty == nextProps.searchEmpty
-    && prevProps.loading == nextProps.loading
-    && prevProps.version == nextProps.version
-    && prevProps.type == nextProps.type
-    && prevProps.className == nextProps.className
-}
-
-export default memo(Sidebar, isEqual)
+export default Sidebar

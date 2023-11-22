@@ -99,10 +99,10 @@ const { wallets: [popularWallets] } = getDefaultWallets({
 })
 
 const connectors = connectorsForWallets([
-  {
-    groupName: 'Recommended',
-    wallets: [rainbowMagicConnector({ chains: chains })],
-  },
+  // {
+  //   groupName: 'Recommended',
+  //   wallets: [rainbowMagicConnector({ chains: chains })],
+  // },
   popularWallets
 ])
 
@@ -147,7 +147,7 @@ function MyApp({ Component, pageProps, initialData, currentInfo, currentPage, cu
         <Provider store={storeRef}>
           <Head route={ssRoute} currentInfo={currentInfo} currentPage={currentPage} currentSymbol={currentSymbol} />
 
-          <Wrapper isMobile={initialData.isMobile}>
+          <Wrapper>
             <Component {...pageProps} />
           </Wrapper>
 
@@ -161,10 +161,7 @@ function MyApp({ Component, pageProps, initialData, currentInfo, currentPage, cu
 
 MyApp.getInitialProps = async ({ ctx }) => {
   const cookies = nookies.get(ctx)
-  let isMobile = false
-  if (ctx.req?.headers?.['user-agent']) {
-    isMobile = ctx.req.headers['user-agent'].match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i)
-  }
+
   let currentInfo = {}
   let currentPage = ''
   let currentAddress = ''
@@ -174,48 +171,48 @@ MyApp.getInitialProps = async ({ ctx }) => {
 
     currentPage = page
     currentAddress = (address ?? '').toLowerCase()
-    if (currentPage === 'exchange') {
-      if (blockchain && address) {
-        const currentChain = CHAINS.find(chain => chain.code === blockchain)
-        if (currentChain) {
-          const post = {
-            currentPage: 1,
-            perPage: 1,
-            orderBy: 'name',
-            orderDirection: 'asc',
-            searchText: address,
-            searchField: 'contract_address',
-          }
+    // if (currentPage === 'exchange') {
+    //   if (blockchain && address) {
+    //     const currentChain = CHAINS.find(chain => chain.code === blockchain)
+    //     if (currentChain) {
+    //       const post = {
+    //         currentPage: 1,
+    //         perPage: 1,
+    //         orderBy: 'name',
+    //         orderDirection: 'asc',
+    //         searchText: address,
+    //         searchField: 'contract_address',
+    //       }
 
-          const [token] = await getTokens(currentChain, post)
-          if (token) {
-            currentInfo = {
-              ...token,
-              blockchain: currentChain.code,
-            }
-            currentSymbol = token.symbol.toUpperCase()
+    //       const [token] = await getTokens(currentChain, post)
+    //       if (token) {
+    //         currentInfo = {
+    //           ...token,
+    //           blockchain: currentChain.code,
+    //         }
+    //         currentSymbol = token.symbol.toUpperCase()
 
-            const prices = await fetchPrices(currentChain, [token])
-            if (prices[token.id]) {
-              currentInfo = {
-                ...currentInfo,
-                ...prices[token.id],
-              }
-            }
+    //         const prices = await fetchPrices(currentChain, [token])
+    //         if (prices[token.id]) {
+    //           currentInfo = {
+    //             ...currentInfo,
+    //             ...prices[token.id],
+    //           }
+    //         }
 
-            currentInfo = tokenTemplate(currentInfo)
-          }
-        }
-      }
-    } else if (currentPage === 'nfts') {
-      const res = await $collection.api.all({ id: address, limit: 1, blockchain: blockchain })
-      if (res && Array.isArray(res?.collections) && res?.collections.length) {
-        const [current] = res.collections
-        currentSymbol = current.name
-        current.blockchain = blockchain
-        currentInfo = collectionTemplate(current)
-      }
-    }
+    //         currentInfo = tokenTemplate(currentInfo)
+    //       }
+    //     }
+    //   }
+    // } else if (currentPage === 'nfts') {
+    //   const res = await $collection.api.all({ id: address, limit: 1, blockchain: blockchain })
+    //   if (res && Array.isArray(res?.collections) && res?.collections.length) {
+    //     const [current] = res.collections
+    //     currentSymbol = current.name
+    //     current.blockchain = blockchain
+    //     currentInfo = collectionTemplate(current)
+    //   }
+    // }
   }
 
   let ssRoute = ''
@@ -232,7 +229,6 @@ MyApp.getInitialProps = async ({ ctx }) => {
   return {
     initialData: {
       blockchain: cookies.blockchain,
-      isMobile,
       marketsList,
     },
     currentInfo,
