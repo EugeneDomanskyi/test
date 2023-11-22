@@ -47,7 +47,7 @@ const TEST_NETWORKS = [
         apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
         coingecko: '',
         platform: '',
-        pages: ['raffle', 'tokens'],
+        pages: ['earn', 'exchange'],
         usdtContract: '0xA02f6adc7926efeBBd59Fd43A84f4E0c0c91e832',
         wrapped: {
             contract: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
@@ -79,7 +79,7 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'arbitrum',
     platform: 'arbitrum-one',
-    pages: ['nfts', 'tokens'],
+    pages: ['nfts', 'exchange'],
     usdtContract: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
     wrapped: {
       contract: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
@@ -119,7 +119,7 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'celo',
     platform: 'celo',
-    pages: ['tokens'],
+    pages: ['exchange'],
     usdtContract: '0xb020d981420744f6b0fedd22bb67cd37ce18a1d5',
     wrapped: {
       contract: '0x3Ad443d769A07f287806874F8E5405cE3Ac902b9',
@@ -139,7 +139,7 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'binancecoin',
     platform: 'binance-smart-chain',
-    pages: ['nfts', 'tokens'],
+    pages: ['nfts', 'exchange'],
     usdtContract: '0x55d398326f99059ff775485246999027b3197955',
     wrapped: {
       contract: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
@@ -159,7 +159,7 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'base',
     platform: 'base',
-    pages: ['nfts', 'tokens'],
+    pages: ['nfts', 'exchange'],
     usdtContract: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
     wrapped: {
       contract: '0x4200000000000000000000000000000000000006',
@@ -179,7 +179,7 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'avalanche-2',
     platform: 'avalanche',
-    pages: ['nfts', 'tokens'],
+    pages: ['nfts', 'exchange'],
     usdtContract: '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7',
     wrapped: {
       contract: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
@@ -223,7 +223,7 @@ export const CHAINS = [
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'ethereum',
     platform: 'ethereum',
-    pages: ['nfts', 'tokens'],
+    pages: ['nfts', 'exchange'],
     gasLimit: 60000,
     usdtContract: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     wrapped: {
@@ -244,7 +244,7 @@ export const CHAINS = [
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'matic-network',
     platform: 'polygon-pos',
-    pages: ['nfts', 'tokens', 'raffle'],
+    pages: ['nfts', 'exchange', 'earn'],
     gasLimit: 250000,
     usdtContract: '0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
     wrapped: {

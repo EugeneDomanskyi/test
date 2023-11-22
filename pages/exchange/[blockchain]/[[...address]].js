@@ -1,14 +1,11 @@
-import { useEffect, useRef, useCallback } from 'react'
+import { useRef, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import dynamic from 'next/dynamic'
 import cn from 'classnames'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
-import { usePropsHelper } from '@/myhooks/props-helper'
-import useOrders from '@/myhooks/useOrders'
+import { trackEvent, getPageName } from '@/libs/analytics.lib'
 
-import $token from '@/store/token'
 import $orders from '@/store/orders'
 
 import App from '@/components/App'
@@ -29,35 +26,19 @@ const GRID_GAP = 8
 const Exchange = () => {
   const router = useRouter()
   const [queryTokenId] = router.query.address || []
-  const queryBlockchainCode = router.query.blockchain
 
-  const { wallet } = useWalletConnect()
-  const { updateOrders } = useOrders({tokenAddress: queryTokenId, type: 'tokens'})
-  
   const dispatch = useDispatch()
   const myOrdersDialogOpen = useSelector(({ $orders }) => $orders.myOrdersDialogOpen)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
-  const windowWidth = useSelector(({ $app }) => $app.size.windowWidth)
-
-  const {
-    tokens,
-    searched,
-    current,
-    tokenLoading,
-    sort,
-    search,
-    searching,
-    searchEmpty
-  } = useSelector($token.get.data)
-
-  const pages = useSelector($token.get.pages)
 
   const tradeForm = useRef(null)
   const mobileRef = useRef(null)
 
-  const handleOrdersUpdated = useCallback(() => {
-    updateOrders()
-  }, [wallet, queryTokenId, queryBlockchainCode])
+  useEffect(() => {
+    trackEvent('Page Visited', {
+      'Page Name': getPageName(),
+    })
+  }, [])
 
   const handleClickOrder = useCallback(async order => {
     if (tradeForm.current) {
@@ -67,19 +48,6 @@ const Exchange = () => {
         tradeForm.current.setForm({formType: 'market', amount: order.quantity, price: order.price, side: order.side})
       }, 300)
     }
-  }, [])
-
-  const handleSort = useCallback((value) => {
-    dispatch($token.set.sort(value))
-    dispatch($token.set.pages({current: 1}))
-  }, [])
-
-  const handleSearch = useCallback((value) => {
-    dispatch($token.set.search(value))
-  }, [])
-
-  const handlePage = useCallback((value, append = false) => {
-    dispatch($token.set.pages({current: value ?? 1, append}))
   }, [])
 
   const handleCloseOrdersDialog = () => {
@@ -98,32 +66,19 @@ const Exchange = () => {
       {!isMobile ? (
         <>
           <Sidebar
-            items={tokens}
-            searched={searched}
-            current={current}
-            sort={sort}
-            search={search}
-            searching={searching}
-            searchEmpty={searchEmpty}
-            pages={pages}
-            loading={tokenLoading}
             type="tokens"
-            onSort={handleSort}
-            onSearch={handleSearch}
-            onPage={handlePage}
           />
 
           <App.Flex column gap={GRID_GAP} className={styles.partRight}>
             <App.Flex row gap={GRID_GAP} className={styles.partRightTop}>
               <App.Flex column className={cn(styles.card, styles.partRightTopChart)}>
-                <Info current={current} type="tokens" />
+                <Info type="tokens" />
                 <Chart type="tokens" />
               </App.Flex>
 
               <TradeForm
                 ref={tradeForm}
                 type="tokens"
-                current={current}
               />
             </App.Flex>
 
@@ -141,9 +96,7 @@ const Exchange = () => {
               </App.Flex>
 
               <Orders
-                current={current}
                 type="tokens"
-                onOrderCancelled={handleOrdersUpdated}
                 onClickOrder={handleClickOrder}
               />
             </App.Flex>
@@ -153,27 +106,13 @@ const Exchange = () => {
         <>
           {!queryTokenId || queryTokenId == '0x' ? (
             <Sidebar
-              items={tokens}
-              searched={searched}
-              current={current}
-              sort={sort}
-              search={search}
-              searching={searching}
-              searchEmpty={searchEmpty}
-              pages={pages}
-              loading={tokenLoading}
               version="mobile"
               type="tokens"
-              onSort={handleSort}
-              onSearch={handleSearch}
-              onPage={handlePage}
             />
           ) : (
             <Mobile
               ref={mobileRef}
-              item={current}
               type="tokens"
-              onOrdersUpdate={handleOrdersUpdated}
             />
           )}
 
@@ -188,7 +127,7 @@ const Exchange = () => {
               </App.Flex>
 
               <App.Flex fullWidth flex={1} sx={{ position: 'relative' }}>
-                <Orders global version="mobile" type="tokens" onOrderCancelled={handleOrdersUpdated} onClickOrder={handleClickOrderMobile} />
+                <Orders global version="mobile" type="tokens" onClickOrder={handleClickOrderMobile} />
               </App.Flex>
             </App.Flex>
           </App.Dialog>

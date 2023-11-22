@@ -1,6 +1,6 @@
 import styles from './styles.module.scss'
 import { useSelector } from 'react-redux'
-import { useState, memo, useEffect, useRef } from 'react'
+import { useState, memo, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
@@ -15,13 +15,20 @@ import App from '@/components/App'
 import { trackEvent, getPageName } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useInterval from '@/myhooks/useInterval'
+import useOrders from '@/myhooks/useOrders'
 
-const Orders = ({current, global, type, version, onOrderCancelled, onClickOrder}) => {
+const Orders = ({global, type, version, onClickOrder}) => {
   const router = useRouter()
+  const [queryTokenId] = router.query.address || []
+  const queryBlockchainCode = router.query.blockchain
+
   const dispatch = useDispatch()
+  const current = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.current : $collection.current)
   const orders = useSelector($orders.get[type])
   const blockchain = useSelector($app.get.blockchain)
   const { wallet, changeNetwork, connect, getConnectorName } = useWalletConnect()
+
+  const { updateOrders } = useOrders({tokenAddress: queryTokenId, type})
 
   const [loading, setLoading] = useState(true)
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
@@ -39,6 +46,33 @@ const Orders = ({current, global, type, version, onOrderCancelled, onClickOrder}
       dispatch($orders.set[type]([]))
     }
   }, [wallet, type, blockchain.code])
+
+  const handleOrdersUpdated = useCallback(() => {
+    if (type == 'tokens') {
+      updateOrders()
+    } else {
+      if (wallet) {
+        $orders.api.get.nfts({
+          blockchain: blockchain.code,
+          maker: wallet,
+          includeCriteriaMetadata: true,
+        }).then(res => {
+          if (res) {
+            dispatch($orders.set.nfts(res))
+          }
+        })
+      }
+  
+      $orders.api.get.nfts.orderBook({
+        collection: queryTokenId,
+        blockchain: blockchain.code,
+      }).then(res => {
+        if (res) {
+          dispatch($orders.set.orderBook({type: 'nfts', data: res}))
+        }
+      })
+    }
+  }, [wallet, queryTokenId, queryBlockchainCode])
 
   const handlePressCancelConfirm = (order) => (e) => {
     e.stopPropagation()
@@ -82,7 +116,7 @@ const Orders = ({current, global, type, version, onOrderCancelled, onClickOrder}
       console.log(error)
     }).finally(() => {
       setCancellingOrders(state => state.filter(id => id !== order.id))
-      onOrderCancelled()
+      handleOrdersUpdated()
     })
   }
 
@@ -223,7 +257,7 @@ const Orders = ({current, global, type, version, onOrderCancelled, onClickOrder}
                 />
 
                 {type === 'nfts' ? (
-                  <Image alt="" src={current?.image} width={20} height={20} />
+                  current?.image ? <Image alt="" src={current?.image} width={20} height={20} /> : null
                 ) : (
                   <App.Text color="#B9B8C5" size={[10, 12]} weight={600} height={1}>{current?.symbol} - USDT Orders</App.Text>
                 )}
@@ -456,8 +490,6 @@ const Orders = ({current, global, type, version, onOrderCancelled, onClickOrder}
 
 const isEqual = (prev, next) => {
   return prev.onClickOrder === next.onClickOrder
-    && prev.onOrderCancelled === next.onOrderCancelled
-    && prev.current?.address === next.current?.address
     && prev.type === next.type
     && prev.global === next.global
     && prev.version === next.version

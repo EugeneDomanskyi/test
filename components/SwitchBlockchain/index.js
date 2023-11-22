@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 import cn from 'classnames'
+import { useNetwork } from 'wagmi'
 
 import { trackEvent } from '@/libs/analytics.lib'
-import { usePropsHelper } from '@/myhooks/props-helper'
+import useWalletConnect from '@/myhooks/wallet-connect'
+
 import $app from '@/store/app'
 import $collection from '@/store/collection'
 import $token from '@/store/token'
@@ -15,25 +17,129 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
-  const router = useRouter()
-  const isExchange = router.pathname.includes('/exchange')
-  const isEarn = router.pathname.includes('/earn')
+  const { chain } = useNetwork()
+  const { changeNetwork } = useWalletConnect()
 
-  const { isMobile } = usePropsHelper()
+  const router = useRouter()
+  const [_, page] = router.asPath.split('/')
+  const queryBlockchain = router.query.blockchain
 
   const dispatch = useDispatch()
+  const isMobile = useSelector(({$app}) => $app.size.isMobile)
   const blockchain = useSelector($app.get.blockchain)
-  const pageBlockchains = useSelector($app.get.pageBlockchains(isExchange ? 'tokens' : (isEarn ? 'raffle' : 'nfts')))
+  const pageBlockchains = useSelector($app.get.pageBlockchains(page))
 
   const [menuShow, setMenuShow] = useState(false)
+  const [queryBlockchainChecked, setQueryBlockchainChecked] = useState(false)
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, false)
-
     return () => {
       document.removeEventListener('click', handleClickOutside, false)
     }
   }, [])
+
+  useEffect(() => {
+    (async () => {
+      if (queryBlockchain) {
+        if (queryBlockchain != blockchain.code) {
+          const newBlockchainCode = pageBlockchains.some(item => item.code == queryBlockchain) ? queryBlockchain : 'ethereum'
+          if (newBlockchainCode != blockchain.code) {
+            const newBlockchain = pageBlockchains.find(item => item.code == newBlockchainCode)
+            if (chain?.id) {
+              if (chain.id != newBlockchain.id) {
+                const result = await changeNetwork(newBlockchainCode)
+                if (result) {
+                  dispatch($app.set.code(newBlockchain))
+                  return
+                }
+              }
+            }
+
+            dispatch($app.set.code(newBlockchain))
+          }
+        } else {
+          const newBlockchain = pageBlockchains.find(item => item.code == queryBlockchain)
+          if (chain?.id) {
+            if (chain.id != newBlockchain.id) {
+              const result = await changeNetwork(queryBlockchain)
+              if (result) {
+                dispatch($app.set.code(queryBlockchain))
+                return
+              }
+            }
+          }
+        }
+        setQueryBlockchainChecked(true)
+      }
+    })()
+  }, [queryBlockchain, page])
+
+  useEffect(() => {
+    (async () => {
+      if (chain?.id && queryBlockchainChecked) {
+        if (chain.id != blockchain.id) {
+          const supportCode = pageBlockchains.find(item => item.id == chain.id)?.code
+          if (supportCode) {
+            if (queryBlockchain && queryBlockchain != supportCode) {
+              router.replace(`/${page}/${supportCode}/0x`)
+            }
+
+            dispatch($app.set.code(supportCode))
+
+            if (page == 'exchange') {
+              dispatch($token.set.loading(true))
+              dispatch($token.set.clear())
+            }
+      
+            if (page == 'nfts') {
+              dispatch($collection.set.loading(true))
+              dispatch($collection.set.clear())
+            }
+          } else {
+            await changeNetwork(blockchain.code)
+          }
+        }
+      }
+    })()
+  }, [chain?.id, queryBlockchainChecked, page])
+
+  const handleBlockchainChange = async (val) => {
+    if (val != blockchain.code) {
+      trackEvent('Switch Network', {
+        'Old Network': blockchain.code.toUpperCase(),
+        'New Network': val.toUpperCase(),
+      })
+
+      const newBlockchain = pageBlockchains.find(item => item.code == val)
+      if (chain?.id && chain.id != newBlockchain.id) {
+        const result = await changeNetwork(newBlockchain.code)
+        if (result) {
+          dispatch($app.set.code(newBlockchain.code))
+        }
+      } else {
+        if (queryBlockchain && queryBlockchain != newBlockchain.code) {
+          router.replace(`/${page}/${newBlockchain.code}/0x`)
+        }
+        dispatch($app.set.code(newBlockchain.code))
+      }
+
+      if (page == 'exchange') {
+        dispatch($token.set.loading(true))
+        dispatch($token.set.clear())
+      }
+
+      if (page == 'nfts') {
+        dispatch($collection.set.loading(true))
+        dispatch($collection.set.clear())
+      }
+      setMenuShow(false)
+
+      if (onMobileMenuClose) {
+        onMobileMenuClose()
+      }
+    }
+  }
 
   const handleClickOutside = (event) => {
     if (! event.target.closest('#blockchain')) {
@@ -43,24 +149,6 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
 
   const handleMenuToggle = () => {
     setMenuShow( ! menuShow)
-  }
-
-  const handleBlockchainChange = async (val) => {
-    if (val != blockchain.code) {
-      trackEvent('Switch Network', {
-        'Old Network': blockchain.code.toUpperCase(),
-        'New Network': val.toUpperCase(),
-      })
-      
-      dispatch($collection.set.clear())
-      dispatch($token.set.clear())
-      setMenuShow(false)
-      dispatch($app.set.code(val))
-
-      if (onMobileMenuClose) {
-        onMobileMenuClose()
-      }
-    }
   }
 
   return (
@@ -92,4 +180,8 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
   )
 }
 
-export default SwitchBlockchain
+const isEqual = (prevProps, nextProps) => {
+  return true
+}
+
+export default memo(SwitchBlockchain, isEqual)

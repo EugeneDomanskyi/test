@@ -7,7 +7,7 @@ import AppIcon from '@/components/App/AppIcon'
 
 import styles from './styles.module.scss'
 
-const AppTextField = ({value, label, type, int, onChange, onSubmit, error, variant, variantNotEmpty, autocompleteOff = false, strictNumber, labelFixed, start, end, withClear, ...props}) => {
+const AppTextField = ({value, label, type, int, onChange, onSubmit, loading, error, variant, variantNotEmpty, autocompleteOff = false, strictNumber, labelFixed, start, end, withClear, ...props}) => {
   const [showPassword, setShowPassword] = useState(false)
 
   const handleChange = ({target: {value}}) => {
