@@ -74,6 +74,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon == 'arrow-right-long') {
+      return (
+        <svg width={width ?? 49} height={height ?? 24} viewBox="0 0 49 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.5" d="M39.436 5.93l6.07 6.07-6.07 6.07M1.006 12.5h44" />
+        </svg>
+      )
+    }
+
     if (icon == 'arrow-refresh') {
       return (
         <svg width={width ?? 17} height={height ?? 17} viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>

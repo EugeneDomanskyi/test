@@ -1,0 +1,10 @@
+.tab-line {
+  height: 3px;
+  width: 100%;
+  border-radius: 100px;
+  background-color: #5E5C6B;
+
+  &.active {
+    background-color: #53F19C;
+  }
+}

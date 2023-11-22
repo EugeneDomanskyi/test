@@ -8,7 +8,7 @@ import AppIcon from '@/components/App/AppIcon'
 
 import styles from './styles.module.scss'
 
-const AppDialog = ({ children, open, size, hideHeader, hideClose, title, subtitle, toTop, full, onClose }) => {
+const AppDialog = ({ children, open, size, hideHeader, hideClose, title, subtitle, toTop, full, width, onClose }) => {
   const [opened, setOpened] = useState(false)
 
   const layout = useRef(null)
@@ -48,27 +48,17 @@ const AppDialog = ({ children, open, size, hideHeader, hideClose, title, subtitl
     <div ref={layout} className={styles.layout}>
       <div ref={content} className={cn(styles.content, {[styles.toTop]: toTop}, {[styles.full]: full})} onClick={handleClose}>
         <div onClick={e => e.stopPropagation()} style={full ? { width: '100%', height: '100%' } : null}>
-          <div className={cn(styles.wrapper, {[styles[size]]: size}, {[styles.full]: full})}>
+          <div className={cn(styles.wrapper, {[styles[size]]: size}, {[styles.full]: full})} style={{ width: width }}>
             {!hideHeader ? (
               <div className={styles.header}>
-                {!hideClose ? (
-                  <div className={styles.closeButton} onClick={handleClose}>
-                    <AppIcon icon="cross" color="#fff" />
-                  </div>
+                {title ? (
+                  <AppText weight={600} height={1}>{title}</AppText>
                 ) : null}
 
-                {title || subtitle ? (
-                  <AppFlex column gap={[16, 32]} className={styles.headerContent}>
-                    <AppFlex column align={['center', 'flex-start']} gap={[16, 8]}>
-                      {title ? (
-                        <AppText center size={20} weight={700} height={1}>{title}</AppText>
-                      ) : null}
-
-                      {subtitle ? (
-                        <AppText center size={12} weight={400} height={1} color="#9996B1">{subtitle}</AppText>
-                      ) : null}
-                    </AppFlex>
-                  </AppFlex>
+                {!hideClose ? (
+                  <div className={styles.closeButton} onClick={handleClose}>
+                    <AppIcon icon="cross" width={20} height={20} color="#fff" />
+                  </div>
                 ) : null}
               </div>
             ) : null}

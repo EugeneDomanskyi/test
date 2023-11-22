@@ -1,0 +1,143 @@
+import { useState } from 'react'
+import Image from 'next/image'
+import numeral from 'numeral'
+
+import { trackEvent } from '@/libs/analytics.lib'
+import Order from '@/libs/structs/Order'
+import useWalletConnect from '@/myhooks/wallet-connect'
+import { TEGRO_FILL_ORDERS_CONTRACTS } from '@/config'
+
+import App from '@/components/App'
+
+const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFormatted, takerAmountFormatted, price }) => {
+  const { wallet } = useWalletConnect()
+
+  const [step, setStep] = useState('preview')
+
+  const handleNextStep = async () => {
+    if (step == 'preview') {
+      trackEvent('Confirm Order Submit', {
+        'Base Currency': side === 'buy' ? makerAsset.symbol : takerAsset.symbol,
+        'Quote Currency': 'USDT',
+        'Side': side.toUpperCase(),
+        'Quantity': numeral(makerAmountFormatted).format('0.[00000]'),
+        'Price': numeral(price).format('0.[00000]'),
+        'Total': numeral(takerAmountFormatted).format('0.[00000]'),
+        'Network': blockchain.code.toUpperCase(),
+        'Order Type': 'Limit',
+        'Step': 'Confirm',
+      })
+
+      setStep('sign')
+      const result = await Order.Order.checkAllowance(blockchain.id, TEGRO_FILL_ORDERS_CONTRACTS[blockchain.id], wallet, takerAsset.address, takerAmountFormatted * 1)
+      if (result?.success) {
+        setStep('place')
+      }
+    }
+  }
+
+  const Summary = () => {
+    return (
+      <App.Flex column fullWidth gap={6}>
+        <App.Flex row align="center" justify="space-between">
+          <App.Text color="#5E5C6B" size={10} weight={600} height={1}>You {side == 'buy' ? 'Pay' : 'Sell'}</App.Text>
+          <App.Text color="#5E5C6B" size={10} weight={600} height={1}>You Get</App.Text>
+        </App.Flex>
+
+        <App.Flex justify="space-between">
+          <App.Flex row align="center" gap={4}>
+            <Image src={takerAsset.image} width={25} height={25} alt="" />
+            <App.Flex column gap={4}>
+              <App.Text size={12} weight={600} height={1} color="#B9B8C5">{ numeral(side === 'buy' ? takerAmountFormatted : makerAmountFormatted).format('0.[00000]') } {takerAsset.symbol}</App.Text>
+              {side === 'buy' ? (
+                <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ numeral(side === 'buy' ? takerAmountFormatted : makerAmountFormatted).format('0.[00000]') }</App.Text>
+              ) : null}
+            </App.Flex>
+          </App.Flex>
+
+          <App.Icon icon="arrow-right-long" />
+
+          <App.Flex align="center" gap={4}>
+            <Image src={makerAsset.image} width={25} height={25} alt="" />
+            <App.Flex column gap={4}>
+              <App.Text size={12} weight={600} height={1} color="#B9B8C5">{ numeral(side === 'buy' ? makerAmountFormatted : takerAmountFormatted).format('0.[00000]') } {makerAsset.symbol}</App.Text>
+              {side === 'sell' ? (
+                <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ numeral(side === 'buy' ? makerAmountFormatted : takerAmountFormatted).format('0.[00000]') }</App.Text>
+              ) : null}
+            </App.Flex>
+          </App.Flex>
+        </App.Flex>
+      </App.Flex>
+    )
+  }
+
+  return (
+    <App.Flex column fullWidth>
+      {step == 'preview' ? (
+        <App.Flex column fullWidth gap={24}>
+          <App.Flex column gap={16} fullWidth sx={{ padding: '16px 24px 0' }}>
+            <App.Flex column fullWidth gap={12}>
+              <App.Text color="#B9B8C5" weight={600}>Summary</App.Text>
+              {Summary()}
+            </App.Flex>
+
+            <App.Hr color="#2a283c" />
+
+            <App.Flex column fullWidth gap={12}>
+              <App.Text color="#B9B8C5" weight={600}>Order Information</App.Text>
+
+              <App.Flex column fullWidth gap={8}>
+                <App.Flex row align="center" justify="space-between">
+                  <App.Text size={12} height={1} color="#5E5C6B">Type</App.Text>
+                  <App.Text size={12} height={1} color="#B9B8C5">Limit</App.Text>
+                </App.Flex>
+
+                <App.Flex row align="center" justify="space-between">
+                  <App.Text size={12} height={1} color="#5E5C6B">At Price</App.Text>
+                  <App.Text size={12} height={1} color="#B9B8C5">{ price } {side == 'buy' ? takerAsset.symbol : makerAsset.symbol}</App.Text>
+                </App.Flex>
+
+                <App.Flex row align="center" justify="space-between">
+                  <App.Text size={12} height={1} color="#5E5C6B">Amount</App.Text>
+                  <App.Text size={12} height={1} color="#B9B8C5">{ makerAmountFormatted } {side == 'buy' ? makerAsset.symbol : takerAsset.symbol}</App.Text>
+                </App.Flex>
+
+                <App.Flex row align="center" justify="space-between">
+                  <App.Text size={12} height={1} color="#5E5C6B">Total</App.Text>
+                  <App.Text size={12} height={1} color="#B9B8C5">{ takerAmountFormatted } {side == 'buy' ? takerAsset.symbol : makerAsset.symbol}</App.Text>
+                </App.Flex>
+
+                <App.Flex row align="center" justify="space-between">
+                  <App.Text size={12} height={1} italic color="#5E5C6B">Fee: 0 | Gas: 0 </App.Text>
+                </App.Flex>
+              </App.Flex>
+            </App.Flex>
+          </App.Flex>
+
+          <App.Hr color="#2a283c" />
+
+          <App.Flex row center sx={{ padding: '0 16px 16px' }}>
+            <App.Button xl variant={side == 'buy' ? 'success' : 'danger'} fullWidth onClick={handleNextStep}>
+              CONFIRM {side.toUpperCase()}
+            </App.Button>
+          </App.Flex>
+        </App.Flex>
+      ) : null}
+
+      {step == 'sign' || step == 'place' ? (
+        <App.Flex column fullWidth gap={8} sx={{ padding: '8px 24px 16px' }}>
+          <App.Flex row align="flex-end" gap={6}>
+            <App.Flex column center gap={2} flex={1}>
+              <App.Flex row center gap={2}>
+                <Image src="/images/icon-key.png" width={10} height={10} alt="" />
+                <App.Text center size={12} height={1} color="#53F19C">Approve</App.Text>
+              </App.Flex>
+            </App.Flex>
+          </App.Flex>
+        </App.Flex>
+      ) : null}
+    </App.Flex>
+  )
+}
+
+export default OrderConfirm
