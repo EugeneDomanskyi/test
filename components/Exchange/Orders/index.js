@@ -257,7 +257,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                 />
 
                 {type === 'nfts' ? (
-                  <Image alt="" src={current?.image} width={20} height={20} />
+                  current?.image ? <Image alt="" src={current?.image} width={20} height={20} /> : null
                 ) : (
                   <App.Text color="#B9B8C5" size={[10, 12]} weight={600} height={1}>{current?.symbol} - USDT Orders</App.Text>
                 )}
