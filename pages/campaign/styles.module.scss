@@ -1,12 +1,13 @@
 .container {
   height: 100vh;
+  position: relative;
+  z-index: 0;
 
-  .leftSide {
-    background-color: #0E0B23;
-    height: 100%;
-    flex: .6;
-    padding-left: 98px;
-    padding-top: 36px;
+  .logoWrapper {
+    position: absolute;
+    z-index: 2;
+    top: 16px;
+    left: 92px;
 
     .logo {
       position: relative;
@@ -30,9 +31,15 @@
         top: 0;
       }
     }
+  }
+
+  .leftSide {
+    background-color: #0E0B23;
+    height: 100%;
+    flex: .6;
+    padding-left: 98px;
 
     .contentWrapper {
-      margin-top: -64px;
       height: 100%;
       justify-content: center;
 
@@ -50,31 +57,37 @@
         }
       }
 
-      .stepBlock {
-        border-radius: 80px;
-        background: #1B192E;
-        height: 39px;
-        align-items: center;
-        padding: 0 4px;
-        padding-right: 16px;
+      .subText {
+        width: 667px;
+      }
 
-        .stepCircle {
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          flex-shrink: 0;
-          background-color: #FFD600;
-          color: #000;
-          font-weight: 800;
+      .stepsWrapper {
+        .stepBlock {
+          border-radius: 80px;
+          background: #1B192E;
+          height: 39px;
+          align-items: center;
+          padding: 0 4px;
+          padding-right: 16px;
+  
+          .stepCircle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background-color: #FFD600;
+            color: #000;
+            font-weight: 800;
+          }
         }
+  
+        .stepLine {
+          border-bottom: 1px dashed #322F4D;
+          height: 1px;
+          width: 76px;
+        }  
       }
-
-      .stepLine {
-        border-bottom: 1px dashed #322F4D;
-        height: 1px;
-        width: 76px;
-      }
-
+      
       .buttonsWrapper {
         margin-top: 32px;
 
@@ -97,6 +110,129 @@
     background-color: #08051C;
     height: 100%;
     flex: .4;
+    position: relative;
+    z-index: 1;
+
+    .bottomSection {
+      position: absolute;
+      bottom: 32px;
+      gap: 32px;
+
+      .circle {
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #53F19C;
+      }
+    }
+  }
+}
+
+@media (max-width: 1235px) {
+  .container {
+    .leftSide {
+      padding-left: 16px;
+      padding-right: 16px;
+  
+      .contentWrapper {
+        .subText {
+          width: auto;
+        }
+      }
+    }
+
+    .rightSide {
+      .bottomSection {
+        gap: 8px;
+      }
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .container {
+    flex-direction: column-reverse;
+    height: auto;
+
+    .logoWrapper {
+      left: 16px;
+    }
+
+    .rightSide {
+      height: 100%;
+      flex: 1;
+      padding: 64px 0;
+  
+      .bottomSection {
+        bottom: 16px;
+        flex-direction: column;
+  
+        .circle {
+          width: 10px;
+          height: 10px;
+        }
+      }
+    }
+
+    .leftSide {
+      flex: 1;
+      padding: 0 16px;
+      padding-top: 64px;
+      padding-bottom: 64px;
+  
+      .contentWrapper {
+        height: 100%;
+        justify-content: center;
+  
+        .rewardText {
+          color: #FFD600;
+          position: relative;
+          z-index: 0;
+  
+          .rewardTextShadow {
+            position: absolute;
+            top: 4px;
+            z-index: -1;
+            color: #7204FF;
+            animation: moving 6s infinite ease-in-out;
+          }
+        }
+
+        .stepsWrapper {
+          flex-direction: column;
+          .stepBlock {
+            width: 170px;
+          }
+    
+          .stepLine {
+            border-bottom: none;
+            border-left: 1px dashed #322F4D;
+            height: 35px;
+            width: 1px;
+          }  
+        }
+
+        .subText {
+          width: auto;
+        }
+  
+        .buttonsWrapper {
+          flex-direction: column;
+  
+          .link {
+            color: #4C69FF;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .3s;
+  
+            &:hover {
+              color: #fff;
+            }
+          }
+        }
+      }
+    }
   }
 }
 

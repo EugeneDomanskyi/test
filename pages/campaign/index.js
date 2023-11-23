@@ -7,21 +7,21 @@ import styles from './styles.module.scss'
 const LandingPage = () => {
   return (
     <App.Flex className={styles.container}>
-      <App.Flex column className={styles.leftSide}>
-        <App.Flex column>
-          <div className={styles.logo}>
-            <div className={styles.badge}>
-              BETA
-            </div>
-            <App.Icon icon="tegro" width={117} height={25} />
+      <App.Flex column className={styles.logoWrapper}>
+        <div className={styles.logo}>
+          <div className={styles.badge}>
+            BETA
           </div>
+          <App.Icon icon="tegro" width={117} height={25} />
+        </div>
 
-          <App.Text size={10} weight={500}>Trade Efficiently On-Chain</App.Text>
-        </App.Flex>
+        <App.Text size={10} weight={500}>Trade Efficiently On-Chain</App.Text>
+      </App.Flex>
 
+      <App.Flex column className={styles.leftSide}>
         <App.Flex column className={styles.contentWrapper} gap={32}>
           <App.Flex column align="flex-start">
-            <App.Text size={55} weight={800}>
+            <App.Text size={[55, 36]} weight={800}>
               Trade on Tegro &<br />
               Share Rewards worth
             </App.Text>
@@ -34,12 +34,12 @@ const LandingPage = () => {
               </App.Text>
             </App.Text>
             
-            <App.Text size={16} weight={500} color="#B9B8C5" sx={{width: 667}}>
+            <App.Text size={16} weight={500} color="#B9B8C5" className={styles.subText}>
               Connect your wallet and trade your favorite tokens on Tegro. Collect TKeys and open Mystery Boxes containing USDT, PEPE, SHIB, and other token rewards.
             </App.Text>
           </App.Flex>
 
-          <App.Flex align="center">
+          <App.Flex align="center" className={styles.stepsWrapper}>
             <App.Flex className={styles.stepBlock} gap={16}>
               <App.Flex center className={styles.stepCircle}>1</App.Flex>
               <App.Text size={14} weight={600}>Connect Wallet</App.Text>
@@ -75,6 +75,24 @@ const LandingPage = () => {
 
       <App.Flex center className={styles.rightSide}>
         <Image src="/animations/campaign.gif" width={448} height={448} alt="" />
+
+        <App.Flex className={styles.bottomSection}>
+          <App.Flex center gap={8}>
+            <App.Flex className={styles.circle} />
+            <App.Flex gap={4}>
+              <App.Text color="#B9B8C5" size={12} weight={700}>1,46,654</App.Text>
+              <App.Text color="#B9B8C5" size={12}>wallets connected so far</App.Text>
+            </App.Flex>
+          </App.Flex>
+          
+          <App.Flex center gap={8}>
+            <App.Flex className={styles.circle} />
+            <App.Flex gap={4}>
+              <App.Text color="#B9B8C5" size={12} weight={700}>$2,13,463</App.Text>
+              <App.Text color="#B9B8C5" size={12}>rewards distributed so far</App.Text>
+            </App.Flex>
+          </App.Flex>
+        </App.Flex>
       </App.Flex>
     </App.Flex>
   )

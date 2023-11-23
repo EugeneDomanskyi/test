@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
+import { useRouter } from 'next/router'
 
 import $app from '@/store/app'
 
@@ -7,7 +8,10 @@ import Header from '@/components/Header'
 import Analytics from '@/components/Analytics'
 
 const Wrapper = ({ children }) => {
+  const router = useRouter()
   const dispatch = useDispatch()
+
+  const isCampaign = router.asPath?.includes('campaign')
 
   useEffect(() => {
     handleWindowResize()
