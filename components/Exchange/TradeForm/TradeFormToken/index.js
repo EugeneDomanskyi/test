@@ -67,11 +67,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
     amount: getDecimalsCount(form.amount),
   }
 
-  const usdtAsset = INCH_TOKENS[blockchain.usdtContract.toLowerCase()]
-  const usdtFormatted = {
-    ...usdtAsset,
-    image: usdtAsset.logoURI,
-  }
+  const usdtFormatted = blockchain.usdt
 
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
@@ -104,7 +100,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
   const fetchBalance = async () => {
     const [tokenBalance, usdtBalance] = await Promise.all([
       getBalance(current.address),
-      getBalance(blockchain.usdtContract)
+      getBalance(blockchain.usdt.address)
     ])
     setUserBalances({usdt: usdtBalance, token: tokenBalance})
     setWasUserBalance(true)
