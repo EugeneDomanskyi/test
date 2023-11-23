@@ -235,12 +235,6 @@ const api = {
           return json
         }
       })
-      // return request(`address/${address}`, 'GET', {api: 'inch', blockchain, ...rest}).then(res => {
-      //   if (res && Array.isArray(res)) {
-      //     return res.map(order => ({...order, network: blockchain}))
-      //   }
-      //   return []
-      // })
     },
     nfts: (params) => {
       return Promise.all([

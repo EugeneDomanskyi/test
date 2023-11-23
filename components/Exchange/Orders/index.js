@@ -50,6 +50,18 @@ const Orders = ({global, type, version, onClickOrder}) => {
   }, [wallet, type, blockchain.code])
 
   useEffect(() => {
+    if (type === 'tokens') {
+      Socket.on('order_placed', (data) => {
+        // getOrders()
+      })
+      Socket.on('order_filled', () => {
+        // getOrders()
+      })
+    }
+   
+  }, [type])
+
+  useEffect(() => {
     if (wallet && socketConnected) {
       Socket.subscribe(wallet)
     }
