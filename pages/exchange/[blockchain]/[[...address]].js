@@ -6,6 +6,7 @@ import cn from 'classnames'
 
 import { trackEvent, getPageName } from '@/libs/analytics.lib'
 
+import $alert from '@/store/alert'
 import $orders from '@/store/orders'
 
 import App from '@/components/App'
@@ -38,6 +39,18 @@ const Exchange = () => {
     trackEvent('Page Visited', {
       'Page Name': getPageName(),
     })
+
+    // setTimeout(() => {
+    //   dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
+    // }, 4000)
+
+    // setTimeout(() => {
+    //   dispatch($alert.set.error({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
+    // }, 6000)
+
+    // setTimeout(() => {
+    //   dispatch($alert.set.warning({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
+    // }, 8000)
   }, [])
 
   const handleClickOrder = useCallback(async order => {

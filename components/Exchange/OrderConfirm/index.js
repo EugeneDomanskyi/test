@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import numeral from 'numeral'
+import cn from 'classnames'
 
 import { trackEvent } from '@/libs/analytics.lib'
 import Order from '@/libs/structs/Order'
@@ -8,6 +9,8 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import { TEGRO_FILL_ORDERS_CONTRACTS } from '@/config'
 
 import App from '@/components/App'
+
+import styles from './styles.module.scss'
 
 const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFormatted, takerAmountFormatted, price }) => {
   const { wallet } = useWalletConnect()
@@ -32,6 +35,28 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
       const result = await Order.Order.checkAllowance(blockchain.id, TEGRO_FILL_ORDERS_CONTRACTS[blockchain.id], wallet, takerAsset.address, takerAmountFormatted * 1)
       if (result?.success) {
         setStep('place')
+
+        trackEvent('Confirm Order Submit', {
+          'Base Currency': side === 'buy' ? makerAsset.symbol : takerAsset.symbol,
+          'Quote Currency': 'USDT',
+          'Side': side.toUpperCase(),
+          'Quantity': numeral(makerAmountFormatted).format('0.[00000]'),
+          'Price': numeral(price).format('0.[00000]'),
+          'Total': numeral(takerAmountFormatted).format('0.[00000]'),
+          'Network': blockchain.code.toUpperCase(),
+          'Order Type': 'Limit',
+          'Step': 'Sign',
+        })
+
+        // const placeOrderResult = await Order.TOKEN.place({
+        //   type: side,
+        //   makerAsset: takerAsset,
+        //   takerAsset: makerAsset,
+        //   price: price,
+        //   amount: makerAmountFormatted,
+        // }, eventHandler).catch(error => {
+        //   return error
+        // })
       }
     }
   }
@@ -132,7 +157,39 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
                 <Image src="/images/icon-key.png" width={10} height={10} alt="" />
                 <App.Text center size={12} height={1} color="#53F19C">Approve</App.Text>
               </App.Flex>
+
+              <div className={cn(styles.tabLine, styles.active)} />
             </App.Flex>
+
+            <App.Flex column center gap={2} flex={1}>
+              <App.Flex row center gap={2}>
+                <Image src="/images/icon-lightning.png" width={10} height={10} alt="" />
+                <App.Text center size={12} height={1} color={step == 'place' ? '#53F19C' : '#5E5C6B'}>Place order</App.Text>
+              </App.Flex>
+
+              <div className={cn(styles.tabLine, {[styles.active]: step == 'place'})} />
+            </App.Flex>
+          </App.Flex>
+
+          <App.Flex row>
+            <App.Flex row align="center" justify="flex-start" className={styles.stepBox}>
+              <App.Text size={10} weight={600} color="#5E5C6B">Step {step == 'sign' ? 1 : 2}/2</App.Text>
+            </App.Flex>
+          </App.Flex>
+
+          <App.Flex row center fullWidth>
+            <App.Flex width={98} height={98}></App.Flex>
+          </App.Flex>
+
+          <App.Flex column center fullWidth gap={16}>
+            <App.Flex column center gap={10} width={265}>
+              <App.Text center size={16} weight={600} height={1}>{step == 'sign' ? 'Approve the Trade!' : 'Confirm Order'}</App.Text>
+              <App.Text center size={12} color="#B9B8C5" height={1.2}>{step == 'sign' ? `Tap 'Approve' in your wallet to unleash ${side == 'buy' ? makerAsset.symbol : takerAsset.symbol} trading power on Tegro` : 'Authorize the transaction on your wallet to finalize the trade'}</App.Text>
+            </App.Flex>
+
+            {Summary()}
+
+            <App.Text center size={10} height={1} color="#5E5C6B">Please proceed in your wallet</App.Text>
           </App.Flex>
         </App.Flex>
       ) : null}

@@ -5,6 +5,7 @@ import { CHAINS } from '@/config'
 
 import $modal from './modal'
 import $app, { appSlice } from './app'
+import $alert from './alert'
 import $exchange from './exchange'
 import $collection, { collectionSlice } from './collection'
 import $token, { tokenSlice } from './token'
@@ -18,6 +19,7 @@ const createStore = (initialData, page, info) => {
     reducer: {
       $modal: $modal.reducer,
       $app: $app.reducer,
+      $alert: $alert.reducer,
       $exchange: $exchange.reducer,
       $collection: $collection.reducer,
       $token: $token.reducer,

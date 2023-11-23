@@ -152,6 +152,7 @@ function MyApp({ Component, pageProps, initialData, currentInfo, currentPage, cu
           </Wrapper>
 
           <App.Modal />
+          <App.Alert />
           <ToastContainer autoClose={3000} />
         </Provider>
       </RainbowKitProvider>
