@@ -405,7 +405,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
       </App.Flex>
 
       <App.Dialog
-        title={`${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)} ${current?.symbol} with ${usdtFormatted.symbol}`}
+        title={`${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)} ${current?.symbol} with ${usdtFormatted?.symbol}`}
         width={420}
         open={isOrderConfirmOpen}
         onClose={handleOrderConfirmClose}
