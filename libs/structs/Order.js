@@ -636,7 +636,7 @@ class TOKEN extends Order {
         signature: signature,
         signed_order_type: '1inch',
       }
-      const res = await $orders.api.create.token(post)
+      const res = await $orders.api.create.tokenAPI(post)
       if (res) {
         resolve({success: true})
         return
