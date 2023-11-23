@@ -37,6 +37,11 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
 
       setStep('sign')
       const result = await Order.Order.checkAllowance(blockchain.id, TEGRO_FILL_ORDERS_CONTRACTS[blockchain.id], wallet, takerAsset.address, takerAmountFormatted * 1)
+        .catch(error => {
+          onClose()
+          dispatch($alert.set.error({ title: 'Trade Not Approved', text: error?.message ?? 'Something went wrong' }))
+        })
+
       if (result?.success) {
         setStep('place')
 
@@ -52,14 +57,12 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
           'Step': 'Sign',
         })
 
-        // Need to Place order instead below code
-        setTimeout(() => {
-          if (onClose) {
-            onClose()
-          }
-
-          dispatch($alert.set.success({ title: 'Order Created', text: 'Your Order has been placed successfully!' }))
-        }, 5000)
+        Order.TOKEN.placeToAPI({ type: side, makerAsset: takerAsset, takerAsset: makerAsset, price: price, amount: makerAmountFormatted }, () => {
+          onClose()
+        }).catch(error => {
+          onClose()
+          dispatch($alert.set.error({ title: 'Order Not Created', text: error?.message ?? 'Something went wrong' }))
+        })
       }
     }
   }

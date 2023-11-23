@@ -67,11 +67,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
     amount: getDecimalsCount(form.amount),
   }
 
-  const usdtAsset = INCH_TOKENS[blockchain.usdtContract.toLowerCase()]
-  const usdtFormatted = {
-    ...usdtAsset,
-    image: usdtAsset.logoURI,
-  }
+  const usdtFormatted = blockchain.usdt
 
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
@@ -104,7 +100,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
   const fetchBalance = async () => {
     const [tokenBalance, usdtBalance] = await Promise.all([
       getBalance(current.address),
-      getBalance(blockchain.usdtContract)
+      getBalance(blockchain.usdt.address)
     ])
     setUserBalances({usdt: usdtBalance, token: tokenBalance})
     setWasUserBalance(true)
@@ -213,7 +209,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
         onSubmit(props)
       }
     } else {
-      if (!blockchain?.useBackend) {
+      if (blockchain?.useBackend) {
         setIsOrderConfirmOpen(true)
       } else {
         dispatch($modal.set.show({
@@ -409,7 +405,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
       </App.Flex>
 
       <App.Dialog
-        title={`${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)} ${current.symbol} with ${usdtFormatted.symbol}`}
+        title={`${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)} ${current?.symbol} with ${usdtFormatted.symbol}`}
         width={420}
         open={isOrderConfirmOpen}
         onClose={handleOrderConfirmClose}

@@ -298,7 +298,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                 <App.Text color="#B9B8C5" size={[10, 12]} weight={600} height={1}>{version != 'mobile' ? 'Hide All Cancelled Orders' : 'Hide Cancelled Orders'}</App.Text>
               </App.Flex>
               ) : (
-                !blockchain.useBackend ? (
+                blockchain.useBackend ? (
                   <App.Button variant="muted" small onClick={handleCancelAllClick}>
                     Cancel All
                   </App.Button>

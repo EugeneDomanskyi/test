@@ -5,7 +5,7 @@ export const TEG_TOKEN = '0xa1f102b004c8a5f4734e70bea7d62f829916d94c'
 export const TEGRO_FILL_ORDERS_CONTRACTS = {
   1: '0x9c11f816f0a8A235B3c3674C8EFD89C805546457', // mainnet
   137: '0xf360BD82C74c6613C55C3441281113ce196D629D', // polygon
-  80001: '0xB34Cb747e09d6d07B8419fE4c66D008456962eA5', // mumbai
+  80001: '0xa6BB5cFE9CC68E0AFfb0bB1785B6eFdC2fe8d326', // mumbai
   42161: '0x4d0c3BC9ad8f0796186Fd3314ae520d43436d87e', // arbitrum
   10: '0xaD929B0848DF4Aa7c071C16010D073dAC89f6AC3', // optimism
   56: '0x64E7d3759D6fD46a49f8e768003559B684a88B6A', // bnb
@@ -29,6 +29,13 @@ const TEST_NETWORKS = [
         platform: 'ethereum',
         pages: ['nfts'],
         usdtContract: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+        usdt: {
+            address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+            decimals: '',
+            name: '',
+            symbol: '',
+            image: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png?1696501661',
+        },
         wrapped: {
             contract: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
             name: 'Wrapped Ether',
@@ -48,7 +55,14 @@ const TEST_NETWORKS = [
         coingecko: '',
         platform: '',
         pages: ['earn', 'exchange'],
-        usdtContract: '0xA02f6adc7926efeBBd59Fd43A84f4E0c0c91e832',
+        usdtContract: '0x764a50f9d30ecf2bd9baad64d763e8eb08c3ea9f',
+        usdt: {
+            address: '0x764a50f9d30ecf2bd9baad64d763e8eb08c3ea9f',
+            decimals: 6,
+            name: 'Tether USD',
+            symbol: 'USDT',
+            image: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png?1696501661',
+        },
         wrapped: {
             contract: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
             name: 'Wrapped Matic',
@@ -80,7 +94,14 @@ const ADDITIONAL_NETWORKS = [{
     coingecko: 'arbitrum',
     platform: 'arbitrum-one',
     pages: ['nfts', 'exchange'],
-    usdtContract: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
+    usdtContract: '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9',
+    usdt: {
+        address: '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9',
+        decimals: 6,
+        name: 'Tether USD',
+        symbol: 'USDT',
+        image: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png?1696501661',
+    },
     wrapped: {
       contract: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
       name: 'Wrapped Ether',
@@ -100,7 +121,14 @@ const ADDITIONAL_NETWORKS = [{
     coingecko: 'optimism',
     platform: 'optimistic-ethereum',
     pages: ['nfts'],
-    usdtContract: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58',
+    usdtContract: '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58',
+    usdt: {
+        address: '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58',
+        decimals: '',
+        name: '',
+        symbol: '',
+        image: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png?1696501661',
+    },
     wrapped: {
       contract: '0x4200000000000000000000000000000000000006',
       name: 'Wrapped Ether',
@@ -121,6 +149,13 @@ const ADDITIONAL_NETWORKS = [{
     platform: 'celo',
     pages: ['exchange'],
     usdtContract: '0xb020d981420744f6b0fedd22bb67cd37ce18a1d5',
+    usdt: {
+        address: '0xb020d981420744f6b0fedd22bb67cd37ce18a1d5',
+        decimals: '',
+        name: '',
+        symbol: '',
+        image: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png?1696501661',
+    },
     wrapped: {
       contract: '0x3Ad443d769A07f287806874F8E5405cE3Ac902b9',
       name: 'Wrapped Celo',
@@ -141,6 +176,13 @@ const ADDITIONAL_NETWORKS = [{
     platform: 'binance-smart-chain',
     pages: ['nfts', 'exchange'],
     usdtContract: '0x55d398326f99059ff775485246999027b3197955',
+    usdt: {
+        address: '0x55d398326f99059ff775485246999027b3197955',
+        decimals: 18,
+        name: 'Tether USD',
+        symbol: 'USDT',
+        image: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png?1696501661',
+    },
     wrapped: {
       contract: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
       name: 'Wrapped BNB',
@@ -161,6 +203,13 @@ const ADDITIONAL_NETWORKS = [{
     platform: 'base',
     pages: ['nfts', 'exchange'],
     usdtContract: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
+    usdt: {
+        address: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
+        decimals: '',
+        name: '',
+        symbol: '',
+        image: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png?1696501661',
+    },
     wrapped: {
       contract: '0x4200000000000000000000000000000000000006',
       name: 'Wrapped Ether',
@@ -180,7 +229,14 @@ const ADDITIONAL_NETWORKS = [{
     coingecko: 'avalanche-2',
     platform: 'avalanche',
     pages: ['nfts', 'exchange'],
-    usdtContract: '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7',
+    usdtContract: '0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7',
+    usdt: {
+        address: '0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7',
+        decimals: 6,
+        name: 'TetherToken',
+        symbol: 'USDt',
+        image: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png?1696501661',
+    },
     wrapped: {
       contract: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
       name: 'Wrapped AVAX',
@@ -200,7 +256,14 @@ const ADDITIONAL_NETWORKS = [{
     coingecko: 'wrapped-ether-linea',
     platform: 'linea',
     pages: ['nfts'],
-    usdtContract: '0xA219439258ca9da29E9Cc4cE5596924745e12B93',
+    usdtContract: '0xa219439258ca9da29e9cc4ce5596924745e12b93',
+    usdt: {
+        address: '0xa219439258ca9da29e9cc4ce5596924745e12b93',
+        decimals: '',
+        name: '',
+        symbol: '',
+        image: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png?1696501661',
+    },
     wrapped: {
       contract: '0xe5d7c2a44ffddf6b295a15c148167daaaf5cf34f',
       name: 'Wrapped Ether',
@@ -226,6 +289,13 @@ export const CHAINS = [
     pages: ['nfts', 'exchange'],
     gasLimit: 60000,
     usdtContract: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    usdt: {
+        address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+        decimals: 6,
+        name: 'Tether USD',
+        symbol: 'USDT',
+        image: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png?1696501661',
+    },
     wrapped: {
       contract: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
       name: 'Wrapped Ether',
@@ -247,6 +317,13 @@ export const CHAINS = [
     pages: ['nfts', 'exchange', 'earn'],
     gasLimit: 250000,
     usdtContract: '0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
+    usdt: {
+        address: '0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
+        decimals: 6,
+        name: '(PoS) Tether USD',
+        symbol: 'USDT',
+        image: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png?1696501661',
+    },
     wrapped: {
       contract: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
       name: 'Wrapped Matic',
