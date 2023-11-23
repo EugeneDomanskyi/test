@@ -95,7 +95,7 @@ const LandingPage = () => {
             </App.Button>
             
             <App.Text className={styles.link}>
-              Don't have a wallet?
+              Don&apos;t have a wallet?
             </App.Text>
           </App.Flex>
         </App.Flex>
