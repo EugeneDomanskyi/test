@@ -54,7 +54,7 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
           takerAsset: makerAsset,
           price: price,
           amount: makerAmountFormatted,
-        }, eventHandler).catch(error => {
+        }, () => {}).catch(error => {
           return error
         })
       }

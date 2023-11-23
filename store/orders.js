@@ -1,5 +1,7 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
 import moment from 'moment'
+import { readContract } from '@wagmi/core'
+import { formatUnits } from 'viem'
 
 import { request } from './index'
 import Order from '@/libs/structs/Order'
@@ -25,6 +27,46 @@ const generatePeriods = (from, to, closePrice, step) => {
         price: closePrice,
         timestamp: time.unix() * 1000,
       }]
+    }
+  }, {})
+}
+
+const getDecimals = async (address) => {
+  const abi = {
+    constant: true,
+    inputs: [],
+    name: 'decimals',
+    outputs: [{name: '', type: 'uint8'}],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function'
+  }
+  const res = await readContract({
+    address: address,
+    abi: [abi],
+    functionName: 'decimals',
+  }).catch(error => {
+    console.log(error)
+  })
+  return res
+}
+
+export const orderBookFormatter = async (list, baseCurrency, quoteCurrency) => {
+  const baseDecimals = await getDecimals(baseCurrency)
+  const quoteDecimals = await getDecimals(quoteCurrency)
+  return Object.entries(list).reduce((acc, [side, values]) => {
+    let prevVolume = 0
+    return {
+      ...acc,
+      [side]: values.slice(0, 10).map((row) => {
+        const volume = formatUnits(row.quantity, baseDecimals)
+        prevVolume += volume*1
+        return {
+          priceFormatted: formatUnits(row.price, quoteDecimals),
+          volume: prevVolume,
+          quantity: volume,
+        }
+      })
     }
   }, {})
 }
@@ -232,7 +274,15 @@ api.get.tokens.orderBook = async ({ address, ...rest }) => {
   const network = CHAINS.find(chain => chain.code === rest.blockchain)
   if (network.useBackend) {
     const res = await request('market/orderbook/depth', 'GET', {api: 'backend', chain_id: network.id, base_asset: address, quote_asset: network.usdtContract})
-    
+    if (res.error) {
+      return {buy: [], sell: []}
+    }
+    const sides = {Asks: 'sell', Bids: 'buy'}
+    const temp = Object.entries(res).reduce((acc, [side, values]) => ({
+      ...acc,
+      [sides[side]]: values ?? []
+    }), {})
+    return await orderBookFormatter(temp, address, network.usdtContract)
   }
   const res = await fetch(`/api/tokens/order-book/${network.id}/${network.usdtContract}/${address}`)
   const json = await res.json()
