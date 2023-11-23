@@ -1,9 +1,10 @@
 import { memo, useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import cn from 'classnames'
+import Socket from '@/libs/ws.lib'
 
 import $app from '@/store/app'
-import $orders from '@/store/orders'
+import $orders, { orderBookFormatter } from '@/store/orders'
 
 import App from '@/components/App'
 
@@ -27,6 +28,18 @@ const OrderBook = ({ type, version, onClickOrder }) => {
 
   const maxBuyVolume = orderBook.buy.reduce((acc, { quantity }) => acc + quantity * 1, 0)
   const maxSellVolume = orderBook.sell.reduce((acc, { quantity }) => acc + quantity * 1, 0)
+
+  useEffect(() => {
+    Socket.on('order_book_updated', async res => {
+      const sides = {Asks: 'sell', Bids: 'buy'}
+      const temp = Object.entries(res).reduce((acc, [side, values]) => ({
+        ...acc,
+        [sides[side]]: values ?? []
+      }), {})
+      const list = await orderBookFormatter(temp, current.address, blockchain.usdtContract)
+      dispatch($orders.set.orderBook({type: type, data: list, tokenAddress: current.address}))
+    })
+  }, [current?.address, blockchain.usdtContract])
 
   useEffect(() => {
     if (isAddress) {

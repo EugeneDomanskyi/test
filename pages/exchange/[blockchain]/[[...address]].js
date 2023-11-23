@@ -46,7 +46,7 @@ const Exchange = () => {
     trackEvent('Page Visited', {
       'Page Name': getPageName(),
     })
-    Socket.init().then(() => {
+    Socket.init(handleAction).then(() => {
       dispatch($app.set.socketConnected(true))
     })
     return () => {
@@ -64,6 +64,17 @@ const Exchange = () => {
       }
     }
   }, [socketConnected, currentBlockchain.id, isAddress, currentToken?.address])
+
+  const handleAction = useCallback(({action, data}) => {
+    switch (action) {
+      case 'order_placed':
+        dispatch($alert.set.success({ title: 'Order placed successfully', text: 'Your Order has been placed successfully!' }))
+        break
+      case 'order_filled':
+        dispatch($alert.set.success({ title: 'Order filled successfully' }))
+        break
+    }
+  }, [])
 
   const handleClickOrder = useCallback(async order => {
     if (tradeForm.current) {
