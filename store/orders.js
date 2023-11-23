@@ -244,8 +244,8 @@ const api = {
             return {
               id: data.OrderId,
               side: data.Type,
-              baseCurrency: data.BaseAsset.slice(0, 3),
-              quoteCurrency: data.QuoteAsset.slice(0, 3),
+              baseCurrency: (res.Tokens[data.BaseAsset].symbol || data.BaseAsset.slice(0, 3)),
+              quoteCurrency: (res.Tokens[data.QuoteAsset].symbol || data.QuoteAsset.slice(0, 3)),
               image: data.image,
               contractAddress: data.BaseAsset,
               quantity: data.OriginalVolume,
