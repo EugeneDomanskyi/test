@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import Image from 'next/image'
 import numeral from 'numeral'
 import cn from 'classnames'
@@ -8,12 +9,15 @@ import Order from '@/libs/structs/Order'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { TEGRO_FILL_ORDERS_CONTRACTS } from '@/config'
 
+import $alert from '@/store/alert'
+
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFormatted, takerAmountFormatted, price }) => {
+const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFormatted, takerAmountFormatted, price, onClose }) => {
   const { wallet } = useWalletConnect()
+  const dispatch = useDispatch()
 
   const [step, setStep] = useState('preview')
 
@@ -33,6 +37,11 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
 
       setStep('sign')
       const result = await Order.Order.checkAllowance(blockchain.id, TEGRO_FILL_ORDERS_CONTRACTS[blockchain.id], wallet, takerAsset.address, takerAmountFormatted * 1)
+        .catch(error => {
+          onClose()
+          dispatch($alert.set.error({ title: 'Trade Not Approved', text: error?.message ?? 'Something went wrong' }))
+        })
+
       if (result?.success) {
         setStep('place')
 
@@ -48,14 +57,11 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
           'Step': 'Sign',
         })
 
-        const placeOrderResult = await Order.TOKEN.placeToAPI({
-          type: side,
-          makerAsset: takerAsset,
-          takerAsset: makerAsset,
-          price: price,
-          amount: makerAmountFormatted,
-        }, () => {}).catch(error => {
-          return error
+        Order.TOKEN.placeToAPI({ type: side, makerAsset: takerAsset, takerAsset: makerAsset, price: price, amount: makerAmountFormatted }, () => {
+          onClose()
+        }).catch(error => {
+          onClose()
+          dispatch($alert.set.error({ title: 'Order Not Created', text: error?.message ?? 'Something went wrong' }))
         })
       }
     }
@@ -178,7 +184,9 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
           </App.Flex>
 
           <App.Flex row center fullWidth>
-            <App.Flex width={98} height={98}></App.Flex>
+            <App.Flex width={98} height={98}>
+              <Image src={`/images/order-${step == 'sign' ? 'approve' : 'confirm'}-loader.gif`} width={98} height={98} alt="" />
+            </App.Flex>
           </App.Flex>
 
           <App.Flex column center fullWidth gap={16}>

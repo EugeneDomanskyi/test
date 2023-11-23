@@ -209,12 +209,15 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
         onSubmit(props)
       }
     } else {
-      // dispatch($modal.set.show({
-      //   show: true,
-      //   modal: 'Exchange/OrderProceed',
-      //   props,
-      // }))
-      setIsOrderConfirmOpen(true)
+      if (blockchain?.useBackend) {
+        setIsOrderConfirmOpen(true)
+      } else {
+        dispatch($modal.set.show({
+          show: true,
+          modal: 'Exchange/OrderProceed',
+          props,
+        }))
+      }
     }
 
     trackEvent('Create Order Click', {
@@ -264,8 +267,8 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
     }
   }
 
-  const handleOrderConfirmClose = (value) => {
-    setIsOrderConfirmOpen(value)
+  const handleOrderConfirmClose = () => {
+    setIsOrderConfirmOpen(false)
   }
 
   const renderBalance = () => {
@@ -402,7 +405,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
       </App.Flex>
 
       <App.Dialog
-        title={`${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)} ${current.symbol} with ${usdtFormatted.symbol}`}
+        title={`${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)} ${current?.symbol} with ${usdtFormatted.symbol}`}
         width={420}
         open={isOrderConfirmOpen}
         onClose={handleOrderConfirmClose}
@@ -415,6 +418,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
           makerAmountFormatted={form.amount}
           takerAmountFormatted={numeral(form.amount * form.price).format('0.0[0000]')}
           price={form.price}
+          onClose={handleOrderConfirmClose}
         />
       </App.Dialog>
     </>

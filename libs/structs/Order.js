@@ -158,8 +158,11 @@ class Order {
         }).catch(error => {
           reject({success: false, message: error.shortMessage, type: 'balance'})
         })
-        if (writeContractResult) {
+
+        if (writeContractResult.success) {
           resolve({success: true})
+        } else {
+          reject({success: false, message: writeContractResult.error.shortMessage, type: 'balance'})
         }
         return
       }
@@ -658,8 +661,8 @@ class TOKEN extends Order {
         to: INCH_CONTRACTS[chainId],
         data: callData,
       }).catch((error) => {
-        Order.showErrorMessage(error.shortMessage)
-        reject(error)
+        //Order.showErrorMessage(error.shortMessage)
+        reject(error.shortMessage)
       })
       if (res) {
         const txResult = await waitForTransaction(res)

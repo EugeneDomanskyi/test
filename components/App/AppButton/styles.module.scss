@@ -185,6 +185,19 @@
     }
   }
 
+  &.muted {
+    border-color: #B9B8C5;
+    color: #B9B8C5;
+    
+    &.small {
+      padding: 6px 8px;
+      border-radius: 2px;
+      font-size: 10px;
+      line-height: 1;
+      font-weight: 600;
+    }
+  }
+
   &.fullWidth {
     width: 100%;
   }
