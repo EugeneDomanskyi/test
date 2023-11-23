@@ -230,6 +230,10 @@ api.get.nfts.orderBook = (params) => {
 
 api.get.tokens.orderBook = async ({ address, ...rest }) => {
   const network = CHAINS.find(chain => chain.code === rest.blockchain)
+  if (network.useBackend) {
+    const res = await request('market/orderbook/depth', 'GET', {api: 'backend', chain_id: network.id, base_asset: address, quote_asset: network.usdtContract})
+    
+  }
   const res = await fetch(`/api/tokens/order-book/${network.id}/${network.usdtContract}/${address}`)
   const json = await res.json()
   return json
