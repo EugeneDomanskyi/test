@@ -237,9 +237,26 @@ const api = {
             Filled: 'completed',
             Cancelled: 'cancelled',
           }
-          return Object.entries(res.Orders).reduce((acc, [key, values]) => {
+          const list = Object.entries(res.Orders).reduce((acc, [key, values]) => {
             return [...acc, ...values.map(order => ({...order, status: orderTypes[key]}))]
           }, [])
+          return list.map((data) => {
+            return {
+              id: data.OrderId,
+              side: data.Type,
+              baseCurrency: data.BaseAsset.slice(0, 3),
+              quoteCurrency: data.QuoteAsset.slice(0, 3),
+              image: data.image,
+              contractAddress: data.BaseAsset,
+              quantity: data.OriginalVolume,
+              price: data.Price,
+              quantityFilled: data.OriginalVolume - data.Volume,
+              status: data.status,
+              time: moment(data.CreatedAt).format('DD MMM, HH:mm'),
+              timeMoment: moment(data.CreatedAt),
+              orderHash: data.OrderHash,
+            }
+          })
         }
       }
       return fetch(`/api/tokens/orders/${network.id}/${address}`).then(async res => {

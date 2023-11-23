@@ -51,14 +51,14 @@ const Orders = ({global, type, version, onClickOrder}) => {
   useEffect(() => {
     if (type === 'tokens') {
       Socket.on('order_placed', (data) => {
-        // getOrders()
+        getOrders()
       })
       Socket.on('order_filled', () => {
-        // getOrders()
+        getOrders()
       })
     }
    
-  }, [type])
+  }, [wallet, type, blockchain.code])
 
   useEffect(() => {
     if (wallet && socketConnected) {
