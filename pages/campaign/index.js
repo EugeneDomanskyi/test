@@ -1,22 +1,50 @@
 import Image from 'next/image'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
+
+import { trackEvent, getPageName } from '@/libs/analytics.lib'
+import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const LandingPage = () => {
+  const router = useRouter()
+  const { wallet, connect, getConnectorName } = useWalletConnect()
+
+  const handleConnectWallet = async () => {
+    if ( ! wallet) {
+      trackEvent('Wallet Connect Clicked', {
+        'Source': getPageName(),
+      })
+
+      const result = await connect()
+      if (result) {
+        router.push('/earn')
+        const walletName = await getConnectorName()
+        trackEvent('Wallet Connect Success', {
+          'Source': getPageName(),
+          'Type': walletName,
+        })
+      }
+    }
+  }
+
   return (
     <App.Flex className={styles.container}>
-      <App.Flex column className={styles.logoWrapper}>
-        <div className={styles.logo}>
-          <div className={styles.badge}>
-            BETA
+      <Link href="/" style={{ lineHeight: 0 }}>
+        <App.Flex column gap={4} className={styles.logoWrapper}>
+          <div className={styles.logo}>
+            <div className={styles.badge}>
+              BETA
+            </div>
+            <App.Icon icon="tegro" width={117} height={25} />
           </div>
-          <App.Icon icon="tegro" width={117} height={25} />
-        </div>
 
-        <App.Text size={10} weight={500}>Trade Efficiently On-Chain</App.Text>
-      </App.Flex>
+          <App.Text size={10} weight={500}>Trade Efficiently On-Chain</App.Text>
+        </App.Flex>
+      </Link>
 
       <App.Flex column className={styles.leftSide}>
         <App.Flex column className={styles.contentWrapper} gap={32}>
@@ -61,7 +89,7 @@ const LandingPage = () => {
           </App.Flex>
 
           <App.Flex align="center" className={styles.buttonsWrapper} gap={32}>
-            <App.Button rounded primary sx={{paddingLeft: 32, paddingRight: 32}}>
+            <App.Button rounded primary sx={{paddingLeft: 32, paddingRight: 32}} onClick={handleConnectWallet}>
               Connect Wallet Now
               <App.Icon icon="stars" />
             </App.Button>
