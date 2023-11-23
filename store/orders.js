@@ -227,8 +227,21 @@ const getters = {
 
 const api = {
   get: {
-    tokens: ({ address, blockchain }) => {
+    tokens: async ({ address, blockchain }) => {
       const network = CHAINS.find(chain => chain.code === blockchain)
+      if (network.useBackend) {
+        const res = await request('market/orders/user', 'GET', {api: 'backend', chain_id: network.id, user_address: address})
+        if (res) {
+          const orderTypes = {
+            Active: 'open',
+            Filled: 'completed',
+            Cancelled: 'cancelled',
+          }
+          return Object.entries(res.Orders).reduce((acc, [key, values]) => {
+            return [...acc, ...values.map(order => ({...order, status: orderTypes[key]}))]
+          }, [])
+        }
+      }
       return fetch(`/api/tokens/orders/${network.id}/${address}`).then(async res => {
         const json = await res.json()
         if (json && Array.isArray(json)) {
