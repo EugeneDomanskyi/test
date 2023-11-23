@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import Image from 'next/image'
 import numeral from 'numeral'
 import cn from 'classnames'
@@ -8,12 +9,15 @@ import Order from '@/libs/structs/Order'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { TEGRO_FILL_ORDERS_CONTRACTS } from '@/config'
 
+import $alert from '@/store/alert'
+
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFormatted, takerAmountFormatted, price }) => {
+const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFormatted, takerAmountFormatted, price, onClose }) => {
   const { wallet } = useWalletConnect()
+  const dispatch = useDispatch()
 
   const [step, setStep] = useState('preview')
 
@@ -48,15 +52,14 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
           'Step': 'Sign',
         })
 
-        // const placeOrderResult = await Order.TOKEN.place({
-        //   type: side,
-        //   makerAsset: takerAsset,
-        //   takerAsset: makerAsset,
-        //   price: price,
-        //   amount: makerAmountFormatted,
-        // }, eventHandler).catch(error => {
-        //   return error
-        // })
+        // Need to Place order instead below code
+        setTimeout(() => {
+          if (onClose) {
+            onClose()
+          }
+
+          dispatch($alert.set.success({ title: 'Order Created', text: 'Your Order has been placed successfully!' }))
+        }, 5000)
       }
     }
   }
@@ -178,7 +181,9 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
           </App.Flex>
 
           <App.Flex row center fullWidth>
-            <App.Flex width={98} height={98}></App.Flex>
+            <App.Flex width={98} height={98}>
+              <Image src={`/images/order-${step == 'sign' ? 'approve' : 'confirm'}-loader.gif`} width={98} height={98} alt="" />
+            </App.Flex>
           </App.Flex>
 
           <App.Flex column center fullWidth gap={16}>

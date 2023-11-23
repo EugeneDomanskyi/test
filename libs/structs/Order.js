@@ -600,8 +600,8 @@ class TOKEN extends Order {
         to: INCH_CONTRACTS[chainId],
         data: callData,
       }).catch((error) => {
-        Order.showErrorMessage(error.shortMessage)
-        reject(error)
+        //Order.showErrorMessage(error.shortMessage)
+        reject(error.shortMessage)
       })
       if (res) {
         const txResult = await waitForTransaction(res)

@@ -4,12 +4,12 @@ import { useState, memo, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
-import moment from 'moment'
 import { useDispatch } from 'react-redux'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
 import $modal from '@/store/modal'
+import $alert from '@/store/alert'
 
 import App from '@/components/App'
 import { trackEvent, getPageName } from '@/libs/analytics.lib'
@@ -35,9 +35,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
   const [hideCancelledOrders, setHideCancelledOrders] = useState(true)
   const [cancellingOrders, setCancellingOrders] = useState([])
   const [ordersType, setOrderTypes] = useState('open')
-  const [openId, setOpenId] = useState()
-  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false)
   const [orderForCancel, setOrderForCancel] = useState()
+  const [isDialogOpen, setIsDialogOpen] = useState({})
 
   useEffect(() => {
     if (wallet) {
@@ -77,20 +76,48 @@ const Orders = ({global, type, version, onClickOrder}) => {
   const handlePressCancelConfirm = (order) => (e) => {
     e.stopPropagation()
     setOrderForCancel(order)
-    setIsConfirmDialogOpen(true)
-  }
-
-  const handleCloseConfirmDialog = () => {
-    setIsConfirmDialogOpen(false)
+    handleDialogOpen('cancel')()
   }
 
   const handleCancelConfirm = (e) => {
     handlePressCancel(orderForCancel)(e)
-    handleCloseConfirmDialog()
+    handleDialogClose('cancel')()
+  }
+
+  const handleCancelAllClick = () => {
+    setOrderForCancel(null)
+    handleDialogOpen('cancelAll')()
+  }
+
+  const handleCancelAllConfirm = (e) => {
+    // Cancel All
+    // handlePressCancel(orderForCancel)(e)
+
+    handleDialogClose('cancelAll')()
+    handleDialogOpen('approve')()
+    setTimeout(() => {
+      handleDialogClose('approve')()
+      dispatch($alert.set.success({ title: 'All Orders Cancelled', text: 'All your live orders has been cancelled successfully!' }))
+    }, 5000)
+  }
+
+  const handleDialogOpen = (key) => () => {
+    setIsDialogOpen(state => ({
+      ...state,
+      [key]: true,
+    }))
+  }
+
+  const handleDialogClose = (key) => () => {
+    setIsDialogOpen(state => ({
+      ...state,
+      [key]: false,
+    }))
   }
 
   const handlePressCancel = (order) => async (e) => {
     e.stopPropagation()
+    handleDialogOpen('approve')()
     if (order.status === 'completed' || order.status === 'cancelled') {
       return
     }
@@ -112,11 +139,13 @@ const Orders = ({global, type, version, onClickOrder}) => {
     setCancellingOrders(state => [...state, order.id])
     order.cancel().then(() => {
       trackEvent('Cancel Order Success', eventPost)
+      dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
     }).catch(error => {
-      console.log(error)
+      dispatch($alert.set.error({ title: 'Order Not Cancelled', text: error }))
     }).finally(() => {
       setCancellingOrders(state => state.filter(id => id !== order.id))
       handleOrdersUpdated()
+      handleDialogClose('approve')()
     })
   }
 
@@ -145,14 +174,6 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
   const handleChangeSwitch = (value) => {
     setShowCollectionOrders(value)
-  }
-
-  const handleClick = (id) => () => {
-    setOpenId(id)
-  }
-
-  const handleClose = () => {
-    setOpenId(null)
   }
 
   const handleChangeOrdersType = type => () => {
@@ -248,7 +269,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
         <>
           <App.Flex align="center" justify="space-between" sx={{padding: 8}}>
             { ! global ? (
-              <App.Flex align="center" gap={8} flex={1}>
+              <App.Flex row align="center" gap={8} flex={1}>
                 <App.Switch
                   width={40}
                   height={20}
@@ -264,7 +285,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
               </App.Flex>
             ) : null}
 
-            {type === 'tokens' && ordersType === 'closed' ? (
+            {type === 'tokens' ? (
+              ordersType === 'closed' ? (
               <App.Flex align="center" gap={8} flex={1}>
                 <App.Switch
                   width={40}
@@ -275,6 +297,13 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
                 <App.Text color="#B9B8C5" size={[10, 12]} weight={600} height={1}>{version != 'mobile' ? 'Hide All Cancelled Orders' : 'Hide Cancelled Orders'}</App.Text>
               </App.Flex>
+              ) : (
+                !blockchain.useBackend ? (
+                  <App.Button variant="muted" small onClick={handleCancelAllClick}>
+                    Cancel All
+                  </App.Button>
+                ) : null
+              )
             ) : null}
           </App.Flex>
 
@@ -353,7 +382,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                           ) : null}
 
                           {order.status === 'open' ? (
-                            <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressCancel(order)}>
+                            <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressCancelConfirm(order)}>
                               <App.Icon icon="cross-circle" />
                             </App.Flex>
                           ) : null}
@@ -467,7 +496,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
         </>
       )}
 
-      <App.Dialog open={isConfirmDialogOpen} onClose={handleCloseConfirmDialog} title="Cancel Order?">
+      <App.Dialog open={isDialogOpen?.cancel} width={420} onClose={handleDialogClose('cancel')} title="Cancel Order?">
         <App.Flex column>
           <App.Flex row sx={{padding: 24}}>
             <App.Text size={16} color="#B9B8C5">Are you sure you want to cancel the order you have placed?</App.Text>
@@ -479,9 +508,38 @@ const Orders = ({global, type, version, onClickOrder}) => {
             </App.Flex>
 
             <App.Flex flex={1}>
-              <App.Button xl fullWidth primary onClick={handleCloseConfirmDialog}>Don&apos;t Cancel</App.Button>
+              <App.Button xl fullWidth primary onClick={handleDialogClose('cancel')}>Don&apos;t Cancel</App.Button>
             </App.Flex>
           </App.Flex>
+        </App.Flex>
+      </App.Dialog>
+
+      <App.Dialog open={isDialogOpen?.cancelAll} width={420} onClose={handleDialogClose('cancelAll')} title="Cancel All Orders?">
+        <App.Flex column>
+          <App.Flex row sx={{padding: 24}}>
+            <App.Text size={16} color="#B9B8C5">Are you sure you want to cancel all orders you have placed?</App.Text>
+          </App.Flex>
+
+          <App.Flex row gap={16} sx={{padding: 16}}>
+            <App.Flex flex={1}>
+              <App.Button xl fullWidth primary outlined onClick={handleCancelAllConfirm}>Cancel All Orders</App.Button>
+            </App.Flex>
+
+            <App.Flex flex={1}>
+              <App.Button xl fullWidth primary onClick={handleDialogClose('cancelAll')}>Don&apos;t Cancel</App.Button>
+            </App.Flex>
+          </App.Flex>
+        </App.Flex>
+      </App.Dialog>
+
+      <App.Dialog open={isDialogOpen?.approve} width={420} onClose={handleDialogClose('approve')} title={orderForCancel ? 'Cancel Order?' : 'Cancel All Orders?'}>
+        <App.Flex column center gap={6} sx={{ padding: '8px 24px 16px' }}>
+          <App.Flex row center width={150} height={150}>
+            <Image src="/images/order-cancel-loader.gif" width={150} height={150} alt="" />
+          </App.Flex>
+
+          <App.Text center size={16} weight={700} height={1}>Waiting for Approval</App.Text>
+          <App.Text center size={10} height={1} color="#5E5C6B">Please Proceed in Your Wallet</App.Text>
         </App.Flex>
       </App.Dialog>
     </App.Flex>
