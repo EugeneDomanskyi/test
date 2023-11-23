@@ -1,6 +1,7 @@
 import { getApolloClient, queries } from '@/api_services/graphql'
 import { getPrices } from '@/api_services/coingecko'
 import coingeckoAssets from '@/public/files/coingecko_ids'
+import { fetchToken } from '@wagmi/core'
 
 import { CHAINS } from '@/config'
 
@@ -28,6 +29,7 @@ export const getTokens = async (chain, post) => {
         totalSupply: null,
         volumeUSD: null,
         totalValueLockedUSD: null,
+        blockchain: chain.code,
       }))
     }
   } else {
@@ -43,8 +45,24 @@ export const getTokens = async (chain, post) => {
       },
     })
 
-    if (res?.data && res.data.hasOwnProperty('tokens')) {
-      return res.data.tokens
+    if (res?.data && res.data.hasOwnProperty('tokens') && res.data.tokens.length) {
+      return res.data.tokens.map(item => ({
+        ...item,
+        blockchain: chain.code,
+      }))
+    } else {
+      const token = await fetchToken({
+        address: post.searchText,
+        chainId: chain.id,
+      }).catch(() => null)
+      if (token) {
+        return [{
+          ...token,
+          id: token.address.toLowerCase(),
+          totalSupply: token.totalSupply.formatted,
+          blockchain: chain.code,
+        }]
+      }
     }
   }
 

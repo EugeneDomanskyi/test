@@ -4,6 +4,7 @@ import LandingSlides from './LandingSlides'
 import LandingPlatform from './LandingPlatform'
 import LandingFounders from './LandingFounders'
 import LandingFooter from './LandingFooter'
+import LandingFAQ from './LandingFAQ'
 
 export default {
   Grid: LandingGrid,
@@ -12,4 +13,5 @@ export default {
   Platform: LandingPlatform,
   Founders: LandingFounders,
   Footer: LandingFooter,
+  FAQ: LandingFAQ,
 }

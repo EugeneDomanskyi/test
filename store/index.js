@@ -44,7 +44,12 @@ const createStore = (initialData, page, info) => {
         ...collectionSlice.getInitialState(),
         current: (page == 'nfts' ? info : {}),
       },
-    }
+    },
+
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+      immutableCheck: false,
+      serializableCheck: false,
+    })
   })
 }
 

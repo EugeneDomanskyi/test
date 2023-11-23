@@ -33,6 +33,7 @@ const HeadDefault = ({currentPage, currentSymbol}) => {
     <Head>
       <title>{getTitle()}</title>
       <meta content={getDescription()} property="description" key="description" />
+      <meta name="keywords" content="Blockchain Crypto Exchange, Cryptocurrency Exchange, Bitcoin Trading, Ethereum price trend, DEX, Decentralized Exchange, BTC price, ETH wallet, ETH price, MATIC price, Uniswap, dYdX, Pancakeswap" data-shuvi-head="true"></meta>
     </Head>
   )
 }
