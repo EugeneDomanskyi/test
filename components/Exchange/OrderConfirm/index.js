@@ -48,15 +48,15 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
           'Step': 'Sign',
         })
 
-        // const placeOrderResult = await Order.TOKEN.place({
-        //   type: side,
-        //   makerAsset: takerAsset,
-        //   takerAsset: makerAsset,
-        //   price: price,
-        //   amount: makerAmountFormatted,
-        // }, eventHandler).catch(error => {
-        //   return error
-        // })
+        const placeOrderResult = await Order.TOKEN.placeToAPI({
+          type: side,
+          makerAsset: takerAsset,
+          takerAsset: makerAsset,
+          price: price,
+          amount: makerAmountFormatted,
+        }, eventHandler).catch(error => {
+          return error
+        })
       }
     }
   }
