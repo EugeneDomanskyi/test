@@ -587,6 +587,64 @@ class TOKEN extends Order {
     })
   }
 
+  static placeToAPI = ({makerAsset, takerAsset, price, amount, type = 'buy'}, callback) => {
+    return new Promise(async (resolve, reject) => {
+      const { walletClient, chainId } = await Order.getWalletData()
+      const limitOrderBuilder = new LimitOrderBuilder('0xa6BB5cFE9CC68E0AFfb0bB1785B6eFdC2fe8d326', chainId, walletClient)
+
+      const spendAmount = type === 'buy' ? price*amount : amount*1
+      const receiveAmount = type === 'buy' ? amount : price*amount
+
+      const price_precision = parseUnits(`${price}`, type === 'buy' ? makerAsset.decimals : takerAsset.decimals).toString()
+      const volume_precision = parseUnits(`${amount}`, type === 'buy' ? takerAsset.decimals : makerAsset.decimals).toString()
+      
+      const balance = await Order.getBalance(walletClient.account.address, makerAsset.address)
+      
+      if (balance < spendAmount) {
+        reject({success: false, message: 'Insufficient balance', type: 'balance'})
+        return 
+      }
+      
+      const limitOrder = limitOrderBuilder.buildLimitOrder({
+        makerAssetAddress: makerAsset.address,
+        takerAssetAddress: takerAsset.address,
+        makerAddress: walletClient.account.address,
+        makingAmount: parseUnits(`${spendAmount}`, makerAsset.decimals).toString(),
+        takingAmount: parseUnits(`${receiveAmount}`, takerAsset.decimals).toString(),
+      })
+
+      const limitOrderTypedData = limitOrderBuilder.buildLimitOrderTypedData(limitOrder, 'Tegro')
+
+      const limitOrderHash = hashTypedData(limitOrderTypedData)
+      const signature = await walletClient.signTypedData(limitOrderTypedData).catch(error => {
+        reject({success: false, message: error.shortMessage, type: error.name})
+      })
+
+      if (!signature) {
+        return
+      }
+      callback('transaction_completed', {success: true})
+      const post = {
+        chain_id: chainId,
+        quote_asset: type === 'buy' ? makerAsset.address : takerAsset.address,
+        base_asset: type === 'buy' ? takerAsset.address : makerAsset.address,
+        side: (type === 'buy')*1,
+        volume_precision: volume_precision,
+        price_precision: price_precision,
+        order_hash: limitOrderHash,
+        raw_order_data: JSON.stringify(limitOrderTypedData.message),
+        signature: signature,
+        signed_order_type: '1inch',
+      }
+      const res = await $orders.api.create.token(post)
+      if (res) {
+        resolve({success: true})
+        return
+      }
+      reject({success: false})
+    })
+  }
+
   cancel = () => {
     return new Promise(async (resolve, reject) => {
       const { chainId } = await Order.getWalletData()
