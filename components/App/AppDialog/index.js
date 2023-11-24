@@ -57,7 +57,7 @@ const AppDialog = ({ children, open, size, hideHeader, hideClose, title, subtitl
 
                 {!hideClose ? (
                   <div className={styles.closeButton} onClick={handleClose}>
-                    <AppIcon icon="cross" width={20} height={20} color="#fff" />
+                    <AppIcon icon="cross" width={18} height={18} color="#fff" />
                   </div>
                 ) : null}
               </div>

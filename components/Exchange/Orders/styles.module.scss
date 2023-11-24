@@ -61,22 +61,41 @@
 
     .hoverContent {
       position: absolute;
+      z-index: 2;
       top: 0;
       bottom: 0;
       right: 0;
       width: 100%;
-      background: linear-gradient(90deg, rgba(9,5,29,0) 10%, rgba(9,5,29,1) 20%);
+      background: linear-gradient(90deg, rgba(9,5,29,0) 30%, rgba(9,5,29,1) 40%);
       transform: translateX(100%);
       transition: .2s;
+      padding: 0 16px;
 
       .actionButton {
         cursor: pointer;
+      }
+    }
+
+    .filled {
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      bottom: 0;
+      left: 0;
+
+      &.complete {
+        background-color: #06382F;
+      }
+
+      &.notComplete {
+        background-color: #4D0E27;
       }
     }
   }
 
   .order {
     position: relative;
+    z-index: 1;
 
     &:hover {
       cursor: pointer;

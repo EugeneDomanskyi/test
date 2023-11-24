@@ -17,6 +17,8 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import useInterval from '@/myhooks/useInterval'
 import useOrders from '@/myhooks/useOrders'
 
+import OrderDetails from '@/components/Exchange/OrderDetails'
+
 const Orders = ({global, type, version, onClickOrder}) => {
   const router = useRouter()
   const [queryTokenId] = router.query.address || []
@@ -36,6 +38,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
   const [cancellingOrders, setCancellingOrders] = useState([])
   const [ordersType, setOrderTypes] = useState('open')
   const [orderForCancel, setOrderForCancel] = useState()
+  const [detailsOrder, setDetailsOrder] = useState()
   const [isDialogOpen, setIsDialogOpen] = useState({})
 
   useEffect(() => {
@@ -163,13 +166,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
   const handleClickDetails = order => e => {
     e.stopPropagation()
     const { cancel, ...rest } = order
-    dispatch($modal.set.show({
-      show: true,
-      modal: 'Exchange/OrderDetails',
-      props: {
-        order: {...rest, itemPrice: order.itemPrice},
-      }
-    }))
+    setDetailsOrder({...rest, itemPrice: order.itemPrice})
+    handleDialogOpen('details')()
   }
 
   const handleChangeSwitch = (value) => {
@@ -317,10 +315,10 @@ const Orders = ({global, type, version, onClickOrder}) => {
                   <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Qty</App.Text>
                 </App.Flex>
                 <App.Flex column flex={1} sx={{padding: '4px 8px 10px'}} align="center">
-                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Price</App.Text>
+                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Price {type === 'tokens' ? '(USDT)' : ''}</App.Text>
                 </App.Flex>
                 <App.Flex column flex={1} sx={{padding: '4px 8px 10px'}} align="center">
-                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Total</App.Text>
+                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Total {type === 'tokens' ? '(USDT)' : ''}</App.Text>
                 </App.Flex>
               </App.Flex>
 
@@ -339,8 +337,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
                               order.quoteCurrency ? (
                                 <App.Flex column gap={4}>
                                   <App.Text size={12} weight={600} center height={1}>{ order.quoteCurrency }</App.Text>
-                                  <div style={{width: '100%', minWidth: 20, height: 1, background: '#5E5C6B'}} />
-                                  <App.Text color="#5E5C6B" size={8} weight={600} center height={1}>{ order.baseCurrency }</App.Text>
+                                  <div style={{width: '100%', minWidth: 20, height: 1, background: '#B9B8C5'}} />
+                                  <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ order.baseCurrency }</App.Text>
                                 </App.Flex>
                               ) : null
                             )}
@@ -349,8 +347,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
                           <App.Flex column sx={{width: 60, padding: 8}} align="center" justify="center">
                             <App.Flex column gap={4}>
                               <App.Text size={12} weight={600} center height={1}>{ order.quantityFilled }</App.Text>
-                              <div style={{width: '100%', minWidth: 20, height: 1, background: '#5E5C6B'}} />
-                              <App.Text color="#5E5C6B" size={8} weight={600} center height={1}>{ order.quantity }</App.Text>
+                              <div style={{width: '100%', minWidth: 20, height: 1, background: '#B9B8C5'}} />
+                              <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ order.quantity }</App.Text>
                             </App.Flex>
                           </App.Flex>
 
@@ -363,7 +361,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                           </App.Flex>
                         </App.Flex>
 
-                        <App.Flex align="center" justify="flex-end" className={cn(styles.hoverContent)}>
+                        <App.Flex row align="center" justify="flex-end" gap={16} className={cn(styles.hoverContent)}>
                           <App.Text color="rgba(185, 184, 197, 1)" size={10} weight={500} sx={{marginRight: 12}} height={1}>{ order.time }</App.Text>
                           {order.status !== 'open' ? (
                             <App.Text color="#B9B8C5" size={10} weight={600} uppercase height={1}>
@@ -371,28 +369,24 @@ const Orders = ({global, type, version, onClickOrder}) => {
                             </App.Text>
                           ) : null}
                           
-                          <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressCopy(order)}>
+                          <App.Flex className={styles.actionButton} align="center" justify="center" onClick={handlePressCopy(order)}>
                             <App.Icon icon="copy" width={12} height={12} color="#B9B8C5" />
                           </App.Flex>
 
                           {order.status !== 'open' ? (
-                            <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handleClickDetails(order)}>
+                            <App.Flex className={styles.actionButton} align="center" justify="center" onClick={handleClickDetails(order)}>
                               <App.Icon icon="order-details" />
                             </App.Flex>
                           ) : null}
 
                           {order.status === 'open' ? (
-                            <App.Flex className={styles.actionButton} align="center" justify="center" sx={{width: 50}} onClick={handlePressCancelConfirm(order)}>
+                            <App.Flex className={styles.actionButton} align="center" justify="center" onClick={handlePressCancelConfirm(order)}>
                               <App.Icon icon="cross-circle" />
                             </App.Flex>
                           ) : null}
                         </App.Flex>
 
-                        {cancellingOrders.includes(order.id) ? (
-                          <App.Flex sx={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0}} align="center" justify="center">
-                            <App.Loader />
-                          </App.Flex>
-                        ) : null}
+                        <App.Flex row className={cn(styles.filled, styles[Math.round(order.quantityFilled * 100 / order.quantity) < 100 ? 'notComplete' : 'complete'])} width={`${Math.round(order.quantityFilled * 100 / order.quantity)}%`} />
                       </App.Flex>
                     </App.Flex>
                   )
@@ -541,6 +535,12 @@ const Orders = ({global, type, version, onClickOrder}) => {
           <App.Text center size={16} weight={700} height={1}>Waiting for Approval</App.Text>
           <App.Text center size={10} height={1} color="#5E5C6B">Please Proceed in Your Wallet</App.Text>
         </App.Flex>
+      </App.Dialog>
+
+      <App.Dialog open={isDialogOpen?.details} width={420} onClose={handleDialogClose('details')} title="Order Details">
+        <OrderDetails
+          order={detailsOrder}
+        />
       </App.Dialog>
     </App.Flex>
   )

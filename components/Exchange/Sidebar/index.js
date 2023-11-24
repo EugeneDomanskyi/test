@@ -62,7 +62,6 @@ const Sidebar = ({ version, type }) => {
     if (!loading && current?.id) {
       const exist = all.find(item => item.id === current.id)
       if (!exist) {
-        console.log([current, ...all])
         dispatch($token.set.all([current, ...all]))
       }
       
