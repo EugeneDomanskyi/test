@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import Image from 'next/image'
 import numeral from 'numeral'
@@ -8,6 +8,7 @@ import { trackEvent } from '@/libs/analytics.lib'
 import Order from '@/libs/structs/Order'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { TEGRO_FILL_ORDERS_CONTRACTS } from '@/config'
+import coingeckoAssets from '@/public/files/coingecko_ids'
 
 import $alert from '@/store/alert'
 
@@ -19,7 +20,27 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
   const { wallet } = useWalletConnect()
   const dispatch = useDispatch()
 
+  const { getPrice } = useWalletConnect()
+
   const [step, setStep] = useState('preview')
+  const [usdPrice, setUsdPrice] = useState(1)
+
+  useEffect(() => {
+    fetchUsdPrice()
+  }, [])
+
+  const fetchUsdPrice = async () => {
+    const cgid = coingeckoAssets[blockchain.platform]?.[takerAsset.address]
+    if (cgid) {
+      const price = await getPrice(cgid, 'usd')
+      if (price) {
+        setUsdPrice(price)
+        return
+      }
+    }
+
+    setUsdPrice(1)
+  }
 
   const handleNextStep = async () => {
     if (step == 'preview') {
@@ -81,7 +102,7 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
             <App.Flex column gap={4}>
               <App.Text size={12} weight={600} height={1} color="#B9B8C5">{ numeral(side === 'buy' ? takerAmountFormatted : makerAmountFormatted).format('0.[00000]') } {takerAsset.symbol}</App.Text>
               {side === 'buy' ? (
-                <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ numeral(side === 'buy' ? takerAmountFormatted : makerAmountFormatted).format('0.[00000]') }</App.Text>
+                <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ numeral(takerAmountFormatted * usdPrice).format('0.[00000]') }</App.Text>
               ) : null}
             </App.Flex>
           </App.Flex>
@@ -93,7 +114,7 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
             <App.Flex column gap={4}>
               <App.Text size={12} weight={600} height={1} color="#B9B8C5">{ numeral(side === 'buy' ? makerAmountFormatted : takerAmountFormatted).format('0.[00000]') } {makerAsset.symbol}</App.Text>
               {side === 'sell' ? (
-                <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ numeral(side === 'buy' ? makerAmountFormatted : takerAmountFormatted).format('0.[00000]') }</App.Text>
+                <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ numeral(takerAmountFormatted * usdPrice).format('0.[00000]') }</App.Text>
               ) : null}
             </App.Flex>
           </App.Flex>
