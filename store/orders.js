@@ -282,7 +282,10 @@ const api = {
     tokenAPI: (params) => {
       return request('market/orders','POST', {api: 'backend', ...params})
     }
-  }
+  },
+  cancel: (params) => {
+    return request(`market/orders/cancel`, 'POST', { api: 'backend', ...params })
+  },
 }
 
 api.get.nfts.orderBook = (params) => {

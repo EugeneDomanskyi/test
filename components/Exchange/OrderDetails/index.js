@@ -67,8 +67,43 @@ const OrderDetails = ({order}) => {
         <>
           <App.Hr color="#2a283c" />
 
-          <App.Flex column fullWidth gap={10} sx={{ padding: '0 24px' }}>
-            <App.Text size={14} weight={600} height={1} color="#B9B8C5">Trade Details</App.Text>
+          <App.Flex column fullWidth>
+            <App.Flex column fullWidth gap={10} sx={{ padding: '0 24px' }}>
+              <App.Text size={14} weight={600} height={1} color="#B9B8C5">Trade Details</App.Text>
+
+              <App.Flex row fullWidth gap={16}>
+                <App.Flex row width={100} align="center" sx={{ padding: '4px 0' }}>
+                  <App.Text size={12} height={1} color="#5E5C6B">Date / Time</App.Text>
+                </App.Flex>
+
+                <App.Flex row width={100} align="center" sx={{ padding: '4px 0' }} flex={1}>
+                  <App.Text size={12} height={1} color="#5E5C6B">Filled</App.Text>
+                </App.Flex>
+
+                <App.Flex row width={100} align="center" justify="flex-end" sx={{ padding: '4px 0' }} flex={1}>
+                  <App.Text right size={12} height={1} color="#5E5C6B">Price</App.Text>
+                </App.Flex>
+              </App.Flex>
+            </App.Flex>
+
+            <App.Flex column fullWidth className={styles.scrollBox}>
+              <App.Flex row fullWidth gap={16} className={styles.row}>
+                <App.Flex row width={100} align="center">
+                  <App.Text size={12} weight={600} height={1} color="#B9B8C5">21 Jun, 10:47:54</App.Text>
+                </App.Flex>
+
+                <App.Flex row width={100} align="center" flex={1}>
+                  <App.Text size={12} weight={600} height={1} color="#B9B8C5">0.32 ETH</App.Text>
+                </App.Flex>
+
+                <App.Flex row width={100} align="center" gap={10} justify="flex-end" flex={1}>
+                  <App.Text size={12} weight={600} height={1} color="#B9B8C5">354 USDT</App.Text>
+                  <a href="https://etherscan.org" target="_blank" rel="noreferrer" style={{ lineHeight: 0 }}>
+                    <App.Icon icon="external-link" />
+                  </a>
+                </App.Flex>
+              </App.Flex>
+            </App.Flex>
           </App.Flex>
         </>
       ) : null}

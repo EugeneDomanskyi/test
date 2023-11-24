@@ -10,3 +10,16 @@
     background-color: #4D0E27;
   }
 }
+
+.scrollBox {
+  max-height: 120px;
+  overflow: auto;
+
+  .row {
+    padding: 4px 24px;
+
+    &:nth-of-type(odd) {
+      background-color: #120f25;
+    }
+  }
+}

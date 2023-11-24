@@ -149,10 +149,6 @@ const Orders = ({global, type, version, onClickOrder}) => {
     if (order.status === 'completed' || order.status === 'cancelled') {
       return
     }
-    const network = await changeNetwork(blockchain.code)
-    if (!network) {
-      return
-    }
     
     const eventPost = {
       'Base Currency': order.baseCurrency,
@@ -164,17 +160,27 @@ const Orders = ({global, type, version, onClickOrder}) => {
       'Network': blockchain.code.toUpperCase(),
     }
     trackEvent('Cancel Order Submit', eventPost)
-    setCancellingOrders(state => [...state, order.id])
-    order.cancel().then(() => {
-      trackEvent('Cancel Order Success', eventPost)
-      dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
-    }).catch(error => {
-      dispatch($alert.set.error({ title: 'Order Not Cancelled', text: error }))
-    }).finally(() => {
-      setCancellingOrders(state => state.filter(id => id !== order.id))
-      handleOrdersUpdated()
+
+    if (blockchain?.useBackend) {
+      const result = await $orders.api.cancel({ order_hash: order.id })
+      if (result) {
+        trackEvent('Cancel Order Success', eventPost)
+        dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
+      } else {
+        dispatch($alert.set.error({ title: 'Order Not Cancelled', text: result }))
+      }
       handleDialogClose('approve')()
-    })
+    } else {
+      order.cancel().then(() => {
+        trackEvent('Cancel Order Success', eventPost)
+        dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
+      }).catch(error => {
+        dispatch($alert.set.error({ title: 'Order Not Cancelled', text: error }))
+      }).finally(() => {
+        handleOrdersUpdated()
+        handleDialogClose('approve')()
+      })
+    }
   }
 
   const handlePressCopy = order => (e) => {
