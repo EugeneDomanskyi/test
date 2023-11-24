@@ -169,6 +169,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
       } else {
         dispatch($alert.set.error({ title: 'Order Not Cancelled', text: result }))
       }
+      handleOrdersUpdated()
       handleDialogClose('approve')()
     } else {
       order.cancel().then(() => {
