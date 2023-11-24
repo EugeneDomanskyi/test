@@ -7,13 +7,15 @@ class Socket {
   constructor() {
     this.socket = null
     this.callbacks = {}
+    this.handleAction = null
   }
 
-  init = async () => {
+  init = async (callback) => {
     return new Promise(resolve => {
       this.socket = new WebSocket(WS_URL)
       this.socket.onmessage = this.handleMessage
       this.socket.onopen = resolve
+      this.handleAction = callback
     })
   }
 
@@ -34,17 +36,6 @@ class Socket {
     if (this.callbacks[json.action]) {
       this.callbacks[json.action](json.data)
       this.handleAction(json)
-    }
-  }
-
-  handleAction = ({action, data}) => {
-    switch (action) {
-      case 'order_placed':
-        toast.success('Order placed successfully')
-        break
-      case 'order_filled':
-        toast.success('Order filled successfully')
-        break
     }
   }
 }

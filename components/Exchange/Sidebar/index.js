@@ -59,14 +59,13 @@ const Sidebar = ({ version, type }) => {
   }, [blockchain.code, sort, pages.current, urlBlockchain])
 
   useEffect(() => {
-    if (!loading && current?.id) {
+    if (!loading && current?.id && current.blockchain === urlBlockchain) {
       const exist = all.find(item => item.id === current.id)
       if (!exist) {
         dispatch($token.set.all([current, ...all]))
       }
-      
     }
-  }, [current?.id, loading])
+  }, [current?.id, loading, urlBlockchain])
 
   useEffect(() => {
     handleScroll()

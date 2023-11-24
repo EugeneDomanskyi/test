@@ -31,9 +31,9 @@ const TEST_NETWORKS = [
         usdtContract: '0xdac17f958d2ee523a2206206994597c13d831ec7',
         usdt: {
             address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-            decimals: '',
-            name: '',
-            symbol: '',
+            decimals: 6,
+            name: 'Tether USD',
+            symbol: 'USDT',
             image: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png?1696501661',
         },
         wrapped: {

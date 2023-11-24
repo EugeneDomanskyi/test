@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
 import { useDispatch } from 'react-redux'
+import Socket from '@/libs/ws.lib'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
@@ -28,6 +29,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
   const current = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.current : $collection.current)
   const orders = useSelector($orders.get[type])
   const blockchain = useSelector($app.get.blockchain)
+  const socketConnected = useSelector(({$app}) => $app.socketConnected)
   const { wallet, changeNetwork, connect, getConnectorName } = useWalletConnect()
 
   const { updateOrders } = useOrders({tokenAddress: queryTokenId, type})
@@ -48,6 +50,29 @@ const Orders = ({global, type, version, onClickOrder}) => {
       dispatch($orders.set[type]([]))
     }
   }, [wallet, type, blockchain.code])
+
+  useEffect(() => {
+    if (type === 'tokens') {
+      Socket.on('order_placed', (data) => {
+        getOrders()
+      })
+      Socket.on('order_filled', () => {
+        getOrders()
+      })
+    }
+   
+  }, [wallet, type, blockchain.code])
+
+  useEffect(() => {
+    if (wallet && socketConnected) {
+      Socket.subscribe(wallet)
+    }
+    return () => {
+      if (socketConnected) {
+        Socket.unsubscribe(wallet)
+      }
+    }
+  }, [wallet, socketConnected])
 
   const handleOrdersUpdated = useCallback(() => {
     if (type == 'tokens') {

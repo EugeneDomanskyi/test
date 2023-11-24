@@ -1,5 +1,7 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
 import moment from 'moment'
+import { readContract } from '@wagmi/core'
+import { formatUnits } from 'viem'
 
 import { request } from './index'
 import Order from '@/libs/structs/Order'
@@ -25,6 +27,46 @@ const generatePeriods = (from, to, closePrice, step) => {
         price: closePrice,
         timestamp: time.unix() * 1000,
       }]
+    }
+  }, {})
+}
+
+const getDecimals = async (address) => {
+  const abi = {
+    constant: true,
+    inputs: [],
+    name: 'decimals',
+    outputs: [{name: '', type: 'uint8'}],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function'
+  }
+  const res = await readContract({
+    address: address,
+    abi: [abi],
+    functionName: 'decimals',
+  }).catch(error => {
+    console.log(error)
+  })
+  return res
+}
+
+export const orderBookFormatter = async (list, baseCurrency, quoteCurrency) => {
+  const baseDecimals = await getDecimals(baseCurrency)
+  const quoteDecimals = await getDecimals(quoteCurrency)
+  return Object.entries(list).reduce((acc, [side, values]) => {
+    let prevVolume = 0
+    return {
+      ...acc,
+      [side]: values.slice(0, 10).map((row) => {
+        const volume = formatUnits(row.quantity, baseDecimals)
+        prevVolume += volume*1
+        return {
+          priceFormatted: formatUnits(row.price, quoteDecimals),
+          volume: prevVolume,
+          quantity: volume,
+        }
+      })
     }
   }, {})
 }
@@ -185,20 +227,44 @@ const getters = {
 
 const api = {
   get: {
-    tokens: ({ address, blockchain }) => {
+    tokens: async ({ address, blockchain }) => {
       const network = CHAINS.find(chain => chain.code === blockchain)
+      if (network.useBackend) {
+        const res = await request('market/orders/user', 'GET', {api: 'backend', chain_id: network.id, user_address: address})
+        if (res) {
+          const orderTypes = {
+            Active: 'open',
+            Filled: 'completed',
+            Cancelled: 'cancelled',
+          }
+          const list = Object.entries(res.Orders).reduce((acc, [key, values]) => {
+            return [...acc, ...values.map(order => ({...order, status: orderTypes[key]}))]
+          }, [])
+          return list.map((data) => {
+            return {
+              id: data.OrderId,
+              side: data.Type,
+              baseCurrency: (res.Tokens[data.BaseAsset].symbol || data.BaseAsset.slice(0, 3)),
+              quoteCurrency: (res.Tokens[data.QuoteAsset].symbol || data.QuoteAsset.slice(0, 3)),
+              image: data.image,
+              contractAddress: data.BaseAsset,
+              quantity: data.OriginalVolume,
+              price: data.Price,
+              quantityFilled: data.OriginalVolume - data.Volume,
+              status: data.status,
+              time: moment(data.CreatedAt).format('DD MMM, HH:mm'),
+              timeMoment: moment(data.CreatedAt),
+              orderHash: data.OrderHash,
+            }
+          })
+        }
+      }
       return fetch(`/api/tokens/orders/${network.id}/${address}`).then(async res => {
         const json = await res.json()
         if (json && Array.isArray(json)) {
           return json
         }
       })
-      // return request(`address/${address}`, 'GET', {api: 'inch', blockchain, ...rest}).then(res => {
-      //   if (res && Array.isArray(res)) {
-      //     return res.map(order => ({...order, network: blockchain}))
-      //   }
-      //   return []
-      // })
     },
     nfts: (params) => {
       return Promise.all([
@@ -230,6 +296,18 @@ api.get.nfts.orderBook = (params) => {
 
 api.get.tokens.orderBook = async ({ address, ...rest }) => {
   const network = CHAINS.find(chain => chain.code === rest.blockchain)
+  if (network.useBackend) {
+    const res = await request('market/orderbook/depth', 'GET', {api: 'backend', chain_id: network.id, base_asset: address, quote_asset: network.usdtContract})
+    if (res.error) {
+      return {buy: [], sell: []}
+    }
+    const sides = {Asks: 'sell', Bids: 'buy'}
+    const temp = Object.entries(res).reduce((acc, [side, values]) => ({
+      ...acc,
+      [sides[side]]: values ?? []
+    }), {})
+    return await orderBookFormatter(temp, address, network.usdtContract)
+  }
   const res = await fetch(`/api/tokens/order-book/${network.id}/${network.usdtContract}/${address}`)
   const json = await res.json()
   return json

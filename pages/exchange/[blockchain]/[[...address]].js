@@ -3,11 +3,13 @@ import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import dynamic from 'next/dynamic'
 import cn from 'classnames'
+import Socket from '@/libs/ws.lib'
 
 import { trackEvent, getPageName } from '@/libs/analytics.lib'
 
 import $alert from '@/store/alert'
 import $orders from '@/store/orders'
+import $app from '@/store/app'
 
 import App from '@/components/App'
 import Sidebar from '@/components/Exchange/Sidebar'
@@ -31,26 +33,47 @@ const Exchange = () => {
   const dispatch = useDispatch()
   const myOrdersDialogOpen = useSelector(({ $orders }) => $orders.myOrdersDialogOpen)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
+  const socketConnected = useSelector(({$app}) => $app.socketConnected)
+  const currentBlockchain = useSelector($app.get.blockchain)
+  const currentToken = useSelector(({$token}) => $token.current)
 
   const tradeForm = useRef(null)
   const mobileRef = useRef(null)
+
+  const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(queryTokenId)
 
   useEffect(() => {
     trackEvent('Page Visited', {
       'Page Name': getPageName(),
     })
+    Socket.init(handleAction).then(() => {
+      dispatch($app.set.socketConnected(true))
+    })
+    return () => {
+      dispatch($app.set.socketConnected(false))
+    }
+  }, [])
 
-    // setTimeout(() => {
-    //   dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
-    // }, 4000)
+  useEffect(() => {
+    if (socketConnected && currentBlockchain.id && isAddress && currentToken?.address) {
+      Socket.subscribe(`${currentBlockchain.id}/${currentToken.address}`)
+    }
+    return () => {
+      if (socketConnected) {
+        Socket.unsubscribe(`${currentBlockchain.id}/${currentToken.address}`)
+      }
+    }
+  }, [socketConnected, currentBlockchain.id, isAddress, currentToken?.address])
 
-    // setTimeout(() => {
-    //   dispatch($alert.set.error({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
-    // }, 6000)
-
-    // setTimeout(() => {
-    //   dispatch($alert.set.warning({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
-    // }, 8000)
+  const handleAction = useCallback(({action, data}) => {
+    switch (action) {
+      case 'order_placed':
+        dispatch($alert.set.success({ title: 'Order placed successfully', text: 'Your Order has been placed successfully!' }))
+        break
+      case 'order_filled':
+        dispatch($alert.set.success({ title: 'Order filled successfully' }))
+        break
+    }
   }, [])
 
   const handleClickOrder = useCallback(async order => {
