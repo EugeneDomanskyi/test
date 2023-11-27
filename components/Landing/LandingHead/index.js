@@ -105,7 +105,7 @@ const LandingHead = () => {
             </App.Button>
           </App.Flex>
 
-          <App.Flex flex={1}>
+          {/* <App.Flex flex={1}>
             <App.Flex center className={styles.banner} onClick={handleDuneClick}>
               <App.Flex className={styles.bannerInner} />
 
@@ -118,7 +118,7 @@ const LandingHead = () => {
                 <App.Icon icon="landing-diagram" />
               </App.Flex>
             </App.Flex>
-          </App.Flex>
+          </App.Flex> */}
         </App.Flex>
 
         <Landing.Slides />
