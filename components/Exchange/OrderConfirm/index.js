@@ -16,7 +16,7 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFormatted, takerAmountFormatted, price, onClose }) => {
+const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFormatted, takerAmountFormatted, price, version, onBack, onClose }) => {
   const { wallet } = useWalletConnect()
   const dispatch = useDispatch()
 
@@ -125,6 +125,20 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
 
   return (
     <App.Flex column fullWidth>
+      {version == 'mobile' ? (
+        <App.Flex className={cn(styles.header, styles[side])} center>
+          <App.Text center weight={700} size={16} capitalize>
+            {side} {side === 'buy' ? makerAsset.symbol : takerAsset.symbol} with {side === 'sell' ? makerAsset.symbol : takerAsset.symbol}
+          </App.Text>
+
+          {step == 'preview' ? (
+            <App.Flex align="center" justify="center" onClick={onBack} className={styles.backButton}>
+              <App.Icon icon="arrow-right" color="#fff" width={24} height={24} />
+            </App.Flex>
+          ) : null}
+        </App.Flex>
+      ) : null}
+
       {step == 'preview' ? (
         <App.Flex column fullWidth gap={24}>
           <App.Flex column gap={16} fullWidth sx={{ padding: '16px 24px 0' }}>
@@ -177,7 +191,7 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
       ) : null}
 
       {step == 'sign' || step == 'place' ? (
-        <App.Flex column fullWidth gap={8} sx={{ padding: '8px 24px 16px' }}>
+        <App.Flex column fullWidth gap={8} sx={{ padding: '16px 24px' }}>
           <App.Flex row align="flex-end" gap={6}>
             <App.Flex column center gap={2} flex={1}>
               <App.Flex row center gap={2}>

@@ -141,6 +141,16 @@
     inset: 0;
     background-color: transparent;
 
+    .header {
+      background-color: transparent;
+
+      .tab {
+        &.active {
+          background: transparent;
+        }
+      }
+    }
+
     .badge {
       background-image: linear-gradient(to right, #E792E4, #B545BE 34.167%, #7931CB 69.583%, #4D42C9 100%);
     }
