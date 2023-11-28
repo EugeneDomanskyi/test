@@ -1,17 +1,32 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 import { trackEvent, getPageName } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
 
+import { CHAINS } from '@/config'
+
 import $app from '@/store/app'
+import $raffle from '@/store/raffle'
 
 import styles from './styles.module.scss'
+
+const getApolloClient = (blockchain) => {
+  const uri = blockchain?.raffle?.subgraph
+  const client = new ApolloClient({
+    uri,
+    cache: new InMemoryCache(),
+    connectToDevTools: true,
+  })
+
+  return client
+}
 
 const LandingPage = () => {
   const dispatch = useDispatch()
@@ -19,9 +34,12 @@ const LandingPage = () => {
   const { wallet, connect, getConnectorName } = useWalletConnect()
 
   const campaigns = useSelector(({ $raffle }) => $raffle.all)
+  const blockchain = CHAINS.find(item => item.id === 137)
+
+  const apollo = useRef()
 
   const [walletsCount, setWalletsCount] = useState(null)
-  const [totalReward, setTotalReward] = useState(0)
+  const [totalReward, setTotalReward] = useState(null)
 
   useEffect(() => {
     dispatch($app.get.walletConnectedCount).then(res => {
@@ -29,10 +47,11 @@ const LandingPage = () => {
         setWalletsCount(res.data.count)
       }
     })
+
+    handleFetchCampaigns()
   }, [])
 
   useEffect(() => {
-    console.log('campaigns', campaigns);
     if (campaigns.length) {
       const sum = campaigns.reduce((accumulator, currentValue) => {
         return accumulator + currentValue.rewardAmount * 1
@@ -41,6 +60,24 @@ const LandingPage = () => {
       setTotalReward(sum)
     }
   }, [campaigns])
+
+  const handleFetchCampaigns = async () => {
+    apollo.current = getApolloClient(blockchain)
+      const result = await apollo.current.query({
+        query: $raffle.query.campaigns,
+      })
+
+      if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('campaigns')) {
+        const campaigns = result.data.campaigns
+        
+        dispatch($raffle.set.all(campaigns.map(item => {
+          return {
+            ...item,
+            rewardAmount: item.rewardAmount / Math.pow(10, 6),
+          }
+        })))
+      }
+  }
 
   const handleConnectWallet = async (noWallet = null) => {
     if (noWallet) {
@@ -144,7 +181,7 @@ const LandingPage = () => {
         <Image src="/animations/campaign_2.gif" width={448} height={448} alt="" />
 
         <App.Flex className={styles.bottomSection}>
-          <App.Flex center gap={8}>
+          <App.Flex center gap={4}>
             <App.Flex center className={styles.circleWrapper}>
               <App.Flex className={styles.dot} />
               <App.Flex className={styles.innerCircle} />
@@ -160,7 +197,7 @@ const LandingPage = () => {
             </App.Flex>
           </App.Flex>
           
-          <App.Flex center gap={8}>
+          <App.Flex center gap={4}>
             <App.Flex center className={styles.circleWrapper}>
               <App.Flex className={styles.dot} />
               <App.Flex className={styles.innerCircle} />
@@ -169,7 +206,7 @@ const LandingPage = () => {
             <App.Flex gap={4}>
               <App.Text color="#B9B8C5" size={12} weight={700}>
                 {
-                  totalReward ?? <App.Loader size={12} />
+                  totalReward ? '$' + totalReward : <App.Loader size={12} />
                 }
               </App.Text>
               <App.Text color="#B9B8C5" size={12}>rewards distributed so far</App.Text>
