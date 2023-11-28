@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
@@ -7,13 +9,44 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
 
+import $app from '@/store/app'
+
 import styles from './styles.module.scss'
 
 const LandingPage = () => {
+  const dispatch = useDispatch()
   const router = useRouter()
   const { wallet, connect, getConnectorName } = useWalletConnect()
 
-  const handleConnectWallet = async () => {
+  const campaigns = useSelector(({ $raffle }) => $raffle.all)
+
+  const [walletsCount, setWalletsCount] = useState(null)
+  const [totalReward, setTotalReward] = useState(0)
+
+  useEffect(() => {
+    dispatch($app.get.walletConnectedCount).then(res => {
+      if (res.data) {
+        setWalletsCount(res.data.count)
+      }
+    })
+  }, [])
+
+  useEffect(() => {
+    console.log('campaigns', campaigns);
+    if (campaigns.length) {
+      const sum = campaigns.reduce((accumulator, currentValue) => {
+        return accumulator + currentValue.rewardAmount * 1
+      }, 0)
+
+      setTotalReward(sum)
+    }
+  }, [campaigns])
+
+  const handleConnectWallet = async (noWallet = null) => {
+    if (noWallet) {
+      trackEvent("Click Don't have a wallet")
+    }
+
     if ( ! wallet) {
       trackEvent('Wallet Connect Clicked', {
         'Source': getPageName(),
@@ -90,11 +123,17 @@ const LandingPage = () => {
 
           <App.Flex align="center" className={styles.buttonsWrapper} gap={32}>
             <App.Button rounded primary sx={{paddingLeft: 32, paddingRight: 32}} onClick={handleConnectWallet}>
-              Connect Wallet Now
-              <App.Icon icon="stars" />
+              {
+                wallet
+                  ? 'Earn Rewards'
+                  : <>
+                      Connect Wallet Now
+                      <App.Icon icon="stars" />      
+                    </>
+              }
             </App.Button>
             
-            <App.Text className={styles.link}>
+            <App.Text className={styles.link} onClick={() => handleConnectWallet(true)}>
               Don&apos;t have a wallet?
             </App.Text>
           </App.Flex>
@@ -102,21 +141,37 @@ const LandingPage = () => {
       </App.Flex>
 
       <App.Flex center className={styles.rightSide}>
-        <Image src="/animations/campaign.gif" width={448} height={448} alt="" />
+        <Image src="/animations/campaign_2.gif" width={448} height={448} alt="" />
 
         <App.Flex className={styles.bottomSection}>
           <App.Flex center gap={8}>
-            <App.Flex className={styles.circle} />
+            <App.Flex center className={styles.circleWrapper}>
+              <App.Flex className={styles.dot} />
+              <App.Flex className={styles.innerCircle} />
+            </App.Flex>
+
             <App.Flex gap={4}>
-              <App.Text color="#B9B8C5" size={12} weight={700}>1,46,654</App.Text>
+              <App.Text color="#B9B8C5" size={12} weight={700}>
+                {
+                  walletsCount ?? <App.Loader size={12} />
+                }
+              </App.Text>
               <App.Text color="#B9B8C5" size={12}>wallets connected so far</App.Text>
             </App.Flex>
           </App.Flex>
           
           <App.Flex center gap={8}>
-            <App.Flex className={styles.circle} />
+            <App.Flex center className={styles.circleWrapper}>
+              <App.Flex className={styles.dot} />
+              <App.Flex className={styles.innerCircle} />
+            </App.Flex>
+
             <App.Flex gap={4}>
-              <App.Text color="#B9B8C5" size={12} weight={700}>$2,13,463</App.Text>
+              <App.Text color="#B9B8C5" size={12} weight={700}>
+                {
+                  totalReward ?? <App.Loader size={12} />
+                }
+              </App.Text>
               <App.Text color="#B9B8C5" size={12}>rewards distributed so far</App.Text>
             </App.Flex>
           </App.Flex>

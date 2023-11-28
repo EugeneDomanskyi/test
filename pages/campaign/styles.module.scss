@@ -118,11 +118,29 @@
       bottom: 32px;
       gap: 32px;
 
-      .circle {
-        width: 13px;
-        height: 13px;
-        border-radius: 50%;
-        background: #53F19C;
+      .circleWrapper {
+        position: relative;
+        z-index: 1;
+        width: 30px;
+        height: 30px;
+
+        .dot {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: #53F19C;
+          z-index: 1;
+        }
+  
+        .innerCircle {
+          position: absolute;
+          z-index: 0;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          background: #173435;
+          animation: pulse-ring 1s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
       }
     }
   }
@@ -251,5 +269,15 @@
   }
   100% {
     left: -6px;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(.33);
+  }
+  80%, 100% {
+    // opacity: 0;
+    transform: scale(1);
   }
 }
