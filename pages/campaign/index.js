@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
+import cn from 'classnames'
 
 import { trackEvent, getPageName } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -98,6 +99,8 @@ const LandingPage = () => {
           'Type': walletName,
         })
       }
+    } else {
+      router.push('/earn')
     }
   }
 
@@ -158,7 +161,7 @@ const LandingPage = () => {
             </App.Flex>
           </App.Flex>
 
-          <App.Flex align="center" className={styles.buttonsWrapper} gap={32}>
+          <App.Flex align="center" className={styles.buttonsWrapper}>
             <App.Button rounded primary sx={{paddingLeft: 32, paddingRight: 32}} onClick={handleConnectWallet}>
               {
                 wallet
@@ -170,15 +173,19 @@ const LandingPage = () => {
               }
             </App.Button>
             
-            <App.Text className={styles.link} onClick={() => handleConnectWallet(true)}>
-              Don&apos;t have a wallet?
-            </App.Text>
+            {
+              ! wallet
+                ? <App.Text className={styles.link} onClick={() => handleConnectWallet(true)}>
+                    Don&apos;t have a wallet?
+                  </App.Text>
+                : null
+            }
           </App.Flex>
         </App.Flex>
       </App.Flex>
 
       <App.Flex center className={styles.rightSide}>
-        <Image src="/animations/campaign_2.gif" width={448} height={448} alt="" />
+        <Image src="/animations/campaign_2.gif" width={320} height={320} alt="" />
 
         <App.Flex className={styles.bottomSection}>
           <App.Flex center gap={4}>
@@ -200,7 +207,7 @@ const LandingPage = () => {
           <App.Flex center gap={4}>
             <App.Flex center className={styles.circleWrapper}>
               <App.Flex className={styles.dot} />
-              <App.Flex className={styles.innerCircle} />
+              <App.Flex className={cn(styles.innerCircle, styles.delayed)} />
             </App.Flex>
 
             <App.Flex gap={4}>

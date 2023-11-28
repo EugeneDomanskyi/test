@@ -90,6 +90,7 @@
       
       .buttonsWrapper {
         margin-top: 32px;
+        gap: 32px;
 
         .link {
           color: #4C69FF;
@@ -140,6 +141,10 @@
           border-radius: 50%;
           background: #173435;
           animation: pulse-ring 1s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+
+          &.delayed {
+            animation-delay: .7s;
+          }
         }
       }
     }
@@ -184,6 +189,7 @@
       .bottomSection {
         bottom: 16px;
         flex-direction: column;
+        align-items: flex-start;
   
         .circle {
           width: 10px;
@@ -195,8 +201,8 @@
     .leftSide {
       flex: 1;
       padding: 0 16px;
-      padding-top: 64px;
-      padding-bottom: 64px;
+      padding-top: 16px;
+      padding-bottom: 120px;
   
       .contentWrapper {
         height: 100%;
@@ -236,6 +242,14 @@
   
         .buttonsWrapper {
           flex-direction: column;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          gap: 8px;
+          gap: 8px;
+          padding: 8px 0;
+          background: #08051C;
   
           .link {
             color: #4C69FF;

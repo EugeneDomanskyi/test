@@ -155,7 +155,7 @@ const get = {
     })
 
     const searched = filtered.filter(item => {
-      return item.title.toLowerCase().includes(search.trim().toLowerCase())
+      return item.title ? item.title.toLowerCase().includes(search.trim().toLowerCase()) : null
     })
 
     const [sortBy, sortDirection] = sort.split(':')
