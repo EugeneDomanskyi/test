@@ -2,6 +2,7 @@ import { createSelector, createSlice } from '@reduxjs/toolkit'
 import { setCookie } from 'nookies'
 import { gql } from '@apollo/client'
 import { CHAINS } from '@/config'
+import { request } from './index'
 
 export const appSlice = createSlice({
   name: '$app',
@@ -55,6 +56,12 @@ export const get = {
   }),
 }
 
+export const post = {
+  sendVid: (data) => {
+    return request("https://us-central1-vibrant-waters-399406.cloudfunctions.net/connect-wallet-vid", 'POST', {api: 'remote', data})
+  },
+}
+
 const query = {
   totalVolume: gql`
     query totalVolume {
@@ -70,4 +77,5 @@ export default {
   set: appSlice.actions,
   query,
   get,
+  post,
 }
