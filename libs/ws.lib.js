@@ -19,8 +19,11 @@ class Socket {
     })
   }
 
-  on = (event, cb) => {
-    this.callbacks[event] = cb
+  on = (event, cbId, cb) => {
+    if (!this.callbacks[event]) {
+      this.callbacks[event] = {}
+    }
+    this.callbacks[event][cbId] = cb
   }
 
   subscribe = (channelId) => {
@@ -34,7 +37,12 @@ class Socket {
   handleMessage = (res) => {
     const json = JSON.parse(res.data)
     if (this.callbacks[json.action]) {
-      this.callbacks[json.action](json.data)
+      Object.values(this.callbacks[json.action]).forEach(cb => {
+        cb(json.data)
+      })
+      // this.callbacks[json.action].forEach(callback => {
+      //   callback(json.data)
+      // })
       this.handleAction(json)
     }
   }

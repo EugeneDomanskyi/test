@@ -30,7 +30,7 @@ const OrderBook = ({ type, version, onClickOrder }) => {
   const maxSellVolume = orderBook.sell.reduce((acc, { quantity }) => acc + quantity * 1, 0)
 
   useEffect(() => {
-    Socket.on('order_book_updated', async res => {
+    Socket.on('order_book_updated', 'order_book', async res => {
       const sides = {Asks: 'sell', Bids: 'buy'}
       const temp = Object.entries(res).reduce((acc, [side, values]) => ({
         ...acc,
