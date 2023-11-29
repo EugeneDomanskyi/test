@@ -43,6 +43,12 @@
       height: 100%;
       justify-content: center;
 
+      h1 {
+        font-size: 55px;
+        font-weight: 800;
+        margin: 0;
+      }
+
       .rewardText {
         color: #FFD600;
         position: relative;
@@ -207,6 +213,10 @@
       .contentWrapper {
         height: 100%;
         justify-content: center;
+
+        h1 {
+          font-size: 36px;
+        }
   
         .rewardText {
           color: #FFD600;

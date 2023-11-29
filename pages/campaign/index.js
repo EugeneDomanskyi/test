@@ -122,10 +122,10 @@ const LandingPage = () => {
       <App.Flex column className={styles.leftSide}>
         <App.Flex column className={styles.contentWrapper} gap={32}>
           <App.Flex column align="flex-start">
-            <App.Text size={[55, 36]} weight={800}>
-              Trade on Tegro &<br />
-              Share Rewards worth
-            </App.Text>
+            <h1 className={styles.title}>
+              Connect & Win<br />
+              Rewards Worth $10,000
+            </h1>
             
             <App.Text size={64} weight={800} className={styles.rewardText}>
               $10,000
@@ -165,12 +165,10 @@ const LandingPage = () => {
             <App.Button rounded primary sx={{paddingLeft: 32, paddingRight: 32}} onClick={handleConnectWallet}>
               {
                 wallet
-                  ? 'Trade Tokens'
-                  : <>
-                      Connect Wallet Now
-                      <App.Icon icon="stars" />      
-                    </>
+                  ? 'Trade Now'
+                  : 'Connect Wallet Now'
               }
+              <App.Icon icon="stars" />    
             </App.Button>
             
             {
