@@ -92,7 +92,7 @@ const LandingPage = () => {
 
       const result = await connect()
       if (result) {
-        router.push('/earn')
+        router.push('/exchange')
         const walletName = await getConnectorName()
         trackEvent('Wallet Connect Success', {
           'Source': getPageName(),
@@ -100,7 +100,7 @@ const LandingPage = () => {
         })
       }
     } else {
-      router.push('/earn')
+      router.push('/exchange')
     }
   }
 
@@ -165,7 +165,7 @@ const LandingPage = () => {
             <App.Button rounded primary sx={{paddingLeft: 32, paddingRight: 32}} onClick={handleConnectWallet}>
               {
                 wallet
-                  ? 'Earn Rewards'
+                  ? 'Trade Tokens'
                   : <>
                       Connect Wallet Now
                       <App.Icon icon="stars" />      

@@ -57,7 +57,7 @@ export const get = {
 
   walletConnectedCount: () => {
     return request('https://us-central1-vibrant-waters-399406.cloudfunctions.net/fetch_connected_wallet_count', 'GET', {api: 'remote'}) 
-  }
+  },
 }
 
 const query = {
