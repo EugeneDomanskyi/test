@@ -237,26 +237,21 @@ const api = {
             Filled: 'completed',
             Cancelled: 'cancelled',
           }
-          const list = Object.entries(res.Orders).reduce((acc, [key, values]) => {
-            return [...acc, ...values.map(order => ({...order, status: orderTypes[key]}))]
-          }, [])
-          return list.map((data) => {
-            return {
-              id: data.OrderId,
-              side: data.Type,
-              baseCurrency: (res.Tokens[data.BaseAsset].symbol || data.BaseAsset.slice(0, 3)),
-              quoteCurrency: (res.Tokens[data.QuoteAsset].symbol || data.QuoteAsset.slice(0, 3)),
-              image: data.image,
-              contractAddress: data.BaseAsset,
-              quantity: data.OriginalVolume,
-              price: data.Price,
-              quantityFilled: data.OriginalVolume - data.Volume,
-              status: data.status,
-              time: moment(data.CreatedAt).format('DD MMM, HH:mm'),
-              timeMoment: moment(data.CreatedAt),
-              orderHash: data.OrderHash,
-            }
-          })
+          return res.map((data) => ({
+            id: data.orderId,
+            side: data.side,
+            baseCurrency: data.baseCurrency,
+            quoteCurrency: data.quoteCurrency,
+            image: data.image,
+            contractAddress: data.contractAddress,
+            quantity: data.quantity,
+            price: data.price,
+            quantityFilled: data.quantityFilled,
+            status: orderTypes[data.status],
+            time: moment(data.time).format('DD MMM, HH:mm'),
+            timeMoment: moment(data.time),
+            orderHash: data.orderHash,
+          }))
         }
       }
       return fetch(`/api/tokens/orders/${network.id}/${address}`).then(async res => {
@@ -316,8 +311,17 @@ api.get.tokens.orderBook = async ({ address, ...rest }) => {
   return json
 }
 
-api.get.tokens.trades = ({ address, blockchain, ...rest }) => {
+api.get.tokens.trades = async ({ address, blockchain }) => {
   const network = CHAINS.find(chain => chain.code === blockchain)
+  if (network.useBackend) {
+    const res = await request('market/trades', 'GET', {api: 'backend', chain_id: network.id, base_asset: address, quote_asset: address})
+    return res.map((trade) => ({
+      ...trade,
+      priceFormatted: trade.price,
+      orderInvalidReason: 'order filled',
+      timestamp: new Date(trade.timestamp).getTime()/1000,
+    }))
+  }
   return fetch(`/api/tokens/sales/${network.id}/${network.usdtContract}/${address}`).then(async res => {
     return await res.json()
   })

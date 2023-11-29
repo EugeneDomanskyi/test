@@ -9,13 +9,11 @@ import Socket from '@/libs/ws.lib'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
-import $modal from '@/store/modal'
 import $alert from '@/store/alert'
 
 import App from '@/components/App'
 import { trackEvent, getPageName } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
-import useInterval from '@/myhooks/useInterval'
 import useOrders from '@/myhooks/useOrders'
 
 import OrderDetails from '@/components/Exchange/OrderDetails'
@@ -53,14 +51,13 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
   useEffect(() => {
     if (type === 'tokens') {
-      Socket.on('order_placed', (data) => {
+      Socket.on('order_placed', 'my_orders', (data) => {
         getOrders()
       })
-      Socket.on('order_filled', () => {
+      Socket.on('order_filled', 'my_orders', () => {
         getOrders()
       })
     }
-   
   }, [wallet, type, blockchain.code])
 
   useEffect(() => {
@@ -237,7 +234,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
   }
 
-  const getOrders = async () => {
+  const getOrders = async (event) => {
     const res = await $orders.api.get[type]({
       blockchain: blockchain.code,
       maker: wallet,
@@ -260,7 +257,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
     return type !== 'tokens' || !hideCancelledOrders || (order.status !== 'cancelled')
   }
 
-  useInterval(getOrders, wallet ? 15000 : null)
+  // useInterval(getOrders, wallet ? 15000 : null)
 
   return (
     <App.Flex column className={cn(styles.container, {[styles[version]]: version})}>
