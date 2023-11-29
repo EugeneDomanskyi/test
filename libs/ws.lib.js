@@ -40,11 +40,8 @@ class Socket {
       Object.values(this.callbacks[json.action]).forEach(cb => {
         cb(json.data)
       })
-      // this.callbacks[json.action].forEach(callback => {
-      //   callback(json.data)
-      // })
-      this.handleAction(json)
     }
+    this.handleAction(json)
   }
 }
 
