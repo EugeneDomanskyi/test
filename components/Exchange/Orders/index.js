@@ -54,7 +54,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
       Socket.on('order_placed', 'my_orders', (data) => {
         getOrders()
       })
-      Socket.on('order_filled', 'my_orders', () => {
+      Socket.on('order_submitted', 'my_orders', () => {
         getOrders()
       })
     }

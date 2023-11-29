@@ -70,8 +70,14 @@ const Exchange = () => {
       case 'order_placed':
         dispatch($alert.set.success({ title: 'Order placed successfully', text: 'Your Order has been placed successfully!' }))
         break
-      case 'order_filled':
-        dispatch($alert.set.success({ title: 'Order filled successfully' }))
+      case 'order_submitted':
+        dispatch($alert.set.success({ title: 'Order submitted successfully' }))
+        break
+      case 'chain_event_OrderFilled':
+        dispatch($alert.set.success({ title: 'Order filled on chain' }))
+        break
+      case 'chain_event_OrderCancelled':
+        dispatch($alert.set.success({ title: 'Order cancelled on chain' }))
         break
     }
   }, [])
