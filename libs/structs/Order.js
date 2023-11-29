@@ -392,6 +392,7 @@ class TOKEN extends Order {
     this.status = data.status
     this.time = moment(data.createDateTime).format('DD MMM, HH:mm')
     this.timeMoment = moment(data.createDateTime)
+    this.orderHash = data.orderHash
   }
 
   get itemPrice () {
@@ -602,7 +603,7 @@ class TOKEN extends Order {
       const volume_precision = parseUnits(`${amount}`, type === 'buy' ? takerAsset.decimals : makerAsset.decimals).toString()
       
       const balance = await Order.getBalance(walletClient.account.address, makerAsset.address)
-      
+
       if (balance < spendAmount) {
         reject({success: false, message: 'Insufficient balance', type: 'balance'})
         return 
@@ -629,8 +630,8 @@ class TOKEN extends Order {
       callback('transaction_completed', {success: true})
       const post = {
         chain_id: chainId,
-        quote_asset: type === 'buy' ? makerAsset.address : takerAsset.address,
-        base_asset: type === 'buy' ? takerAsset.address : makerAsset.address,
+        base_asset: type === 'buy' ? makerAsset.address : takerAsset.address,
+        quote_asset: type === 'buy' ? takerAsset.address : makerAsset.address,
         side: (type === 'buy')*1,
         volume_precision: volume_precision,
         price_precision: price_precision,
