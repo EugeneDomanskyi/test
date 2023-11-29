@@ -50,13 +50,13 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
               if (chain.id != newBlockchain.id) {
                 const result = await changeNetwork(newBlockchainCode)
                 if (result) {
-                  dispatch($app.set.code(newBlockchain))
+                  dispatch($app.set.code(newBlockchain.code))
                   return
                 }
               }
             }
 
-            dispatch($app.set.code(newBlockchain))
+            dispatch($app.set.code(newBlockchain.code))
           }
         } else {
           const newBlockchain = pageBlockchains.find(item => item.code == queryBlockchain)
