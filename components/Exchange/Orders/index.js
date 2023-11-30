@@ -157,9 +157,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
       'Network': blockchain.code.toUpperCase(),
     }
     trackEvent('Cancel Order Submit', eventPost)
-
     if (blockchain?.useBackend) {
-      const result = await $orders.api.cancel({ order_hash: order.id })
+      const result = await $orders.api.cancel({ order_hash: order.orderHash })
       if (result) {
         trackEvent('Cancel Order Success', eventPost)
         dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
