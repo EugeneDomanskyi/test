@@ -278,6 +278,11 @@ const api = {
       return request('market/orders','POST', {api: 'backend', ...params})
     }
   },
+
+  trades: (params) => {
+    return request(`market/orders/trades/${params.id}`, 'GET', { api: 'backend', ...params })
+  },
+
   cancel: (params) => {
     return request(`market/orders/cancel`, 'POST', { api: 'backend', ...params })
   },
@@ -315,12 +320,16 @@ api.get.tokens.trades = async ({ address, blockchain }) => {
   const network = CHAINS.find(chain => chain.code === blockchain)
   if (network.useBackend) {
     const res = await request('market/trades', 'GET', {api: 'backend', chain_id: network.id, base_asset: address, quote_asset: address})
-    return res.map((trade) => ({
-      ...trade,
-      priceFormatted: trade.price,
-      orderInvalidReason: 'order filled',
-      timestamp: new Date(trade.timestamp).getTime()/1000,
-    }))
+    if (res) {
+      return res.map((trade) => ({
+        ...trade,
+        priceFormatted: trade.price,
+        orderInvalidReason: 'order filled',
+        timestamp: new Date(trade.timestamp).getTime()/1000,
+      }))
+    }
+
+    return []
   }
   return fetch(`/api/tokens/sales/${network.id}/${network.usdtContract}/${address}`).then(async res => {
     return await res.json()
