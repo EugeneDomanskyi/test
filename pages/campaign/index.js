@@ -140,24 +140,26 @@ const LandingPage = () => {
             </App.Text>
           </App.Flex>
 
-          <App.Flex align="center" className={styles.stepsWrapper}>
-            <App.Flex className={styles.stepBlock} gap={16}>
-              <App.Flex center className={styles.stepCircle}>1</App.Flex>
-              <App.Text size={14} weight={600}>Connect Wallet</App.Text>
-            </App.Flex>
+          <App.Flex>
+            <App.Flex className={styles.stepsWrapper}>
+              <App.Flex className={styles.stepBlock} gap={16}>
+                <App.Flex center className={styles.stepCircle}>1</App.Flex>
+                <App.Text size={14} weight={600}>Connect Wallet</App.Text>
+              </App.Flex>
 
-            <App.Flex className={styles.stepLine} />
+              <App.Flex className={styles.stepLine} />
 
-            <App.Flex className={styles.stepBlock} gap={16}>
-              <App.Flex center className={styles.stepCircle}>2</App.Flex>
-              <App.Text size={14} weight={600}>Trade Tokens</App.Text>
-            </App.Flex>
+              <App.Flex className={styles.stepBlock} gap={16}>
+                <App.Flex center className={styles.stepCircle}>2</App.Flex>
+                <App.Text size={14} weight={600}>Trade Tokens</App.Text>
+              </App.Flex>
 
-            <App.Flex className={styles.stepLine} />
+              <App.Flex className={styles.stepLine} />
 
-            <App.Flex className={styles.stepBlock} gap={16}>
-              <App.Flex center className={styles.stepCircle}>3</App.Flex>
-              <App.Text size={14} weight={600}>Earn Rewards</App.Text>
+              <App.Flex className={styles.stepBlock} gap={16}>
+                <App.Flex center className={styles.stepCircle}>3</App.Flex>
+                <App.Text size={14} weight={600}>Earn Rewards</App.Text>
+              </App.Flex>
             </App.Flex>
           </App.Flex>
 

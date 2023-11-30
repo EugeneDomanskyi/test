@@ -234,6 +234,8 @@
 
         .stepsWrapper {
           flex-direction: column;
+          align-items: flex-start;
+          
           .stepBlock {
             width: 170px;
           }
