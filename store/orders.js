@@ -253,6 +253,7 @@ const api = {
             orderHash: data.orderHash,
           }))
         }
+        return
       }
       return fetch(`/api/tokens/orders/${network.id}/${address}`).then(async res => {
         const json = await res.json()
