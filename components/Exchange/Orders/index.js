@@ -114,16 +114,15 @@ const Orders = ({global, type, version, onClickOrder}) => {
     handleDialogOpen('cancelAll')()
   }
 
-  const handleCancelAllConfirm = (e) => {
-    // Cancel All
-    // handlePressCancel(orderForCancel)(e)
-
+  const handleCancelAllConfirm = async () => {
     handleDialogClose('cancelAll')()
-    handleDialogOpen('approve')()
-    setTimeout(() => {
-      handleDialogClose('approve')()
+
+    const hashes = orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map(order => order.orderHash )
+    const result = await $orders.api.cancelAll({ wallet, order_hashes: hashes })
+    if (result) {
+      getOrders()
       dispatch($alert.set.success({ title: 'All Orders Cancelled', text: 'All your live orders has been cancelled successfully!' }))
-    }, 5000)
+    }
   }
 
   const handleDialogOpen = (key) => () => {

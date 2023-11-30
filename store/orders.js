@@ -287,6 +287,10 @@ const api = {
   cancel: (params) => {
     return request(`market/orders/cancel`, 'POST', { api: 'backend', ...params })
   },
+
+  cancelAll: (params) => {
+    return request(`market/orders/cancel/${params.wallet}`, 'POST', { api: 'backend', ...params })
+  },
 }
 
 api.get.nfts.orderBook = (params) => {
