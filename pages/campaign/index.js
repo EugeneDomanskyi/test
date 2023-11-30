@@ -141,7 +141,7 @@ const LandingPage = () => {
           </App.Flex>
 
           <App.Flex>
-            <App.Flex className={styles.stepsWrapper}>
+            <App.Flex align="center" className={styles.stepsWrapper}>
               <App.Flex className={styles.stepBlock} gap={16}>
                 <App.Flex center className={styles.stepCircle}>1</App.Flex>
                 <App.Text size={14} weight={600}>Connect Wallet</App.Text>
