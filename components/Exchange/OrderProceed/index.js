@@ -9,6 +9,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import Order from '@/libs/structs/Order'
 import { INCH_CONTRACTS, TEGRO_FILL_ORDERS_CONTRACTS } from '@/config'
 import { trackEvent } from '@/libs/analytics.lib'
+import { tradeVolumeCheck } from '@/libs/magic-square.lib'
 
 import App from '@/components/App'
 import Tabs from './Tabs'
@@ -192,6 +193,7 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
     }
     const allowanceResults = await Promise.all(allowances.map(fn => fn()))
     if (allowanceResults.every(res => res.success)) {
+      tradeVolumeCheck()
       trackEvent('Confirm Order Submit', {
         'Base Currency': side === 'buy' ? makerAsset.symbol : takerAsset.symbol,
         'Quote Currency': 'USDT',

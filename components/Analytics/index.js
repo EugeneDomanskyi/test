@@ -4,6 +4,7 @@ import amplitude from 'amplitude-js'
 import Smartlook from 'smartlook-client'
 import { v4 as uuid } from 'uuid'
 import { useAccount, useNetwork } from 'wagmi'
+import { connectWalletVid } from '@/libs/magic-square.lib'
 
 const Analytics = () => {
   const router = useRouter()
@@ -30,14 +31,7 @@ const Analytics = () => {
   useEffect(() => {
     if (isConnected && address && chain?.id) {
       fetch(`https://39bd5ye5v9.execute-api.eu-north-1.amazonaws.com/connected_wallets?wallet_address=${address}&chain_id=${chain.id}`, { method: 'POST' })
-      const magicSquareVid = localStorage.getItem('ms_vid')
-      if (magicSquareVid) {
-        const post = {
-          wallet_address: address,
-          vid: magicSquareVid
-      }
-        fetch(`https://us-central1-vibrant-waters-399406.cloudfunctions.net/connect-wallet-vid`, { method: 'POST', body: JSON.stringify(post) })
-      }
+      connectWalletVid(address)
     }
   }, [address, isConnected, chain?.id])
 

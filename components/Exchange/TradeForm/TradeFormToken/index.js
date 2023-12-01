@@ -16,6 +16,8 @@ import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
 import numeral from 'numeral'
 
+import { tradeVolumeCheck } from '@/libs/magic-square.lib'
+
 const trimLeadingZerosBeforeDecimal = number => {
   return number.toString().replace(/^0+(?=\d+(\.\d*)?$)/, '').replace(/^\.(\d*)$/, '0.$1')
 }
@@ -178,6 +180,8 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
   }
 
   const handleSubmit = async () => {
+    console.log('handleSubmit!');
+    tradeVolumeCheck(wallet)
     const network = await changeNetwork(blockchain.code)
     if (!network) {
       return
