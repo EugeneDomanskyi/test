@@ -25,7 +25,7 @@ const Sales = ({onClickSale, version, type}) => {
 
   useEffect(() => {
     if (type === 'tokens') {
-      Socket.on('order_filled', 'trades', () => {
+      Socket.on('order_submitted', 'trades', () => {
         getTrades()
       })
     }
