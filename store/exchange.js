@@ -224,8 +224,15 @@ const api = {
         return res.orders
       })
     },
-    tokenChartData: (buyAsset, blockchain, interval) => {
+    tokenChartData: async (buyAsset, blockchain, interval) => {
       const network = CHAINS.find(chain => chain.code === blockchain)
+      if (network.useBackend) {
+        const res = await request(`market/chart`, 'GET', {api: 'backend', chain_id: network.id, base_asset: network.usdtContract, quote_asset: buyAsset, interval: interval})
+        if (res) {
+          return {data: res.sort((a, b) => a.time - b.time)}
+        }
+        return null
+      }
       return fetch(`https://charts.1inch.io/v1.0/chart/aggregated/candle/${buyAsset}/${network.usdtContract}/${interval}/${network.id}`, {cache: 'force-cache'})
         .then(async res => res.ok ? await res.json() : null)
     }
