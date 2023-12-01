@@ -114,16 +114,15 @@ const Orders = ({global, type, version, onClickOrder}) => {
     handleDialogOpen('cancelAll')()
   }
 
-  const handleCancelAllConfirm = (e) => {
-    // Cancel All
-    // handlePressCancel(orderForCancel)(e)
-
+  const handleCancelAllConfirm = async () => {
     handleDialogClose('cancelAll')()
-    handleDialogOpen('approve')()
-    setTimeout(() => {
-      handleDialogClose('approve')()
+
+    const hashes = orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map(order => order.orderHash )
+    const result = await $orders.api.cancelAll({ wallet, order_hashes: hashes })
+    if (result) {
+      getOrders()
       dispatch($alert.set.success({ title: 'All Orders Cancelled', text: 'All your live orders has been cancelled successfully!' }))
-    }, 5000)
+    }
   }
 
   const handleDialogOpen = (key) => () => {
@@ -306,10 +305,16 @@ const Orders = ({global, type, version, onClickOrder}) => {
                 {type === 'nfts' ? (
                   current?.image ? <Image alt="" src={current?.image} width={20} height={20} /> : null
                 ) : (
-                  <App.Text color="#B9B8C5" size={[10, 12]} weight={600} height={1}>{current?.symbol} - USDT Orders</App.Text>
+                  version == 'mobile' ? (
+                    <App.Text size={12} height={1}>{current?.symbol}/USDT</App.Text>
+                  ) : (
+                    <App.Text color="#B9B8C5" size={10} weight={600} height={1}>{current?.symbol} - USDT Orders</App.Text>
+                  )
                 )}
               </App.Flex>
-            ) : null}
+            ) : (
+              <App.Flex />
+            )}
 
             {type === 'tokens' ? (
               ordersType === 'closed' ? (
@@ -324,10 +329,14 @@ const Orders = ({global, type, version, onClickOrder}) => {
                 <App.Text color="#B9B8C5" size={[10, 12]} weight={600} height={1}>{version != 'mobile' ? 'Hide All Cancelled Orders' : 'Hide Cancelled Orders'}</App.Text>
               </App.Flex>
               ) : (
-                blockchain.useBackend ? (
-                  <App.Button variant="muted" small onClick={handleCancelAllClick}>
-                    Cancel All
-                  </App.Button>
+                blockchain?.useBackend ? (
+                  version == 'mobile' ? (
+                    <App.Text weight={600} color="#FFAF38" onClick={handleCancelAllClick}>CANCEL ALL</App.Text>
+                  ) : (
+                    <App.Button variant="muted" small onClick={handleCancelAllClick}>
+                      Cancel All
+                    </App.Button>
+                  )
                 ) : null
               )
             ) : null}
@@ -451,7 +460,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                               </svg>
 
                               <App.Flex row center className={styles.progressText}>
-                                <App.Text size={12} weight={600} color={order.side == 'buy' ? '#53F19C' : '#C00C4D'}>{percent}%</App.Text>
+                                <App.Text size={10} weight={600} color={order.side == 'buy' ? '#53F19C' : '#C00C4D'}>{percent}%</App.Text>
                               </App.Flex>
                             </div>
                           </App.Flex>
@@ -459,7 +468,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
                         <App.Flex row justify="space-between" flex={1}>
                           <App.Flex column gap={8}>
-                            <App.Flex row center gap={10} height={25} className={styles.currency} onClick={handlePressCopy(order)}>
+                            <App.Flex row center gap={10} height={25} className={styles.currency} onClick={handleClickDetails(order)}>
                               <App.Text size={12} weight={700} height={1}>{order.quoteCurrency} <App.Text inline size={10} weight={700} color="#5E5C6B" height={1}>/ {order.baseCurrency}</App.Text></App.Text>
                               <App.Icon icon="chevron-right2" />
                             </App.Flex>
@@ -526,11 +535,11 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
           <App.Flex row gap={16} sx={{padding: 16}}>
             <App.Flex flex={1}>
-              <App.Button xl fullWidth primary outlined onClick={handleCancelConfirm}>Cancel</App.Button>
+              <App.Button xl fullWidth primary noPadding outlined onClick={handleCancelConfirm}>Cancel</App.Button>
             </App.Flex>
 
             <App.Flex flex={1}>
-              <App.Button xl fullWidth primary onClick={handleDialogClose('cancel')}>Don&apos;t Cancel</App.Button>
+              <App.Button xl fullWidth primary noPadding onClick={handleDialogClose('cancel')}>Don&apos;t Cancel</App.Button>
             </App.Flex>
           </App.Flex>
         </App.Flex>
@@ -544,11 +553,11 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
           <App.Flex row gap={16} sx={{padding: 16}}>
             <App.Flex flex={1}>
-              <App.Button xl fullWidth primary outlined onClick={handleCancelAllConfirm}>Cancel All Orders</App.Button>
+              <App.Button xl fullWidth primary noPadding outlined onClick={handleCancelAllConfirm}>Cancel All Orders</App.Button>
             </App.Flex>
 
             <App.Flex flex={1}>
-              <App.Button xl fullWidth primary onClick={handleDialogClose('cancelAll')}>Don&apos;t Cancel</App.Button>
+              <App.Button xl fullWidth primary noPadding onClick={handleDialogClose('cancelAll')}>Don&apos;t Cancel</App.Button>
             </App.Flex>
           </App.Flex>
         </App.Flex>

@@ -1,15 +1,40 @@
 import { useSelector } from 'react-redux'
+import moment from 'moment'
 import cn from 'classnames'
 
 import $app from '@/store/app'
+import $orders from '@/store/orders'
 
 import App from '@/components/App'
 
-import styles from './styles.module.scss'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
+
+import useWalletConnect from '@/myhooks/wallet-connect'
+
+import styles from './styles.module.scss'
 
 const OrderDetails = ({order}) => {
   const blockchain = useSelector($app.get.blockchain)
+  const { scanUrl } = useWalletConnect()
+
+  const [loading, setLoading] = useState(true)
+  const [trades, setTrades] = useState([])
+
+  useEffect(() => {
+    if (blockchain?.useBackend) {
+      fetchTrades()
+    }
+  }, [blockchain?.useBackend])
+
+  const fetchTrades = async () => {
+    const result = await $orders.api.trades({ id: order.id })
+    if (result && result.length) {
+      setTrades(result)
+    }
+
+    setLoading(false)
+  }
 
   return (
     <App.Flex column fullWidth gap={16} sx={{ paddingBottom: 16 }}>
@@ -87,22 +112,30 @@ const OrderDetails = ({order}) => {
             </App.Flex>
 
             <App.Flex column fullWidth className={styles.scrollBox}>
-              <App.Flex row fullWidth gap={16} className={styles.row}>
-                <App.Flex row width={100} align="center">
-                  <App.Text size={12} weight={600} height={1} color="#B9B8C5">21 Jun, 10:47:54</App.Text>
-                </App.Flex>
+              {loading ? (
+                <App.LoaderBlock height={40} />
+              ) : (
+                trades.map((item) => (
+                  <App.Flex key={item.id} row fullWidth gap={16} className={styles.row}>
+                    <App.Flex row width={100} align="center">
+                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{moment(item.time).format('DD MMM, HH:mm:ss')}</App.Text>
+                    </App.Flex>
 
-                <App.Flex row width={100} align="center" flex={1}>
-                  <App.Text size={12} weight={600} height={1} color="#B9B8C5">0.32 ETH</App.Text>
-                </App.Flex>
+                    <App.Flex row width={100} align="center" flex={1}>
+                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{item.amount} {order.quoteCurrency}</App.Text>
+                    </App.Flex>
 
-                <App.Flex row width={100} align="center" gap={10} justify="flex-end" flex={1}>
-                  <App.Text size={12} weight={600} height={1} color="#B9B8C5">354 USDT</App.Text>
-                  <a href="https://etherscan.org" target="_blank" rel="noreferrer" style={{ lineHeight: 0 }}>
-                    <App.Icon icon="external-link" />
-                  </a>
-                </App.Flex>
-              </App.Flex>
+                    <App.Flex row width={100} align="center" gap={10} justify="flex-end" flex={1}>
+                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{item.price} {order.baseCurrency}</App.Text>
+                      {item.txHash ? (
+                        <a href={scanUrl(item.txHash, 'tx', blockchain)} target="_blank" rel="noreferrer" style={{ lineHeight: 0 }}>
+                          <App.Icon icon="external-link" />
+                        </a>
+                      ) : null}
+                    </App.Flex>
+                  </App.Flex>
+                ))
+              )}
             </App.Flex>
           </App.Flex>
         </>

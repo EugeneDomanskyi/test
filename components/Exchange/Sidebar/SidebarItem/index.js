@@ -71,7 +71,7 @@ const SidebarItem = ({ item, type }) => {
 
         <App.Flex column gap={2} sx={{ maxWidth: 100 }}>
           <App.Flex row align="center" gap={4}>
-            <App.Text nowrap uppercase size={12} weight={600} height={1}>{item.symbol ?? item?.slug}{type == 'tokens' ? (<App.Text inline size={10} weight={600} color="#B9B8C5">/USDT</App.Text>) : null}</App.Text>
+            <App.Text nowrap uppercase size={12} weight={600} height={1}>{item.symbol ?? item?.slug}{type == 'tokens' ? (<App.Text inline size={10} weight={600} color={['#B9B8C5', '#5E5C6B']}>/USDT</App.Text>) : null}</App.Text>
             {item.openseaVerificationStatus == 'verified' ? (
               <App.Tooltip text={<TooltipText />} placement="right">
                 <App.Flex center width={10} height={10} sx={{ minWidth: 10 }}>
@@ -81,7 +81,7 @@ const SidebarItem = ({ item, type }) => {
             ) : null}
           </App.Flex>
 
-          <App.Text nowrap size={10} height={1} color="#B9B8C5">{item.name}</App.Text>
+          <App.Text nowrap size={10} height={1} color={['#B9B8C5', '#5E5C6B']}>{item.name}</App.Text>
         </App.Flex>
       </App.Flex>
       

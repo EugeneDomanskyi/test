@@ -89,7 +89,7 @@ const Mobile = forwardRef(({ type, onOrdersUpdate }, ref) => {
 
   return (
     <App.Flex column full gap={16}>
-      <App.Flex row align="center" height={72} justify="space-between" sx={{ padding: 8 }}>
+      <App.Flex row align="center" justify="space-between" sx={{ padding: '8px 8px 0' }}>
         <App.Flex row align="center" gap={8}>
           <App.Flex row align="center" className={styles.back} onClick={handleBack} fullWidth>
             <App.Icon icon="chevron-left" width={24} height={24} color="#fff" />
@@ -119,7 +119,7 @@ const Mobile = forwardRef(({ type, onOrdersUpdate }, ref) => {
       </App.Flex>
 
       <App.Flex column gap={16} sx={{ padding: '0 8px' }} flex={1}>
-        <App.Tabs options={tabs} active={tab} onChange={handleTabChange} height={38} variant="mobile" />
+        <App.Tabs options={tabs} active={tab} onChange={handleTabChange} height={22} variant="mobile" />
 
         <App.Flex column flex={1} sx={{ position: 'relative' }}>
           {(currentTab => {
