@@ -638,7 +638,7 @@ class TOKEN extends Order {
         order_hash: limitOrderHash,
         raw_order_data: JSON.stringify(limitOrderTypedData.message),
         signature: signature,
-        signed_order_type: '1inch',
+        signed_order_type: 'tegro',
       }
       const res = await $orders.api.create.tokenAPI(post)
       if (res) {
