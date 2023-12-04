@@ -173,8 +173,8 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
       <div className={cn(styles.menu, {[styles.active]: menuShow})}>
         <App.Flex column>
           {pageBlockchains.map(item => (
-            <App.Flex row gap={16} align="center" justify="space-between" className={styles.item} onClick={() => handleBlockchainChange(item.code)}>
-              <App.Flex row gap={8} key={item.id} align="center">
+            <App.Flex key={item.id} row gap={16} align="center" justify="space-between" className={styles.item} onClick={() => handleBlockchainChange(item.code)}>
+              <App.Flex row gap={8} align="center">
                 <Image src={`/images/icon-${item.code}.png`} width={28} height={28} alt="" />
                 <App.Text nowrap height={1}>{ item.name }</App.Text>
               </App.Flex>
