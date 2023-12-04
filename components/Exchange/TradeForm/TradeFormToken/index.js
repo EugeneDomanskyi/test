@@ -180,8 +180,9 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
   }
 
   const handleSubmit = async () => {
-    console.log('handleSubmit!');
-    tradeVolumeCheck(wallet)
+    if (wallet) {
+      tradeVolumeCheck(wallet)
+    }
     const network = await changeNetwork(blockchain.code)
     if (!network) {
       return
