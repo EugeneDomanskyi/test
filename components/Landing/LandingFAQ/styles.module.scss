@@ -106,7 +106,16 @@
 
 @media (max-width: 768px) {
   .container {
+    h2 {
+      // text-align: left;
+    }
+  
+    h3 {
+      text-align: left;
+    }
     .faqContainer {
+      margin: 0;
+
       .item {
         padding-left: 8px;
         padding-right: 8px;
