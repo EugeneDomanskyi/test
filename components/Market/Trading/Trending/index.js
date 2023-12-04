@@ -61,7 +61,6 @@ export default function Trending() {
         
       }
     }
-    console.log('topResults', topResults);
     setTrending(topResults)
   }
 

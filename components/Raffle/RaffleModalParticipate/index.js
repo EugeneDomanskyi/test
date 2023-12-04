@@ -215,11 +215,9 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
   const fetchReward = async (enterCampaignHash, maxTries = 10) => {
     if (maxTries > 0) {
       const result = await $raffle.api.reward(enterCampaignHash.trim())
-      console.log('result?', result);
       if (result?.data) {
         const parsedRes = JSON.parse(result.data)
         const rewardAmount = parsedRes[enterCampaignHash]?.expectedRewardAmount !== '0' ? parsedRes[enterCampaignHash]?.expectedRewardAmount * 1 : parsedRes[enterCampaignHash]?.expectedRewardAmount
-        console.log('rewardAmount', rewardAmount);
         if (!rewardAmount) {
           setTimeout(() => {
             fetchReward(enterCampaignHash, (maxTries - 1))
