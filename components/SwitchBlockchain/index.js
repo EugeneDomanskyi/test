@@ -32,6 +32,8 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
   const [menuShow, setMenuShow] = useState(false)
   const [queryBlockchainChecked, setQueryBlockchainChecked] = useState(false)
 
+  const prevWalletChainId = useRef(chain?.id)
+
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, false)
     return () => {
@@ -80,7 +82,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
       if (chain?.id && queryBlockchainChecked) {
         if (chain.id != blockchain.id) {
           const supportCode = pageBlockchains.find(item => item.id == chain.id)?.code
-          if (supportCode) {
+          if (supportCode && prevWalletChainId.current) {
             if (queryBlockchain && queryBlockchain != supportCode) {
               router.replace(`/${page}/${supportCode}/0x`)
             }
@@ -96,8 +98,10 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
               dispatch($collection.set.loading(true))
               dispatch($collection.set.clear())
             }
+            prevWalletChainId.current = chain.id
           } else {
             await changeNetwork(blockchain.code)
+            prevWalletChainId.current = blockchain.id
           }
         }
       }
@@ -169,9 +173,17 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
       <div className={cn(styles.menu, {[styles.active]: menuShow})}>
         <App.Flex column>
           {pageBlockchains.map(item => (
-            <App.Flex row gap={8} key={item.id} align="center" className={styles.item} onClick={() => handleBlockchainChange(item.code)}>
-              <Image src={`/images/icon-${item.code}.png`} width={28} height={28} alt="" />
-              <App.Text nowrap size={16} weight={700} height={1}>{ item.name }</App.Text>
+            <App.Flex row gap={16} align="center" justify="space-between" className={styles.item} onClick={() => handleBlockchainChange(item.code)}>
+              <App.Flex row gap={8} key={item.id} align="center">
+                <Image src={`/images/icon-${item.code}.png`} width={28} height={28} alt="" />
+                <App.Text nowrap height={1}>{ item.name }</App.Text>
+              </App.Flex>
+
+              <App.Flex center width={20} height={20}>
+                {item.code == blockchain.code ? (
+                  <App.Icon icon="check" color="#53F19C" />
+                ) : null}
+              </App.Flex>
             </App.Flex>
           ))}
         </App.Flex>

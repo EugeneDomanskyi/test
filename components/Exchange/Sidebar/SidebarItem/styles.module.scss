@@ -29,6 +29,13 @@
     justify-content: center;
     padding: 4px;
   }
+
+  &.mobile {
+    .emptyImage {
+      width: 30px;
+      height: 30px;
+    }
+  }
   
   &:hover,
   &.active {

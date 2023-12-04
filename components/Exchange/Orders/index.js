@@ -241,10 +241,12 @@ const Orders = ({global, type, version, onClickOrder}) => {
       sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
       statuses: '[1,2,3]',
     })
+
     if (res) {
       dispatch($orders.set[type](res))
-      setLoading(false)
     }
+
+    setLoading(false)
   }
 
   const filterByAddress = (order) => {
@@ -437,89 +439,93 @@ const Orders = ({global, type, version, onClickOrder}) => {
             ) : (
               <App.Flex column flex={1} fullWidth sx={{position: 'relative' }}>
                 <App.Flex column sx={{position: 'absolute', inset: 0, overflow: 'auto'}}>
-                  {orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map((order, index) => {
-                    const percent = Math.round(order.quantityFilled * 100 / order.quantity)
-                    const perimeter =  2 * Math.PI * 19.5
-                    const length = (1 + Math.max(0, Math.min(percent / 100, 1))) * perimeter
+                  {orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).length ? 
+                    orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map((order) => {
+                      const percent = Math.round(order.quantityFilled * 100 / order.quantity)
+                      const perimeter =  2 * Math.PI * 19.5
+                      const length = (1 + Math.max(0, Math.min(percent / 100, 1))) * perimeter
 
-                    return (
-                      <App.Flex key={order.id} row gap={32} fullWidth className={styles.orderContainer}>
-                        <App.Flex column gap={8} align="center">
-                          <App.Flex row center height={25}>
-                            <App.Text size={12} weight={600} color={order.side == 'buy' ? '#53F19C' : '#C00C4D'}>{order.side.toUpperCase()}</App.Text>
-                          </App.Flex>
-
-                          <App.Flex row center flex={1}>
-                            <div className={styles.progress}>
-                              <svg xmlns="http://www.w3.org/2000/svg" width="39" height="39" viewBox="0 0 39 39" fill="none" className={styles.progressStroke}>
-                                <circle cx="19.5" cy="19.5" r="18.5" stroke="#2D2A48" strokeWidth="2" />
-                              </svg>
-
-                              <svg xmlns="http://www.w3.org/2000/svg" width="39" height="39" viewBox="0 0 39 39" fill="none" className={styles.progressFill}>
-                                <circle cx="19.5" cy="19.5" r="18.5" stroke={order.side == 'buy' ? '#53F19C' : '#C00C4D'} strokeWidth="2" strokeDasharray={length} strokeDashoffset={perimeter} />
-                              </svg>
-
-                              <App.Flex row center className={styles.progressText}>
-                                <App.Text size={10} weight={600} color={order.side == 'buy' ? '#53F19C' : '#C00C4D'}>{percent}%</App.Text>
-                              </App.Flex>
-                            </div>
-                          </App.Flex>
-                        </App.Flex>
-
-                        <App.Flex row justify="space-between" flex={1}>
-                          <App.Flex column gap={8}>
-                            <App.Flex row center gap={10} height={25} className={styles.currency} onClick={handleClickDetails(order)}>
-                              <App.Text size={12} weight={700} height={1}>{order.quoteCurrency} <App.Text inline size={10} weight={700} color="#5E5C6B" height={1}>/ {order.baseCurrency}</App.Text></App.Text>
-                              <App.Icon icon="chevron-right2" />
+                      return (
+                        <App.Flex key={order.id} row gap={32} fullWidth className={styles.orderContainer}>
+                          <App.Flex column gap={8} align="center">
+                            <App.Flex row center height={25}>
+                              <App.Text size={12} weight={600} color={order.side == 'buy' ? '#53F19C' : '#C00C4D'}>{order.side.toUpperCase()}</App.Text>
                             </App.Flex>
 
-                            <App.Flex row align="center">
-                              <App.Flex width={60}>
-                                <App.Text size={12} uppercase height={1} color="#5E5C6B">Amount:</App.Text>
-                              </App.Flex>
-                              <App.Text size={14} weight={600} height={1}>{ order.quantityFilled } <App.Text inline size={12} weight={600} height={1} color="#5E5C6B">/ { order.quantity }</App.Text></App.Text>
-                            </App.Flex>
+                            <App.Flex row center flex={1}>
+                              <div className={styles.progress}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="39" height="39" viewBox="0 0 39 39" fill="none" className={styles.progressStroke}>
+                                  <circle cx="19.5" cy="19.5" r="18.5" stroke="#2D2A48" strokeWidth="2" />
+                                </svg>
 
-                            <App.Flex row align="center">
-                              <App.Flex width={60}>
-                                <App.Text size={12} uppercase height={1} color="#5E5C6B">Price:</App.Text>
-                              </App.Flex>
-                              <App.Text size={14} weight={600} height={1}>{ order.itemPrice }</App.Text>
-                            </App.Flex>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="39" height="39" viewBox="0 0 39 39" fill="none" className={styles.progressFill}>
+                                  <circle cx="19.5" cy="19.5" r="18.5" stroke={order.side == 'buy' ? '#53F19C' : '#C00C4D'} strokeWidth="2" strokeDasharray={length} strokeDashoffset={perimeter} />
+                                </svg>
 
-                            <App.Flex row align="center">
-                              <App.Flex width={60}>
-                                <App.Text size={12} uppercase height={1} color="#5E5C6B">Total:</App.Text>
-                              </App.Flex>
-                              <App.Text size={14} weight={600} height={1} color="#5E5C6B">{ order.price }</App.Text>
-                            </App.Flex>
-                          </App.Flex>
-
-                          <App.Flex column align="flex-end" justify="space-between">
-                            <App.Flex row align="center" height={25}>
-                              <App.Text right size={12} weight={600} color="#5E5C6B">{order.time}</App.Text>
-                            </App.Flex>
-
-                            {order.status === 'open' ? (
-                              cancellingOrders.includes(order.id) ? (
-                                <App.Flex center>
-                                  <App.Loader size={20} />
+                                <App.Flex row center className={styles.progressText}>
+                                  <App.Text size={10} weight={600} color={order.side == 'buy' ? '#53F19C' : '#C00C4D'}>{percent}%</App.Text>
                                 </App.Flex>
+                              </div>
+                            </App.Flex>
+                          </App.Flex>
+
+                          <App.Flex row justify="space-between" flex={1}>
+                            <App.Flex column gap={8}>
+                              <App.Flex row center gap={10} height={25} className={styles.currency} onClick={handleClickDetails(order)}>
+                                <App.Text size={12} weight={700} height={1}>{order.quoteCurrency} <App.Text inline size={10} weight={700} color="#5E5C6B" height={1}>/ {order.baseCurrency}</App.Text></App.Text>
+                                <App.Icon icon="chevron-right2" />
+                              </App.Flex>
+
+                              <App.Flex row align="center">
+                                <App.Flex width={60}>
+                                  <App.Text size={12} uppercase height={1} color="#5E5C6B">Amount:</App.Text>
+                                </App.Flex>
+                                <App.Text size={14} weight={600} height={1}>{ order.quantityFilled } <App.Text inline size={12} weight={600} height={1} color="#5E5C6B">/ { order.quantity }</App.Text></App.Text>
+                              </App.Flex>
+
+                              <App.Flex row align="center">
+                                <App.Flex width={60}>
+                                  <App.Text size={12} uppercase height={1} color="#5E5C6B">Price:</App.Text>
+                                </App.Flex>
+                                <App.Text size={14} weight={600} height={1}>{ order.itemPrice }</App.Text>
+                              </App.Flex>
+
+                              <App.Flex row align="center">
+                                <App.Flex width={60}>
+                                  <App.Text size={12} uppercase height={1} color="#5E5C6B">Total:</App.Text>
+                                </App.Flex>
+                                <App.Text size={14} weight={600} height={1} color="#5E5C6B">{ order.price }</App.Text>
+                              </App.Flex>
+                            </App.Flex>
+
+                            <App.Flex column align="flex-end" justify="space-between">
+                              <App.Flex row align="center" height={25}>
+                                <App.Text right size={12} weight={600} color="#5E5C6B">{order.time}</App.Text>
+                              </App.Flex>
+
+                              {order.status === 'open' ? (
+                                cancellingOrders.includes(order.id) ? (
+                                  <App.Flex center>
+                                    <App.Loader size={20} />
+                                  </App.Flex>
+                                ) : (
+                                  <App.Flex row center onClick={handlePressCancelConfirm(order)}>
+                                    <App.Icon icon="trash" />
+                                  </App.Flex>
+                                )
                               ) : (
-                                <App.Flex row center onClick={handlePressCancelConfirm(order)}>
-                                  <App.Icon icon="trash" />
-                                </App.Flex>
-                              )
-                            ) : (
-                              <App.Text color="#B9B8C5" size={12} uppercase>
-                                { order.status }
-                              </App.Text>
-                            )}
+                                <App.Text color="#B9B8C5" size={12} uppercase>
+                                  { order.status }
+                                </App.Text>
+                              )}
+                            </App.Flex>
                           </App.Flex>
                         </App.Flex>
-                      </App.Flex>
+                      )
+                    }) : (
+                      <App.Text center size={16}>There are no orders yet</App.Text>
                     )
-                  })}
+                  }
                 </App.Flex>
               </App.Flex>
             )

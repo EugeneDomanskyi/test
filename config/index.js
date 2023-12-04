@@ -93,7 +93,7 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'arbitrum',
     platform: 'arbitrum-one',
-    pages: ['nfts'],
+    pages: ['nfts', 'exchange'],
     usdtContract: '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9',
     usdt: {
         address: '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9',
@@ -120,7 +120,7 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'optimism',
     platform: 'optimistic-ethereum',
-    pages: ['nfts'],
+    pages: ['nfts', 'exchange'],
     usdtContract: '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58',
     usdt: {
         address: '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58',
@@ -174,7 +174,7 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'binancecoin',
     platform: 'binance-smart-chain',
-    pages: ['nfts'],
+    pages: ['nfts', 'exchange'],
     usdtContract: '0x55d398326f99059ff775485246999027b3197955',
     usdt: {
         address: '0x55d398326f99059ff775485246999027b3197955',
@@ -201,7 +201,7 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'base',
     platform: 'base',
-    pages: ['nfts'],
+    pages: ['nfts', 'exchange'],
     usdtContract: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
     usdt: {
         address: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
@@ -228,7 +228,7 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'avalanche-2',
     platform: 'avalanche',
-    pages: ['nfts'],
+    pages: ['nfts', 'exchange'],
     usdtContract: '0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7',
     usdt: {
         address: '0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7',
@@ -286,7 +286,7 @@ export const CHAINS = [
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'ethereum',
     platform: 'ethereum',
-    pages: ['nfts'],
+    pages: ['nfts', 'exchange'],
     gasLimit: 60000,
     usdtContract: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     usdt: {
@@ -314,7 +314,7 @@ export const CHAINS = [
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'matic-network',
     platform: 'polygon-pos',
-    pages: ['nfts', 'earn'],
+    pages: ['nfts', 'earn', 'exchange'],
     gasLimit: 250000,
     usdtContract: '0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
     usdt: {
