@@ -8,9 +8,11 @@ import styles from './styles.module.scss'
 const StoriesButton = () => {
   const balance = useSelector(({$raffle}) => $raffle.balance)
 
+  const isSeen = false
+
 
   return (
-    <App.Flex column className={cn(styles.container, {[styles.sticky]: isSticky})}>
+    <App.Flex column className={cn(styles.container, {[styles.disabled]: isSeen})}>
       
     </App.Flex>
   )
