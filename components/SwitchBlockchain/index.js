@@ -155,7 +155,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
     <App.Flex row align="center" justify={justify} gap={8} sx={{ position: 'relative' }} id="blockchain" onMouseEnter={() => setMenuShow(true)} onMouseLeave={() => setMenuShow(false)}>
       <App.Flex row center gap={8} className={cn(styles.badge, {[styles.active]: menuShow})} sx={{ cursor: 'pointer' }} onClick={isMobile ? handleMenuToggle : null}>
       {/* <App.Flex row center gap={8} className={cn(styles.badge, {[styles.active]: menuShow})} sx={{ cursor: 'pointer' }}> */}
-        <Image src={`/images/icon-${blockchain.code}.png`} width={28} height={28} alt="" />
+        <Image src={`/images/icon-${blockchain?.code}.png`} width={28} height={28} alt="" />
         {
           ! isMobile
             ? <>

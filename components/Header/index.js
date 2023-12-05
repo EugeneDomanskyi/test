@@ -21,6 +21,7 @@ import NavbarDropdown from '@/components/NavbarDropdown'
 import HeaderWalletMobile from '@/components/Header/HeaderWalletMobile'
 
 import styles from './styles.module.scss'
+import StoriesButton from './StoriesButton'
 
 const Header = () => {
   const router = useRouter()
@@ -245,6 +246,8 @@ const Header = () => {
                   </App.Flex>
                 </App.Flex>
               ) : null}
+
+              <StoriesButton />
 
               { ! isEarn && ! isLanding && ! isMarket ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : <App.Flex />}
               

@@ -1,0 +1,138 @@
+.container {
+  position: fixed;
+  top: 78px;
+  right: 128px;
+  width: 478px;
+  height: 534px;
+  border-radius: 12px;
+  padding-top: 48px;
+  background: url('/images/campaign/story_first_bg.png');
+
+  .closeButton {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 25px;
+    height: 25px;
+    background-color: #7436d2;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: .3s;
+
+    &:hover {
+      background-color: #9151f1;
+    }
+  }
+
+  .progressWrapper {
+    z-index: 1;
+    .progressBar {
+      width: 212.595px;
+      height: 5px;
+      border-radius: 40px;
+      background: #CBB2FF;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: .3s;
+
+      .barFiller {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background-color: #fff;
+      }
+
+      &.active {
+        &:hover {
+          opacity: .9;
+        }
+      }
+    }
+  }
+
+  &.second {
+    background: url('/images/campaign/story_second_bg.png');
+  }
+
+  .storyWrapper {
+    position:  absolute;
+    z-index: 0;
+    padding: 0 16px;
+    opacity: 0;
+    transition: .3s;
+    visibility: hidden;
+
+    &.show {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  .learnButton {
+    display: flex;
+    padding: 0 10px;
+    height: 31px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border-radius: 38px;
+    border: 1px solid #FFD600;
+    color: #FFD600;
+    margin-top: 8px;
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .3s;
+
+    &:hover {
+      background: #FFD600;
+      color: #000;
+
+      & svg path {
+        stroke: #000;
+      }
+    }
+  }
+
+  .collectButton {
+    display: flex;
+    width: 419px;
+    height: 60px;
+    padding: 11.198px 24.635px;
+    justify-content: center;
+    align-items: center;
+    gap: 11.198px;
+    flex-shrink: 0;
+    border-radius: 4px;
+    border: 1.12px solid #7204FF;
+    background: #53F19C;
+    box-shadow: 4.479px 4.479px 0px 0px #000;
+    font-weight: 800;
+    color: #08051C;
+    margin-top: 8px;
+    cursor: pointer;
+    transition: .3s;
+    font-size: 18px;
+
+    &:hover {
+      box-shadow: 2px 2px 0px 0px #000;
+      transform: translate(3px, 3px);
+    }
+  }
+}
+
+@keyframes fillAnimation {
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes resetAnimation {
+  100% {
+    width: 0;
+  }
+}
