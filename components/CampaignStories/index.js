@@ -96,7 +96,7 @@ const CampaignStories = ({onClose}) => {
           </App.Text>
           
           <App.Text center size={20} weight={700}>
-            Buy and Sell any token on Tegro in a click. It's Superfast and Easy.
+            Buy and Sell any token on Tegro in a click. It&apos;s Superfast and Easy.
           </App.Text>
         </App.Flex>
       
