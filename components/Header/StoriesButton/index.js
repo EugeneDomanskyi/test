@@ -27,6 +27,7 @@ const StoriesButton = () => {
 
   const handleClickButton = () => {
     localStorage.setItem('storiesIsSeen', true)
+    setIsSeen(true)
     setShow(!show)
   }
 
