@@ -12,14 +12,18 @@ const StoriesButton = () => {
   const router = useRouter()
 
   const [show, setShow] = useState(false)
-
-  const isSeen = localStorage.getItem('storiesIsSeen')
+  const [isSeen, setIsSeen] = useState(false)
 
   useEffect(() => {
     if (router.query.src) {
       setShow(true)
     }
   }, [router.query?.src])
+
+  useEffect(() => {
+    const storageVar = localStorage.getItem('storiesIsSeen')
+    setIsSeen(storageVar)
+  }, [])
 
   const handleClickButton = () => {
     localStorage.setItem('storiesIsSeen', true)
