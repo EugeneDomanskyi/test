@@ -13,7 +13,7 @@ const StoriesButton = () => {
 
   const [show, setShow] = useState(false)
 
-  const isSeen = false
+  const isSeen = localStorage.getItem('storiesIsSeen')
 
   useEffect(() => {
     if (router.query.src) {
@@ -21,9 +21,14 @@ const StoriesButton = () => {
     }
   }, [router.query?.src])
 
+  const handleClickButton = () => {
+    localStorage.setItem('storiesIsSeen', true)
+    setShow(!show)
+  }
+
   return (
     <>
-      <App.Flex column className={cn(styles.container, {[styles.disabled]: isSeen})} onClick={() => setShow(!show)}>
+      <App.Flex column className={cn(styles.container, {[styles.disabled]: isSeen})} onClick={handleClickButton}>
         <App.Flex center className={styles.outerCircle} />
 
         <App.Flex center className={styles.innerCircle}>

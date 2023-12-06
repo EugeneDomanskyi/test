@@ -8,6 +8,12 @@
   width: 42px;
   position: relative;
 
+  &.disabled {
+    .outerCircle {
+      background: #332D52;
+    }
+  }
+
   &:hover {
     .outerCircle {
       transform: rotate(540deg);

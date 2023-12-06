@@ -86,16 +86,19 @@ const CampaignStories = ({onClose}) => {
       </App.Flex>
 
       <App.Flex column center className={cn(styles.storyWrapper, {[styles.show]: ! currentStory})}>
-        <App.Flex>
-          <Image src="/animations/story_first.gif" width={320} height={320} alt="" />
+        <App.Flex sx={{marginTop: 32}}>
+          {/* <Image src="/animations/story_first.gif" width={320} height={320} alt="" /> */}
+          <Image src="/animations/story_first.gif" width={200} height={200} alt="" />
         </App.Flex>
 
         <App.Flex column center>
-          <App.Text size={36} weight={900}>
+          {/* <App.Text size={36} weight={900}> */}
+          <App.Text size={25} weight={900}>
             Trade Tokens
           </App.Text>
           
-          <App.Text center size={20} weight={700}>
+          {/* <App.Text center size={20} weight={700}> */}
+          <App.Text center size={14} weight={700}>
             Buy and Sell any token on Tegro in a click. It&apos;s Superfast and Easy.
           </App.Text>
         </App.Flex>
@@ -109,16 +112,19 @@ const CampaignStories = ({onClose}) => {
       </App.Flex>
 
       <App.Flex column center className={cn(styles.storyWrapper, {[styles.show]: currentStory})}>
-        <App.Flex sx={{marginTop: -32}}>
-          <Image src="/animations/story_second.gif" width={320} height={320} alt="" />
+        <App.Flex>
+          {/* <Image src="/animations/story_second.gif" width={320} height={320} alt="" /> */}
+          <Image src="/animations/story_second.gif" width={224} height={224} alt="" />
         </App.Flex>
 
         <App.Flex column center>
-          <App.Text size={36} weight={900}>
+          {/* <App.Text size={36} weight={900}> */}
+          <App.Text size={25} weight={900}>
             Earn Rewards
           </App.Text>
           
-          <App.Text center size={20} weight={600}>
+          {/* <App.Text center size={20} weight={600}> */}
+          <App.Text center size={14} weight={600}>
             Trade Tokens, Collect TKeys, Unlock Rewards. Win $USDT, $SHIB, $PEPE, and more!
           </App.Text>
         </App.Flex>
