@@ -1,7 +1,6 @@
 import styles from './styles.module.scss'
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import Image from 'next/image'
 import numeral from 'numeral'
 import cn from 'classnames'
 
@@ -9,9 +8,8 @@ import $app from '@/store/app'
 import $modal from '@/store/modal'
 import $orders from '@/store/orders'
 import useWalletConnect from '@/myhooks/wallet-connect'
-import useInterval from '@/myhooks/useInterval'
 import { trackEvent } from '@/libs/analytics.lib'
-import { INCH_TOKENS } from '@/config'
+import { subscribeToBalanceUpdates } from '@/libs/helpers'
 
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
@@ -44,7 +42,7 @@ const MAX_DECIMALS = 5
 
 const TradeFormToken = forwardRef(({current, currentTab, version, formOption, prevProps, onSubmit}, ref) => {
   const dispatch = useDispatch()
-  const { wallet, changeNetwork, getBalance } = useWalletConnect()
+  const { wallet, changeNetwork } = useWalletConnect()
   
   const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector($orders.get.orderBook('tokens'))
@@ -97,14 +95,21 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
     }
   }, [form.total, form.amount, currentTab, wasUserBalance])
 
-  const fetchBalance = async () => {
-    const [tokenBalance, usdtBalance] = await Promise.all([
-      getBalance(current.address),
-      getBalance(blockchain.usdt.address)
-    ])
-    setUserBalances({usdt: usdtBalance, token: tokenBalance})
-    setWasUserBalance(true)
-  }
+  useEffect(() => {
+    const unsubscribe = subscribeToBalanceUpdates(wallet, [current?.address, blockchain.usdt.address], (res) => {
+      const balances = Object.entries(res).reduce((acc, [address, balance]) => ({
+        ...acc,
+        [address === blockchain.usdt.address ? 'usdt' : 'token']: balance,
+      }), {usdt: 0, token: 0})
+      setUserBalances(balances)
+      setWasUserBalance(true)
+    })
+    return () => {
+      if (unsubscribe) {
+        unsubscribe()
+      }
+    }
+  }, [wallet, blockchain.id, current?.address])
 
   const handleSetPrice = (inputByUser = true) => {
     switch (currentTab) {
@@ -290,8 +295,6 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
       </App.Flex>
     )
   }
-
-  useInterval(fetchBalance, (wallet && blockchain && current?.address) ? 2000 : null)
 
   return (
     <>
