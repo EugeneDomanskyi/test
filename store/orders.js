@@ -234,8 +234,8 @@ const api = {
         if (res) {
           const orderTypes = {
             Active: 'open',
-            Matched: 'open',
-            Completed: 'open',
+            Matched: 'completed',
+            Completed: 'completed',
             Filled: 'completed',
             Cancelled: 'cancelled',
           }
