@@ -96,7 +96,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
   }, [form.total, form.amount, currentTab, wasUserBalance])
 
   useEffect(() => {
-    const unsubscribe = subscribeToBalanceUpdates(wallet, [current?.address, blockchain.usdt.address], (res) => {
+    const unsubscribe = subscribeToBalanceUpdates(blockchain.id, wallet, [current?.address, blockchain.usdt.address], (res) => {
       const balances = Object.entries(res).reduce((acc, [address, balance]) => ({
         ...acc,
         [address === blockchain.usdt.address ? 'usdt' : 'token']: balance,

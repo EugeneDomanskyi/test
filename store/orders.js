@@ -31,7 +31,7 @@ const generatePeriods = (from, to, closePrice, step) => {
   }, {})
 }
 
-const getDecimals = async (address) => {
+const getDecimals = async (chainId, address) => {
   const abi = {
     constant: true,
     inputs: [],
@@ -45,15 +45,16 @@ const getDecimals = async (address) => {
     address: address,
     abi: [abi],
     functionName: 'decimals',
+    chainId: chainId,
   }).catch(error => {
     console.log(error)
   })
   return res
 }
 
-export const orderBookFormatter = async (list, baseCurrency, quoteCurrency) => {
-  const baseDecimals = await getDecimals(baseCurrency)
-  const quoteDecimals = await getDecimals(quoteCurrency)
+export const orderBookFormatter = async (chainId, list, baseCurrency, quoteCurrency) => {
+  const baseDecimals = await getDecimals(chainId, baseCurrency)
+  const quoteDecimals = await getDecimals(chainId, quoteCurrency)
   return Object.entries(list).reduce((acc, [side, values]) => {
     let prevVolume = 0
     return {
@@ -316,7 +317,7 @@ api.get.tokens.orderBook = async ({ address, ...rest }) => {
       ...acc,
       [sides[side]]: values ?? []
     }), {})
-    return await orderBookFormatter(temp, address, network.usdtContract)
+    return await orderBookFormatter(network.id, temp, address, network.usdtContract)
   }
   const res = await fetch(`/api/tokens/order-book/${network.id}/${network.usdtContract}/${address}`)
   const json = await res.json()

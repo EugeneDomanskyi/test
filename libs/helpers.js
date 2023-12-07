@@ -18,7 +18,7 @@ const ABI = [{
     type: 'function'
 }]
 
-export const subscribeToBalanceUpdates = (walletAddress, tokens, onUpdate) => {
+export const subscribeToBalanceUpdates = (chainId, walletAddress, tokens, onUpdate) => {
     if (!walletAddress) {
         return null
     }
@@ -27,11 +27,13 @@ export const subscribeToBalanceUpdates = (walletAddress, tokens, onUpdate) => {
         address: tokenAddress,
         abi: ABI,
         functionName: 'decimals',
+        chainId: chainId,
     },{
         address: tokenAddress,
         abi: ABI,
         functionName: 'balanceOf',
         args: [walletAddress],
+        chainId: chainId,
     }]))
     const args = {
         contracts: contracts,
