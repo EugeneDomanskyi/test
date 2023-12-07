@@ -98,7 +98,7 @@ const CampaignStories = ({onClose}) => {
           </App.Text>
           
           {/* <App.Text center size={20} weight={700}> */}
-          <App.Text center size={14} weight={700}>
+          <App.Text center size={14} weight={500}>
             Buy and Sell any token on Tegro in a click. It&apos;s Superfast and Easy.
           </App.Text>
         </App.Flex>
@@ -124,7 +124,7 @@ const CampaignStories = ({onClose}) => {
           </App.Text>
           
           {/* <App.Text center size={20} weight={600}> */}
-          <App.Text center size={14} weight={600}>
+          <App.Text center size={14} weight={500}>
             Trade Tokens, Collect TKeys, Unlock Rewards. Win $USDT, $SHIB, $PEPE, and more!
           </App.Text>
         </App.Flex>

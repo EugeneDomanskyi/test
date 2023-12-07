@@ -1,7 +1,7 @@
 .container {
-  position: fixed;
+  position: absolute;
   top: 78px;
-  right: 484px;
+  right: 0;
   // width: 478px;
   // height: 534px;
   width: 334px;
@@ -98,7 +98,7 @@
     border-radius: 38px;
     border: 1px solid #FFD600;
     color: #FFD600;
-    margin-top: 8px;
+    margin-top: 16px;
     font-size: 16px;
     font-style: italic;
     font-weight: 600;

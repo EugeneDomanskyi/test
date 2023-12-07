@@ -32,7 +32,7 @@ const StoriesButton = () => {
   }
 
   return (
-    <>
+    <div style={{position: 'relative'}}>
       <App.Flex column className={cn(styles.container, {[styles.disabled]: isSeen})} onClick={handleClickButton}>
         <App.Flex center className={styles.outerCircle} />
 
@@ -49,7 +49,7 @@ const StoriesButton = () => {
             </>
           : null
       }
-    </>
+    </div>
   )
 }
 
