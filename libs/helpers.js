@@ -1,5 +1,6 @@
 import { watchMulticall } from '@wagmi/core'
 import { formatUnits } from 'viem'
+import moment from "moment";
 
 const ABI = [{
     constant: true,
@@ -54,4 +55,23 @@ export const subscribeToBalanceUpdates = (chainId, walletAddress, tokens, onUpda
         onUpdate(result)
     }
     return watchMulticall(args, handleUpdate)
+}
+
+export const OrderUtils = {
+    orderTypes: {
+        Active: 'open',
+        Matched: 'completed',
+        Completed: 'completed',
+        Filled: 'completed',
+        Cancelled: 'cancelled',
+    },
+    formatter: (data) => {
+        return {
+            ...data,
+            id: data.orderId,
+            status: OrderUtils.orderTypes[data.status],
+            time: moment(data.time).format('DD MMM, HH:mm'),
+            timeMoment: moment(data.time),
+        }
+    }
 }

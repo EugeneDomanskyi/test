@@ -1,7 +1,5 @@
-
-import { toast } from 'react-toastify'
-
 const WS_URL = 'wss://v2.betora.vip/ws'
+// const WS_URL = 'ws://localhost:8080/ws'
 
 class Socket {
   constructor() {

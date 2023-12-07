@@ -6,6 +6,7 @@ import { formatUnits } from 'viem'
 import { request } from './index'
 import Order from '@/libs/structs/Order'
 import { CHAINS } from '@/config'
+import { OrderUtils } from '@/libs/helpers'
 
 const round = (date, duration, method) => {
   return moment(Math[method]((+date) / (+duration)) * (+duration))
@@ -98,6 +99,12 @@ export const ordersSlice = createSlice({
   reducers: {
     tokens: (state, { payload }) => {
       state.tokens = payload
+    },
+    tokensAdd: (state, { payload }) => {
+      state.tokens = [payload, ...state.tokens]
+    },
+    tokensUpdate: (state, { payload }) => {
+      state.tokens = state.tokens.map(o => o.id === payload.id ? payload : o)
     },
     nfts: (state, { payload }) => {
       state.nfts = payload
@@ -232,31 +239,7 @@ const api = {
       const network = CHAINS.find(chain => chain.code === blockchain)
       if (network?.useBackend) {
         const res = await request('market/orders/user', 'GET', {api: 'backend', chain_id: network.id, user_address: address})
-        if (res) {
-          const orderTypes = {
-            Active: 'open',
-            Matched: 'completed',
-            Completed: 'completed',
-            Filled: 'completed',
-            Cancelled: 'cancelled',
-          }
-          return res.map((data) => ({
-            id: data.orderId,
-            side: data.side,
-            baseCurrency: data.baseCurrency,
-            quoteCurrency: data.quoteCurrency,
-            image: data.image,
-            contractAddress: data.contractAddress,
-            quantity: data.quantity,
-            price: data.price,
-            quantityFilled: data.quantityFilled,
-            status: orderTypes[data.status],
-            time: moment(data.time).format('DD MMM, HH:mm'),
-            timeMoment: moment(data.time),
-            orderHash: data.orderHash,
-          }))
-        }
-        return
+        return res && Array.isArray(res) ? res.map((data) => OrderUtils.formatter(data)) : null
       }
       return fetch(`/api/tokens/orders/${network.id}/${address}`).then(async res => {
         const json = await res.json()
