@@ -1,7 +1,7 @@
 .container {
   position: fixed;
   top: 78px;
-  right: 256px;
+  right: 484px;
   // width: 478px;
   // height: 534px;
   width: 334px;
@@ -9,6 +9,7 @@
   border-radius: 12px;
   padding-top: 40px;
   background: url('/images/campaign/story_first_bg.png');
+  z-index: 12;
 
   &.second {
     background: url('/images/campaign/story_second_bg.png');
