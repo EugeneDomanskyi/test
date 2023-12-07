@@ -36,7 +36,7 @@ const OrderBook = ({ type, version, onClickOrder }) => {
         ...acc,
         [sides[side]]: values ?? []
       }), {})
-      const list = await orderBookFormatter(temp, current.address, blockchain.usdtContract)
+      const list = await orderBookFormatter(blockchain.id, temp, current.address, blockchain.usdtContract)
       dispatch($orders.set.orderBook({type: type, data: list, tokenAddress: current.address}))
     })
   }, [current?.address, blockchain.usdtContract])
