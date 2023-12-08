@@ -94,7 +94,7 @@ const LandingPage = () => {
 
       const result = await connect()
       if (result) {
-        router.push('/exchange')
+        router.push(tradeLink)
         const walletName = await getConnectorName()
         trackEvent('Wallet Connect Success', {
           'Source': getPageName(),
