@@ -16,6 +16,7 @@ const StoriesButton = () => {
 
   useEffect(() => {
     if (router.query.src) {
+      localStorage.setItem('storiesIsSeen', true)
       setShow(true)
     }
   }, [router.query?.src])
