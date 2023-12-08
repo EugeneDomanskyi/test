@@ -506,15 +506,9 @@ const Orders = ({global, type, version, onClickOrder}) => {
                               </App.Flex>
 
                               {order.status === 'open' ? (
-                                cancellingOrders.includes(order.id) ? (
-                                  <App.Flex center>
-                                    <App.Loader size={20} />
-                                  </App.Flex>
-                                ) : (
-                                  <App.Flex row center onClick={handlePressCancelConfirm(order)}>
-                                    <App.Icon icon="trash" />
-                                  </App.Flex>
-                                )
+                                <App.Flex row center onClick={handlePressCancelConfirm(order)}>
+                                  <App.Icon icon="trash" />
+                                </App.Flex>
                               ) : (
                                 <App.Text color="#B9B8C5" size={12} uppercase>
                                   { order.status }

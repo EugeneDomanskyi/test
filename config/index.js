@@ -76,7 +76,7 @@ const TEST_NETWORKS = [
             txUrl: 'https://mumbai.polygonscan.com/tx/',
             rewardEndpoint: 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status',
         },
-        useBackend: true,
+        useBackend: false,
     },
 ]
 
@@ -120,7 +120,7 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'optimism',
     platform: 'optimistic-ethereum',
-    pages: ['nfts', 'exchange'],
+    pages: ['nfts'],
     usdtContract: '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58',
     usdt: {
         address: '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58',

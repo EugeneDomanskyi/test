@@ -25,11 +25,15 @@ class Socket {
   }
 
   subscribe = (channelId) => {
-    this.socket.send(JSON.stringify({action: 'subscribe', channelId: channelId}))
+    if (this.socket?.readyState === WebSocket.OPEN) {
+      this.socket.send(JSON.stringify({action: 'subscribe', channelId: channelId}))
+    }
   }
 
   unsubscribe = (channelId) => {
-    this.socket.send(JSON.stringify({action: 'unsubscribe', channelId: channelId}))
+    if (this.socket?.readyState === WebSocket.OPEN) {
+      this.socket.send(JSON.stringify({action: 'unsubscribe', channelId: channelId}))
+    }
   }
 
   handleMessage = (res) => {
