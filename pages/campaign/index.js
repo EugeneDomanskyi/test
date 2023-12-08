@@ -42,6 +42,8 @@ const LandingPage = () => {
   const [walletsCount, setWalletsCount] = useState(null)
   const [totalReward, setTotalReward] = useState(null)
 
+  const tradeLink = '/exchange/ethereum/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2?src=campaign'
+
   useEffect(() => {
     dispatch($app.get.walletConnectedCount).then(res => {
       if (res.data) {
@@ -99,9 +101,13 @@ const LandingPage = () => {
           'Type': walletName,
         })
       }
-    } else {
-      router.push('/exchange')
     }
+  }
+
+  const handleClickTrade = () => {
+    trackEvent('Campaign Click Trade Now', {
+      'Source': getPageName(),
+    })
   }
 
   return (
@@ -162,25 +168,28 @@ const LandingPage = () => {
               </App.Flex>
             </App.Flex>
           </App.Flex>
-
-          <App.Flex align="center" className={styles.buttonsWrapper}>
-            <App.Button rounded primary sx={{paddingLeft: 32, paddingRight: 32}} onClick={handleConnectWallet}>
-              {
-                wallet
-                  ? 'Trade Now'
-                  : 'Connect Wallet Now'
-              }
-              <App.Icon icon="stars" />    
-            </App.Button>
-            
-            {
-              ! wallet
-                ? <App.Text className={styles.link} onClick={() => handleConnectWallet(true)}>
+          
+          {
+            ! wallet
+              ? <App.Flex align="center" className={styles.buttonsWrapper}>
+                  <App.Button rounded primary sx={{paddingLeft: 32, paddingRight: 32}} onClick={handleConnectWallet}>
+                    Connect Wallet Now
+                    <App.Icon icon="stars" />
+                  </App.Button>
+                    
+                  <App.Text className={styles.link} onClick={() => handleConnectWallet(true)}>
                     Don&apos;t have a wallet?
                   </App.Text>
-                : null
-            }
-          </App.Flex>
+                </App.Flex>
+              : <App.Flex align="center" className={styles.buttonsWrapper}>
+                <Link href={tradeLink}>
+                  <App.Button rounded primary sx={{paddingLeft: 32, paddingRight: 32}} onClick={handleClickTrade}>
+                    Trade Now
+                    <App.Icon icon="stars" />
+                  </App.Button>
+                </Link>
+                </App.Flex>
+          }
         </App.Flex>
       </App.Flex>
 

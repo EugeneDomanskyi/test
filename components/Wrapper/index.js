@@ -11,7 +11,7 @@ const Wrapper = ({ children }) => {
   const router = useRouter()
   const dispatch = useDispatch()
 
-  const isCampaign = router.asPath?.includes('campaign')
+  const isCampaign = router.asPath?.includes('/campaign')
 
   useEffect(() => {
     handleWindowResize()
