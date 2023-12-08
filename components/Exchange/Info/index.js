@@ -138,7 +138,7 @@ const Info = ({ type }) => {
           <App.Flex row align="center" className={styles.gap}>
             <App.Flex row center gap={8}>
               {current?.image ? (
-                <Image src={current?.image} width={36} height={36} alt="" />
+                <img src={current?.image} width={36} height={36} alt="" />
               ) : (
                 <div className={styles.emptyImage} />
               )}
