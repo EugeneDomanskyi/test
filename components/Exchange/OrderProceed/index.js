@@ -193,7 +193,6 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
     }
     const allowanceResults = await Promise.all(allowances.map(fn => fn()))
     if (allowanceResults.every(res => res.success)) {
-      tradeVolumeCheck()
       trackEvent('Confirm Order Submit', {
         'Base Currency': side === 'buy' ? makerAsset.symbol : takerAsset.symbol,
         'Quote Currency': 'USDT',
@@ -296,6 +295,9 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
         'Order Type': (flowSteps.fill_order && flowSteps.place_order) ? 'Hybrid' : (flowSteps.fill_order ? 'Taker' : 'Maker'),
         'Step': 'Confirm',
       })
+      if (wallet) {
+        tradeVolumeCheck(wallet)
+      }
       if (!flowSteps.fill_order || !flowSteps.place_order) {
         setCurrentTab(flowSteps.fill_order ? 'fill_order' : 'limit_order')
       }
