@@ -84,7 +84,7 @@ const LandingHead = () => {
             <App.Icon icon="chevron-circle" />
           </App.Button>
 
-          <App.Flex center className={styles.banner} onClick={handleDuneClick}>
+          {/* <App.Flex center className={styles.banner} onClick={handleDuneClick}>
             <App.Flex className={styles.bannerInner} />
 
             <App.Flex justify="flex-start" align="center" gap={8}>
@@ -95,7 +95,7 @@ const LandingHead = () => {
 
               <App.Icon icon="landing-diagram" />
             </App.Flex>
-          </App.Flex>
+          </App.Flex> */}
         </App.Flex>
 
         <App.Flex row center gap={16} className={cn(styles.buttons, styles.showOnMobile)}>
@@ -105,7 +105,7 @@ const LandingHead = () => {
             </App.Button>
           </App.Flex>
 
-          <App.Flex flex={1}>
+          {/* <App.Flex flex={1}>
             <App.Flex center className={styles.banner} onClick={handleDuneClick}>
               <App.Flex className={styles.bannerInner} />
 
@@ -118,7 +118,7 @@ const LandingHead = () => {
                 <App.Icon icon="landing-diagram" />
               </App.Flex>
             </App.Flex>
-          </App.Flex>
+          </App.Flex> */}
         </App.Flex>
 
         <Landing.Slides />

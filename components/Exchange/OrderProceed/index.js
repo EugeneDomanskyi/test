@@ -425,12 +425,16 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                     </App.Flex>
                     <App.Flex justify="space-between" className={styles.row} sx={{marginBottom: 12}}>
                       <App.Flex align="center">
-                        <Image width={25} height={25} src={takerAsset.image} alt="" style={{marginRight: 8}} />
+                        {takerAsset?.image ? (
+                          <Image width={25} height={25} src={takerAsset.image} alt="" style={{marginRight: 8}} />
+                        ) : null}
                         <App.Text size={12} weight={600}>{ numeral(side === 'buy' ? takerAmountFormatted : makerAmountFormatted).format('0.[00000]') } {takerAsset.symbol}</App.Text>
                       </App.Flex>
                       <App.Icon icon="arrow-right" />
                       <App.Flex align="center">
-                        <Image width={25} height={25} src={makerAsset.image} alt="" style={{marginRight: 8}} />
+                        {makerAsset?.image ? (
+                          <Image width={25} height={25} src={makerAsset.image} alt="" style={{marginRight: 8}} />
+                        ) : null}
                         <App.Text size={12} weight={600}>{ numeral(side === 'buy' ? makerAmountFormatted : takerAmountFormatted).format('0.[00000]') } {makerAsset.symbol}</App.Text>
                       </App.Flex>
                     </App.Flex>
@@ -620,12 +624,16 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                                 </App.Flex>
                                 <App.Flex justify="space-between" className={styles.row}>
                                   <App.Flex align="center">
-                                    <Image width={25} height={25} src={takerAsset.image} alt="" style={{marginRight: 8}} />
+                                    {takerAsset?.image ? (
+                                      <Image width={25} height={25} src={takerAsset.image} alt="" style={{marginRight: 8}} />
+                                    ) : null}
                                     <App.Text size={12} weight={600}>{ numeral(side === 'buy' ? takerAmountFormatted : makerAmountFormatted).format('0.[00000]') } {takerAsset.symbol}</App.Text>
                                   </App.Flex>
                                   <App.Icon icon="arrow-right" />
                                   <App.Flex align="center">
-                                    <Image width={25} height={25} src={makerAsset.image} alt="" style={{marginRight: 8}} />
+                                    {makerAsset?.image ? (
+                                      <Image width={25} height={25} src={makerAsset.image} alt="" style={{marginRight: 8}} />
+                                    ) : null}
                                     <App.Text size={12} weight={600}>{ numeral(side === 'buy' ? makerAmountFormatted : takerAmountFormatted).format('0.[00000]') } {makerAsset.symbol}</App.Text>
                                   </App.Flex>
                                 </App.Flex>
@@ -656,12 +664,16 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                                 </App.Flex>
                                 <App.Flex justify="space-between" className={styles.row}>
                                   <App.Flex align="center">
-                                    <Image width={25} height={25} src={takerAsset.image} alt="" style={{marginRight: 8}} />
+                                    {takerAsset?.image ? (
+                                      <Image width={25} height={25} src={takerAsset.image} alt="" style={{marginRight: 8}} />
+                                    ) : null}
                                     <App.Text size={12} weight={600}>{ stats.spendedAmount } {takerAsset.symbol}</App.Text>
                                   </App.Flex>
                                   <App.Icon icon="arrow-right" />
                                   <App.Flex align="center">
-                                    <Image width={25} height={25} src={makerAsset.image} alt="" style={{marginRight: 8}} />
+                                    {makerAsset?.image ? (
+                                      <Image width={25} height={25} src={makerAsset.image} alt="" style={{marginRight: 8}} />
+                                    ) : null}
                                     <App.Text size={12} weight={600}>{ stats.tookAmount } {makerAsset.symbol}</App.Text>
                                   </App.Flex>
                                 </App.Flex>
@@ -708,14 +720,18 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
                                 </App.Flex>
                                 <App.Flex justify="space-between" className={styles.row}>
                                   <App.Flex align="center">
-                                    <Image width={25} height={25} src={takerAsset.image} alt="" style={{marginRight: 8}} />
+                                    {takerAsset?.image ? (
+                                      <Image width={25} height={25} src={takerAsset.image} alt="" style={{marginRight: 8}} />
+                                    ) : null}
                                     <App.Text size={12} weight={600}>
                                       { numeral(side === 'buy' ? amountLimitOrder*price : amountLimitOrder).format('0.0[0000]') } {takerAsset.symbol}
                                     </App.Text>
                                   </App.Flex>
                                   <App.Icon icon="arrow-right" />
                                   <App.Flex align="center">
-                                    <Image width={25} height={25} src={makerAsset.image} alt="" style={{marginRight: 8}} />
+                                    {makerAsset?.image ? (
+                                      <Image width={25} height={25} src={makerAsset.image} alt="" style={{marginRight: 8}} />
+                                    ) : null}
                                     <App.Text size={12} weight={600}>
                                       { numeral(side === 'buy' ? amountLimitOrder : amountLimitOrder*price).format('0.0[0000]') } {makerAsset.symbol}
                                     </App.Text>
