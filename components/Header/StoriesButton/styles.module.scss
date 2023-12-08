@@ -1,57 +1,61 @@
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  z-index: 1;
-  height: 42px;
-  width: 42px;
+.wrapper {
   position: relative;
 
-  &.disabled {
-    .outerCircle {
-      background: #332D52;
-    }
-  }
-
-  &:hover {
-    .outerCircle {
-      transform: rotate(540deg);
-    }
-
-    .innerCircle {
-      background: rgba(9, 5, 29, .7);
-
-      img {
-        transform: rotateY(360deg);
-      }
-    }
-  }
-
-  .innerCircle {
-    gap: 16px;
-    background: rgb(9, 5, 29,);
-    border-radius: 50%;
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
     z-index: 1;
-    transition: .3s;
-    cursor: pointer;
     height: 42px;
     width: 42px;
-    position: absolute;
-
-    img {
+    position: relative;
+  
+    &.disabled {
+      .outerCircle {
+        background: #332D52;
+      }
+    }
+  
+    &:hover {
+      .outerCircle {
+        transform: rotate(540deg);
+      }
+  
+      .innerCircle {
+        background: rgba(9, 5, 29, .7);
+  
+        img {
+          transform: rotateY(360deg);
+        }
+      }
+    }
+  
+    .innerCircle {
+      gap: 16px;
+      background: rgb(9, 5, 29,);
+      border-radius: 50%;
+      z-index: 1;
+      transition: .3s;
+      cursor: pointer;
+      height: 42px;
+      width: 42px;
+      position: absolute;
+  
+      img {
+        transition: .3s;
+      }
+    }
+  
+    .outerCircle {
+      background: linear-gradient(91.77deg, #E792E4 2.92%, #B545BE 36.09%, #7931CB 70.47%, #4D42C9 100%);
+      height: 44px;
+      width: 44px;
+      border-radius: 50%;
+      position: absolute;
+      z-index: 1;
       transition: .3s;
     }
-  }
-
-  .outerCircle {
-    background: linear-gradient(91.77deg, #E792E4 2.92%, #B545BE 36.09%, #7931CB 70.47%, #4D42C9 100%);
-    height: 44px;
-    width: 44px;
-    border-radius: 50%;
-    position: absolute;
-    z-index: 1;
-    transition: .3s;
   }
 }
 
@@ -60,4 +64,10 @@
   z-index: 11;
   inset: 0;
   background: rgba(0, 0, 0, .6);
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    position: static;
+  }
 }

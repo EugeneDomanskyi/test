@@ -33,7 +33,7 @@ const StoriesButton = () => {
   }
 
   return (
-    <div style={{position: 'relative'}}>
+    <div className={styles.wrapper}>
       <App.Flex column className={cn(styles.container, {[styles.disabled]: isSeen})} onClick={handleClickButton}>
         <App.Flex center className={styles.outerCircle} />
 
