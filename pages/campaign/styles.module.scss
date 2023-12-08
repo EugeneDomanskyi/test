@@ -1,0 +1,309 @@
+.container {
+  height: 100vh;
+  position: relative;
+  z-index: 0;
+
+  .logoWrapper {
+    position: absolute;
+    z-index: 2;
+    top: 16px;
+    left: 92px;
+
+    .logo {
+      position: relative;
+      padding-top: 11px;
+      width: 116px;
+  
+      .badge {
+        position: absolute;
+        background-color: #77E9D4;
+        border-radius: 2px;
+        color: #231D4C;
+        text-align: center;
+        font-family: 'Gilroy';
+        font-style: italic;
+        font-weight: 800;
+        font-size: 8.72504px;
+        line-height: 11px;
+        line-height: 1;
+        padding: 2px 6px 0px 6px;
+        right: 0;
+        top: 0;
+      }
+    }
+  }
+
+  .leftSide {
+    background-color: #0E0B23;
+    height: 100%;
+    flex: .6;
+    padding-left: 98px;
+
+    .contentWrapper {
+      height: 100%;
+      justify-content: center;
+
+      h1 {
+        font-size: 55px;
+        font-weight: 800;
+        margin: 0;
+      }
+
+      .rewardText {
+        color: #FFD600;
+        position: relative;
+        z-index: 0;
+
+        .rewardTextShadow {
+          position: absolute;
+          top: 4px;
+          z-index: -1;
+          color: #7204FF;
+          animation: moving 5s infinite ease-in-out;
+        }
+      }
+
+      .subText {
+        width: 667px;
+      }
+
+      .stepsWrapper {
+        .stepBlock {
+          border-radius: 80px;
+          background: #1B192E;
+          height: 39px;
+          align-items: center;
+          padding: 0 4px;
+          padding-right: 16px;
+  
+          .stepCircle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background-color: #FFD600;
+            color: #000;
+            font-weight: 800;
+          }
+        }
+  
+        .stepLine {
+          border-bottom: 1px dashed #322F4D;
+          height: 1px;
+          width: 76px;
+        }  
+      }
+      
+      .buttonsWrapper {
+        margin-top: 32px;
+        gap: 32px;
+
+        .link {
+          color: #4C69FF;
+          font-size: 16px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: .3s;
+
+          &:hover {
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+  
+  .rightSide {
+    background-color: #08051C;
+    height: 100%;
+    flex: .4;
+    position: relative;
+    z-index: 1;
+
+    .bottomSection {
+      position: absolute;
+      bottom: 32px;
+      gap: 32px;
+
+      .circleWrapper {
+        position: relative;
+        z-index: 1;
+        width: 30px;
+        height: 30px;
+
+        .dot {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: #53F19C;
+          z-index: 1;
+        }
+  
+        .innerCircle {
+          position: absolute;
+          z-index: 0;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          background: #173435;
+          animation: pulse-ring 1s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+
+          &.delayed {
+            animation-delay: .7s;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 1235px) {
+  .container {
+    .leftSide {
+      padding-left: 16px;
+      padding-right: 16px;
+  
+      .contentWrapper {
+        .subText {
+          width: auto;
+        }
+      }
+    }
+
+    .rightSide {
+      .bottomSection {
+        gap: 8px;
+      }
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .container {
+    flex-direction: column-reverse;
+    height: auto;
+
+    .logoWrapper {
+      left: 16px;
+    }
+
+    .rightSide {
+      height: 100%;
+      flex: 1;
+      padding: 64px 0;
+  
+      .bottomSection {
+        bottom: 16px;
+        flex-direction: column;
+        align-items: flex-start;
+  
+        .circle {
+          width: 10px;
+          height: 10px;
+        }
+      }
+    }
+
+    .leftSide {
+      flex: 1;
+      padding: 0 16px;
+      padding-top: 16px;
+      padding-bottom: 120px;
+  
+      .contentWrapper {
+        height: 100%;
+        justify-content: center;
+
+        h1 {
+          font-size: 36px;
+        }
+  
+        .rewardText {
+          color: #FFD600;
+          position: relative;
+          z-index: 0;
+  
+          .rewardTextShadow {
+            position: absolute;
+            top: 4px;
+            z-index: -1;
+            color: #7204FF;
+            animation: moving 6s infinite ease-in-out;
+          }
+        }
+
+        .stepsWrapper {
+          flex-direction: column;
+          align-items: flex-start;
+
+          .stepBlock {
+            width: 170px;
+          }
+    
+          .stepLine {
+            border-bottom: none;
+            border-left: 1px dashed #322F4D;
+            height: 35px;
+            width: 1px;
+          }  
+        }
+
+        .subText {
+          width: auto;
+        }
+  
+        .buttonsWrapper {
+          flex-direction: column;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          gap: 8px;
+          gap: 8px;
+          padding: 8px 0;
+          background: #08051C;
+  
+          .link {
+            color: #4C69FF;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .3s;
+  
+            &:hover {
+              color: #fff;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes moving {
+  0% {
+    left: -6px;
+  }
+  20% {
+    left: 6px;
+  }
+  40% {
+    left: -6px;
+  }
+  60% {
+    left: 6px;
+  }
+  100% {
+    left: -6px;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(.33);
+  }
+  80%, 100% {
+    // opacity: 0;
+    transform: scale(1);
+  }
+}

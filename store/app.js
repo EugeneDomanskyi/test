@@ -2,6 +2,7 @@ import { createSelector, createSlice } from '@reduxjs/toolkit'
 import { setCookie } from 'nookies'
 import { gql } from '@apollo/client'
 import { CHAINS } from '@/config'
+import { request } from './index'
 
 export const appSlice = createSlice({
   name: '$app',
@@ -53,6 +54,10 @@ export const get = {
   ], (blockchains) => {
     return blockchains.filter(item => item.pages.some(el => el == page))
   }),
+
+  walletConnectedCount: () => {
+    return request('https://us-central1-vibrant-waters-399406.cloudfunctions.net/fetch_connected_wallet_count', 'GET', {api: 'remote'}) 
+  },
 }
 
 const query = {
