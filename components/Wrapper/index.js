@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import $app from '@/store/app'
 
@@ -9,8 +9,9 @@ import Analytics from '@/components/Analytics'
 const Wrapper = ({ children }) => {
   const dispatch = useDispatch()
 
+  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
+
   useEffect(() => {
-    handleWindowResize()
     window.addEventListener('resize', handleWindowResize)
 
     return () => {

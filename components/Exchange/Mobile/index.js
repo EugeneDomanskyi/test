@@ -1,8 +1,12 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
+
+import $app from '@/store/app'
+import $token from '@/store/token'
+import { fetchPrices, getTokens } from '@/api_services/tokens'
 
 import App from '@/components/App'
 import TradeFormWrapper from '@/components/Exchange/Mobile/TradeFormWrapper'
@@ -28,8 +32,13 @@ const formatNumber = (number) => {
 
 const Mobile = forwardRef(({ type, onOrdersUpdate }, ref) => {
   const router = useRouter()
+  const [queryAddress] = router.query.address || []
+  const address = queryAddress ? queryAddress?.toLowerCase() : ''
   const queryBlockchainCode = router.query.blockchain
 
+  const dispatch = useDispatch()
+  const blockchain = useSelector($app.get.blockchain)
+  const list = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.all : $collection.all)
   const item = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.current : $collection.current)
 
   const [tab, setTab] = useState('charts')
@@ -59,8 +68,47 @@ const Mobile = forwardRef(({ type, onOrdersUpdate }, ref) => {
         {value: formatNumber(item.high ?? 0), text: 'High'},
         {value: formatNumber(item.low ?? 0), text: 'Low'},
       ])
+    } else {
+      if (type == 'tokens') {
+        fetchToken()
+      } else {
+        // Fetch collection
+      }
     }
   }, [item?.id])
+
+  const fetchToken = async () => {
+    const existInList = list.find(item => item.id === address)
+    if (!existInList) {
+      const post = {
+        currentPage: 1,
+        perPage: 1,
+        orderBy: 'name',
+        orderDirection: 'asc',
+        searchText: address,
+        searchField: 'contract_address',
+      }
+
+      const [token] = await getTokens(blockchain, post)
+      if (token) {
+        let currentToken = {
+          ...token,
+        }
+
+        const prices = await fetchPrices(blockchain, [token])
+        if (prices[token.id]) {
+          currentToken = {
+            ...currentToken,
+            ...prices[token.id],
+          }
+        }
+
+        dispatch($token.set.current(currentToken))
+      }
+    } else {
+      dispatch($token.set.current(existInList))
+    }
+  }
 
   const handleBack = () => {
     const page = router.pathname.split('/').filter(item => item != '')[0]

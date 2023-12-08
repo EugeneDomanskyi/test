@@ -12,7 +12,7 @@ export const appSlice = createSlice({
     blockchains: CHAINS,
     marketInfo: [],
     size: {
-      isMobile: false,
+      isMobile: null,
       windowWidth: null,
       windowHeight: null,
     }
