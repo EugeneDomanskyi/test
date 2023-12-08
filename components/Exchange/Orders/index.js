@@ -1,6 +1,6 @@
 import styles from './styles.module.scss'
 import { useSelector } from 'react-redux'
-import { useState, memo, useEffect, useRef, useCallback } from 'react'
+import { useState, memo, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
@@ -11,6 +11,7 @@ import $app from '@/store/app'
 import $orders from '@/store/orders'
 import $alert from '@/store/alert'
 
+import { OrderUtils } from '@/libs/helpers'
 import App from '@/components/App'
 import { trackEvent, getPageName } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -28,14 +29,13 @@ const Orders = ({global, type, version, onClickOrder}) => {
   const orders = useSelector($orders.get[type])
   const blockchain = useSelector($app.get.blockchain)
   const socketConnected = useSelector(({$app}) => $app.socketConnected)
-  const { wallet, changeNetwork, connect, getConnectorName } = useWalletConnect()
+  const { wallet, connect, getConnectorName } = useWalletConnect()
 
   const { updateOrders } = useOrders({tokenAddress: queryTokenId, type})
 
   const [loading, setLoading] = useState(true)
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
   const [hideCancelledOrders, setHideCancelledOrders] = useState(true)
-  const [cancellingOrders, setCancellingOrders] = useState([])
   const [ordersType, setOrderTypes] = useState('open')
   const [orderForCancel, setOrderForCancel] = useState()
   const [detailsOrder, setDetailsOrder] = useState()
@@ -52,10 +52,12 @@ const Orders = ({global, type, version, onClickOrder}) => {
   useEffect(() => {
     if (type === 'tokens') {
       Socket.on('order_placed', 'my_orders', (data) => {
-        getOrders()
+        const order = OrderUtils.formatter(data)
+        dispatch($orders.set.tokensAdd(order))
       })
-      Socket.on('order_submitted', 'my_orders', () => {
-        getOrders()
+      Socket.on('order_submitted', 'my_orders', (data) => {
+        const order = OrderUtils.formatter(data)
+        dispatch($orders.set.tokensUpdate(order))
       })
     }
   }, [wallet, type, blockchain.code])
@@ -118,9 +120,9 @@ const Orders = ({global, type, version, onClickOrder}) => {
     handleDialogClose('cancelAll')()
 
     const hashes = orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map(order => order.orderHash )
-    const result = await $orders.api.cancelAll({ wallet, order_hashes: hashes })
+    const result = await $orders.api.cancelAll({ wallet, order_hashes: hashes, chain_id: blockchain.id })
     if (result) {
-      getOrders()
+      dispatch($orders.set.tokens(result.data.map(o => OrderUtils.formatter(o))))
       dispatch($alert.set.success({ title: 'All Orders Cancelled', text: 'All your live orders has been cancelled successfully!' }))
     }
   }
@@ -157,14 +159,14 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
     trackEvent('Cancel Order Submit', eventPost)
     if (blockchain?.useBackend) {
-      const result = await $orders.api.cancel({ order_hash: order.orderHash })
+      const result = await $orders.api.cancel({ order_hash: order.orderHash, chain_id: blockchain.id })
       if (result) {
         trackEvent('Cancel Order Success', eventPost)
+        dispatch($orders.set.tokensUpdate(OrderUtils.formatter(result.data)))
         dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
       } else {
         dispatch($alert.set.error({ title: 'Order Not Cancelled', text: result }))
       }
-      handleOrdersUpdated()
       handleDialogClose('approve')()
     } else {
       order.cancel().then(() => {
@@ -232,7 +234,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
   }
 
-  const getOrders = async (event) => {
+  const getOrders = async () => {
     const res = await $orders.api.get[type]({
       blockchain: blockchain.code,
       maker: wallet,
