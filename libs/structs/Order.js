@@ -158,8 +158,11 @@ class Order {
         }).catch(error => {
           reject({success: false, message: error.shortMessage, type: 'balance'})
         })
-        if (writeContractResult) {
+
+        if (writeContractResult.success) {
           resolve({success: true})
+        } else {
+          reject({success: false, message: writeContractResult.error.shortMessage, type: 'balance'})
         }
         return
       }
@@ -389,6 +392,7 @@ class TOKEN extends Order {
     this.status = data.status
     this.time = moment(data.createDateTime).format('DD MMM, HH:mm')
     this.timeMoment = moment(data.createDateTime)
+    this.orderHash = data.orderHash
   }
 
   get itemPrice () {
@@ -587,6 +591,64 @@ class TOKEN extends Order {
     })
   }
 
+  static placeToAPI = ({makerAsset, takerAsset, price, amount, type = 'buy'}, callback) => {
+    return new Promise(async (resolve, reject) => {
+      const { walletClient, chainId } = await Order.getWalletData()
+      const limitOrderBuilder = new LimitOrderBuilder(TEGRO_FILL_ORDERS_CONTRACTS[chainId], chainId, walletClient)
+
+      const spendAmount = type === 'buy' ? price*amount : amount*1
+      const receiveAmount = type === 'buy' ? amount : price*amount
+
+      const price_precision = parseUnits(`${price}`, type === 'buy' ? makerAsset.decimals : takerAsset.decimals).toString()
+      const volume_precision = parseUnits(`${amount}`, type === 'buy' ? takerAsset.decimals : makerAsset.decimals).toString()
+      
+      const balance = await Order.getBalance(walletClient.account.address, makerAsset.address)
+
+      if (balance < spendAmount) {
+        reject({success: false, message: 'Insufficient balance', type: 'balance'})
+        return 
+      }
+      
+      const limitOrder = limitOrderBuilder.buildLimitOrder({
+        makerAssetAddress: makerAsset.address,
+        takerAssetAddress: takerAsset.address,
+        makerAddress: walletClient.account.address,
+        makingAmount: parseUnits(`${spendAmount}`, makerAsset.decimals).toString(),
+        takingAmount: parseUnits(`${receiveAmount}`, takerAsset.decimals).toString(),
+      })
+
+      const limitOrderTypedData = limitOrderBuilder.buildLimitOrderTypedData(limitOrder, 'Tegro')
+
+      const limitOrderHash = hashTypedData(limitOrderTypedData)
+      const signature = await walletClient.signTypedData(limitOrderTypedData).catch(error => {
+        reject({success: false, message: error.shortMessage, type: error.name})
+      })
+
+      if (!signature) {
+        return
+      }
+      callback('transaction_completed', {success: true})
+      const post = {
+        chain_id: chainId,
+        base_asset: type === 'buy' ? makerAsset.address : takerAsset.address,
+        quote_asset: type === 'buy' ? takerAsset.address : makerAsset.address,
+        side: (type === 'buy')*1,
+        volume_precision: volume_precision,
+        price_precision: price_precision,
+        order_hash: limitOrderHash,
+        raw_order_data: JSON.stringify(limitOrderTypedData.message),
+        signature: signature,
+        signed_order_type: 'tegro',
+      }
+      const res = await $orders.api.create.tokenAPI(post)
+      if (res) {
+        resolve({success: true})
+        return
+      }
+      reject({success: false})
+    })
+  }
+
   cancel = () => {
     return new Promise(async (resolve, reject) => {
       const { chainId } = await Order.getWalletData()
@@ -600,13 +662,13 @@ class TOKEN extends Order {
         to: INCH_CONTRACTS[chainId],
         data: callData,
       }).catch((error) => {
-        Order.showErrorMessage(error.shortMessage)
-        reject(error)
+        //Order.showErrorMessage(error.shortMessage)
+        reject(error.shortMessage)
       })
       if (res) {
         const txResult = await waitForTransaction(res)
         setTimeout(() => {
-          Order.showSuccessMessage('Order cancelled successfully')
+          //Order.showSuccessMessage('Order cancelled successfully')
           resolve(txResult)
         }, 2000)
       }

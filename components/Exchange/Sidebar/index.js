@@ -138,6 +138,7 @@ const Sidebar = ({ version, type }) => {
                         key={item.id}
                         item={item}
                         type={type}
+                        version={version}
                       />
                     )
                   })}

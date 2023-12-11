@@ -26,7 +26,7 @@ const middleware = (request) => {
     const validBlockhains = CHAINS.filter(item => item.pages.some(el => el == seg1))
     let blockchain = seg2 ?? request.cookies.get('blockchain')?.value
     if (!validBlockhains.some(item => item.code == blockchain)) {
-      blockchain = DEFAULT_BLOCKCHAIN
+      blockchain = validBlockhains.find(item => item.code == DEFAULT_BLOCKCHAIN) ? DEFAULT_BLOCKCHAIN : validBlockhains[0]?.code
     }
 
     response.cookies.delete('blockchain')
@@ -35,14 +35,14 @@ const middleware = (request) => {
 
     if ((!seg2 || !seg3) && !isMobile) {
       return NextResponse.redirect(new URL(`/${seg1}/${blockchain}/${seg3 ?? '0x'}`, request.url))
-    } else if (isMobile && !seg2) {
+    } else if (isMobile && (!seg2 || seg2 && blockchain != seg2)) {
       return NextResponse.redirect(new URL(`/${seg1}/${blockchain}`, request.url))
     }
   } else {
     const validBlockhains = CHAINS
     let blockchain = request.cookies.get('blockchain')?.value
     if (!validBlockhains.some(item => item.code == blockchain)) {
-      blockchain = DEFAULT_BLOCKCHAIN
+      blockchain = validBlockhains.find(item => item.code == DEFAULT_BLOCKCHAIN) ? DEFAULT_BLOCKCHAIN : validBlockhains[0]?.code
     }
 
     response.cookies.delete('blockchain')
