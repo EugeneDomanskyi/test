@@ -3,7 +3,6 @@ import { ResponseCookies, RequestCookies } from 'next/dist/server/web/spec-exten
 import { CHAINS } from '@/config'
 
 const DEFAULT_BLOCKCHAIN = 'ethereum'
-const VALID_BLOCKCHAINS = ['ethereum', 'polygon', 'mumbai', 'arbitrum', 'bsc', 'avalanche']
 
 const applySetCookie = (req, res) => {
   const setCookies = new ResponseCookies(res.headers)
