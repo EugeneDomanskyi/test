@@ -76,7 +76,7 @@ const TEST_NETWORKS = [
             txUrl: 'https://mumbai.polygonscan.com/tx/',
             rewardEndpoint: 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status',
         },
-        useBackend: false,
+        useBackend: true,
     },
 ]
 

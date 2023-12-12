@@ -42,6 +42,9 @@ export const subscribeToBalanceUpdates = (chainId, walletAddress, tokens, onUpda
     }
     const handleUpdate = data => {
         const result = data.reduce((acc, res, i, array) => {
+            if (!res?.result) {
+                return acc
+            }
             const isBalance = i%2
             if (isBalance) {
                 const decimals = array[i-1].result
