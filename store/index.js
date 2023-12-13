@@ -5,6 +5,7 @@ import { CHAINS } from '@/config'
 
 import $modal from './modal'
 import $app, { appSlice } from './app'
+import $alert from './alert'
 import $exchange from './exchange'
 import $collection, { collectionSlice } from './collection'
 import $token, { tokenSlice } from './token'
@@ -12,12 +13,14 @@ import $nft from './nft'
 import $orders from './orders'
 import $raffle from './raffle'
 import $markets from './markets'
+import $portfolio from './portfolio'
 
 const createStore = (initialData, page, info) => {
   return configureStore({
     reducer: {
       $modal: $modal.reducer,
       $app: $app.reducer,
+      $alert: $alert.reducer,
       $exchange: $exchange.reducer,
       $collection: $collection.reducer,
       $token: $token.reducer,
@@ -25,6 +28,7 @@ const createStore = (initialData, page, info) => {
       $orders: $orders.reducer,
       $raffle: $raffle.reducer,
       $markets: $markets.reducer,
+      $portfolio: $portfolio.reducer,
     },
 
     preloadedState: {
@@ -61,7 +65,9 @@ const QUICKSWAP_URL = 'https://unpkg.com/quickswap-default-token-list@1.2.2/'
 const CELO_URL = 'https://celo-org.github.io/'
 const BNB_URL = 'https://raw.githubusercontent.com/'
 const INCH_URL = 'https://limit-orders.1inch.io/v3.0/'
-const BACKEND_URL = 'https://34.74.211.77:8080/'
+const BACKEND_URL = 'https://v2.betora.vip/'
+// const BACKEND_URL = 'http://localhost:8080/'
+const PORTFOLIO_URL = 'https://api.1inch.dev/portfolio/v3/portfolio/overview/'
 
 export const request = async (uri, method = 'GET', {blockchain, api, ...data} = {}) => {
   const currentChain = CHAINS.find(chain => chain.code === blockchain)
@@ -79,7 +85,6 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
   }
 
   let query = ''
-
   if (data) {
     if (method === 'GET') {
       query = queryBuilder(data)
@@ -123,6 +128,9 @@ export const request = async (uri, method = 'GET', {blockchain, api, ...data} = 
         break
       case 'inch':
         base_url = `${INCH_URL}${currentChain.id}/`
+        break
+      case 'portfolio':
+        base_url = `${PORTFOLIO_URL}`
         break
     }
   }

@@ -31,6 +31,7 @@ const AppTabs = ({width = '100%', height = '100%', options, active, end, variant
     switch (variant) {
       case 'classic': return { size: 20, weight: 700 }
       case 'back': return { size: 12, weight: 500 }
+      case 'mobile': return { size: 12, weight: 600 }
       default: return { size: 14, weight: 500 }
     }
   }

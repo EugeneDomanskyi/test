@@ -1,0 +1,94 @@
+import { useEffect, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { gsap } from 'gsap'
+import cn from 'classnames'
+
+import $alert from '@/store/alert'
+
+import AppFlex from '@/components/App/AppFlex'
+import AppText from '@/components/App/AppText'
+import AppIcon from '@/components/App/AppIcon'
+
+import styles from './styles.module.scss'
+
+const AppAlert = () => {
+  const dispatch = useDispatch()
+  const messages = useSelector(({ $alert }) => $alert.messages)
+
+  const [currentMessages, setCurrentMessages] = useState([])
+
+  const alertsBoxRef = useRef({})
+  const alertsRef = useRef({})
+
+  useEffect(() => {
+    if (messages.length) {
+      setCurrentMessages(state => {
+        return [
+          ...messages.map(item => ({
+            ...item,
+            id: Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000,
+            visible: false,
+          })),
+          ...state,
+        ]
+      })
+
+      dispatch($alert.set.clear())
+    }
+  }, [messages])
+
+  useEffect(() => {
+    (async () => {
+      if (currentMessages.some(item => ! item.visible)) {
+        const unvisibleMessages = currentMessages.filter(item => ! item.visible)
+        for (const message of unvisibleMessages) {
+          const alert = alertsRef.current[message.id]
+          if (alert) {
+            const alertRect = alert.getBoundingClientRect()
+            const alertBox = alertsBoxRef.current[message.id]
+
+            await gsap.to(alertBox, { height: alertRect.height, duration: 0.1 })
+            await gsap.to(alert, { marginLeft: 0, duration: 0.1 })
+
+            setTimeout(async () => {
+              await gsap.to(alert, { marginLeft: '100%', duration: 0.1 })
+              await gsap.to(alertBox, { height: 0, duration: 0.1 })
+
+              setCurrentMessages(state => {
+                return state.filter(item => item.id != message.id)
+              })
+            }, message.delay)
+          }
+        }
+
+        setCurrentMessages(state => {
+          return state.map(item => ({
+            ...item,
+            visible: true,
+          }))
+        })
+      }
+    })()
+  }, [currentMessages, alertsRef.current])
+
+  return (
+    <AppFlex column gap={8} className={styles.alerts}>
+      {currentMessages.map((item, index) => (
+        <div key={item.id} ref={(element) => alertsBoxRef.current[item.id] = element} className={cn(styles.alertBox)}>
+          <div ref={(element) => alertsRef.current[item.id] = element} className={cn(styles.alert, styles[item.type])}>
+            <AppFlex row center className={cn(styles.alertIcon, styles[item.type])}>
+              <AppIcon icon={`alert-${item.type}`} />
+            </AppFlex>
+
+            <AppFlex column gap={4} flex={1}>
+              <AppText nowrap size={17} weight={600} height={1}>{item.title}</AppText>
+              <AppText size={13} height={1.2} color="#C8C5C5">{item.text}</AppText>
+            </AppFlex>
+          </div>
+        </div>
+      ))}
+    </AppFlex>
+  )
+}
+
+export default AppAlert

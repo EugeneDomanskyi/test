@@ -1,5 +1,5 @@
 .collection {
-  padding: 8px 12px;
+  padding: 16px 12px;
   cursor: pointer;
   transition: all .2s ease 0s;
   background: transparent;
@@ -28,6 +28,13 @@
     align-items: center;
     justify-content: center;
     padding: 4px;
+  }
+
+  &.mobile {
+    .emptyImage {
+      width: 30px;
+      height: 30px;
+    }
   }
   
   &:hover,

@@ -1,0 +1,119 @@
+.portfolioContainer {
+  inset: 0;
+  position: fixed;
+  z-index: 10;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity .3s ease 0s;
+
+  .portfolioBackdrop {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+  }
+
+  .portfolio {
+    position: absolute;
+    z-index: 1;
+    right: -444px;
+    width: 444px;
+    top: 64px;
+    bottom: 0;
+    padding: 32px 0;
+    border-radius: 24px 0 0 24px;
+    background-color: #08051C;
+    box-shadow: 0px 0px 153px 0px rgba(97, 0, 255, 0.10);
+    transition: .3s;
+
+    .header {
+      padding: 14px 16px;
+      border-bottom: solid #1F1C30 1px;
+
+      .closeButton {
+        width: 26px;
+        height: 26px;
+        border-radius: 40px;
+        border: 1px solid #130E2D;
+        background: rgba(19, 14, 45, 0.32);
+      }
+    }
+
+    @media (max-width: 768px) {
+      right: 0;
+      left: 0;
+      width: 100%;
+      height: max(percentage(0.7), 600px);
+      top: auto;
+      bottom: calc(-1 * max(percentage(0.7), 600px));
+      border-radius: 20px 20px 0 0;
+      padding: 0;
+    }
+
+    .portfolioCardBox {
+      padding: 0 16px;
+
+      .portfolioCard {
+        width: 100%;
+        padding: 16px;
+        border-radius: 12px;
+        box-shadow: -9px 5px 25px 0px rgba(97, 0, 255, 0.08);
+      }
+    }
+
+    .scroll {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      overflow-y: auto;
+
+      .row {
+        padding: 16px;
+        border-bottom: 0.5px solid #08051C;
+        position: relative;
+        z-index: 0;
+
+        &.clickable {
+          cursor: pointer;
+
+          &:after {
+            content: '';
+            display: block;
+            position: absolute;
+            z-index: -1;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(217, 217, 217, 0.00) 0%, rgba(255, 255, 255, 0.08) 46.15%, rgba(217, 217, 217, 0.00) 91.67%);
+            opacity: 0;
+            transition: .3s;
+          }
+
+          &:hover {
+            &:after {
+              opacity: 1;
+            }
+          }
+        }
+
+        &:nth-of-type(odd) {
+          background-color: #0E0B23;
+        } 
+      }
+    }
+  }
+
+  &.active {
+    pointer-events: all;
+    opacity: 1;
+
+    .portfolio {
+      right: 0;
+
+      @media (max-width: 768px) {
+        bottom: 0;
+      }
+    }
+  }
+}

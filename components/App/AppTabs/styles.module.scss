@@ -83,7 +83,15 @@
         }
 
         .optionInner {
-          padding: 12px 0;
+          padding: 4px 0;
+
+          .optionText {
+            color: #5E5C6B;
+
+            &.active {
+              color: #fff;
+            }
+          }
         }
       }
 
