@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 import cn from 'classnames'
@@ -6,6 +6,7 @@ import cn from 'classnames'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
 import $app from '@/store/app'
+import $token from '@/store/token'
 
 import App from '@/components/App'
 
@@ -16,6 +17,7 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
 
   const { wallet, scanUrl } = useWalletConnect()
 
+  const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const portfolioUsd = useSelector(({ $portfolio }) => $portfolio.usd)
   const portfolioTicker = useSelector(({ $portfolio }) => $portfolio.ticker)
@@ -39,6 +41,7 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
 
   const handleTrade = (item) => () => {
     if (!item.isNative && !item.isUsdt) {
+      dispatch($token.set.current({}))
       router.push(`/exchange/${blockchain.code}/${item.address}`)
       handleClose()
     }

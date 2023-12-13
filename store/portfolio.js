@@ -26,9 +26,10 @@ export const portfolioSlice = createSlice({
         symbol: native?.info?.symbol,
       }
 
-      state.usd = payload.reduce((acc, item) => {
+      const usd = payload.reduce((acc, item) => {
         return acc + item.value_usd
-      }, 0).toFixed(4)
+      }, 0)
+      state.usd = usd.toFixed(4)
 
       state.list = payload.map(item => {
         return {
@@ -53,12 +54,15 @@ export const portfolioSlice = createSlice({
       const usdTicker = payload.reduce((acc, item) => {
         return acc + item.abs_profit_usd
       }, 0)
-
       state.ticker = {
         type: usdTicker >= 0 ? 'plus' : 'minus',
-        percent: (usdTicker * 100 / state.usd).toFixed(2),
+        percent: (usdTicker * 100 / usd).toFixed(2),
         usd: usdTicker.toFixed(4),
       }
+    },
+
+    native: (state, { payload }) => {
+      state.native = payload
     },
   },
 })

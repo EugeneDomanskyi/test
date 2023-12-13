@@ -188,6 +188,7 @@ const ADDITIONAL_NETWORKS = [{
       name: 'Wrapped BNB',
       shortName: 'WBNB',
     },
+    use1Inch: true,
   }, {
     ...base,
     code: 'base',
@@ -301,6 +302,7 @@ export const CHAINS = [
       name: 'Wrapped Ether',
       shortName: 'WETH',
     },
+    use1Inch: true,
   }, {
     ...polygon,
     code: 'polygon',
@@ -337,6 +339,7 @@ export const CHAINS = [
         txUrl: 'https://polygonscan.com/tx/',
         rewardEndpoint: 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status-polygon',
     },
+    use1Inch: true,
   }, 
   ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? TEST_NETWORKS : []),
   ...ADDITIONAL_NETWORKS.filter(chain => TEGRO_FILL_ORDERS_CONTRACTS[chain.id]),
