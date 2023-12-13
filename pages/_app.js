@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { Provider } from 'react-redux'
+import { useRouter } from 'next/router'
 import { userAgentFromString } from 'next/server'
 import { ToastContainer } from 'react-toastify'
 import { createClient } from '@reservoir0x/reservoir-sdk'
