@@ -9,6 +9,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import Order from '@/libs/structs/Order'
 import { INCH_CONTRACTS, TEGRO_FILL_ORDERS_CONTRACTS } from '@/config'
 import { trackEvent } from '@/libs/analytics.lib'
+import { tradeVolumeCheck } from '@/libs/magic-square.lib'
 
 import App from '@/components/App'
 import Tabs from './Tabs'
@@ -294,6 +295,9 @@ const OrderProceed = ({side, blockchain, makerAsset, takerAsset, makerAmountForm
         'Order Type': (flowSteps.fill_order && flowSteps.place_order) ? 'Hybrid' : (flowSteps.fill_order ? 'Taker' : 'Maker'),
         'Step': 'Confirm',
       })
+      if (wallet) {
+        tradeVolumeCheck(wallet)
+      }
       if (!flowSteps.fill_order || !flowSteps.place_order) {
         setCurrentTab(flowSteps.fill_order ? 'fill_order' : 'limit_order')
       }

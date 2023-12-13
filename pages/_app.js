@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { Provider } from 'react-redux'
+import { useRouter } from 'next/router'
 import { userAgentFromString } from 'next/server'
 import { ToastContainer } from 'react-toastify'
 import { createClient } from '@reservoir0x/reservoir-sdk'
@@ -134,9 +135,13 @@ const RainbowTheme = merge(darkTheme({ overlayBlur: 'small' }), {
 amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
 
 function MyApp({ Component, pageProps, initialData, currentInfo, currentPage, currentAddress, currentSymbol, ssRoute, marketInfo, marketsList }) {
+  const router = useRouter()
   const storeRef = useRef(store(initialData, currentPage, currentInfo)).current
 
   useEffect(() => {
+    if (router?.query?.vid) {
+      localStorage.setItem('ms_vid', router.query.vid)
+    }
     if (process.env.NEXT_PUBLIC_APP_ENV !== 'local') {
       Smartlook.init('cf71ed516173943775e4d8cc10245b95b9ed7de0')
     }

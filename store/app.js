@@ -60,6 +60,12 @@ export const get = {
   },
 }
 
+export const post = {
+  sendVid: (data) => {
+    return request("https://us-central1-vibrant-waters-399406.cloudfunctions.net/connect-wallet-vid", 'POST', {api: 'remote', data})
+  },
+}
+
 const query = {
   totalVolume: gql`
     query totalVolume {
@@ -75,4 +81,5 @@ export default {
   set: appSlice.actions,
   query,
   get,
+  post,
 }
