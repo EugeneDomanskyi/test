@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { Provider } from 'react-redux'
-import { useRouter } from 'next/router'
+import { userAgentFromString } from 'next/server'
 import { ToastContainer } from 'react-toastify'
 import { createClient } from '@reservoir0x/reservoir-sdk'
 import nookies from 'nookies'
@@ -157,6 +157,7 @@ function MyApp({ Component, pageProps, initialData, currentInfo, currentPage, cu
           </Wrapper>
 
           <App.Modal />
+          <App.Alert />
           <ToastContainer autoClose={3000} />
         </Provider>
       </RainbowKitProvider>
@@ -223,17 +224,22 @@ MyApp.getInitialProps = async ({ ctx }) => {
   let ssRoute = ''
   let marketInfo = {}
   let marketsList = []
+  let isMobile = null
 
   if (ctx?.req) {
     const routeArr = ctx?.req?.url.split('/') || []
     const [addrArr] = routeArr.slice(-1)
     currentAddress = addrArr.split('?')[0]
     ssRoute = (ctx.req.url)
+
+    const { device } = userAgentFromString(ctx.req.headers['user-agent'])
+    isMobile = device.type === 'mobile'
   }
 
   return {
     initialData: {
       blockchain: cookies.blockchain,
+      isMobile,
       marketsList,
     },
     currentInfo,

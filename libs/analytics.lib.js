@@ -59,6 +59,10 @@ export const getPageName = () => {
     return 'NFT Swap'
   }
 
+  if (window.location.pathname.includes('campaign')) {
+    return 'Campaign Landing'
+  }
+
   return window.location.pathname
 }
 

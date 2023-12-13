@@ -19,7 +19,7 @@ const getRandomColor = () => {
   return `#${randomColor}`
 }
 
-const SidebarItem = ({ item, type }) => {
+const SidebarItem = ({ item, type, version }) => {
   const router = useRouter()
 
   const dispatch = useDispatch()
@@ -59,19 +59,19 @@ const SidebarItem = ({ item, type }) => {
   )
   
   return (
-    <App.Flex row justify="space-between" align="center" onClick={handleClick} className={cn(styles.collection, {[styles.active]: (current.id == item.id)})}>
+    <App.Flex row justify="space-between" align="center" onClick={handleClick} className={cn(styles.collection, styles.version, {[styles.active]: (current.id == item.id)})}>
       <App.Flex row gap={4} align="center">
         {item.image ? (
-          <Image src={item.image} priority width={26} height={26} className={styles.image} alt="" />
+          <Image src={item.image} priority width={version == 'mobile' ? 30 : 26} height={version == 'mobile' ? 30 : 26} className={styles.image} alt="" />
         ) : (
           <div className={styles.emptyImage} style={{background: `linear-gradient(0deg, ${colors.current[0]}, ${colors.current[1]})`}}>
             <App.Text center size={10} weight={600}>{ getSymbolForLogo() }</App.Text>
           </div>
         )}
 
-        <App.Flex column gap={2} sx={{ maxWidth: 100 }}>
+        <App.Flex column gap={2} sx={{ maxWidth: version == 'mobile' ? 210 : 100 }}>
           <App.Flex row align="center" gap={4}>
-            <App.Text nowrap uppercase size={12} weight={600} height={1}>{item.symbol ?? item?.slug}{type == 'tokens' ? (<App.Text inline size={10} weight={600} color="#B9B8C5">/USDT</App.Text>) : null}</App.Text>
+            <App.Text nowrap uppercase size={[12, 16]} weight={600} height={1}>{item.symbol ?? item?.slug}{type == 'tokens' ? (<App.Text inline size={[10, 12]} weight={600} color={['#B9B8C5', '#5E5C6B']} height={1}>/USDT</App.Text>) : null}</App.Text>
             {item.openseaVerificationStatus == 'verified' ? (
               <App.Tooltip text={<TooltipText />} placement="right">
                 <App.Flex center width={10} height={10} sx={{ minWidth: 10 }}>
@@ -81,19 +81,19 @@ const SidebarItem = ({ item, type }) => {
             ) : null}
           </App.Flex>
 
-          <App.Text nowrap size={10} height={1} color="#B9B8C5">{item.name}</App.Text>
+          <App.Text nowrap size={[10, 12]} height={1} color={['#B9B8C5', '#5E5C6B']}>{item.name}</App.Text>
         </App.Flex>
       </App.Flex>
       
       <App.Flex column align="flex-end" gap={2}>
         {item.price == '' ? (
-          <App.Loader size={12} />
+          <App.Loader size={[12, 16]} />
         ) : (
-          <App.Text right size={12} weight={600} height={1}>{ item.price }</App.Text>
+          <App.Text right size={[12, 16]} weight={600} height={1}>{ item.price }</App.Text>
         )}
         <App.Flex row align="center" justify="flex-end" gap={2}>
           <App.Icon icon="caret-down" width={10} height={10} color={item.ticker.type == 'minus' ? '#FF1D61' : '#53F19C'} style={{transform: `rotate(${item.ticker.type == 'plus' ? '180deg' : '0deg'})`}} />
-          <App.Text size={10} height={1} color={item.ticker.type == 'minus' ? '#FF1D61' : '#53F19C'}>{ item.ticker.value }%</App.Text>
+          <App.Text size={[10, 12]} height={1} color={item.ticker.type == 'minus' ? '#FF1D61' : '#53F19C'}>{ item.ticker.value }%</App.Text>
         </App.Flex>
       </App.Flex>
 
@@ -105,6 +105,7 @@ const SidebarItem = ({ item, type }) => {
 const isEqual = (prevProps, nextProps) => {
   return prevProps.item === nextProps.item
     && prevProps.type === nextProps.type
+    && prevProps.version === nextProps.version
 }
 
 export default memo(SidebarItem, isEqual)

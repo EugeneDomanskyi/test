@@ -13,7 +13,7 @@ export const appSlice = createSlice({
     blockchains: CHAINS,
     marketInfo: [],
     size: {
-      isMobile: false,
+      isMobile: null,
       windowWidth: null,
       windowHeight: null,
     }
@@ -54,6 +54,10 @@ export const get = {
   ], (blockchains) => {
     return blockchains.filter(item => item.pages.some(el => el == page))
   }),
+
+  walletConnectedCount: () => {
+    return request('https://us-central1-vibrant-waters-399406.cloudfunctions.net/fetch_connected_wallet_count', 'GET', {api: 'remote'}) 
+  },
 }
 
 export const post = {

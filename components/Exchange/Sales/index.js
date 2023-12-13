@@ -5,6 +5,7 @@ import cn from 'classnames'
 
 import $orders from '@/store/orders'
 import $app from '@/store/app'
+import Socket from '@/libs/ws.lib'
 
 import App from '@/components/App'
 
@@ -23,22 +24,36 @@ const Sales = ({onClickSale, version, type}) => {
   let previousPrice = 0
 
   useEffect(() => {
-    if (type === 'tokens' && isAddress) {
-      setLoading(true)
-      $orders.api.get.tokens.trades({
-        address: current.address,
-        blockchain: blockchain.code,
-        sortBy: 'createDateTime',
-        statuses: '[3]',
-        limit: 100,
-      }).then(res => {
-        dispatch($orders.set.trades({type: 'tokens', data: res}))
-        setLoading(false)
+    if (type === 'tokens') {
+      Socket.on('order_submitted', 'trades', () => {
+        getTrades()
       })
+    }
+  }, [type, current.address])
+
+  useEffect(() => {
+    if (type === 'tokens' && isAddress) {
+      getTrades()
     } else {
       setLoading(false)
     }
   }, [current.address])
+
+  const getTrades = async () => {
+    setLoading(true)
+    dispatch($orders.set.trades({type: 'tokens', data: []}))
+    const res = await $orders.api.get.tokens.trades({
+      address: current.address,
+      blockchain: blockchain.code,
+      sortBy: 'createDateTime',
+      statuses: '[3]',
+      limit: 100,
+    })
+    if (res) {
+      dispatch($orders.set.trades({type: 'tokens', data: res}))
+    }
+    setLoading(false)
+  }
 
   const handleClick = sale => () => {
     onClickSale({quantity: sale.amount, price: sale.priceFormatted, side: sale.side})
