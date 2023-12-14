@@ -61,9 +61,7 @@ const handler = async (req, res) => {
           const info = tokens.find(el => el.address == item.contract_address)
 
           if (!info?.image) {
-            if (info.symbol == 'USDT') {
-              info.image = 'https://tokens.1inch.io/0xdac17f958d2ee523a2206206994597c13d831ec7.png'
-            }
+            info.image = `https://tokens.1inch.io/${item.contract_address.toLowerCase()}.png`
           }
 
           return {

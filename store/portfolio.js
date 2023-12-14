@@ -32,6 +32,7 @@ export const portfolioSlice = createSlice({
       state.usd = usd.toFixed(4)
 
       state.list = payload.map(item => {
+        const percent = Math.round((item.roi * 100) * 100) / 100
         return {
           address: item.contract_address,
           name: item.info?.name,
@@ -42,8 +43,8 @@ export const portfolioSlice = createSlice({
           usd: item.value_usd.toFixed(4),
           price: item.price_to_usd,
           ticker: {
-            type: item.abs_profit_usd >= 0 ? 'plus' : 'minus',
-            percent: (item.roi * 100).toFixed(2),
+            type: percent > 0 ? 'plus' : percent < 0 ? 'minus' : 'zero',
+            percent: percent.toFixed(2),
             usd: item.abs_profit_usd.toFixed(4),
           },
           isNative: native?.contract_address == item.contract_address,
@@ -54,9 +55,11 @@ export const portfolioSlice = createSlice({
       const usdTicker = payload.reduce((acc, item) => {
         return acc + item.abs_profit_usd
       }, 0)
+
+      const percent = usd != 0 ? (Math.round((usdTicker * 100 / usd) * 100) / 100) : 0
       state.ticker = {
-        type: usdTicker >= 0 ? 'plus' : 'minus',
-        percent: (usdTicker * 100 / usd).toFixed(2),
+        type: percent > 0 ? 'plus' : percent < 0 ? 'minus' : 'zero',
+        percent: percent.toFixed(2),
         usd: usdTicker.toFixed(4),
       }
     },

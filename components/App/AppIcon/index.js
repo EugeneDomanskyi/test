@@ -27,7 +27,7 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
 
     if (icon == 'copy2') {
       return (
-        <svg width={width ?? 10} height={height ?? 10} viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width={width ?? 10} height={height ?? 10} viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <path fill={color ?? '#5E5C6B'} d="M8.797 8.682h-5.21V2.955h5.21m0-.819h-5.21c-.252 0-.493.087-.67.24a.766.766 0 00-.278.579v5.727c0 .217.1.425.277.578.178.154.419.24.67.24h5.21c.252 0 .493-.086.67-.24a.766.766 0 00.278-.578V2.955c0-.217-.1-.426-.277-.579a1.028 1.028 0 00-.67-.24zM7.376.5H1.692c-.252 0-.493.086-.67.24a.766.766 0 00-.278.578v5.727h.948V1.318h5.684V.5z" />
         </svg>
       )
