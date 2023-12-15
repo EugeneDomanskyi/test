@@ -328,6 +328,10 @@ api.get.tokens.trades = async ({ address, blockchain }) => {
   })
 }
 
+api.get.tokens.typedData = (params) => {
+  return request('market/orders/getTypedData', 'POST', {api: 'backend', ...params})
+}
+
 api.get.tokens.byAssets = ({ makerAsset, takerAsset, blockchain, ...rest }) => {
   return request('all', 'GET', { api: 'inch', takerAsset: takerAsset, makerAsset: makerAsset, blockchain, ...rest })
 }
