@@ -16,6 +16,11 @@ export const portfolioSlice = createSlice({
       usd: 0,
     },
     list: [],
+    prefill: {
+      address: null,
+      side: 'buy',
+      amount: 0,
+    },
   },
 
   reducers: {
@@ -66,6 +71,10 @@ export const portfolioSlice = createSlice({
 
     native: (state, { payload }) => {
       state.native = payload
+    },
+
+    prefill: (state, { payload }) => {
+      state.prefill = payload
     },
   },
 })
