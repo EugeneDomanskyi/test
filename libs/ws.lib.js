@@ -1,4 +1,4 @@
-const WS_URL = 'wss://v2.betora.vip/ws'
+const WS_URL = 'wss://api.testnet.tegro.com/v2/ws'
 // const WS_URL = 'ws://localhost:8080/ws'
 
 class Socket {
