@@ -55,9 +55,9 @@ const TEST_NETWORKS = [
         coingecko: '',
         platform: '',
         pages: ['earn', 'exchange'],
-        usdtContract: '0x764a50f9d30ecf2bd9baad64d763e8eb08c3ea9f',
+        usdtContract: '0x216d17a5896b649f08c32bc759807a3092bf4fe2',
         usdt: {
-            address: '0x764a50f9d30ecf2bd9baad64d763e8eb08c3ea9f',
+            address: '0x216d17a5896b649f08c32bc759807a3092bf4fe2',
             decimals: 6,
             name: 'Tether USD',
             symbol: 'USDT',

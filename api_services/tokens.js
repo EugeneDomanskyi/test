@@ -11,12 +11,12 @@ export const getTokens = async (chain, post) => {
   if (chain?.useBackend) {
     const result = await $token.api.backend.all({
       page: post.currentPage,
-      pageSize: post.perPage,
-      chainId: chain.id,
-      sortBy: 'name',
-      sortOrder: 'asc',
-      filterVal: post?.searchText,
-      filterCol: post?.searchField,
+      page_size: post.perPage,
+      chain_id: chain.id,
+      sort_by: 'name',
+      sort_order: 'asc',
+      filter_val: post?.searchText,
+      filter_col: post?.searchField,
     })
 
     if (result) {

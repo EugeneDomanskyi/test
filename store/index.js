@@ -64,7 +64,7 @@ const CELO_URL = 'https://celo-org.github.io/'
 const BNB_URL = 'https://raw.githubusercontent.com/'
 const INCH_URL = 'https://limit-orders.1inch.io/v3.0/'
 const BACKEND_URL = 'https://api.testnet.tegro.com/v2/'
-// const BACKEND_URL = 'http://localhost:8080/'
+// const BACKEND_URL = 'http://localhost:8080/v2/'
 
 export const request = async (uri, method = 'GET', {blockchain, api, ...data} = {}) => {
   const currentChain = CHAINS.find(chain => chain.code === blockchain)

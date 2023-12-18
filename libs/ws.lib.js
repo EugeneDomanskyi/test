@@ -1,5 +1,5 @@
 const WS_URL = 'wss://api.testnet.tegro.com/v2/ws'
-// const WS_URL = 'ws://localhost:8080/ws'
+// const WS_URL = 'ws://localhost:8080/v2/ws'
 
 class Socket {
   constructor() {
