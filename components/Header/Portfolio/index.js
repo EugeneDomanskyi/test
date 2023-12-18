@@ -12,6 +12,7 @@ import $portfolio from '@/store/portfolio'
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
+import { useState } from 'react'
 
 const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
   const router = useRouter()
@@ -23,6 +24,8 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
   const portfolioUsd = useSelector(({ $portfolio }) => $portfolio.usd)
   const portfolioTicker = useSelector(({ $portfolio }) => $portfolio.ticker)
   const portfolioList = useSelector(({ $portfolio }) => $portfolio.list)
+
+  const [isClicked, setIsClicked] = useState()
 
   const handleClose = () => {
     if (onClose) {
@@ -52,6 +55,11 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
       router.push(`/exchange/${blockchain.code}/${item.address}`)
       handleClose()
     }
+  }
+
+  const handleClick = (address) => () => {
+    const status = address == isClicked ? null : address
+    setIsClicked(status)
   }
 
   return (
@@ -109,33 +117,46 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
               <div className={styles.scroll}>
                 <App.Flex column>
                   {portfolioList.map(item => (
-                    <App.Flex key={item.address} row align="center" justify="space-between" className={cn(styles.row, {[styles.clickable]: !item.isNative && !item.isUsdt})}>
-                      <App.Flex row gap={8} align="center">
-                        <Image src={item.image} width={40} height={40} alt="" />
+                    <App.Flex key={item.address} column className={cn(styles.row, styles.clickable)} onMouseLeave={handleClick(null)} onClick={handleClick(item.address)}>
+                      <App.Flex row align="center" justify="space-between">
+                        <App.Flex row gap={8} align="center">
+                          <Image src={item.image} width={40} height={40} alt="" />
+
+                          <App.Flex column gap={6}>
+                            <App.Text size={16} weight={700} height={1}>{item.name}</App.Text>
+                            <App.Text size={12} weight={600} height={1} color="#5E5C6B">{item.balance} {item.symbol}</App.Text>
+                          </App.Flex>
+                        </App.Flex>
 
                         <App.Flex column gap={6}>
-                          <App.Text size={16} weight={700} height={1}>{item.name}</App.Text>
-                          <App.Text size={12} weight={600} height={1} color="#5E5C6B">{item.balance} {item.symbol}</App.Text>
+                          <App.Text size={16} weight={700} height={1}>${item.usd}</App.Text>
 
-                          {!item.isNative && !item.isUsdt ? (
-                            <App.Flex row align="center" gap={16}>
-                              <App.Button small variant="success" outlined onClick={handleTrade(item, 'buy')}>Buy</App.Button>
-                              <App.Button small variant="danger" outlined onClick={handleTrade(item, 'sell')}>Sell</App.Button>
+                          <App.Flex align="center" justify="flex-end" gap={4}>
+                            {item.ticker?.type != 'zero' ? (
+                              <App.Icon style={{transform: `rotate(${item.ticker?.type == 'minus' ? '0' : '180'}deg)`}} icon="caret-down" color={item.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C' } width={10} height={10} />
+                            ) : null}
+                            <App.Text size={12} height={1} color={item.ticker?.type == 'minus' ? '#FF1D61' : item.ticker?.type == 'plus' ? '#53F19C' : '#5E5C6B' }>{ item.ticker?.percent }%</App.Text>
+                          </App.Flex>
+                        </App.Flex>
+                      </App.Flex>
+
+                      {!item.isNative && !item.isUsdt ? (
+                        <App.Flex row fullWidth className={cn(styles.buttonsBox, {[styles.active]: isClicked == item.address})}>
+                          <App.Flex row fullWidth align="center" gap={16}>
+                            <App.Flex flex={1}>
+                              <App.Button fullWidth variant="success" onClick={handleTrade(item, 'buy')}>Buy</App.Button>
                             </App.Flex>
-                          ) : null}
-                        </App.Flex>
-                      </App.Flex>
 
-                      <App.Flex column gap={6}>
-                        <App.Text size={16} weight={700} height={1}>${item.usd}</App.Text>
-
-                        <App.Flex align="center" justify="flex-end" gap={4}>
-                          {item.ticker?.type != 'zero' ? (
-                            <App.Icon style={{transform: `rotate(${item.ticker?.type == 'minus' ? '0' : '180'}deg)`}} icon="caret-down" color={item.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C' } width={10} height={10} />
-                          ) : null}
-                          <App.Text size={12} height={1} color={item.ticker?.type == 'minus' ? '#FF1D61' : item.ticker?.type == 'plus' ? '#53F19C' : '#5E5C6B' }>{ item.ticker?.percent }%</App.Text>
+                            <App.Flex flex={1}>
+                              <App.Button fullWidth variant="danger" onClick={handleTrade(item, 'sell')}>Sell</App.Button>
+                            </App.Flex>
+                          </App.Flex>
                         </App.Flex>
-                      </App.Flex>
+                      ) : (
+                        <App.Flex className={cn(styles.textBox, {[styles.active]: isClicked == item.address})}>
+                          <App.Text style="italic" color="#FFD600">This cryptocurrency is currently tradable only in token format.</App.Text>
+                        </App.Flex>
+                      )}
                     </App.Flex>
                   ))}
                 </App.Flex>
