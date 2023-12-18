@@ -168,7 +168,7 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
         ) : (
           <App.Flex column center gap={16} sx={{ padding: '26px 50px' }}>
             <App.Text center size={20} weight={600}>Build Your Portfolio</App.Text>
-            <App.Text center color="#B9B8C5">Whether your assets are under $1 or you're just getting started, explore opportunities and start building your crypto portfolio.</App.Text>
+            <App.Text center color="#B9B8C5">Whether your assets are under $1 or you&apos;re just getting started, explore opportunities and start building your crypto portfolio.</App.Text>
           </App.Flex>
         )}
       </App.Flex>
