@@ -5,12 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="15b7c246-34cc-403a-84ad-314a99309a64" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api_services/tokens.js" beforeDir="false" afterPath="$PROJECT_DIR$/api_services/tokens.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/config/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Analytics/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Analytics/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Exchange/OrderBook/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Exchange/OrderBook/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Exchange/OrderConfirm/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Exchange/OrderConfirm/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Exchange/TradeForm/TradeFormToken/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Exchange/TradeForm/TradeFormToken/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/structs/Order.js" beforeDir="false" afterPath="$PROJECT_DIR$/libs/structs/Order.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libs/ws.lib.js" beforeDir="false" afterPath="$PROJECT_DIR$/libs/ws.lib.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/store/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/exchange.js" beforeDir="false" afterPath="$PROJECT_DIR$/store/exchange.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/orders.js" beforeDir="false" afterPath="$PROJECT_DIR$/store/orders.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/token.js" beforeDir="false" afterPath="$PROJECT_DIR$/store/token.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

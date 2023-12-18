@@ -21,11 +21,12 @@ export const getTokens = async (chain, post) => {
 
     if (result) {
       return result.map(item => ({
-        id: item.ContractAddress.toLowerCase(),
-        name: item.Name,
-        symbol: item.Symbol,
-        decimals: item.Decimals,
-        image: `https://storage.googleapis.com/token-assets/assets/${chain.code}/${item.ContractAddress.toLowerCase()}.png`,
+        id: item.BaseContractAddress.toLowerCase(),
+        marketId: item.ID,
+        name: `${item.BaseSymbol}/${item.QuoteSymbol}`,
+        symbol: item.BaseSymbol,
+        decimals: item.BaseDecimal,
+        image: `https://storage.googleapis.com/token-assets/assets/${chain.code}/${item.BaseContractAddress.toLowerCase()}.png`,
         totalSupply: null,
         volumeUSD: null,
         totalValueLockedUSD: null,

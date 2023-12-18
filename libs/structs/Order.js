@@ -591,7 +591,7 @@ class TOKEN extends Order {
     })
   }
 
-  static placeToAPI = ({makerAsset, takerAsset, price, amount, type = 'buy'}, callback) => {
+  static placeToAPI = ({marketId, makerAsset, takerAsset, price, amount, type = 'buy'}, callback) => {
     return new Promise(async (resolve, reject) => {
       const { walletClient, chainId } = await Order.getWalletData()
       const limitOrderBuilder = new LimitOrderBuilder(TEGRO_FILL_ORDERS_CONTRACTS[chainId], chainId, walletClient)
@@ -632,6 +632,7 @@ class TOKEN extends Order {
         chain_id: chainId,
         base_asset: type === 'buy' ? makerAsset.address : takerAsset.address,
         quote_asset: type === 'buy' ? takerAsset.address : makerAsset.address,
+        market_id: marketId,
         side: (type === 'buy')*1,
         volume_precision: volume_precision,
         price_precision: price_precision,

@@ -27,11 +27,11 @@ const Analytics = () => {
     }
   }, [address, isConnected])
 
-  useEffect(() => {
-    if (isConnected && address && chain?.id) {
-      fetch(`https://39bd5ye5v9.execute-api.eu-north-1.amazonaws.com/connected_wallets?wallet_address=${address}&chain_id=${chain.id}`, { method: 'POST' })
-    }
-  }, [address, isConnected, chain?.id])
+  // useEffect(() => {
+  //   if (isConnected && address && chain?.id) {
+  //     fetch(`https://39bd5ye5v9.execute-api.eu-north-1.amazonaws.com/connected_wallets?wallet_address=${address}&chain_id=${chain.id}`, { method: 'POST' })
+  //   }
+  // }, [address, isConnected, chain?.id])
 
   useEffect(() => {
     if (router.query) {

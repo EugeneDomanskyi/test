@@ -291,7 +291,7 @@ api.get.nfts.orderBook = (params) => {
 api.get.tokens.orderBook = async ({ address, ...rest }) => {
   const network = CHAINS.find(chain => chain.code === rest.blockchain)
   if (network?.useBackend) {
-    const res = await request('market/orderbook/depth', 'GET', {api: 'backend', chain_id: network.id, base_asset: network.usdtContract, quote_asset: address})
+    const res = await request('market/orderbook/depth', 'GET', {api: 'backend', market_id: rest.marketId})
     if (res.error) {
       return {buy: [], sell: []}
     }
