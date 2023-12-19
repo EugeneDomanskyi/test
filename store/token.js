@@ -31,6 +31,7 @@ export const template = (item, assets) => {
 
   return {
     id: item?.id,
+    marketId: item?.marketId,
     address: assets?.address ?? item?.id,
     decimals: assets?.decimals ?? item?.decimals,
     image: assets?.image ?? (item?.image ?? null),
@@ -262,7 +263,7 @@ const api = {
 
   backend: {
     all: (params) => {
-      return request('token/list/', 'GET', {api: 'backend', ...params})
+      return request('market/list', 'GET', {api: 'backend', ...params})
     },
   },
 }

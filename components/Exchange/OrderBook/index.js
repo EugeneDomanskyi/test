@@ -47,6 +47,7 @@ const OrderBook = ({ type, version, onClickOrder }) => {
       $orders.api.get[type].orderBook({
         collection: current.address,
         address: current.address,
+        marketId: current.marketId,
         blockchain: blockchain.code,
         sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
         ...(type === 'nfts' ? {} : { statuses: '[1]' })

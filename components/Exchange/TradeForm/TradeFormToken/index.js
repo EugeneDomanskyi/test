@@ -207,6 +207,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
       makerAmountFormatted: form.amount,
       takerAmountFormatted: numeral(form.amount*form.price).format('0.0[0000]'),
       price: form.price,
+      marketId: current.marketId,
     }
 
     if (version == 'mobile') {
@@ -420,6 +421,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
           takerAsset={currentTab === 'buy' ? usdtFormatted : current}
           makerAmountFormatted={form.amount}
           takerAmountFormatted={numeral(form.amount * form.price).format('0.0[0000]')}
+          marketId={current.marketId}
           price={form.price}
           onClose={handleOrderConfirmClose}
         />

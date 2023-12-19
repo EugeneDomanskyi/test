@@ -227,7 +227,7 @@ const api = {
     tokenChartData: async (buyAsset, blockchain, interval) => {
       const network = CHAINS.find(chain => chain.code === blockchain)
       if (network.useBackend) {
-        const res = await request(`market/chart`, 'GET', {api: 'backend', chain_id: network.id, base_asset: network.usdtContract, quote_asset: buyAsset, interval: interval})
+        const res = await request(`market/chart`, 'GET', {api: 'backend', market_id: `${network.id}_${buyAsset}_${network.usdtContract}`, chain_id: network.id, base_asset: network.usdtContract, quote_asset: buyAsset, interval: interval})
         if (res) {
           return {data: res.sort((a, b) => a.time - b.time)}
         }

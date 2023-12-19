@@ -260,7 +260,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
     return type !== 'tokens' || !hideCancelledOrders || (order.status !== 'cancelled')
   }
 
-  useInterval(getOrders, wallet ? 5000 : null)
+  // useInterval(getOrders, wallet ? 5000 : null)
 
   return (
     <App.Flex column className={cn(styles.container, {[styles[version]]: version})}>

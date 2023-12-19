@@ -15,8 +15,9 @@ import $alert from '@/store/alert'
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
+import {current} from "@reduxjs/toolkit";
 
-const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFormatted, takerAmountFormatted, price, version, onBack, onClose }) => {
+const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFormatted, takerAmountFormatted, price, version, marketId, onBack, onClose }) => {
   const { wallet } = useWalletConnect()
   const dispatch = useDispatch()
 
@@ -78,7 +79,7 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
           'Step': 'Sign',
         })
 
-        Order.TOKEN.placeToAPI({ type: side, makerAsset: takerAsset, takerAsset: makerAsset, price: price, amount: makerAmountFormatted }, () => {
+        Order.TOKEN.placeToAPI({ type: side, makerAsset: takerAsset, takerAsset: makerAsset, price: price, amount: makerAmountFormatted, marketId: marketId }, () => {
           onClose()
         }).catch(error => {
           onClose()
