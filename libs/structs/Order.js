@@ -624,14 +624,16 @@ class TOKEN extends Order {
         reject({success: false, message: error.shortMessage, type: error.name})
       })
 
+      console.log(limitOrderTypedData)
+
       if (!signature) {
         return
       }
       callback('transaction_completed', {success: true})
       const post = {
         chain_id: chainId,
-        base_asset: type === 'buy' ? makerAsset.address : takerAsset.address,
-        quote_asset: type === 'buy' ? takerAsset.address : makerAsset.address,
+        base_asset: type === 'buy' ? takerAsset.address : makerAsset.address,
+        quote_asset: type === 'buy' ? makerAsset.address :  takerAsset.address,
         market_id: marketId,
         side: (type === 'buy')*1,
         volume_precision: volume_precision,
@@ -641,6 +643,7 @@ class TOKEN extends Order {
         signature: signature,
         signed_order_type: 'tegro',
       }
+      console.log(post)
       const res = await $orders.api.create.tokenAPI(post)
       if (res) {
         resolve({success: true})
