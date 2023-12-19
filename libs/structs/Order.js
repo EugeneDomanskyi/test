@@ -631,9 +631,6 @@ class TOKEN extends Order {
       }
       callback('transaction_completed', {success: true})
       const post = {
-        chain_id: chainId,
-        base_asset: type === 'buy' ? takerAsset.address : makerAsset.address,
-        quote_asset: type === 'buy' ? makerAsset.address :  takerAsset.address,
         market_id: marketId,
         side: (type === 'buy')*1,
         volume_precision: volume_precision,
