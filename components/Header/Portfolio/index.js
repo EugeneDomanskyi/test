@@ -167,7 +167,7 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
 
             <App.Flex row sx={{ padding: 16 }}>
               <App.Flex className={styles.bottomBox}>
-                <App.Text size={12} style="italic" color="#DB880C">Heads Up! 🌟 Assets under <b>$1</b> aren't displayed now, but fret not! We're updating soon. Stay tuned! 🚀</App.Text>
+                <App.Text size={12} style="italic" color="#DB880C">Heads Up! 🌟 Assets under <b>$1</b> aren&apos;t displayed now, but fret not! We&apos;re updating soon. Stay tuned! 🚀</App.Text>
               </App.Flex>
             </App.Flex>
           </App.Flex>
