@@ -19,6 +19,7 @@ const AppAlert = () => {
 
   const alertsBoxRef = useRef({})
   const alertsRef = useRef({})
+  const timerRef = useRef({})
 
   useEffect(() => {
     if (messages.length) {
@@ -42,21 +43,10 @@ const AppAlert = () => {
       if (currentMessages.some(item => ! item.visible)) {
         const unvisibleMessages = currentMessages.filter(item => ! item.visible)
         for (const message of unvisibleMessages) {
-          const alert = alertsRef.current[message.id]
-          if (alert) {
-            const alertRect = alert.getBoundingClientRect()
-            const alertBox = alertsBoxRef.current[message.id]
-
-            await gsap.to(alertBox, { height: alertRect.height, duration: 0.1 })
-            await gsap.to(alert, { marginLeft: 0, duration: 0.1 })
-
-            setTimeout(async () => {
-              await gsap.to(alert, { marginLeft: '100%', duration: 0.1 })
-              await gsap.to(alertBox, { height: 0, duration: 0.1 })
-
-              setCurrentMessages(state => {
-                return state.filter(item => item.id != message.id)
-              })
+          const isOpen = await handleOpen(message.id)
+          if (isOpen) {
+            timerRef.current[message.id] = setTimeout(async () => {
+              handleClose(message.id)
             }, message.delay)
           }
         }
@@ -71,10 +61,43 @@ const AppAlert = () => {
     })()
   }, [currentMessages, alertsRef.current])
 
+  const handleOpen = async (id) => {
+    const alert = alertsRef.current[id]
+    if (alert) {
+      const alertRect = alert.getBoundingClientRect()
+      const alertBox = alertsBoxRef.current[id]
+
+      if (alertBox) {
+        await gsap.to(alertBox, { height: alertRect.height, duration: 0.1 })
+        await gsap.to(alert, { marginLeft: 0, duration: 0.1 })
+
+        return true
+      }
+    }
+
+    return false
+  }
+
+  const handleClose = async (id) => {
+    const alert = alertsRef.current[id]
+    const alertBox = alertsBoxRef.current[id]
+
+    if (alert && alertBox) {
+      await gsap.to(alert, { marginLeft: '100%', duration: 0.1 })
+      await gsap.to(alertBox, { height: 0, duration: 0.1 })
+
+      setCurrentMessages(state => {
+        return state.filter(item => item.id != id)
+      })
+    }
+
+    clearTimeout(timerRef.current[id])
+  }
+
   return (
     <AppFlex column gap={8} className={styles.alerts}>
       {currentMessages.map((item, index) => (
-        <div key={item.id} ref={(element) => alertsBoxRef.current[item.id] = element} className={cn(styles.alertBox)}>
+        <div key={item.id} ref={(element) => alertsBoxRef.current[item.id] = element} className={cn(styles.alertBox)} onClick={() => { handleClose(item.id) }}>
           <div ref={(element) => alertsRef.current[item.id] = element} className={cn(styles.alert, styles[item.type])}>
             <AppFlex row center className={cn(styles.alertIcon, styles[item.type])}>
               <AppIcon icon={`alert-${item.type}`} />

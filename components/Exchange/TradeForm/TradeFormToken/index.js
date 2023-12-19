@@ -69,8 +69,15 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
 
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
-      handleChangeForm('price')(data.price.toString())
-      // handleChangeForm('amount')(data.amount.toString())
+      if (data.hasOwnProperty('price')) {
+        handleChangeForm('price')(data.price.toString())
+      } else {
+        handleSetPrice(false, data?.side)
+      }
+
+      if (data.hasOwnProperty('amount')) {
+        handleChangeForm('amount')(data.amount.toString())
+      }
     }
   }))
 
@@ -111,8 +118,8 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
     }
   }, [wallet, blockchain.id, current?.address])
 
-  const handleSetPrice = (inputByUser = true) => {
-    switch (currentTab) {
+  const handleSetPrice = (inputByUser = true, tab = currentTab) => {
+    switch (tab) {
       case 'buy':
         const [cheapestOrder] = orderBook.sell
         if (cheapestOrder && cheapestOrder.priceFormatted) {
@@ -155,7 +162,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
     
     switch (field) {
       case 'price':
-        value = value.indexOf('.')+1 ? value.substring(0, value.indexOf('.') + (MAX_DECIMALS + 1 - countOfDecimals.amount)) : value
+        //value = value.indexOf('.')+1 ? value.substring(0, value.indexOf('.') + (MAX_DECIMALS + 1 - countOfDecimals.amount)) : value
         setForm(state => ({
           ...state,
           price: value,
@@ -163,7 +170,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
         }))
         return
       case 'amount':
-        value = value.indexOf('.')+1 ? value.substring(0, value.indexOf('.') + (MAX_DECIMALS + 1 - countOfDecimals.price)) : value
+        //value = value.indexOf('.')+1 ? value.substring(0, value.indexOf('.') + (MAX_DECIMALS + 1 - countOfDecimals.price)) : value
         setForm(state => {
           return {
             ...state,
