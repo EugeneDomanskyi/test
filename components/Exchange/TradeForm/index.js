@@ -1,10 +1,11 @@
 import styles from './styles.module.scss'
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle, memo } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import cn from 'classnames'
 
-import $exchange from '@/store/exchange'
 import $app from '@/store/app'
+import $exchange from '@/store/exchange'
+import $portfolio from '@/store/portfolio'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useTrade from '@/myhooks/trade'
 import { trackEvent } from '@/libs/analytics.lib'
@@ -26,10 +27,12 @@ const TradeForm = forwardRef(({ type, version, fullWidth = null, onSubmit, prevP
   const { wallet, getBalance, changeNetwork } = useWalletConnect()
   const { getNftBalanceUser } = useTrade()
 
+  const dispatch = useDispatch()
   const current = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.current : $collection.current)
   const orderBook = useSelector($exchange.get.orderBook)
   const loading = useSelector(({ $exchange }) => $exchange.loadingCollectionData)
   const blockchain = useSelector($app.get.blockchainByCode(current?.blockchain))
+  const prefill = useSelector(({ $portfolio }) => $portfolio.prefill)
 
   const [currentTab, setCurrentTab] = useState('buy')
   const [formType, setFormType] = useState('market')
@@ -103,6 +106,27 @@ const TradeForm = forwardRef(({ type, version, fullWidth = null, onSubmit, prevP
       handleChangeTab(prevProps?.side)
     }
   }, [prevProps])
+
+  useEffect(() => {
+    if (prefill.address) {
+      if (currentTab != prefill.side) {
+        handleChangeTab(prefill.side)
+      }
+
+      if (tokenFormRef.current) {
+        tokenFormRef.current.setForm({
+          amount: prefill.amount,
+          side: prefill.side,
+        })
+      }
+
+      dispatch($portfolio.set.prefill({
+        address: null,
+        side: 'buy',
+        amount: 0,
+      }))
+    }
+  }, [prefill.address])
 
   const setInitialPrice = price => {
     setLimitForm(state => ({

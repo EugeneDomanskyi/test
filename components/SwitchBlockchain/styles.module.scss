@@ -23,22 +23,18 @@
 }
 
 .menu {
-  border-radius: 12px;
-  border: 0.5px solid #7204FF;
-  background: rgba(8, 5, 28, 0.78);
-  box-shadow: 0px 25px 56px 0px rgba(0, 0, 0, 0.10), 0px 101px 101px 0px rgba(0, 0, 0, 0.09), 0px 227px 136px 0px rgba(0, 0, 0, 0.05), 0px 404px 162px 0px rgba(0, 0, 0, 0.01), 0px 631px 177px 0px rgba(0, 0, 0, 0.00);
-  backdrop-filter: blur(12px);
+  border-radius: 10px;
+  border: 0.6px solid #332D52;
+  background-color: #060416;
   position: absolute;
-  // background-color: rgba(9, 5, 29, 0.8);
-  // border: solid #7204FF 1px;
-  // border-radius: 12px;
-  left: 0;
+  right: 0;
   top: 120%;
   visibility: hidden;
   opacity: 0;
   min-width: 100%;
   transition: all .2s ease 0s;
   overflow: hidden;
+  padding: 6px 0;
 
   &.active {
     visibility: visible;
@@ -46,12 +42,20 @@
   }
 
   .item {
-    padding: 8px;
+    padding: 6px 10px;
     cursor: pointer;
     transition: all .2s ease 0s;
 
+    .imageBox {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 0.642px solid #1D1937;
+      background: #0E0B23;
+    }
+
     &:hover {
-      background-color: rgba(255, 255, 255, 0.2);
+      background-color: rgba(255, 255, 255, 0.05);
     }
   }
 }
