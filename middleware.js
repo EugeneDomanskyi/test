@@ -2,8 +2,6 @@ import { NextResponse, userAgent } from 'next/server'
 import { ResponseCookies, RequestCookies } from 'next/dist/server/web/spec-extension/cookies'
 import { CHAINS } from '@/config'
 
-const DEFAULT_BLOCKCHAIN = 'ethereum'
-
 const applySetCookie = (req, res) => {
   const setCookies = new ResponseCookies(res.headers)
   const newReqHeaders = new Headers(req.headers)
@@ -22,11 +20,11 @@ const middleware = (request) => {
   const isMobile = device.type === 'mobile'
   const [_, seg1, seg2, seg3] = request.nextUrl.pathname.split('/')
 
+  const validBlockhains = CHAINS.filter(item => item.pages.some(el => el == seg1))
   if (seg1 === 'exchange' || seg1 === 'nfts') {
-    const validBlockhains = CHAINS.filter(item => item.pages.some(el => el == seg1))
     let blockchain = seg2 ?? request.cookies.get('blockchain')?.value
     if (!validBlockhains.some(item => item.code == blockchain)) {
-      blockchain = validBlockhains.find(item => item.code == DEFAULT_BLOCKCHAIN) ? DEFAULT_BLOCKCHAIN : validBlockhains[0]?.code
+      blockchain = validBlockhains[0]?.code
     }
 
     response.cookies.delete('blockchain')
@@ -39,10 +37,9 @@ const middleware = (request) => {
       return NextResponse.redirect(new URL(`/${seg1}/${blockchain}`, request.url))
     }
   } else {
-    const validBlockhains = CHAINS
     let blockchain = request.cookies.get('blockchain')?.value
     if (!validBlockhains.some(item => item.code == blockchain)) {
-      blockchain = validBlockhains.find(item => item.code == DEFAULT_BLOCKCHAIN) ? DEFAULT_BLOCKCHAIN : validBlockhains[0]?.code
+      blockchain = validBlockhains[0]?.code
     }
 
     response.cookies.delete('blockchain')

@@ -45,7 +45,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
     (async () => {
       if (queryBlockchain) {
         if (queryBlockchain != blockchain.code) {
-          const newBlockchainCode = pageBlockchains.some(item => item.code == queryBlockchain) ? queryBlockchain : 'ethereum'
+          const newBlockchainCode = pageBlockchains.some(item => item.code == queryBlockchain) ? queryBlockchain : pageBlockchains?.[0]?.code
           if (newBlockchainCode != blockchain.code) {
             const newBlockchain = pageBlockchains.find(item => item.code == newBlockchainCode)
             if (chain?.id) {
