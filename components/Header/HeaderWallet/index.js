@@ -97,7 +97,7 @@ const HeaderWallet = () => {
 
     disconnect()
     handleDisconnectDialogToggle(false)()
-    handlePortfolioToggle(false)()
+    handlePortfolioToggle(false)
 
     trackEvent('Wallet Disconnect Success', {
       'Source': getPageName(),
@@ -143,6 +143,8 @@ const HeaderWallet = () => {
   const handlePortfolioToggle = (value = true) => {
     if (blockchain?.use1Inch) {
       setIsPortfolioVisible(value)
+    } else {
+      handleDisconnectDialogToggle(value)()
     }
   }
 

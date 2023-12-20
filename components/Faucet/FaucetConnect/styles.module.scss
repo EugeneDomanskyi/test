@@ -1,0 +1,17 @@
+.container {
+  padding: 32px;
+  height: 510px;
+
+  @media (max-width: 768px) {
+    padding: 32px 16px;
+    height: 100%
+  }
+
+  .header {
+    display: none;
+
+    @media (max-width: 768px) {
+      display: flex;
+    }
+  }
+}

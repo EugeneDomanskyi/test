@@ -1,26 +1,52 @@
 import { useEffect, useState } from 'react'
-import cn from 'classnames'
+import moment from 'moment'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
+import FaucetSteps from '@/components/Faucet/FaucetSteps'
 import FaucetConnect from '@/components/Faucet/FaucetConnect'
 import FaucetMatic from '@/components/Faucet/FaucetMatic'
 import FaucetToken from '@/components/Faucet/FaucetToken'
 import FaucetComplete from '@/components/Faucet/FaucetComplete'
+import FaucetTimer from '@/components/Faucet/FaucetTimer'
 
 import styles from './styles.module.scss'
 
 const Faucet = () => {
   const { connection } = useWalletConnect()
 
-  const [step, setStep] = useState(1)
+  const [step, setStep] = useState()
+  const [timeLeft, setLeftTime] = useState()
 
   useEffect(() => {
-    if (!connection.loading) {
-      handleStepChange(connection.connected ? 2 : 1)()
-    }
+    (async () => {
+      if (!connection.loading) {
+        let nextStep = connection.connected ? 2 : 1
+
+        if (connection.connected) {
+          const time = await getTime()
+          if (time > 0) {
+            nextStep = 5
+            setLeftTime(time)
+          }
+        }
+        
+        handleStepChange(nextStep)()
+      }
+    })()
   }, [connection])
+
+  const getTime = async () => {
+    const period = 4 * 60 * 60
+    const lastTime = moment('2023-12-20T07:56:00')
+    const currentTime = moment()
+
+    const diffMilliseconds = currentTime.diff(lastTime)
+    const diffSeconds = Math.floor(diffMilliseconds / 1000)
+
+    return period - diffSeconds
+  }
 
   const handleStepChange = (newStep) => () => {
     setStep(newStep)
@@ -31,7 +57,8 @@ const Faucet = () => {
       case 1: return <FaucetConnect onComplete={handleStepChange(2)} />
       case 2: return <FaucetMatic onComplete={handleStepChange(3)} />
       case 3: return <FaucetToken onComplete={handleStepChange(4)} />
-      case 4: return <FaucetComplete onComplete={handleStepChange(5)} />
+      case 4: return <FaucetComplete />
+      case 5: return <FaucetTimer time={timeLeft} onComplete={handleStepChange(2)} />
     }
   }
 
@@ -40,34 +67,15 @@ const Faucet = () => {
       <div className={styles.circle} />
 
       <App.Flex column align="center" gap={48} fullWidth className={styles.content}>
-        <App.Flex column center gap={8}>
+        <App.Flex column center gap={8} className={styles.header}>
           <App.Text center size={32} weight={700} height={1}>Claim $100 worth mock BTC, ETH & USDT</App.Text>
           <App.Text center weight={400} color="gba(255, 255, 255, 0.50)">Every Four Hours. Explore the Crypto World Risk-Free!</App.Text>
         </App.Flex>
 
         <App.Flex column className={styles.box}>
-          <App.Flex row className={styles.steps}>
-            <App.Flex column center gap={8} flex={1} className={cn(styles.step, {[styles.current]: step == 1}, {[styles.past]: step > 1})}>
-              <App.Flex center className={styles.dot}>
-                <App.Icon icon="check" width={10} height={8} />
-              </App.Flex>
-              <App.Text center size={12} weight={400} className={styles.stepText}>Connect Wallet</App.Text>
-            </App.Flex>
-
-            <App.Flex column center gap={8} flex={1} className={cn(styles.step, {[styles.current]: step == 2}, {[styles.past]: step > 2})}>
-              <App.Flex center className={styles.dot}>
-                <App.Icon icon="check" width={10} height={8} />
-              </App.Flex>
-              <App.Text center size={12} weight={400} className={styles.stepText}>Claim MATIC</App.Text>
-            </App.Flex>
-
-            <App.Flex column center gap={8} flex={1} className={cn(styles.step, {[styles.current]: step == 3}, {[styles.past]: step > 3})}>
-              <App.Flex center className={styles.dot}>
-                <App.Icon icon="check" width={10} height={8} />
-              </App.Flex>
-              <App.Text center size={12} weight={400} className={styles.stepText}>Claim Token</App.Text>
-            </App.Flex>
-          </App.Flex>
+          {step < 5 ? (
+            <FaucetSteps step={step} />
+          ) : null}
 
           {connection.loading ? (
             <App.LoaderBlock height={510} flex={null}/>
