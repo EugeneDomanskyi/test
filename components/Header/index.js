@@ -191,7 +191,7 @@ const Header = () => {
                     ? <App.Icon icon="tegro" width={91} height={20} />
                     : <div className={styles.logo}>
                         <div className={styles.badge}>
-                          BETA
+                          TESTNET
                         </div>
                         <App.Icon icon="tegro" width={117} height={25} />
                       </div>
@@ -208,6 +208,12 @@ const Header = () => {
                 <Link href="/earn" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/earn')})}>
                   <App.Flex center height="100%">
                     <App.Text size={16} weight={500}>Earn</App.Text>
+                  </App.Flex>
+                </Link>
+
+                <Link href="/faucet" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/faucet')})}>
+                  <App.Flex center height="100%">
+                    <App.Text size={16} weight={500}>Faucet</App.Text>
                   </App.Flex>
                 </Link>
 
@@ -312,6 +318,13 @@ const Header = () => {
                   <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                     <App.Icon icon="menuEarn" />
                     <App.Text size={14} weight={700}>Earn</App.Text>
+                  </App.Flex>
+                </Link>
+
+                <Link href="/faucet" className={cn(styles.link, {[styles.active]: router.pathname.includes('/faucet')})}>
+                  <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
+                    <App.Icon icon="menuEarn" />
+                    <App.Text size={14} weight={700}>Faucet</App.Text>
                   </App.Flex>
                 </Link>
 

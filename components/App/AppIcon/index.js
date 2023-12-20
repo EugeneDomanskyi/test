@@ -132,7 +132,7 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
 
     if (icon === 'check') {
       return (
-        <svg width={width ?? 14} height={height ?? 11} fill="none" {...props}>
+        <svg width={width ?? 14} height={height ?? 11} viewBox="0 0 14 11" fill="none" {...props}>
           <path fill={color ?? '#fff'} d="M5 8.127 1.873 5 .806 6.057 5 10.25l9-9L12.943.192 5 8.127Z" />
         </svg>
       )

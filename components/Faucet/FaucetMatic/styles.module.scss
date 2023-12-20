@@ -1,0 +1,16 @@
+.stepBox {
+  padding: 16px;
+  border-radius: 12px;
+  background: #1c192e;
+
+  .link {
+    color: #4C69FF;
+    text-decoration: underline;
+    transition: .2s;;
+
+    &:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+  }
+}
