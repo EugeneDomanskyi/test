@@ -47,7 +47,7 @@ const FaucetComplete = () => {
 
       <App.Flex center column gap={[16, 8]}>
         <App.Text center size={24} weight={600} height={1}>Congratulations</App.Text>
-        <App.Text center weight={400} color="#B9B8C5">You've just received your drip! You can start trading now!</App.Text>
+        <App.Text center weight={400} color="#B9B8C5">You&apos;ve just received your drip! You can start trading now!</App.Text>
       </App.Flex>
 
       <App.Flex row center gap={16}>
