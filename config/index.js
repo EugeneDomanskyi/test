@@ -77,6 +77,7 @@ const TEST_NETWORKS = [
             rewardEndpoint: 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status',
         },
         useBackend: true,
+        defaultFor: 'local',
     },
 ]
 
@@ -303,6 +304,7 @@ export const CHAINS = [
       shortName: 'WETH',
     },
     use1Inch: true,
+    defaultFor: 'production',
   }, {
     ...polygon,
     code: 'polygon',

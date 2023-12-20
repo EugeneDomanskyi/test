@@ -20,7 +20,11 @@ const middleware = (request) => {
   const isMobile = device.type === 'mobile'
   const [_, seg1, seg2, seg3] = request.nextUrl.pathname.split('/')
 
-  const validBlockhains = CHAINS.filter(item => item.pages.some(el => el == seg1))
+  let validBlockhains = CHAINS.filter(item => item.pages.some(el => el == seg1))
+  if (!validBlockhains.length) {
+    validBlockhains = CHAINS.filter(item => item.defaultFor == process.env.NEXT_PUBLIC_APP_ENV)
+  }
+
   if (seg1 === 'exchange' || seg1 === 'nfts') {
     let blockchain = seg2 ?? request.cookies.get('blockchain')?.value
     if (!validBlockhains.some(item => item.code == blockchain)) {
