@@ -5,11 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="15b7c246-34cc-403a-84ad-314a99309a64" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/libs/request.lib.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/Exchange/TradeForm/TradeFormToken/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Exchange/TradeForm/TradeFormToken/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Exchange/Sales/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Exchange/Sales/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/helpers.js" beforeDir="false" afterPath="$PROJECT_DIR$/libs/helpers.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libs/structs/Order.js" beforeDir="false" afterPath="$PROJECT_DIR$/libs/structs/Order.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libs/ws.lib.js" beforeDir="false" afterPath="$PROJECT_DIR$/libs/ws.lib.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/store/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/orders.js" beforeDir="false" afterPath="$PROJECT_DIR$/store/orders.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

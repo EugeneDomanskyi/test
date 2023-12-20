@@ -1,6 +1,36 @@
 import { watchMulticall } from '@wagmi/core'
 import { formatUnits } from 'viem'
-import moment from "moment";
+import moment from "moment"
+import request from '@/libs/request.lib'
+
+enum Side {
+    Buy = 'buy',
+    Sell = 'sell',
+}
+
+interface TypedDataParams {
+    chain_id: number;
+    wallet_address: string;
+    market_symbol: string;
+    side: Side;
+    price: number;
+    amount: number;
+}
+
+interface LimitOrder {
+    chain_id: number;
+    base_asset: string;
+    quote_asset: string;
+    side: number;
+    volume_precision: string;
+    price_precision: string;
+    order_hash: string;
+    raw_order_data: string;
+    signature: string;
+    signed_order_type: string;
+    market_id: string;
+    market_symbol:string;
+}
 
 const ABI = [{
     constant: true,
@@ -19,7 +49,7 @@ const ABI = [{
     type: 'function'
 }]
 
-export const subscribeToBalanceUpdates = (chainId, walletAddress, tokens, onUpdate) => {
+export const subscribeToBalanceUpdates = (chainId: number, walletAddress: string, tokens: [string], onUpdate: { (res: any): any }) => {
     if (!walletAddress) {
         return null
     }
@@ -68,13 +98,22 @@ export const OrderUtils = {
         Filled: 'completed',
         Cancelled: 'cancelled',
     },
-    formatter: (data) => {
+    formatter: (data: any) => {
         return {
             ...data,
             id: data.orderId,
             status: OrderUtils.orderTypes[data.status],
             time: moment(data.time).format('DD MMM, HH:mm'),
             timeMoment: moment(data.time),
+        }
+    },
+    api: {
+        getTypedData: async (params: TypedDataParams) => {
+            const res = await request.POST('market/orders/typedData/generate', params)
+            return res.error || res.data
+        },
+        placeToOrderBook: async (params: LimitOrder) => {
+            return await request.POST('market/orders', params)
         }
     }
 }

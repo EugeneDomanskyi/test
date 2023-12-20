@@ -6,6 +6,7 @@ import { LimitOrderProtocolFacade, LimitOrderBuilder } from '@1inch/limit-order-
 import { toast } from 'react-toastify'
 import * as math from 'mathjs'
 import moment from 'moment'
+import { OrderUtils } from '@/libs/helpers'
 
 import { CHAINS, INCH_CONTRACTS, INCH_TOKENS, TEGRO_FILL_ORDERS_CONTRACTS } from '@/config'
 import $orders from '@/store/orders'
@@ -594,13 +595,8 @@ class TOKEN extends Order {
   static placeToAPI = ({marketId, makerAsset, takerAsset, price, amount, type = 'buy'}, callback) => {
     return new Promise(async (resolve, reject) => {
       const { walletClient, chainId } = await Order.getWalletData()
-      const limitOrderBuilder = new LimitOrderBuilder(TEGRO_FILL_ORDERS_CONTRACTS[chainId], chainId, walletClient)
 
       const spendAmount = type === 'buy' ? price*amount : amount*1
-      const receiveAmount = type === 'buy' ? amount : price*amount
-
-      const price_precision = parseUnits(`${price}`, type === 'buy' ? makerAsset.decimals : takerAsset.decimals).toString()
-      const volume_precision = parseUnits(`${amount}`, type === 'buy' ? takerAsset.decimals : makerAsset.decimals).toString()
       
       const balance = await Order.getBalance(walletClient.account.address, makerAsset.address)
 
@@ -608,41 +604,35 @@ class TOKEN extends Order {
         reject({success: false, message: 'Insufficient balance', type: 'balance'})
         return 
       }
-      
-      const limitOrder = limitOrderBuilder.buildLimitOrder({
-        makerAssetAddress: makerAsset.address,
-        takerAssetAddress: takerAsset.address,
-        makerAddress: walletClient.account.address,
-        makingAmount: parseUnits(`${spendAmount}`, makerAsset.decimals).toString(),
-        takingAmount: parseUnits(`${receiveAmount}`, takerAsset.decimals).toString(),
+
+      const typedData = await OrderUtils.api.getTypedData({
+        chain_id: chainId,
+        wallet_address: walletClient.account.address,
+        market_symbol: type === 'buy' ? `${takerAsset.symbol}_${makerAsset.symbol}` : `${makerAsset.symbol}_${takerAsset.symbol}`,
+        side: type,
+        price: price*1,
+        amount: amount*1
       })
 
-      const limitOrderTypedData = limitOrderBuilder.buildLimitOrderTypedData(limitOrder, 'Tegro')
+      if (typedData.error) {
+        reject({success: false, message: typedData.error})
+        return
+      }
 
-      const limitOrderHash = hashTypedData(limitOrderTypedData)
-      const signature = await walletClient.signTypedData(limitOrderTypedData).catch(error => {
+      const signature = await walletClient.signTypedData(typedData.sign_data).catch(error => {
         reject({success: false, message: error.shortMessage, type: error.name})
       })
-
-      console.log(limitOrderTypedData)
 
       if (!signature) {
         return
       }
       callback('transaction_completed', {success: true})
       const post = {
-        market_id: marketId,
-        side: (type === 'buy')*1,
-        volume_precision: volume_precision,
-        price_precision: price_precision,
-        order_hash: limitOrderHash,
-        raw_order_data: JSON.stringify(limitOrderTypedData.message),
+        ...typedData.limit_order,
         signature: signature,
-        signed_order_type: 'tegro',
       }
-      console.log(post)
-      const res = await $orders.api.create.tokenAPI(post)
-      if (res) {
+      const res = await OrderUtils.api.placeToOrderBook(post)
+      if (res && !res?.error) {
         resolve({success: true})
         return
       }

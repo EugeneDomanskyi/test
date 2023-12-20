@@ -307,10 +307,10 @@ api.get.tokens.orderBook = async ({ address, ...rest }) => {
   return json
 }
 
-api.get.tokens.trades = async ({ address, blockchain }) => {
+api.get.tokens.trades = async ({ address, blockchain, ...rest }) => {
   const network = CHAINS.find(chain => chain.code === blockchain)
   if (network.useBackend) {
-    const res = await request('market/trades', 'GET', {api: 'backend', chain_id: network.id, base_asset: network.usdtContract, quote_asset: address})
+    const res = await request('market/trades', 'GET', {api: 'backend', ...rest})
     if (res && Array.isArray(res)) {
       return res.map((trade) => ({
         ...trade,

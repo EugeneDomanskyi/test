@@ -44,10 +44,9 @@ const Sales = ({onClickSale, version, type}) => {
     dispatch($orders.set.trades({type: 'tokens', data: []}))
     const res = await $orders.api.get.tokens.trades({
       address: current.address,
+      market_id: current.marketId,
       blockchain: blockchain.code,
-      sortBy: 'createDateTime',
-      statuses: '[3]',
-      limit: 100,
+      limit: 50,
     })
     if (res) {
       dispatch($orders.set.trades({type: 'tokens', data: res}))
