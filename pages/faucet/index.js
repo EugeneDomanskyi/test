@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import moment from 'moment'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
+import Contracts from '@/libs/contracts.lib'
 
 import App from '@/components/App'
 import FaucetSteps from '@/components/Faucet/FaucetSteps'
@@ -14,10 +15,12 @@ import FaucetTimer from '@/components/Faucet/FaucetTimer'
 import styles from './styles.module.scss'
 
 const Faucet = () => {
-  const { connection } = useWalletConnect()
+  const { wallet, connection } = useWalletConnect()
 
   const [step, setStep] = useState()
   const [timeLeft, setLeftTime] = useState()
+
+  const contracts = new Contracts()
 
   useEffect(() => {
     (async () => {
@@ -38,14 +41,19 @@ const Faucet = () => {
   }, [connection])
 
   const getTime = async () => {
-    const period = 4 * 60 * 60
-    const lastTime = moment('2023-12-20T07:56:00')
-    const currentTime = moment()
+    // const time = await contracts.nextClaimTime(wallet, process.env.NEXT_PUBLIC_FAUCET_CONTRACT, 'BTC')
+    // if (time) {
+    //   const period = 4 * 60 * 60
+    //   const nextTime = moment(time * 1000)
+    //   const currentTime = moment()
 
-    const diffMilliseconds = currentTime.diff(lastTime)
-    const diffSeconds = Math.floor(diffMilliseconds / 1000)
+    //   const diffMilliseconds = nextTime.diff(currentTime)
+    //   const diffSeconds = Math.floor(diffMilliseconds / 1000)
 
-    return period - diffSeconds
+    //   return diffSeconds
+    // }
+
+    return 0
   }
 
   const handleStepChange = (newStep) => () => {

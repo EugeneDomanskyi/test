@@ -12,6 +12,7 @@
     width: 174px;
     border-radius: 12px;
     overflow: hidden;
+    cursor: pointer;
     background: linear-gradient(0deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.08) 100%), #08051C;
 
     @media (max-width: 768px) {
@@ -30,6 +31,17 @@
         inset: 0;
         opacity: 0.6;
         filter: blur(50px);
+        opacity: 0;
+        transition: .3s;
+      }
+    }
+
+    &:hover,
+    &.active {
+      .logo {
+        .color {
+          opacity: 1;
+        }
       }
     }
 

@@ -1,4 +1,38 @@
 export default {
+  erc20: {
+    getFreeToken: [{
+      "name": "getFreeToken",
+      "stateMutability": "nonpayable",
+      "type": "function",
+      "inputs": [{
+        "internalType": "string",
+        "name": "tokenID",
+        "type":"string",
+      }],
+      "outputs": [],
+    }],
+
+    nextClaimTime: [{
+      "name": "nextClaimTime",
+      "stateMutability": "view",
+      "type": "function",
+      "inputs": [{
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }, {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }],
+      "outputs": [{
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256",
+      }],
+    }],
+  },
+
   erc721: {
     bulkTransfer: [{
       "name": "bulkTransfer",
