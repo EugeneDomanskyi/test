@@ -9,14 +9,20 @@ import $token from '@/store/token'
 
 export const getTokens = async (chain, post) => {
   if (chain?.useBackend) {
+    const sortMap = {
+      name: 'symbol',
+      derivedETH: 'price',
+      volumeUSD: 'volume',
+    }
     const result = await $token.api.backend.all({
       page: post.currentPage,
       page_size: post.perPage,
       chain_id: chain.id,
-      sort_by: 'name',
-      sort_order: 'asc',
+      sort_by: sortMap[post.orderBy],
+      sort_order: post.orderDirection,
       filter_val: post?.searchText,
       filter_col: post?.searchField,
+      verified: true,
     })
 
     if (result) {

@@ -10,7 +10,6 @@
       <change beforePath="$PROJECT_DIR$/libs/request.lib.js" beforeDir="false" afterPath="$PROJECT_DIR$/libs/request.lib.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libs/ws.lib.js" beforeDir="false" afterPath="$PROJECT_DIR$/libs/ws.lib.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/store/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/store/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/token.js" beforeDir="false" afterPath="$PROJECT_DIR$/store/token.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
