@@ -5,13 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="15b7c246-34cc-403a-84ad-314a99309a64" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/libs/request.lib.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/Exchange/Sales/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Exchange/Sales/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/helpers.js" beforeDir="false" afterPath="$PROJECT_DIR$/libs/helpers.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/structs/Order.js" beforeDir="false" afterPath="$PROJECT_DIR$/libs/structs/Order.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api_services/tokens.js" beforeDir="false" afterPath="$PROJECT_DIR$/api_services/tokens.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/request.lib.js" beforeDir="false" afterPath="$PROJECT_DIR$/libs/request.lib.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libs/ws.lib.js" beforeDir="false" afterPath="$PROJECT_DIR$/libs/ws.lib.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/orders.js" beforeDir="false" afterPath="$PROJECT_DIR$/store/orders.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/store/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/token.js" beforeDir="false" afterPath="$PROJECT_DIR$/store/token.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,21 +48,50 @@
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/Applications/GoLand.app/Contents/plugins/javascript-impl/jsLanguageServicesImpl/external&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Applications/GoLand.app/Contents/plugins/javascript-impl/jsLanguageServicesImpl/external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="ReactBuddySettings">
+    <option name="extensionsIgnore" value="true" />
+  </component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
         <entry key="com.haulmont.rcb.reactComponents" value="false" />
         <entry key="com.haulmont.rcb.reactInspector" value="false" />
         <entry key="com.haulmont.rcb.storybook" value="false" />
+        <entry key="com.intellij.reactbuddy.reactComponents" value="false" />
+        <entry key="com.intellij.reactbuddy.reactInspector" value="false" />
       </map>
     </option>
   </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-gosdk-467a64f6063b-ee0e143f3e2b-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-233.11799.286" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="15b7c246-34cc-403a-84ad-314a99309a64" name="Changes" comment="" />
+      <created>1703091850187</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1703091850187</updated>
+      <workItem from="1703091851451" duration="129000" />
+    </task>
+    <servers />
+  </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="dependencySupport" implementationName="javascript:npm:react" />
+    <option featureType="dependencySupport" implementationName="javascript:npm:next" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

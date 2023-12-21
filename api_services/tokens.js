@@ -31,6 +31,14 @@ export const getTokens = async (chain, post) => {
         volumeUSD: null,
         totalValueLockedUSD: null,
         blockchain: chain.code,
+        current_price: item.ticker.price,
+        high_24h: item.ticker.price_high_24h,
+        low_24h: item.ticker.price_low_24h,
+        ticker: {
+          value: item.ticker.price_change_24h,
+          type: item.ticker.price_change_24h < 0 ? 'minus' : 'plus',
+        },
+        volume: item.ticker.quote_volume,
       }))
     }
   } else {
