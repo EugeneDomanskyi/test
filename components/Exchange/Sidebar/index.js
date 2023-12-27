@@ -143,7 +143,7 @@ const Sidebar = ({ version, type }) => {
                     )
                   })}
 
-                  {pages.next && ! searching && (all.length % 20 == 0) ? (
+                  {pages.next && ! searching && all.length > 0 && (all.length % 20 == 0) ? (
                     <div ref={mobileNextRef}>
                       <App.Flex center full>
                         <App.Loader size={40} />

@@ -11,7 +11,7 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const FaucetToken = ({ onComplete }) => {
+const FaucetToken = ({ balances, onComplete }) => {
   const dispatch = useDispatch()
 
   const [tokenId, setTokenId] = useState()
@@ -57,7 +57,7 @@ const FaucetToken = ({ onComplete }) => {
           </App.Flex>
 
           <App.Flex row className={styles.text}>
-            <App.Text size={16} weight={600} height={1}>0.0023 BTC</App.Text>
+            <App.Text size={16} weight={600} height={1}>{balances.BTC} BTC</App.Text>
           </App.Flex>
         </App.Flex>
 
@@ -68,7 +68,7 @@ const FaucetToken = ({ onComplete }) => {
           </App.Flex>
 
           <App.Flex row className={styles.text}>
-            <App.Text size={16} weight={600} height={1}>0.044 ETH</App.Text>
+            <App.Text size={16} weight={600} height={1}>{balances.ETH} ETH</App.Text>
           </App.Flex>
         </App.Flex>
 
@@ -79,7 +79,7 @@ const FaucetToken = ({ onComplete }) => {
           </App.Flex>
 
           <App.Flex row className={styles.text}>
-            <App.Text size={16} weight={600} height={1}>100 USDT</App.Text>
+            <App.Text size={16} weight={600} height={1}>{balances.USDT} USDT</App.Text>
           </App.Flex>
         </App.Flex>
       </App.Flex>

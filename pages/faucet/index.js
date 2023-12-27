@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import moment from 'moment'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import Contracts from '@/libs/contracts.lib'
+
+import $app from '@/store/app'
 
 import App from '@/components/App'
 import FaucetSteps from '@/components/Faucet/FaucetSteps'
@@ -15,12 +18,17 @@ import FaucetTimer from '@/components/Faucet/FaucetTimer'
 import styles from './styles.module.scss'
 
 const Faucet = () => {
-  const { wallet, connection } = useWalletConnect()
+  const { wallet, connection, getBasicInfo } = useWalletConnect()
+
+  const blockchain = useSelector($app.get.blockchain)
 
   const [step, setStep] = useState()
   const [timeLeft, setLeftTime] = useState()
+  const [balances, setBalances] = useState({ BTC: 0, ETH: 0, USDT: 0 })
 
   const contracts = new Contracts()
+
+  const symbols = ['BTC', 'ETH', 'USDT']
 
   useEffect(() => {
     (async () => {
@@ -35,25 +43,53 @@ const Faucet = () => {
           }
         }
         
+        getBalances()
         handleStepChange(nextStep)()
       }
     })()
   }, [connection])
 
   const getTime = async () => {
-    // const time = await contracts.nextClaimTime(wallet, process.env.NEXT_PUBLIC_FAUCET_CONTRACT, 'BTC')
-    // if (time) {
-    //   const period = 4 * 60 * 60
-    //   const nextTime = moment(time * 1000)
-    //   const currentTime = moment()
+    const calls = symbols.map(item => {
+      return contracts.nextClaimTime(wallet, process.env.NEXT_PUBLIC_FAUCET_CONTRACT, item)
+    })
 
-    //   const diffMilliseconds = nextTime.diff(currentTime)
-    //   const diffSeconds = Math.floor(diffMilliseconds / 1000)
+    const times = await Promise.all(calls)
+    const time = times.reduce((acc, value) => {
+      return Math.max(acc, value * 1)
+    }, 0)
 
-    //   return diffSeconds
-    // }
+    if (time) {
+      const nextTime = moment(time * 1000)
+      const currentTime = moment()
+
+      const diffMilliseconds = nextTime.diff(currentTime)
+      const diffSeconds = Math.floor(diffMilliseconds / 1000)
+
+      return diffSeconds
+    }
 
     return 0
+  }
+
+  const getBalances = async () => {
+    const calls = symbols.map(item => {
+      return contracts.tokens(process.env.NEXT_PUBLIC_FAUCET_CONTRACT, item)
+    })
+
+    const tempBalance = { BTC: 0, ETH: 0, USDT: 0 }
+    const results = await Promise.all(calls)
+    for (const result of results) {
+      const info = await getBasicInfo(result[0], blockchain.id)
+      
+      const perMint = Number(result[1])
+      const totalBalance = Number(result[2])
+      const currentBalance = Math.min(perMint, totalBalance)
+
+      tempBalance[info.symbol] = currentBalance / Math.pow(10, info.decimals)
+    }
+
+    setBalances(tempBalance)
   }
 
   const handleStepChange = (newStep) => () => {
@@ -64,7 +100,7 @@ const Faucet = () => {
     switch (step) {
       case 1: return <FaucetConnect onComplete={handleStepChange(2)} />
       case 2: return <FaucetMatic onComplete={handleStepChange(3)} />
-      case 3: return <FaucetToken onComplete={handleStepChange(4)} />
+      case 3: return <FaucetToken balances={balances} onComplete={handleStepChange(4)} />
       case 4: return <FaucetComplete />
       case 5: return <FaucetTimer time={timeLeft} onComplete={handleStepChange(2)} />
     }

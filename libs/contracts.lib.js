@@ -328,6 +328,19 @@ export default function Contracts(defaultGasLimit = null) {
 
       return Number(result)
     },
+
+    tokens: async (contract, tokenId) => {
+      const result = await methods.readContract({
+        address: contract,
+        abi: abi.erc20.tokens,
+        functionName: 'tokens',
+        args: [
+          tokenId,
+        ],
+      })
+
+      return result
+    },
   }
 
   return methods

@@ -31,6 +31,30 @@ export default {
         "type": "uint256",
       }],
     }],
+
+    tokens: [{
+      "name": "tokens",
+      "stateMutability": "view",
+      "type": "function",
+      "inputs": [{
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }],
+      "outputs": [{
+        "internalType": "contract IERC20",
+        "name": "token",
+        "type": "address"
+      }, {
+        "internalType": "uint256",
+        "name": "amountPerMint",
+        "type": "uint256"
+      }, {
+        "internalType": "uint256",
+        "name": "balance",
+        "type": "uint256"
+      }],
+    }],
   },
 
   erc721: {
