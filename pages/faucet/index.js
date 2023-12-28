@@ -82,11 +82,13 @@ const Faucet = () => {
     for (const result of results) {
       const info = await getBasicInfo(result[0], blockchain.id)
       
-      const perMint = Number(result[1])
-      const totalBalance = Number(result[2])
-      const currentBalance = Math.min(perMint, totalBalance)
+      if (info) {
+        const perMint = Number(result[1])
+        const totalBalance = Number(result[2])
+        const currentBalance = Math.min(perMint, totalBalance)
 
-      tempBalance[info.symbol] = currentBalance / Math.pow(10, info.decimals)
+        tempBalance[info.symbol] = currentBalance / Math.pow(10, info.decimals)
+      }
     }
 
     setBalances(tempBalance)

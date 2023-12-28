@@ -1,10 +1,28 @@
 .container {
   padding: 32px;
   height: 510px;
+  background: url('/images/connect-wallet-bg.png') center no-repeat;
+
+  @media (max-width: 768px) {
+    background: url('/images/connect-wallet-bg-mweb.png') center no-repeat;
+
+    @media (max-height: 670px) {
+      background-size: 80%;
+      background-position: center 40%;
+    }
+  }
 
   @media (max-width: 768px) {
     padding: 32px 16px;
     height: 100%
+  }
+
+  .headerMain {
+    display: flex;
+
+    @media (max-width: 768px) {
+      display: none;
+    }
   }
 
   .header {
