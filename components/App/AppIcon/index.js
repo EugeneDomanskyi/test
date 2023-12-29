@@ -570,6 +570,30 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon == 'menuFaucet') {
+      return (
+        <svg width={width ?? 32} height={height ?? 33} viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <g clipPath="url(#clip0_820_3238)">
+            <rect width="30.003" height="30.003" x="1" y="1.311" fill="url(#paint0_linear_820_3238)" fillOpacity="0.24" rx="4" />
+            <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M6.858 1.311H5.001a4 4 0 00-4 4v22.003a4 4 0 004 4h22.002a4 4 0 004-4V5.312a4 4 0 00-4-4h-2.17" />
+            <path stroke={color ?? '#fff'} strokeLinecap="round" strokeWidth="1" d="M10.307 1.203H21.12" />
+            <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" d="M9.402 9.462h13.2c1.1 0 2 .9 2 2v2.2c0 .8-.5 1.8-1 2.3l-4.3 3.8c-.6.5-1 1.5-1 2.3v3.3c0 .6-.4 1.4-.9 1.7l-1.4.9c-1.3.8-3.1-.1-3.1-1.7v-4.3c0-.7-.4-1.6-.8-2.1l-3.8-4c-.5-.5-.9-1.4-.9-2v-2.3c0-1.2.9-2.1 2-2.1z" />
+            <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" d="M20.618 9.164a4.911 4.911 0 00-4.905-4.905 4.905 4.905 0 00-4.904 4.905" />
+            <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" d="M15.714 7.443l-.664 1.222-1.223.664H17.6l-1.222-.664-.664-1.222zM15.379 13.826l.633-1.167.634 1.167 1.166.633-1.166.634-.634 1.166-.633-1.166-1.167-.634 1.167-.633z" />
+          </g>
+          <defs>
+            <linearGradient id="paint0_linear_820_3238" x1="16.002" x2="16.002" y1="1.311" y2="31.314" gradientUnits="userSpaceOnUse">
+              <stop stopColor={color ?? '#fff'} stopOpacity="0"></stop>
+              <stop offset="1" stopColor={color ?? '#fff'}></stop>
+            </linearGradient>
+            <clipPath id="clip0_820_3238">
+              <path fill={color ?? '#fff'} d="M0 0H32.004V32.004H0z" transform="translate(0 .257)" />
+            </clipPath>
+          </defs>
+        </svg>
+      )
+    }
+
     if (icon === 'menuNFT') {
       return (
         <svg

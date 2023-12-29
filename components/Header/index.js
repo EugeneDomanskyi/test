@@ -187,7 +187,7 @@ const Header = () => {
 
                 <Link href="/faucet" className={cn(styles.link, {[styles.active]: router.pathname.includes('/faucet')})}>
                   <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
-                    <App.Icon icon="menuEarn" />
+                    <App.Icon icon="menuFaucet" />
                     <App.Text size={14} weight={700}>Faucet</App.Text>
                   </App.Flex>
                 </Link>
