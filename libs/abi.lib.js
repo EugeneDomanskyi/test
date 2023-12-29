@@ -4,11 +4,7 @@ export default {
       "name": "getFreeToken",
       "stateMutability": "nonpayable",
       "type": "function",
-      "inputs": [{
-        "internalType": "string",
-        "name": "tokenID",
-        "type":"string",
-      }],
+      "inputs": [],
       "outputs": [],
     }],
 

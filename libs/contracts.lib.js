@@ -297,14 +297,12 @@ export default function Contracts(defaultGasLimit = null) {
       return parseFloat(result)
     },
 
-    getFreeToken: async (contract, tokenId) => {
+    getFreeToken: async (contract) => {
       const config = await methods.prepareWriteContract({
         address: contract,
         abi: abi.erc20.getFreeToken,
         functionName: 'getFreeToken',
-        args: [
-          tokenId,
-        ],
+        args: [],
       })
 
       if (config?.error) {
@@ -312,7 +310,7 @@ export default function Contracts(defaultGasLimit = null) {
       }
 
       const result = await methods.writeContract(config)
-      return parseFloat(result)
+      return result
     },
 
     nextClaimTime: async (wallet, contract, tokenId) => {

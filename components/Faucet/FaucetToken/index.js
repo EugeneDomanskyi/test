@@ -14,32 +14,30 @@ import styles from './styles.module.scss'
 const FaucetToken = ({ balances, onComplete }) => {
   const dispatch = useDispatch()
 
-  const [tokenId, setTokenId] = useState()
+  const [loading, setLoading] = useState(false)
 
   const contracts = new Contracts()
 
   const handleClaim = async () => {
-    if (tokenId) {
-      const result = await contracts.getFreeToken(process.env.NEXT_PUBLIC_FAUCET_CONTRACT, tokenId)
-      if (result?.error) {
-        if (result.error.includes('reason:')) {
-          const temp = result.error.split('reason:')
-          if (temp.length == 2) {
-            dispatch($alert.set.error({ title: 'An Error Occurred', text: temp[1] }))
-          }
+    setLoading(true)
+    const result = await contracts.getFreeToken(process.env.NEXT_PUBLIC_FAUCET_CONTRACT)
+    if (result?.error) {
+      if (result.error.includes('reason:')) {
+        const temp = result.error.split('reason:')
+        if (temp.length == 2) {
+          dispatch($alert.set.error({ title: 'An Error Occurred', text: temp[1] }))
         }
-
-        return
+      } else {
+        dispatch($alert.set.error({ title: 'An Error Occurred', text: result.error }))
       }
 
-      if (onComplete) (
-        onComplete()
-      )
+      setLoading(false)
+      return
     }
-  }
 
-  const handleTokenId = (id) => () => {
-    setTokenId(id)
+    if (onComplete) (
+      onComplete()
+    )
   }
 
   return (
@@ -50,7 +48,7 @@ const FaucetToken = ({ balances, onComplete }) => {
       </App.Flex>
 
       <App.Flex direction={['row', 'column']} center fullWidth gap={16}>
-        <App.Flex direction={['column', 'row']} center gap={32} onClick={handleTokenId('BTC')} className={cn(styles.box, {[styles.active]: tokenId == 'BTC'}, styles.btc)}>
+        <App.Flex direction={['column', 'row']} center gap={32} className={cn(styles.box, styles.active, styles.btc)}>
           <App.Flex center className={styles.logo}>
             <Image src="/images/circle-btc.png" width={70} height={70} alt="" />
             <div className={styles.color} />
@@ -61,7 +59,7 @@ const FaucetToken = ({ balances, onComplete }) => {
           </App.Flex>
         </App.Flex>
 
-        <App.Flex direction={['column', 'row']} center gap={32} onClick={handleTokenId('ETH')} className={cn(styles.box, {[styles.active]: tokenId == 'ETH'}, styles.eth)}>
+        <App.Flex direction={['column', 'row']} center gap={32} className={cn(styles.box, styles.active, styles.eth)}>
           <App.Flex center className={styles.logo}>
             <Image src="/images/circle-eth.png" width={70} height={70} alt="" />
             <div className={styles.color} />
@@ -72,7 +70,7 @@ const FaucetToken = ({ balances, onComplete }) => {
           </App.Flex>
         </App.Flex>
 
-        <App.Flex direction={['column', 'row']} center gap={32} onClick={handleTokenId('USDT')} className={cn(styles.box, {[styles.active]: tokenId == 'USDT'}, styles.usdt)}>
+        <App.Flex direction={['column', 'row']} center gap={32} className={cn(styles.box, styles.active, styles.usdt)}>
           <App.Flex center className={styles.logo}>
             <Image src="/images/circle-usdt.png" width={70} height={70} alt="" />
             <div className={styles.color} />
@@ -85,7 +83,7 @@ const FaucetToken = ({ balances, onComplete }) => {
       </App.Flex>
 
       <App.Flex column center gap={16}>
-        <App.Button primary xl fitWidth center disabled={!tokenId} onClick={handleClaim}>Claim Token</App.Button>
+        <App.Button primary xl fitWidth center disabled={loading} loading={loading} onClick={handleClaim}>Claim Token</App.Button>
       </App.Flex>
     </App.Flex>
   )
