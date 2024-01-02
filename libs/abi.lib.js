@@ -1,4 +1,58 @@
 export default {
+  erc20: {
+    getFreeToken: [{
+      "name": "getFreeToken",
+      "stateMutability": "nonpayable",
+      "type": "function",
+      "inputs": [],
+      "outputs": [],
+    }],
+
+    nextClaimTime: [{
+      "name": "nextClaimTime",
+      "stateMutability": "view",
+      "type": "function",
+      "inputs": [{
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }, {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }],
+      "outputs": [{
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256",
+      }],
+    }],
+
+    tokens: [{
+      "name": "tokens",
+      "stateMutability": "view",
+      "type": "function",
+      "inputs": [{
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }],
+      "outputs": [{
+        "internalType": "contract IERC20",
+        "name": "token",
+        "type": "address"
+      }, {
+        "internalType": "uint256",
+        "name": "amountPerMint",
+        "type": "uint256"
+      }, {
+        "internalType": "uint256",
+        "name": "balance",
+        "type": "uint256"
+      }],
+    }],
+  },
+
   erc721: {
     bulkTransfer: [{
       "name": "bulkTransfer",

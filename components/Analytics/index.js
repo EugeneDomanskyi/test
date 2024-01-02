@@ -4,6 +4,7 @@ import amplitude from 'amplitude-js'
 import Smartlook from 'smartlook-client'
 import { v4 as uuid } from 'uuid'
 import { useAccount, useNetwork } from 'wagmi'
+import { connectWalletVid } from '@/libs/magic-square.lib'
 
 const Analytics = () => {
   const router = useRouter()

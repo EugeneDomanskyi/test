@@ -80,7 +80,7 @@ export const subscribeToBalanceUpdates = (chainId: number, walletAddress: string
                 const decimals = array[i-1].result
                 return {
                     ...acc,
-                    [filteredTokens[parseInt(i/2)]]: formatUnits(res?.result, decimals)
+                    [filteredTokens[parseInt(i/2)]]: formatUnits(res?.result ?? '', decimals)
                 }
             }
             return acc

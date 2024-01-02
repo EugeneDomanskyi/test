@@ -1,11 +1,6 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useEffect, useState, useRef } from 'react'
 import cn from 'classnames'
-import { useNetwork } from 'wagmi'
-
-import useWalletConnect from '@/myhooks/wallet-connect'
-import { usePropsHelper } from '@/myhooks/props-helper'
-import { trackEvent, getPageName } from '@/libs/analytics.lib'
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -13,22 +8,18 @@ import { useRouter } from 'next/router'
 
 import { CHAINS } from '@/config'
 
-import $modal from '@/store/modal'
-
 import App from '@/components/App'
 import SwitchBlockchain from '@/components/SwitchBlockchain'
 import NavbarDropdown from '@/components/NavbarDropdown'
-import HeaderWalletMobile from '@/components/Header/HeaderWalletMobile'
+import HeaderWallet from '@/components/Header/HeaderWallet'
 
 import styles from './styles.module.scss'
 import StoriesButton from './StoriesButton'
 
 const Header = () => {
   const router = useRouter()
-  const dispatch = useDispatch()
-  const { wallet, connect, disconnect, getBalance, getConnectorName } = useWalletConnect()
-  const { isMobile } = usePropsHelper()
-  const { chain } = useNetwork()
+  
+  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
   const path = router.asPath.split('/')
   const blockchain = path[1]
@@ -38,22 +29,11 @@ const Header = () => {
   const isEarn = router.pathname.includes('/earn')
   const isSticky = ! router.pathname.includes('/exchange')
 
-  const balance = useSelector(({$raffle}) => $raffle.balance)
-
   const headerRef = useRef(null)
 
-  const [menuShow, setMenuShow] = useState(false)
   const [mobileMenuShow, setMobileMenuShow] = useState(false)
   const [moreIsOpen, setMoreIsOpen] = useState(false)
   const [supportIsOpen, setSupportIsOpen] = useState(false)
-  const [currentBalance, setCurrentBalance] = useState({amount: 0, symbol: ''})
-  const [balanceLoading, setBalanceLoading] = useState(true)
-
-  useEffect(() => {
-    if (wallet && ! isEarn) {
-      handleGetBalance()
-    }
-  }, [wallet, isEarn, chain?.id])
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, false)
@@ -63,20 +43,7 @@ const Header = () => {
     }
   }, [])
 
-  useEffect(() => {
-    if (isEarn && ! balance) {
-      setBalanceLoading(true)
-    } else if (isEarn) {
-      setCurrentBalance({amount: balance, symbol: 'TKeys'})
-      setBalanceLoading(false)
-    }
-  }, [balance, isEarn])
-
   const handleClickOutside = (event) => {
-    if (! event.target.closest('#wallet')) {
-      setMenuShow(false)
-    }
-
     if (! event.target.closest('#menu-dropdown')) {
       setMoreIsOpen(false)
     }
@@ -84,59 +51,6 @@ const Header = () => {
     if (! event.target.closest('#support-dropdown')) {
       setSupportIsOpen(false)
     }
-  }
-
-  const handlePageEvent = (page) => () => {
-    trackEvent('Page Visited', {
-      'Page Name': page,
-    })
-  }
-
-  const handleResourceEvent = (community) => () => {
-    trackEvent('Community Resources Visited', {
-      'Community': community,
-    })
-  }
-
-  const handleConnectWallet = async () => {
-    if ( ! wallet) {
-      trackEvent('Wallet Connect Clicked', {
-        'Source': getPageName(),
-      })
-
-      const result = await connect()
-      if (result) {
-        const walletName = await getConnectorName()
-        trackEvent('Wallet Connect Success', {
-          'Source': getPageName(),
-          'Type': walletName,
-        })
-      }
-    }
-  }
-
-  const shorterAddress = (size = 6) => {
-    return wallet ? (wallet.slice(0, size) + '...' + wallet.slice(wallet.length - size)) : ''
-  }
-
-  const handleMenuToggle = () => {
-    if (isMobile) {
-      dispatch($modal.set.show({modal: 'Home/HomeDisconnectModal'}))
-    } else {
-      setMenuShow( ! menuShow)
-    }
-  }
-
-  const handleDisconnect = async () => {
-    const walletName = await getConnectorName()
-
-    disconnect()
-    setMenuShow(false)
-
-    trackEvent('Wallet Disconnect Success', {
-      'Source': getPageName(),
-      'Type': walletName,
-    })
   }
 
   const handleMobileMenuClick = () => {
@@ -149,20 +63,7 @@ const Header = () => {
     setMobileMenuShow(!mobileMenuShow)
   }
 
-  const handleGetBalance = async () => {
-    setBalanceLoading(true)
-    if (! isEarn) {
-      const balance = await getBalance('', true)
-      if (balance.formatted) {
-        const amount = balance.formatted*1
-        setCurrentBalance({amount: amount.toFixed(4), symbol: balance.symbol})
-      }
-    }
-    setBalanceLoading(false)
-  }
-
   const handleClickDiscord = () => {
-    // trackEvent('Click Support')
     window.open("https://discord.com/channels/951018857533935627/1107789606612631602/1135635808087462009", '_blank')
   }
 
@@ -191,7 +92,7 @@ const Header = () => {
                     ? <App.Icon icon="tegro" width={91} height={20} />
                     : <div className={styles.logo}>
                         <div className={styles.badge}>
-                          BETA
+                          TESTNET
                         </div>
                         <App.Icon icon="tegro" width={117} height={25} />
                       </div>
@@ -208,6 +109,12 @@ const Header = () => {
                 <Link href="/earn" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/earn')})}>
                   <App.Flex center height="100%">
                     <App.Text size={16} weight={500}>Earn</App.Text>
+                  </App.Flex>
+                </Link>
+
+                <Link href="/faucet" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/faucet')})}>
+                  <App.Flex center height="100%">
+                    <App.Text size={16} weight={500}>Faucet</App.Text>
                   </App.Flex>
                 </Link>
 
@@ -249,47 +156,10 @@ const Header = () => {
 
               <StoriesButton />
 
-              { ! isEarn && ! isLanding && ! isMarket ? <SwitchBlockchain onChangeNetwork={handleGetBalance} /> : <App.Flex />}
+              { ! isEarn && ! isLanding && ! isMarket ? <SwitchBlockchain /> : <App.Flex />}
               
               <App.Flex row align="center" gap={16}>
-                {wallet ? (
-                  isMobile ? (
-                    <HeaderWalletMobile />
-                  ) : (
-                    <App.Flex sx={{ position: 'relative' }} id="wallet">
-                      <App.Flex row gap={16} className={styles.walletInfo}>
-                        {! isMobile ? (
-                          <App.Flex>
-                            {balanceLoading ? (
-                              <App.Flex center sx={{width: 90}}>
-                                <App.Loader />
-                              </App.Flex>
-                            ) : (
-                              <App.Flex center gap={4}>
-                                {isEarn ? <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" /> : null}
-                                <App.Text size={16} weight={500}>{ currentBalance.amount + ' ' + currentBalance.symbol }</App.Text>
-                              </App.Flex>
-                            )}
-                          </App.Flex>
-                        ) : null}
-
-                        <App.Flex className={styles.walletAddressWrapper} onClick={handleMenuToggle}>
-                          <App.Text size={16} weight={500}>{shorterAddress(isMobile ? 4 : 6)}</App.Text>
-                        </App.Flex>
-                      </App.Flex>
-
-                      <div className={cn(styles.menu, {[styles.active]: menuShow})}>
-                        <App.Button primary fullWidth onClick={handleDisconnect}>
-                        <App.Icon icon="logout" /> Disconnect
-                        </App.Button>
-                      </div>
-                    </App.Flex>
-                  )
-                ) : (
-                  <App.Button primary large={!isMobile} onClick={handleConnectWallet}>
-                    Connect{!isMobile ? ' Wallet' : ''}
-                  </App.Button>
-                )}
+                <HeaderWallet />
 
                 <div className={cn(styles.mobileMenuButton, {[styles.show]: mobileMenuShow})} onClick={handleMobileMenuClick}>
                   <span></span>
@@ -312,6 +182,13 @@ const Header = () => {
                   <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                     <App.Icon icon="menuEarn" />
                     <App.Text size={14} weight={700}>Earn</App.Text>
+                  </App.Flex>
+                </Link>
+
+                <Link href="/faucet" className={cn(styles.link, {[styles.active]: router.pathname.includes('/faucet')})}>
+                  <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
+                    <App.Icon icon="menuFaucet" />
+                    <App.Text size={14} weight={700}>Faucet</App.Text>
                   </App.Flex>
                 </Link>
 

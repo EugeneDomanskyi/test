@@ -11,37 +11,31 @@ export default function Contracts(defaultGasLimit = null) {
 
   const methods = {
     debugMessage: (error, title = null) => {
-      if (isDebugMode) {
-        if (title) {
-          console.log('------>', title)
-        }
+      // if (isDebugMode) {
+      //   if (title) {
+      //     console.log('------>', title)
+      //   }
 
-        if (error) {
-          for (const key in error) {
-            console.log((key + ':'), error[key])
-          }
-        }
-      }
+      //   if (error) {
+      //     for (const key in error) {
+      //       console.log((key + ':'), error[key])
+      //     }
+      //   }
+      // }
 
-      return { error: error?.message || error?.name || error }
+      return { error: error?.shortMessage || error?.message || error?.name || error }
     },
 
     prepareWriteContract: async (contractConfig, gasLimit = defaultGasLimit) => {
       const place = contractConfig?.functionName
       let errorCode = null
-      let errorData = {}
       let config = {}
       try {
         config = await prepareWriteContract(contractConfig)
       } catch (error) {
         errorCode = error?.code
-        // errorData.error = error
-        methods.debugMessage(error, `Prepare "${place}"`)
+        return methods.debugMessage(error, `Prepare "${place}"`)
       }
-
-      // if (errorData) {
-      //   return errorData
-      // }
 
       if (errorCode) {
         if (errorCode == 'UNPREDICTABLE_GAS_LIMIT' && gasLimit) {
@@ -301,6 +295,49 @@ export default function Contracts(defaultGasLimit = null) {
       })
 
       return parseFloat(result)
+    },
+
+    getFreeToken: async (contract) => {
+      const config = await methods.prepareWriteContract({
+        address: contract,
+        abi: abi.erc20.getFreeToken,
+        functionName: 'getFreeToken',
+        args: [],
+      })
+
+      if (config?.error) {
+        return config
+      }
+
+      const result = await methods.writeContract(config)
+      return result
+    },
+
+    nextClaimTime: async (wallet, contract, tokenId) => {
+      const result = await methods.readContract({
+        address: contract,
+        abi: abi.erc20.nextClaimTime,
+        functionName: 'nextClaimTime',
+        args: [
+          tokenId,
+          wallet,
+        ],
+      })
+
+      return Number(result)
+    },
+
+    tokens: async (contract, tokenId) => {
+      const result = await methods.readContract({
+        address: contract,
+        abi: abi.erc20.tokens,
+        functionName: 'tokens',
+        args: [
+          tokenId,
+        ],
+      })
+
+      return result
     },
   }
 

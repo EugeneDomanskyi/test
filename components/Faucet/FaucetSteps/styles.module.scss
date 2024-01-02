@@ -1,0 +1,105 @@
+.steps {
+  border-radius: 12px;
+  background-color: #1c192e;
+
+  @media (max-width: 768px) {
+    border-radius: 0;
+  }
+
+  .step {
+    padding: 16px 0;
+    position: relative;
+    z-index: 0;
+
+    &:not(:first-of-type):before {
+      content: '';
+      display: block;
+      width: 50%;
+      height: 1px;
+      background-color: #fff;
+      top: 24px;
+      left: 0;
+      position: absolute;
+      z-index: -1;
+    }
+
+    &:not(:last-of-type):after {
+      content: '';
+      display: block;
+      width: 50%;
+      height: 1px;
+      background-color: #fff;
+      top: 24px;
+      left: 50%;
+      position: absolute;
+      z-index: -1;
+    }
+
+    .dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: #fff;
+
+      svg {
+        display: none;
+      }
+
+      &:after {
+        content: '';
+        display: block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #b9b8c4;
+      }
+    }
+
+    .stepText {
+      color: #B9B8C5;
+    }
+
+    &.current {
+      &:before {
+        background-color: #4C69FF;
+      }
+
+      &:after {
+        background-color: #fff;
+      }
+
+      .dot {
+        background-color: #4C69FF;
+
+        &:after {
+          background-color: #fff;
+        }
+      }
+
+      .stepText {
+        color: #fff;
+      }
+    }
+
+    &.past {
+      &:before {
+        background-color: #53F19C;
+      }
+
+      &:after {
+        background-color: #53F19C;
+      }
+
+      .dot {
+        background-color: #53F19C;
+        svg {
+          display: block;
+        }
+
+        &:after {
+          display: none;
+        }
+      }
+    }
+  }
+}

@@ -33,6 +33,7 @@ const Info = ({ type }) => {
   const list = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.all : $collection.all)
   const loading = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.loading : $collection.loading)
   const { high, low } = useSelector($exchange.get.highLow({ count: 24, unit: 'hours' }))
+  const prefill = useSelector(({ $portfolio }) => $portfolio.prefill)
 
   const [usdPrice, setUsdPrice] = useState(current.price)
 
@@ -52,24 +53,24 @@ const Info = ({ type }) => {
   }, [isAddress, list, urlBlockchain, blockchain.code, isMobile, loading])
 
   useEffect(() => {
-    if (isAddress && blockchain.code === urlBlockchain && !current?.id) {
+    if (isAddress && blockchain.code === urlBlockchain && (!current?.id || prefill.address)) {
       if (type == 'tokens') {
-        fetchToken()
+        fetchToken(prefill.address ?? address)
       } else {
         // Fetch collection
       }
     }
-  }, [isAddress, urlBlockchain, blockchain.code, address, current?.id])
+  }, [isAddress, urlBlockchain, blockchain.code, address, current?.id, prefill.address])
 
-  const fetchToken = async () => {
-    const existInList = list.find(item => item.id === address)
+  const fetchToken = async (currentAddress) => {
+    const existInList = list.find(item => item.id === currentAddress)
     if (!existInList) {
       const post = {
         currentPage: 1,
         perPage: 1,
         orderBy: 'name',
         orderDirection: 'asc',
-        searchText: address,
+        searchText: currentAddress,
         searchField: 'contract_address',
       }
 

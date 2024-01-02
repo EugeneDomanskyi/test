@@ -186,7 +186,7 @@ export default function Markets({ currentInfo, currentChain }) {
 export async function getServerSideProps({ query }) {
   const blockchainCode = query.blockchain
   const address = query.address
-  const currentChain = CHAINS.find(chain => chain.code === blockchainCode)
+  const currentChain = CHAINS.find(chain => chain.code === blockchainCode) ?? null
   let currentInfo = {}
 
   if (currentChain) {

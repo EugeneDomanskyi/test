@@ -45,7 +45,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
     (async () => {
       if (queryBlockchain) {
         if (queryBlockchain != blockchain.code) {
-          const newBlockchainCode = pageBlockchains.some(item => item.code == queryBlockchain) ? queryBlockchain : 'ethereum'
+          const newBlockchainCode = pageBlockchains.some(item => item.code == queryBlockchain) ? queryBlockchain : pageBlockchains?.[0]?.code
           if (newBlockchainCode != blockchain.code) {
             const newBlockchain = pageBlockchains.find(item => item.code == newBlockchainCode)
             if (chain?.id) {
@@ -158,16 +158,8 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
   return (
     <App.Flex row align="center" justify={justify} gap={8} sx={{ position: 'relative' }} id="blockchain" onMouseEnter={() => setMenuShow(true)} onMouseLeave={() => setMenuShow(false)}>
       <App.Flex row center gap={8} className={cn(styles.badge, {[styles.active]: menuShow})} sx={{ cursor: 'pointer' }} onClick={isMobile ? handleMenuToggle : null}>
-      {/* <App.Flex row center gap={8} className={cn(styles.badge, {[styles.active]: menuShow})} sx={{ cursor: 'pointer' }}> */}
-        <Image src={`/images/icon-${blockchain?.code}.png`} width={28} height={28} alt="" />
-        {
-          ! isMobile
-            ? <>
-                <App.Text size={16} weight={700} className={styles.badgeTitle}>{blockchain.name}</App.Text>
-                <App.Icon icon="caret-down" color="#fff" />
-              </>
-            : null
-        }
+        <Image src={`/images/icon-${blockchain.code}.png`} width={24} height={24} alt="" />
+        {! isMobile ? <App.Text size={16} className={styles.badgeTitle}>{blockchain.name}</App.Text> : null}
       </App.Flex>
 
       <div className={cn(styles.menu, {[styles.active]: menuShow})}>
@@ -175,8 +167,10 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
           {pageBlockchains.map(item => (
             <App.Flex key={item.id} row gap={16} align="center" justify="space-between" className={styles.item} onClick={() => handleBlockchainChange(item.code)}>
               <App.Flex row gap={8} align="center">
-                <Image src={`/images/icon-${item.code}.png`} width={28} height={28} alt="" />
-                <App.Text nowrap height={1}>{ item.name }</App.Text>
+                <App.Flex row center className={styles.imageBox}>
+                  <Image src={`/images/icon-${item.code}.png`} width={16} height={16} alt="" />
+                </App.Flex>
+                <App.Text nowrap size={12} height={1} color="#B9B8C5">{ item.name }</App.Text>
               </App.Flex>
 
               <App.Flex center width={20} height={20}>

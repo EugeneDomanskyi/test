@@ -43,7 +43,7 @@ const FourthStep = ({ campaign, onSubmit, onShare }) => {
       })
 
       anim.onComplete = () => {
-        setShowConfetti(false)
+        //setShowConfetti(false)
       }
 
       return () => {

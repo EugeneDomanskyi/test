@@ -54,7 +54,7 @@ const TEST_NETWORKS = [
         apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
         coingecko: '',
         platform: '',
-        pages: ['earn', 'exchange'],
+        pages: ['earn', 'exchange', 'faucet'],
         usdtContract: '0x216d17a5896b649f08c32bc759807a3092bf4fe2',
         usdt: {
             address: '0x216d17a5896b649f08c32bc759807a3092bf4fe2',
@@ -77,6 +77,7 @@ const TEST_NETWORKS = [
             rewardEndpoint: 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status',
         },
         useBackend: true,
+        defaultFor: 'local',
     },
 ]
 
@@ -93,7 +94,7 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'arbitrum',
     platform: 'arbitrum-one',
-    pages: ['nfts', 'exchange'],
+    pages: [],
     usdtContract: '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9',
     usdt: {
         address: '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9',
@@ -120,7 +121,7 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'optimism',
     platform: 'optimistic-ethereum',
-    pages: ['nfts'],
+    pages: [],
     usdtContract: '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58',
     usdt: {
         address: '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58',
@@ -174,7 +175,7 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'binancecoin',
     platform: 'binance-smart-chain',
-    pages: ['nfts', 'exchange'],
+    pages: [],
     usdtContract: '0x55d398326f99059ff775485246999027b3197955',
     usdt: {
         address: '0x55d398326f99059ff775485246999027b3197955',
@@ -188,6 +189,7 @@ const ADDITIONAL_NETWORKS = [{
       name: 'Wrapped BNB',
       shortName: 'WBNB',
     },
+    use1Inch: true,
   }, {
     ...base,
     code: 'base',
@@ -201,7 +203,7 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'base',
     platform: 'base',
-    pages: ['nfts', 'exchange'],
+    pages: [],
     usdtContract: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
     usdt: {
         address: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
@@ -228,7 +230,7 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'avalanche-2',
     platform: 'avalanche',
-    pages: ['nfts', 'exchange'],
+    pages: [],
     usdtContract: '0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7',
     usdt: {
         address: '0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7',
@@ -255,7 +257,7 @@ const ADDITIONAL_NETWORKS = [{
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'wrapped-ether-linea',
     platform: 'linea',
-    pages: ['nfts'],
+    pages: [],
     usdtContract: '0xa219439258ca9da29e9cc4ce5596924745e12b93',
     usdt: {
         address: '0xa219439258ca9da29e9cc4ce5596924745e12b93',
@@ -286,7 +288,7 @@ export const CHAINS = [
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'ethereum',
     platform: 'ethereum',
-    pages: ['nfts', 'exchange'],
+    pages: [],
     gasLimit: 60000,
     usdtContract: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     usdt: {
@@ -301,6 +303,8 @@ export const CHAINS = [
       name: 'Wrapped Ether',
       shortName: 'WETH',
     },
+    use1Inch: true,
+    defaultFor: 'production',
   }, {
     ...polygon,
     code: 'polygon',
@@ -314,7 +318,7 @@ export const CHAINS = [
     apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY,
     coingecko: 'matic-network',
     platform: 'polygon-pos',
-    pages: ['nfts', 'earn', 'exchange'],
+    pages: [],
     gasLimit: 250000,
     usdtContract: '0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
     usdt: {
@@ -337,6 +341,7 @@ export const CHAINS = [
         txUrl: 'https://polygonscan.com/tx/',
         rewardEndpoint: 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status-polygon',
     },
+    use1Inch: true,
   }, 
   ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? TEST_NETWORKS : []),
   ...ADDITIONAL_NETWORKS.filter(chain => TEGRO_FILL_ORDERS_CONTRACTS[chain.id]),
