@@ -36,14 +36,8 @@ const Wrapper = ({ children }) => {
 
   return (
     <div style={{height: '100%', paddingTop: isCampaign ? 0 : 64, transition: '.4s', overflowX: 'hidden'}}>
-      {
-        ! isCampaign
-          ? <Header />
-          : null
-      }
-
+      {! isCampaign ? <Header /> : null}
       {children}
-
       <Analytics />
     </div>
   )

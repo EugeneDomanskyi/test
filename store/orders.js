@@ -234,6 +234,22 @@ const getters = {
 }
 
 const api = {
+  orderbook: (data) => {
+    const result = request('market/orderbook/depth', 'GET', {api: 'backend', market_id: data.marketId})
+    if (result.error) {
+      return {buy: [], sell: []}
+    }
+
+    return result
+
+    // const sides = {Asks: 'sell', Bids: 'buy'}
+    // const temp = Object.entries(res).reduce((acc, [side, values]) => ({
+    //   ...acc,
+    //   [sides[side]]: values ?? []
+    // }), {})
+    // return await orderBookFormatter(network.id, temp, address, network.usdtContract)
+  },
+
   get: {
     tokens: async ({ address, blockchain }) => {
       const network = CHAINS.find(chain => chain.code === blockchain)

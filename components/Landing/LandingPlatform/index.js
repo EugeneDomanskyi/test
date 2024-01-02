@@ -71,14 +71,9 @@ const LandingPlatform = () => {
 
   return (
     <App.Flex className={styles.container}>
-      {/* <video autoPlay loop muted>
-        <source src={'/images/landing/reveal.webm'} type="video/webm" />
-      </video> */}
-
       <App.Container>
         <App.Flex column center gap={36} sx={[{ padding: '70px 0' }, { padding: '0' }]}>
           <App.Flex row center width={['50%', '100%']}>
-            {/* <App.Text center size={[96, 40]} weight={300} height={1.2}>A Platform Built For Everyone</App.Text> */}
             <h2>A Platform Built For Everyone</h2>
           </App.Flex>
 

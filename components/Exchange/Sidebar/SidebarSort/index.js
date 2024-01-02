@@ -2,16 +2,15 @@ import { memo, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import $token from '@/store/token'
-import $collection from '@/store/collection'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const SidebarSort = ({ type }) => {
+const SidebarSort = () => {
   const dispatch = useDispatch()
-  const loading = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.loading : $collection.loading)
-  const sort = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.sort : $collection.sort)
+  const loading = useSelector(({ $token }) => $token.loading)
+  const sort = useSelector(({ $token }) => $token.sort)
   const [sortBy, sortDirection] = sort.split(':')
 
   const sorting = useRef(false)
@@ -25,51 +24,47 @@ const SidebarSort = ({ type }) => {
   const handleSort = (field) => () => {
     if ( ! loading) {
       sorting.current = true
-      const newSort = (field === sortBy) ? `${field}:${sortDirection === 'ASC' ? 'DESC' : 'ASC'}` : `${field}:ASC`
+      const newSort = (field === sortBy) ? `${field}:${sortDirection === 'asc' ? 'desc' : 'asc'}` : `${field}:asc`
 
-      if (type == 'tokens') {
-        dispatch($token.set.sort(newSort))
-        dispatch($token.set.pages({current: 1}))
-      } else {
-        dispatch($collection.set.sort(newSort))
-      }
+      dispatch($token.set.sort(newSort))
+      dispatch($token.set.pages({current: 1}))
     }
   }
 
   return (
     <App.Flex row className={styles.container}>
-      <App.Flex row flex={1} gap={6} align="center" justify="flex-start" onClick={handleSort('NAME')} sx={{ cursor: 'pointer' }}>
-        <App.Text size={10} weight={600} height={1} color={sortBy === 'NAME' ? '#fff' : '#908f99'}>Name</App.Text>
-        {loading && sorting.current && sortBy === 'NAME' ? (
+      <App.Flex row flex={1} gap={6} align="center" justify="flex-start" onClick={handleSort('symbol')} sx={{ cursor: 'pointer' }}>
+        <App.Text size={10} weight={600} height={1} color={sortBy === 'symbol' ? '#fff' : '#908f99'}>Name</App.Text>
+        {loading && sorting.current && sortBy === 'symbol' ? (
           <App.Flex center width={7}><App.Loader size={7} /></App.Flex>
         ) : (
-          <App.Icon icon="arrow-down2" color={sortBy === 'NAME' ? '#fff' : 'transparent'} style={{transform: `rotate(${sortDirection === 'ASC' ? '180deg' : '0deg'})`}} />
+          <App.Icon icon="arrow-down2" color={sortBy === 'symbol' ? '#fff' : 'transparent'} style={{transform: `rotate(${sortDirection === 'asc' ? '180deg' : '0deg'})`}} />
         )}
       </App.Flex>
 
-      <App.Flex row flex={1} gap={6} center onClick={handleSort('VOLUME')} sx={{ cursor: 'pointer' }}>
-        <App.Text size={10} weight={600} height={1} color={sortBy === 'VOLUME' ? '#fff' : '#908f99'}>Volume</App.Text>
-        {loading && sorting.current && sortBy === 'VOLUME' ? (
+      <App.Flex row flex={1} gap={6} center onClick={handleSort('volume')} sx={{ cursor: 'pointer' }}>
+        <App.Text size={10} weight={600} height={1} color={sortBy === 'volume' ? '#fff' : '#908f99'}>Volume</App.Text>
+        {loading && sorting.current && sortBy === 'volume' ? (
           <App.Flex center width={7}><App.Loader size={7} /></App.Flex>
         ) : (
-          <App.Icon icon="arrow-down2" color={sortBy === 'VOLUME' ? '#fff' : 'transparent'} style={{transform: `rotate(${sortDirection === 'ASC' ? '180deg' : '0deg'})`}} />
+          <App.Icon icon="arrow-down2" color={sortBy === 'volume' ? '#fff' : 'transparent'} style={{transform: `rotate(${sortDirection === 'asc' ? '180deg' : '0deg'})`}} />
         )}
       </App.Flex>
 
-      <App.Flex row flex={1} gap={6} align="center" justify="flex-end" onClick={handleSort('PRICE')} sx={{ cursor: 'pointer' }}>
-        {loading && sorting.current && sortBy === 'PRICE' ? (
+      <App.Flex row flex={1} gap={6} align="center" justify="flex-end" onClick={handleSort('price')} sx={{ cursor: 'pointer' }}>
+        {loading && sorting.current && sortBy === 'price' ? (
           <App.Flex center width={7}><App.Loader size={7} /></App.Flex>
         ) : (
-          <App.Icon icon="arrow-down2" color={sortBy === 'PRICE' ? '#fff' : 'transparent'} style={{transform: `rotate(${sortDirection === 'ASC' ? '180deg' : '0deg'})`}} />
+          <App.Icon icon="arrow-down2" color={sortBy === 'price' ? '#fff' : 'transparent'} style={{transform: `rotate(${sortDirection === 'asc' ? '180deg' : '0deg'})`}} />
         )}
-        <App.Text size={10} weight={600} height={1} color={sortBy === 'PRICE' ? '#fff' : '#908f99'}>Price</App.Text>
+        <App.Text size={10} weight={600} height={1} color={sortBy === 'price' ? '#fff' : '#908f99'}>Price</App.Text>
       </App.Flex>
     </App.Flex>
   )
 }
 
-const isEqual = (prevProps, nextProps) => {
-  return prevProps.type == nextProps.type
+const isEqual = () => {
+  return true
 }
 
 export default  memo(SidebarSort, isEqual)

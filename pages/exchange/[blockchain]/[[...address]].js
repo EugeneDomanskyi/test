@@ -31,11 +31,11 @@ const Exchange = () => {
   const [queryTokenId] = router.query.address || []
 
   const dispatch = useDispatch()
-  const myOrdersDialogOpen = useSelector(({ $orders }) => $orders.myOrdersDialogOpen)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
-  const socketConnected = useSelector(({$app}) => $app.socketConnected)
+  const myOrdersDialogOpen = useSelector(({ $orders }) => $orders.myOrdersDialogOpen)
+  const socketConnected = useSelector(({ $app }) => $app.socketConnected)
   const currentBlockchain = useSelector($app.get.blockchain)
-  const currentToken = useSelector(({$token}) => $token.current)
+  const currentToken = useSelector(({ $token }) => $token.current)
 
   const tradeForm = useRef(null)
   const mobileRef = useRef(null)
@@ -46,9 +46,11 @@ const Exchange = () => {
     trackEvent('Page Visited', {
       'Page Name': getPageName(),
     })
+
     Socket.init(handleAction).then(() => {
       dispatch($app.set.socketConnected(true))
     })
+
     return () => {
       dispatch($app.set.socketConnected(false))
     }
@@ -58,6 +60,7 @@ const Exchange = () => {
     if (socketConnected && currentBlockchain.id && isAddress && currentToken?.address) {
       Socket.subscribe(`${currentBlockchain.id}/${currentToken.address}`)
     }
+
     return () => {
       if (socketConnected) {
         Socket.unsubscribe(`${currentBlockchain.id}/${currentToken.address}`)
@@ -107,29 +110,24 @@ const Exchange = () => {
     <App.Flex gap={GRID_GAP} className={styles.container}>
       {!isMobile ? (
         <>
-          <Sidebar
-            type="tokens"
-          />
+          <Sidebar />
 
           <App.Flex column gap={GRID_GAP} className={styles.partRight}>
             <App.Flex row gap={GRID_GAP} className={styles.partRightTop}>
               <App.Flex column className={cn(styles.card, styles.partRightTopChart)}>
-                <Info type="tokens" />
-                <Chart type="tokens" />
+                <Info />
+                <Chart />
               </App.Flex>
 
-              <TradeForm
+              {/* <TradeForm
                 ref={tradeForm}
                 type="tokens"
-              />
+              /> */}
             </App.Flex>
 
             <App.Flex gap={GRID_GAP} className={styles.partRightBottom}>
               <App.Flex gap={GRID_GAP} className={styles.partRightBottomSales}>
-                <OrderBook
-                  type="tokens"
-                  onClickOrder={handleClickOrder}
-                />
+                <OrderBook onClickOrder={handleClickOrder} />
 
                 <Sales
                   type="tokens"
@@ -147,15 +145,9 @@ const Exchange = () => {
       ) : (
         <>
           {!queryTokenId || queryTokenId == '0x' ? (
-            <Sidebar
-              version="mobile"
-              type="tokens"
-            />
+            <Sidebar version="mobile" />
           ) : (
-            <Mobile
-              ref={mobileRef}
-              type="tokens"
-            />
+            <Mobile ref={mobileRef} type="tokens" />
           )}
 
           <App.Dialog open={myOrdersDialogOpen} onClose={handleCloseOrdersDialog} hideHeader hideClose full>

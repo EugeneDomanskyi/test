@@ -45,7 +45,8 @@ export const exchangeSlice = createSlice({
     loading: false,
     chartData: {
       tokens: [],
-    }
+    },
+    chart: [],
   },
 
   reducers: {
@@ -83,7 +84,11 @@ export const exchangeSlice = createSlice({
     },
     chartData: (state, {payload}) => {
       state.chartData[payload.type] = payload.data
-    }
+    },
+
+    chart: (state, { payload }) => {
+      state.chart = payload
+    },
   },
 })
 
@@ -198,6 +203,14 @@ const getters = {
 }
 
 const api = {
+  chart: async (data) => {
+    const result = await request(`market/chart`, 'GET', {api: 'backend', ...data})
+    if (result) {
+      return result.sort((a, b) => a.time - b.time)
+    }
+    return null
+  },
+
   get: {
     orderBook: (params) => {
       return Promise.all([

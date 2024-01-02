@@ -3,7 +3,6 @@ import { Provider } from 'react-redux'
 import { useRouter } from 'next/router'
 import { userAgentFromString } from 'next/server'
 import { ToastContainer } from 'react-toastify'
-import { createClient } from '@reservoir0x/reservoir-sdk'
 import nookies from 'nookies'
 import amplitude from 'amplitude-js'
 import * as Sentry from '@sentry/nextjs'
@@ -15,13 +14,9 @@ import { configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
-import * as MagicConnectors from '@magiclabs/wagmi-connector/dist/lib/connectors/universalWalletConnector'
 
 import { CHAINS } from '@/config'
-import { fetchPrices, getTokens } from '@/api_services/tokens'
 import store from '@/store'
-import { template as tokenTemplate } from '@/store/token'
-import $collection, { template as collectionTemplate } from '@/store/collection'
 
 import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
@@ -49,11 +44,6 @@ if (process.env.NODE_ENV === 'production') {
   })
 }
 
-createClient({
-  chains: CHAINS,
-  source: "tegro.com"
-})
-
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   CHAINS, [
   alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }),
@@ -62,38 +52,6 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 ]
 )
 
-const rainbowMagicConnector = ({ chains }) => ({
-  id: 'magic',
-  name: 'Magic',
-  iconUrl: '/images/icon-magic.png',
-  iconBackground: '#fff',
-  createConnector: () => {
-    const formattedChains = chains.map((chain) => {
-      const [rpcUrl] = chain.rpcUrls.public.http
-      return {
-        rpcUrl: rpcUrl,
-        chainId: chain.id,
-      }
-    })
-    const [initialChain] = formattedChains
-
-    const connector = new MagicConnectors.UniversalWalletConnector({
-      chains: chains,
-      options: {
-        networks: formattedChains,
-        apiKey: process.env.NEXT_PUBLIC_MAGIC_LINK_API_KEY,
-        magicSdkConfiguration: {
-          network: initialChain,
-        },
-      },
-    })
-
-    return {
-      connector,
-    }
-  },
-})
-
 const { wallets: [popularWallets] } = getDefaultWallets({
   appName: process.env.NEXT_PUBLIC_APP_NAME,
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
@@ -101,10 +59,6 @@ const { wallets: [popularWallets] } = getDefaultWallets({
 })
 
 const connectors = connectorsForWallets([
-  // {
-  //   groupName: 'Recommended',
-  //   wallets: [rainbowMagicConnector({ chains: chains })],
-  // },
   popularWallets
 ])
 
@@ -134,7 +88,7 @@ const RainbowTheme = merge(darkTheme({ overlayBlur: 'small' }), {
 
 amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
 
-function MyApp({ Component, pageProps, initialData, currentInfo, currentPage, currentAddress, currentSymbol, ssRoute, marketInfo, marketsList }) {
+function MyApp({ Component, pageProps, initialData, currentInfo, currentPage, currentSymbol, ssRoute }) {
   const router = useRouter()
   const storeRef = useRef(store(initialData, currentPage, currentInfo)).current
 
@@ -171,66 +125,17 @@ MyApp.getInitialProps = async ({ ctx }) => {
 
   let currentInfo = {}
   let currentPage = ''
-  let currentAddress = ''
   let currentSymbol = ''
   if (ctx?.req) {
     const [_, page, blockchain, address] = ctx.req.url.split('/')
-
     currentPage = page
-    currentAddress = (address ?? '').toLowerCase()
-    // if (currentPage === 'exchange') {
-    //   if (blockchain && address) {
-    //     const currentChain = CHAINS.find(chain => chain.code === blockchain)
-    //     if (currentChain) {
-    //       const post = {
-    //         currentPage: 1,
-    //         perPage: 1,
-    //         orderBy: 'name',
-    //         orderDirection: 'asc',
-    //         searchText: address,
-    //         searchField: 'contract_address',
-    //       }
-
-    //       const [token] = await getTokens(currentChain, post)
-    //       if (token) {
-    //         currentInfo = {
-    //           ...token,
-    //           blockchain: currentChain.code,
-    //         }
-    //         currentSymbol = token.symbol.toUpperCase()
-
-    //         const prices = await fetchPrices(currentChain, [token])
-    //         if (prices[token.id]) {
-    //           currentInfo = {
-    //             ...currentInfo,
-    //             ...prices[token.id],
-    //           }
-    //         }
-
-    //         currentInfo = tokenTemplate(currentInfo)
-    //       }
-    //     }
-    //   }
-    // } else if (currentPage === 'nfts') {
-    //   const res = await $collection.api.all({ id: address, limit: 1, blockchain: blockchain })
-    //   if (res && Array.isArray(res?.collections) && res?.collections.length) {
-    //     const [current] = res.collections
-    //     currentSymbol = current.name
-    //     current.blockchain = blockchain
-    //     currentInfo = collectionTemplate(current)
-    //   }
-    // }
   }
 
   let ssRoute = ''
-  let marketInfo = {}
   let marketsList = []
   let isMobile = null
 
   if (ctx?.req) {
-    const routeArr = ctx?.req?.url.split('/') || []
-    const [addrArr] = routeArr.slice(-1)
-    currentAddress = addrArr.split('?')[0]
     ssRoute = (ctx.req.url)
 
     const { device } = userAgentFromString(ctx.req.headers['user-agent'])
@@ -245,11 +150,8 @@ MyApp.getInitialProps = async ({ ctx }) => {
     },
     currentInfo,
     currentPage,
-    currentAddress,
     currentSymbol,
     ssRoute,
-    marketInfo,
-    marketsList,
   }
 }
 

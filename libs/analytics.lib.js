@@ -67,29 +67,11 @@ export const getPageName = () => {
 }
 
 export const trackEvent = (eventName, eventProperties) => {
-  /* const data = {
-    ...eventProperties,
-    IsBrowser: true,
-    OS: getOS(),
-    Device: getDevice(),
-  }
-  Intercom.trackEvent(eventName, data)
-  const post = {
-    device_id: localStorage.getItem('device_id'),
-    event_type: eventName,
-    event_properties: data,
-  }
-  amplitudeEventTrack(post) */
-  const [subDomain] = window.location.hostname.split('.')
-  const segments = window.location.pathname.split('/')
-
   const data = {
     ...eventProperties,
     IsBrowser: true,
     OS: getOS(),
     Device: getDevice(),
-    // Source: `${subDomain.charAt(0).toUpperCase()}${subDomain.slice(1)}`,
-    // 'Page': `${segments[1].charAt(0).toUpperCase()}${segments[1].slice(1)}`,
   }
   amplitude.getInstance().logEvent(eventName, data)
 }

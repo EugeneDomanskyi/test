@@ -20,9 +20,9 @@ const OrderBook = ({ type, version, onClickOrder }) => {
 
   const [loading, setLoading] = useState(true)
 
-  const orderBook = useSelector($orders.get.orderBook(type))
   const blockchain = useSelector($app.get.blockchain)
-  const current = useSelector(({ $token, $collection }) => type == 'nfts' ? $collection.current : $token.current)
+  const current = useSelector(({ $token }) => $token.current)
+  const orderBook = useSelector($orders.get.orderBook(type))
 
   const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(current.address)
 
@@ -43,20 +43,28 @@ const OrderBook = ({ type, version, onClickOrder }) => {
 
   useEffect(() => {
     if (isAddress) {
-      setLoading(true)
-      $orders.api.get[type].orderBook({
-        collection: current.address,
-        address: current.address,
-        marketId: current.marketId,
-        blockchain: blockchain.code,
-        sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
-        ...(type === 'nfts' ? {} : { statuses: '[1]' })
-      }).then(res => {
-        dispatch($orders.set.orderBook({ type: type, data: res, tokenAddress: current.address }))
-        setLoading(false)
-      })
+      fetchOrderbook()
+      // $orders.api.get[type].orderBook({
+      //   collection: current.address,
+      //   address: current.address,
+      //   marketId: current.marketId,
+      //   blockchain: blockchain.code,
+      //   sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
+      //   ...(type === 'nfts' ? {} : { statuses: '[1]' })
+      // }).then(res => {
+      //   dispatch($orders.set.orderBook({ type: type, data: res, tokenAddress: current.address }))
+      //   setLoading(false)
+      // })
     }
-  }, [current.address])
+  }, [current?.id])
+
+  const fetchOrderbook = async () => {
+    const result = await $orders.api.orderbook(current)
+    if (result) {
+      console.log(result)
+    }
+    setLoading(false)
+  }
 
   const handleClick = (order, volume) => () => {
     onClickOrder({ ...order, price: order.priceFormatted, quantity: toLowerFixed(volume) })
