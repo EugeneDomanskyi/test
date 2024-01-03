@@ -34,7 +34,7 @@ const FaucetMatic = ({ onComplete }) => {
       <App.Flex column fullWidth gap={16}>
         <App.Flex column gap={[16, 8]} className={styles.stepBox}>
           <App.Text size={[14, 12]} weight={400} color="#B9B8C5" height={1}>Step 1</App.Text>
-          <App.Text size={[16, 14]} weight={600} height={1}>Go to <a href="https://mumbaifaucet.com/" target="_blank" rel="noreferrer" className={styles.link}>mumbaifaucet.com</a></App.Text>
+          <App.Text size={[16, 14]} weight={600} height={1}>Go to <a href="https://mumbaifaucet.com/" target="_blank" rel="noreferrer" className={styles.link}>mumbaifaucet.com</a> <a href="https://mumbaifaucet.com/" target="_blank" rel="noreferrer"><App.Icon icon="external-link" width={12} height={12} /></a></App.Text>
         </App.Flex>
 
         <App.Flex column gap={[16, 8]} className={styles.stepBox}>

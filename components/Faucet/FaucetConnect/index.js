@@ -1,16 +1,27 @@
 import Image from 'next/image'
 
+import { useSelector } from 'react-redux'
+
 import useWalletConnect from '@/myhooks/wallet-connect'
+
+import $app from '@/store/app'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const FaucetConnect = ({ onComplete }) => {
-  const {connect} = useWalletConnect()
+  const blockchain = useSelector($app.get.blockchain)
+
+  const { connect, changeNetwork } = useWalletConnect()
 
   const handleConnect = async () => {
     const result = await connect()
+
+    const network = await changeNetwork(blockchain.code)
+    if (!network) {
+      return
+    }
 
     if (result && onComplete) (
       onComplete()
@@ -33,33 +44,6 @@ const FaucetConnect = ({ onComplete }) => {
         
 
         <App.Flex row justify="center" gap={4}>
-          {/* <App.Flex column center gap={8} width={[104, 80]}>
-            <a href="https://rainbow.me/" target="_blank" rel="noreferrer">
-              <Image src="/images/icon-rainbow.png" width={60} height={60} alt="" />
-            </a>
-            <App.Text weight={700}>Rainbow</App.Text>
-          </App.Flex>
-
-          <App.Flex column center gap={8} width={[104, 80]}>
-            <a href="https://metamask.io/" target="_blank" rel="noreferrer">
-              <Image src="/images/icon-metamask.png" width={60} height={60} alt="" />
-            </a>
-            <App.Text weight={700}>MetaMask</App.Text>
-          </App.Flex>
-
-          <App.Flex column center gap={8} width={[104, 80]}>
-            <a href="https://www.coinbase.com/" target="_blank" rel="noreferrer">
-              <Image src="/images/icon-coinbase.png" width={60} height={60} alt="" />
-            </a>
-            <App.Text weight={700}>Coinbase</App.Text>
-          </App.Flex>
-
-          <App.Flex column center gap={8} width={[104, 80]}>
-            <a href="https://walletconnect.com/" target="_blank" rel="noreferrer">
-              <Image src="/images/icon-walletconnect.png" width={60} height={60} alt="" />
-            </a>
-            <App.Text nowrap weight={700}>WalletConnect</App.Text>
-          </App.Flex> */}
         </App.Flex>
       </App.Flex>
 

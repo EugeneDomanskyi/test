@@ -20,7 +20,7 @@ const HeaderWallet = () => {
   const router = useRouter()
   const isEarn = router.pathname.includes('/earn')
 
-  const { wallet, connectorId, connect, disconnect, getBalance, getConnectorName } = useWalletConnect()
+  const { wallet, connectorId, connect, disconnect, blockchain: chain, getBalance, getConnectorName } = useWalletConnect()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -39,7 +39,7 @@ const HeaderWallet = () => {
     if (wallet && blockchain?.id) {
       getPortfolio()
     }
-  }, [wallet, blockchain?.id])
+  }, [wallet, blockchain?.id, chain?.id])
 
   const getBalanceString = () => {
     if (isEarn) {
