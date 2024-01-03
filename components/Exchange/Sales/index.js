@@ -3,59 +3,54 @@ import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
 import cn from 'classnames'
 
-import $orders from '@/store/orders'
-import $app from '@/store/app'
 import Socket from '@/libs/ws.lib'
+
+import $app from '@/store/app'
+import $orders from '@/store/orders'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const Sales = ({onClickSale, version, type}) => {
+const Sales = ({ version, onClickSale }) => {
   const dispatch = useDispatch()
+  const blockchain = useSelector($app.get.blockchain)
+  const current = useSelector(({ $token }) => $token.current)
+  const trades = useSelector(({ $orders }) => $orders.trades)
 
   const [loading, setLoading] = useState(true)
-
-  const trades = useSelector($orders.get.recentTrades(type, 50))
-  const blockchain = useSelector($app.get.blockchain)
-  const current = useSelector(({$token, $collection}) => type == 'nfts' ? $collection.current : $token.current)
-  const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(current.address)
 
   let previousPrice = 0
 
   useEffect(() => {
-    if (type === 'tokens') {
-      Socket.on('order_submitted', 'trades', () => {
-        getTrades()
-      })
-    }
-  }, [type, current.address])
-
-  useEffect(() => {
-    if (type === 'tokens' && isAddress) {
+    Socket.on('order_submitted', 'trades', () => {
       getTrades()
-    } else {
-      setLoading(false)
-    }
-  }, [current.address])
+    })
+
+    getTrades()
+  }, [current?.id])
 
   const getTrades = async () => {
-    setLoading(true)
-    dispatch($orders.set.trades({type: 'tokens', data: []}))
-    const res = await $orders.api.get.tokens.trades({
+    const result = await $orders.api.trades({
       address: current.address,
       market_id: current.marketId,
       blockchain: blockchain.code,
-      limit: 50,
+      limit: 10,
     })
-    if (res) {
-      dispatch($orders.set.trades({type: 'tokens', data: res}))
+
+    if (result) {
+      dispatch($orders.set.trades(result ?? []))
     }
+
     setLoading(false)
   }
 
-  const handleClick = sale => () => {
-    onClickSale({quantity: sale.amount, price: sale.priceFormatted, side: sale.side})
+  const handleClick = (sale) => () => {
+    onClickSale({
+      quantity: sale.amount,
+      price: sale.priceFormatted,
+      side: sale.side,
+    })
   }
 
   return version == 'mobile' && loading ? (
@@ -77,7 +72,7 @@ const Sales = ({onClickSale, version, type}) => {
 
         <App.Flex flex={1} column sx={{overflow: 'auto'}}>
           {
-            trades.slice(0, 10).map(sale => {
+            trades.map(sale => {
               const price = sale.priceFormatted
               let color = {
                 price: '#53F19C',
@@ -112,6 +107,7 @@ const Sales = ({onClickSale, version, type}) => {
 
 const isEqual = (prev, next) => {
   return prev.onClickSale === next.onClickSale
+    && prev.version === next.version
 }
 
 export default memo(Sales, isEqual)

@@ -1,6 +1,6 @@
 import styles from './styles.module.scss'
 import { useSelector } from 'react-redux'
-import { useState, memo, useEffect, useCallback } from 'react'
+import { useState, memo, useEffect } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
@@ -15,24 +15,19 @@ import { OrderUtils } from '@/libs/helpers'
 import App from '@/components/App'
 import { trackEvent, getPageName } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
-import useOrders from '@/myhooks/useOrders'
 
 import OrderDetails from '@/components/Exchange/OrderDetails'
-import useInterval from '@/myhooks/useInterval'
 
 const Orders = ({global, type, version, onClickOrder}) => {
   const router = useRouter()
-  const [queryTokenId] = router.query.address || []
-  const queryBlockchainCode = router.query.blockchain
 
-  const dispatch = useDispatch()
-  const current = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.current : $collection.current)
-  const orders = useSelector($orders.get[type])
-  const blockchain = useSelector($app.get.blockchain)
-  const socketConnected = useSelector(({$app}) => $app.socketConnected)
   const { wallet, connect, getConnectorName } = useWalletConnect()
 
-  const { updateOrders } = useOrders({tokenAddress: queryTokenId, type})
+  const dispatch = useDispatch()
+  const blockchain = useSelector($app.get.blockchain)
+  const socketConnected = useSelector(({ $app }) => $app.socketConnected)
+  const current = useSelector(({ $token }) => $token.current)
+  const orders = useSelector($orders.get.list)
 
   const [loading, setLoading] = useState(true)
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
@@ -44,29 +39,25 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
   useEffect(() => {
     if (wallet) {
-      getOrders()
+      fetchOrders()
     } else {
-      dispatch($orders.set[type]([]))
+      dispatch($orders.set.list([]))
     }
-  }, [wallet, type, blockchain.code])
 
-  useEffect(() => {
-    if (type === 'tokens') {
-      Socket.on('order_placed', 'my_orders', (data) => {
-        const order = OrderUtils.formatter(data)
-        dispatch($orders.set.tokensAdd(order))
-      })
-      Socket.on('order_submitted', 'my_orders', (data) => {
-        const order = OrderUtils.formatter(data)
-        dispatch($orders.set.tokensUpdate(order))
-      })
-    }
-  }, [wallet, type, blockchain.code])
+    Socket.on('order_placed', 'my_orders', (data) => {
+      dispatch($orders.set.add(data))
+    })
+    
+    Socket.on('order_submitted', 'my_orders', (data) => {
+      dispatch($orders.set.update(data))
+    })
+  }, [wallet, current?.id])
 
   useEffect(() => {
     if (wallet && socketConnected) {
       Socket.subscribe(wallet)
     }
+
     return () => {
       if (socketConnected) {
         Socket.unsubscribe(wallet)
@@ -74,32 +65,18 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
   }, [wallet, socketConnected])
 
-  const handleOrdersUpdated = useCallback(() => {
-    if (type == 'tokens') {
-      updateOrders()
-    } else {
-      if (wallet) {
-        $orders.api.get.nfts({
-          blockchain: blockchain.code,
-          maker: wallet,
-          includeCriteriaMetadata: true,
-        }).then(res => {
-          if (res) {
-            dispatch($orders.set.nfts(res))
-          }
-        })
-      }
-  
-      $orders.api.get.nfts.orderBook({
-        collection: queryTokenId,
-        blockchain: blockchain.code,
-      }).then(res => {
-        if (res) {
-          dispatch($orders.set.orderBook({type: 'nfts', data: res}))
-        }
-      })
+  const fetchOrders = async () => {
+    const result = await $orders.api.list({
+      chain_id: blockchain.id,
+      user_address: wallet,
+    })
+
+    if (result) {
+      dispatch($orders.set.list(result ?? []))
     }
-  }, [wallet, queryTokenId, queryBlockchainCode])
+
+    setLoading(false)
+  }
 
   const handlePressCancelConfirm = (order) => (e) => {
     e.stopPropagation()
@@ -159,27 +136,16 @@ const Orders = ({global, type, version, onClickOrder}) => {
       'Network': blockchain.code.toUpperCase(),
     }
     trackEvent('Cancel Order Submit', eventPost)
-    if (blockchain?.useBackend) {
-      const result = await $orders.api.cancel({ order_hash: order.orderHash, chain_id: blockchain.id })
-      if (result) {
-        trackEvent('Cancel Order Success', eventPost)
-        dispatch($orders.set.tokensUpdate(OrderUtils.formatter(result.data)))
-        dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
-      } else {
-        dispatch($alert.set.error({ title: 'Order Not Cancelled', text: result }))
-      }
-      handleDialogClose('approve')()
+
+    const result = await $orders.api.cancel({ order_hash: order.orderHash, chain_id: blockchain.id })
+    if (result) {
+      trackEvent('Cancel Order Success', eventPost)
+      dispatch($orders.set.update(result.data))
+      dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
     } else {
-      order.cancel().then(() => {
-        trackEvent('Cancel Order Success', eventPost)
-        dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
-      }).catch(error => {
-        dispatch($alert.set.error({ title: 'Order Not Cancelled', text: error }))
-      }).finally(() => {
-        handleOrdersUpdated()
-        handleDialogClose('approve')()
-      })
+      dispatch($alert.set.error({ title: 'Order Not Cancelled', text: result }))
     }
+    handleDialogClose('approve')()
   }
 
   const handlePressCopy = order => (e) => {
@@ -235,53 +201,26 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
   }
 
-  const getOrders = async () => {
-    const res = await $orders.api.get[type]({
-      blockchain: blockchain.code,
-      maker: wallet,
-      includeCriteriaMetadata: true,
-      address: wallet,
-      sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
-      statuses: '[1,2,3]',
-    })
-
-    if (res) {
-      dispatch($orders.set[type](res))
-    }
-
-    setLoading(false)
-  }
-
   const filterByAddress = (order) => {
     return !showCollectionOrders || (!global && order.contractAddress === current?.address)
   }
 
   const filteredByStatus = order => {
-    return type !== 'tokens' || !hideCancelledOrders || (order.status !== 'cancelled')
+    return !hideCancelledOrders || (order.status !== 'cancelled')
   }
-
-  // useInterval(getOrders, wallet ? 5000 : null)
 
   return (
     <App.Flex column className={cn(styles.container, {[styles[version]]: version})}>
-      {
-        type === 'tokens'
-          ? <App.Flex className={styles.header}>
-              <App.Flex flex={1} center className={cn(styles.tab, {[styles.active]: ordersType === 'open'})} onClick={handleChangeOrdersType('open')}>
-                <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'open' ? '#fff' : '#5E5C6B'} height={1}>Open Orders</App.Text>
-              </App.Flex>
-              <App.Flex flex={1} center className={cn(styles.tab, {[styles.active]: ordersType === 'closed'})} onClick={handleChangeOrdersType('closed')}>
-                <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'closed' ? '#fff' : '#5E5C6B'} height={1}>Completed Orders</App.Text>
-              </App.Flex>
+      <App.Flex className={styles.header}>
+        <App.Flex flex={1} center className={cn(styles.tab, {[styles.active]: ordersType === 'open'})} onClick={handleChangeOrdersType('open')}>
+          <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'open' ? '#fff' : '#5E5C6B'} height={1}>Open Orders</App.Text>
+        </App.Flex>
+        <App.Flex flex={1} center className={cn(styles.tab, {[styles.active]: ordersType === 'closed'})} onClick={handleChangeOrdersType('closed')}>
+          <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'closed' ? '#fff' : '#5E5C6B'} height={1}>Completed Orders</App.Text>
+        </App.Flex>
 
-              <div className={styles.badge} style={{transform: `translateX(${ordersType === 'open' ? 0 : 100}%)`}} />
-            </App.Flex>
-          : version != 'mobile' ? (
-            <App.Flex className={styles.header} align="center">
-              <App.Text size={[12, 14]} uppercase={[true, null]} weight={600} height={1}>My Orders</App.Text>
-            </App.Flex>
-          ) : null
-      }
+        <div className={styles.badge} style={{transform: `translateX(${ordersType === 'open' ? 0 : 100}%)`}} />
+      </App.Flex>
 
       {!wallet && version == 'mobile' ? (
         <App.Flex column center full gap={16}>
@@ -307,22 +246,17 @@ const Orders = ({global, type, version, onClickOrder}) => {
                   onChange={handleChangeSwitch}
                 />
 
-                {type === 'nfts' ? (
-                  current?.image ? <Image alt="" src={current?.image} width={20} height={20} /> : null
+                {version == 'mobile' ? (
+                  <App.Text size={12} height={1}>{current?.symbol}/USDT</App.Text>
                 ) : (
-                  version == 'mobile' ? (
-                    <App.Text size={12} height={1}>{current?.symbol}/USDT</App.Text>
-                  ) : (
-                    <App.Text color="#B9B8C5" size={10} weight={600} height={1}>{current?.symbol} - USDT Orders</App.Text>
-                  )
+                  <App.Text color="#B9B8C5" size={10} weight={600} height={1}>{current?.symbol} - USDT Orders</App.Text>
                 )}
               </App.Flex>
             ) : (
               <App.Flex />
             )}
 
-            {type === 'tokens' ? (
-              ordersType === 'closed' ? (
+            {ordersType === 'closed' ? (
               <App.Flex align="center" gap={8} flex={1}>
                 <App.Switch
                   width={40}
@@ -333,18 +267,15 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
                 <App.Text color="#B9B8C5" size={[10, 12]} weight={600} height={1}>{version != 'mobile' ? 'Hide All Cancelled Orders' : 'Hide Cancelled Orders'}</App.Text>
               </App.Flex>
+            ) : (
+              version == 'mobile' ? (
+                <App.Text weight={600} color="#FFAF38" onClick={handleCancelAllClick}>CANCEL ALL</App.Text>
               ) : (
-                blockchain?.useBackend ? (
-                  version == 'mobile' ? (
-                    <App.Text weight={600} color="#FFAF38" onClick={handleCancelAllClick}>CANCEL ALL</App.Text>
-                  ) : (
-                    <App.Button variant="muted" small onClick={handleCancelAllClick}>
-                      Cancel All
-                    </App.Button>
-                  )
-                ) : null
+                <App.Button variant="muted" small onClick={handleCancelAllClick}>
+                  Cancel All
+                </App.Button>
               )
-            ) : null}
+            )}
           </App.Flex>
 
           {version != 'mobile' ? (
@@ -357,10 +288,10 @@ const Orders = ({global, type, version, onClickOrder}) => {
                   <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Qty</App.Text>
                 </App.Flex>
                 <App.Flex column flex={1} sx={{padding: '4px 8px 10px'}} align="center">
-                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Price {type === 'tokens' ? '(USDT)' : ''}</App.Text>
+                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Price (USDT)</App.Text>
                 </App.Flex>
                 <App.Flex column flex={1} sx={{padding: '4px 8px 10px'}} align="center">
-                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Total {type === 'tokens' ? '(USDT)' : ''}</App.Text>
+                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Total (USDT)</App.Text>
                 </App.Flex>
               </App.Flex>
 

@@ -1,6 +1,4 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
-import moment from 'moment'
-import { readContract } from '@wagmi/core'
 import { formatUnits } from 'viem'
 
 import { request } from './index'
@@ -8,282 +6,120 @@ import Order from '@/libs/structs/Order'
 import { CHAINS } from '@/config'
 import { OrderUtils } from '@/libs/helpers'
 
-const round = (date, duration, method) => {
-  return moment(Math[method]((+date) / (+duration)) * (+duration))
-}
-
-const generatePeriods = (from, to, closePrice, step) => {
-  const start = moment(from)
-  const end = moment(to)
-  const range = moment.range(start, end)
-  const array = Array.from(range.by(step.unit, { step: step.count, excludeEnd: true })).slice(1)
-  return array.reduce((acc, time) => {
-    const roundedDate = time.format('DD-MM-YY HH:mm')
-    return {
-      ...acc,
-      [roundedDate]: [{
-        date: time,
-        roundedDate: roundedDate,
-        volume: 0,
-        price: closePrice,
-        timestamp: time.unix() * 1000,
-      }]
-    }
-  }, {})
-}
-
-const getDecimals = async (chainId, address) => {
-  const abi = {
-    constant: true,
-    inputs: [],
-    name: 'decimals',
-    outputs: [{name: '', type: 'uint8'}],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function'
+export const template = (item) => {
+  let status = 'unknown'
+  switch (item.status) {
+    case 'Active': 
+      status = 'open'
+      break
+    case 'Matched':
+    case 'Completed':
+    case 'Filled':
+      status = 'completed'
+      break
+    case 'Cancelled':
+      status = 'cancelled'
+      break
   }
-  const res = await readContract({
-    address: address,
-    abi: [abi],
-    functionName: 'decimals',
-    chainId: chainId,
-  }).catch(error => {
-    console.log(error)
-  })
-  return res
-}
 
-export const orderBookFormatter = async (chainId, list, baseCurrency, quoteCurrency) => {
-  const baseDecimals = await getDecimals(chainId, baseCurrency)
-  const quoteDecimals = await getDecimals(chainId, quoteCurrency)
-  return Object.entries(list).reduce((acc, [side, values]) => {
-    let prevVolume = 0
-    return {
-      ...acc,
-      [side]: values.slice(0, 10).map((row) => {
-        const volume = formatUnits(row.quantity, baseDecimals)
-        prevVolume += volume*1
-        return {
-          priceFormatted: formatUnits(row.price, quoteDecimals),
-          volume: prevVolume,
-          quantity: volume,
-        }
-      })
-    }
-  }, {})
+  return {
+    ...item,
+    id: item.orderId,
+    status,
+    time: moment(item.time).format('DD MMM, HH:mm'),
+    timeMoment: moment(item.time),
+  }
 }
 
 export const ordersSlice = createSlice({
   name: '$orders',
+
   initialState: {
-    nfts: [],
-    tokens: [],
-    orderBooks: {
-      nfts: {
-        buy: [],
-        sell: [],
-      },
-      tokens: {
-        buy: [],
-        sell: [],
-      },
-    },
+    list: [],
     orderBookId: null,
-    trades: {
-      nfts: [],
-      tokens: [],
+    orderbook: {
+      buy: [],
+      sell: [],
     },
+    trades: [],
     myOrdersDialogOpen: false,
   },
 
   reducers: {
-    tokens: (state, { payload }) => {
-      state.tokens = payload
+    list: (state, { payload }) => {
+      state.list = payload.map(item => template(item))
     },
-    tokensAdd: (state, { payload }) => {
-      state.tokens = [payload, ...state.tokens]
+
+    add: (state, { payload }) => {
+      state.list = [template(payload), ...state.list]
     },
-    tokensUpdate: (state, { payload }) => {
-      state.tokens = state.tokens.map(o => o.id === payload.id ? payload : o)
+
+    update: (state, { payload }) => {
+      state.list = state.list.map(o => o.id === payload.orderId ? template(payload) : o)
     },
-    nfts: (state, { payload }) => {
-      state.nfts = payload
+    
+    orderbook: (state, { payload }) => {
+      const sides = {Asks: 'sell', Bids: 'buy'}
+      const list = Object.entries(payload.data).reduce((acc, [side, values]) => ({
+        ...acc,
+        [sides[side]]: values ?? []
+      }), {})
+      
+      state.orderbook = Object.entries(list).reduce((acc, [side, values]) => {
+        let prevVolume = 0
+        return {
+          ...acc,
+          [side]: values.slice(0, 10).map((row) => {
+            const volume = formatUnits(row.quantity, payload.token.decimals)
+            prevVolume += volume * 1
+
+            return {
+              priceFormatted: formatUnits(row.price, payload.token.quoteDecimals),
+              volume: prevVolume,
+              quantity: volume,
+            }
+          })
+        }
+      }, {})
     },
-    orderBook: (state, { payload }) => {
-      state.orderBooks[payload.type] = payload.data
-      state.orderBookId = payload.tokenAddress
-    },
+
     trades: (state, { payload }) => {
-      state.trades[payload.type] = payload.data
+      state.trades = payload.map((trade) => ({
+        ...trade,
+        priceFormatted: trade.price,
+        orderInvalidReason: 'order filled',
+        timestamp: new Date(trade.timestamp).getTime()/1000,
+      }))
     },
+
     myOrdersDialogOpen: (state, { payload }) => {
       state.myOrdersDialogOpen = payload
     },
   },
 })
 
-const getters = {
-  nfts: createSelector([
-    state => state.$orders.nfts,
+const get = {
+  list: createSelector([
+    state => state.$orders.list
   ], (orders) => {
     return {
-      open: orders.map(order => new Order.NFT(order)),
-      closed: [],
+      open: orders.filter(order => order.status === 'open'),
+      closed: orders.filter(order => order.status === 'completed' || order.status === 'cancelled')
     }
-  }),
-  tokens: createSelector([
-    state => state.$orders.tokens
-  ], (orders) => {
-    return {
-      open: orders.map(order => new Order.TOKEN(order)).filter(order => order.status === 'open'),
-      closed: orders.map(order => new Order.TOKEN(order)).filter(order => order.status === 'completed' || order.status === 'cancelled')
-    }
-  }),
-  orderBook: (type) => createSelector([
-    state => state.$orders.orderBooks[type]
-  ], (orderBook) => {
-    if (type === 'tokens') {
-      return {
-        buy: orderBook.buy,
-        sell: orderBook.sell,
-      }
-    }
-    return {
-      buy: orderBook.buy.slice(0, 10).map(item => ({ ...item, priceFormatted: item.priceFormatted ?? item.price, volume: item.volume || item.quantity })),
-      sell: orderBook.sell.slice(0, 10).map(item => ({ ...item, priceFormatted: item.priceFormatted ?? item.price, volume: item.volume || item.quantity })),
-    }
-  }),
-  recentTrades: (type, limit) => createSelector([
-    state => state.$orders.trades[type]
-  ], (trades) => {
-    return trades.filter(order => {
-      return (order.priceFormatted !== 'NaN') && (order.orderInvalidReason === 'order filled' || type === 'nfts')
-    }).map(sale => {
-      return {
-        ...sale,
-        priceFormatted: sale.priceFormatted ?? sale.price.amount.native,
-      }
-    }).slice(0, limit)
-  }),
-  kLineData: (interval) => createSelector([
-    state => state.$orders.trades.tokens,
-  ], (sales) => {
-    const groupedSales = sales.reduce((acc, sale) => {
-      const roundedDate = round(moment(sale.timestamp * 1000), moment.duration(interval.count, interval.unit), 'ceil')
-      const intervalKey = roundedDate.unix()
-      const formattedData = {
-        price: sale.priceFormatted * 1,
-        timestamp: sale.timestamp * 1000,
-        volume: sale.amount * 1,
-        roundedDate: roundedDate.format('DD-MM-YY HH:mm'),
-        date: roundedDate,
-      }
-      const list = acc[intervalKey] ? [...acc[intervalKey], formattedData] : [formattedData]
-      return {
-        ...acc,
-        [intervalKey]: list
-      }
-    }, {})
-
-    let previousRoundedDate = ''
-    let previousClosePrice = 0
-
-    const temp = Object.entries(groupedSales).reduce((acc, [time, sales]) => {
-      let emptyPeriods = {}
-      const isNext = !previousRoundedDate
-      if (!isNext) {
-        emptyPeriods = generatePeriods(time, previousRoundedDate, previousClosePrice, { count: interval.count, unit: interval.unit })
-      }
-      previousRoundedDate = time
-      previousClosePrice = sales.sort((a, b) => b.timestamp - a.timestamp)[0].price
-      return {
-        ...acc,
-        ...emptyPeriods,
-        [time]: sales,
-      }
-    }, {})
-
-    const result = Object.entries(temp).map(([intervalKey, sales]) => {
-      const { timestamps, prices, volume } = sales.reduce((acc, sale) => {
-        return {
-          timestamps: [...acc.timestamps, sale.timestamp],
-          prices: [...acc.prices, sale.price],
-          volume: acc.volume + sale.volume,
-        }
-      }, { timestamps: [], prices: [], volume: 0 })
-      const openKey = Math.min(...timestamps)
-      const closeKey = Math.max(...timestamps)
-      const data = sales.reduce((acc, sale) => {
-        return {
-          ...acc,
-          [sale.timestamp]: sale,
-        }
-      }, {})
-
-      return {
-        open: data[openKey].price,
-        close: data[closeKey].price,
-        low: Math.min(...prices),
-        high: Math.max(...prices),
-        volume: volume,
-        time: sales[0].date.unix() * 1000
-      }
-    })
-    return result.sort((a, b) => a.time - b.time)
   }),
 }
 
 const api = {
-  orderbook: (data) => {
-    const result = request('market/orderbook/depth', 'GET', {api: 'backend', market_id: data.marketId})
-    if (result.error) {
-      return {buy: [], sell: []}
-    }
-
-    return result
-
-    // const sides = {Asks: 'sell', Bids: 'buy'}
-    // const temp = Object.entries(res).reduce((acc, [side, values]) => ({
-    //   ...acc,
-    //   [sides[side]]: values ?? []
-    // }), {})
-    // return await orderBookFormatter(network.id, temp, address, network.usdtContract)
-  },
-
-  get: {
-    tokens: async ({ address, blockchain }) => {
-      const network = CHAINS.find(chain => chain.code === blockchain)
-      if (network?.useBackend) {
-        const res = await request('market/orders/user', 'GET', {api: 'backend', chain_id: network.id, user_address: address})
-        return res && Array.isArray(res) ? res.map((data) => OrderUtils.formatter(data)) : null
-      }
-      return fetch(`/api/tokens/orders/${network.id}/${address}`).then(async res => {
-        const json = await res.json()
-        if (json && Array.isArray(json)) {
-          return json
-        }
-      })
-    },
-    nfts: (params) => {
-      return Promise.all([
-        request('orders/bids/v6', 'GET', params),
-        request('orders/asks/v5', 'GET', params),
-      ]).then(([bids, asks]) => {
-        return [...bids.orders, ...asks.orders]
-      })
-    },
-  },
-  create: {
-    token: (params) => {
-      return request(`limit-order`, 'POST', { api: 'inch', ...params })
-    },
-    tokenAPI: (params) => {
-      return request('market/orders','POST', {api: 'backend', ...params})
-    }
+  orderbook: (params) => {
+    return request('market/orderbook/depth', 'GET', {api: 'backend', ...params})
   },
 
   trades: (params) => {
-    return request(`market/orders/trades/${params.id}`, 'GET', { api: 'backend', ...params })
+    return request('market/trades', 'GET', {api: 'backend', ...params})
+  },
+
+  list: (params) => {
+    return request('market/orders/user', 'GET', {api: 'backend', ...params})
   },
 
   cancel: (params) => {
@@ -293,68 +129,28 @@ const api = {
   cancelAll: (params) => {
     return request(`market/orders/cancel/${params.wallet}`, 'POST', { api: 'backend', ...params })
   },
-}
 
-api.get.nfts.orderBook = (params) => {
-  return Promise.all([
-    request('orders/depth/v1', 'GET', { side: 'buy', ...params }),
-    request('orders/depth/v1', 'GET', { side: 'sell', ...params }),
-  ]).then(([buy, sell]) => {
-    return { buy: buy ? buy.depth : [], sell: sell ? sell.depth : [] }
-  })
-}
-
-api.get.tokens.orderBook = async ({ address, ...rest }) => {
-  const network = CHAINS.find(chain => chain.code === rest.blockchain)
-  if (network?.useBackend) {
-    const res = await request('market/orderbook/depth', 'GET', {api: 'backend', market_id: rest.marketId})
-    if (res.error) {
-      return {buy: [], sell: []}
+  create: {
+    token: (params) => {
+      return request(`limit-order`, 'POST', { api: 'inch', ...params })
+    },
+    tokenAPI: (params) => {
+      return request('market/orders','POST', {api: 'backend', ...params})
     }
-    const sides = {Asks: 'sell', Bids: 'buy'}
-    const temp = Object.entries(res).reduce((acc, [side, values]) => ({
-      ...acc,
-      [sides[side]]: values ?? []
-    }), {})
-    return await orderBookFormatter(network.id, temp, address, network.usdtContract)
-  }
-  const res = await fetch(`/api/tokens/order-book/${network.id}/${network.usdtContract}/${address}`)
-  const json = await res.json()
-  return json
+  },
 }
 
-api.get.tokens.trades = async ({ address, blockchain, ...rest }) => {
-  const network = CHAINS.find(chain => chain.code === blockchain)
-  if (network.useBackend) {
-    const res = await request('market/trades', 'GET', {api: 'backend', ...rest})
-    if (res && Array.isArray(res)) {
-      return res.map((trade) => ({
-        ...trade,
-        priceFormatted: trade.price,
-        orderInvalidReason: 'order filled',
-        timestamp: new Date(trade.timestamp).getTime()/1000,
-      }))
-    }
+// api.get.tokens.typedData = (params) => {
+//   return request('market/orders/getTypedData', 'POST', {api: 'backend', ...params})
+// }
 
-    return
-  }
-  
-  return fetch(`/api/tokens/sales/${network.id}/${network.usdtContract}/${address}`).then(async res => {
-    return await res.json()
-  })
-}
-
-api.get.tokens.typedData = (params) => {
-  return request('market/orders/getTypedData', 'POST', {api: 'backend', ...params})
-}
-
-api.get.tokens.byAssets = ({ makerAsset, takerAsset, blockchain, ...rest }) => {
-  return request('all', 'GET', { api: 'inch', takerAsset: takerAsset, makerAsset: makerAsset, blockchain, ...rest })
-}
+// api.get.tokens.byAssets = ({ makerAsset, takerAsset, blockchain, ...rest }) => {
+//   return request('all', 'GET', { api: 'inch', takerAsset: takerAsset, makerAsset: makerAsset, blockchain, ...rest })
+// }
 
 export default {
   reducer: ordersSlice.reducer,
   set: ordersSlice.actions,
-  get: getters,
-  api: api,
+  get,
+  api,
 }

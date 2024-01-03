@@ -15,6 +15,7 @@ export const template = (item) => {
     name: `${item.BaseSymbol}/${item.QuoteSymbol}`,
     symbol: item.BaseSymbol,
     decimals: item.BaseDecimal,
+    quoteDecimals: item.QuoteDecimal,
     blockchain: blockchain?.code,
     image: `https://storage.googleapis.com/token-assets/assets/${blockchain?.code}/${item.BaseContractAddress.toLowerCase()}.png`,
     volume: item.ticker.quote_volume,
