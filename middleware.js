@@ -25,7 +25,7 @@ const middleware = (request) => {
     validBlockhains = CHAINS.filter(item => item.defaultFor == process.env.NEXT_PUBLIC_APP_ENV)
   }
 
-  if (seg1 === 'exchange' || seg1 === 'nfts') {
+  if (seg1 === 'exchange') {
     let blockchain = seg2 ?? request.cookies.get('blockchain')?.value
     if (!validBlockhains.some(item => item.code == blockchain)) {
       blockchain = validBlockhains[0]?.code

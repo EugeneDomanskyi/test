@@ -11,7 +11,6 @@ import $app from '@/store/app'
 import $orders from '@/store/orders'
 import $alert from '@/store/alert'
 
-import { OrderUtils } from '@/libs/helpers'
 import App from '@/components/App'
 import { trackEvent, getPageName } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -45,7 +44,6 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
 
     Socket.on('order_placed', 'my_orders', (data) => {
-      console.log(data)
       dispatch($orders.set.add(data))
     })
     
@@ -101,7 +99,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
     const hashes = orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map(order => order.orderHash )
     const result = await $orders.api.cancelAll({ wallet, order_hashes: hashes, chain_id: blockchain.id })
     if (result) {
-      dispatch($orders.set.tokens(result.data.map(o => OrderUtils.formatter(o))))
+      dispatch($orders.set.list(result.data))
       dispatch($alert.set.success({ title: 'All Orders Cancelled', text: 'All your live orders has been cancelled successfully!' }))
     }
   }

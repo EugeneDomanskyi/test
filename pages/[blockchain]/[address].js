@@ -119,6 +119,7 @@ export default function Markets({ currentInfo, currentChain }) {
         <meta property="og:title" content={`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Index, Live Chart, Marketcap & News | Tegro: The CEX-DEX`} />
         <meta property="og:description" content={`Use Tegro: The CEX-DEX for real-time ${marketInfo.symbol ?? 'USDT'} prices and market data, ${marketInfo.name} orderbooks and the best ${marketInfo.symbol ?? 'USDT'} spot trading chart to buy, sell and trade instantly.`} />
       </Head>
+      
       <App.Container>
         <App.Flex sx={{ paddingBottom: 48, paddingTop: 64, overflow: 'hidden' }} gap={32}>
           {

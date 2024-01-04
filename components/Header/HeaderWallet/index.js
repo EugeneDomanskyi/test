@@ -160,7 +160,7 @@ const HeaderWallet = () => {
                   <App.Loader size={16} />
                 </App.Flex>
               ) : (
-                <App.Text size={16} height={1}>{getBalanceString()}</App.Text>
+                <App.Text nowrap size={16} height={1}>{getBalanceString()}</App.Text>
               )}
             </App.Flex>
           </App.Flex>

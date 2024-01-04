@@ -9,7 +9,6 @@ import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
 import $app from '@/store/app'
-import $collection from '@/store/collection'
 import $token from '@/store/token'
 
 import App from '@/components/App'
@@ -25,7 +24,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
   const queryBlockchain = router.query.blockchain
 
   const dispatch = useDispatch()
-  const isMobile = useSelector(({$app}) => $app.size.isMobile)
+  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const blockchain = useSelector($app.get.blockchain)
   const pageBlockchains = useSelector($app.get.pageBlockchains(page))
 
@@ -93,11 +92,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
               dispatch($token.set.loading(true))
               dispatch($token.set.clear())
             }
-      
-            if (page == 'nfts') {
-              dispatch($collection.set.loading(true))
-              dispatch($collection.set.clear())
-            }
+
             prevWalletChainId.current = chain.id
           } else {
             await changeNetwork(blockchain.code)
@@ -133,10 +128,6 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
         dispatch($token.set.clear())
       }
 
-      if (page == 'nfts') {
-        dispatch($collection.set.loading(true))
-        dispatch($collection.set.clear())
-      }
       setMenuShow(false)
 
       if (onMobileMenuClose) {
@@ -159,7 +150,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
     <App.Flex row align="center" justify={justify} gap={8} sx={{ position: 'relative' }} id="blockchain" onMouseEnter={() => setMenuShow(true)} onMouseLeave={() => setMenuShow(false)}>
       <App.Flex row center gap={8} className={cn(styles.badge, {[styles.active]: menuShow})} sx={{ cursor: 'pointer' }} onClick={isMobile ? handleMenuToggle : null}>
         <Image src={`/images/icon-${blockchain.code}.png`} width={24} height={24} alt="" />
-        {! isMobile ? <App.Text size={16} className={styles.badgeTitle}>{blockchain.name}</App.Text> : null}
+        {! isMobile ? <App.Text nowrap size={16} className={styles.badgeTitle}>{blockchain.name}</App.Text> : null}
       </App.Flex>
 
       <div className={cn(styles.menu, {[styles.active]: menuShow})}>

@@ -6,7 +6,6 @@ import Image from 'next/image'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
-import { fetchPrices, getTokens } from '@/api_services/tokens'
 
 import App from '@/components/App'
 import TradeFormWrapper from '@/components/Exchange/Mobile/TradeFormWrapper'

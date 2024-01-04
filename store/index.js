@@ -7,9 +7,7 @@ import $modal from './modal'
 import $app, { appSlice } from './app'
 import $alert from './alert'
 import $exchange from './exchange'
-import $collection, { collectionSlice } from './collection'
 import $token, { tokenSlice } from './token'
-import $nft from './nft'
 import $orders from './orders'
 import $raffle from './raffle'
 import $markets from './markets'
@@ -22,9 +20,7 @@ const createStore = (initialData, page, info) => {
       $app: $app.reducer,
       $alert: $alert.reducer,
       $exchange: $exchange.reducer,
-      $collection: $collection.reducer,
       $token: $token.reducer,
-      $nft: $nft.reducer,
       $orders: $orders.reducer,
       $raffle: $raffle.reducer,
       $markets: $markets.reducer,
@@ -43,10 +39,6 @@ const createStore = (initialData, page, info) => {
         ...tokenSlice.getInitialState(),
         list: initialData.marketsList,
         current: (page == 'exchange' ? info : {}),
-      },
-      $collection: {
-        ...collectionSlice.getInitialState(),
-        current: (page == 'nfts' ? info : {}),
       },
     },
 

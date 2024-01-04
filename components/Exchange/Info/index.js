@@ -100,9 +100,9 @@ const Info = () => {
               <App.Flex column gap={4}>
                 <App.Flex row align="center" gap={8}>
                   <App.Text size={16} weight={600} uppercase height={1}>{ current?.name}</App.Text>
-                  <a href={websiteLink} style={{ lineHeight: 0 }} target="_blank" rel="noreferrer">
+                  {/* <a href={websiteLink} style={{ lineHeight: 0 }} target="_blank" rel="noreferrer">
                     <App.Text size={12} color={websiteLink ? '#4C69FF' : '#B9B8C5'} nowrap height={1} onClick={handleClickLink('market-page')}><App.Icon icon="external-link" /></App.Text>
-                  </a>
+                  </a> */}
                 </App.Flex>
 
                 {current?.id ? (

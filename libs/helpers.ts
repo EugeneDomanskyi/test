@@ -1,7 +1,5 @@
 import { watchMulticall } from '@wagmi/core'
 import { formatUnits } from 'viem'
-import moment from "moment"
-import request from '@/libs/request.lib'
 
 enum Side {
     Buy = 'buy',
@@ -88,32 +86,4 @@ export const subscribeToBalanceUpdates = (chainId: number, walletAddress: string
         onUpdate(result)
     }
     return watchMulticall(args, handleUpdate)
-}
-
-export const OrderUtils = {
-    orderTypes: {
-        Active: 'open',
-        Matched: 'completed',
-        Completed: 'completed',
-        Filled: 'completed',
-        Cancelled: 'cancelled',
-    },
-    formatter: (data: any) => {
-        return {
-            ...data,
-            id: data.orderId,
-            status: OrderUtils.orderTypes[data.status],
-            time: moment(data.time).format('DD MMM, HH:mm'),
-            timeMoment: moment(data.time),
-        }
-    },
-    api: {
-        getTypedData: async (params: TypedDataParams) => {
-            const res = await request.POST('market/orders/typedData/generate', params)
-            return res.error || res.data
-        },
-        placeToOrderBook: async (params: LimitOrder) => {
-            return await request.POST('market/orders', params)
-        }
-    }
 }

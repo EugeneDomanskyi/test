@@ -196,20 +196,6 @@ const Header = () => {
                   <App.Text size={14} weight={700}>MORE</App.Text>
                 </App.Flex>
 
-                <Link href="/nfts" className={cn(styles.link, {[styles.active]: router.pathname.includes('/nfts')})}>
-                  <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
-                    <App.Icon icon="menuNFT" />
-                    <App.Text size={14} weight={700}>NFT</App.Text>
-                  </App.Flex>
-                </Link>
-
-                <Link href="/swap" className={cn(styles.link, {[styles.active]: router.pathname.includes('/swap')})}>
-                  <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
-                    <App.Icon icon="menuSWAP" />
-                    <App.Text size={14} weight={700}>NFT Swap</App.Text>
-                  </App.Flex>
-                </Link>
-
                 <a href="https://classic.tegro.com" target="_blank" rel="noreferrer" className={styles.link}>
                   <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                     <App.Icon icon="menuClassic" />

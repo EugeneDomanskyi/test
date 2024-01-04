@@ -1,12 +1,6 @@
-import { useDispatch } from 'react-redux'
-import { useEffect, useState } from 'react'
 import cn from 'classnames'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
-import { usePropsHelper } from '@/myhooks/props-helper'
 import { trackEvent } from '@/libs/analytics.lib'
-
-import Link from 'next/link'
 
 import App from '@/components/App'
 
@@ -32,32 +26,6 @@ const NavbarDropdown = ({isOpen, onClose}) => {
           <App.Text size={14} weight={700} color="#B9B8C5">EXCHANGE</App.Text>
 
           <App.Flex column gap={8}>
-            <Link href="/nfts">
-              <App.Flex gap={8} className={styles.menuItem}>
-                <App.Flex>
-                  <App.Icon icon="menuNFT" />
-                </App.Flex>
-
-                <App.Flex column sx={{width: 160}}>
-                  <App.Text size={14} weight={500}>NFT {`->`}</App.Text>
-                  <App.Text size={10} weight={500}>Trade NFTs as easy as ERC-20 Tokens</App.Text>
-                </App.Flex>
-              </App.Flex>
-            </Link>
-            
-            <Link href="/swap">
-              <App.Flex gap={8} className={styles.menuItem}>
-                <App.Flex>
-                  <App.Icon icon="menuSWAP" />
-                </App.Flex>
-
-                <App.Flex column sx={{width: 160}}>
-                  <App.Text size={14} weight={500}>NFT Swap</App.Text>
-                  <App.Text size={10} weight={500}>Buy & Sell NFTs in bulk at the best prices</App.Text>
-                </App.Flex>
-              </App.Flex>
-            </Link>
-            
             <a href="https://classic.tegro.com/" target="_blank" rel="noreferrer" onClick={handlePageEvent('Classic')}>
               <App.Flex gap={8} className={styles.menuItem}>
                 <App.Flex>
