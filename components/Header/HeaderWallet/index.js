@@ -111,20 +111,9 @@ const HeaderWallet = () => {
 
   const getPortfolio = async () => {
     setBalanceLoading(true)
-    if (blockchain?.use1Inch) {
-      const result = await $portfolio.api.details({ wallet, blockchain })
-      if (result) {
-        dispatch($portfolio.set.details(result))
-      }
-    } else {
-      const balance = await getBalance('', true)
-      if (balance.formatted) {
-        const amount = balance.formatted * 1
-        dispatch($portfolio.set.native({
-          value: amount.toFixed(4),
-          symbol: balance.symbol,
-        }))
-      }
+    const result = await $portfolio.api.details2({ wallet, blockchain })
+    if (result) {
+      dispatch($portfolio.set.details(result))
     }
     setBalanceLoading(false)
   }
@@ -135,17 +124,11 @@ const HeaderWallet = () => {
   }
 
   const handleShortPortfolioVisible = (value) => () => {
-    if (blockchain?.use1Inch) {
-      setIsShortPortfolioVisible(value)
-    }
+    setIsShortPortfolioVisible(value)
   }
 
   const handlePortfolioToggle = (value = true) => {
-    if (blockchain?.use1Inch) {
-      setIsPortfolioVisible(value)
-    } else {
-      handleDisconnectDialogToggle(value)()
-    }
+    setIsPortfolioVisible(value)
   }
 
   return wallet ? (

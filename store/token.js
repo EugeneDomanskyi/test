@@ -7,25 +7,35 @@ import { request } from './index'
 export const template = (item) => {
   const blockchain = CHAINS.find(chain => chain.id == item.ChainId)
 
-  return {
-    id: item.BaseContractAddress.toLowerCase(),
-    address: item.BaseContractAddress.toLowerCase(),
-    quote: item.QuoteContractAddress.toLowerCase(),
-    marketId: item.ID,
-    name: `${item.BaseSymbol}/${item.QuoteSymbol}`,
-    symbol: item.BaseSymbol,
-    decimals: item.BaseDecimal,
-    quoteDecimals: item.QuoteDecimal,
-    blockchain: blockchain?.code,
-    image: `https://storage.googleapis.com/token-assets/assets/${blockchain?.code}/${item.BaseContractAddress.toLowerCase()}.png`,
-    volume: item.ticker.quote_volume,
-    price: item.ticker.price,
-    high: item.ticker.price_high_24h,
-    low: item.ticker.price_low_24h,
-    ticker: {
-      value: item.ticker.price_change_24h,
-      type: item.ticker.price_change_24h < 0 ? 'minus' : 'plus',
-    },
+  if (item?.BaseContractAddress) {
+    return {
+      id: item.BaseContractAddress.toLowerCase(),
+      address: item.BaseContractAddress.toLowerCase(),
+      quote: item.QuoteContractAddress.toLowerCase(),
+      marketId: item.ID,
+      name: `${item.BaseSymbol}/${item.QuoteSymbol}`,
+      symbol: item.BaseSymbol,
+      quoteSymbol: item.QuoteSymbol,
+      decimals: item.BaseDecimal,
+      quoteDecimals: item.QuoteDecimal,
+      blockchain: blockchain?.code,
+      image: `https://storage.googleapis.com/token-assets/assets/${blockchain?.code}/${item.BaseContractAddress.toLowerCase()}.png`,
+      quoteImage: `/images/icon-usdt.png`,
+      volume: item.ticker.quote_volume,
+      price: item.ticker.price,
+      high: item.ticker.price_high_24h,
+      low: item.ticker.price_low_24h,
+      trade: {
+        buy: item.ticker.ask_low,
+        sell: item.ticker.bid_high,
+      },
+      ticker: {
+        value: item.ticker.price_change_24h,
+        type: item.ticker.price_change_24h < 0 ? 'minus' : 'plus',
+      },
+    }
+  } else {
+    return item
   }
 }
 
@@ -64,7 +74,7 @@ export const tokenSlice = createSlice({
     },
 
     current: (state, { payload }) => {
-      state.current = payload?.BaseContractAddress ? template(payload) : payload
+      state.current = template(payload)
     },
 
     sort: (state, { payload }) => {

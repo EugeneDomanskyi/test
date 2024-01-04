@@ -30,7 +30,7 @@ const formatNumber = (number) => {
   }
 }
 
-const Mobile = forwardRef(({ type, onOrdersUpdate }, ref) => {
+const Mobile = forwardRef(({ type }, ref) => {
   const router = useRouter()
   const [queryAddress] = router.query.address || []
   const address = queryAddress ? queryAddress?.toLowerCase() : ''
@@ -38,8 +38,11 @@ const Mobile = forwardRef(({ type, onOrdersUpdate }, ref) => {
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
-  const list = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.all : $collection.all)
-  const item = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.current : $collection.current)
+  const list = useSelector(({ $token }) => $token.all)
+  const item = useSelector(({ $token }) => $token.current)
+  const sort = useSelector(({ $token }) => $token.sort)
+
+  const [sortBy, sortDirection] = sort.split(':')
 
   const [tab, setTab] = useState('charts')
   const [isTradeDialogOpen, setIsTradeDialogOpen] = useState(false)
@@ -69,41 +72,26 @@ const Mobile = forwardRef(({ type, onOrdersUpdate }, ref) => {
         {value: formatNumber(item.low ?? 0), text: 'Low'},
       ])
     } else {
-      if (type == 'tokens') {
-        fetchToken()
-      } else {
-        // Fetch collection
-      }
+      fetchToken(address)
     }
   }, [item?.id])
 
-  const fetchToken = async () => {
-    const existInList = list.find(item => item.id === address)
+  const fetchToken = async (currentAddress) => {
+    const existInList = list.find(item => item.id === currentAddress)
     if (!existInList) {
-      const post = {
-        currentPage: 1,
-        perPage: 1,
-        orderBy: 'name',
-        orderDirection: 'asc',
-        searchText: address,
-        searchField: 'contract_address',
-      }
+      const [token] = await $token.api.backend.all({
+        page: 1,
+        page_size: 1,
+        chain_id: blockchain.id,
+        sort_by: sortBy,
+        sort_order: sortDirection,
+        filter_val: currentAddress,
+        filter_col: 'contract_address',
+        verified: true,
+      })
 
-      const [token] = await getTokens(blockchain, post)
       if (token) {
-        let currentToken = {
-          ...token,
-        }
-
-        const prices = await fetchPrices(blockchain, [token])
-        if (prices[token.id]) {
-          currentToken = {
-            ...currentToken,
-            ...prices[token.id],
-          }
-        }
-
-        dispatch($token.set.current(currentToken))
+        dispatch($token.set.current(token))
       }
     } else {
       dispatch($token.set.current(existInList))
@@ -174,19 +162,19 @@ const Mobile = forwardRef(({ type, onOrdersUpdate }, ref) => {
             switch (currentTab) {
               case 'charts':
                 return (
-                  <App.Flex className={styles.absolute}><Chart type={type} version="mobile" showSwitch top={chartTop} /></App.Flex>
+                  <App.Flex className={styles.absolute}><Chart version="mobile" showSwitch top={chartTop} /></App.Flex>
                 )
               case 'orderbook':
                 return (
-                  <OrderBook type={type} version="mobile" onClickOrder={handleClickOrder} />
+                  <OrderBook version="mobile" onClickOrder={handleClickOrder} />
                 )
               case 'trades':
                 return (
-                  <Sales type={type} version="mobile" onClickSale={handleClickOrder} />
+                  <Sales version="mobile" onClickSale={handleClickOrder} />
                 )
               case 'orders':
                 return (
-                  <Orders current={item} version="mobile" type={type} onClickOrder={handleClickOrder} />
+                  <Orders current={item} version="mobile" onClickOrder={handleClickOrder} />
                 )
               default: return null
             }
@@ -211,7 +199,6 @@ const Mobile = forwardRef(({ type, onOrdersUpdate }, ref) => {
           <TradeFormWrapper
             ref={tradeForm}
             item={item}
-            type={type}
             side={tradeSide}
             onClose={handleTradeDialogClose}
           />

@@ -1,12 +1,10 @@
-import styles from './styles.module.scss'
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import numeral from 'numeral'
 import cn from 'classnames'
 
 import $app from '@/store/app'
-import $modal from '@/store/modal'
-import $orders from '@/store/orders'
+
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { trackEvent } from '@/libs/analytics.lib'
 import { subscribeToBalanceUpdates } from '@/libs/helpers'
@@ -14,6 +12,8 @@ import { subscribeToBalanceUpdates } from '@/libs/helpers'
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeInput'
 import OrderConfirm from '@/components/Exchange/OrderConfirm'
+
+import styles from './styles.module.scss'
 
 const trimLeadingZerosBeforeDecimal = number => {
   return number.toString().replace(/^0+(?=\d+(\.\d*)?$)/, '').replace(/^\.(\d*)$/, '0.$1')
@@ -33,20 +33,10 @@ const checkPrice = (price, tab, marketPrice) => {
   }
 }
 
-const getDecimalsCount = string => {
-  const [_, decimals] = string.toString().split('.')
-  return decimals ? decimals.length : 0
-}
-
-const MAX_DECIMALS = 5
-
-const TradeFormToken = forwardRef(({current, currentTab, version, formOption, prevProps, onSubmit}, ref) => {
-  const dispatch = useDispatch()
+const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onSubmit}, ref) => {
   const { wallet, changeNetwork } = useWalletConnect()
   
   const blockchain = useSelector($app.get.blockchain)
-  const orderBook = useSelector($orders.get.orderBook('tokens'))
-  const orderBookId = useSelector(({$orders}) => $orders.orderBookId)
 
   const [form, setForm] = useState({price: '', amount: '1', total: '0'})
   const [userBalances, setUserBalances] = useState({token: 0, usdt: 0})
@@ -59,11 +49,6 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
   const isDisabled = !(form.amount*1) || !(form.price*1) || !(form.total*1)
 
   const loadingRef = useRef(false)
-
-  const countOfDecimals = {
-    price: getDecimalsCount(form.price),
-    amount: getDecimalsCount(form.amount),
-  }
 
   const usdtFormatted = blockchain.usdt
 
@@ -85,7 +70,9 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
     setWasUserBalance(false)
     setWasUserInput(false)
     setIsErrorBalance(false)
-  }, [current])
+
+    handleSetPrice(false)
+  }, [current?.id])
 
   useEffect(() => {
     if (prevProps?.side) {
@@ -94,7 +81,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
     } else {
       handleSetPrice(false)
     }
-  }, [orderBookId, prevProps])
+  }, [prevProps])
 
   useEffect(() => {
     if (wasUserBalance) {
@@ -103,14 +90,15 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
   }, [form.total, form.amount, currentTab, wasUserBalance])
 
   useEffect(() => {
-    const unsubscribe = subscribeToBalanceUpdates(blockchain.id, wallet, [current?.address, blockchain.usdt.address], (res) => {
+    const unsubscribe = subscribeToBalanceUpdates(blockchain.id, wallet, [current?.address, current?.quote], (res) => {
       const balances = Object.entries(res).reduce((acc, [address, balance]) => ({
         ...acc,
-        [address === blockchain.usdt.address ? 'usdt' : 'token']: balance,
+        [address === current?.quote ? 'usdt' : 'token']: balance,
       }), {usdt: 0, token: 0})
       setUserBalances(balances)
       setWasUserBalance(true)
     })
+
     return () => {
       if (unsubscribe) {
         unsubscribe()
@@ -119,28 +107,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
   }, [wallet, blockchain.id, current?.address])
 
   const handleSetPrice = (inputByUser = true, tab = currentTab) => {
-    switch (tab) {
-      case 'buy':
-        const [cheapestOrder] = orderBook.sell
-        if (cheapestOrder && cheapestOrder.priceFormatted) {
-          handleChangeForm('price', inputByUser)(cheapestOrder.priceFormatted.toString())
-        } else if (current.price) {
-          handleChangeForm('price', inputByUser)(current.price)
-        } else {
-          handleChangeForm('price', inputByUser)('')
-        }
-        break
-      case 'sell':
-        const [expensiveOrder] = orderBook.buy
-        if (expensiveOrder && expensiveOrder.priceFormatted) {
-          handleChangeForm('price', inputByUser)(expensiveOrder.priceFormatted.toString())
-        } else if (current.price) {
-          handleChangeForm('price', inputByUser)(current.price)
-        } else {
-          handleChangeForm('price', inputByUser)('')
-        }
-        break
-    }
+    handleChangeForm('price', inputByUser)(current?.trade?.[tab] || current.price || 0)
   }
 
   const handleChangePrice = (type) => () => {
@@ -162,7 +129,6 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
     
     switch (field) {
       case 'price':
-        //value = value.indexOf('.')+1 ? value.substring(0, value.indexOf('.') + (MAX_DECIMALS + 1 - countOfDecimals.amount)) : value
         setForm(state => ({
           ...state,
           price: value,
@@ -170,7 +136,6 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
         }))
         return
       case 'amount':
-        //value = value.indexOf('.')+1 ? value.substring(0, value.indexOf('.') + (MAX_DECIMALS + 1 - countOfDecimals.price)) : value
         setForm(state => {
           return {
             ...state,
@@ -181,7 +146,6 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
         return
       case 'total':
         setForm(state => {
-          value = value.indexOf('.')+1 ? value.substring(0, value.indexOf('.') + (MAX_DECIMALS + 1)) : value
           const amount = Math.floor(value/state.price)
           return {
             ...state,
@@ -209,12 +173,10 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
     const props = {
       side: currentTab,
       blockchain: blockchain,
-      makerAsset: currentTab === 'buy' ? current : usdtFormatted,
-      takerAsset: currentTab === 'buy' ? usdtFormatted : current,
-      makerAmountFormatted: form.amount,
-      takerAmountFormatted: numeral(form.amount*form.price).format('0.0[0000]'),
+      current: current,
       price: form.price,
-      marketId: current.marketId,
+      amount: form.amount,
+      total: numeral(form.amount * form.price).format('0.0[0000]'),
     }
 
     if (version == 'mobile') {
@@ -222,15 +184,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
         onSubmit(props)
       }
     } else {
-      if (blockchain?.useBackend) {
-        setIsOrderConfirmOpen(true)
-      } else {
-        dispatch($modal.set.show({
-          show: true,
-          modal: 'Exchange/OrderProceed',
-          props,
-        }))
-      }
+      setIsOrderConfirmOpen(true)
     }
 
     trackEvent('Create Order Click', {
@@ -245,7 +199,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
   }
 
   const handleTotalBlur = () => {
-    handleChangeForm('price')(form.total/form.amount)
+    handleChangeForm('price')(form.total / form.amount)
     trackEvent('Add Total', {
       'Base Currency': current.symbol,
       'Quote Currency': 'USDT',
@@ -411,12 +365,12 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
         </App.Flex>
 
         <App.Button xl fullWidth variant={currentTab == 'buy' ? 'success' : 'danger'} disabled={isDisabled || (isErrorBalance && wasUserInput)} onClick={handleSubmit}>
-          {formOption.title}
+          {currentTab.toUpperCase()}
         </App.Button>
       </App.Flex>
 
       <App.Dialog
-        title={`${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)} ${current?.symbol} with ${usdtFormatted?.symbol}`}
+        title={`${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)} ${current?.symbol} with ${current?.quoteSymbol}`}
         width={420}
         open={isOrderConfirmOpen}
         onClose={handleOrderConfirmClose}
@@ -424,12 +378,10 @@ const TradeFormToken = forwardRef(({current, currentTab, version, formOption, pr
         <OrderConfirm
           side={currentTab}
           blockchain={blockchain}
-          makerAsset={currentTab === 'buy' ? current : usdtFormatted}
-          takerAsset={currentTab === 'buy' ? usdtFormatted : current}
-          makerAmountFormatted={form.amount}
-          takerAmountFormatted={numeral(form.amount * form.price).format('0.0[0000]')}
-          marketId={current.marketId}
+          current={current}
           price={form.price}
+          amount={form.amount}
+          total={numeral(form.amount * form.price).format('0.0[0000]')}
           onClose={handleOrderConfirmClose}
         />
       </App.Dialog>

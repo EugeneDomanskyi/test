@@ -45,6 +45,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
 
     Socket.on('order_placed', 'my_orders', (data) => {
+      console.log(data)
       dispatch($orders.set.add(data))
     })
     
@@ -309,9 +310,9 @@ const Orders = ({global, type, version, onClickOrder}) => {
                             ) : (
                               order.quoteCurrency ? (
                                 <App.Flex column gap={4}>
-                                  <App.Text size={12} weight={600} center height={1}>{ order.quoteCurrency }</App.Text>
+                                  <App.Text size={12} weight={600} center height={1}>{ order.baseCurrency }</App.Text>
                                   <div style={{width: '100%', minWidth: 20, height: 1, background: '#B9B8C5'}} />
-                                  <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ order.baseCurrency }</App.Text>
+                                  <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ order.quoteCurrency }</App.Text>
                                 </App.Flex>
                               ) : null
                             )}

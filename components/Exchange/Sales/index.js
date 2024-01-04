@@ -23,11 +23,13 @@ const Sales = ({ version, onClickSale }) => {
   let previousPrice = 0
 
   useEffect(() => {
-    Socket.on('order_submitted', 'trades', () => {
-      getTrades()
-    })
+    if (current?.id) {
+      Socket.on('order_submitted', 'trades', () => {
+        getTrades()
+      })
 
-    getTrades()
+      getTrades()
+    }
   }, [current?.id])
 
   const getTrades = async () => {
@@ -39,7 +41,7 @@ const Sales = ({ version, onClickSale }) => {
     })
 
     if (result) {
-      dispatch($orders.set.trades(result ?? []))
+      dispatch($orders.set.trades({data: result ?? [], token: current}))
     }
 
     setLoading(false)

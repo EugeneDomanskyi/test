@@ -11,17 +11,17 @@ export default function Contracts(defaultGasLimit = null) {
 
   const methods = {
     debugMessage: (error, title = null) => {
-      // if (isDebugMode) {
-      //   if (title) {
-      //     console.log('------>', title)
-      //   }
+      if (isDebugMode) {
+        if (title) {
+          console.log('------>', title)
+        }
 
-      //   if (error) {
-      //     for (const key in error) {
-      //       console.log((key + ':'), error[key])
-      //     }
-      //   }
-      // }
+        if (error) {
+          for (const key in error) {
+            console.log((key + ':'), error[key])
+          }
+        }
+      }
 
       return { error: error?.shortMessage || error?.message || error?.name || error }
     },
@@ -339,6 +339,54 @@ export default function Contracts(defaultGasLimit = null) {
 
       return result
     },
+
+    fillOperator: (chainCode) => {
+      switch (chainCode) {
+        case 'mumbai':
+          return '0xa6BB5cFE9CC68E0AFfb0bB1785B6eFdC2fe8d326'
+        default:
+          return null
+      }
+    },
+
+    allowance: async (wallet, contract, blockchain) => {
+      const operator = methods.fillOperator(blockchain.code)
+      if (operator) {
+        const result = await methods.readContract({
+          address: contract,
+          abi: abi.erc20.allowance,
+          functionName: 'allowance',
+          args: [
+            wallet,
+            operator,
+          ],
+        })
+
+        return result
+      }
+
+      return {error: 'Wrong blockchain'}
+    },
+
+    approve: async (contract, blockchain, amount) => {
+      const operator = methods.fillOperator(blockchain.code)
+      if (operator) {
+        const config = await methods.prepareWriteContract({
+          address: contract,
+          abi: abi.erc20.approve,
+          functionName: 'approve',
+          args: [
+            operator,
+            amount,
+          ],
+        })
+
+        const result = await methods.writeContract(config)
+        return result
+      }
+
+      return {error: 'Wrong blockchain'}
+    }
   }
 
   return methods

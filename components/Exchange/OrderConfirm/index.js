@@ -1,93 +1,121 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import Image from 'next/image'
+import { formatUnits, parseUnits } from 'viem'
 import numeral from 'numeral'
 import cn from 'classnames'
 
 import { trackEvent } from '@/libs/analytics.lib'
-import Order from '@/libs/structs/Order'
 import useWalletConnect from '@/myhooks/wallet-connect'
-import { TEGRO_FILL_ORDERS_CONTRACTS } from '@/config'
-import coingeckoAssets from '@/public/files/coingecko_ids'
+import Contracts from '@/libs/contracts.lib'
 
+import $orders from '@/store/orders'
 import $alert from '@/store/alert'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
-import {current} from "@reduxjs/toolkit";
 
-const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFormatted, takerAmountFormatted, price, version, marketId, onBack, onClose }) => {
-  const { wallet } = useWalletConnect()
+const OrderConfirm = ({ side, blockchain, current, price, amount, total, version, onBack, onClose }) => {
+  const { wallet, walletClient } = useWalletConnect()
+  
   const dispatch = useDispatch()
 
-  const { getPrice } = useWalletConnect()
-
   const [step, setStep] = useState('preview')
-  const [usdPrice, setUsdPrice] = useState(1)
 
-  useEffect(() => {
-    fetchUsdPrice()
-  }, [])
-
-  const fetchUsdPrice = async () => {
-    const cgid = coingeckoAssets[blockchain.platform]?.[takerAsset.address]
-    if (cgid) {
-      const price = await getPrice(cgid, 'usd')
-      if (price) {
-        setUsdPrice(price)
-        return
-      }
-    }
-
-    setUsdPrice(1)
-  }
+  const contracts = new Contracts()
 
   const handleNextStep = async () => {
     if (step == 'preview') {
       trackEvent('Confirm Order Submit', {
-        'Base Currency': side === 'buy' ? makerAsset.symbol : takerAsset.symbol,
-        'Quote Currency': 'USDT',
+        'Base Currency': side === 'buy' ? current.symbol : current.quoteSymbol,
+        'Quote Currency': side === 'buy' ? current.quoteSymbol : current.symbol,
         'Side': side.toUpperCase(),
-        'Quantity': numeral(makerAmountFormatted).format('0.[00000]'),
+        'Quantity': numeral(amount).format('0.[00000]'),
         'Price': numeral(price).format('0.[00000]'),
-        'Total': numeral(takerAmountFormatted).format('0.[00000]'),
+        'Total': numeral(total).format('0.[00000]'),
         'Network': blockchain.code.toUpperCase(),
         'Order Type': 'Limit',
         'Step': 'Confirm',
       })
 
       setStep('sign')
-      const result = await Order.Order.checkAllowance(blockchain.id, TEGRO_FILL_ORDERS_CONTRACTS[blockchain.id], wallet, takerAsset.address, takerAmountFormatted * 1)
-        .catch(error => {
-          onClose()
-          dispatch($alert.set.error({ title: 'Trade Not Approved', text: error?.message ?? 'Something went wrong' }))
-        })
+      const allowance = await contracts.allowance(wallet, current.quote, blockchain)
+      if (allowance?.error) {
+        return handleError('Trade Not Approved', allowance?.error)
+      }
 
-      if (result?.success) {
-        setStep('place')
+      const allowanceAmount = formatUnits(allowance, current.decimals)
+      if (allowanceAmount * 1 < amount * 1) {
+        if (current.quote === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
+          const reset = await contracts.approve(current.quote, blockchain, parseUnits('0', current.quoteDecimals))
+          if (reset?.error) {
+            return handleError('Trade Not Approved', reset?.error)
+          }
+        }
 
-        trackEvent('Confirm Order Submit', {
-          'Base Currency': side === 'buy' ? makerAsset.symbol : takerAsset.symbol,
-          'Quote Currency': 'USDT',
-          'Side': side.toUpperCase(),
-          'Quantity': numeral(makerAmountFormatted).format('0.[00000]'),
-          'Price': numeral(price).format('0.[00000]'),
-          'Total': numeral(takerAmountFormatted).format('0.[00000]'),
-          'Network': blockchain.code.toUpperCase(),
-          'Order Type': 'Limit',
-          'Step': 'Sign',
-        })
+        const approve = await contracts.approve(current.quote, blockchain, parseUnits(Number.MAX_SAFE_INTEGER.toString(), current.quoteDecimals))
+        if (approve?.error) {
+          return handleError('Trade Not Approved', approve?.error)
+        }
+      }
+      
+      setStep('place')
 
-        Order.TOKEN.placeToAPI({ type: side, makerAsset: takerAsset, takerAsset: makerAsset, price: price, amount: makerAmountFormatted, marketId: marketId }, () => {
-          onClose()
-        }).catch(error => {
-          onClose()
-          dispatch($alert.set.error({ title: 'Order Not Created', text: error?.message ?? 'Something went wrong' }))
-        })
+      trackEvent('Confirm Order Submit', {
+        'Base Currency': side === 'buy' ? current.symbol : current.quoteSymbol,
+        'Quote Currency': side === 'buy' ? current.quoteSymbol : current.symbol,
+        'Side': side.toUpperCase(),
+        'Quantity': numeral(amount).format('0.[00000]'),
+        'Price': numeral(price).format('0.[00000]'),
+        'Total': numeral(total).format('0.[00000]'),
+        'Network': blockchain.code.toUpperCase(),
+        'Order Type': 'Limit',
+        'Step': 'Sign',
+      })
+
+      const typedData = await $orders.api.typedData({
+        chain_id: blockchain.id,
+        wallet_address: wallet,
+        market_symbol: `${current.symbol}_${current.quoteSymbol}`,
+        side,
+        price: price * 1,
+        amount: amount * 1,
+      })
+
+      if (typedData?.error) {
+        return handleError('Order Not Created', typedData?.error)
+      }
+
+      const signature = await walletClient.signTypedData(typedData.data.sign_data).catch(error => {
+        return handleError('Order Not Created', error.shortMessage)
+      })
+
+      if (!signature) {
+        return
+      }
+
+      const result = await $orders.api.place({
+        ...typedData.data.limit_order,
+        signature,
+      })
+
+      if (result?.error) {
+        return handleError('Order Not Created', result?.error)
+      }
+
+      if (onClose) {
+        onClose()
       }
     }
   }
+
+  const handleError = (title, text = 'Something went wrong') => {
+    dispatch($alert.set.error({ title, text }))
+    if (onClose) {
+      onClose()
+    }
+  } 
 
   const Summary = () => {
     return (
@@ -99,11 +127,11 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
 
         <App.Flex justify="space-between">
           <App.Flex row align="center" gap={4}>
-            <Image src={takerAsset.image} width={25} height={25} alt="" />
+            <Image src={current.quoteImage} width={25} height={25} alt="" />
             <App.Flex column gap={4}>
-              <App.Text size={12} weight={600} height={1} color="#B9B8C5">{ numeral(side === 'buy' ? takerAmountFormatted : makerAmountFormatted).format('0.[00000]') } {takerAsset.symbol}</App.Text>
+              <App.Text size={12} weight={600} height={1} color="#B9B8C5">{ numeral(side === 'buy' ? total : amount).format('0.[00000]') } {side === 'buy' ? current.quoteSymbol : current.symbol}</App.Text>
               {side === 'buy' ? (
-                <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ numeral(takerAmountFormatted * usdPrice).format('0.[00000]') }</App.Text>
+                <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ numeral(total).format('0.[00000]') }</App.Text>
               ) : null}
             </App.Flex>
           </App.Flex>
@@ -111,11 +139,11 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
           <App.Icon icon="arrow-right-long" />
 
           <App.Flex align="center" gap={4}>
-            <Image src={makerAsset.image} width={25} height={25} alt="" />
+            <Image src={current.image} width={25} height={25} alt="" />
             <App.Flex column gap={4}>
-              <App.Text size={12} weight={600} height={1} color="#B9B8C5">{ numeral(side === 'buy' ? makerAmountFormatted : takerAmountFormatted).format('0.[00000]') } {makerAsset.symbol}</App.Text>
+              <App.Text size={12} weight={600} height={1} color="#B9B8C5">{ numeral(side === 'buy' ? amount : total).format('0.[00000]') } {side === 'buy' ? current.symbol : current.quoteSymbol}</App.Text>
               {side === 'sell' ? (
-                <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ numeral(takerAmountFormatted * usdPrice).format('0.[00000]') }</App.Text>
+                <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ numeral(total).format('0.[00000]') }</App.Text>
               ) : null}
             </App.Flex>
           </App.Flex>
@@ -129,7 +157,7 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
       {version == 'mobile' ? (
         <App.Flex className={cn(styles.header, styles[side])} center>
           <App.Text center weight={700} size={16} capitalize>
-            {side} {side === 'buy' ? makerAsset.symbol : takerAsset.symbol} with {side === 'sell' ? makerAsset.symbol : takerAsset.symbol}
+            {side} {side === 'buy' ? current.symbol : current.quoteSymbol} with {side === 'sell' ? current.symbol : current.quoteSymbol}
           </App.Text>
 
           {step == 'preview' ? (
@@ -161,17 +189,17 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
 
                 <App.Flex row align="center" justify="space-between">
                   <App.Text size={12} height={1} color="#5E5C6B">At Price</App.Text>
-                  <App.Text size={12} height={1} color="#B9B8C5">{ price } {side == 'buy' ? takerAsset.symbol : makerAsset.symbol}</App.Text>
+                  <App.Text size={12} height={1} color="#B9B8C5">{ price } {side == 'buy' ? current.quoteSymbol : current.symbol}</App.Text>
                 </App.Flex>
 
                 <App.Flex row align="center" justify="space-between">
                   <App.Text size={12} height={1} color="#5E5C6B">Amount</App.Text>
-                  <App.Text size={12} height={1} color="#B9B8C5">{ makerAmountFormatted } {side == 'buy' ? makerAsset.symbol : takerAsset.symbol}</App.Text>
+                  <App.Text size={12} height={1} color="#B9B8C5">{ amount } {side == 'buy' ? current.symbol : current.quoteSymbol}</App.Text>
                 </App.Flex>
 
                 <App.Flex row align="center" justify="space-between">
                   <App.Text size={12} height={1} color="#5E5C6B">Total</App.Text>
-                  <App.Text size={12} height={1} color="#B9B8C5">{ takerAmountFormatted } {side == 'buy' ? takerAsset.symbol : makerAsset.symbol}</App.Text>
+                  <App.Text size={12} height={1} color="#B9B8C5">{ total } {side == 'buy' ? current.quoteSymbol : current.symbol}</App.Text>
                 </App.Flex>
 
                 <App.Flex row align="center" justify="space-between">
@@ -228,7 +256,7 @@ const OrderConfirm = ({ side, blockchain, makerAsset, takerAsset, makerAmountFor
           <App.Flex column center fullWidth gap={16}>
             <App.Flex column center gap={10} width={265}>
               <App.Text center size={16} weight={600} height={1}>{step == 'sign' ? 'Approve the Trade!' : 'Confirm Order'}</App.Text>
-              <App.Text center size={12} color="#B9B8C5" height={1.2}>{step == 'sign' ? `Tap 'Approve' in your wallet to unleash ${side == 'buy' ? makerAsset.symbol : takerAsset.symbol} trading power on Tegro` : 'Authorize the transaction on your wallet to finalize the trade'}</App.Text>
+              <App.Text center size={12} color="#B9B8C5" height={1.2}>{step == 'sign' ? `Tap 'Approve' in your wallet to unleash ${side == 'buy' ? current.symbol : current.quoteSymbol} trading power on Tegro` : 'Authorize the transaction on your wallet to finalize the trade'}</App.Text>
             </App.Flex>
 
             {Summary()}

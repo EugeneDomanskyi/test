@@ -119,10 +119,7 @@ const Exchange = () => {
                 <Chart />
               </App.Flex>
 
-              {/* <TradeForm
-                ref={tradeForm}
-                type="tokens"
-              /> */}
+              <TradeForm ref={tradeForm} />
             </App.Flex>
 
             <App.Flex gap={GRID_GAP} className={styles.partRightBottom}>
@@ -140,7 +137,7 @@ const Exchange = () => {
           {!queryTokenId || queryTokenId == '0x' ? (
             <Sidebar version="mobile" />
           ) : (
-            <Mobile ref={mobileRef} type="tokens" />
+            <Mobile ref={mobileRef} />
           )}
 
           <App.Dialog open={myOrdersDialogOpen} onClose={handleCloseOrdersDialog} hideHeader hideClose full>
@@ -154,7 +151,7 @@ const Exchange = () => {
               </App.Flex>
 
               <App.Flex fullWidth flex={1} sx={{ position: 'relative' }}>
-                <Orders global version="mobile" type="tokens" onClickOrder={handleClickOrderMobile} />
+                <Orders global version="mobile" onClickOrder={handleClickOrderMobile} />
               </App.Flex>
             </App.Flex>
           </App.Dialog>

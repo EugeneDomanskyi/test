@@ -46,6 +46,8 @@
     transition: .3s;
     overflow: hidden;
     width: 320px;
+    max-height: 400px;
+    overflow-y: auto;
 
     &.active,
     &:hover {

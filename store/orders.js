@@ -1,10 +1,8 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
 import { formatUnits } from 'viem'
+import moment from 'moment'
 
 import { request } from './index'
-import Order from '@/libs/structs/Order'
-import { CHAINS } from '@/config'
-import { OrderUtils } from '@/libs/helpers'
 
 export const template = (item) => {
   let status = 'unknown'
@@ -36,7 +34,6 @@ export const ordersSlice = createSlice({
 
   initialState: {
     list: [],
-    orderBookId: null,
     orderbook: {
       buy: [],
       sell: [],
@@ -84,7 +81,7 @@ export const ordersSlice = createSlice({
     },
 
     trades: (state, { payload }) => {
-      state.trades = payload.map((trade) => ({
+      state.trades = payload.data.map((trade) => ({
         ...trade,
         priceFormatted: trade.price,
         orderInvalidReason: 'order filled',
@@ -122,6 +119,14 @@ const api = {
     return request('market/orders/user', 'GET', {api: 'backend', ...params})
   },
 
+  typedData: (params) => {
+    return request('market/orders/typedData/generate', 'POST', {api: 'backend', ...params})
+  },
+
+  place: (params) => {
+    return request('market/orders', 'POST', {api: 'backend', ...params})
+  },
+
   cancel: (params) => {
     return request(`market/orders/cancel`, 'POST', { api: 'backend', ...params })
   },
@@ -129,24 +134,7 @@ const api = {
   cancelAll: (params) => {
     return request(`market/orders/cancel/${params.wallet}`, 'POST', { api: 'backend', ...params })
   },
-
-  create: {
-    token: (params) => {
-      return request(`limit-order`, 'POST', { api: 'inch', ...params })
-    },
-    tokenAPI: (params) => {
-      return request('market/orders','POST', {api: 'backend', ...params})
-    }
-  },
 }
-
-// api.get.tokens.typedData = (params) => {
-//   return request('market/orders/getTypedData', 'POST', {api: 'backend', ...params})
-// }
-
-// api.get.tokens.byAssets = ({ makerAsset, takerAsset, blockchain, ...rest }) => {
-//   return request('all', 'GET', { api: 'inch', takerAsset: takerAsset, makerAsset: makerAsset, blockchain, ...rest })
-// }
 
 export default {
   reducer: ordersSlice.reducer,
