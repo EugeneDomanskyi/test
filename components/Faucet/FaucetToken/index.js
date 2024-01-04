@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import cn from 'classnames'
 
+import useWalletConnect from '@/myhooks/wallet-connect'
 import Contracts from '@/libs/contracts.lib'
 
+import $app from '@/store/app'
 import $alert from '@/store/alert'
 
 import App from '@/components/App'
@@ -12,7 +14,10 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const FaucetToken = ({ balances, onComplete }) => {
+  const { changeNetwork } = useWalletConnect()
+
   const dispatch = useDispatch()
+  const blockchain = useSelector($app.get.blockchain)
 
   const [loading, setLoading] = useState(false)
 
@@ -20,6 +25,12 @@ const FaucetToken = ({ balances, onComplete }) => {
 
   const handleClaim = async () => {
     setLoading(true)
+    const network = await changeNetwork(blockchain.code)
+    if (!network) {
+      setLoading(false)
+      return
+    }
+
     const result = await contracts.getFreeToken(process.env.NEXT_PUBLIC_FAUCET_CONTRACT)
     if (result?.error) {
       if (result.error.includes('reason:')) {
