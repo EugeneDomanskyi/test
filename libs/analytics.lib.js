@@ -75,16 +75,3 @@ export const trackEvent = (eventName, eventProperties) => {
   }
   amplitude.getInstance().logEvent(eventName, data)
 }
-
-export const amplitudeEventTrack = (post) => {
-  const headers = {
-    'Content-Type': 'application/json',
-    'x-api-key': process.env.NEXT_PUBLIC_X_API_KEY
-  }
-  const payload = {
-    ...post,
-    services:  ['amplitude', 'intercom', 'redshift']
-  }
-
-  return fetch(`${process.env.NEXT_PUBLIC_ANALYTICS_URL}/users/events/track`, {method: 'POST', body: JSON.stringify(payload), headers: headers})
-}

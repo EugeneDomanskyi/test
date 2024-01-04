@@ -28,6 +28,7 @@ const HeaderWallet = () => {
   const nativeBalance = useSelector(({ $portfolio }) => $portfolio.native)
   const portfolioUsd = useSelector(({ $portfolio }) => $portfolio.usd)
   const portfolioList = useSelector(({ $portfolio }) => $portfolio.list)
+  const raffleLoading = useSelector(({ $raffle }) => $raffle.loadingUser)
   const raffleBalance = useSelector(({ $raffle }) => $raffle.balance)
 
   const [isDisconnectDialogOpen, setIsDisconnectDialogOpen] = useState(false)
@@ -37,9 +38,13 @@ const HeaderWallet = () => {
 
   useEffect(() => {
     if (wallet && blockchain?.id) {
-      getPortfolio()
+      if (isEarn) {
+        setBalanceLoading(raffleLoading)
+      }
+
+      getPortfolio(!isEarn)
     }
-  }, [wallet, blockchain?.id, chain?.id])
+  }, [wallet, blockchain?.id, chain?.id, isEarn, raffleLoading])
 
   const getBalanceString = () => {
     if (isEarn) {
@@ -48,15 +53,6 @@ const HeaderWallet = () => {
       return `${nativeBalance.value} ${nativeBalance.symbol ?? blockchain.currency}`
     }
   }
-
-  // useEffect(() => {
-  //   if (isEarn && ! balance) {
-  //     setBalanceLoading(true)
-  //   } else if (isEarn) {
-  //     setCurrentBalance({amount: balance, symbol: 'TKeys'})
-  //     setBalanceLoading(false)
-  //   }
-  // }, [balance, isEarn])
 
   const getConnectorLogo = () => {
     switch (connectorId) {
@@ -109,13 +105,19 @@ const HeaderWallet = () => {
     setIsDisconnectDialogOpen(open)
   }
 
-  const getPortfolio = async () => {
-    setBalanceLoading(true)
-    const result = await $portfolio.api.details2({ wallet, blockchain })
+  const getPortfolio = async (controlLoading) => {
+    if (controlLoading) {
+      setBalanceLoading(true)
+    }
+
+    const result = await $portfolio.api.details({ wallet, blockchain })
     if (result) {
       dispatch($portfolio.set.details(result))
     }
-    setBalanceLoading(false)
+
+    if (controlLoading) {
+      setBalanceLoading(false)
+    }
   }
 
   const handleOrdersDialogOpen = () => {

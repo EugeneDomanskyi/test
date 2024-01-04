@@ -91,6 +91,34 @@ export default {
         "type": "bool",
       }],
     }],
+
+    balanceOf: [{
+      "name": "balanceOf",
+      "stateMutability": "view",
+      "type": "function",
+      "inputs": [{
+        "internalType": "address",
+        "name": "account",
+        "type": "address",
+      }],
+      "outputs": [{
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256",
+      }],
+    }],
+
+    decimals: [{
+      "name": "decimals",
+      "stateMutability": "view",
+      "type": "function",
+      "inputs": [],
+      "outputs": [{
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8",
+      }],
+    }],
   },
 
   erc721: {

@@ -1,28 +1,12 @@
 import Head from 'next/head'
 
-const HeadDefault = ({currentPage, currentSymbol}) => {
+const HeadDefault = () => {
   const getTitle = () => {
-    if (!currentSymbol) {
-      return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'
-    }
-    switch (currentPage) {
-      case 'tokens':
-        return `${currentSymbol}/USDT Trading and Charts | Tegro: The CEX-DEX`
-      default:
-        return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'
-    }
+    return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'
   }
 
   const getDescription = () => {
-    if (!currentSymbol) {
-      return 'Buy, sell, and trade Tokens or NFTs instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade Tokens and NFTs at the best prices.'
-    }
-    switch (currentPage) {
-      case 'tokens':
-        return `Buy, sell, and trade ${currentSymbol}/USDT instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${currentSymbol} at the best prices.`
-      default:
-        return 'Buy, sell, and trade Tokens or NFTs instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade Tokens and NFTs at the best prices.'
-    }
+    return 'Buy, sell, and trade Tokens or NFTs instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade Tokens and NFTs at the best prices.'
   }
 
   return (

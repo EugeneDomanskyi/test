@@ -24,6 +24,7 @@ export const template = (item) => {
     ...item,
     id: item.orderId,
     status,
+    itemPrice: item.price / item.quantity,
     time: moment(item.time).format('DD MMM, HH:mm'),
     timeMoment: moment(item.time),
   }
@@ -34,6 +35,13 @@ export const ordersSlice = createSlice({
 
   initialState: {
     list: [],
+    interval: {
+      key: '4h',
+      count: 4,
+      unit: 'hours',
+      seconds: 4 * 60 * 60,
+    },
+    chart: [],
     orderbook: {
       buy: [],
       sell: [],
@@ -53,6 +61,14 @@ export const ordersSlice = createSlice({
 
     update: (state, { payload }) => {
       state.list = state.list.map(o => o.id === payload.orderId ? template(payload) : o)
+    },
+
+    interval: (state, {payload}) => {
+      state.interval = payload
+    },
+
+    chart: (state, { payload }) => {
+      state.chart = payload.sort((a, b) => a.time - b.time)
     },
     
     orderbook: (state, { payload }) => {
@@ -107,32 +123,36 @@ const get = {
 }
 
 const api = {
+  chart: (params) => {
+    return request(`market/chart`, 'GET', params)
+  },
+
   orderbook: (params) => {
-    return request('market/orderbook/depth', 'GET', {api: 'backend', ...params})
+    return request('market/orderbook/depth', 'GET', params)
   },
 
   trades: (params) => {
-    return request('market/trades', 'GET', {api: 'backend', ...params})
+    return request('market/trades', 'GET', params)
   },
 
   list: (params) => {
-    return request('market/orders/user', 'GET', {api: 'backend', ...params})
+    return request('market/orders/user', 'GET', params)
   },
 
   typedData: (params) => {
-    return request('market/orders/typedData/generate', 'POST', {api: 'backend', ...params})
+    return request('market/orders/typedData/generate', 'POST', params)
   },
 
   place: (params) => {
-    return request('market/orders', 'POST', {api: 'backend', ...params})
+    return request('market/orders', 'POST', params)
   },
 
   cancel: (params) => {
-    return request(`market/orders/cancel`, 'POST', { api: 'backend', ...params })
+    return request(`market/orders/cancel`, 'POST', params)
   },
 
   cancelAll: (params) => {
-    return request(`market/orders/cancel/${params.wallet}`, 'POST', { api: 'backend', ...params })
+    return request(`market/orders/cancel/${params.wallet}`, 'POST', params)
   },
 }
 

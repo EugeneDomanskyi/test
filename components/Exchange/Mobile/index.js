@@ -78,7 +78,7 @@ const Mobile = forwardRef(({ type }, ref) => {
   const fetchToken = async (currentAddress) => {
     const existInList = list.find(item => item.id === currentAddress)
     if (!existInList) {
-      const [token] = await $token.api.backend.all({
+      const [token] = await $token.api.all({
         page: 1,
         page_size: 1,
         chain_id: blockchain.id,

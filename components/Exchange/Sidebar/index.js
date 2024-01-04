@@ -1,15 +1,19 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
+import dynamic from 'next/dynamic'
 import cn from 'classnames'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
 
 import App from '@/components/App'
-import SidebarSearch from '@/components/Exchange/Sidebar/SidebarSearch'
-import SidebarSort from '@/components/Exchange/Sidebar/SidebarSort'
+// import SidebarSearch from '@/components/Exchange/Sidebar/SidebarSearch'
+// import SidebarSort from '@/components/Exchange/Sidebar/SidebarSort'
 import SidebarItem from '@/components/Exchange/Sidebar/SidebarItem'
+
+const SidebarSearch = dynamic(() => import('@/components/Exchange/Sidebar/SidebarSearch'), {ssr: false})
+const SidebarSort = dynamic(() => import('@/components/Exchange/Sidebar/SidebarSort'), {ssr: false})
 
 import styles from './styles.module.scss'
 
@@ -71,7 +75,7 @@ const Sidebar = ({ version }) => {
   }
 
   const fetchTokensList = async () => {
-    const tokens = await $token.api.backend.all({
+    const tokens = await $token.api.all({
       page: pages.current,
       page_size: pages.perPage,
       chain_id: blockchain.id,

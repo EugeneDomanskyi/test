@@ -6,7 +6,7 @@ import cn from 'classnames'
 import $portfolio from '@/store/portfolio'
 
 import App from '@/components/App'
-import Tabs from '@/components/Exchange/Tabs'
+import Tabs from '@/components/Exchange/TradeForm/Tabs'
 import TradeFormToken from '@/components/Exchange/TradeForm/TradeFormToken'
 
 const TradeForm = forwardRef(({ version, onSubmit, prevProps }, ref) => {

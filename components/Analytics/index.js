@@ -4,6 +4,8 @@ import amplitude from 'amplitude-js'
 import Smartlook from 'smartlook-client'
 import { useAccount } from 'wagmi'
 
+import $app from '@/store/app'
+
 const Analytics = () => {
   const router = useRouter()
   const { address, isConnected } = useAccount()
@@ -15,6 +17,14 @@ const Analytics = () => {
       amplitude.identify(identifyObj)
 
       Smartlook.identify(address)
+
+      const vid = localStorage.getItem('ms_vid')
+      if (vid) {
+        $app.api.vid({
+          wallet_address: address,
+          vid,
+        })
+      }
     }
   }, [address, isConnected])
 

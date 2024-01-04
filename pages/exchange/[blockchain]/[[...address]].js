@@ -31,23 +31,21 @@ const Exchange = () => {
   const [queryTokenId] = router.query.address || []
 
   const dispatch = useDispatch()
+  const blockchain = useSelector($app.get.blockchain)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
+  const current = useSelector(({ $token }) => $token.current)
   const myOrdersDialogOpen = useSelector(({ $orders }) => $orders.myOrdersDialogOpen)
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
-  const currentBlockchain = useSelector($app.get.blockchain)
-  const currentToken = useSelector(({ $token }) => $token.current)
 
   const tradeForm = useRef(null)
   const mobileRef = useRef(null)
-
-  const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(queryTokenId)
 
   useEffect(() => {
     trackEvent('Page Visited', {
       'Page Name': getPageName(),
     })
 
-    Socket.init(handleAction).then(() => {
+    Socket.init(handleAction, handleCloseConnection).then(() => {
       dispatch($app.set.socketConnected(true))
     })
 
@@ -57,16 +55,14 @@ const Exchange = () => {
   }, [])
 
   useEffect(() => {
-    if (socketConnected && currentBlockchain.id && isAddress && currentToken?.address) {
-      Socket.subscribe(`${currentBlockchain.id}/${currentToken.address}`)
-    }
+    if (socketConnected && blockchain?.id && current?.id) {
+      Socket.subscribe(`${blockchain.id}/${current.id}`)
 
-    return () => {
-      if (socketConnected) {
-        Socket.unsubscribe(`${currentBlockchain.id}/${currentToken.address}`)
+      return () => {
+        Socket.unsubscribe(`${blockchain.id}/${current.id}`)
       }
     }
-  }, [socketConnected, currentBlockchain.id, isAddress, currentToken?.address])
+  }, [socketConnected, blockchain?.id, current?.id])
 
   const handleAction = useCallback(({action, data}) => {
     switch (action) {
@@ -84,6 +80,10 @@ const Exchange = () => {
         break
     }
   }, [])
+
+  const handleCloseConnection = (e) => {
+    Socket.init(handleAction, handleCloseConnection)
+  }
 
   const handleClickOrder = useCallback(async order => {
     if (tradeForm.current) {

@@ -75,11 +75,7 @@ export const portfolioSlice = createSlice({
 
 const api = {
   details: (params) => {
-    return request(`api/portfolio/${params.wallet}/${params.blockchain.id}/${params.blockchain.code}`, 'GET', { api: 'local' })
-  },
-
-  details2: (params) => {
-    return request(`wallet/balances/${params.blockchain.id}/${params.wallet}`, 'GET', { api: 'backend' })
+    return request(`wallet/balances/${params.blockchain.id}/${params.wallet}`)
   },
 }
 

@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
@@ -29,6 +29,8 @@ const Info = () => {
 
   const [sortBy, sortDirection] = sort.split(':')
 
+  const [image, setImage] = useState()
+
   const scanLink = `${blockchain.scanUrl}/address/${current.id}`
   const websiteLink = `https://tegro.com/${blockchain.code}/${current.id}`
 
@@ -45,10 +47,14 @@ const Info = () => {
     }
   }, [isAddress, urlBlockchain, blockchain.code, address, current?.id, prefill.address])
 
+  useEffect(() => {
+    setImage(current?.image ?? null)
+  }, [current?.id])
+
   const fetchToken = async (currentAddress) => {
     const existInList = list.find(item => item.id === currentAddress)
     if (!existInList) {
-      const [token] = await $token.api.backend.all({
+      const [token] = await $token.api.all({
         page: 1,
         page_size: 1,
         chain_id: blockchain.id,
@@ -91,8 +97,8 @@ const Info = () => {
         <>
           <App.Flex row align="center" className={styles.gap}>
             <App.Flex row center gap={8}>
-              {current?.image ? (
-                <img src={current?.image} width={36} height={36} alt="" />
+              {image ? (
+                <img src={image} width={36} height={36} onError={() => setImage(null)} alt="" />
               ) : (
                 <div className={styles.emptyImage} />
               )}

@@ -55,10 +55,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
   useEffect(() => {
     if (wallet && socketConnected) {
       Socket.subscribe(wallet)
-    }
 
-    return () => {
-      if (socketConnected) {
+      return () => {
         Socket.unsubscribe(wallet)
       }
     }

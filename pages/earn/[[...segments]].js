@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { hexToString } from 'viem'
-import { Web3Storage } from 'web3.storage'
-import moment from 'moment'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
+import moment from 'moment'
 import Head from 'next/head'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -15,6 +13,7 @@ import $raffle from '@/store/raffle'
 
 import App from '@/components/App'
 import Raffle from '@/components/Raffle'
+import Contracts from '@/libs/contracts.lib'
 
 const getApolloClient = (blockchain) => {
   const uri = blockchain?.raffle?.subgraph
@@ -39,12 +38,12 @@ const RafflePage = () => {
 
   const apollo = useRef()
   const alchemy = useRef()
+  const contracts = new Contracts()
 
   const prevWallet = useRef()
   const reward = useRef()
 
   const requiredChain = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
-  // const requiredChain = 'polygon'
 
   useEffect(() => {
     trackEvent('Page Visited', {
@@ -69,7 +68,6 @@ const RafflePage = () => {
         })
 
         if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('campaigns')) {
-          // const campaigns = await getIpfsInfo(result.data.campaigns)
           const campaigns = result.data.campaigns
           const campaignIds = result.data.campaigns.map(item => item.id)
           const queryString = campaignIds.map(id => `campaignIds[]=${id}`).join('&')
@@ -127,29 +125,6 @@ const RafflePage = () => {
     }
   }, [wallet, campaignLoading, blockchain.code])
 
-  // const getUserSummary = async (hard = false) => {
-  //   if (hard) {
-  //     apollo.current = getApolloClient(blockchain)
-  //   }
-
-  //   const result = await apollo.current.query({
-  //     query: $raffle.query.user,
-  //     variables: {
-  //       id: wallet,
-  //     },
-  //   })
-
-  //   if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('user')) {
-  //     const user = result.data.user
-  //     if (user) {
-  //       dispatch($raffle.set.user({
-  //         ...user,
-  //         totalEarned: user.totalEarned / Math.pow(10, 6),
-  //       }))
-  //     }
-  //   }
-  // }
-
   const getUserCases = async (hard = false) => {
     if (hard) {
       apollo.current = getApolloClient(blockchain)
@@ -184,12 +159,7 @@ const RafflePage = () => {
   }
 
   const getUserTKeysBalance = async () => {
-    // const network = await changeNetwork(blockchain.code)
-    // if ( ! network) {
-    //   return
-    // }
-
-    const balance = await alchemy.current.getNftsForOwnerCollectionCount(wallet, blockchain.raffle.contract)
+    const balance = await contracts.balanceOfTkeys(wallet, blockchain.raffle.contract)
     dispatch($raffle.set.balance(balance))
   }
 
@@ -220,68 +190,6 @@ const RafflePage = () => {
         }
       }
     }
-  }
-
-  // const getIpfsInfo = async (campaigns) => {
-  //   const client = new Web3Storage({ token: process.env.NEXT_PUBLIC_WEB3_STORAGE_API_KEY })
-  //   const promises = campaigns.map(item => {
-  //     const hash = hexToString(item.ipfsHash)
-  //     return client.get(hash)
-  //   })
-
-  //   const result = []
-  //   const responses = await Promise.all(promises)
-  //   for (const index in responses) {
-  //     const response = responses[index]
-  //     if (response.ok) {
-  //       const cid = response.url.split('/').pop()
-  //       const files = await response.files()
-  //       const file = files.find(item => item.name == 'info.json')
-  //       if (file) {
-  //         const info = await readIpfsInfo(file)
-  //         const campaign = campaigns[index]
-  //         result.push({
-  //           ...campaign,
-  //           ...info,
-  //         })
-  //       }
-  //     } else {
-  //       result.push({
-  //         id: 0,
-  //         ipfsHash: '0x00',
-  //         rewardAmount: 100000000,
-  //         totalTransferred: 0,
-  //         tKeyRequired: 3,
-  //         status: 'ACTIVE',
-  //         startTimestamp: 1695204437,
-  //         endTimestamp: 1695215237,
-  //         title: 'Unknown Campaign',
-  //         image: '/images/raffle/usdt.png',
-  //       })
-  //     }
-  //   }
-
-  //   return result
-  // }
-
-  const readIpfsInfo = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-  
-      reader.addEventListener('load', (e) => {
-        const fileContent = e.target.result
-        const parsedContent = JSON.parse(fileContent)
-        parsedContent.odds = parsedContent.rewardRange
-        delete parsedContent.rewardRange
-        resolve(parsedContent)
-      });
-  
-      reader.addEventListener('error', (error) => {
-        reject(error)
-      });
-  
-      reader.readAsText(file)
-    })
   }
 
   const getStatus = (item) => {

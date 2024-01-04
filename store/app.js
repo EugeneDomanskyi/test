@@ -1,7 +1,8 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import { setCookie } from 'nookies'
-import { gql } from '@apollo/client'
+
 import { CHAINS } from '@/config'
+
 import { request } from './index'
 
 export const appSlice = createSlice({
@@ -11,7 +12,6 @@ export const appSlice = createSlice({
     socketConnected: false,
     code: null,
     blockchains: CHAINS,
-    marketInfo: [],
     size: {
       isMobile: null,
       windowWidth: null,
@@ -24,9 +24,11 @@ export const appSlice = createSlice({
       state.code = payload
       setCookie(null, 'blockchain', payload, {path: '/'})
     },
+
     socketConnected: (state, { payload }) => {
       state.socketConnected = payload
     },
+
     size: (state, { payload }) => {
       state.size = {
         isMobile: payload?.isMobile ?? (payload?.width ? payload.width <= 768 : false),
@@ -34,9 +36,6 @@ export const appSlice = createSlice({
         windowHeight: payload?.height,
       }
     },
-    marketInfo: (state, { payload }) => {
-      state.marketInfo = payload
-    }
   },
 })
 
@@ -45,41 +44,30 @@ export const get = {
     return $app.blockchains.find(item => item.code == $app.code)
   },
 
-  blockchainByCode: (code) => ({ $app }) => {
-    return $app.blockchains.find(item => item.code == code)
-  },
-
   pageBlockchains: (page) => createSelector([
     (state) => state.$app.blockchains,
   ], (blockchains) => {
     return blockchains.filter(item => item.pages.some(el => el == page))
   }),
+}
 
-  walletConnectedCount: () => {
+export const api = {
+  walletCount: () => {
     return request('https://us-central1-vibrant-waters-399406.cloudfunctions.net/fetch_connected_wallet_count', 'GET', {api: 'remote'}) 
   },
-}
 
-export const post = {
-  sendVid: (data) => {
-    return request("https://us-central1-vibrant-waters-399406.cloudfunctions.net/connect-wallet-vid", 'POST', {api: 'remote', data})
+  vid: (params) => {
+    return request(`https://us-central1-vibrant-waters-399406.cloudfunctions.net/connect-wallet-vid`, 'POST', { api: 'remote', ...params })
   },
-}
 
-const query = {
-  totalVolume: gql`
-    query totalVolume {
-      totalVolume(id: "usdt_volume") {
-        volume
-      }
-    }
-  `,
+  volume: (params) => {
+    return request(`https://us-central1-vibrant-waters-399406.cloudfunctions.net/magic_square_trade_volume_check`, 'POST', { api: 'remote', ...params })
+  },
 }
 
 export default {
   reducer: appSlice.reducer,
   set: appSlice.actions,
-  query,
+  api,
   get,
-  post,
 }

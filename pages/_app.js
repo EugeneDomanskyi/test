@@ -2,7 +2,6 @@ import { useRef, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { useRouter } from 'next/router'
 import { userAgentFromString } from 'next/server'
-import { ToastContainer } from 'react-toastify'
 import nookies from 'nookies'
 import amplitude from 'amplitude-js'
 import * as Sentry from '@sentry/nextjs'
@@ -24,7 +23,6 @@ import Head from '@/components/Head'
 
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
-import 'react-toastify/dist/ReactToastify.css'
 import '@rainbow-me/rainbowkit/styles.css'
 import '@/styles/globals.css'
 import '@/styles/roulette_design.css'
@@ -32,13 +30,7 @@ import '@/styles/roulette_design.css'
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
     dsn: 'https://b6059579615abe9ca86108562cbeb308@o1399663.ingest.sentry.io/4505906094538752',
-    // integrations: [
-    //   new Sentry.BrowserTracing(),
-    //   new Sentry.Replay(),
-    // ],
-    // Performance Monitoring
     tracesSampleRate: 0.1, // Capture 100% of the transactions, reduce in production!
-    // Session Replay
     replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
     replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
   })
@@ -88,14 +80,15 @@ const RainbowTheme = merge(darkTheme({ overlayBlur: 'small' }), {
 
 amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
 
-function MyApp({ Component, pageProps, initialData, currentInfo, currentPage, currentSymbol, ssRoute }) {
+function MyApp({ Component, pageProps, initialData, ssRoute }) {
   const router = useRouter()
-  const storeRef = useRef(store(initialData, currentPage, currentInfo)).current
+  const storeRef = useRef(store(initialData)).current
 
   useEffect(() => {
     if (router?.query?.vid) {
       localStorage.setItem('ms_vid', router.query.vid)
     }
+    
     if (process.env.NEXT_PUBLIC_APP_ENV !== 'local') {
       Smartlook.init('cf71ed516173943775e4d8cc10245b95b9ed7de0')
     }
@@ -105,15 +98,13 @@ function MyApp({ Component, pageProps, initialData, currentInfo, currentPage, cu
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
         <Provider store={storeRef}>
-          <Head route={ssRoute} currentInfo={currentInfo} currentPage={currentPage} currentSymbol={currentSymbol} />
+          <Head route={ssRoute} />
 
           <Wrapper>
             <Component {...pageProps} />
           </Wrapper>
 
-          <App.Modal />
           <App.Alert />
-          <ToastContainer autoClose={3000} />
         </Provider>
       </RainbowKitProvider>
     </WagmiConfig>
@@ -123,20 +114,11 @@ function MyApp({ Component, pageProps, initialData, currentInfo, currentPage, cu
 MyApp.getInitialProps = async ({ ctx }) => {
   const cookies = nookies.get(ctx)
 
-  let currentInfo = {}
-  let currentPage = ''
-  let currentSymbol = ''
-  if (ctx?.req) {
-    const [_, page, blockchain, address] = ctx.req.url.split('/')
-    currentPage = page
-  }
-
   let ssRoute = ''
-  let marketsList = []
   let isMobile = null
 
   if (ctx?.req) {
-    ssRoute = (ctx.req.url)
+    ssRoute = ctx.req.url
 
     const { device } = userAgentFromString(ctx.req.headers['user-agent'])
     isMobile = device.type === 'mobile'
@@ -146,11 +128,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
     initialData: {
       blockchain: cookies.blockchain,
       isMobile,
-      marketsList,
     },
-    currentInfo,
-    currentPage,
-    currentSymbol,
     ssRoute,
   }
 }

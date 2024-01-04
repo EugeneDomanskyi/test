@@ -53,7 +53,7 @@ const SidebarSearch = () => {
 
     const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(searchText)
     
-    const tokens = await $token.api.backend.all({
+    const tokens = await $token.api.all({
       page: 1,
       page_size: pages.perPage,
       chain_id: blockchain.id,

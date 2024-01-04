@@ -7,10 +7,10 @@ import $app from '@/store/app'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import { trackEvent } from '@/libs/analytics.lib'
-import { subscribeToBalanceUpdates } from '@/libs/helpers'
+import Contracts from '@/libs/contracts.lib'
 
 import App from '@/components/App'
-import TradeInput from '@/components/Exchange/TradeInput'
+import TradeInput from '@/components/Exchange/TradeForm/TradeInput'
 import OrderConfirm from '@/components/Exchange/OrderConfirm'
 
 import styles from './styles.module.scss'
@@ -39,7 +39,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const blockchain = useSelector($app.get.blockchain)
 
   const [form, setForm] = useState({price: '', amount: '1', total: '0'})
-  const [userBalances, setUserBalances] = useState({token: 0, usdt: 0})
+  const [userBalances, setUserBalances] = useState({base: 0, quote: 0})
   const [wasUserBalance, setWasUserBalance] = useState(false)
   const [wasUserInput, setWasUserInput] = useState(false)
   const [isErrorBalance, setIsErrorBalance] = useState(false)
@@ -49,8 +49,9 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const isDisabled = !(form.amount*1) || !(form.price*1) || !(form.total*1)
 
   const loadingRef = useRef(false)
+  const unsubscribeRef = useRef()
 
-  const usdtFormatted = blockchain.usdt
+  const contracts = new Contracts()
 
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
@@ -85,26 +86,31 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
 
   useEffect(() => {
     if (wasUserBalance) {
-      setIsErrorBalance(currentTab == 'buy' && (form.total * 1 > userBalances.usdt * 1) || currentTab == 'sell' && (form.amount * 1 > userBalances.token * 1))
+      setIsErrorBalance(currentTab == 'buy' && (form.total * 1 > userBalances.quote * 1) || currentTab == 'sell' && (form.amount * 1 > userBalances.base * 1))
     }
   }, [form.total, form.amount, currentTab, wasUserBalance])
 
   useEffect(() => {
-    const unsubscribe = subscribeToBalanceUpdates(blockchain.id, wallet, [current?.address, current?.quote], (res) => {
-      const balances = Object.entries(res).reduce((acc, [address, balance]) => ({
-        ...acc,
-        [address === current?.quote ? 'usdt' : 'token']: balance,
-      }), {usdt: 0, token: 0})
-      setUserBalances(balances)
-      setWasUserBalance(true)
-    })
+    if (wallet && current?.address) {
+      (async () => {
+        unsubscribeRef.current = await contracts.watchBalance(wallet, [current?.address, current?.quote], (result) => {
+          const balances = Object.entries(result).reduce((acc, [address, balance]) => ({
+            ...acc,
+            [address === current?.quote ? 'quote' : 'base']: balance,
+          }), {usdt: 0, token: 0})
+
+          setUserBalances(balances)
+          setWasUserBalance(true)
+        })
+      })()
+    }
 
     return () => {
-      if (unsubscribe) {
-        unsubscribe()
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current()
       }
     }
-  }, [wallet, blockchain.id, current?.address])
+  }, [wallet, current?.address])
 
   const handleSetPrice = (inputByUser = true, tab = currentTab) => {
     handleChangeForm('price', inputByUser)(current?.trade?.[tab] || current.price || 0)
@@ -228,9 +234,9 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
 
   const handleClickMultipler = (percentage) => () => {
     if (currentTab === 'buy') {
-      handleChangeForm('total', true)(userBalances.usdt * percentage)
+      handleChangeForm('total', true)(userBalances.quote * percentage)
     } else {
-      handleChangeForm('amount', true)(userBalances.token * percentage)
+      handleChangeForm('amount', true)(userBalances.base * percentage)
     }
   }
 
@@ -244,7 +250,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
         <App.Flex flex={1} align="center" gap={4}>
           <App.Icon icon="wallet" width={10} height={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} />
           <App.Text size={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} height={1}>
-            {currentTab === 'buy' ? `${userBalances.usdt} USDT` : `${userBalances.token} ${current.symbol}`}
+            {currentTab === 'buy' ? `${userBalances.quote} USDT` : `${userBalances.base} ${current.symbol}`}
           </App.Text>
         </App.Flex>
 

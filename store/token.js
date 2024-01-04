@@ -139,10 +139,8 @@ const get = {
 }
 
 const api = {
-  backend: {
-    all: (params) => {
-      return request('market/list', 'GET', {api: 'backend', ...params})
-    },
+  all: (params) => {
+    return request('market/list', 'GET', params)
   },
 }
 

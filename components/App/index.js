@@ -11,7 +11,6 @@ import AppHr from '@/components/App/AppHr'
 import AppIcon from '@/components/App/AppIcon'
 import AppLoader from '@/components/App/AppLoader'
 import AppLoaderBlock from '@/components/App/AppLoaderBlock'
-import AppModal from '@/components/App/AppModal'
 import AppPagination from '@/components/App/AppPagination'
 import AppSwitch from '@/components/App/AppSwitch'
 import AppTabs from '@/components/App/AppTabs'
@@ -36,7 +35,6 @@ export default {
   Icon: AppIcon,
   Loader: AppLoader,
   LoaderBlock: AppLoaderBlock,
-  Modal: AppModal,
   Pagination: AppPagination,
   Switch: AppSwitch,
   Tabs: AppTabs,

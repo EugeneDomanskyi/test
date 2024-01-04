@@ -3,17 +3,17 @@ import { useRouter } from 'next/router'
 import HeadDefault from './HeadDefault'
 import HeadExchange from './HeadExchange'
 
-const Head = ({ route, ...props }) => {
+const Head = ({ route }) => {
   const router = useRouter()
 
   const getHead = () => {
     const currentRoute = route || router.asPath
 
     if (currentRoute.includes('exchange')) {
-      return <HeadExchange {...props} />
+      return <HeadExchange />
     }
 
-    return <HeadDefault {...props} />
+    return <HeadDefault />
   }
 
   return getHead()

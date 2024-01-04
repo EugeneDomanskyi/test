@@ -1,9 +1,9 @@
 import Head from 'next/head'
 import { useSelector } from 'react-redux'
 
-const HeadExchange = ({ currentInfo }) => {
+const HeadExchange = () => {
   const current = useSelector(({ $token }) => $token.current)
-  const initCurrent = currentInfo?.id ? currentInfo : current
+  const initCurrent = current
 
   const getTitle = () => {
     if (initCurrent?.id) {

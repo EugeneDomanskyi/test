@@ -104,6 +104,14 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         return handleError('Order Not Created', result?.error)
       }
 
+      const vid = localStorage.getItem('ms_vid')
+      if (vid) {
+        $app.api.volume({
+          wallet_address: wallet,
+          vid,
+        })
+      }
+
       if (onClose) {
         onClose()
       }

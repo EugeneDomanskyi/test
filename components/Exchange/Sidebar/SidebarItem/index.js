@@ -1,4 +1,4 @@
-import { memo, useRef } from 'react'
+import { memo, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
@@ -25,6 +25,8 @@ const SidebarItem = ({ item, version }) => {
   const blockchain = useSelector($app.get.blockchain)
   const current = useSelector(({ $token }) => $token.current)
 
+  const [image, setImage] = useState(item.image)
+
   const colors = useRef([getRandomColor(), getRandomColor()])
 
   const handleClick = () => {
@@ -49,8 +51,8 @@ const SidebarItem = ({ item, version }) => {
   return (
     <App.Flex row justify="space-between" align="center" onClick={handleClick} className={cn(styles.market, styles.version, {[styles.active]: (current.id == item.id)})}>
       <App.Flex row gap={4} align="center">
-        {item.image ? (
-          <Image src={item.image} priority width={version == 'mobile' ? 30 : 26} height={version == 'mobile' ? 30 : 26} className={styles.image} alt="" />
+        {image ? (
+          <Image src={image} priority onError={() => setImage(null)} width={version == 'mobile' ? 30 : 26} height={version == 'mobile' ? 30 : 26} className={styles.image} alt="" />
         ) : (
           <div className={styles.emptyImage} style={{background: `linear-gradient(0deg, ${colors.current[0]}, ${colors.current[1]})`}}>
             <App.Text center size={10} weight={600}>{ getSymbolForLogo() }</App.Text>

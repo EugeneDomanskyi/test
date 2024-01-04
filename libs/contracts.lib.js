@@ -1,4 +1,5 @@
-import { prepareWriteContract, waitForTransaction, writeContract, readContract } from '@wagmi/core'
+import { prepareWriteContract, waitForTransaction, writeContract, readContract, multicall, watchMulticall } from '@wagmi/core'
+import { formatUnits } from 'viem'
 
 import abi from './abi.lib'
 
@@ -283,14 +284,13 @@ export default function Contracts(defaultGasLimit = null) {
       return result
     },
 
-    balanceOfTkeys: async (wallet, contract, tokenId) => {
+    balanceOfTkeys: async (wallet, contract) => {
       const result = await methods.readContract({
         address: contract,
-        abi: abi.tkeys.balanceOf,
+        abi: abi.erc721.balanceOf,
         functionName: 'balanceOf',
         args: [
           wallet,
-          tokenId,
         ],
       })
 
@@ -386,7 +386,54 @@ export default function Contracts(defaultGasLimit = null) {
       }
 
       return {error: 'Wrong blockchain'}
-    }
+    },
+
+    watchBalance: async (wallet, contracts, callback) => {
+      const calls = contracts.flatMap((contract) => ([{
+        address: contract,
+        abi: abi.erc20.decimals,
+        functionName: 'decimals',
+        args: [],
+      }, {
+        address: contract,
+        abi: abi.erc20.balanceOf,
+        functionName: 'balanceOf',
+        args: [
+          wallet,
+        ],
+      }]))
+
+      multicall({
+        contracts: calls,
+        listenToBlock: true,
+      })
+
+      return watchMulticall({
+        contracts: calls,
+        listenToBlock: true,
+      }, (data) => {
+        const result = data.reduce((acc, response, i, array) => {
+          if (!response.hasOwnProperty('result')) {
+            return acc
+          }
+
+          const isBalance = i % 2
+          if (isBalance) {
+            const decimals = array[i - 1].result
+            return {
+              ...acc,
+              [contracts[parseInt(i / 2)]]: formatUnits(response?.result ?? '', decimals)
+            }
+          }
+
+          return acc
+        }, {})
+
+        if (callback) {
+          callback(result)
+        }
+      })
+    },
   }
 
   return methods

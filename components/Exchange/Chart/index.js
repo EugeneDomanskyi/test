@@ -6,7 +6,7 @@ import cn from 'classnames'
 import * as LightweightCharts from 'lightweight-charts'
 
 import $app from '@/store/app'
-import $exchange from '@/store/exchange'
+import $orders from '@/store/orders'
 
 import App from '@/components/App'
 
@@ -89,9 +89,9 @@ const INTERVALS = [
 const TradeChart = ({ version, showSwitch, top = [] }) => {
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
-  const activeInterval = useSelector(({$exchange}) => $exchange.interval)
   const current = useSelector(({ $token }) => $token.current)
-  const chartData = useSelector(({ $exchange }) => $exchange.chart)
+  const activeInterval = useSelector(({$orders}) => $orders.interval)
+  const chartData = useSelector(({ $orders }) => $orders.chart)
 
   const [variant, setVariant] = useState('candlesticks')
 
@@ -126,12 +126,12 @@ const TradeChart = ({ version, showSwitch, top = [] }) => {
       interval: activeInterval.seconds,
     }
 
-    const result = await $exchange.api.chart(post)
-    dispatch($exchange.set.chart(result ?? []))
+    const result = await $orders.api.chart(post)
+    dispatch($orders.set.chart(result ?? []))
   }
 
   const handleChangeInterval = (interval) => () => {
-    dispatch($exchange.set.interval(interval))
+    dispatch($orders.set.interval(interval))
   }
 
   const buildChart = () => {

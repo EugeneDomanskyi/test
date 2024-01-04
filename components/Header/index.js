@@ -9,12 +9,12 @@ import { useRouter } from 'next/router'
 import { CHAINS } from '@/config'
 
 import App from '@/components/App'
-import SwitchBlockchain from '@/components/SwitchBlockchain'
-import NavbarDropdown from '@/components/NavbarDropdown'
+import SwitchBlockchain from '@/components/Header/SwitchBlockchain'
+import NavbarDropdown from '@/components/Header/NavbarDropdown'
 import HeaderWallet from '@/components/Header/HeaderWallet'
+import StoriesButton from '@/components/Header/StoriesButton'
 
 import styles from './styles.module.scss'
-import StoriesButton from './StoriesButton'
 
 const Header = () => {
   const router = useRouter()

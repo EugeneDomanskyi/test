@@ -45,7 +45,7 @@ const LandingPage = () => {
   const tradeLink = '/exchange/ethereum/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2?src=campaign'
 
   useEffect(() => {
-    dispatch($app.get.walletConnectedCount).then(res => {
+    dispatch($app.api.walletCount).then(res => {
       if (res.data) {
         setWalletsCount(res.data.count)
       }

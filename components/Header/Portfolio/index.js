@@ -122,7 +122,11 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
                     <App.Flex key={item.address} column className={cn(styles.row, styles.clickable)} onMouseLeave={handleClick(null)} onClick={handleClick(item.address)}>
                       <App.Flex row align="center" justify="space-between">
                         <App.Flex row gap={8} align="center">
-                          <Image src={item.image} width={40} height={40} alt="" />
+                          {item.image ? (
+                            <Image src={item.image} width={40} height={40} alt="" />
+                          ) : (
+                            <div className={styles.emptyImage} />
+                          )}
 
                           <App.Flex column gap={6}>
                             <App.Text size={16} weight={700} height={1}>{item.name}</App.Text>
