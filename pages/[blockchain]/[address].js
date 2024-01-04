@@ -6,9 +6,7 @@ import Head from 'next/head'
 import { usePropsHelper } from '@/myhooks/props-helper'
 import { trackEvent, getPageName } from '@/libs/analytics.lib'
 import { CHAINS } from '@/config'
-import { fetchPrices, getTokens, getFull } from '@/api_services/tokens'
 import $token, { template } from '@/store/token'
-import $exchange from '@/store/exchange'
 import $markets from '@/store/markets'
 
 import App from '@/components/App'
@@ -31,157 +29,156 @@ import FAQ from '@/components/Market/Details/FAQ'
 const token = 'fc873434915ecf9e639339b325338f768e1f5b81fc88e3e4299641a3f87de70fcf93c09316c0d1e5146fa36171076ead7c5797f1d1882f35a9f60aaf5ec065ad7757b0615886847a307d3b25dbaadb42b98d63c59a39744667ff3f5438393a87f3b63ce948bfb260ac0041c44dbe0a10e1646dfa8f8d2c85abd18e45c0bb02c6'
 
 export default function Markets({ currentInfo, currentChain }) {
-  const dispatch = useDispatch()
-  const router = useRouter()
-  const { isMobile } = usePropsHelper()
+  // const dispatch = useDispatch()
+  // const router = useRouter()
+  // const { isMobile } = usePropsHelper()
 
-  const activeInterval = useSelector(({ $exchange }) => $exchange.interval)
+  // const activeInterval = useSelector(({ $exchange }) => $exchange.interval)
 
-  const isNfts = router.asPath?.includes('nfts')
-  const type = isNfts ? 'nfts' : 'tokens'
+  // const type = 'tokens'
 
-  const [marketInfo, setMarketInfo] = useState(currentInfo)
-
-  useEffect(() => {
-    trackEvent('Page Visited', {
-      'Page Name': getPageName(),
-    })
-  }, [])
+  // const [marketInfo, setMarketInfo] = useState(currentInfo)
 
   // useEffect(() => {
-  //   console.log('currentInfo', currentInfo);
-  //   // if (currentInfo) {
-  //   //   setMarketInfo(currentInfo)
-  //   // }
-  //   // test()
-  // }, [currentInfo])
+  //   trackEvent('Page Visited', {
+  //     'Page Name': getPageName(),
+  //   })
+  // }, [])
 
-  useEffect(() => {
-    if (currentInfo.id) {
-      dispatch($token.set.current(currentInfo))
-      $markets.api.strapi(currentInfo.id, token).then(res => {
-        if (res.data && res.data.length) {
-          const info = res.data[0].attributes
-          const resources = info?.project_data.project.resources.length ? info?.project_data.project.resources : null
-          const investors = info?.project_data.project.investors && info?.project_data.project.investors !== "null" ? info?.project_data.project.investors : null
-          const team = info?.project_data.project.creator.length ? info?.project_data.project.creator : null
-          const description = info?.token_metadata.token.long_description ?? null
-          const parent_collection_name = info?.token_metadata.token.parent_collection_name ?? null
-          const project_name = info?.token_metadata.token.project_name ?? null
+  // // useEffect(() => {
+  // //   console.log('currentInfo', currentInfo);
+  // //   // if (currentInfo) {
+  // //   //   setMarketInfo(currentInfo)
+  // //   // }
+  // //   // test()
+  // // }, [currentInfo])
 
-          setMarketInfo(state => (
-            {
-              ...state,
-              sampleImages: info?.token_metadata.token.nft_gallery ?? null,
-              resources: resources,
-              investors: investors,
-              team: team,
-              ...(description ? {description: description} : null),
-              ...(parent_collection_name ? {parent_collection_name: parent_collection_name} : null),
-              ...(project_name ? {project_name: project_name} : null),
-            }
-          ))
-        }
-      })
-      $exchange.api.get.tokenChartData(marketInfo.id, currentChain.code, activeInterval.seconds).then(res => {
-        if (res) {
-          setMarketInfo(state => (
-            {
-              ...state,
-              charts: true,
-            }
-          ))
-          dispatch($exchange.set.chartData({ type: 'tokens', data: res.data }))
-          return
-        }
+  // useEffect(() => {
+  //   if (currentInfo.id) {
+  //     dispatch($token.set.current(currentInfo))
+  //     $markets.api.strapi(currentInfo.id, token).then(res => {
+  //       if (res.data && res.data.length) {
+  //         const info = res.data[0].attributes
+  //         const resources = info?.project_data.project.resources.length ? info?.project_data.project.resources : null
+  //         const investors = info?.project_data.project.investors && info?.project_data.project.investors !== "null" ? info?.project_data.project.investors : null
+  //         const team = info?.project_data.project.creator.length ? info?.project_data.project.creator : null
+  //         const description = info?.token_metadata.token.long_description ?? null
+  //         const parent_collection_name = info?.token_metadata.token.parent_collection_name ?? null
+  //         const project_name = info?.token_metadata.token.project_name ?? null
 
-        setMarketInfo(state => (
-          {
-            ...state,
-            charts: null,
-          }
-        ))
-        dispatch($exchange.set.chartData({ type: 'tokens', data: [] }))
-      })
-    }
-  }, [currentInfo?.id, activeInterval.seconds])
+  //         setMarketInfo(state => (
+  //           {
+  //             ...state,
+  //             sampleImages: info?.token_metadata.token.nft_gallery ?? null,
+  //             resources: resources,
+  //             investors: investors,
+  //             team: team,
+  //             ...(description ? {description: description} : null),
+  //             ...(parent_collection_name ? {parent_collection_name: parent_collection_name} : null),
+  //             ...(project_name ? {project_name: project_name} : null),
+  //           }
+  //         ))
+  //       }
+  //     })
+  //     $exchange.api.get.tokenChartData(marketInfo.id, currentChain.code, activeInterval.seconds).then(res => {
+  //       if (res) {
+  //         setMarketInfo(state => (
+  //           {
+  //             ...state,
+  //             charts: true,
+  //           }
+  //         ))
+  //         dispatch($exchange.set.chartData({ type: 'tokens', data: res.data }))
+  //         return
+  //       }
 
-  const handleClickOrder = () => {
-    console.log();
-  }
+  //       setMarketInfo(state => (
+  //         {
+  //           ...state,
+  //           charts: null,
+  //         }
+  //       ))
+  //       dispatch($exchange.set.chartData({ type: 'tokens', data: [] }))
+  //     })
+  //   }
+  // }, [currentInfo?.id, activeInterval.seconds])
 
-  return (
-    <>
-      <Head>
-        <title>{`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Index, Live Chart, Marketcap & News | Tegro: The CEX-DEX`}</title>
-        <meta name="description" content={`Use Tegro: The CEX-DEX for real-time ${marketInfo.symbol ?? 'USDT'} prices and market data, ${marketInfo.name} orderbooks and the best ${marketInfo.symbol ?? 'USDT'} spot trading chart to buy, sell and trade instantly.`} />
-        <meta name="keywords" content={`${marketInfo.symbol ?? 'USDT'}, ${marketInfo.name}`} />
-        <meta property="og:title" content={`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Index, Live Chart, Marketcap & News | Tegro: The CEX-DEX`} />
-        <meta property="og:description" content={`Use Tegro: The CEX-DEX for real-time ${marketInfo.symbol ?? 'USDT'} prices and market data, ${marketInfo.name} orderbooks and the best ${marketInfo.symbol ?? 'USDT'} spot trading chart to buy, sell and trade instantly.`} />
-      </Head>
+  // const handleClickOrder = () => {
+  //   console.log();
+  // }
+
+  // return (
+  //   <>
+  //     <Head>
+  //       <title>{`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Index, Live Chart, Marketcap & News | Tegro: The CEX-DEX`}</title>
+  //       <meta name="description" content={`Use Tegro: The CEX-DEX for real-time ${marketInfo.symbol ?? 'USDT'} prices and market data, ${marketInfo.name} orderbooks and the best ${marketInfo.symbol ?? 'USDT'} spot trading chart to buy, sell and trade instantly.`} />
+  //       <meta name="keywords" content={`${marketInfo.symbol ?? 'USDT'}, ${marketInfo.name}`} />
+  //       <meta property="og:title" content={`${marketInfo.name} Price, ${marketInfo.symbol ?? 'USDT'} Price Index, Live Chart, Marketcap & News | Tegro: The CEX-DEX`} />
+  //       <meta property="og:description" content={`Use Tegro: The CEX-DEX for real-time ${marketInfo.symbol ?? 'USDT'} prices and market data, ${marketInfo.name} orderbooks and the best ${marketInfo.symbol ?? 'USDT'} spot trading chart to buy, sell and trade instantly.`} />
+  //     </Head>
       
-      <App.Container>
-        <App.Flex sx={{ paddingBottom: 48, paddingTop: 64, overflow: 'hidden' }} gap={32}>
-          {
-            marketInfo
-              ? !isMobile
-                ? <>
-                    <App.Flex column sx={{ flex: .8 }}>
-                      <Market.Details type={type} marketInfo={marketInfo} />
-                    </App.Flex>
+  //     <App.Container>
+  //       <App.Flex sx={{ paddingBottom: 48, paddingTop: 64, overflow: 'hidden' }} gap={32}>
+  //         {
+  //           marketInfo
+  //             ? !isMobile
+  //               ? <>
+  //                   <App.Flex column sx={{ flex: .8 }}>
+  //                     <Market.Details type={type} marketInfo={marketInfo} />
+  //                   </App.Flex>
 
-                    <App.Flex column sx={{ flex: .3 }} gap={48}>
-                      <Market.Trading type={type} marketInfo={marketInfo} />
-                    </App.Flex>
-                  </>
-                : <App.Flex column sx={{ paddingTop: 32, width: '100%', height: '100%' }} gap={48}>
-                    <Info type={type} marketInfo={marketInfo} />
-                    {
-                      marketInfo.price
-                        ? <TradeForm
-                            current={marketInfo}
-                            type={type}
-                          />
-                        : null
-                    }
-                    <OrderBook
-                      type={type}
-                      onClickOrder={handleClickOrder}
-                    />
-                    <LivePrice marketInfo={marketInfo} />
-                    <Stats marketInfo={marketInfo} />
-                    <Trending />
-                    <About marketInfo={marketInfo} />
-                    {
-                      marketInfo?.sampleImages
-                        ? <Images />
-                        : null
-                    }
-                    {/* <Ad /> */}
-                    {
-                      marketInfo.team
-                        ? <Team />
-                        : null
-                    }
-                    {
-                      marketInfo.invedtors
-                        ? <Investors />
-                        : null
-                    }
-                    {
-                      marketInfo?.resources
-                        ? <Resources marketInfo={marketInfo} />
-                        : null
-                    }
-                    {/* <Analysis /> */}
-                    <FAQ marketInfo={marketInfo} />
-                  </App.Flex>
-              : null
-          }
-        </App.Flex>
-      </App.Container>
-    </>
-  )
+  //                   <App.Flex column sx={{ flex: .3 }} gap={48}>
+  //                     <Market.Trading type={type} marketInfo={marketInfo} />
+  //                   </App.Flex>
+  //                 </>
+  //               : <App.Flex column sx={{ paddingTop: 32, width: '100%', height: '100%' }} gap={48}>
+  //                   <Info type={type} marketInfo={marketInfo} />
+  //                   {
+  //                     marketInfo.price
+  //                       ? <TradeForm
+  //                           current={marketInfo}
+  //                           type={type}
+  //                         />
+  //                       : null
+  //                   }
+  //                   <OrderBook
+  //                     type={type}
+  //                     onClickOrder={handleClickOrder}
+  //                   />
+  //                   <LivePrice marketInfo={marketInfo} />
+  //                   <Stats marketInfo={marketInfo} />
+  //                   <Trending />
+  //                   <About marketInfo={marketInfo} />
+  //                   {
+  //                     marketInfo?.sampleImages
+  //                       ? <Images />
+  //                       : null
+  //                   }
+  //                   {/* <Ad /> */}
+  //                   {
+  //                     marketInfo.team
+  //                       ? <Team />
+  //                       : null
+  //                   }
+  //                   {
+  //                     marketInfo.invedtors
+  //                       ? <Investors />
+  //                       : null
+  //                   }
+  //                   {
+  //                     marketInfo?.resources
+  //                       ? <Resources marketInfo={marketInfo} />
+  //                       : null
+  //                   }
+  //                   {/* <Analysis /> */}
+  //                   <FAQ marketInfo={marketInfo} />
+  //                 </App.Flex>
+  //             : null
+  //         }
+  //       </App.Flex>
+  //     </App.Container>
+  //   </>
+  // )
 }
 
 export async function getServerSideProps({ query }) {
