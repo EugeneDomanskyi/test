@@ -22,13 +22,11 @@ const OrderDetails = ({order}) => {
   const [trades, setTrades] = useState([])
 
   useEffect(() => {
-    if (blockchain?.useBackend) {
-      fetchTrades()
-    }
-  }, [blockchain?.useBackend])
+    fetchTrades()
+  }, [])
 
   const fetchTrades = async () => {
-    const result = await $orders.api.trades({ id: order.id })
+    const result = await $orders.api.details({ id: order.id })
     if (result && result.length) {
       setTrades(result)
     }

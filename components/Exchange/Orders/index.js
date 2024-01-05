@@ -11,16 +11,16 @@ import $app from '@/store/app'
 import $orders from '@/store/orders'
 import $alert from '@/store/alert'
 
-import App from '@/components/App'
 import { trackEvent, getPageName } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
+import App from '@/components/App'
 import OrderDetails from '@/components/Exchange/OrderDetails'
 
 const Orders = ({global, type, version, onClickOrder}) => {
   const router = useRouter()
 
-  const { wallet, connect, getConnectorName } = useWalletConnect()
+  const { wallet, connect, getConnectorName, sign } = useWalletConnect()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -93,13 +93,20 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
   const handleCancelAllConfirm = async () => {
     handleDialogClose('cancelAll')()
+    handleDialogOpen('approve')()
 
-    const hashes = orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map(order => order.orderHash )
-    const result = await $orders.api.cancelAll({ wallet, order_hashes: hashes, chain_id: blockchain.id })
-    if (result) {
-      dispatch($orders.set.list(result.data))
-      dispatch($alert.set.success({ title: 'All Orders Cancelled', text: 'All your live orders has been cancelled successfully!' }))
+    const signature = await sign(wallet)
+    if (signature) {
+      const result = await $orders.api.cancelAll({ wallet, chain_id: blockchain.id, signature })
+      if (result) {
+        dispatch($orders.set.list(result.data))
+        dispatch($alert.set.success({ title: 'All Orders Cancelled', text: 'All your live orders has been cancelled successfully!' }))
+      }
+    } else {
+      dispatch($alert.set.error({ title: 'Order Not Cancelled' }))
     }
+
+    handleDialogClose('approve')()
   }
 
   const handleDialogOpen = (key) => () => {
@@ -134,13 +141,18 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
     trackEvent('Cancel Order Submit', eventPost)
 
-    const result = await $orders.api.cancel({ order_hash: order.orderHash, chain_id: blockchain.id })
-    if (result) {
-      trackEvent('Cancel Order Success', eventPost)
-      dispatch($orders.set.update(result.data))
-      dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
+    const signature = await sign(wallet)
+    if (signature) {
+      const result = await $orders.api.cancel({ id: order.orderId, chain_id: blockchain.id, signature })
+      if (result) {
+        trackEvent('Cancel Order Success', eventPost)
+        dispatch($orders.set.update(result.data))
+        dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
+      } else {
+        dispatch($alert.set.error({ title: 'Order Not Cancelled', text: result }))
+      }
     } else {
-      dispatch($alert.set.error({ title: 'Order Not Cancelled', text: result }))
+      dispatch($alert.set.error({ title: 'Order Not Cancelled' }))
     }
     handleDialogClose('approve')()
   }

@@ -112,7 +112,7 @@ const HeaderWallet = () => {
 
     const result = await $portfolio.api.details({ wallet, blockchain })
     if (result) {
-      dispatch($portfolio.set.details(result))
+      dispatch($portfolio.set.details({data: result, blockchain}))
     }
 
     if (controlLoading) {

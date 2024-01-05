@@ -259,6 +259,7 @@ const useWalletConnect = () => {
     getBalance,
     getPrice,
     scanUrl,
+    sign,
     usdt,
     jsonRpcEndpoints,
     getAddress,

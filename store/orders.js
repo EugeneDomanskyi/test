@@ -78,6 +78,9 @@ export const ordersSlice = createSlice({
         [sides[side]]: values ?? []
       }), {})
       
+      list.buy.sort((a, b) => b.price * 1 - a.price * 1)
+      list.sell.sort((a, b) => a.price * 1 - b.price * 1)
+
       state.orderbook = Object.entries(list).reduce((acc, [side, values]) => {
         let prevVolume = 0
         return {
@@ -148,11 +151,15 @@ const api = {
   },
 
   cancel: (params) => {
-    return request(`market/orders/cancel`, 'POST', params)
+    return request(`market/orders/cancel/${params.id}`, 'POST', params)
   },
 
   cancelAll: (params) => {
-    return request(`market/orders/cancel/${params.wallet}`, 'POST', params)
+    return request(`market/orders/cancelAll`, 'POST', params)
+  },
+
+  details: (params) => {
+    return request(`market/orders/trades/${params.id}`)
   },
 }
 

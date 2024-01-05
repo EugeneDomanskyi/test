@@ -96,14 +96,14 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
                 <App.Text size={12} weight={600} height={1} color="#B9B8C5">Balance</App.Text>
                 <App.Text size={[32, 24]} weight={700} height={1}>${portfolioUsd}</App.Text>
 
-                {portfolioUsd * 0 > 0 ? (
+                {/* {portfolioUsd * 0 > 0 ? (
                   <App.Flex align="center" gap={4}>
                     {portfolioTicker?.type != 'zero' ? (
                       <App.Icon style={{transform: `rotate(${portfolioTicker?.type == 'minus' ? '0' : '180'}deg)`}} icon="caret-down" color={portfolioTicker?.type == 'minus' ? '#FF1D61' : '#53F19C' } width={12} height={12} />
                     ) : null}
                     <App.Text size={[16, 14]} height={1} color={portfolioTicker?.type == 'minus' ? '#FF1D61' : portfolioTicker?.type == 'plus' ? '#53F19C' : '#B9B8C5'}>{ portfolioTicker?.percent }%</App.Text>
                   </App.Flex>
-                ) : null}
+                ) : null} */}
               </App.Flex>
             </App.Flex>
           </App.Frame>

@@ -35,7 +35,7 @@ const checkPrice = (price, tab, marketPrice) => {
 
 const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onSubmit}, ref) => {
   const { wallet, changeNetwork } = useWalletConnect()
-  
+
   const blockchain = useSelector($app.get.blockchain)
 
   const [form, setForm] = useState({price: '', amount: '1', total: '0'})
@@ -97,7 +97,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
           const balances = Object.entries(result).reduce((acc, [address, balance]) => ({
             ...acc,
             [address === current?.quote ? 'quote' : 'base']: balance,
-          }), {usdt: 0, token: 0})
+          }), {quote: 0, base: 0})
 
           setUserBalances(balances)
           setWasUserBalance(true)

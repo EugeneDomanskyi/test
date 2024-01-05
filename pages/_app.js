@@ -3,9 +3,6 @@ import { Provider } from 'react-redux'
 import { useRouter } from 'next/router'
 import { userAgentFromString } from 'next/server'
 import nookies from 'nookies'
-import amplitude from 'amplitude-js'
-import * as Sentry from '@sentry/nextjs'
-import Smartlook from 'smartlook-client'
 import merge from 'lodash.merge'
 
 import { getDefaultWallets, RainbowKitProvider, darkTheme, connectorsForWallets } from '@rainbow-me/rainbowkit'
@@ -26,15 +23,6 @@ import 'slick-carousel/slick/slick-theme.css'
 import '@rainbow-me/rainbowkit/styles.css'
 import '@/styles/globals.css'
 import '@/styles/roulette_design.css'
-
-if (process.env.NODE_ENV === 'production') {
-  Sentry.init({
-    dsn: 'https://b6059579615abe9ca86108562cbeb308@o1399663.ingest.sentry.io/4505906094538752',
-    tracesSampleRate: 0.1, // Capture 100% of the transactions, reduce in production!
-    replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
-    replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
-  })
-}
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   CHAINS, [
@@ -78,8 +66,6 @@ const RainbowTheme = merge(darkTheme({ overlayBlur: 'small' }), {
   },
 })
 
-amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
-
 function MyApp({ Component, pageProps, initialData, ssRoute }) {
   const router = useRouter()
   const storeRef = useRef(store(initialData)).current
@@ -87,10 +73,6 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
   useEffect(() => {
     if (router?.query?.vid) {
       localStorage.setItem('ms_vid', router.query.vid)
-    }
-    
-    if (process.env.NEXT_PUBLIC_APP_ENV !== 'local') {
-      Smartlook.init('cf71ed516173943775e4d8cc10245b95b9ed7de0')
     }
   }, [])
 

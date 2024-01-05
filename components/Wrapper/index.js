@@ -1,16 +1,19 @@
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
+import dynamic from 'next/dynamic'
 
 import $app from '@/store/app'
 
 import Header from '@/components/Header'
-import Analytics from '@/components/Analytics'
+// import Analytics from '@/components/Analytics'
+
+const Analytics = dynamic(import('@/components/Analytics'), {ssr: false})
 
 const Wrapper = ({ children }) => {
-  const router = useRouter()
   const dispatch = useDispatch()
 
+  const router = useRouter()
   const isCampaign = router.asPath?.includes('/campaign')
 
   useEffect(() => {
