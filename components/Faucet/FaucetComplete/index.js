@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import lottie from 'lottie-web'
 import animationData from '@/public/animations/confetti_new.json'
 import cn from 'classnames'
 
@@ -20,21 +19,21 @@ const FaucetComplete = () => {
       setIconAmimation(false)
     }, 300)
 
-    const anim = lottie.loadAnimation({
-      container: document.getElementById('lottie-container'),
-      animationData: animationData,
-      renderer: 'svg',
-      loop: false,
-      autoplay: true,
-    })
+    const loadAimation = async () => {
+        const anim = (await import('lottie-web')).loadAnimation({
+            container: document.getElementById('lottie-container'),
+            animationData: animationData,
+            renderer: 'svg',
+            loop: false,
+            autoplay: true,
+        })
 
-    anim.onComplete = () => {
-      setShowConfetti(false)
+        anim.onComplete = () => {
+            setShowConfetti(false)
+            anim.destroy()
+        }
     }
-
-    return () => {
-      anim.destroy()
-    }
+    loadAimation()
   }, [])
 
   const handleTrade = () => {

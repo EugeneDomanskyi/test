@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import lottie from 'lottie-web'
 import Image from 'next/image'
 import moment from 'moment'
 import animationData from '@/public/animations/confetti_new.json'
@@ -34,21 +33,21 @@ const FourthStep = ({ campaign, onSubmit, onShare }) => {
 
   useEffect(() => {
     if (prize.amount) {
-      const anim = lottie.loadAnimation({
-        container: document.getElementById('lottie-container'),
-        animationData: animationData,
-        renderer: 'svg',
-        loop: false,
-        autoplay: true,
-      })
+      const loadAnimation = async () => {
+        const anim = (await import('lottie-web')).loadAnimation({
+          container: document.getElementById('lottie-container'),
+          animationData: animationData,
+          renderer: 'svg',
+          loop: false,
+          autoplay: true,
+        })
 
-      anim.onComplete = () => {
-        //setShowConfetti(false)
+        anim.onComplete = () => {
+          //setShowConfetti(false)
+          anim.destroy()
+        }
       }
-
-      return () => {
-        anim.destroy()
-      }
+      loadAnimation()
     }
   }, [prize])
 
