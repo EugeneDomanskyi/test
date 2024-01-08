@@ -28,6 +28,7 @@ const createStore = (initialData) => {
         size: {
           isMobile: initialData.isMobile,
         },
+        isApp: initialData.isApp,
       },
     },
 

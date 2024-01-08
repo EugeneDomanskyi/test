@@ -1,12 +1,13 @@
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
+
+import useApp from '@/myhooks/useApp'
 
 import $app from '@/store/app'
 
 import Header from '@/components/Header'
-// import Analytics from '@/components/Analytics'
 
 const Analytics = dynamic(import('@/components/Analytics'), {ssr: false})
 
@@ -15,6 +16,8 @@ const Wrapper = ({ children }) => {
 
   const router = useRouter()
   const isCampaign = router.asPath?.includes('/campaign')
+
+  const { isApp } = useApp()
 
   useEffect(() => {
     window.addEventListener('resize', handleWindowResize)
@@ -38,8 +41,8 @@ const Wrapper = ({ children }) => {
   }
 
   return (
-    <div style={{height: '100%', paddingTop: isCampaign ? 0 : 64, transition: '.4s', overflowX: 'hidden'}}>
-      {! isCampaign ? <Header /> : null}
+    <div style={{height: '100%', paddingTop: isCampaign || isApp ? 0 : 64, transition: '.4s', overflowX: 'hidden'}}>
+      {!isCampaign && !isApp ? <Header /> : null}
       {children}
       <Analytics />
     </div>

@@ -1,11 +1,16 @@
 import { useRef, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
+import { connect } from '@wagmi/core'
+import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect'
 import dynamic from 'next/dynamic'
 import cn from 'classnames'
-import Socket from '@/libs/ws.lib'
 
+import { CHAINS } from '@/config'
+import Socket from '@/libs/ws.lib'
 import { trackEvent, getPageName } from '@/libs/analytics.lib'
+import useWalletConnect from '@/myhooks/wallet-connect'
+import useApp from '@/myhooks/useApp'
 
 import $alert from '@/store/alert'
 import $orders from '@/store/orders'
@@ -29,6 +34,9 @@ const GRID_GAP = 8
 const Exchange = () => {
   const router = useRouter()
   const [queryTokenId] = router.query.address || []
+
+  const { wallet } = useWalletConnect()
+  const { isApp, appData, appPost, appLog } = useApp()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -55,6 +63,18 @@ const Exchange = () => {
   }, [])
 
   useEffect(() => {
+    if (isApp && !wallet) {
+      connectTegroWallet()
+    }
+  }, [isApp, wallet])
+
+  useEffect(() => {
+    if (appData?.walletAddress && appData?.walletAddress != wallet) {
+      connectTegroWallet()
+    }
+  }, [appData?.walletAddress])
+
+  useEffect(() => {
     if (socketConnected && blockchain?.id && current?.id) {
       Socket.subscribe(`${blockchain.id}/${current.id}`)
 
@@ -63,6 +83,35 @@ const Exchange = () => {
       }
     }
   }, [socketConnected, blockchain?.id, current?.id])
+
+  const connectTegroWallet = async () => {
+    const customConnector = new WalletConnectConnector({
+      chains: CHAINS,
+      options: {
+        projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
+        showQrModal: false,
+        metadata: {
+          name: 'Tegro Wallet',
+          description: 'Tegro Wallet App',
+          url: 'https://tegro.com',
+          icons: ['https://tegro.com/favicon.ico'],
+        }
+      },
+    })
+
+    customConnector.on('message', ({type, data}) => {
+      if (type == 'display_uri') {
+        appPost({ wcUri: data})
+      }
+    })
+    
+    const result = await connect({
+      connector: customConnector,
+      chainId: blockchain.id,
+    })
+
+    appLog(Object.keys(result))
+  }
 
   const handleAction = useCallback(({action, data}) => {
     switch (action) {

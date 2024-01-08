@@ -98,18 +98,23 @@ MyApp.getInitialProps = async ({ ctx }) => {
 
   let ssRoute = ''
   let isMobile = null
+  let isApp = null
 
   if (ctx?.req) {
     ssRoute = ctx.req.url
 
     const { device } = userAgentFromString(ctx.req.headers['user-agent'])
     isMobile = device.type === 'mobile'
+
+    // isApp = ctx.req.headers['x-tegro-app'] == 'native'
+    isApp = true
   }
 
   return {
     initialData: {
       blockchain: cookies.blockchain,
       isMobile,
+      isApp,
     },
     ssRoute,
   }

@@ -16,7 +16,8 @@ export const appSlice = createSlice({
       isMobile: null,
       windowWidth: null,
       windowHeight: null,
-    }
+    },
+    isApp: false,
   },
 
   reducers: {
