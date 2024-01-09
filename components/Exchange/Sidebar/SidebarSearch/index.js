@@ -51,22 +51,23 @@ const SidebarSearch = () => {
     dispatch($token.set.searching(true))
     dispatch($token.set.loading(true))
 
-    const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(searchText)
-    if (isAddress) {
-      searchText = `${blockchain.id}_${searchText}_${blockchain.info?.token?.address}`
-    }
-    
-    const tokens = await $token.api.all({
+    const params = {
       page: 1,
       page_size: pages.perPage,
       chain_id: blockchain.id,
       sort_by: sortBy,
       sort_order: sortDirection,
-      filter_val: searchText,
-      filter_col: isAddress ? 'id' : 'symbol',
       verified: true,
-    })
+    }
 
+    const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(searchText)
+    if (isAddress) {
+      params.market_id = `${blockchain.id}_${searchText}_${blockchain.info?.token?.address}`
+    } else {
+      params.symbol = searchText
+    }
+
+    const tokens = await $token.api.all(params)
     if (tokens) {
       dispatch($token.set.searched(tokens))
     }

@@ -85,8 +85,7 @@ const Mobile = forwardRef(({ type }, ref) => {
         chain_id: blockchain.id,
         sort_by: sortBy,
         sort_order: sortDirection,
-        filter_val: id,
-        filter_col: 'id',
+        market_id: id,
         verified: true,
       })
 
