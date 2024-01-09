@@ -13,6 +13,7 @@ import { publicProvider } from 'wagmi/providers/public'
 
 import { CHAINS } from '@/config'
 import store from '@/store'
+import $app from '@/store/app'
 
 import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
@@ -99,6 +100,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
   let ssRoute = ''
   let isMobile = null
   let isApp = null
+  let chains = []
 
   if (ctx?.req) {
     ssRoute = ctx.req.url
@@ -106,8 +108,25 @@ MyApp.getInitialProps = async ({ ctx }) => {
     const { device } = userAgentFromString(ctx.req.headers['user-agent'])
     isMobile = device.type === 'mobile'
 
-    // isApp = ctx.req.headers['x-tegro-app'] == 'native'
-    isApp = true
+    isApp = ctx.req.headers['x-tegro-app'] == 'native'
+
+    const result = await $app.api.chains()
+    if (result) {
+      chains = result.map(item => {
+        return {
+          id: item.ChainId,
+          token: {
+            symbol: item.DefaultQuoteTokenSymbol,
+            address: item.DefaultQuoteTokenContractAddress.toLowerCase(),
+            image: item.Logo || (item.DefaultQuoteTokenSymbol == 'USDT' ? '/images/icon-usdt.png' : '') || `https://storage.googleapis.com/token-assets/assets/${item?.Name}/${item.DefaultQuoteTokenContractAddress.toLowerCase()}.png`
+          },
+          contract: {
+            exchange: item.ExchangeContract.toLowerCase(),
+            settlement: item.SettlementContract.toLowerCase(),
+          },
+        }
+      })
+    }
   }
 
   return {
@@ -115,6 +134,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
       blockchain: cookies.blockchain,
       isMobile,
       isApp,
+      chains,
     },
     ssRoute,
   }

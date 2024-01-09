@@ -32,7 +32,7 @@ const SidebarItem = ({ item, version }) => {
   const handleClick = () => {
     trackEvent('View Market', {
       'Base Currency': item.symbol,
-      'Quote Currency': 'USDT',
+      'Quote Currency': item.quoteSymbol,
       'Network': blockchain.code.toUpperCase(),
     })
 
@@ -59,7 +59,7 @@ const SidebarItem = ({ item, version }) => {
           </div>
         )}
 
-        <App.Flex column gap={2} sx={{ maxWidth: version == 'mobile' ? 210 : 100 }}>
+        <App.Flex column gap={2} sx={{ maxWidth: version == 'mobile' ? 210 : 110 }}>
           <App.Flex row align="center" gap={4}>
             <App.Text nowrap uppercase size={[12, 16]} weight={600} height={1}>{item.name}</App.Text>
           </App.Flex>

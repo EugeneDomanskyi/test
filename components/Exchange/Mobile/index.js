@@ -78,14 +78,15 @@ const Mobile = forwardRef(({ type }, ref) => {
   const fetchToken = async (currentAddress) => {
     const existInList = list.find(item => item.id === currentAddress)
     if (!existInList) {
+      const id = `${blockchain.id}_${currentAddress}_${blockchain.info?.token?.address}`
       const [token] = await $token.api.all({
         page: 1,
         page_size: 1,
         chain_id: blockchain.id,
         sort_by: sortBy,
         sort_order: sortDirection,
-        filter_val: currentAddress,
-        filter_col: 'contract_address',
+        filter_val: id,
+        filter_col: 'id',
         verified: true,
       })
 

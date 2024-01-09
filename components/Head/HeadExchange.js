@@ -11,7 +11,7 @@ const HeadExchange = () => {
       if (initCurrent?.ticker?.value && initCurrent.ticker.value * 1 != 0) {
         ticker = `${initCurrent.ticker.type == 'plus' ? '▲' : '▼'} ${initCurrent.ticker.value}%`
       }
-      return (initCurrent.price ? (`$${initCurrent.price} ${initCurrent.symbol}/USDT ${ticker} | `) : '') + `Trade ${initCurrent.name} at best price on Tegro: The CEX-DEX`
+      return (initCurrent.price ? (`$${initCurrent.price} ${initCurrent.symbol}/${initCurrent.quoteSymbol} ${ticker} | `) : '') + `Trade ${initCurrent.name} at best price on Tegro: The CEX-DEX`
     }
 
     return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'
@@ -19,7 +19,7 @@ const HeadExchange = () => {
 
   const getDescription = () => {
     if (initCurrent?.id) {
-      return `Buy, sell, and trade ${initCurrent.symbol}/USDT instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${initCurrent.symbol} at the best prices.`
+      return `Buy, sell, and trade ${initCurrent.symbol}/${initCurrent.quoteSymbol} instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${initCurrent.symbol} at the best prices.`
     }
 
     return 'Buy, sell, and trade Tokens instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade Tokens at the best prices.'

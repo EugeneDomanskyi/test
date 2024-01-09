@@ -182,7 +182,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
   const handleChangeOrdersType = type => () => {
     trackEvent(`View ${type == 'open' ? 'Open' : 'Completed'} Order`, {
       'Base Currency': current?.symbol ?? 'Global',
-      'Quote Currency': 'USDT',
+      'Quote Currency': current?.quoteSymbol,
       'Network': blockchain.code.toUpperCase(),
     })
 
@@ -256,9 +256,9 @@ const Orders = ({global, type, version, onClickOrder}) => {
                 />
 
                 {version == 'mobile' ? (
-                  <App.Text size={12} height={1}>{current?.symbol}/USDT</App.Text>
+                  <App.Text size={12} height={1}>{current?.symbol}/{current?.quoteSymbol}</App.Text>
                 ) : (
-                  <App.Text color="#B9B8C5" size={10} weight={600} height={1}>{current?.symbol} - USDT Orders</App.Text>
+                  <App.Text color="#B9B8C5" size={10} weight={600} height={1}>{current?.symbol} - {current?.quoteSymbol} Orders</App.Text>
                 )}
               </App.Flex>
             ) : (
@@ -290,17 +290,17 @@ const Orders = ({global, type, version, onClickOrder}) => {
           {version != 'mobile' ? (
             <>
               <App.Flex align="center" sx={{borderBottom: '1px solid #19162D'}}>
-                <App.Flex column sx={{width: 60, padding: '4px 8px 10px'}} align="center">
+                <App.Flex column sx={{width: 90, padding: '4px 8px 10px'}} align="center">
                   <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Asset</App.Text>
                 </App.Flex>
                 <App.Flex column sx={{width: 60, padding: '4px 8px 10px'}} align="center">
                   <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Qty</App.Text>
                 </App.Flex>
                 <App.Flex column flex={1} sx={{padding: '4px 8px 10px'}} align="center">
-                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Price (USDT)</App.Text>
+                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Price ({current?.quoteSymbol})</App.Text>
                 </App.Flex>
                 <App.Flex column flex={1} sx={{padding: '4px 8px 10px'}} align="center">
-                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Total (USDT)</App.Text>
+                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Total ({current?.quoteSymbol})</App.Text>
                 </App.Flex>
               </App.Flex>
 
@@ -312,7 +312,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                       <App.Flex column className={styles.orderContainer}>
                         <App.Flex align="center" className={cn(styles.order, {[styles.disabled]: order.status === 'completed' || order.status === 'cancelled'})}>
                           <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
-                          <App.Flex column align="center" justify="center" sx={{width: 60, padding: 8}}>
+                          <App.Flex column align="center" justify="center" sx={{width: 90, padding: 8}}>
                             {order.image && type === 'nfts' ? (
                               <Image alt="" src={order.image} width={35} height={35} />
                             ) : (
@@ -415,7 +415,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                           <App.Flex row justify="space-between" flex={1}>
                             <App.Flex column gap={8}>
                               <App.Flex row center gap={10} height={25} className={styles.currency} onClick={handleClickDetails(order)}>
-                                <App.Text size={12} weight={700} height={1}>{order.quoteCurrency} <App.Text inline size={10} weight={700} color="#5E5C6B" height={1}>/ {order.baseCurrency}</App.Text></App.Text>
+                                <App.Text size={12} weight={700} height={1}>{order.baseCurrency} <App.Text inline size={10} weight={700} color="#5E5C6B" height={1}>/ {order.quoteCurrency}</App.Text></App.Text>
                                 <App.Icon icon="chevron-right2" />
                               </App.Flex>
 

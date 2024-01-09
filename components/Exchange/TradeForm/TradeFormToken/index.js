@@ -195,7 +195,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
 
     trackEvent('Create Order Click', {
       'Base Currency': current.symbol,
-      'Quote Currency': 'USDT',
+      'Quote Currency': current.quoteSymbol,
       'Side': currentTab.toUpperCase(),
       'Quantity': form.amount,
       'Price': form.price,
@@ -208,7 +208,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     handleChangeForm('price')(form.total / form.amount)
     trackEvent('Add Total', {
       'Base Currency': current.symbol,
-      'Quote Currency': 'USDT',
+      'Quote Currency': current.quoteSymbol,
       'Price': form.price,
       'Network': blockchain.code.toUpperCase(),
     })
@@ -217,7 +217,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const handleBlurPrice = () => {
     trackEvent('Add Price', {
       'Base Currency': current.symbol,
-      'Quote Currency': 'USDT',
+      'Quote Currency': current.quoteSymbol,
       'Price': form.price,
       'Network': blockchain.code.toUpperCase(),
     })
@@ -226,7 +226,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const handleBlurAmount = () => {
     trackEvent('Add Quantity', {
       'Base Currency': current.symbol,
-      'Quote Currency': 'USDT',
+      'Quote Currency': current.quoteSymbol,
       'Price': form.price,
       'Network': blockchain.code.toUpperCase(),
     })
@@ -250,7 +250,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
         <App.Flex flex={1} align="center" gap={4}>
           <App.Icon icon="wallet" width={10} height={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} />
           <App.Text size={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} height={1}>
-            {currentTab === 'buy' ? `${userBalances.quote} USDT` : `${userBalances.base} ${current.symbol}`}
+            {currentTab === 'buy' ? `${userBalances.quote} ${current.quoteSymbol}` : `${userBalances.base} ${current.symbol}`}
           </App.Text>
         </App.Flex>
 
@@ -281,7 +281,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
             <App.Flex justify="center" flex={1} column sx={{position: 'relative'}}>
               <TradeInput
                 label="AT PRICE"
-                currency={'USDT'}
+                currency={current.quoteSymbol}
                 value={form.price}
                 version={version}
                 warning={isWrongPrice}
@@ -350,7 +350,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
           <App.Flex column>
             <TradeInput
               label="TOTAL"
-              currency={'USDT'}
+              currency={current.quoteSymbol}
               value={form.total}
               version={version}
               error={currentTab == 'buy' && isErrorBalance && wasUserInput}

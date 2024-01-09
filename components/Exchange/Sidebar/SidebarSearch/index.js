@@ -52,6 +52,9 @@ const SidebarSearch = () => {
     dispatch($token.set.loading(true))
 
     const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(searchText)
+    if (isAddress) {
+      searchText = `${blockchain.id}_${searchText}_${blockchain.info?.token?.address}`
+    }
     
     const tokens = await $token.api.all({
       page: 1,
@@ -60,7 +63,7 @@ const SidebarSearch = () => {
       sort_by: sortBy,
       sort_order: sortDirection,
       filter_val: searchText,
-      filter_col: isAddress ? 'contract_address' : 'symbol',
+      filter_col: isAddress ? 'id' : 'symbol',
       verified: true,
     })
 

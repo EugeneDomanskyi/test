@@ -12,6 +12,7 @@ export const appSlice = createSlice({
     socketConnected: false,
     code: null,
     blockchains: CHAINS,
+    chains: [],
     size: {
       isMobile: null,
       windowWidth: null,
@@ -37,13 +38,48 @@ export const appSlice = createSlice({
         windowHeight: payload?.height,
       }
     },
+
+    chains: (state, { payload }) => {
+      state.chains = payload.map(item => {
+        return {
+          id: item.ChainId,
+          token: {
+            symbol: item.DefaultQuoteTokenSymbol,
+            address: item.DefaultQuoteTokenContractAddress.toLowerCase(),
+            image: item.Logo || `https://storage.googleapis.com/token-assets/assets/${item?.Name}/${item.DefaultQuoteTokenContractAddress.toLowerCase()}.png`
+          },
+          contract: {
+            exchange: item.ExchangeContract.toLowerCase(),
+            settlement: item.SettlementContract.toLowerCase(),
+          },
+        }
+      })
+    },
   },
 })
 
 export const get = {
-  blockchain: ({ $app }) => {
-    return $app.blockchains.find(item => item.code == $app.code)
-  },
+  blockchain: createSelector([
+    (state) => state.$app.code,
+    (state) => state.$app.blockchains,
+    (state) => state.$app.chains,
+  ], (code, blockchains, chains) => {
+    const temp = blockchains.find(item => item.code == code)
+    if (temp) {
+      const chain = chains.find(item => item.id == temp.id)
+      if (chain) {
+        const { id, ...info } = chain
+        return {
+          ...temp,
+          info,
+        }
+      }
+
+      return temp
+    }
+
+    return null
+  }),
 
   pageBlockchains: (page) => createSelector([
     (state) => state.$app.blockchains,
@@ -63,6 +99,10 @@ export const api = {
 
   volume: (params) => {
     return request(`https://us-central1-vibrant-waters-399406.cloudfunctions.net/magic_square_trade_volume_check`, 'POST', { api: 'remote', ...params })
+  },
+
+  chains: () => {
+    return request(`chain/list/`)
   },
 }
 

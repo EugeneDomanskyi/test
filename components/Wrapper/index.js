@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 
@@ -21,7 +21,6 @@ const Wrapper = ({ children }) => {
 
   useEffect(() => {
     window.addEventListener('resize', handleWindowResize)
-
     return () => {
       window.removeEventListener('resize', handleWindowResize)
     }

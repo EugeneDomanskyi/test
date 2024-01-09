@@ -54,14 +54,15 @@ const Info = () => {
   const fetchToken = async (currentAddress) => {
     const existInList = list.find(item => item.id === currentAddress)
     if (!existInList) {
+      const id = `${blockchain.id}_${currentAddress}_${blockchain.info?.token?.address}`
       const [token] = await $token.api.all({
         page: 1,
         page_size: 1,
         chain_id: blockchain.id,
         sort_by: sortBy,
         sort_order: sortDirection,
-        filter_val: currentAddress,
-        filter_col: 'contract_address',
+        filter_val: id,
+        filter_col: 'id',
         verified: true,
       })
 
@@ -155,7 +156,7 @@ const Info = () => {
             </App.Flex>
 
             <App.Flex column gap={6}>
-              <App.Text nowrap size={12} height={1} color="#B9B8C5">24h Volume (USDT)</App.Text>
+              <App.Text nowrap size={12} height={1} color="#B9B8C5">24h Volume ({current.quoteSymbol})</App.Text>
               <App.Number size={12} weight={600} height={1} color="#fff">{ current.volume }</App.Number>
             </App.Flex>
           </App.Flex>
