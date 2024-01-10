@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import Image from 'next/image'
-import { formatUnits, parseEther, parseUnits, verifyTypedData } from 'viem'
-import { signTypedData } from '@wagmi/core'
+import { formatUnits, parseUnits } from 'viem'
 import numeral from 'numeral'
 import cn from 'classnames'
 
@@ -17,12 +16,9 @@ import $alert from '@/store/alert'
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
-import useApp from '@/myhooks/useApp'
 
 const OrderConfirm = ({ side, blockchain, current, price, amount, total, version, onBack, onClose }) => {
   const { wallet, walletClient } = useWalletConnect()
-
-  const { appLog} = useApp() 
   
   const dispatch = useDispatch()
 
@@ -103,14 +99,6 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         console.log(error.shortMessage)
         return handleError('Order Not Created', error.shortMessage)
       })
-
-      const valid = await verifyTypedData({
-        ...temp,
-        signature,
-        address: wallet,
-      })
-
-      alert(valid)
 
       if (!signature) {
         return
