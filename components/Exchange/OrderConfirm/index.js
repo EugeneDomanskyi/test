@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import Image from 'next/image'
-import { formatUnits, parseUnits } from 'viem'
+import { formatUnits, parseEther, parseUnits, verifyTypedData } from 'viem'
+import { signTypedData } from '@wagmi/core'
 import numeral from 'numeral'
 import cn from 'classnames'
 
@@ -9,15 +10,19 @@ import { trackEvent } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import Contracts from '@/libs/contracts.lib'
 
+import $app from '@/store/app'
 import $orders from '@/store/orders'
 import $alert from '@/store/alert'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
+import useApp from '@/myhooks/useApp'
 
 const OrderConfirm = ({ side, blockchain, current, price, amount, total, version, onBack, onClose }) => {
   const { wallet, walletClient } = useWalletConnect()
+
+  const { appLog} = useApp() 
   
   const dispatch = useDispatch()
 
@@ -87,9 +92,25 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         return handleError('Order Not Created', typedData?.error)
       }
 
-      const signature = await walletClient.signTypedData(typedData.data.sign_data).catch(error => {
+      let {types} = typedData.data.sign_data
+      delete types.EIP712Domain
+      const temp = {
+        ...typedData.data.sign_data,
+        types,
+      }
+
+      const signature = await walletClient.signTypedData(temp).catch(error => {
+        console.log(error.shortMessage)
         return handleError('Order Not Created', error.shortMessage)
       })
+
+      const valid = await verifyTypedData({
+        ...temp,
+        signature,
+        address: wallet,
+      })
+
+      alert(valid)
 
       if (!signature) {
         return

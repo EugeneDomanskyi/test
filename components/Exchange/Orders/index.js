@@ -43,24 +43,26 @@ const Orders = ({global, type, version, onClickOrder}) => {
       dispatch($orders.set.list([]))
     }
 
-    Socket.on('order_placed', 'my_orders', (data) => {
-      dispatch($orders.set.add(data))
-    })
-    
-    Socket.on('order_submitted', 'my_orders', (data) => {
-      dispatch($orders.set.update(data))
-    })
+    if (version != 'mobile') {
+      Socket.on('order_placed', 'my_orders', (data) => {
+        dispatch($orders.set.add(data))
+      })
+      
+      Socket.on('order_submitted', 'my_orders', (data) => {
+        dispatch($orders.set.update(data))
+      })
+    }
   }, [wallet, current?.id])
 
   useEffect(() => {
-    if (wallet && socketConnected) {
+    if (wallet && socketConnected && version != 'mobile') {
       Socket.subscribe(wallet)
 
       return () => {
         Socket.unsubscribe(wallet)
       }
     }
-  }, [wallet, socketConnected])
+  }, [wallet, socketConnected, version])
 
   const fetchOrders = async () => {
     const result = await $orders.api.list({

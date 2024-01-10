@@ -40,7 +40,6 @@
     font-size: 14px;
     font-weight: 600;
     font-family: Gilroy;
-    -moz-appearance: textfield;
 
     &.error {
       color: #FF1D61;
@@ -48,6 +47,10 @@
 
     &.warning {
       color: #FFD600;
+    }
+
+    &.app {
+      font-size: 16px;
     }
 
     &::-webkit-outer-spin-button,

@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { gsap } from 'gsap'
 import cn from 'classnames'
 
+import useApp from '@/myhooks/useApp'
+
 import $alert from '@/store/alert'
 
 import AppFlex from '@/components/App/AppFlex'
@@ -12,7 +14,10 @@ import AppIcon from '@/components/App/AppIcon'
 import styles from './styles.module.scss'
 
 const AppAlert = () => {
+  const { appPost } = useApp()
+
   const dispatch = useDispatch()
+  const isApp = useSelector(({ $app }) => $app.isApp)
   const messages = useSelector(({ $alert }) => $alert.messages)
 
   const [currentMessages, setCurrentMessages] = useState([])
@@ -43,11 +48,15 @@ const AppAlert = () => {
       if (currentMessages.some(item => ! item.visible)) {
         const unvisibleMessages = currentMessages.filter(item => ! item.visible)
         for (const message of unvisibleMessages) {
-          const isOpen = await handleOpen(message.id)
-          if (isOpen) {
-            timerRef.current[message.id] = setTimeout(async () => {
-              handleClose(message.id)
-            }, message.delay)
+          if (!isApp) {
+            const isOpen = await handleOpen(message.id)
+            if (isOpen) {
+              timerRef.current[message.id] = setTimeout(async () => {
+                handleClose(message.id)
+              }, message.delay)
+            }
+          } else {
+            appPost({notification: message})
           }
         }
 

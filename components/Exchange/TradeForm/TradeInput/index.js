@@ -3,8 +3,10 @@ import React, { useState } from 'react'
 import cn from 'classnames'
 
 import App from '@/components/App'
+import { useSelector } from 'react-redux'
 
 const TradeInput = ({label, currency, version, onChange, onBlur, error, warning, ...props}) => {
+  const isApp = useSelector(({ $app }) => $app.isApp)
 
   const [focused, setFocused] = useState(false)
 
@@ -27,7 +29,7 @@ const TradeInput = ({label, currency, version, onChange, onBlur, error, warning,
       </App.Flex>
       <div className={styles.divider} />
       <input
-        className={cn(styles.input, {[styles.error]: error, [styles.warning]: warning})}
+        className={cn(styles.input, {[styles.app]: isApp, [styles.error]: error, [styles.warning]: warning})}
         onChange={handleChange}
         onWheel={e => e.target.blur()}
         onFocus={() => setFocused(true)}

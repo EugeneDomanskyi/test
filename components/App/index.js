@@ -1,4 +1,3 @@
-import AppAddress from '@/components/App/AppAddress'
 import AppAlert from '@/components/App/AppAlert'
 import AppButton from '@/components/App/AppButton'
 import AppCard from '@/components/App/AppCard'
@@ -22,7 +21,6 @@ import AppShadowText from '@/components/App/AppShadowText'
 import AppNumber from '@/components/App/AppNumber'
 
 export default {
-  Address: AppAddress,
   Alert: AppAlert,
   Button: AppButton,
   Card: AppCard,

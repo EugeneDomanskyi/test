@@ -15,8 +15,10 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import styles from './styles.module.scss'
 
 const OrderDetails = ({order}) => {
-  const blockchain = useSelector($app.get.blockchain)
   const { scanUrl } = useWalletConnect()
+
+  const blockchain = useSelector($app.get.blockchain)
+  const isApp = useSelector(({ $app }) => $app.isApp)
 
   const [loading, setLoading] = useState(true)
   const [trades, setTrades] = useState([])
@@ -118,12 +120,12 @@ const OrderDetails = ({order}) => {
                     </App.Flex>
 
                     <App.Flex row width={100} align="center" flex={1}>
-                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{item.amount} {order.quoteCurrency}</App.Text>
+                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{item.amount} {order.baseCurrency}</App.Text>
                     </App.Flex>
 
                     <App.Flex row width={100} align="center" gap={10} justify="flex-end" flex={1}>
-                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{item.price} {order.baseCurrency}</App.Text>
-                      {item.txHash ? (
+                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{item.price} {order.quoteCurrency}</App.Text>
+                      {item.txHash && !isApp ? (
                         <a href={scanUrl(item.txHash, 'tx', blockchain)} target="_blank" rel="noreferrer" style={{ lineHeight: 0 }}>
                           <App.Icon icon="external-link" />
                         </a>

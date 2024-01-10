@@ -95,6 +95,27 @@
         }
       }
 
+      &.mobile-app {
+        position: relative;
+        z-index: 0;
+        
+        &.disabled {
+          opacity: .5;
+        }
+
+        .optionInner {
+          padding: 10px 0;
+
+          .optionText {
+            color: #5E5C6B;
+
+            &.active {
+              color: #fff;
+            }
+          }
+        }
+      }
+
       &.classic {
         background: #08051C;
         border: solid #1D1937 1px;
@@ -240,7 +261,8 @@
       border-radius: 20px;
       transition: all .2s ease 0s;
 
-      &.mobile {
+      &.mobile,
+      &.mobile-app {
         background-image: linear-gradient(to right, #E792E4, #B545BE 34.167%, #7931CB 69.583%, #4D42C9 100%);
       }
     }

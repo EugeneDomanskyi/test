@@ -6,6 +6,10 @@ import Image from 'next/image'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
+import $orders from '@/store/orders'
+
+import useWalletConnect from '@/myhooks/wallet-connect'
+import Socket from '@/libs/ws.lib'
 
 import App from '@/components/App'
 import TradeFormWrapper from '@/components/Exchange/Mobile/TradeFormWrapper'
@@ -35,8 +39,12 @@ const Mobile = forwardRef(({ type }, ref) => {
   const address = queryAddress ? queryAddress?.toLowerCase() : ''
   const queryBlockchainCode = router.query.blockchain
 
+  const { wallet } = useWalletConnect()
+
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
+  const socketConnected = useSelector(({ $app }) => $app.socketConnected)
+  const isApp = useSelector(({ $app }) => $app.isApp)
   const list = useSelector(({ $token }) => $token.all)
   const item = useSelector(({ $token }) => $token.current)
   const sort = useSelector(({ $token }) => $token.sort)
@@ -62,6 +70,26 @@ const Mobile = forwardRef(({ type }, ref) => {
       handleClickOrder(order)
     }
   }))
+
+  useEffect(() => {
+    Socket.on('order_placed', 'my_orders', (data) => {
+      dispatch($orders.set.add(data))
+    })
+    
+    Socket.on('order_submitted', 'my_orders', (data) => {
+      dispatch($orders.set.update(data))
+    })
+  }, [wallet, item?.id])
+
+  useEffect(() => {
+    if (wallet && socketConnected) {
+      Socket.subscribe(wallet)
+
+      return () => {
+        Socket.unsubscribe(wallet)
+      }
+    }
+  }, [wallet, socketConnected])
 
   useEffect(() => {
     if (item?.id) {
@@ -154,7 +182,7 @@ const Mobile = forwardRef(({ type }, ref) => {
       </App.Flex>
 
       <App.Flex column gap={16} sx={{ padding: '0 8px' }} flex={1}>
-        <App.Tabs options={tabs} active={tab} onChange={handleTabChange} height={22} variant="mobile" />
+        <App.Tabs options={tabs} active={tab} onChange={handleTabChange} height={22} variant={`mobile${isApp ? '-app' : ''}`} />
 
         <App.Flex column flex={1} sx={{ position: 'relative' }}>
           {(currentTab => {

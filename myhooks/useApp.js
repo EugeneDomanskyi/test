@@ -11,13 +11,15 @@ export const useApp = () => {
   }, [])
 
   const appDataHandler = (data) => {
-    if (data) {
+    if (isApp && data) {
       setAppData(data)
     }
   }
 
   const appPost = (data) => {
-    window.ReactNativeWebView.postMessage(JSON.stringify(data))
+    if (isApp) {
+      window.ReactNativeWebView.postMessage(JSON.stringify(data))
+    }
   }
 
   const appLog = (data) => {

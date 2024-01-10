@@ -11,6 +11,7 @@ import App from '@/components/App'
 const SidebarSearch = () => {
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
+  const isApp = useSelector(({ $app }) => $app.isApp)
   const loading = useSelector(({ $token }) => $token.loading)
   const pages = useSelector($token.get.pages)
   const sort = useSelector(({ $token }) => $token.sort)
@@ -85,7 +86,7 @@ const SidebarSearch = () => {
       start={<App.Icon icon="search" color={localSearch.trim() != '' ? '#fff' : '#5E5C6B' } />}
       end={localSearch.trim() != '' && loading ? <App.Loader size={12} /> : null}
       size="small"
-      variant="search"
+      variant={`search${isApp ? '-app' : ''}`}
       variantNotEmpty
       withClear
       autoComplete="search no-autocomplete"
