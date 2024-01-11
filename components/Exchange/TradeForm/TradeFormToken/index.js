@@ -104,14 +104,18 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
         })
       })()
     }
-
     return () => {
-      setUserBalances({base: 0, quote: 0})
       if (unsubscribeRef.current) {
         unsubscribeRef.current()
       }
     }
   }, [wallet, current?.address])
+
+  useEffect(() => {
+    if (!wallet) {
+      setUserBalances({base: 0, quote: 0})
+    }
+  }, [wallet])
 
   const handleSetPrice = (inputByUser = true, tab = currentTab) => {
     handleChangeForm('price', inputByUser)(current?.trade?.[tab] || current.price || 0)
