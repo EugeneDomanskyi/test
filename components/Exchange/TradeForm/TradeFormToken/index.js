@@ -92,20 +92,21 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
 
   useEffect(() => {
     if (wallet && current?.address) {
-      // (async () => {
-      //   unsubscribeRef.current = await contracts.watchBalance(wallet, [current?.address, current?.quote], (result) => {
-      //     const balances = Object.entries(result).reduce((acc, [address, balance]) => ({
-      //       ...acc,
-      //       [address === current?.quote ? 'quote' : 'base']: balance,
-      //     }), {quote: 0, base: 0})
+      (async () => {
+        unsubscribeRef.current = await contracts.watchBalance(wallet, [current?.address, current?.quote], (result) => {
+          const balances = Object.entries(result).reduce((acc, [address, balance]) => ({
+            ...acc,
+            [address === current?.quote ? 'quote' : 'base']: balance,
+          }), {quote: 0, base: 0})
 
-      //     setUserBalances(balances)
-      //     setWasUserBalance(true)
-      //   })
-      // })()
+          setUserBalances(balances)
+          setWasUserBalance(true)
+        })
+      })()
     }
 
     return () => {
+      setUserBalances({base: 0, quote: 0})
       if (unsubscribeRef.current) {
         unsubscribeRef.current()
       }
