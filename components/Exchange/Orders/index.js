@@ -24,6 +24,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
+  const isApp = useSelector(({ $app }) => $app.isApp)
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
   const current = useSelector(({ $token }) => $token.current)
   const orders = useSelector($orders.get.list)
@@ -514,8 +515,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
             <Image src="/images/order-cancel-loader.gif" width={150} height={150} alt="" />
           </App.Flex>
 
-          <App.Text center size={16} weight={700} height={1}>Waiting for Approval</App.Text>
-          <App.Text center size={10} height={1} color="#5E5C6B">Please Proceed in Your Wallet</App.Text>
+          <App.Text center size={16} weight={700} height={1}>Waiting for {isApp ? 'Blockchain Confirmation' : 'Approval'}</App.Text>
+          <App.Text center size={10} height={1} color="#5E5C6B">{isApp ? 'It will take a few seconds' : 'Please Proceed in Your Wallet'}</App.Text>
         </App.Flex>
       </App.Dialog>
 

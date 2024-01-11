@@ -35,7 +35,7 @@ export const portfolioSlice = createSlice({
           address: item.address,
           name: item.name,
           symbol: item.symbol,
-          image: item.image || `https://storage.googleapis.com/token-assets/assets/${payload?.blockchain?.code}/${item.address.toLowerCase()}.png`,
+          image: item.image || (item.type == 'quote' ? '/images/icon-usdt.png' : null) || `https://storage.googleapis.com/token-assets/assets/${payload?.blockchain?.code}/${item.address.toLowerCase()}.png`,
           balance: item.balance.toFixed(4),
           price: item.price || (item.type == 'quote' ? item.balance : 0),
           usd: (item.price || (item.type == 'quote' ? item.balance : 0)).toFixed(4),
