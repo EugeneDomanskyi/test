@@ -112,12 +112,6 @@ const Header = () => {
                   </App.Flex>
                 </Link>
 
-                <Link href="/faucet" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/faucet')})}>
-                  <App.Flex center height="100%">
-                    <App.Text size={16} weight={500}>Faucet</App.Text>
-                  </App.Flex>
-                </Link>
-
                 <App.Flex id="menu-dropdown" className={cn(styles.navbarItem, styles.navbarDropdown, {[styles.active]: moreIsOpen})} onMouseEnter={() => setMoreIsOpen(true)} onMouseLeave={() => setMoreIsOpen(false)}>
                   <App.Flex center height="100%" gap={8}>
                     <App.Text size={16} weight={500}>More</App.Text>
@@ -182,13 +176,6 @@ const Header = () => {
                   <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                     <App.Icon icon="menuEarn" />
                     <App.Text size={14} weight={700}>Earn</App.Text>
-                  </App.Flex>
-                </Link>
-
-                <Link href="/faucet" className={cn(styles.link, {[styles.active]: router.pathname.includes('/faucet')})}>
-                  <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
-                    <App.Icon icon="menuFaucet" />
-                    <App.Text size={14} weight={700}>Faucet</App.Text>
                   </App.Flex>
                 </Link>
 
