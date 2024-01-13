@@ -77,6 +77,8 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
     }
   }, [])
 
+  wagmiConfig.args.autoConnect = ! initialData?.isApp
+
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
