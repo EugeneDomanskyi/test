@@ -97,6 +97,28 @@ const Exchange = () => {
       if (type == 'display_uri') {
         appPost({ wcUri: data})
       }
+
+      appLog(type)
+    })
+
+    customConnector.on('chainChanged', (event) => {
+      appLog({chainChanged: event})
+    })
+
+    customConnector.on('accountsChanged', (event) => {
+      appLog({accountsChanged: event})
+    })
+
+    customConnector.on('connect', (event) => {
+      appLog({connect: event})
+    })
+
+    customConnector.on('session_event', (event) => {
+      appLog({session_event: event})
+    })
+
+    customConnector.on('disconnect', (event) => {
+      appLog({disconnect: event})
     })
     
     const result = await connect({
