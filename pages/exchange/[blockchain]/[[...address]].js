@@ -35,7 +35,7 @@ const Exchange = () => {
   const router = useRouter()
   const [queryTokenId] = router.query.address || []
 
-  const { wallet } = useWalletConnect()
+  const { wallet, disconnect } = useWalletConnect()
   const { isApp, appData, appPost, appLog } = useApp()
 
   const dispatch = useDispatch()
@@ -63,10 +63,10 @@ const Exchange = () => {
   }, [])
 
   useEffect(() => {
-    if (isApp && !wallet) {
+    if (isApp) {
       connectTegroWallet()
     }
-  }, [isApp, wallet])
+  }, [isApp])
 
   useEffect(() => {
     if (appData?.walletAddress && appData?.walletAddress != wallet) {
@@ -85,6 +85,10 @@ const Exchange = () => {
   }, [socketConnected, blockchain?.id, current?.id])
 
   const connectTegroWallet = async () => {
+    if (wallet) {
+      disconnect()
+    }
+
     const customConnector = new WalletConnectConnector({
       chains: CHAINS,
       options: {
@@ -126,7 +130,7 @@ const Exchange = () => {
       chainId: blockchain.id,
     })
 
-    appLog(Object.keys(result))
+    appLog('Wallet', result.account)
   }
 
   const handleAction = useCallback(({action, data}) => {
