@@ -94,6 +94,12 @@ const Exchange = () => {
       options: {
         projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
         showQrModal: false,
+        metadata: {
+          name: 'TegroWebView',
+          description: 'Tegro Wallet Dapp',
+          url: 'tegro.com',
+          icons: ['https://tegro.com/images/tegro-connect-wallet.png']
+        }
       },
     })
 
