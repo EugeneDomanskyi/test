@@ -130,7 +130,7 @@ const Exchange = () => {
       chainId: blockchain.id,
     })
 
-    appLog('Wallet', result.account)
+    appLog({Wallet: result.account})
   }
 
   const handleAction = useCallback(({action, data}) => {
