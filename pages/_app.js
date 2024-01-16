@@ -77,8 +77,6 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
     }
   }, [])
 
-  wagmiConfig.args.autoConnect = ! initialData?.isApp
-
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
@@ -102,6 +100,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
   let ssRoute = ''
   let isMobile = null
   let isApp = null
+  let initWallet = null
   let chains = []
 
   if (ctx?.req) {
@@ -111,6 +110,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
     isMobile = device.type === 'mobile'
 
     isApp = ctx.req.headers['x-tegro-app'] == 'native'
+    initWallet = ctx.req.headers['x-tegro-wallet']
 
     const result = await $app.api.chains()
     if (result) {
@@ -136,6 +136,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
       blockchain: cookies.blockchain,
       isMobile,
       isApp,
+      initWallet,
       chains,
     },
     ssRoute,

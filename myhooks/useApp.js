@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 
 export const useApp = () => {
   const isApp = useSelector(({ $app }) => $app.isApp)
+  const initWallet = useSelector(({ $app }) => $app.initWallet)
 
   const [appData, setAppData] = useState()
 

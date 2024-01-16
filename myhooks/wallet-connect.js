@@ -113,8 +113,8 @@ const useWalletConnect = () => {
     }) : [])
   }, [chains, isConnected])
 
-  const disconnect = () => {
-    wagmiDisconnect()
+  const disconnect = async () => {
+    await wagmiDisconnect()
   }
 
   const network = (currentChain) => {

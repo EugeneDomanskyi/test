@@ -35,8 +35,8 @@ const Exchange = () => {
   const router = useRouter()
   const [queryTokenId] = router.query.address || []
 
-  const { wallet, disconnect } = useWalletConnect()
-  const { isApp, appData, appPost, appLog } = useApp()
+  const { wallet, connection, disconnect } = useWalletConnect()
+  const { isApp, initWallet, appData, appPost, appLog } = useApp()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -63,10 +63,10 @@ const Exchange = () => {
   }, [])
 
   useEffect(() => {
-    if (isApp) {
+    if (isApp && !connection.loading) {
       connectTegroWallet()
     }
-  }, [isApp])
+  }, [isApp, connection])
 
   useEffect(() => {
     if (appData?.walletAddress && appData?.walletAddress != wallet) {
@@ -84,59 +84,46 @@ const Exchange = () => {
     }
   }, [socketConnected, blockchain?.id, current?.id])
 
+  useEffect(() => {
+    if (isApp) {
+      appLog({WebViewWallet: wallet})
+    }
+  }, [isApp, wallet])
+
   const connectTegroWallet = async () => {
-    if (wallet) {
-      disconnect()
+    let needConnect = !wallet
+    if (wallet && initWallet && wallet != initWallet) {
+      await disconnect()
+      needConnect = true
     }
 
-    const customConnector = new WalletConnectConnector({
-      chains: CHAINS,
-      options: {
-        projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
-        showQrModal: false,
-        metadata: {
-          name: 'TegroWebView',
-          description: 'Tegro Wallet Dapp',
-          url: 'tegro.com',
-          icons: ['https://tegro.com/images/tegro-connect-wallet.png']
+    if (needConnect) {
+      const customConnector = new WalletConnectConnector({
+        chains: CHAINS,
+        options: {
+          projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
+          showQrModal: false,
+          metadata: {
+            name: 'TegroWebView',
+            description: 'Tegro Wallet Dapp',
+            url: 'tegro.com',
+            icons: ['https://tegro.com/images/tegro-connect-wallet.png']
+          }
+        },
+      })
+
+      customConnector.on('message', ({type, data}) => {
+        if (type == 'display_uri') {
+          appPost({ wcUri: data})
         }
-      },
-    })
+        appLog(type)
+      })
 
-    customConnector.on('message', ({type, data}) => {
-      if (type == 'display_uri') {
-        appPost({ wcUri: data})
-      }
-
-      appLog(type)
-    })
-
-    customConnector.on('chainChanged', (event) => {
-      appLog({chainChanged: event})
-    })
-
-    customConnector.on('accountsChanged', (event) => {
-      appLog({accountsChanged: event})
-    })
-
-    customConnector.on('connect', (event) => {
-      appLog({connect: event})
-    })
-
-    customConnector.on('session_event', (event) => {
-      appLog({session_event: event})
-    })
-
-    customConnector.on('disconnect', (event) => {
-      appLog({disconnect: event})
-    })
-    
-    const result = await connect({
-      connector: customConnector,
-      chainId: blockchain.id,
-    })
-
-    appLog({Wallet: result.account})
+      await connect({
+        connector: customConnector,
+        chainId: blockchain.id,
+      })
+    }
   }
 
   const handleAction = useCallback(({action, data}) => {

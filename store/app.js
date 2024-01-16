@@ -19,6 +19,7 @@ export const appSlice = createSlice({
       windowHeight: null,
     },
     isApp: false,
+    initWallet: null,
   },
 
   reducers: {

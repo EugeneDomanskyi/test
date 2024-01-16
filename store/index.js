@@ -30,6 +30,7 @@ const createStore = (initialData) => {
         },
         chains: initialData.chains,
         isApp: initialData.isApp,
+        initWallet: initialData.initWallet,
       },
     },
 
