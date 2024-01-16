@@ -38,7 +38,6 @@ export default {
   Tabs: AppTabs,
   Text: AppText,
   TextField: AppTextField,
-  Switch: AppSwitch,
   RangeInput: AppRangeInput,
   Tooltip: AppTooltip,
   ShadowText: AppShadowText,

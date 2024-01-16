@@ -24,8 +24,11 @@ const Sales = ({ version, onClickSale }) => {
 
   useEffect(() => {
     if (current?.id) {
-      Socket.on('order_submitted', 'trades', () => {
-        getTrades()
+      Socket.on('trade_created', 'trades', (trade) => {
+        dispatch($orders.set.addTrades(trade))
+      })
+      Socket.on('trade_updated', 'trades', (trade) => {
+        dispatch($orders.set.updateTrade(trade))
       })
 
       getTrades()
@@ -47,7 +50,7 @@ const Sales = ({ version, onClickSale }) => {
   const handleClick = (sale) => () => {
     onClickSale({
       quantity: sale.amount,
-      price: sale.priceFormatted,
+      price: sale.price,
       side: sale.side,
     })
   }
@@ -66,19 +69,19 @@ const Sales = ({ version, onClickSale }) => {
         <App.Flex className={styles.rowHeader} justify="space-between" align="center">
           <App.Text flex={1} size={[10, 12]} color="#B9B8C5" weight={[600, 500]} height={1}>Price</App.Text>
           <App.Text flex={1} size={[10, 12]} color="#B9B8C5" center weight={[600, 500]} height={1}>Volume</App.Text>
+          <App.Text flex={1} size={[10, 12]} color="#B9B8C5" center weight={[600, 500]} height={1}>Status</App.Text>
           <App.Text flex={1} size={[10, 12]} color="#B9B8C5" right weight={[600, 500]} height={1}>Time</App.Text>
         </App.Flex>
 
         <App.Flex flex={1} column sx={{overflow: 'auto'}}>
           {
             trades.map(sale => {
-              const price = sale.priceFormatted
               let color = {
                 price: '#53F19C',
                 row: '#06382f',
                 side: 'buy',
               }
-              if (price * 1 < previousPrice) {
+              if (sale.price * 1 < previousPrice) {
                 color = {
                   price: '#EB3169',
                   row: '#4d0e27',
@@ -86,13 +89,27 @@ const Sales = ({ version, onClickSale }) => {
                 }
               }
 
-              previousPrice = price * 1
+              previousPrice = sale.price * 1
               return (
                 <App.Flex key={sale.id || sale.signature} column>
                   <App.Flex  justify="space-between" align="center" className={styles.sale} sx={{backgroundColor: color.row}} onClick={handleClick({...sale, side: color.side})}>
-                    <App.Text flex={1} size={12} color={color.price} height={1}>{ price }</App.Text>
+                    <App.Text flex={1} size={12} color={color.price} height={1}>{ sale.price }</App.Text>
                     <App.Text flex={1} size={12} weight={600} center height={1}>{ sale.amount }</App.Text>
-                    <App.Text flex={1} size={12} right height={1}>{ moment(sale.timestamp*1000).format('hh:mm:ss A') }</App.Text>
+                    <App.Flex flex={1} size={12} weight={600} center height={1}>
+                      { (state => {
+                        switch (state) {
+                          case 'success':
+                            return <App.Icon icon={"check"} />
+                          case 'failed':
+                            return <App.Icon width={14} height={11} color="#fff" icon={"cross"} />
+                          case 'matched':
+                            return <App.Icon width={20} height={20} color="#fff" icon={"hourglass"} />
+                          default:
+                            return null
+                        }
+                      })(sale.state) }
+                    </App.Flex>
+                    <App.Text flex={1} size={12} right height={1}>{ moment(sale.time).format('hh:mm:ss A') }</App.Text>
                   </App.Flex>
                 </App.Flex>
               )

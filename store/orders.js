@@ -100,12 +100,15 @@ export const ordersSlice = createSlice({
     },
 
     trades: (state, { payload }) => {
-      state.trades = payload.data.map((trade) => ({
-        ...trade,
-        priceFormatted: trade.price,
-        orderInvalidReason: 'order filled',
-        timestamp: new Date(trade.timestamp).getTime()/1000,
-      }))
+      state.trades = payload.data
+    },
+
+    addTrades: (state, { payload }) => {
+      state.trades = [payload, ...state.trades]
+    },
+
+    updateTrade: (state, { payload }) => {
+      state.trades = state.trades.map(tr => (tr.id === payload.id ? payload : tr))
     },
 
     myOrdersDialogOpen: (state, { payload }) => {
