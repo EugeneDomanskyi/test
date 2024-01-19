@@ -142,7 +142,8 @@ const api = {
   },
 
   list: (params) => {
-    return request('market/orders/user', 'GET', params)
+    const { user_address, ...query } = params
+    return request(`market/orders/user/${user_address}`, 'GET', query)
   },
 
   typedData: (params) => {

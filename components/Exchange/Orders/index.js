@@ -69,6 +69,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
     const result = await $orders.api.list({
       chain_id: blockchain.id,
       user_address: wallet,
+      page: 1,
+      page_size: 50,
     })
 
     if (result) {
