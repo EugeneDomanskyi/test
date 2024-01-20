@@ -48,7 +48,7 @@ export const useApp = () => {
 
   const appConnect = async () => {
     let needConnect = !wallet
-    if (wallet && appWallet && wallet != appWallet) {
+    if (wallet && wallet != appWallet) {
       appLog(`Disconnect ${wallet}`)
       await disconnect()
       return
@@ -83,6 +83,7 @@ export const useApp = () => {
         chainId: blockchain.id,
       })
 
+      setAppWallet(connected.account.toLowerCase())
       appLog(`Connected to wallet ${connected.account}`)
     } else {
       appLog(`Do not need to Connect: ${wallet}`)
