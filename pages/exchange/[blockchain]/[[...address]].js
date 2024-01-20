@@ -1,12 +1,9 @@
-import { useRef, useCallback, useEffect } from 'react'
+import { useRef, useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
-import { connect } from '@wagmi/core'
-import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect'
 import dynamic from 'next/dynamic'
 import cn from 'classnames'
 
-import { CHAINS } from '@/config'
 import Socket from '@/libs/ws.lib'
 import { trackEvent, getPageName } from '@/libs/analytics.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -24,6 +21,7 @@ import Sales from '@/components/Exchange/Sales'
 import TradeForm from '@/components/Exchange/TradeForm'
 import Info from '@/components/Exchange/Info'
 import Orders from '@/components/Exchange/Orders'
+import DevModal from '@/components/DevModal'
 
 import styles from './styles.module.scss'
 
@@ -35,15 +33,18 @@ const Exchange = () => {
   const router = useRouter()
   const [queryTokenId] = router.query.address || []
 
-  const { wallet, connection, disconnect } = useWalletConnect()
-  const { isApp, initWallet, appData, appPost, appLog } = useApp()
+  const { wallet, connection } = useWalletConnect()
+  const { isApp, appLog, appConnect } = useApp()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
+  const devMode = useSelector(({ $app }) => $app.devMode)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const current = useSelector(({ $token }) => $token.current)
   const myOrdersDialogOpen = useSelector(({ $orders }) => $orders.myOrdersDialogOpen)
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
+
+  const [devModalVisible, setDevModalVisible] = useState(false)
 
   const tradeForm = useRef(null)
   const mobileRef = useRef(null)
@@ -64,15 +65,10 @@ const Exchange = () => {
 
   useEffect(() => {
     if (isApp && !connection.loading) {
-      connectTegroWallet()
+      appLog(connection)
+      appConnect()
     }
   }, [isApp, connection])
-
-  useEffect(() => {
-    if (appData?.walletAddress && appData?.walletAddress != wallet) {
-      connectTegroWallet()
-    }
-  }, [appData?.walletAddress])
 
   useEffect(() => {
     if (socketConnected && blockchain?.id && current?.id) {
@@ -83,48 +79,6 @@ const Exchange = () => {
       }
     }
   }, [socketConnected, blockchain?.id, current?.id])
-
-  useEffect(() => {
-    if (isApp) {
-      appLog({WebViewWallet: wallet})
-    }
-  }, [isApp, wallet])
-
-  const connectTegroWallet = async () => {
-    let needConnect = !wallet
-    if (wallet && initWallet && wallet != initWallet) {
-      await disconnect()
-      needConnect = true
-    }
-
-    if (needConnect) {
-      const customConnector = new WalletConnectConnector({
-        chains: CHAINS,
-        options: {
-          projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
-          showQrModal: false,
-          metadata: {
-            name: 'TegroWebView',
-            description: 'Tegro Wallet Dapp',
-            url: 'tegro.com',
-            icons: ['https://tegro.com/images/tegro-connect-wallet.png']
-          }
-        },
-      })
-
-      customConnector.on('message', ({type, data}) => {
-        if (type == 'display_uri') {
-          appPost({ wcUri: data})
-        }
-        appLog(type)
-      })
-
-      await connect({
-        connector: customConnector,
-        chainId: blockchain.id,
-      })
-    }
-  }
 
   const handleAction = useCallback(({action, data}) => {
     if ( !isApp) {
@@ -168,6 +122,10 @@ const Exchange = () => {
       mobileRef.current.handleClickOrder(order)
       handleCloseOrdersDialog()
     }, 300)
+  }
+
+  const handleDevModal = () => {
+    setDevModalVisible(state => !state)
   }
 
   return (
@@ -219,6 +177,18 @@ const Exchange = () => {
               </App.Flex>
             </App.Flex>
           </App.Dialog>
+
+          {devMode ? (
+            <>
+              <App.Flex className={styles.devModeButton}>
+                <App.Button primary onClick={handleDevModal}>Dev</App.Button>
+              </App.Flex>
+
+              <App.Dialog open={devModalVisible} onClose={handleDevModal} title="Developer Mode Settings">
+                <DevModal />
+              </App.Dialog>
+            </>
+          ) : null}
         </>
       )}
     </App.Flex>
