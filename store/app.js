@@ -18,11 +18,16 @@ export const appSlice = createSlice({
       windowWidth: null,
       windowHeight: null,
     },
+    devMode: true,
     isApp: false,
     initWallet: null,
   },
 
   reducers: {
+    devMode: (state, { payload }) => {
+      state.devMode = payload
+    },
+
     code: (state, { payload }) => {
       state.code = payload
       setCookie(null, 'blockchain', payload, {path: '/'})
