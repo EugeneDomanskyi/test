@@ -12,6 +12,21 @@ const FaucetOnce = ({ onClose }) => {
     }
   }
 
+  const handleShare = () => {
+    const tweetText = encodeURIComponent(
+  `
+🚀🔥 Just landed a spot on the @TegroFi Testnet whitelist!
+
+If you're farming #airdrops, don't miss this gem.
+
+Simply connect your wallet at testnet.tegro.com and complete FREE trades to collect points! 🌐💥
+  `
+    )
+
+    const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}`
+    window.open(tweetUrl, '_blank')
+  }
+
   return (
     <App.Flex column gap={[64, 32]} sx={[{ padding: 32 }, { padding: 16 }]}>
       <App.Flex column center gap={16}>
@@ -29,7 +44,7 @@ const FaucetOnce = ({ onClose }) => {
           </App.Flex>
 
           <App.Flex row className={styles.text}>
-            <App.Text size={16} weight={600} height={1}>1M KRYPTONITE</App.Text>
+            <App.Text size={16} weight={600} height={1}>KRYPTONITE</App.Text>
           </App.Flex>
         </App.Flex>
 
@@ -40,14 +55,14 @@ const FaucetOnce = ({ onClose }) => {
           </App.Flex>
 
           <App.Flex row className={styles.text}>
-            <App.Text size={16} weight={600} height={1}>1M POKEBALLS</App.Text>
+            <App.Text size={16} weight={600} height={1}>POKEBALLS</App.Text>
           </App.Flex>
         </App.Flex>
       </App.Flex>
 
       <App.Flex center row gap={[32, 16]} sx={[{ padding: '0 48px' }, {padding: 0}]}>
         <App.Flex center flex={1}>
-          <App.Button primary outlined large fullWidth>Share Now</App.Button>
+          <App.Button primary outlined large fullWidth onClick={handleShare}>Share Now</App.Button>
         </App.Flex>
 
         <App.Flex center flex={1}>
