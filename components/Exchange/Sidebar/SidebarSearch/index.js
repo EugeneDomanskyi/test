@@ -1,7 +1,7 @@
 import { memo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
@@ -42,7 +42,7 @@ const SidebarSearch = () => {
   const handleSearch = (searchQuery) => {
     searchTokens(searchQuery)
 
-    trackEvent('Search Market', {
+    Amplitude.event('Search Market', {
       'Network': blockchain.code.toUpperCase(),
       'Search term': searchQuery,
     })

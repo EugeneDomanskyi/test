@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 import App from '@/components/App'
 
@@ -55,13 +55,13 @@ const LandingPlatform = () => {
     }
 
     if (page) {
-      trackEvent('Page Visited', {
+      Amplitude.event('Page Visited', {
         'Page Name': page,
       })
     }
 
     if (community) {
-      trackEvent('Community Resources Visited', {
+      Amplitude.event('Community Resources Visited', {
         'Community': community,
       })
     }

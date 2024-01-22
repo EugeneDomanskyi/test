@@ -5,7 +5,7 @@ import animationData from '@/public/animations/confetti_new.json'
 import styles from './styles.module.scss'
 import cn from 'classnames'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 import App from '@/components/App'
 import ClaimText from '@/components/Raffle/RaffleModalParticipate/ClaimText'
@@ -69,7 +69,7 @@ const FourthStep = ({ campaign, onSubmit, onShare }) => {
   }
 
   const handleClickShare = () => {
-    trackEvent('Click Case Share ', {
+    Amplitude.event('Click Case Share ', {
       'Name': campaign.title,
       'Time Left': getTime(campaign),
       'Tkey Cost': campaign.tKeyRequired,

@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
-import { trackEvent, getPageName } from '@/libs/analytics.lib'
 import { CHAINS } from '@/config'
 import $token, { template } from '@/store/token'
 import $markets from '@/store/markets'
@@ -40,8 +39,8 @@ export default function Markets({ currentInfo, currentChain }) {
   // const [marketInfo, setMarketInfo] = useState(currentInfo)
 
   // useEffect(() => {
-  //   trackEvent('Page Visited', {
-  //     'Page Name': getPageName(),
+  //   Amplitude.event('Page Visited', {
+  //     'Page Name': Amplitude.page(),
   //   })
   // }, [])
 
