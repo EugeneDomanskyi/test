@@ -1,6 +1,6 @@
 import cn from 'classnames'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 import App from '@/components/App'
 
@@ -8,13 +8,13 @@ import styles from './styles.module.scss'
 
 const NavbarDropdown = ({isOpen, onClose}) => {
   const handlePageEvent = (page) => () => {
-    trackEvent('Page Visited', {
+    Amplitude.event('Page Visited', {
       'Page Name': page,
     })
   }
 
   const handleResourceEvent = (community) => () => {
-    trackEvent('Community Resources Visited', {
+    Amplitude.event('Community Resources Visited', {
       'Community': community,
     })
   }

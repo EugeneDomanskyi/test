@@ -1,6 +1,6 @@
 import { usePropsHelper } from '@/myhooks/props-helper'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 import App from '@/components/App'
 
@@ -10,7 +10,7 @@ const LandingFooter = () => {
   const { isMobile } = usePropsHelper()
 
   const handlePageEvent = (page) => () => {
-    trackEvent('Page Visited', {
+    Amplitude.event('Page Visited', {
       'Page Name': page,
     })
   }

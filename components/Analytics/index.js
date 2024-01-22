@@ -1,13 +1,12 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import amplitude from 'amplitude-js'
 import Smartlook from 'smartlook-client'
 import * as Sentry from '@sentry/nextjs'
 import { useAccount } from 'wagmi'
 
-import $app from '@/store/app'
+import Amplitude from '@/libs/amplitude.lib'
 
-amplitude.getInstance().init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY)
+import $app from '@/store/app'
 
 if (process.env.NEXT_PUBLIC_APP_ENV !== 'local') {
   Sentry.init({
@@ -28,9 +27,7 @@ const Analytics = () => {
     }
 
     if (isConnected && address) {
-      const identifyObj = new amplitude.Identify()
-      identifyObj.set('wallet', address)
-      amplitude.identify(identifyObj)
+      Amplitude.identify(address)
 
       if (process.env.NEXT_PUBLIC_APP_ENV !== 'local') {
         Smartlook.identify(address)

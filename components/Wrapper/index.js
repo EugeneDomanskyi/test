@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 
 import useApp from '@/myhooks/useApp'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $app from '@/store/app'
 
@@ -18,6 +19,7 @@ const Wrapper = ({ children }) => {
   const isCampaign = router.asPath?.includes('/campaign')
 
   const { isApp } = useApp()
+  Amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY, !isApp)
 
   useEffect(() => {
     window.addEventListener('resize', handleWindowResize)
@@ -41,9 +43,9 @@ const Wrapper = ({ children }) => {
 
   return (
     <div style={{height: '100%', paddingTop: isCampaign || isApp ? 0 : 64, transition: '.4s', overflowX: 'hidden'}}>
+      <Analytics />
       {!isCampaign && !isApp ? <Header /> : null}
       {children}
-      <Analytics />
     </div>
   )
 }

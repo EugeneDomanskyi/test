@@ -6,7 +6,7 @@ import cn from 'classnames'
 import $app from '@/store/app'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 import Contracts from '@/libs/contracts.lib'
 
 import App from '@/components/App'
@@ -198,7 +198,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       setIsOrderConfirmOpen(true)
     }
 
-    trackEvent('Create Order Click', {
+    Amplitude.event('Create Order Click', {
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
       'Side': currentTab.toUpperCase(),
@@ -211,7 +211,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
 
   const handleTotalBlur = () => {
     handleChangeForm('price')(form.total / form.amount)
-    trackEvent('Add Total', {
+    Amplitude.event('Add Total', {
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
       'Price': form.price,
@@ -220,7 +220,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   }
 
   const handleBlurPrice = () => {
-    trackEvent('Add Price', {
+    Amplitude.event('Add Price', {
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
       'Price': form.price,
@@ -229,7 +229,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   }
 
   const handleBlurAmount = () => {
-    trackEvent('Add Quantity', {
+    Amplitude.event('Add Quantity', {
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
       'Price': form.price,

@@ -5,7 +5,7 @@ import moment from 'moment'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $app from '@/store/app'
 import $raffle from '@/store/raffle'
@@ -72,13 +72,13 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
 
   const handleTabChange = (value) => {
     if (value === 'my') {
-      trackEvent('View Case History')
+      Amplitude.event('View Case History')
     }
     setTab(value)
   }
 
   const handleParticipate = async (item) => {
-    trackEvent('View Case', {
+    Amplitude.event('View Case', {
       'Name': item.title,
       'Time Left': getTime(item),
       'Tkey Cost': item.tKeyRequired,

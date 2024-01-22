@@ -6,7 +6,7 @@ import Head from 'next/head'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import AlchemyLibrary from '@/libs/alchemy.lib'
-import { trackEvent, getPageName } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $app from '@/store/app'
 import $raffle from '@/store/raffle'
@@ -46,8 +46,8 @@ const RafflePage = () => {
   const requiredChain = process.env.NEXT_PUBLIC_APP_ENV == 'local' ? 'mumbai' : 'polygon'
 
   useEffect(() => {
-    trackEvent('Page Visited', {
-      'Page Name': getPageName(),
+    Amplitude.event('Page Visited', {
+      'Page Name': Amplitude.page(),
     })
   }, [])
 

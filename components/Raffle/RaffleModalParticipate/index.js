@@ -12,7 +12,7 @@ import $app from '@/store/app'
 import $raffle from '@/store/raffle'
 
 import Contracts from '@/libs/contracts.lib'
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 import App from '@/components/App'
 import Raffle from '@/components/Raffle'
@@ -81,7 +81,7 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
       return
     }
 
-    trackEvent('Open Case', {
+    Amplitude.event('Open Case', {
       'Name': item.title,
       'Time Left': getTime(),
       'Tkey Cost': item.tKeyRequired,
@@ -119,7 +119,7 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
 
     if (step === 0) {
       if (!isApproved) {
-        trackEvent('Case Opening Confirmation', {
+        Amplitude.event('Case Opening Confirmation', {
           'Name': item.title,
           'Time Left': getTime(),
           'Tkey Cost': item.tKeyRequired,
@@ -139,7 +139,7 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
     }
 
     if (step === 1) {
-      trackEvent('Case Opening Confirmation', {
+      Amplitude.event('Case Opening Confirmation', {
         'Name': item.title,
         'Time Left': getTime(),
         'Tkey Cost': item.tKeyRequired,
@@ -157,7 +157,7 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
 
       onUpdateTitle('Blockchain Confirmation!')
 
-      trackEvent('Case Opening Confirmation', {
+      Amplitude.event('Case Opening Confirmation', {
         'Name': item.title,
         'Time Left': getTime(),
         'Tkey Cost': item.tKeyRequired,
@@ -172,7 +172,7 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
     if (step === 3) {
       onUpdateTitle('Congratulations!')
 
-      trackEvent('Case Opening Confirmation', {
+      Amplitude.event('Case Opening Confirmation', {
         'Name': item.title,
         'Time Left': getTime(),
         'Tkey Cost': item.tKeyRequired,
@@ -225,7 +225,7 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
   }
 
   const handleClickShare = () => {
-    trackEvent('Click Case Share ', {
+    Amplitude.event('Click Case Share ', {
       'Name': item.title,
       'Time Left': getTime(),
       'Tkey Cost': item.tKeyRequired,
