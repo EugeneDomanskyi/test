@@ -20,6 +20,10 @@ class Amplitude {
     amplitude.identify(identifyObj)
   }
 
+  utm = (params) => {
+    amplitude.getInstance().setUserProperties(params)
+  }
+
   os = () => {
     let userAgent = window.navigator.userAgent,
         platform = window.navigator.platform,
