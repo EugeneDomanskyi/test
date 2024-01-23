@@ -1,12 +1,20 @@
+import { useDispatch } from 'react-redux'
 import Image from 'next/image'
 import cn from 'classnames'
+
+import $alert from '@/store/alert'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const FaucetOnce = ({ onClose }) => {
+  const dispatch = useDispatch()
+
   const handleClose = () => {
+    dispatch($alert.set.success({ title: 'POKEBALLS added to your wallet' }))
+    dispatch($alert.set.success({ title: 'KRYPTONITE added to your wallet' }))
+
     if (onClose) {
       onClose()
     }
