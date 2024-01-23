@@ -85,7 +85,7 @@ const Exchange = () => {
   }, [socketConnected, blockchain?.id, current?.id])
 
   useEffect(() => {
-    if (!connection?.loading) {
+    if (!connection?.loading && !isApp) {
       faucetCheck()
     }
   }, [connection])
