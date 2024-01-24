@@ -80,6 +80,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
     setLoading(false)
   }
 
+  console.log(orders)
+
   const handlePressCancelConfirm = (order) => (e) => {
     e.stopPropagation()
     setOrderForCancel(order)
