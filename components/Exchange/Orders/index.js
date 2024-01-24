@@ -11,7 +11,7 @@ import $app from '@/store/app'
 import $orders from '@/store/orders'
 import $alert from '@/store/alert'
 
-import { trackEvent, getPageName } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
@@ -146,13 +146,13 @@ const Orders = ({global, type, version, onClickOrder}) => {
       'Total': order.price,
       'Network': blockchain.code.toUpperCase(),
     }
-    trackEvent('Cancel Order Submit', eventPost)
+    Amplitude.event('Cancel Order Submit', eventPost)
 
     const signature = await sign(wallet)
     if (signature) {
       const result = await $orders.api.cancel({ id: order.orderId, chain_id: blockchain.id, signature })
       if (result) {
-        trackEvent('Cancel Order Success', eventPost)
+        Amplitude.event('Cancel Order Success', eventPost)
         dispatch($orders.set.update(result.data))
         dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
       } else {
@@ -187,7 +187,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
   }
 
   const handleChangeOrdersType = type => () => {
-    trackEvent(`View ${type == 'open' ? 'Open' : 'Completed'} Order`, {
+    Amplitude.event(`View ${type == 'open' ? 'Open' : 'Completed'} Order`, {
       'Base Currency': current?.symbol ?? 'Global',
       'Quote Currency': current?.quoteSymbol,
       'Network': blockchain.code.toUpperCase(),
@@ -202,15 +202,15 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
   const handleConnectWallet = async () => {
     if ( ! wallet) {
-      trackEvent('Wallet Connect Clicked', {
-        'Source': getPageName(),
+      Amplitude.event('Wallet Connect Clicked', {
+        'Source': Amplitude.page(),
       })
 
       const result = await connect()
       if (result) {
         const walletName = await getConnectorName()
-        trackEvent('Wallet Connect Success', {
-          'Source': getPageName(),
+        Amplitude.event('Wallet Connect Success', {
+          'Source': Amplitude.page(),
           'Type': walletName,
         })
       }

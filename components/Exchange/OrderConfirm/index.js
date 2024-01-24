@@ -5,7 +5,7 @@ import { formatUnits, parseUnits } from 'viem'
 import numeral from 'numeral'
 import cn from 'classnames'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import Contracts from '@/libs/contracts.lib'
 
@@ -29,7 +29,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
 
   const handleNextStep = async () => {
     if (step == 'preview') {
-      trackEvent('Confirm Order Submit', {
+      Amplitude.event('Confirm Order Submit', {
         'Base Currency': side === 'buy' ? current.symbol : current.quoteSymbol,
         'Quote Currency': side === 'buy' ? current.quoteSymbol : current.symbol,
         'Side': side.toUpperCase(),
@@ -64,7 +64,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       
       setStep('place')
 
-      trackEvent('Confirm Order Submit', {
+      Amplitude.event('Confirm Order Submit', {
         'Base Currency': side === 'buy' ? current.symbol : current.quoteSymbol,
         'Quote Currency': side === 'buy' ? current.quoteSymbol : current.symbol,
         'Side': side.toUpperCase(),

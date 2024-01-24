@@ -3,10 +3,11 @@ import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
+
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
@@ -75,13 +76,13 @@ const Info = () => {
 
   const handleClickLink = (type) => () => {
     if (type == 'market-page') {
-      trackEvent(`Page Visited`, {
+      Amplitude.event(`Page Visited`, {
         'Page Name': 'Market Page',
         'Market': current.marketId,
         'Network': blockchain.name,
       })
     } else {
-      trackEvent(`Click ${type} Redirect`, {
+      Amplitude.event(`Click ${type} Redirect`, {
         Markets: current.name,
       })
     }

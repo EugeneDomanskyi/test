@@ -5,7 +5,7 @@ import Image from 'next/image'
 import cn from 'classnames'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
-import { getPageName, trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
@@ -73,15 +73,15 @@ const HeaderWallet = () => {
 
   const handleConnectWallet = async () => {
     if ( ! wallet) {
-      trackEvent('Wallet Connect Clicked', {
-        'Source': getPageName(),
+      Amplitude.event('Wallet Connect Clicked', {
+        'Source': Amplitude.page(),
       })
 
       const result = await connect()
       if (result) {
         const walletName = await getConnectorName()
-        trackEvent('Wallet Connect Success', {
-          'Source': getPageName(),
+        Amplitude.event('Wallet Connect Success', {
+          'Source': Amplitude.event(),
           'Type': walletName,
         })
       }
@@ -95,8 +95,8 @@ const HeaderWallet = () => {
     handleDisconnectDialogToggle(false)()
     handlePortfolioToggle(false)
 
-    trackEvent('Wallet Disconnect Success', {
-      'Source': getPageName(),
+    Amplitude.event('Wallet Disconnect Success', {
+      'Source': Amplitude.page(),
       'Type': walletName,
     })
   }

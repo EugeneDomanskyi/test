@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import cn from 'classnames'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
@@ -30,7 +30,7 @@ const SidebarItem = ({ item, version }) => {
   const colors = useRef([getRandomColor(), getRandomColor()])
 
   const handleClick = () => {
-    trackEvent('View Market', {
+    Amplitude.event('View Market', {
       'Base Currency': item.symbol,
       'Quote Currency': item.quoteSymbol,
       'Network': blockchain.code.toUpperCase(),

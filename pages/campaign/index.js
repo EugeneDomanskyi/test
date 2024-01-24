@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 import cn from 'classnames'
 
-import { trackEvent, getPageName } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
@@ -84,20 +84,20 @@ const LandingPage = () => {
 
   const handleConnectWallet = async (noWallet = null) => {
     if (noWallet) {
-      trackEvent("Click Don't have a wallet")
+      Amplitude.event("Click Don't have a wallet")
     }
 
     if ( ! wallet) {
-      trackEvent('Wallet Connect Clicked', {
-        'Source': getPageName(),
+      Amplitude.event('Wallet Connect Clicked', {
+        'Source': Amplitude.page(),
       })
 
       const result = await connect()
       if (result) {
         router.push(tradeLink)
         const walletName = await getConnectorName()
-        trackEvent('Wallet Connect Success', {
-          'Source': getPageName(),
+        Amplitude.event('Wallet Connect Success', {
+          'Source': Amplitude.page(),
           'Type': walletName,
         })
       }
@@ -105,8 +105,8 @@ const LandingPage = () => {
   }
 
   const handleClickTrade = () => {
-    trackEvent('Campaign Click Trade Now', {
-      'Source': getPageName(),
+    Amplitude.event('Campaign Click Trade Now', {
+      'Source': Amplitude.page(),
     })
   }
 

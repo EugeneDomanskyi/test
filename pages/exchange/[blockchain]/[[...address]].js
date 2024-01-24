@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import cn from 'classnames'
 
 import Socket from '@/libs/ws.lib'
-import { trackEvent, getPageName } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useApp from '@/myhooks/useApp'
 
@@ -21,6 +21,8 @@ import Sales from '@/components/Exchange/Sales'
 import TradeForm from '@/components/Exchange/TradeForm'
 import Info from '@/components/Exchange/Info'
 import Orders from '@/components/Exchange/Orders'
+import FaucetConnect from '@/components/Faucet/FaucetConnect'
+import FaucetOnce from '@/components/Faucet/FaucetOnce'
 import DevModal from '@/components/DevModal'
 
 import styles from './styles.module.scss'
@@ -45,13 +47,15 @@ const Exchange = () => {
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
 
   const [devModalVisible, setDevModalVisible] = useState(false)
+  const [isFaucetConnectVisible, setIsFaucetConnectVisible] = useState(false)
+  const [isFaucetOnceVisible, setIsFaucetOnceVisible] = useState(false)
 
   const tradeForm = useRef(null)
   const mobileRef = useRef(null)
 
   useEffect(() => {
-    trackEvent('Page Visited', {
-      'Page Name': getPageName(),
+    Amplitude.event('Page Visited', {
+      'Page Name': Amplitude.page(),
     })
 
     Socket.init(handleAction, handleCloseConnection).then(() => {
@@ -79,6 +83,43 @@ const Exchange = () => {
       }
     }
   }, [socketConnected, blockchain?.id, current?.id])
+
+  useEffect(() => {
+    if (!connection?.loading && !isApp) {
+      faucetCheck()
+    }
+  }, [connection])
+
+  useEffect(() => {
+    if (!connection?.loading && wallet) {
+      faucetWalletCheck()
+    }
+  }, [connection, wallet])
+
+  const faucetCheck = () => {
+    if (!connection.connected) {
+      const fauceConnect = localStorage.getItem('faucet-connect')
+      if (!fauceConnect || !JSON.parse(fauceConnect)) {
+        localStorage.setItem('faucet-connect', JSON.stringify(true))
+        setIsFaucetConnectVisible(true)
+      }
+    }
+  }
+
+  const faucetWalletCheck = () => {
+    let fauceWallets = localStorage.getItem('faucet-wallets')
+    if (fauceWallets) {
+      fauceWallets = JSON.parse(fauceWallets)
+    } else {
+      fauceWallets = []
+    }
+
+    if (!fauceWallets.includes(wallet.toLowerCase())) {
+      fauceWallets.push(wallet.toLowerCase())
+      localStorage.setItem('faucet-wallets', JSON.stringify(fauceWallets))
+      setIsFaucetOnceVisible(true)
+    }
+  }
 
   const handleAction = useCallback(({action, data}) => {
     if ( !isApp) {
@@ -126,6 +167,14 @@ const Exchange = () => {
 
   const handleDevModal = () => {
     setDevModalVisible(state => !state)
+  }
+
+  const handleFaucetConnectClose = () => {
+    setIsFaucetConnectVisible(false)
+  }
+
+  const handleFaucetOnceClose = () => {
+    setIsFaucetOnceVisible(false)
   }
 
   return (
@@ -191,6 +240,31 @@ const Exchange = () => {
           ) : null}
         </>
       )}
+
+      {isApp ? (
+        connection.loading ? (
+          <App.Flex column center gap={8} className={styles.appLoader}>
+            <App.Loader />
+            <App.Text>Connection...</App.Text>
+          </App.Flex>
+        ) : (
+          ! connection.loading && ! connection.connected ? (
+            <App.Flex column center gap={8} className={styles.appLoader}>
+              <App.Icon icon="alert-error" />
+              <App.Text>Connection failed</App.Text>
+              <App.Text>Swipe down to reconnect</App.Text>
+            </App.Flex>
+          ) : null
+        )
+      ) : null}
+
+      <App.Dialog width={620} open={isFaucetConnectVisible} hideHeader onClose={handleFaucetConnectClose}>
+        <FaucetConnect onComplete={handleFaucetConnectClose} />
+      </App.Dialog>
+
+      <App.Dialog width={620} open={isFaucetOnceVisible} hideHeader onClose={handleFaucetOnceClose}>
+        <FaucetOnce onClose={handleFaucetOnceClose} />
+      </App.Dialog>
     </App.Flex>
   )
 }
