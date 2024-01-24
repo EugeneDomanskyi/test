@@ -1,8 +1,21 @@
 import { polygonMumbai } from '@wagmi/chains'
 
+const mumbaiWithCustomRPC = {
+  ...polygonMumbai,
+  rpcUrls: {
+    ...polygonMumbai.rpcUrls,
+    default: {
+      http: ['https://rpc-mumbai.maticvigil.com/'],
+    },
+    public: {
+      http: ['https://rpc-mumbai.maticvigil.com/'],
+    },
+  }
+}
+
 const TEST_NETWORKS = [
   {
-    ...polygonMumbai,
+    ...mumbaiWithCustomRPC,
     code: 'mumbai',
     currency: polygonMumbai.nativeCurrency.symbol,
     decimals: polygonMumbai.nativeCurrency.decimals,
