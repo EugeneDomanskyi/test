@@ -143,7 +143,9 @@ const api = {
 
   list: (params) => {
     const { user_address, ...query } = params
-    return request(`market/orders/user/${user_address}`, 'GET', query)
+    const active = request(`market/orders/user/${user_address}`, 'GET', {...query, statuses: 'active'})
+    const close = request(`market/orders/user/${user_address}`, 'GET', {...query, statuses: 'matched,completed,cancelled'})
+    return Promise.all([active, close]).then(([active, close]) => [...active, ...close])
   },
 
   typedData: (params) => {
