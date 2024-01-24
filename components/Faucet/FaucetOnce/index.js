@@ -2,6 +2,8 @@ import { useDispatch } from 'react-redux'
 import Image from 'next/image'
 import cn from 'classnames'
 
+import useApp from '@/myhooks/useApp'
+
 import $alert from '@/store/alert'
 
 import App from '@/components/App'
@@ -11,9 +13,11 @@ import styles from './styles.module.scss'
 const FaucetOnce = ({ onClose }) => {
   const dispatch = useDispatch()
 
+  const { isApp } = useApp()
+
   const handleClose = () => {
-    dispatch($alert.set.success({ title: 'POKEBALLS added to your wallet' }))
-    dispatch($alert.set.success({ title: 'KRYPTONITE added to your wallet' }))
+    dispatch($alert.set.success({ title: 'Congratulations!', text: 'POKEBALLS added to your wallet' }))
+    dispatch($alert.set.success({ title: 'Congratulations!', text: 'KRYPTONITE added to your wallet' }))
 
     if (onClose) {
       onClose()
@@ -44,7 +48,7 @@ Simply connect your wallet at testnet.tegro.com and complete FREE trades to coll
         </App.Flex>
       </App.Flex>
 
-      <App.Flex direction={['row', 'column']} fullWidth gap={32}>
+      <App.Flex direction={['row', isApp ? 'row' : 'column']} fullWidth gap={32}>
         <App.Flex column center gap={32} className={cn(styles.box, styles.kryptonite)}>
           <App.Flex center className={styles.logo}>
             <Image src="/images/circle-kryptonite.png" width={100} height={100} alt="" />

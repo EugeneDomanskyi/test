@@ -46,7 +46,7 @@ export const useApp = () => {
     appPost({ log: data })
   }
 
-  const appConnect = async () => {
+  const appConnect = async (onComplete) => {
     let needConnect = !wallet
     if (wallet && wallet != appWallet) {
       appLog(`Disconnect ${wallet}`)
@@ -87,6 +87,10 @@ export const useApp = () => {
       appLog(`Connected to wallet ${connected.account}`)
     } else {
       appLog(`Do not need to Connect: ${wallet}`)
+    }
+
+    if (onComplete) {
+      onComplete()
     }
   }
 
