@@ -33,6 +33,11 @@ export const useApp = () => {
       if (data?.walletAddress && data.walletAddress.toLowerCase() != wallet) {
         setAppWallet(data.walletAddress.toLowerCase())
       }
+
+      if (data?.clearLocalStorage) {
+        appLog(`Clear Local Storage`)
+        window.localStorage.clear()
+      }
     }
   }
 
