@@ -2,9 +2,17 @@ import App from '@/components/App'
 import cn from 'classnames'
 
 import styles from './styles.module.scss'
+import useWalletConnect from "@/myhooks/wallet-connect";
+import Button from "@/components/Tournamnet/Button";
 
 const TierStats = ({walletResults}) => {
   const formattedAddress = `${walletResults.address?.slice(0,4)}.....${walletResults.address?.slice(-4)}`
+  const { wallet, connect } = useWalletConnect()
+
+  const handleConnect = () => {
+    connect()
+  }
+
   return (
       <App.Flex flex={1} gap={24}>
         <App.Flex column gap={24} flex={1} justify={'flex-end'}>
@@ -25,8 +33,7 @@ const TierStats = ({walletResults}) => {
               </svg>
             </App.Flex>
             <App.Text size={20} weight={700}>Volume</App.Text>
-            <App.Text size={20} weight={700}><App.Text inline family={'Playfair Display'}
-                                                       size={20}>Required</App.Text> for</App.Text>
+            <App.Text size={20} weight={700}><App.Text inline family={'Playfair Display'} size={20}>Required</App.Text> for</App.Text>
             <App.Text size={20} weight={700}>Next Tier</App.Text>
             <App.Text size={48} weight={700}>{walletResults.volume_remaining}</App.Text>
           </App.Flex>
@@ -36,10 +43,18 @@ const TierStats = ({walletResults}) => {
             <App.Flex column className={styles.plate} flex={1} height={286}>
               <App.Text size={20} weight={700}>My</App.Text>
               <App.Text size={20} weight={700} family={'Playfair Display'}>Wallet</App.Text>
-              <App.Flex align={'center'} gap={8}>
-                <App.Text size={14} weight={400}>{formattedAddress}</App.Text>
-                <App.Icon icon={'copy'}/>
-              </App.Flex>
+              {
+                wallet
+                  ? <App.Flex align={'center'} gap={8}>
+                      <App.Text size={14} weight={400}>{formattedAddress}</App.Text>
+                      <App.Icon icon={'copy'}/>
+                    </App.Flex>
+                  : <App.Flex column flex={1} justify={'space-between'}>
+                      <App.Text color={'#9B99AE'} size={14} weight={400}>Lorem hendrerit massa posuere a sed faucibus viverra urna lectus.</App.Text>
+                      <Button onClick={handleConnect}>Connect</Button>
+                    </App.Flex>
+              }
+
             </App.Flex>
             <App.Flex column align={'center'} justify={'center'} className={cn(styles.plate, styles.color)} flex={1}
                       height={180}>

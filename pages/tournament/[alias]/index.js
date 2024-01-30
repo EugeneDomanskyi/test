@@ -16,16 +16,14 @@ const TournamentPage = () => {
   const { wallet } = useWalletConnect()
 
   const [tournament, setTournament] = useState({})
-  const [walletResults, setWalletresults] = useState({})
+  const [walletResults, setWalletresults] = useState({position: 0, points: 0})
   const [leaderboard, setLeaderboard] = useState([])
 
   useEffect(() => {
     $tournament.api.get(router.query.alias).then(res => {
-      console.log(res)
       setTournament(res.data)
     })
     $tournament.api.leaderboard(router.query.alias).then(res => {
-      console.log(res)
       setLeaderboard(res.data)
     })
   }, [])
@@ -33,7 +31,6 @@ const TournamentPage = () => {
   useEffect(() => {
     if (wallet) {
       $tournament.api.walletResult(router.query.alias, wallet).then(res => {
-        console.log(res)
         setWalletresults(res.data)
       })
     }

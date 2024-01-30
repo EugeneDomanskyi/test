@@ -43,14 +43,12 @@ const Leaderboard = ({leaderboard}) => {
                     <App.Text size={16} family={'Playfair Display'}>{item.wallet_address}</App.Text>
                   </App.Flex>
                   <App.Flex flex={1} justify={'center'}>
-                    <App.Text color={'#9B99AE'} size={14} weight={600}>Earned: </App.Text>
-                    &nbsp;
                     <App.Text size={14} family={'Playfair Display'} sx={{lineHeight: 1.2}}>{item.points}</App.Text>
                   </App.Flex>
                   <App.Flex justify={'flex-end'} width={120}>
-                    <App.Text color={'#9B99AE'} size={14} weight={600}>Reward: </App.Text>
-                    &nbsp;
                     <App.Text size={14} family={'Playfair Display'} sx={{lineHeight: 1.2}}>{item.reward}</App.Text>
+                    &nbsp;
+                    <App.Text color={'#9B99AE'} size={14} weight={600}>{item.reward_currency}</App.Text>
                   </App.Flex>
                 </App.Flex>
             )
