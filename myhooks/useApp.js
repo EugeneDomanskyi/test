@@ -43,6 +43,9 @@ const useApp = () => {
 
   const appPost = (data) => {
     if (isApp) {
+      if (data?.clear) {
+        window.localStorage.clear()
+      }
       window.ReactNativeWebView.postMessage(JSON.stringify(data))
     }
   }
@@ -86,7 +89,7 @@ const useApp = () => {
       const connected = await connect({
         connector: customConnector,
         chainId: blockchain.id,
-      })
+      }).catch(e => appLog(e))
 
       setAppWallet(connected.account.toLowerCase())
       appLog(`Connected to wallet ${connected.account}`)
