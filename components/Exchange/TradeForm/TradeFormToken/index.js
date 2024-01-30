@@ -78,7 +78,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   useEffect(() => {
     if (prevProps?.side) {
       handleChangeForm('price')(prevProps.price)
-      handleChangeForm('amount')(prevProps.makerAmountFormatted)
+      handleChangeForm('amount')(prevProps.amount)
     } else {
       handleSetPrice(false)
     }

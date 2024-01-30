@@ -8,7 +8,7 @@ import { CHAINS } from '@/config'
 
 import $app from '@/store/app'
 
-export const useApp = () => {
+const useApp = () => {
   const { wallet, disconnect } = useWalletConnect()
 
   const dispatch = useDispatch()
@@ -33,11 +33,19 @@ export const useApp = () => {
       if (data?.walletAddress && data.walletAddress.toLowerCase() != wallet) {
         setAppWallet(data.walletAddress.toLowerCase())
       }
+
+      if (data?.clearLocalStorage) {
+        appLog(`Clear Local Storage`)
+        window.localStorage.clear()
+      }
     }
   }
 
   const appPost = (data) => {
     if (isApp) {
+      if (data?.clear) {
+        window.localStorage.clear()
+      }
       window.ReactNativeWebView.postMessage(JSON.stringify(data))
     }
   }
@@ -46,7 +54,7 @@ export const useApp = () => {
     appPost({ log: data })
   }
 
-  const appConnect = async () => {
+  const appConnect = async (onComplete) => {
     let needConnect = !wallet
     if (wallet && wallet != appWallet) {
       appLog(`Disconnect ${wallet}`)
@@ -81,12 +89,16 @@ export const useApp = () => {
       const connected = await connect({
         connector: customConnector,
         chainId: blockchain.id,
-      })
+      }).catch(e => appLog(e))
 
       setAppWallet(connected.account.toLowerCase())
       appLog(`Connected to wallet ${connected.account}`)
     } else {
       appLog(`Do not need to Connect: ${wallet}`)
+    }
+
+    if (onComplete) {
+      onComplete()
     }
   }
 

@@ -49,6 +49,7 @@ const Exchange = () => {
   const [devModalVisible, setDevModalVisible] = useState(false)
   const [isFaucetConnectVisible, setIsFaucetConnectVisible] = useState(false)
   const [isFaucetOnceVisible, setIsFaucetOnceVisible] = useState(false)
+  const [appConnectionLoading, setAppConnectionLoading] = useState(true)
 
   const tradeForm = useRef(null)
   const mobileRef = useRef(null)
@@ -70,7 +71,7 @@ const Exchange = () => {
   useEffect(() => {
     if (isApp && !connection.loading) {
       appLog(connection)
-      appConnect()
+      appConnect(() => setAppConnectionLoading(false))
     }
   }, [isApp, connection])
 
@@ -242,13 +243,13 @@ const Exchange = () => {
       )}
 
       {isApp ? (
-        connection.loading ? (
+        appConnectionLoading ? (
           <App.Flex column center gap={8} className={styles.appLoader}>
             <App.Loader />
             <App.Text>Connection...</App.Text>
           </App.Flex>
         ) : (
-          ! connection.loading && ! connection.connected ? (
+          ! connection.connected ? (
             <App.Flex column center gap={8} className={styles.appLoader}>
               <App.Icon icon="alert-error" />
               <App.Text>Connection failed</App.Text>
