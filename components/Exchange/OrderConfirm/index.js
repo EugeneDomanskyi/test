@@ -5,9 +5,10 @@ import { formatUnits, parseUnits } from 'viem'
 import numeral from 'numeral'
 import cn from 'classnames'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import Contracts from '@/libs/contracts.lib'
+import useApp from '@/myhooks/useApp'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
@@ -19,9 +20,9 @@ import styles from './styles.module.scss'
 
 const OrderConfirm = ({ side, blockchain, current, price, amount, total, version, onBack, onClose }) => {
   const { wallet, walletClient } = useWalletConnect()
+  const { isApp, appLog } = useApp()
   
   const dispatch = useDispatch()
-  const isApp = useSelector(({ $app }) => $app.isApp)
 
   const [step, setStep] = useState('preview')
 
@@ -29,7 +30,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
 
   const handleNextStep = async () => {
     if (step == 'preview') {
-      trackEvent('Confirm Order Submit', {
+      Amplitude.event('Confirm Order Submit', {
         'Base Currency': side === 'buy' ? current.symbol : current.quoteSymbol,
         'Quote Currency': side === 'buy' ? current.quoteSymbol : current.symbol,
         'Side': side.toUpperCase(),
@@ -42,13 +43,17 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       })
 
       setStep('sign')
+
+      appLog('Check Allowance')
       const allowance = await contracts.allowance(wallet, current.quote, blockchain?.info?.contract?.exchange)
       if (allowance?.error) {
         return handleError('Trade Not Approved', allowance?.error)
       }
 
+      appLog('Check Allowance Amount')
       const allowanceAmount = formatUnits(allowance, current.decimals)
       if (allowanceAmount * 1 < amount * 1) {
+        appLog('Change Allowance Amount')
         if (current.quote === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
           const reset = await contracts.approve(current.quote, blockchain?.info?.contract?.exchange, parseUnits('0', current.quoteDecimals))
           if (reset?.error) {
@@ -64,7 +69,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       
       setStep('place')
 
-      trackEvent('Confirm Order Submit', {
+      Amplitude.event('Confirm Order Submit', {
         'Base Currency': side === 'buy' ? current.symbol : current.quoteSymbol,
         'Quote Currency': side === 'buy' ? current.quoteSymbol : current.symbol,
         'Side': side.toUpperCase(),
@@ -76,6 +81,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         'Step': 'Sign',
       })
 
+      appLog('Generate Typed Data')
       const typedData = await $orders.api.typedData({
         chain_id: blockchain.id,
         wallet_address: wallet,
@@ -96,15 +102,18 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         types,
       }
 
+      appLog('Sign Typed Data')
       const signature = await walletClient.signTypedData(temp).catch(error => {
-        console.log(error.shortMessage)
+        appLog(`Signature error ${error.shortMessage}`)
         return handleError('Order Not Created', error.shortMessage)
       })
 
       if (!signature) {
+        appLog(`Signature failed`)
         return
       }
 
+      appLog(`Place Order`)
       const result = await $orders.api.place({
         ...typedData.data.limit_order,
         signature,
@@ -114,6 +123,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         return handleError('Order Not Created', result?.error)
       }
 
+      appLog(`Place Order Success`)
       const vid = localStorage.getItem('ms_vid')
       if (vid) {
         $app.api.volume({
@@ -240,8 +250,8 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       {step == 'sign' || step == 'place' ? (
         isApp ? (
           <App.Flex column center gap={6} sx={{ padding: '8px 24px 16px' }}>
-            <App.Flex row center width={150} height={150}>
-              <Image src="/images/order-cancel-loader.gif" width={150} height={150} alt="" />
+            <App.Flex row center width={170} height={170}>
+              <App.Loader size={150} />
             </App.Flex>
 
             <App.Text center size={16} weight={700} height={1}>Waiting for Blockchain Confirmation</App.Text>

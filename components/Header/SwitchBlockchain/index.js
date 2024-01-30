@@ -5,7 +5,7 @@ import Image from 'next/image'
 import cn from 'classnames'
 import { useNetwork } from 'wagmi'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
 import $app from '@/store/app'
@@ -105,7 +105,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
 
   const handleBlockchainChange = async (val) => {
     if (val != blockchain.code) {
-      trackEvent('Switch Network', {
+      Amplitude.event('Switch Network', {
         'Old Network': blockchain.code.toUpperCase(),
         'New Network': val.toUpperCase(),
       })
