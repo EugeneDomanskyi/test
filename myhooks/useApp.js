@@ -8,7 +8,7 @@ import { CHAINS } from '@/config'
 
 import $app from '@/store/app'
 
-export const useApp = () => {
+const useApp = () => {
   const { wallet, disconnect } = useWalletConnect()
 
   const dispatch = useDispatch()
