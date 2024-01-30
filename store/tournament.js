@@ -18,7 +18,7 @@ const api = {
     return request(`tournament/${alias}/leaderboard`)
   },
   walletResult: (alias, wallet) => {
-    return request(`tournament/${alias}/leaderboard/0x113128f65d830b5295cef847597f4655f3d8e47c`)
+    return request(`tournament/${alias}/leaderboard/${'0x113128f65d830b5295cef847597f4655f3d8e47c'}`) // 0x113128f65d830b5295cef847597f4655f3d8e47c
   }
 }
 

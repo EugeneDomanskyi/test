@@ -1,0 +1,41 @@
+.container {
+  height: 34px;
+  width: 100%;
+
+  .tier {
+    background: #1B182580;
+    border-radius: 62px;
+    padding: 1px;
+    position: relative;
+
+    .inner {
+      //background-color: #1B1825;
+      border-radius: 62px;
+    }
+
+    &.active {
+      background: linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%);
+
+      .inner {
+        background-color: rgb(9, 5, 29);
+      }
+
+      &:after {
+        content: '';
+        position: absolute;
+        width: 16px;
+        height: 1px;
+        right: -16px;
+        transform: translateY(-50%);
+        background: linear-gradient(90deg, #6A5ADD 25%, #749828 100%);
+        top: 50%;
+      }
+
+      &.current {
+        &:after {
+          background: linear-gradient(90deg, #6A5ADD 3.12%, #1B1825 71.87%);
+        }
+      }
+    }
+  }
+}
