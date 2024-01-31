@@ -5,7 +5,7 @@ import styles from './styles.module.scss'
 export default function LandingPage() {
   return (
     <App.Container className={styles.container}>
-      <App.Flex column align="center">
+      <App.Flex column align="center" sx={{padding: '0 128px'}}>
         <h1>USER AGREEMENT</h1>
 
         <p>VERSION 0.10</p>
@@ -117,7 +117,7 @@ export default function LandingPage() {
         <h2>1.1. Account Creation</h2>
 
         <p>
-            In order to use certain features of the Site, you must register for an account (“Account”) and provide certain information about yourself as prompted by the account registration form. You represent and warrant that:
+            In order to use certain features of the Site, you must register for an account (<b>“Account”</b>) and provide certain information about yourself as prompted by the account registration form. You represent and warrant that:
         </p>
 
         <ol type="a">
@@ -536,7 +536,7 @@ export default function LandingPage() {
         <h2>10.4. Entire Agreement.</h2>
 
         <p>
-          This Agreement, together with Tegro&apos;s Privacy Policy,
+          This Agreement, together with <a href="https://tegro.com/terms">Tegro&apos;s Privacy Policy</a>,
           constitute the entire agreement between you and us regarding the use of the Services.
           Our failure to exercise or enforce any right or provision of this Agreement shall not
           operate as a waiver of such right or provision. The section titles in this Agreement
