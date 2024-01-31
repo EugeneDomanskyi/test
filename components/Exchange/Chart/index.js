@@ -46,7 +46,6 @@ const CHART_CONFIG = {
     horzLines: { color: 'rgba(161, 159, 255, 0.3)', style: 3 },
   },
   timeScale: {
-    borderColor: 'rgba(161, 159, 255, 0.2)',
     borderColor: 'transparent',
     tickMarkFormatter: (time) => {
       return moment(time).format('DD MMM HH:mm')

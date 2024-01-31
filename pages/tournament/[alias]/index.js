@@ -10,13 +10,14 @@ import $tournament from  "@/store/tournament"
 import styles from "./styles.module.scss";
 import useWalletConnect from "@/myhooks/wallet-connect";
 import Leaderboard from "@/components/Tournamnet/Leaderboard";
+import Header from '@/components/Tournamnet/Header'
 
 const TournamentPage = () => {
   const router = useRouter()
   const { wallet } = useWalletConnect()
 
   const [tournament, setTournament] = useState({})
-  const [walletResults, setWalletresults] = useState({position: 0, points: 0})
+  const [walletResults, setWalletResults] = useState({position: 0, points: 0, address: ''})
   const [leaderboard, setLeaderboard] = useState([])
 
   useEffect(() => {
@@ -31,13 +32,16 @@ const TournamentPage = () => {
   useEffect(() => {
     if (wallet) {
       $tournament.api.walletResult(router.query.alias, wallet).then(res => {
-        setWalletresults(res.data)
+        setWalletResults(res.data)
       })
+    } else {
+      setWalletResults({position: 0, points: 0, address: ''})
     }
   }, [wallet])
 
   return (
       <App.Flex column className={styles.container}>
+        <Header />
         <Banner tournament={tournament} />
         <TierBlock tiers={tournament.tiers} walletResults={walletResults} />
         <Leaderboard leaderboard={leaderboard} />
