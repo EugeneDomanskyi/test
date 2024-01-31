@@ -6,14 +6,14 @@ import Button from "@/components/Tournamnet/Button";
 
 const Banner = ({tournament}) => {
   const handleClickMore = () => {
-    const now = new Date()
-    const end = new Date().setDate(now.getDate() + 3)
+    const start = new Date(2024, 1, 1)
+    const end = new Date(2024, 2, 1).setDate(0)
     const post = {
-      title: 'test',
+      title: 'February',
       description: 'some tournament',
-      start_time: now,
+      start_time: start,
       end_time: new Date(end),
-      alias: 'super-tournament',
+      alias: 'february-tournament',
       tiers: [
       {
         title: 'Cub',
@@ -51,15 +51,16 @@ const Banner = ({tournament}) => {
         reward_currency: 'USDT',
       }],
     }
-    fetch(
-        'http://localhost:8080/v2/tournament/create',
-        {
-          method: 'POST',
-          body: JSON.stringify(post),
-          headers: {'Content-Type': 'application/json'
-          }
-        }
-    )
+    console.log(post)
+    // fetch(
+    //     'http://localhost:8080/v2/tournament/create',
+    //     {
+    //       method: 'POST',
+    //       body: JSON.stringify(post),
+    //       headers: {'Content-Type': 'application/json'
+    //       }
+    //     }
+    // )
   }
   return (
       <App.Container>
