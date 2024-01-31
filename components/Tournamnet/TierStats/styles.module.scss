@@ -6,4 +6,18 @@
   &.color {
     background: linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%);
   }
+
+  &.position {
+    background-image: url("/images/tournament/tournament_position_bg.png");
+    background-repeat: no-repeat;
+    background-position: right;
+    background-size: contain;
+  }
+
+  &.wallet {
+    background-image: url("/images/tournament/tournament_wallet_bg.png");
+    background-repeat: no-repeat;
+    background-position: bottom;
+    background-size: contain;
+  }
 }

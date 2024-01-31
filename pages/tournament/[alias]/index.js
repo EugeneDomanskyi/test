@@ -11,14 +11,16 @@ import styles from "./styles.module.scss";
 import useWalletConnect from "@/myhooks/wallet-connect";
 import Leaderboard from "@/components/Tournamnet/Leaderboard";
 import Header from '@/components/Tournamnet/Header'
+import HowWorks from "@/components/Tournamnet/HowWorks";
 
 const TournamentPage = () => {
   const router = useRouter()
   const { wallet } = useWalletConnect()
 
-  const [tournament, setTournament] = useState({})
-  const [walletResults, setWalletResults] = useState({position: 0, points: 0, address: ''})
+  const [tournament, setTournament] = useState({tiers: []})
+  const [walletResults, setWalletResults] = useState({position: 0, points: 0, volume: 0, address: ''})
   const [leaderboard, setLeaderboard] = useState([])
+  const [openModal, setOpenModal] = useState(false)
 
   useEffect(() => {
     $tournament.api.get(router.query.alias).then(res => {
@@ -35,7 +37,7 @@ const TournamentPage = () => {
         setWalletResults(res.data)
       })
     } else {
-      setWalletResults({position: 0, points: 0, address: ''})
+      setWalletResults({position: 0, points: 0, volume: 0, address: ''})
     }
   }, [wallet])
 
@@ -43,8 +45,14 @@ const TournamentPage = () => {
       <App.Flex column className={styles.container}>
         <Header />
         <Banner tournament={tournament} />
-        <TierBlock tiers={tournament.tiers} walletResults={walletResults} />
-        <Leaderboard leaderboard={leaderboard} />
+        <TierBlock
+          tiers={tournament.tiers}
+          walletResults={walletResults}
+          onClickWorks={() => setOpenModal(true)} />
+        <Leaderboard leaderboard={leaderboard} onClickWorks={() => setOpenModal(true)} />
+        <App.Dialog hideClose hideHeader width={1000} open={openModal} onClose={() => setOpenModal(false)}>
+          <HowWorks tournament={tournament} />
+        </App.Dialog>
       </App.Flex>
   )
 }

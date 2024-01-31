@@ -40,7 +40,7 @@ const TierStats = ({walletResults}) => {
         </App.Flex>
         <App.Flex column gap={24} flex={2} sx={{paddingBottom: 40}}>
           <App.Flex gap={24} flex={1} align={'flex-end'}>
-            <App.Flex column className={styles.plate} flex={1} height={286}>
+            <App.Flex column className={cn(styles.plate, styles.wallet)} flex={1} height={286}>
               <App.Text size={20} weight={700}>My</App.Text>
               <App.Text size={20} weight={700} family={'Playfair Display'}>Wallet</App.Text>
               {
@@ -54,19 +54,16 @@ const TierStats = ({walletResults}) => {
                       <Button onClick={handleConnect}>Connect</Button>
                     </App.Flex>
               }
-
             </App.Flex>
-            <App.Flex column align={'center'} justify={'center'} className={cn(styles.plate, styles.color)} flex={1}
-                      height={180}>
+            <App.Flex column align={'center'} justify={'center'} className={cn(styles.plate, styles.color)} flex={1} height={180}>
               <App.Text size={20} weight={700}>Points</App.Text>
               <App.Text family={'Playfair Display'} size={20} weight={700}>Earned</App.Text>
               <App.Text size={48} weight={700}>{walletResults.points}</App.Text>
             </App.Flex>
           </App.Flex>
           <App.Flex>
-            <App.Flex column className={styles.plate} flex={1} height={180}>
-              <App.Text size={20} weight={700}>Current <App.Text inline family={'Playfair Display'}
-                                                                 size={20}>Position</App.Text></App.Text>
+            <App.Flex column className={cn(styles.plate, styles.position)} flex={1} height={180}>
+              <App.Text size={20} weight={700}>Current <App.Text inline family={'Playfair Display'} size={20}>Position</App.Text></App.Text>
               <App.Text size={48} weight={700}>{walletResults.position}</App.Text>
             </App.Flex>
           </App.Flex>

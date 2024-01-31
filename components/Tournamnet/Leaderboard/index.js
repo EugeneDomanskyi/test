@@ -2,7 +2,10 @@ import styles from './styles.module.scss'
 import App from '@/components/App'
 import Image from 'next/image'
 
-const Leaderboard = ({leaderboard}) => {
+const Leaderboard = ({leaderboard, onClickWorks}) => {
+  const handleClickWorks = () => {
+    onClickWorks()
+  }
   return (
       <App.Container>
         <App.Flex>
@@ -12,7 +15,8 @@ const Leaderboard = ({leaderboard}) => {
               <App.Text family={'Playfair Display'} size={64} color={'#A6DC37'}>Leaders</App.Text>
             </App.Flex>
             <App.Text size={12} weight={400} color={'#9B99AE'}>Rutrum faucibus donec quisque nisi eget adipiscing vel nullam metus. Semper in elementum curabitur nibh urna. Ut ut nec ultricies ac eget euismod at. Nec faucibus in sagittis ultricies imperdiet. Vivamus in euismod egestas pellentesque semper quisque ut risus. Donec a mattis condimentum etiam proin. Aliquam porttitor et id amet suspendisse sapien interdum. Sed.</App.Text>
-            <App.Text color={'#A6DC37'} size={14} weight={600}>{`How It Works? >`}</App.Text>
+
+            <App.Text color={'#A6DC37'} size={14} weight={600} onClick={handleClickWorks}>{`How It Works? >`}</App.Text>
           </App.Flex>
           <App.Flex flex={1}>
             <Image src={'/images/tournament/leaderboard.png'} width={614} height={278} />

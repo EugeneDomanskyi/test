@@ -29,26 +29,21 @@ const TierInfo = ({walletResults}) => {
           {
             wallet
                 ? <>
-                  <App.Text weight={700} size={40}>Tier: <App.Text weight={700} size={40} family={'Playfair Display'}
-                                                                   inline>{walletResults.tier?.title}</App.Text></App.Text>
-                  <App.Text color={'#7364FF'} weight={400} size={12}>You are currently here</App.Text>
-                  <App.Text weight={700} size={24} sx={{marginTop: 'auto'}}>Tier <App.Text inline color={'#7364FF'}
-                                                                                           family={'Playfair Display'}
-                                                                                           weight={700}
-                                                                                           size={24}>Benefits:</App.Text></App.Text>
-                  <App.Text color={'#A6DC37'} size={18} weight={'700'}
-                            family={'Playfair Display'}>x{walletResults.tier?.multiplier}</App.Text>
-                  <App.Text size={18} weight={600}>mauris tincidunt</App.Text>
-                </>
+                    <App.Text weight={700} size={40}>Tier: <App.Text weight={700} size={40} family={'Playfair Display'} inline>{walletResults.tier?.title}</App.Text></App.Text>
+                    <App.Text color={'#7364FF'} weight={400} size={12}>You are currently here</App.Text>
+                    <App.Text weight={700} size={24} sx={{marginTop: 'auto'}}>Tier <App.Text inline color={'#7364FF'} family={'Playfair Display'} weight={700} size={24}>Benefits:</App.Text></App.Text>
+                    <App.Text color={'#A6DC37'} size={18} weight={'700'} family={'Playfair Display'}>x{walletResults.tier?.multiplier}</App.Text>
+                    <App.Text size={18} weight={600}>mauris tincidunt</App.Text>
+                  </>
                 : <>
-                  <App.Text size={40} weight={700}>Start your</App.Text>
-                  <App.Text size={40} weight={700} family={'Playfair Display'}>Journey</App.Text>
-                  <App.Text color={'#9B99AE'} size={14} weight={400} sx={{marginTop: 'auto', marginBottom: 12}}>Eu metus
-                    aliquam turpis commodo cursus. Volutpat tempus amet malesuada tincidunt.</App.Text>
-                  <Button onClick={handleConnect}>
-                    Connect Wallet and Start
-                  </Button>
-                </>
+                    <App.Text size={40} weight={700}>Start your</App.Text>
+                    <App.Text size={40} weight={700} family={'Playfair Display'}>Journey</App.Text>
+                    <App.Text color={'#9B99AE'} size={14} weight={400} sx={{marginTop: 'auto', marginBottom: 12}}>Eu metus
+                      aliquam turpis commodo cursus. Volutpat tempus amet malesuada tincidunt.</App.Text>
+                    <Button onClick={handleConnect}>
+                      Connect Wallet and Start
+                    </Button>
+                  </>
           }
 
         </App.Flex>

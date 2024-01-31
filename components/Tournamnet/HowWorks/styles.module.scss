@@ -1,0 +1,61 @@
+.container {
+  padding: 32px;
+  position: relative;
+  height: 640px;
+
+  .closeButton {
+    background: linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%);
+    width: 32px;
+    height: 32px;
+    padding: 1px;
+    border-radius: 50%;
+    position: absolute;
+    right: 32px;
+    top: 32px;
+
+    .closeIcon {
+      background: rgb(9, 5, 29);
+      border-radius: 50%;
+    }
+  }
+
+  .plate {
+    background: radial-gradient(113.88% 113.88% at 67.99% -35.17%, #231F38 0%, #100D21 100%);
+    border-radius: 16px;
+    padding: 24px 16px;
+    position: relative;
+    //background-image: url("/images/tournament/tournament_bonus_bg.png");
+
+    &.active {
+      background: linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%);
+    }
+
+    &.higher {
+      background-image: url("/images/tournament/tournament_tier_bg.png"), radial-gradient(113.88% 113.88% at 67.99% -35.17%, #231F38 0%, #100D21 100%);
+      background-repeat: no-repeat;
+      background-position: bottom;
+      background-size: contain;
+
+      &.active {
+        background-image: url("/images/tournament/tournament_tier_bg.png"), linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%);
+      }
+    }
+
+    &.bonus {
+      background-image: url("/images/tournament/tournament_bonus_bg.png"), radial-gradient(113.88% 113.88% at 67.99% -35.17%, #231F38 0%, #100D21 100%);
+      background-repeat: no-repeat;
+      background-position: bottom;
+      background-size: contain;
+
+      &.active {
+        background-image: url("/images/tournament/tournament_bonus_bg.png"), linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%);
+      }
+    }
+  }
+
+  .footer {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 32px;
+    //height: 100px;
+  }
+}
