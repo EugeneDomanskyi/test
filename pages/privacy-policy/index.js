@@ -5,7 +5,7 @@ import styles from './styles.module.scss'
 export default function LandingPage() {
   return (
     <App.Container className={styles.container}>
-      <App.Flex column align="center" sx={{padding: '0 128px'}}>
+      <App.Flex column align="center" className={styles.wrapper}>
         <h1>PRIVACY POLICY</h1>
 
         <p>This privacy policy (<b>“Privacy Policy”</b>) sets out how Tegro (<b>“Company”</b>) uses and protects any information that you give the Company when you use or access the <a href="http://tegro.com/">http://tegro.com/</a>, Tegro (“Application”), or any services or materials provided by the Company (collectively “Services”). The Company is committed to protecting your privacy. This Privacy Policy explains how the Company collects, uses, and shares your personal information. This Privacy Policy applies to your use of the Service as further described in the Company&apos;s Terms and Conditions available at <a href="https://Tegro.com/terms">https://tegro.com/terms</a>.</p>

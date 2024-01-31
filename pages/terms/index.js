@@ -5,7 +5,7 @@ import styles from './styles.module.scss'
 export default function LandingPage() {
   return (
     <App.Container className={styles.container}>
-      <App.Flex column align="center" sx={{padding: '0 128px'}}>
+      <App.Flex column align="center" className={styles.wrapper}>
         <h1>USER AGREEMENT</h1>
 
         <p>VERSION 0.10</p>
