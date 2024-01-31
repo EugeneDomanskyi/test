@@ -536,7 +536,7 @@ export default function LandingPage() {
         <h2>10.4. Entire Agreement.</h2>
 
         <p>
-          This Agreement, together with <a href="https://tegro.com/terms">Tegro&apos;s Privacy Policy</a>,
+          This Agreement, together with <a href="https://tegro.com/privacy-policy">Tegro&apos;s Privacy Policy</a>,
           constitute the entire agreement between you and us regarding the use of the Services.
           Our failure to exercise or enforce any right or provision of this Agreement shall not
           operate as a waiver of such right or provision. The section titles in this Agreement
