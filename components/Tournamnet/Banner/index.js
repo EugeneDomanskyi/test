@@ -72,7 +72,11 @@ const Banner = ({tournament}) => {
       <App.Container>
         <App.Flex flex={1} className={styles.bannerContainer} gap={24}>
           <App.Flex column justify={'center'}>
-            <Image src="/images/tournament/tournament_image.png" width={592} height={451} />
+            <Image
+              src="/images/tournament/tournament_image.png"
+              width={592}
+              height={451}
+              style={{maxWidth: '100%', maxHeight: '100%', objectFit: 'cover'}} />
           </App.Flex>
           <App.Flex column justify={'center'} gap={16}>
             <App.Text family={'Playfair Display'} size={64} color={'#7364FF'}><App.Text inline size={64} weight={800}>{tournament.title}</App.Text> Tournament</App.Text>

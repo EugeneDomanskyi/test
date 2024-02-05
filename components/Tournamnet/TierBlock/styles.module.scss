@@ -1,3 +1,18 @@
 .tierBlock {
   //height: 500px;
+
+  .tierInfo {
+    margin-top: 72px;
+    padding-bottom: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tierBlock {
+    flex-direction: column;
+
+    .tierInfo {
+
+    }
+  }
 }

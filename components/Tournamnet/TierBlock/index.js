@@ -10,7 +10,7 @@ const TierBlock = ({tiers, walletResults, onClickWorks}) => {
   return (
       <App.Container>
         <App.Flex className={styles.tierBlock} gap={24}>
-          <App.Flex flex={1} column gap={26} sx={{marginTop: 72, paddingBottom: 40}}>
+          <App.Flex className={styles.tierInfo} flex={1} column gap={26}>
             <Tiers tiers={tiers} current={walletResults.tier?.level} />
             <TierInfo walletResults={walletResults} />
           </App.Flex>
