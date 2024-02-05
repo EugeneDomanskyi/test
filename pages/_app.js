@@ -82,11 +82,9 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
       <RainbowKitProvider chains={chains} theme={RainbowTheme}>
         <Provider store={storeRef}>
           <Head route={ssRoute} />
-
           <Wrapper>
             <Component {...pageProps} />
           </Wrapper>
-
           <App.Alert />
         </Provider>
       </RainbowKitProvider>
