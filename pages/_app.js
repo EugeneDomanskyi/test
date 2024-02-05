@@ -98,6 +98,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
   let ssRoute = ''
   let isMobile = null
   let isApp = null
+  let platform = null
   let initWallet = null
   let devMode = null
   let chains = []
@@ -109,6 +110,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
     isMobile = device.type === 'mobile'
 
     isApp = ctx.req.headers['x-tegro-app'] == 'native'
+    platform = ctx.req.headers['x-tegro-platform']
     initWallet = ctx.req.headers['x-tegro-wallet'] == 'null' ? null : ctx.req.headers['x-tegro-wallet']
     devMode = ctx.req.headers['x-tegro-dev-mode'] == 'true' ? true : null
 
@@ -136,6 +138,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
       blockchain: cookies.blockchain,
       isMobile,
       isApp,
+      platform,
       initWallet,
       devMode,
       chains,

@@ -15,6 +15,7 @@ const useApp = () => {
   const blockchain = useSelector($app.get.blockchain)
   const devMode = useSelector(({ $app }) => $app.devMode)
   const isApp = useSelector(({ $app }) => $app.isApp)
+  const platform = useSelector(({ $app }) => $app.platform)
   const initWallet = useSelector(({ $app }) => $app.initWallet)
 
   const [appWallet, setAppWallet] = useState(initWallet)
@@ -102,7 +103,7 @@ const useApp = () => {
     }
   }
 
-  return { isApp, appWallet, appConnect, appPost, appLog }
+  return { isApp, appWallet, platform, appConnect, appPost, appLog }
 }
 
 export default useApp

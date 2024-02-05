@@ -117,12 +117,17 @@ const TradeChart = ({ version, showSwitch, top = [] }) => {
   }, [current?.id, activeInterval.seconds])
 
   const fetchTokenChartData = async () => {
+    const to = new Date()
+    const from = new Date(to)
+    from.setDate(to.getDate() - 10)
     const post = {
       market_id: current.marketId,
       chain_id: blockchain.id,
       base_asset: current.id,
       quote_asset: current.quote,
       interval: activeInterval.seconds,
+      to: to.getTime(),
+      from: from.getTime(),
     }
 
     const result = await $orders.api.chart(post)

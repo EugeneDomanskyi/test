@@ -18,8 +18,8 @@ const Wrapper = ({ children }) => {
   const router = useRouter()
   const isCampaign = router.asPath?.includes('/campaign') || router.asPath?.includes('/tournament')
 
-  const { isApp } = useApp()
-  Amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY, !isApp)
+  const { isApp, platform } = useApp()
+  Amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY, !isApp, platform ?? 'Web')
 
   useEffect(() => {
     window.addEventListener('resize', handleWindowResize)

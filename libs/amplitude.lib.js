@@ -6,9 +6,9 @@ class Amplitude {
     this.isBrowser = false
   }
 
-  init = (apiKey, isBrowser) => {
+  init = (apiKey, isBrowser, platform) => {
     if (!this.initialized) {
-      amplitude.getInstance().init(apiKey)
+      amplitude.getInstance().init(apiKey, null, { platform })
       this.isBrowser = isBrowser
       this.initialized = true
     }
