@@ -3,17 +3,19 @@ import App from "@/components/App";
 import Image from "next/image";
 import Countdown from "@/components/Tournamnet/Countdown";
 import Button from "@/components/Tournamnet/Button";
+import moment from "moment";
+import $tournament from "@/store/tournament";
 
 const Banner = ({tournament}) => {
   const handleClickMore = () => {
-    const now = new Date()
-    const end = new Date().setDate(now.getDate() + 3)
+    const start = new Date(2024, 1, 1)
+    const end = new Date(2024, 2, 1).setDate(0)
     const post = {
-      title: 'test',
+      title: 'February',
       description: 'some tournament',
-      start_time: now,
+      start_time: start,
       end_time: new Date(end),
-      alias: 'super-tournament',
+      alias: 'february-tournament',
       tiers: [
       {
         title: 'Cub',
@@ -51,16 +53,21 @@ const Banner = ({tournament}) => {
         reward_currency: 'USDT',
       }],
     }
-    fetch(
-        'http://localhost:8080/v2/tournament/create',
-        {
-          method: 'POST',
-          body: JSON.stringify(post),
-          headers: {'Content-Type': 'application/json'
-          }
-        }
-    )
+    $tournament.api.create(post)
+    console.log(post)
+    // fetch(
+    //     'http://localhost:8080/v2/tournament/create',
+    //     {
+    //       method: 'POST',
+    //       body: JSON.stringify(post),
+    //       headers: {'Content-Type': 'application/json'
+    //       }
+    //     }
+    // )
   }
+
+  const isStarted = moment(new Date).isAfter(tournament.start_time)
+
   return (
       <App.Container>
         <App.Flex flex={1} className={styles.bannerContainer} gap={24}>
@@ -70,7 +77,19 @@ const Banner = ({tournament}) => {
           <App.Flex column justify={'center'} gap={16}>
             <App.Text family={'Playfair Display'} size={64} color={'#7364FF'}><App.Text inline size={64} weight={800}>{tournament.title}</App.Text> Tournament</App.Text>
             <App.Text weight={400} size={12} color={'rgba(255,255,255,0.6)'}>{tournament.description}</App.Text>
-            <Countdown endTime={tournament.end_time} />
+            {
+              tournament.status === 'active'
+                ? isStarted
+                  ? <Countdown endTime={tournament.end_time} />
+                  : <App.Flex align={'flex-end'} gap={12}>
+                        <App.Text weight={700} family="Playfair Display" italic color={"#A6DC37"} size={24}>Started in: </App.Text>
+                        <Countdown endTime={tournament.start_time} />
+                    </App.Flex>
+                : <App.Flex align={'flex-end'} gap={12}>
+                    <App.Text weight={700} family="Playfair Display" italic color={"#A6DC37"} size={24}>Closed at: </App.Text>
+                    <App.Text weight={700} size={40} sx={{lineHeight: 1.1}}>{ moment(tournament.end_time).format('DD.MM.YYYY') }</App.Text>
+                  </App.Flex>
+            }
             <App.Flex>
               <Button onClick={handleClickMore}>
                 Learn More

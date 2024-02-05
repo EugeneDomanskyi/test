@@ -24,7 +24,7 @@ const AppText = ({ children, html, inline, family, size, weight, style, color, g
   }
 
   const styleObject = () => {
-    const result = {...sx}
+    const result = {...(typeof onClick === 'function' ? {cursor: 'pointer'} : null), ...sx}
 
     if (family) {
       result.fontFamily = propValue(family)

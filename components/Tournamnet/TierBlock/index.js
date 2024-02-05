@@ -6,7 +6,7 @@ import Tiers from "@/components/Tournamnet/Tiers";
 import TierInfo from "@/components/Tournamnet/TierInfo";
 import TierStats from "@/components/Tournamnet/TierStats";
 
-const TierBlock = ({tiers, walletResults}) => {
+const TierBlock = ({tiers, walletResults, onClickWorks}) => {
   return (
       <App.Container>
         <App.Flex className={styles.tierBlock} gap={24}>
@@ -14,7 +14,7 @@ const TierBlock = ({tiers, walletResults}) => {
             <Tiers tiers={tiers} current={walletResults.tier?.level} />
             <TierInfo walletResults={walletResults} />
           </App.Flex>
-          <TierStats walletResults={walletResults} />
+          <TierStats walletResults={walletResults} onClickWorks={onClickWorks} />
         </App.Flex>
       </App.Container>
   )
