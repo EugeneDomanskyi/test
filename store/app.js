@@ -18,8 +18,9 @@ export const appSlice = createSlice({
       windowWidth: null,
       windowHeight: null,
     },
-    devMode: true,
+    devMode: false,
     isApp: false,
+    platform: null,
     initWallet: null,
   },
 

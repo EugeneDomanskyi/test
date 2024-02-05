@@ -27,7 +27,7 @@ const Leaderboard = ({leaderboard, walletResults, onClickWorks}) => {
             <App.Text color={'#7364FF'} size={14} weight={600}>№</App.Text>
           </App.Flex>
           <App.Flex flex={1} sx={{paddingLeft: 30}}>
-            <App.Text color={'#7364FF'} size={14} weight={600}>Wallet Address</App.Text>
+            <App.Text color={'#7364FF'} size={14} weight={600}>Wallet</App.Text>
           </App.Flex>
           <App.Flex flex={1} justify={'center'}>
             <App.Text color={'#7364FF'} size={14} weight={600}>Earned</App.Text>
@@ -48,8 +48,8 @@ const Leaderboard = ({leaderboard, walletResults, onClickWorks}) => {
                       </svg>
                       <App.Text sx={{position: 'absolute', marginBottom: 5}} family={'Playfair Display'} color={'#A6DC37'} size={16} weight={600}>{item.position}</App.Text>
                     </App.Flex>
-                    <App.Flex flex={1} sx={{paddingLeft: 30}}>
-                      <App.Text size={16} family={'Playfair Display'}>{item.wallet_address}</App.Text>
+                    <App.Flex flex={1} sx={{paddingLeft: 30}} className={styles.addressRow}>
+                      <App.Text sx={{textOverflow: 'ellipsis', overflow: 'hidden'}} size={16} family={'Playfair Display'}>{item.wallet_address}</App.Text>
                     </App.Flex>
                     <App.Flex flex={1} justify={'center'}>
                       <App.Text size={14} family={'Playfair Display'} sx={{lineHeight: 1.2}}>{item.points}</App.Text>
