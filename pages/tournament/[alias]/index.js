@@ -24,17 +24,23 @@ const TournamentPage = () => {
 
   useEffect(() => {
     $tournament.api.get(router.query.alias).then(res => {
-      setTournament(res.data)
+      if (res) {
+        setTournament(res.data)
+      }
     })
     $tournament.api.leaderboard(router.query.alias).then(res => {
-      setLeaderboard(res.data)
+      if (res) {
+        setLeaderboard(res.data)
+      }
     })
   }, [])
 
   useEffect(() => {
     if (wallet) {
       $tournament.api.walletResult(router.query.alias, wallet).then(res => {
-        setWalletResults(res.data)
+        if (res) {
+          setWalletResults(res.data)
+        }
       })
     } else {
       setWalletResults({position: 0, points: 0, volume: 0, address: ''})
@@ -49,9 +55,12 @@ const TournamentPage = () => {
           tiers={tournament.tiers}
           walletResults={walletResults}
           onClickWorks={() => setOpenModal(true)} />
-        <Leaderboard leaderboard={leaderboard} onClickWorks={() => setOpenModal(true)} />
+        <Leaderboard
+          leaderboard={leaderboard}
+          walletResults={walletResults}
+          onClickWorks={() => setOpenModal(true)} />
         <App.Dialog hideClose hideHeader width={1000} open={openModal} onClose={() => setOpenModal(false)}>
-          <HowWorks tournament={tournament} />
+          <HowWorks tournament={tournament} onClose={() => setOpenModal(false)} />
         </App.Dialog>
       </App.Flex>
   )

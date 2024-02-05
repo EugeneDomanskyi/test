@@ -14,6 +14,12 @@ const api = {
   get: (alias) => {
     return request(`tournament/${alias}`)
   },
+  create: (post) => {
+    return request(`tournament/create`, 'POST', post)
+  },
+  current: () => {
+    return request(`tournament/current`)
+  },
   leaderboard: (alias) => {
     return request(`tournament/${alias}/leaderboard`)
   },

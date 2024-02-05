@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 
 import { CHAINS } from '@/config'
+import $tournament from '@/store/tournament'
 
 import App from '@/components/App'
 import SwitchBlockchain from '@/components/Header/SwitchBlockchain'
@@ -34,9 +35,15 @@ const Header = () => {
   const [mobileMenuShow, setMobileMenuShow] = useState(false)
   const [moreIsOpen, setMoreIsOpen] = useState(false)
   const [supportIsOpen, setSupportIsOpen] = useState(false)
+  const [openTournament, setOpenTournament] = useState(null)
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, false)
+    $tournament.api.current().then(res => {
+      if (res) {
+        setOpenTournament(res.data)
+      }
+    })
 
     return () => {
       document.removeEventListener('click', handleClickOutside, false)
@@ -106,7 +113,7 @@ const Header = () => {
                   </App.Flex>
                 </Link>
 
-                <Link href="/earn" className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/earn')})}>
+                <Link href={`/tournament/${openTournament?.alias}`} className={cn(styles.navbarItem, {[styles.active]: router.pathname.includes('/tournament')})}>
                   <App.Flex center height="100%">
                     <App.Text size={16} weight={500}>Earn</App.Text>
                   </App.Flex>

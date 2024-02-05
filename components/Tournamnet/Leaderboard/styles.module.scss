@@ -1,4 +1,14 @@
+.leaderboard {
+  overflow: auto;
+  height: 100vh;
+
+}
+
 .row {
   border-bottom: 1px solid rgba(255,255,255,0.1);
   height: 60px;
+
+  &.active {
+    background: linear-gradient(90deg, rgba(116,152,40,0) 0%, rgba(116,152,40,1) 20%, rgba(103,78,255,1) 80%, rgba(103,78,255,0) 100%);
+  }
 }

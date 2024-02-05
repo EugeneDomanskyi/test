@@ -1,11 +1,12 @@
 import App from '@/components/App'
 import cn from 'classnames'
+import numeral from 'numeral'
 
 import styles from './styles.module.scss'
 import useWalletConnect from "@/myhooks/wallet-connect";
 import Button from "@/components/Tournamnet/Button";
 
-const TierStats = ({walletResults}) => {
+const TierStats = ({walletResults, onClickWorks}) => {
   const formattedAddress = `${walletResults.address?.slice(0,4)}.....${walletResults.address?.slice(-4)}`
   const { wallet, connect } = useWalletConnect()
 
@@ -20,8 +21,8 @@ const TierStats = ({walletResults}) => {
             <App.Flex column align={'center'} justify={'center'} className={styles.plate} flex={1} height={180}>
               <App.Text size={20} weight={700}>Volume</App.Text>
               <App.Text family={'Playfair Display'} size={20} weight={700}>Exectuted</App.Text>
-              <App.Text size={48} weight={700}>{walletResults.volume}</App.Text>
-              <App.Text color={'#A6DC37'} size={14} weight={600}>{`How It Works? >`}</App.Text>
+              <App.Text size={48} weight={700}>{numeral(walletResults.volume).format('0.[0]a')}</App.Text>
+              <App.Text color={'#A6DC37'} size={14} weight={600} onClick={onClickWorks}>{`How It Works? >`}</App.Text>
             </App.Flex>
           </App.Flex>
           <App.Flex column align={'center'} justify={'center'} className={cn(styles.plate, styles.color)} height={250} width={'100%'}>

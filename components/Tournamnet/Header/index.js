@@ -4,9 +4,11 @@ import useWalletConnect from "@/myhooks/wallet-connect";
 import Button from '@/components/Tournamnet/Button'
 import Link from "next/link";
 import {useSelector} from "react-redux";
+import {useRouter} from "next/router";
 
 const Header = () => {
   const { wallet, connect, disconnect } = useWalletConnect()
+  const router = useRouter()
 
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
@@ -36,8 +38,8 @@ const Header = () => {
             <Link href={'/exchange'}>
               <App.Text size={14} weight={600}>Exchange</App.Text>
             </Link>
-            <Link href={'/earn'}>
-              <App.Text size={14} weight={600}>Earn</App.Text>
+            <Link href={router.asPath}>
+              <App.Text color={'#A6DC37'} size={14} weight={600}>Earn</App.Text>
             </Link>
             <Button onClick={handleConnect}>
               {wallet ? 'Disconnect' : 'Connect Wallet'}

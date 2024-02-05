@@ -4,6 +4,7 @@ import Image from "next/image";
 import Countdown from "@/components/Tournamnet/Countdown";
 import Button from "@/components/Tournamnet/Button";
 import moment from "moment";
+import $tournament from "@/store/tournament";
 
 const Banner = ({tournament}) => {
   const handleClickMore = () => {
@@ -52,6 +53,7 @@ const Banner = ({tournament}) => {
         reward_currency: 'USDT',
       }],
     }
+    $tournament.api.create(post)
     console.log(post)
     // fetch(
     //     'http://localhost:8080/v2/tournament/create',
@@ -65,7 +67,7 @@ const Banner = ({tournament}) => {
   }
 
   const isStarted = moment(new Date).isAfter(tournament.start_time)
-  console.log(tournament.start_time, isStarted)
+
   return (
       <App.Container>
         <App.Flex flex={1} className={styles.bannerContainer} gap={24}>
