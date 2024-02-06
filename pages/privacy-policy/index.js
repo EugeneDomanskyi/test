@@ -8,7 +8,7 @@ export default function LandingPage() {
       <App.Flex column align="center" className={styles.wrapper}>
         <h1>PRIVACY POLICY</h1>
 
-        <p>This privacy policy (<b>“Privacy Policy”</b>) sets out how Tegro (<b>“Company”</b>) uses and protects any information that you give the Company when you use or access the <a href="http://tegro.com/">http://tegro.com/</a>, Tegro (“Application”), or any services or materials provided by the Company (collectively “Services”). The Company is committed to protecting your privacy. This Privacy Policy explains how the Company collects, uses, and shares your personal information. This Privacy Policy applies to your use of the Service as further described in the Company&apos;s Terms and Conditions available at <a href="https://Tegro.com/terms">https://tegro.com/terms</a>.</p>
+        <p>This privacy policy (<b>“Privacy Policy”</b>) sets out how Tegro (<b>“Company”</b>) uses and protects any information that you give the Company when you use or access the <a href="https://tegro.com/">https://tegro.com/</a>, Tegro (“Application”), or any services or materials provided by the Company (collectively “Services”). The Company is committed to protecting your privacy. This Privacy Policy explains how the Company collects, uses, and shares your personal information. This Privacy Policy applies to your use of the Service as further described in the Company&apos;s Terms and Conditions available at <a href="https://Tegro.com/terms">https://tegro.com/terms</a>.</p>
 
         <p>By using the Services, you agree to be bound by the terms and conditions of this Privacy Policy. You hereby expressly consent to the processing of your personal information in accordance with this Privacy Policy. Your personal information may be stored, processed, or transmitted in India or any other part of the world, where laws regarding storing, processing, or transmitting personal information may be less restrictive than the laws in your country. If you do not agree to the terms of this Privacy Policy, please do not use or access the Services. By mere use of or access to the Services, you expressly consent to the Company&apos;s use and disclosure of your personal information in accordance with this Privacy Policy. This Privacy Policy is incorporated into and subject to the Terms and Conditions.</p>
 
@@ -189,7 +189,7 @@ export default function LandingPage() {
 
         <p>
           You may change certain of your personal information by editing your User Account settings or by sending the
-          Company an e mail - at <a href="mailto:compliance@tegro.com">compliance@tegro.com</a> or postal mail addressed to the Company. The Company
+          Company an e mail - at <a href="mailto:support@tegro.com">support@tegro.com</a> or postal mail addressed to the Company. The Company
           may maintain a copy of your unrevised information in its records, even after your revise or update your
           information. Some of your information may remain in the Company&apos;s private records after your deletion of
           such information from your User Account. You are responsible for maintaining the secrecy of your unique
@@ -230,7 +230,7 @@ export default function LandingPage() {
         <p>
           The Company may periodically send you free newsletters and promotional communications. When you receive
           newsletters or promotional communications from the Company, you may “opt out” - of these emails by
-          following the unsubscribe instructions provided in the email you receive or by contacting the Company at <a href="mailto:compliance@tegro.com">compliance@tegro.com</a>.
+          following the unsubscribe instructions provided in the email you receive or by contacting the Company at <a href="mailto:support@tegro.com">support@tegro.com</a>.
           Despite your indicated email preferences, the Company may send you notices of any
           updates to its Privacy Policy, Terms and Conditions or other administrative emails.
         </p>
@@ -239,7 +239,7 @@ export default function LandingPage() {
 
         <p>
           The Company welcomes your comments, grievances or questions regarding this Privacy Policy. Please e-mail
-          the Company at <a href="mailto:compliance@tegro.com">compliance@tegro.com</a>
+          the Company at <a href="mailto:support@tegro.com">support@tegro.com</a>
         </p>
       </App.Flex>
     </App.Container>
