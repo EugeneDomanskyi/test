@@ -33,6 +33,7 @@ const useApp = () => {
 
       if (data?.walletAddress && data.walletAddress.toLowerCase() != wallet) {
         setAppWallet(data.walletAddress.toLowerCase())
+        appConnect(null, data.walletAddress.toLowerCase())
       }
 
       if (data?.clearLocalStorage) {
@@ -55,9 +56,10 @@ const useApp = () => {
     appPost({ log: data })
   }
 
-  const appConnect = async (onComplete) => {
+  const appConnect = async (onComplete, currentWallet = appWallet) => {
     let needConnect = !wallet
-    if (wallet && wallet != appWallet) {
+    appLog(`${wallet} --- ${currentWallet}`)
+    if (wallet && wallet != currentWallet) {
       appLog(`Disconnect ${wallet}`)
       await disconnect()
       return
@@ -90,7 +92,14 @@ const useApp = () => {
       const connected = await connect({
         connector: customConnector,
         chainId: blockchain.id,
-      }).catch(e => appLog(e))
+      }).catch(e => {
+        appLog(e)
+        disconnect()
+      })
+
+      if (!connected) {
+        return
+      }
 
       setAppWallet(connected.account.toLowerCase())
       appLog(`Connected to wallet ${connected.account}`)

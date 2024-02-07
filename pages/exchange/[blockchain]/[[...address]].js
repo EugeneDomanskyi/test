@@ -69,9 +69,13 @@ const Exchange = () => {
   }, [])
 
   useEffect(() => {
-    if (isApp && !connection.loading) {
-      appLog(connection)
-      appConnect(() => setAppConnectionLoading(false))
+    if (isApp) {
+      if (connection.loading) {
+        setAppConnectionLoading(true)
+      } else {
+        appLog(connection)
+        appConnect(() => setAppConnectionLoading(false))
+      }
     }
   }, [isApp, connection])
 
@@ -250,10 +254,14 @@ const Exchange = () => {
           </App.Flex>
         ) : (
           ! connection.connected ? (
+            // <App.Flex column center gap={8} className={styles.appLoader}>
+            //   <App.Icon icon="alert-error" />
+            //   <App.Text>Connection failed</App.Text>
+            //   <App.Text>Swipe down to reconnect</App.Text>
+            // </App.Flex>
             <App.Flex column center gap={8} className={styles.appLoader}>
-              <App.Icon icon="alert-error" />
-              <App.Text>Connection failed</App.Text>
-              <App.Text>Swipe down to reconnect</App.Text>
+              <App.Loader />
+              <App.Text>Reconnecting...</App.Text>
             </App.Flex>
           ) : null
         )
