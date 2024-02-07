@@ -1,0 +1,16 @@
+.bannerContainer {
+  //height: 500px;
+
+
+  .title {
+    font-family: "Playfair Display", serif;
+    font-size: 64px;
+    color: #7364FF;
+  }
+}
+
+@media(max-width: 768px) {
+  .bannerContainer {
+    flex-wrap: wrap;
+  }
+}

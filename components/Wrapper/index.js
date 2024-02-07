@@ -16,7 +16,7 @@ const Wrapper = ({ children }) => {
   const dispatch = useDispatch()
 
   const router = useRouter()
-  const isCampaign = router.asPath?.includes('/campaign')
+  const isCampaign = router.asPath?.includes('/campaign') || router.asPath?.includes('/tournament')
 
   const { isApp, platform } = useApp()
   Amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY, !isApp, platform ?? 'Web')

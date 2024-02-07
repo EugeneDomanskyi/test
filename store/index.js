@@ -8,6 +8,7 @@ import $orders from './orders'
 import $raffle from './raffle'
 import $markets from './markets'
 import $portfolio from './portfolio'
+import $tournament from './tournament'
 
 const createStore = (initialData) => {
   return configureStore({
@@ -19,6 +20,7 @@ const createStore = (initialData) => {
       $raffle: $raffle.reducer,
       $markets: $markets.reducer,
       $portfolio: $portfolio.reducer,
+      $tournament: $tournament.reducer,
     },
 
     preloadedState: {

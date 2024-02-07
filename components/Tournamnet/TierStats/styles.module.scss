@@ -1,0 +1,41 @@
+.plate {
+  background: radial-gradient(113.88% 113.88% at 67.99% -35.17%, #231F38 0%, #100D21 100%);
+  border-radius: 16px;
+  padding: 24px 16px;
+
+  &.color {
+    background: linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%);
+  }
+
+  &.position {
+    background-image: url("/images/tournament/tournament_position_bg.png"), radial-gradient(113.88% 113.88% at 67.99% -35.17%, #231F38 0%, #100D21 100%);
+    background-repeat: no-repeat;
+    background-position: right;
+    background-size: contain;
+  }
+
+  &.wallet {
+    background-image: url("/images/tournament/tournament_wallet_bg.png"), radial-gradient(113.88% 113.88% at 67.99% -35.17%, #231F38 0%, #100D21 100%);
+    background-repeat: no-repeat;
+    background-position: bottom;
+    background-size: contain;
+  }
+}
+
+.desktop {
+
+}
+
+.mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop {
+    display: none;
+  }
+
+  .mobile {
+    display: flex;
+  }
+}
