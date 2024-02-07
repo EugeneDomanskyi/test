@@ -1,5 +1,5 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
-import { formatUnits } from 'viem'
+import { formatUnits, parseUnits } from 'viem'
 import moment from 'moment'
 
 import { request } from './index'
@@ -77,26 +77,47 @@ export const ordersSlice = createSlice({
         ...acc,
         [sides[side]]: values ?? []
       }), {})
-      
-      list.buy.sort((a, b) => b.price * 1 - a.price * 1)
-      list.sell.sort((a, b) => a.price * 1 - b.price * 1)
 
-      state.orderbook = Object.entries(list).reduce((acc, [side, values]) => {
-        let prevVolume = 0
-        return {
-          ...acc,
-          [side]: values.slice(0, 10).map((row) => {
-            const volume = formatUnits(row.quantity, payload.token.decimals)
-            prevVolume += volume * 1
+      state.orderbook = {
+        buy: list.buy,
+        sell: list.sell,
+      }
 
-            return {
-              priceFormatted: formatUnits(row.price, payload.token.quoteDecimals),
-              volume: prevVolume,
-              quantity: volume,
-            }
-          })
-        }
-      }, {})
+      // state.orderbook = Object.entries(list).reduce((acc, [side, values]) => {
+      //   let prevVolume = 0
+      //   return {
+      //     ...acc,
+      //     [side]: values.slice(0, 10).map((row) => {
+      //       const volume = formatUnits(row.quantity, payload.token.decimals)
+      //       prevVolume += volume * 1
+      //
+      //       return {
+      //         priceFormatted: formatUnits(row.price, payload.token.quoteDecimals),
+      //         price: row.price,
+      //         volume: prevVolume,
+      //         quantity: volume,
+      //       }
+      //     })
+      //   }
+      // }, {})
+      // console.log(state.orderbook)
+    },
+
+    orderbookUpdate: (state, { payload }) => {
+      console.log('buy ', payload.bids)
+      console.log('sell ', payload.asks)
+      const buyObj = state.orderbook.buy.reduce((acc, item) => ({...acc, [item.price]: item.quantity}), {})
+      const sellObj = state.orderbook.sell.reduce((acc, item) => ({...acc, [item.price]: item.quantity}), {})
+
+      buyObj[payload.bids.price] = payload.bids.quantity
+      sellObj[payload.asks.price] = payload.asks.quantity
+
+      console.log(buyObj)
+
+      state.orderbook = {
+        buy: Object.entries(buyObj).reduce((acc, [price, quantity]) => [...acc, {price, quantity}], []),
+        sell: Object.entries(sellObj).reduce((acc, [price, quantity]) => [...acc, {price, quantity}], []),
+      }
     },
 
     trades: (state, { payload }) => {
@@ -119,12 +140,42 @@ export const ordersSlice = createSlice({
 
 const get = {
   list: createSelector([
-    state => state.$orders.list
+    state => state.$orders.list,
   ], (orders) => {
     return {
       open: orders.filter(order => order.status === 'open'),
       closed: orders.filter(order => order.status === 'completed' || order.status === 'cancelled')
     }
+  }),
+  orderbook: createSelector([
+    state => state.$orders.orderbook,
+    state => state.$token.current,
+  ], (orderbook, current) => {
+    console.log('getter', orderbook)
+    let sorted = {
+      buy: structuredClone(orderbook.buy),
+      sell: structuredClone(orderbook.sell),
+    }
+    sorted.buy.sort((a, b) => b.price * 1 - a.price * 1)
+    sorted.sell.sort((a, b) => a.price * 1 - b.price * 1)
+
+    return Object.entries(sorted).reduce((acc, [side, values]) => {
+      let prevVolume = 0
+      return {
+        ...acc,
+        [side]: values.filter(item => item.quantity*1).slice(0, 10).map((row) => {
+          const volume = formatUnits(row.quantity, current.decimals)
+          prevVolume += volume * 1
+
+          return {
+            priceFormatted: formatUnits(row.price, current.quoteDecimals),
+            price: row.price,
+            volume: prevVolume,
+            quantity: volume,
+          }
+        })
+      }
+    }, {})
   }),
 }
 
