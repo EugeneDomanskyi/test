@@ -82,41 +82,18 @@ export const ordersSlice = createSlice({
         buy: list.buy,
         sell: list.sell,
       }
-
-      // state.orderbook = Object.entries(list).reduce((acc, [side, values]) => {
-      //   let prevVolume = 0
-      //   return {
-      //     ...acc,
-      //     [side]: values.slice(0, 10).map((row) => {
-      //       const volume = formatUnits(row.quantity, payload.token.decimals)
-      //       prevVolume += volume * 1
-      //
-      //       return {
-      //         priceFormatted: formatUnits(row.price, payload.token.quoteDecimals),
-      //         price: row.price,
-      //         volume: prevVolume,
-      //         quantity: volume,
-      //       }
-      //     })
-      //   }
-      // }, {})
-      // console.log(state.orderbook)
     },
 
     orderbookUpdate: (state, { payload }) => {
-      console.log('buy ', payload.bids)
-      console.log('sell ', payload.asks)
+      const updatedBuy = payload.bids.reduce((acc, item) => ({...acc, [item.price]: item.quantity}), {})
+      const updatedSell = payload.asks.reduce((acc, item) => ({...acc, [item.price]: item.quantity}), {})
       const buyObj = state.orderbook.buy.reduce((acc, item) => ({...acc, [item.price]: item.quantity}), {})
       const sellObj = state.orderbook.sell.reduce((acc, item) => ({...acc, [item.price]: item.quantity}), {})
-
-      buyObj[payload.bids.price] = payload.bids.quantity
-      sellObj[payload.asks.price] = payload.asks.quantity
-
-      console.log(buyObj)
-
+      const buy = {...buyObj, ...updatedBuy}
+      const sell = {...sellObj, ...updatedSell}
       state.orderbook = {
-        buy: Object.entries(buyObj).reduce((acc, [price, quantity]) => [...acc, {price, quantity}], []),
-        sell: Object.entries(sellObj).reduce((acc, [price, quantity]) => [...acc, {price, quantity}], []),
+        buy: Object.entries(buy).reduce((acc, [price, quantity]) => [...acc, {price, quantity}], []),
+        sell: Object.entries(sell).reduce((acc, [price, quantity]) => [...acc, {price, quantity}], []),
       }
     },
 
@@ -151,7 +128,6 @@ const get = {
     state => state.$orders.orderbook,
     state => state.$token.current,
   ], (orderbook, current) => {
-    console.log('getter', orderbook)
     let sorted = {
       buy: structuredClone(orderbook.buy),
       sell: structuredClone(orderbook.sell),
