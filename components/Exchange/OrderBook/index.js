@@ -20,14 +20,14 @@ const OrderBook = ({ version, onClickOrder }) => {
   const [loading, setLoading] = useState(true)
 
   const current = useSelector(({ $token }) => $token.current)
-  const orderBook = useSelector(({ $orders }) => $orders.orderbook)
+  const orderBook = useSelector($orders.get.orderbook)
 
   const maxBuyVolume = orderBook.buy.reduce((acc, { quantity }) => acc + quantity * 1, 0)
   const maxSellVolume = orderBook.sell.reduce((acc, { quantity }) => acc + quantity * 1, 0)
 
   useEffect(() => {
-    Socket.on('order_book_updated', 'order_book', async result => {
-      dispatch($orders.set.orderbook({data: result, token: current}))
+    Socket.on('order_book_diff', 'order_book', async result => {
+      dispatch($orders.set.orderbookUpdate(result))
     })
   }, [current?.id])
 
