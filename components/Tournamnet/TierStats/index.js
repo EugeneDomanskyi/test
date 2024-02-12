@@ -5,6 +5,7 @@ import numeral from 'numeral'
 import styles from './styles.module.scss'
 import useWalletConnect from "@/myhooks/wallet-connect";
 import Button from "@/components/Tournamnet/Button";
+import Link from "next/link";
 
 const TierStats = ({walletResults, onClickWorks}) => {
   const formattedAddress = `${walletResults.address?.slice(0,4)}.....${walletResults.address?.slice(-4)}`
@@ -23,7 +24,9 @@ const TierStats = ({walletResults, onClickWorks}) => {
                 <App.Text size={20} weight={700}>Volume</App.Text>
                 <App.Text family={'Playfair Display'} size={20} weight={700}>Exectuted</App.Text>
                 <App.Text size={48} weight={700}>{numeral(walletResults.volume).format('0.[0]a')}</App.Text>
-                <App.Text color={'#A6DC37'} size={14} weight={600} onClick={onClickWorks}>{`How It Works? >`}</App.Text>
+                <Link href={`/exchange`}>
+                  <App.Text color={'#A6DC37'} size={14} weight={600}>{`Trade now`}</App.Text>
+                </Link>
               </App.Flex>
             </App.Flex>
             <App.Flex column align={'center'} justify={'center'} className={cn(styles.plate, styles.color)} height={250} width={'100%'}>
@@ -61,6 +64,7 @@ const TierStats = ({walletResults, onClickWorks}) => {
                 <App.Text size={20} weight={700}>Points</App.Text>
                 <App.Text family={'Playfair Display'} size={20} weight={700}>Earned</App.Text>
                 <App.Text size={48} weight={700}>{walletResults.points}</App.Text>
+                <App.Text color={'#A6DC37'} size={14} weight={600} onClick={onClickWorks}>{`How It Works? >`}</App.Text>
               </App.Flex>
             </App.Flex>
             <App.Flex>
