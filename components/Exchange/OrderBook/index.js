@@ -4,6 +4,7 @@ import cn from 'classnames'
 import Socket from '@/libs/ws.lib'
 
 import $orders from '@/store/orders'
+import $app from '@/store/app'
 
 import App from '@/components/App'
 
@@ -20,6 +21,7 @@ const OrderBook = ({ version, onClickOrder }) => {
   const [loading, setLoading] = useState(true)
 
   const current = useSelector(({ $token }) => $token.current)
+  const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector($orders.get.orderbook)
 
   const maxBuyVolume = orderBook.buy.reduce((acc, { quantity }) => acc + quantity * 1, 0)
@@ -32,13 +34,13 @@ const OrderBook = ({ version, onClickOrder }) => {
   }, [current?.id])
 
   useEffect(() => {
-    if (current?.id) {
+    if (current?.id && blockchain?.id) {
       fetchOrderbook()
     }
-  }, [current?.id])
+  }, [current?.id, blockchain?.id])
 
   const fetchOrderbook = async () => {
-    const result = await $orders.api.orderbook({ market_id: current.marketId })
+    const result = await $orders.api.orderbook({ market_id: current.marketId, chain_id: blockchain.id })
     if (result) {
       dispatch($orders.set.orderbook({data: result, token: current}))
     }
