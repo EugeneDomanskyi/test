@@ -68,7 +68,7 @@ export const ordersSlice = createSlice({
     },
 
     chart: (state, { payload }) => {
-      state.chart = payload.sort((a, b) => a.time - b.time)
+      state.chart = payload.sort((a, b) => a.time - b.time).map(item => ({...item, time: item.time*1000}))
     },
     
     orderbook: (state, { payload }) => {
@@ -176,7 +176,7 @@ const api = {
   },
 
   typedData: (params) => {
-    return request('market/orders/typedData/generate', 'POST', params)
+    return request('market/orders/typedData/generate/v2', 'POST', params)
   },
 
   place: (params) => {
