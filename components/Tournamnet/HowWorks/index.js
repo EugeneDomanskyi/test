@@ -2,7 +2,7 @@ import styles from './styles.module.scss'
 import cn from 'classnames'
 
 import App from '@/components/App'
-import {useEffect, useState} from "react";
+import { useState} from "react";
 import Radio from "@/components/Tournamnet/Radio";
 
 const marks = [...new Array(21)].map((_, i) => {
@@ -34,11 +34,11 @@ const HowWorks = ({tournament, onClose}) => {
             <App.Icon icon={'cross'} color={'#fff'} />
           </App.Flex>
         </App.Flex>
-        <App.Flex gap={64} align={'center'}>
+        <App.Flex gap={[64, 24]} align={'center'} className={styles.header}>
           <App.Text size={40} weight={800}>How it &nbsp;<App.Text inline size={40} color={'#7364FF'} family={'Playfair Display'}>Works</App.Text></App.Text>
           <App.Text size={12} weight={500} color={'rgba(255,255,255,0.6)'} lines={2} sx={{width: 400}}>Habitant porttitor morbi amet molestie euismod egestas. Massa nisl in eget tristique semper facilisi sit.</App.Text>
         </App.Flex>
-        <App.Flex flex={1} gap={24}>
+        <App.Flex flex={1} gap={24} className={styles.content}>
           <App.Flex flex={1.2} column gap={30} className={styles.plate} sx={{padding: 32}}>
             <App.Flex>
               <App.Flex flex={1} column>
@@ -78,7 +78,7 @@ const HowWorks = ({tournament, onClose}) => {
               <App.Text family={'Playfair Display'} size={20}>Multiplier</App.Text>
               <App.Text color={'#9B99AE'} size={14} weight={400}>(Based on Lifetime volume)</App.Text>
             </App.Flex>
-            <App.Flex flex={1} gap={20}>
+            <App.Flex flex={1} gap={20} className={styles.tiers}>
               <App.Flex column flex={1} gap={20}>
                 <App.Flex className={cn(styles.plate, {[styles.active]: activeTier.id === tier1.id})} flex={1} column>
                   <Radio
@@ -99,9 +99,7 @@ const HowWorks = ({tournament, onClose}) => {
                   <App.Text size={32} weight={700}>x{tier2.multiplier}</App.Text>
                 </App.Flex>
               </App.Flex>
-              <App.Flex flex={1}
-                        className={cn(styles.plate, styles.higher, {[styles.active]: activeTier.id === tier3.id})}
-                        column>
+              <App.Flex flex={1} className={cn(styles.plate, styles.higher, {[styles.active]: activeTier.id === tier3.id})} column>
                 <Radio
                     sx={{position: 'absolute', right: 16, top: 16}}
                     active={activeTier.id === tier3.id}
@@ -110,7 +108,7 @@ const HowWorks = ({tournament, onClose}) => {
                 <App.Text color={'rgba(255,255,255,0.6)'} size={14} weight={600}>{tier3.description}</App.Text>
                 <App.Text size={32} weight={700}>x{tier3.multiplier}</App.Text>
               </App.Flex>
-              <App.Flex flex={1} column className={cn(styles.plate, styles.bonus, {[styles.active]: bonusActive})}>
+              <App.Flex column className={cn(styles.plate, styles.bonus, {[styles.active]: bonusActive})}>
                 <Radio
                     sx={{position: 'absolute', right: 16, top: 16}}
                     active={bonusActive}
