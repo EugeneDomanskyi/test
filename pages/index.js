@@ -1,19 +1,20 @@
 import App from '@/components/App'
-import Landing from '@/components/Landing'
-import Raffle from '@/components/Raffle'
+import Home from '@/components/Home'
 
 import styles from './styles.module.scss'
 
 const LandingPage = () => {
   return (
-    <App.Flex column gap={[130, 70]} className={styles.container}>
-      <Landing.Grid />
-      <Landing.Head />
-      <Raffle.Top landing />
-      <Landing.Platform />
-      <Landing.Founders />
-      <Landing.FAQ />
-      <Landing.Footer />
+    <App.Flex column className={styles.container}>
+      <div className={styles.background} />
+
+      <Home.Top />
+      <Home.Stats />
+      <Home.Features />
+      <Home.Press />
+      <Home.Team />
+      <Home.Community />
+      <Home.Faq />
     </App.Flex>
   )
 }

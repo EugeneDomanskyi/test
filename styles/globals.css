@@ -151,3 +151,9 @@ a {
   border-radius: 3px;
   z-index: 3;
 }
+
+@media (max-width: 768px) {
+  .hideOnMobile {
+    display: none;
+  }
+}

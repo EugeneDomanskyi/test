@@ -7,7 +7,14 @@ export const tournamentSlice = createSlice({
 
   initialState: {
     data: null,
+    current: null,
   },
+
+  reducers: {
+    current: (state, { payload }) => {
+      state.current = payload
+    },
+  }
 })
 
 const api = {
