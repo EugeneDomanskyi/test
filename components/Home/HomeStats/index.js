@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import cn from 'classnames'
 
 import App from '@/components/App'
@@ -137,7 +138,7 @@ const HomeStats = () => {
       </App.Flex>
 
       <App.Flex sx={{ paddingTop: 16 }}>
-        <App.Text size={14} weight={400} color="#9B99AE" className={styles.bottomText}>Interested in More Statistics? <a href="/stats">View More Stats &gt;</a></App.Text>
+        <App.Text size={14} weight={400} color="#9B99AE" className={styles.bottomText}>Interested in More Statistics? <Link href="/stats">View More Stats &gt;</Link></App.Text>
       </App.Flex>
     </App.Container>
   ) : (
@@ -246,7 +247,7 @@ const HomeStats = () => {
       </App.Flex>
 
       <App.Flex center sx={{ paddingTop: 16 }}>
-        <App.Text center size={14} weight={400} color="#9B99AE" className={styles.bottomText}>Interested in More Statistics? <a href="/stats">View More Stats &gt;</a></App.Text>
+        <App.Text center size={14} weight={400} color="#9B99AE" className={styles.bottomText}>Interested in More Statistics? <Link href="/stats">View More Stats &gt;</Link></App.Text>
       </App.Flex>
     </App.Container>
   )
