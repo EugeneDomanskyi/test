@@ -4,6 +4,7 @@ import App from '@/components/App'
 import { useSelector } from 'react-redux'
 
 const HomeTop = () => {
+  const loading = useSelector(({ $tournament }) => $tournament.loading)
   const tournament = useSelector(({ $tournament }) => $tournament.current)
 
   return (
@@ -16,18 +17,10 @@ const HomeTop = () => {
 
         {tournament?.alias ? (
           <Link href={`/tournament/${tournament.alias}`}>
-            <App.Frame padding="10px 24px" radius={50} gradient="linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)" sx={{ cursor: 'pointer', width: 160 }}>
-              <App.Flex row center gap={16}>
-                <App.Text>Earn Points</App.Text>
-              </App.Flex>
-            </App.Frame>
+            <App.ButtonGradient>Earn Points</App.ButtonGradient>
           </Link>
         ) : (
-          <App.Frame padding="10px 24px" radius={50} gradient="linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)">
-            <App.Flex row center gap={16}>
-              <App.Text>There are no active tournaments</App.Text>
-            </App.Flex>
-          </App.Frame>
+          <App.ButtonGradient>{loading ? 'Loading...' : 'There are no active tournaments'}</App.ButtonGradient>
         )}
       </App.Flex>
     </App.Container>

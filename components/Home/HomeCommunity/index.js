@@ -11,6 +11,8 @@ const HomeCommunity = () => {
 
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
+  const [isSubscribeModalVisible, setIsSubscribeModalVisible] = useState(false)
+
   const handleSocialClick = (social) => () => {
     let url = ''
     let community = null
@@ -48,6 +50,14 @@ const HomeCommunity = () => {
     }
 
     window.open(url, '_blank')
+  }
+
+  const handleSubscribeModal = () => {
+    setIsSubscribeModalVisible(true)
+  }
+
+  const handleSubscribeModalClose = () => {
+    setIsSubscribeModalVisible(false)
   }
 
   return (
@@ -119,22 +129,26 @@ const HomeCommunity = () => {
               </App.Flex>
 
               <App.Flex row align="center" flex={[1, 0]} gap={12} width={['auto', '100%']}>
-                <App.TextField
+                {/* <App.TextField
                   value={email}
                   placeholder="Email"
                   variant="subscribe"
                   onChange={(value) => setEmail(value)}
-                />
+                /> */}
 
-                <App.Frame padding="10px 24px" radius={50} gradient="linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)" sx={{ cursor: 'pointer' }}>
-                  <App.Flex row center gap={16}>
-                    <App.Text>{!isMobile ? 'Subscribe' : '>'}</App.Text>
-                  </App.Flex>
-                </App.Frame>
+                <App.ButtonGradient onClick={handleSubscribeModal}>Subscribe</App.ButtonGradient>
               </App.Flex>
             </App.Flex>
           </App.Flex>
         </App.Flex>
+
+        <App.Dialog width={480} open={isSubscribeModalVisible} title="Subscribe" onClose={handleSubscribeModalClose}>
+          <iframe src="https://tegro.substack.com/embed"
+            width={480}
+            height={150}
+            style={{border: '1px solid #fff', backgroundColor: '#ff0'}}
+          ></iframe>
+        </App.Dialog>
       </App.Container>
     </div>
   )

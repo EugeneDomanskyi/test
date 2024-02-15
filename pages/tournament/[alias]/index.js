@@ -49,7 +49,6 @@ const TournamentPage = () => {
 
   return (
       <App.Flex column className={styles.container}>
-        <Header />
         <Banner tournament={tournament} />
         <TierBlock
           tiers={tournament.tiers}

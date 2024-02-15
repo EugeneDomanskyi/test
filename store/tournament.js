@@ -8,11 +8,16 @@ export const tournamentSlice = createSlice({
   initialState: {
     data: null,
     current: null,
+    loading: true,
   },
 
   reducers: {
     current: (state, { payload }) => {
       state.current = payload
+    },
+
+    loading: (state, { payload }) => {
+      state.loading = payload
     },
   }
 })
@@ -32,7 +37,7 @@ const api = {
   },
   walletResult: (alias, wallet) => {
     return request(`tournament/${alias}/leaderboard/${wallet}`) // 0x113128f65d830b5295cef847597f4655f3d8e47c
-  }
+  },
 }
 
 export default {

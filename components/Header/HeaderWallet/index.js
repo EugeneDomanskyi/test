@@ -212,11 +212,7 @@ const HeaderWallet = () => {
     //   Connect{!isMobile ? ' Wallet' : ''}
     // </App.Button>
 
-    <App.Frame padding="10px 24px" radius={50} gradient="linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)" sx={{ cursor: 'pointer' }} onClick={handleConnectWallet}>
-      <App.Flex row center gap={16}>
-        <App.Text>Connect Wallet</App.Text>
-      </App.Flex>
-    </App.Frame>
+    <App.ButtonGradient onClick={handleConnectWallet}>Connect Wallet</App.ButtonGradient>
   )
 }
 
