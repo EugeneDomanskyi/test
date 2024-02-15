@@ -146,7 +146,7 @@ const HomeCommunity = () => {
           <iframe src="https://tegro.substack.com/embed"
             width={480}
             height={150}
-            style={{border: '1px solid #fff', backgroundColor: '#ff0'}}
+            style={{border: '1px solid #08051C', backgroundColor: '#08051C'}}
           ></iframe>
         </App.Dialog>
       </App.Container>
