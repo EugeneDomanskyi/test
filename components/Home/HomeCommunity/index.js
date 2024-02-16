@@ -68,7 +68,7 @@ const HomeCommunity = () => {
         <App.Flex fullWidth className={styles.inner}>
           <App.Flex fullWidth column gap={32}>
             <App.Flex column>
-              <App.Text size={40} weight={600} height={1}>Building Tomorrow's DEX,</App.Text>
+              <App.Text size={40} weight={600} height={1}>Building Tomorrow&apos;s DEX,</App.Text>
               <App.Text italic size={40} weight={700} color="#A6DC37" family="Playfair Display" height={1}>Today – With You, For You</App.Text>
             </App.Flex>
 

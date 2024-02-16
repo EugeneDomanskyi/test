@@ -17,7 +17,7 @@ const HomeTeam = () => {
           </App.Flex>
 
           <App.Text size={12} weight={400} color="#9B99AE">
-            Our founding team introduced cryptocurrency trading to 10 million Indians with WazirX — India's largest crypto exchange with $40B+ volumes. Now, with Tegro, we're shaping the future of decentralized finance, targeting the next 100 million traders globally!
+            Our founding team introduced cryptocurrency trading to 10 million Indians with WazirX — India&apos;s largest crypto exchange with $40B+ volumes. Now, with Tegro, we&apos;re shaping the future of decentralized finance, targeting the next 100 million traders globally!
           </App.Text>
         </App.Flex>
 
