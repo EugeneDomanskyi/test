@@ -34,4 +34,16 @@
   .img {
     max-width: 100%;
   }
+
+  .soc {
+    opacity: .6;
+    transition: all .2s;
+    box-shadow: 0 0 20px rgba(115, 100, 255, .4);
+    border-radius: 50%;
+    line-height: 0;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
 }

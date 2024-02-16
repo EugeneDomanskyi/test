@@ -1,7 +1,9 @@
+import { useSelector } from 'react-redux'
 import Link from 'next/link'
 
 import App from '@/components/App'
-import { useSelector } from 'react-redux'
+
+import styles from './styles.module.scss'
 
 const HomeTop = () => {
   const loading = useSelector(({ $tournament }) => $tournament.loading)
@@ -13,6 +15,12 @@ const HomeTop = () => {
         <App.Flex column center width={[715, 337]} gap={20}>
           <App.Text center size={[80, 64]} weight={800} height={['88px', 1]}>The Gen II Exchange <App.Text inline italic size={[80, 64]} weight={700} color="#7364FF" family="Playfair Display">Is Here!</App.Text></App.Text>
           <App.Text center size={16} weight={400} color="rgba(255, 255, 255, .6)">Testnet is live. Participate and start earning points.</App.Text>
+          <Link href="/exchange">
+            <App.Flex row center gap={8} className={styles.button}>
+              <div className={styles.circle} />
+              <App.Text size={16} weight={500} color="#1cbc7c">Testnet Live</App.Text>
+            </App.Flex>
+          </Link>
         </App.Flex>
 
         {tournament?.alias ? (

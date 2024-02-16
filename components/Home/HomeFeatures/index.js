@@ -16,9 +16,13 @@ const HomeFeatures = () => {
 
           <div className={styles.sep} />
 
-          <App.Flex flex={1}>
+          <App.Flex column>
             <App.Text size={12} weight={400} color="rgba(255, 255, 255, .6)">
-              Elementum lectus at est enim. Mi lacus venenatis sapien suspendisse tincidunt nulla. Lacus quam urna dictumst dui. Faucibus viverra vel morbi duis amet. Sit vitae tristique eget nibh nibh. Ipsum imperdiet sem condimentum proin sodales vel pellentesque et nullam. Vel suspendisse amet arcu ut tristique massa enim.
+              CEX Speed, DEX Trust — Enjoy the Best of Both Worlds
+            </App.Text>
+
+            <App.Text size={12} weight={400} color="rgba(255, 255, 255, .6)">
+              High-frequency Trading, Now On-chain
             </App.Text>
           </App.Flex>
         </App.Flex>
@@ -27,16 +31,16 @@ const HomeFeatures = () => {
           <App.Flex direction={['row', 'column']} align="center" fullWidth gap={[62, 0]}>
             <App.Flex row align="center" width={[300, '100%']} className={styles.name}>
               <div className={styles.ellipse} />
-              <img src="/images/home/features-1.png" alt="" />
+              <img src="/images/home/features-4.png" alt="" />
 
               <App.Flex column>
-                <App.Text italic size={[16, 24]} weight={700} family="Playfair Display">Custody</App.Text>
-                <App.Text size={[16, 24]} weight={600}>Less Orders</App.Text>
+                <App.Text size={[16, 24]} weight={600}>Efficient</App.Text>
+                <App.Text italic size={[16, 24]} weight={700} family="Playfair Display">Orderbooks</App.Text>
               </App.Flex>
             </App.Flex>
 
             <App.Text center={[null, true]} size={14} weight={400} color="#9B99AE">
-              Habitant porttitor morbi amet molestie euismod egestas. Quis eget eu volutpat in et ipsum amet duis. Massa nisl in eget tristique semper facilisi sit. 
+              Real-time market depth at your fingertips, mirroring CEX precision.
             </App.Text>
           </App.Flex>
 
@@ -49,12 +53,48 @@ const HomeFeatures = () => {
 
               <App.Flex column>
                 <App.Text italic size={[16, 24]} weight={700} family="Playfair Display">Gasless</App.Text>
-                <App.Text size={[16, 24]} weight={600}>Cancellations</App.Text>
+                <App.Text size={[16, 24]} weight={600}>Quotes</App.Text>
               </App.Flex>
             </App.Flex>
 
             <App.Text center={[null, true]} size={14} weight={400} color="#9B99AE">
-              Cursus pharetra lacus faucibus vulputate. Bibendum egestas non odio porta sollicitudin id. 
+              Order creation and cancellation without gas fees for seamless price discovery.
+            </App.Text>
+          </App.Flex>
+
+          <div className={styles.hr} />
+          
+          <App.Flex direction={['row', 'column']} align="center" fullWidth gap={[62, 0]}>
+            <App.Flex row align="center" width={[300, '100%']} className={styles.name}>
+              <div className={styles.ellipse} />
+              <img src="/images/home/features-1.png" alt="" />
+
+              <App.Flex column>
+                <App.Text italic size={[16, 24]} weight={700} family="Playfair Display">Lightning-fast</App.Text>
+                <App.Text size={[16, 24]} weight={600}>Orders</App.Text>
+              </App.Flex>
+            </App.Flex>
+
+            <App.Text center={[null, true]} size={14} weight={400} color="#9B99AE">
+              Your trades settled in seconds. Trade at scale!
+            </App.Text>
+          </App.Flex>
+
+          <div className={styles.hr} />
+          
+          <App.Flex direction={['row', 'column']} align="center" fullWidth gap={[62, 0]}>
+            <App.Flex row align="center" width={[300, '100%']} className={styles.name}>
+              <div className={styles.ellipse} />
+              <img src="/images/home/features-5.png" alt="" />
+
+              <App.Flex column>
+                <App.Text size={[16, 24]} weight={600}>Binance-like</App.Text>
+                <App.Text italic size={[16, 24]} weight={700} family="Playfair Display">APIs Support</App.Text>
+              </App.Flex>
+            </App.Flex>
+
+            <App.Text center={[null, true]} size={14} weight={400} color="#9B99AE">
+              Easily deploy bots and trading strategies with user-friendly API integration. Trade smarter on-chain!
             </App.Text>
           </App.Flex>
 
@@ -66,13 +106,13 @@ const HomeFeatures = () => {
               <img src="/images/home/features-3.png" alt="" />
 
               <App.Flex column>
-                <App.Text italic size={[16, 24]} weight={700} family="Playfair Display">Significant</App.Text>
-                <App.Text size={[16, 24]} weight={600}>Gas Savings</App.Text>
+                <App.Text italic size={[16, 24]} weight={700} family="Playfair Display">Gas</App.Text>
+                <App.Text size={[16, 24]} weight={600}>Efficiency</App.Text>
               </App.Flex>
             </App.Flex>
 
             <App.Text center={[null, true]} size={14} weight={400} color="#9B99AE">
-              At laoreet eget lacus in. Pharetra pellentesque dui facilisis ipsum arcu varius integer consequat. Leo magna tristique feugiat dapibus integer. Vivamus risus vel habitasse consequat sed.
+              Enjoy up to 60% savings on every transaction! Spend less & trade more.
             </App.Text>
           </App.Flex>
 
@@ -84,30 +124,31 @@ const HomeFeatures = () => {
               <img src="/images/home/features-4.png" alt="" />
 
               <App.Flex column>
-                <App.Text italic size={[16, 24]} weight={700} family="Playfair Display">Orderbooks</App.Text>
+                <App.Text size={[16, 24]} weight={600}>MEV</App.Text>
+                <App.Text italic size={[16, 24]} weight={700} family="Playfair Display">Resistant</App.Text>
               </App.Flex>
             </App.Flex>
 
             <App.Text center={[null, true]} size={14} weight={400} color="#9B99AE">
-              Massa arcu hac sagittis aenean. Tincidunt eleifend eleifend lacus tristique suscipit. Tortor nulla tortor vitae purus. 
+              Your trades are protected against bots or any predatory practices. Trade worry-free!
             </App.Text>
           </App.Flex>
 
           <div className={styles.hr} />
-
+          
           <App.Flex direction={['row', 'column']} align="center" fullWidth gap={[62, 0]}>
             <App.Flex row align="center" width={[300, '100%']} className={styles.name}>
               <div className={styles.ellipse} />
               <img src="/images/home/features-5.png" alt="" />
 
               <App.Flex column>
-                <App.Text size={[16, 24]} weight={600}>Trading</App.Text>
-                <App.Text italic size={[16, 24]} weight={700} family="Playfair Display">The Alpha</App.Text>
+                <App.Text size={[16, 24]} weight={600}>Custody-less</App.Text>
+                <App.Text italic size={[16, 24]} weight={700} family="Playfair Display">Trading</App.Text>
               </App.Flex>
             </App.Flex>
 
             <App.Text center={[null, true]} size={14} weight={400} color="#9B99AE">
-              Eu id vehicula fringilla auctor. Metus orci hendrerit netus magna in in gravida nunc. Sollicitudin lorem sodales odio mus lorem et sit adipiscing.
+              Buy or sell your favorite tokens with 100% self-custody over your assets. Your keys, your crypto.
             </App.Text>
           </App.Flex>
         </App.Flex>
