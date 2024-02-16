@@ -43,25 +43,26 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       })
 
       setStep('sign')
-
       appLog('Check Allowance')
-      const allowance = await contracts.allowance(wallet, current.quote, blockchain?.info?.contract?.exchange)
+      const spendToken = side === 'buy' ? current.quote : current.address
+      const allowance = await contracts.allowance(wallet, spendToken, blockchain?.info?.contract?.exchange)
       if (allowance?.error) {
         return handleError('Trade Not Approved', allowance?.error)
       }
 
       appLog('Check Allowance Amount')
-      const allowanceAmount = formatUnits(allowance, current.decimals)
+      const spendDecimals = side === 'buy' ? current.quoteDecimals : current.decimals
+      const allowanceAmount = formatUnits(allowance, spendDecimals)
       if (allowanceAmount * 1 < amount * 1) {
         appLog('Change Allowance Amount')
-        if (current.quote === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
-          const reset = await contracts.approve(current.quote, blockchain?.info?.contract?.exchange, parseUnits('0', current.quoteDecimals))
+        if (spendToken === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
+          const reset = await contracts.approve(spendToken, blockchain?.info?.contract?.exchange, parseUnits('0', spendDecimals))
           if (reset?.error) {
             return handleError('Trade Not Approved', reset?.error)
           }
         }
 
-        const approve = await contracts.approve(current.quote, blockchain?.info?.contract?.exchange, parseUnits(Number.MAX_SAFE_INTEGER.toString(), current.quoteDecimals))
+        const approve = await contracts.approve(spendToken, blockchain?.info?.contract?.exchange, parseUnits(Number.MAX_SAFE_INTEGER.toString(), spendDecimals))
         if (approve?.error) {
           return handleError('Trade Not Approved', approve?.error)
         }
