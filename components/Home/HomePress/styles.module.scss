@@ -1,0 +1,24 @@
+.container {
+  border-top: 1px solid #FFFFFF1A;
+  padding: 64px 0;
+  position: relative;
+  z-index: 1;
+
+  .link {
+    color: #A6DC37;
+    transition: all .2s;
+
+    &:hover {
+      color: #86b724;
+    }
+  }
+
+  .press {
+    transition: .2s all;
+
+    &:hover {
+      transform: scale(1.2);
+      filter: brightness(1.3);
+    }
+  }
+}

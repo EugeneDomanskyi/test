@@ -9,6 +9,7 @@ import Amplitude from '@/libs/amplitude.lib'
 import $app from '@/store/app'
 
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 const Analytics = dynamic(import('@/components/Analytics'), {ssr: false})
 
@@ -16,7 +17,8 @@ const Wrapper = ({ children }) => {
   const dispatch = useDispatch()
 
   const router = useRouter()
-  const isCampaign = router.asPath?.includes('/campaign') || router.asPath?.includes('/tournament')
+  const isCampaign = router.asPath?.includes('/campaign')
+  const isExchange = router.asPath?.includes('/exchange')
 
   const { isApp, platform } = useApp()
   Amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY, !isApp, platform ?? 'Web')
@@ -42,10 +44,11 @@ const Wrapper = ({ children }) => {
   }
 
   return (
-    <div style={{height: '100%', paddingTop: isCampaign || isApp ? 0 : 64, transition: '.4s', overflowX: 'hidden'}}>
+    <div style={{height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden'}}>
       <Analytics />
       {!isCampaign && !isApp ? <Header /> : null}
       {children}
+      {!isCampaign && !isApp && !isExchange ? <Footer /> : null}
     </div>
   )
 }

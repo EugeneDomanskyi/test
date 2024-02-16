@@ -208,9 +208,11 @@ const HeaderWallet = () => {
       </App.Dialog>
     </>
   ) : (
-    <App.Button primary large={!isMobile} onClick={handleConnectWallet}>
-      Connect{!isMobile ? ' Wallet' : ''}
-    </App.Button>
+    // <App.Button primary large={!isMobile} onClick={handleConnectWallet}>
+    //   Connect{!isMobile ? ' Wallet' : ''}
+    // </App.Button>
+
+    <App.ButtonGradient onClick={handleConnectWallet}>Connect Wallet</App.ButtonGradient>
   )
 }
 
