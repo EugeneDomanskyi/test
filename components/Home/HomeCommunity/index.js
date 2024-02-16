@@ -67,7 +67,10 @@ const HomeCommunity = () => {
 
         <App.Flex fullWidth className={styles.inner}>
           <App.Flex fullWidth column gap={32}>
-            <App.Text size={40} weight={600}>Join Our <App.Text inline italic size={40} weight={700} color="#A6DC37" family="Playfair Display">Community</App.Text></App.Text>
+            <App.Flex column>
+              <App.Text size={40} weight={600} height={1}>Building Tomorrow&apos;s DEX,</App.Text>
+              <App.Text italic size={40} weight={700} color="#A6DC37" family="Playfair Display" height={1}>Today – With You, For You</App.Text>
+            </App.Flex>
 
             <App.Flex wrap gap={[40, 0]} justify="space-between">
               <App.Flex direction={['row', 'column']} align={['center', 'flex-start']} gap={12} width={[190, '50%']} sx={{ cursor: 'pointer' }} onClick={handleSocialClick('twitter')} className={styles.item}>
@@ -122,9 +125,13 @@ const HomeCommunity = () => {
             <div className={styles.line} />
 
             <App.Flex direction={['row', 'column']} align={['center', 'flex-start']} fullWidth gap={12}>
-              <App.Flex width={[210, '100%']}>
+              <App.Flex column width={[310, '100%']}>
                 <App.Text capitalize size={[16, 20]} weight={600}>
-                  Do not forget <App.Text inline italic size={[16, 20]} weight={700} family="Playfair Display" color="#7364FF">to subscribe</App.Text> to our Newsletters:
+                  <App.Text inline italic size={[16, 20]} weight={700} family="Playfair Display" color="#7364FF">Subscribe</App.Text> to Newsletter CTA:
+                </App.Text>
+
+                <App.Text capitalize size={12} weight={600} color="#9B99BD">
+                  Never Miss an Update – Subscribe and Stay Informed.
                 </App.Text>
               </App.Flex>
 

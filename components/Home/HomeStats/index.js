@@ -1,13 +1,32 @@
-import Link from 'next/link'
+import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import cn from 'classnames'
+
+import $app from '@/store/app'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
-import { useSelector } from 'react-redux'
 
 const HomeStats = () => {
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
+
+  useEffect(() => {
+    // fetchStats()
+  }, [])
+
+  const fetchStats = async () => {
+    const calls = [
+      $app.api.totalTradingVolume(),
+      $app.api.totalOrdersCreated(),
+      $app.api.gasSaved(),
+      $app.api.totalTradesSettled(),
+      $app.api.totalOrdersCancelled(),
+    ]
+
+    const [volume, created, gas, settled, cancelled] = await Promise.all(calls)
+    console.log(volume)
+  }
 
   return !isMobile ? (
     <App.Container maxWidth={1230} sx={{ paddingBottom: 32 }} className={styles.container}>

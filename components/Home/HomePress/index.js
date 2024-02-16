@@ -9,8 +9,8 @@ const HomePress = () => {
     <App.Container maxWidth={1230}>
       <App.Flex direction={['row', 'column']} fullWidth align={['center', 'flex-start']} gap={[16, 48]} className={styles.container}>
         <App.Flex column>
-          <App.Text size={32} weight={600}>Tegro <App.Text inline italic size={32} weight={700} family="Playfair Display">in Press:</App.Text></App.Text>
-          <a href="https://press.tegro.com/" target="_blank" rel="noreferrer" className={styles.link}>Press Kit &gt;</a>
+          <App.Text size={32} weight={600}>Tegro <App.Text inline italic size={32} weight={700} family="Playfair Display">in the News:</App.Text></App.Text>
+          <a href="https://press.tegro.com/" target="_blank" rel="noreferrer" className={styles.link}>View more &gt;</a>
         </App.Flex>
 
         <App.Flex row wrap={[null, true]} flex={1} gap={[0, 16]} align="center">
