@@ -33,7 +33,7 @@ const Leaderboard = ({leaderboard, walletResults, onClickWorks}) => {
                       <App.Text color={'#7364FF'} size={14} weight={600}>Wallet</App.Text>
                     </App.Flex>
                     <App.Flex flex={1} justify={'center'}>
-                      <App.Text color={'#7364FF'} size={14} weight={600}>Earned</App.Text>
+                      <App.Text color={'#7364FF'} size={14} weight={600}>Points Earned</App.Text>
                     </App.Flex>
                     <App.Flex justify={'flex-end'} width={120}>
                       <App.Text color={'#7364FF'} size={14} weight={600}>Reward</App.Text>
@@ -58,7 +58,7 @@ const Leaderboard = ({leaderboard, walletResults, onClickWorks}) => {
                                   <App.Text size={14} family={'Playfair Display'} sx={{lineHeight: 1.2}}>{item.points}</App.Text>
                                 </App.Flex>
                                 <App.Flex justify={'flex-end'} width={120}>
-                                  <App.Text size={14} family={'Playfair Display'} sx={{lineHeight: 1.2}}>{item.reward}</App.Text>
+                                  <App.Text size={14} family={'Playfair Display'} sx={{lineHeight: 1.2}}>{item.reward ? item.reward : '-'}</App.Text>
                                   &nbsp;
                                   <App.Text color={'#9B99AE'} size={14} weight={600}>{item.reward_currency}</App.Text>
                                 </App.Flex>
