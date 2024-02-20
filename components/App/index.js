@@ -19,6 +19,7 @@ import AppRangeInput from '@/components/App/AppRangeInput'
 import AppTooltip from '@/components/App/AppTooltip'
 import AppShadowText from '@/components/App/AppShadowText'
 import AppNumber from '@/components/App/AppNumber'
+import AppButtonGradient from '@/components/App/AppButtonGradient'
 
 export default {
   Alert: AppAlert,
@@ -42,4 +43,5 @@ export default {
   Tooltip: AppTooltip,
   ShadowText: AppShadowText,
   Number: AppNumber,
+  ButtonGradient: AppButtonGradient,
 }

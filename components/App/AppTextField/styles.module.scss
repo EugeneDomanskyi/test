@@ -132,6 +132,30 @@ $borderRadius: 12px;
     }
   }
 
+  /* variant: subscribe */
+  &.subscribe {
+    .input {
+      background-color: #05050B;
+
+      .input_input {
+        font-size: 14px;
+        line-height: 16px;
+        padding: 10px 20px;
+
+        &::placeholder {
+          color: #9B99AE;
+          font-size: 14px;
+          line-height: 16px;
+        }
+      }
+
+      .input_fieldset {
+        border-radius: 52px;
+        border-color: #574E74;
+      }
+    }
+  }
+
   /* variant: search-app */
   &.search-app {
     .input {
