@@ -86,8 +86,8 @@ const Banner = ({tournament}) => {
               style={{maxWidth: '100%', maxHeight: '100%', objectFit: 'cover'}} />
           </App.Flex>
           <App.Flex column justify={'center'} gap={16}>
-            <App.Text tag="h1" family={'Playfair Display'} size={64} color={'#7364FF'}><App.Text inline size={64} weight={800}>$10,000+ Tegro Testnet</App.Text> Championship</App.Text>
-            <App.Text weight={400} size={16} color={'rgba(255,255,255,0.6)'}>The Tegro Gen2 DEX Testnet is LIVE! Explore the platform, Trade for FREE, and Collect POINTS to Win BIG!</App.Text>
+            <App.Text tag="h1" family={'Playfair Display'} size={64} color={'#7364FF'}><App.Text inline size={64} weight={800}>{tournament.title}</App.Text> Championship</App.Text>
+            <App.Text weight={400} size={16} color={'rgba(255,255,255,0.6)'}>{tournament.description}</App.Text>
             {
               tournament.status === 'active'
                 ? isStarted
