@@ -12,7 +12,7 @@ const Leaderboard = ({leaderboard, walletResults, onClickWorks}) => {
         <App.Flex>
           <App.Flex column flex={1} gap={16}>
             <App.Flex column>
-              <App.Text tag="h2" family={'Playfair Display'} size={64} color={'#A6DC37'}>Leaderboard</App.Text>
+              <App.Text tag="h2" family={'Playfair Display'} size={[64, 46]} color={'#A6DC37'}>Leaderboard</App.Text>
             </App.Flex>
             <App.Text size={16} weight={400} color={'#9B99AE'}>Join the ranks of alpha traders. Trade your way to the summit! Unlock additional POINTS based on your leaderboard ranking.</App.Text>
             <App.Text color={'#A6DC37'} size={14} weight={600} onClick={handleClickWorks}>{`How It Works? >`}</App.Text>
