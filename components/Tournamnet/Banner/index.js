@@ -5,8 +5,11 @@ import Countdown from "@/components/Tournamnet/Countdown";
 import Button from "@/components/Tournamnet/Button";
 import moment from "moment";
 import $tournament from "@/store/tournament";
+import useWalletConnect from "@/myhooks/wallet-connect"
 
 const Banner = ({tournament}) => {
+  const { wallet, connect } = useWalletConnect()
+
   const handleClickMore = () => {
     const start = new Date(2024, 1, 1)
     const end = new Date(2024, 2, 1).setDate(0)
@@ -66,6 +69,10 @@ const Banner = ({tournament}) => {
     // )
   }
 
+  const handleConnect = () => {
+    connect()
+  }
+
   const isStarted = moment(new Date).isAfter(tournament.start_time)
 
   return (
@@ -79,8 +86,8 @@ const Banner = ({tournament}) => {
               style={{maxWidth: '100%', maxHeight: '100%', objectFit: 'cover'}} />
           </App.Flex>
           <App.Flex column justify={'center'} gap={16}>
-            <App.Text family={'Playfair Display'} size={64} color={'#7364FF'}><App.Text inline size={64} weight={800}>{tournament.title}</App.Text> Tournament</App.Text>
-            <App.Text weight={400} size={12} color={'rgba(255,255,255,0.6)'}>{tournament.description}</App.Text>
+            <App.Text tag="h1" family={'Playfair Display'} size={64} color={'#7364FF'}><App.Text inline size={64} weight={800}>$10,000+ Tegro Testnet</App.Text> Championship</App.Text>
+            <App.Text weight={400} size={16} color={'rgba(255,255,255,0.6)'}>The Tegro Gen2 DEX Testnet is LIVE! Explore the platform, Trade for FREE, and Collect POINTS to Win BIG!</App.Text>
             {
               tournament.status === 'active'
                 ? isStarted
@@ -94,10 +101,16 @@ const Banner = ({tournament}) => {
                     <App.Text weight={700} size={40} sx={{lineHeight: 1.1}}>{ moment(tournament.end_time).format('DD.MM.YYYY') }</App.Text>
                   </App.Flex>
             }
-            <App.Flex>
+            <App.Flex gap={16}>
               <Button onClick={handleClickMore}>
                 Learn More
               </Button>
+
+              {!wallet ? (
+                <Button onClick={handleConnect}>
+                  Connect Wallet and Start
+                </Button>
+              ) : null}
             </App.Flex>
           </App.Flex>
         </App.Flex>

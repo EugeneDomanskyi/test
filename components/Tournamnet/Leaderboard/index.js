@@ -12,10 +12,9 @@ const Leaderboard = ({leaderboard, walletResults, onClickWorks}) => {
         <App.Flex>
           <App.Flex column flex={1} gap={16}>
             <App.Flex column>
-              <App.Text weight={800} size={64} sx={{lineHeight: 1}}>Tournament</App.Text>
-              <App.Text family={'Playfair Display'} size={64} color={'#A6DC37'}>Leaders</App.Text>
+              <App.Text tag="h2" family={'Playfair Display'} size={64} color={'#A6DC37'}>Leaderboard</App.Text>
             </App.Flex>
-            <App.Text size={12} weight={400} color={'#9B99AE'}>Rutrum faucibus donec quisque nisi eget adipiscing vel nullam metus. Semper in elementum curabitur nibh urna. Ut ut nec ultricies ac eget euismod at. Nec faucibus in sagittis ultricies imperdiet. Vivamus in euismod egestas pellentesque semper quisque ut risus. Donec a mattis condimentum etiam proin. Aliquam porttitor et id amet suspendisse sapien interdum. Sed.</App.Text>
+            <App.Text size={16} weight={400} color={'#9B99AE'}>Join the ranks of alpha traders. Trade your way to the summit! Unlock additional POINTS based on your leaderboard ranking.</App.Text>
             <App.Text color={'#A6DC37'} size={14} weight={600} onClick={handleClickWorks}>{`How It Works? >`}</App.Text>
           </App.Flex>
           <App.Flex flex={1}>

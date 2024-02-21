@@ -51,7 +51,11 @@
     }
 
     .answer {
-      max-height: 200px;
+      max-height: 220px;
+
+      @media (max-width: 768px) {
+        max-height: 520px;
+      }
     }
   }
 }
