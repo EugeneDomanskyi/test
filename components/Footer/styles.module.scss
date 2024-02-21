@@ -1,0 +1,17 @@
+.container {
+  border-top: 1px solid #FFFFFF1A;
+
+  @media (max-width: 768px) {
+    padding: 24px 0;
+  }
+
+  .line {
+    width: 1px;
+    height: 16px;
+    background-color: #6F6C88;
+
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+}

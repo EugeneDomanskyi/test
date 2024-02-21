@@ -184,11 +184,11 @@ const api = {
   },
 
   cancel: (params) => {
-    return request(`market/orders/cancel/${params.id}`, 'POST', params)
+    return request(`market/orders/cancel`, 'POST', params)
   },
 
   cancelAll: (params) => {
-    return request(`market/orders/cancelAll`, 'POST', params)
+    return request(`market/orders/cancel-all`, 'POST', params)
   },
 
   details: (params) => {
