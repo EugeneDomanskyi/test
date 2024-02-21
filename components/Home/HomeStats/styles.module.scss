@@ -8,6 +8,13 @@
   background: radial-gradient(113.88% 113.88% at 67.99% -35.17%, #231F38 0%, #100D21 100%);
   padding: 16px;
 
+  &.newGradient {
+    background: radial-gradient(751.8% 165.3% at 71.74% -97.8%, #100D21 0%, #231F38 100%);
+    border: 1px solid #749828;
+    position: relative;
+    overflow: hidden;
+  }
+
   &.noPadding {
     padding: 0;
   }
@@ -15,21 +22,13 @@
   .gasBack {
     padding: 16px;
     border-radius: 16px;
-    background: url('/images/home/stats-4.png') -30px bottom no-repeat;
-
-    @media (max-width: 768px) {
-      background: url('/images/home/stats-4.png') -60px bottom no-repeat;
-    }
+    background: url('/images/home/nstats-1.png') right top no-repeat;
   }
 
   .volumeBack {
     padding: 16px;
     border-radius: 16px;
-    background: url('/images/home/stats-7.png') left bottom no-repeat;
-
-    @media (max-width: 768px) {
-      background: url('/images/home/stats-7.png') -30px bottom no-repeat;
-    }
+    background: url('/images/home/nstats-2.png') right top no-repeat;
   }
 }
 

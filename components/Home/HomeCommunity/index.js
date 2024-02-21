@@ -68,70 +68,79 @@ const HomeCommunity = () => {
         <App.Flex fullWidth className={styles.inner}>
           <App.Flex fullWidth column gap={32}>
             <App.Flex column>
-              <App.Text size={40} weight={600} height={1}>Building Tomorrow&apos;s DEX,</App.Text>
-              <App.Text italic size={40} weight={700} color="#A6DC37" family="Playfair Display" height={1}>Today – With You, For You</App.Text>
+              <App.Text tag="h2" size={40} weight={600} height={1}>
+                Building Tomorrow&apos;s DEX,<br />
+                <App.Text inline italic size={40} weight={700} color="#A6DC37" family="Playfair Display" height={1}>Today – With You, For You</App.Text>
+              </App.Text>
             </App.Flex>
 
-            <App.Flex wrap gap={[40, 0]} justify="space-between">
-              <App.Flex direction={['row', 'column']} align={['center', 'flex-start']} gap={12} width={[190, '50%']} sx={{ cursor: 'pointer' }} onClick={handleSocialClick('twitter')} className={styles.item}>
-                <img src="/images/home/community-x.png" alt="X" />
+            <App.Flex wrap gap={20}>
+              <App.Flex flex={1} onClick={handleSocialClick('twitter')} className={styles.item}>
+                <App.Frame padding="12px 16px" width="100%" radius={12} gradient="linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)">
+                  <App.Flex column fullWidth gap={12}>
+                    <img src="/images/home/community-x.png" alt="X" />
+                    <App.Text size={20} weight={600} height={1}>X (Twitter)</App.Text>
+                  </App.Flex>
+                </App.Frame>
 
-                <App.Flex column>
-                  <App.Text size={20} weight={700}>Twitter (X)</App.Text>
-                  <App.Text size={14} weight={600}>Join &gt;</App.Text>
-                </App.Flex>
+                <App.Icon icon="arrow-45" width={12} height={12} color="#FFFFFF99" className={styles.arrow} />
               </App.Flex>
 
-              <App.Flex direction={['row', 'column']} align={['center', 'flex-start']} gap={12} width={[190, '50%']} sx={{ cursor: 'pointer' }} onClick={handleSocialClick('discord')} className={styles.item}>
-                <img src="/images/home/community-discord.png" alt="Discord" />
+              <App.Flex flex={1} onClick={handleSocialClick('discord')} className={styles.item}>
+                <App.Frame padding="12px 16px" width="100%" radius={12} gradient="linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)">
+                  <App.Flex column fullWidth gap={12}>
+                    <img src="/images/home/community-discord.png" alt="Discord" />
+                    <App.Text size={20} weight={600} height={1}>Discord</App.Text>
+                  </App.Flex>
+                </App.Frame>
 
-                <App.Flex column>
-                  <App.Text size={20} weight={700}>Discord</App.Text>
-                  <App.Text size={14} weight={600}>Join &gt;</App.Text>
-                </App.Flex>
+                <App.Icon icon="arrow-45" width={12} height={12} color="#FFFFFF99" className={styles.arrow} />
               </App.Flex>
 
-              <App.Flex direction={['row', 'column']} align={['center', 'flex-start']} gap={12} width={[190, '50%']} sx={{ cursor: 'pointer' }} onClick={handleSocialClick('telegram')} className={styles.item}>
-                <img src="/images/home/community-telegram.png" alt="Telegram" />
+              <App.Flex flex={1} onClick={handleSocialClick('telegram')} className={styles.item}>
+                <App.Frame padding="12px 16px" width="100%" radius={12} gradient="linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)">
+                  <App.Flex column fullWidth gap={12}>
+                    <img src="/images/home/community-telegram.png" alt="Telegram" />
+                    <App.Text size={20} weight={600} height={1}>Telegram</App.Text>
+                  </App.Flex>
+                </App.Frame>
 
-                <App.Flex column>
-                  <App.Text size={20} weight={700}>Telegram</App.Text>
-                  <App.Text size={14} weight={600}>Join &gt;</App.Text>
-                </App.Flex>
+                <App.Icon icon="arrow-45" width={12} height={12} color="#FFFFFF99" className={styles.arrow} />
               </App.Flex>
 
-              <App.Flex direction={['row', 'column']} align={['center', 'flex-start']} gap={12} width={[190, '50%']} sx={{ cursor: 'pointer' }} onClick={handleSocialClick('youtube')} className={styles.item}>
-                <img src="/images/home/community-youtube.png" alt="YouTube" />
+              <App.Flex flex={1} onClick={handleSocialClick('youtube')} className={styles.item}>
+                <App.Frame padding="12px 16px" width="100%" radius={12} gradient="linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)">
+                  <App.Flex column fullWidth gap={12}>
+                    <img src="/images/home/community-youtube.png" alt="YouTube" />
+                    <App.Text size={20} weight={600} height={1}>YouTube</App.Text>
+                  </App.Flex>
+                </App.Frame>
 
-                <App.Flex column>
-                  <App.Text size={20} weight={700}>YouTube</App.Text>
-                  <App.Text size={14} weight={600}>Join &gt;</App.Text>
-                </App.Flex>
+                <App.Icon icon="arrow-45" width={12} height={12} color="#FFFFFF99" className={styles.arrow} />
               </App.Flex>
 
-              <App.Flex direction={['row', 'column']} align={['center', 'flex-start']} gap={12} width={[190, '50%']} sx={{ cursor: 'pointer' }} onClick={handleSocialClick('linkedin')} className={styles.item}>
-                <img src="/images/home/community-linkedin.png" alt="LinkedIn" />
+              <App.Flex flex={1} onClick={handleSocialClick('linkedin')} className={styles.item}>
+                <App.Frame padding="12px 16px" width="100%" radius={12} gradient="linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)">
+                  <App.Flex column fullWidth gap={12}>
+                    <img src="/images/home/community-linkedin.png" alt="LinkedIn" />
+                    <App.Text size={20} weight={600} height={1}>LinkedIn</App.Text>
+                  </App.Flex>
+                </App.Frame>
 
-                <App.Flex column>
-                  <App.Text size={20} weight={700}>LinkedIn</App.Text>
-                  <App.Text size={14} weight={600}>Join &gt;</App.Text>
-                </App.Flex>
-              </App.Flex>
-
-              <App.Flex direction={['row', 'column']} align={['center', 'flex-start']} gap={12} width={[190, '50%']} className={styles.item}>
+                <App.Icon icon="arrow-45" width={12} height={12} color="#FFFFFF99" className={styles.arrow} />
               </App.Flex>
             </App.Flex>
 
             <div className={styles.line} />
 
             <App.Flex direction={['row', 'column']} align={['center', 'flex-start']} fullWidth gap={12}>
-              <App.Flex column width={[310, '100%']}>
-                <App.Text capitalize size={[16, 20]} weight={600}>
-                  <App.Text inline italic size={[16, 20]} weight={700} family="Playfair Display" color="#7364FF">Subscribe</App.Text> to Newsletter CTA:
+              <App.Flex column width={[430, '100%']}>
+                <App.Text capitalize size={20} weight={600}>
+                  Never miss <App.Text inline italic size={20} weight={700} family="Playfair Display" color="#7364FF">an update</App.Text>
                 </App.Text>
 
-                <App.Text capitalize size={12} weight={600} color="#9B99BD">
-                  Never Miss an Update – Subscribe and Stay Informed.
+                <App.Text capitalize size={14} weight={500} color="#9B99BD">
+                  Subscribe to our weekly newsletter and stay informed!
                 </App.Text>
               </App.Flex>
 

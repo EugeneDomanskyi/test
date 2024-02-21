@@ -11,12 +11,13 @@ const HomeTeam = () => {
       <App.Flex fullWidth column gap={64}>
         <App.Flex column gap={12} sx={[{ paddingLeft: 550 }, { paddingTop: 300 }]}>
           <App.Flex column>
-            <App.Text size={[64, 48]} weight={800} height={1}>Powered by Expertise</App.Text>
-            <App.Text size={[64, 48]} weight={800} height={1}>that Empowered</App.Text>
-            <App.Text italic size={[64, 48]} weight={700} height={1} family="Playfair Display" color="#7364FF">10 Million Traders</App.Text>
+            <App.Text tag="h2" size={[64, 48]} weight={800} height={1}>
+              Powered by Expertise that Empowered<br />
+              <App.Text inline italic size={[64, 48]} weight={700} height={1} family="Playfair Display" color="#7364FF">10 Million Traders</App.Text>
+            </App.Text>
           </App.Flex>
 
-          <App.Text size={12} weight={400} color="#9B99AE">
+          <App.Text size={16} weight={400} color="#9B99AE">
             Our founding team introduced cryptocurrency trading to 10 million Indians with WazirX — India&apos;s largest crypto exchange with $40B+ volumes. Now, with Tegro, we&apos;re shaping the future of decentralized finance, targeting the next 100 million traders globally!
           </App.Text>
         </App.Flex>
