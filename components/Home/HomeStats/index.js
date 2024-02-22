@@ -23,7 +23,7 @@ const HomeStats = () => {
 
   const fetchStats = async () => {
     const calls = [
-      $app.api.totalTradingVolume(),
+      $app.api.sevenDaysTradingVolume(),
       $app.api.totalOrdersCreated(),
       $app.api.gasSaved(),
       $app.api.totalTradesSettled(),
@@ -137,7 +137,7 @@ const HomeStats = () => {
           <App.Flex row flex={1} gap={16}>
             <App.Flex column flex={7} gap={8} className={cn(styles.statsBox, styles.noPadding)}>
               <App.Flex column gap={12} className={styles.volumeBack}>
-                <App.Text size={24} weight={700}>Total <App.Text inline size={24} weight={700} italic family="Playfair Display">Trading</App.Text> Volume</App.Text>
+                <App.Text size={24} weight={700}>7 Days <App.Text inline size={24} weight={700} italic family="Playfair Display">Trading</App.Text> Volume</App.Text>
 
                 {loading ? (
                   <App.Flex height={60} align="center">
@@ -228,7 +228,7 @@ const HomeStats = () => {
           <App.Flex column flex={1} gap={8} className={cn(styles.statsBox, styles.noPadding)}>
             <App.Flex column gap={12} className={styles.volumeBack}>
               <App.Text size={20} weight={700}>
-                Total<br />
+                7 Days<br />
                 <App.Text inline size={20} weight={700} italic family="Playfair Display">Trading</App.Text><br />
                 Volume
               </App.Text>
