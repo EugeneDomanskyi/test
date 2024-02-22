@@ -8,7 +8,7 @@ const Leaderboard = ({leaderboard, walletResults, onClickWorks}) => {
     onClickWorks()
   }
   return (
-      <App.Container>
+      <App.Container sx={{position: 'relative', zIndex: 1}}>
         <App.Flex>
           <App.Flex column flex={1} gap={16}>
             <App.Flex column>
