@@ -38,10 +38,9 @@ const TierInfo = ({walletResults}) => {
 
                   </>
                 : <>
-                    <App.Text size={40} weight={700}>Start your</App.Text>
-                    <App.Text size={40} weight={700} family={'Playfair Display'}>Journey</App.Text>
-                    <App.Text color={'#9B99AE'} size={14} weight={400} sx={{marginTop: 'auto', marginBottom: 12}}>Eu metus
-                      aliquam turpis commodo cursus. Volutpat tempus amet malesuada tincidunt.</App.Text>
+                    <App.Text size={40} weight={700} sx={{lineHeight: 1}}>Start your</App.Text>
+                    <App.Text size={40} weight={700} sx={{marginBottom: 8}}>QUEST</App.Text>
+                    <App.Text color={'#9B99AE'} size={14} weight={400} sx={{marginTop: 'auto', marginBottom: 12}}>Dive into the Testnet and complete trades to collect vital points, with tiers and special NFTs multiplying your gains. Aim for the top to unlock exclusive rewards with the POINTS you accumulate!</App.Text>
                     <App.Flex className={styles.benefits}>
                       <Button onClick={handleConnect}>
                         Connect Wallet and Start

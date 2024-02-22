@@ -10,8 +10,8 @@ import $tournament from  "@/store/tournament"
 import styles from "./styles.module.scss";
 import useWalletConnect from "@/myhooks/wallet-connect";
 import Leaderboard from "@/components/Tournamnet/Leaderboard";
-import Header from '@/components/Tournamnet/Header'
 import HowWorks from "@/components/Tournamnet/HowWorks";
+import FAQ from '@/components/Tournamnet/FAQ'
 
 const TournamentPage = () => {
   const router = useRouter()
@@ -58,6 +58,7 @@ const TournamentPage = () => {
           leaderboard={leaderboard}
           walletResults={walletResults}
           onClickWorks={() => setOpenModal(true)} />
+        <FAQ />
         <App.Dialog hideClose hideHeader width={1000} open={openModal} onClose={() => setOpenModal(false)}>
           <HowWorks tournament={tournament} onClose={() => setOpenModal(false)} />
         </App.Dialog>
