@@ -7,23 +7,30 @@ import moment from "moment";
 import useWalletConnect from "@/myhooks/wallet-connect"
 import Link from "next/link";
 
+import useApp from '@/myhooks/useApp'
+
 const Banner = ({tournament}) => {
   const { wallet, connect } = useWalletConnect()
+  const { isApp, appPost } = useApp()
 
   const handleConnect = () => {
     connect()
+  }
+
+  const handlePressAppStart = () => {
+    appPost({navigation: 'TradeTab'})
   }
 
   const isStarted = moment(new Date).isAfter(tournament.start_time)
 
   return (
       <App.Container>
-        <App.Flex flex={1} className={styles.bannerContainer} gap={24}>
-          <App.Flex column justify={'center'}>
+        <App.Flex flex={1} className={styles.bannerContainer} gap={isApp ? 0 : 24}>
+          <App.Flex column justify={'center'} className={isApp ? styles.appImage : null}>
             <Image
               src="/images/tournament/tournament_image.png"
               width={592}
-              height={451}
+              height={isApp ? 400 : 451}
               style={{maxWidth: '100%', maxHeight: '100%', objectFit: 'cover'}} />
           </App.Flex>
           <App.Flex column justify={'center'} gap={16}>
@@ -49,12 +56,17 @@ const Banner = ({tournament}) => {
                 </Button>
               </Link>
 
-
-              {!wallet ? (
-                <Button onClick={handleConnect}>
-                  Connect Wallet and Start
-                </Button>
-              ) : null}
+              {
+                isApp
+                  ? <Button onClick={handlePressAppStart}>
+                      Start!
+                    </Button>
+                  : !wallet ? (
+                    <Button onClick={handleConnect}>
+                      Connect Wallet and Start
+                    </Button>
+                  ) : null
+              }
             </App.Flex>
           </App.Flex>
         </App.Flex>

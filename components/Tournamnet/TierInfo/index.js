@@ -6,12 +6,19 @@ import ProgressBar from "@/components/Tournamnet/ProgressBar";
 import useWalletConnect from "@/myhooks/wallet-connect";
 import Button from "@/components/Tournamnet/Button";
 
+import useApp from '@/myhooks/useApp'
+
 const TierInfo = ({walletResults}) => {
   const { wallet, connect } = useWalletConnect()
+  const { isApp, appPost } = useApp()
   const percentage = walletResults.volume ? walletResults.volume*100/(walletResults.volume+walletResults.volume_remaining) : 0
 
   const handleConnect = () => {
     connect()
+  }
+
+  const handlePressAppStart = () => {
+    appPost({navigation: 'TradeTab'})
   }
 
   return (
@@ -42,9 +49,15 @@ const TierInfo = ({walletResults}) => {
                     <App.Text size={40} weight={700} sx={{marginBottom: 8}}>QUEST</App.Text>
                     <App.Text color={'#9B99AE'} size={14} weight={400} sx={{marginTop: 'auto', marginBottom: 12}}>Dive into the Testnet and complete trades to collect vital points, with tiers and special NFTs multiplying your gains. Aim for the top to unlock exclusive rewards with the POINTS you accumulate!</App.Text>
                     <App.Flex className={styles.benefits}>
-                      <Button onClick={handleConnect}>
-                        Connect Wallet and Start
-                      </Button>
+                      {
+                        isApp
+                          ? <Button onClick={handlePressAppStart}>
+                              Start!
+                            </Button>
+                          : <Button onClick={handleConnect}>
+                              Connect Wallet and Start
+                            </Button>
+                      }
                     </App.Flex>
                   </>
           }
@@ -60,9 +73,13 @@ const TierInfo = ({walletResults}) => {
                     <App.Text color={'#A6DC37'} size={18} weight={'700'} family={'Playfair Display'}>x{walletResults.tier?.multiplier}</App.Text>
                     <App.Text size={18} weight={600}>mauris tincidunt</App.Text>
                   </>
-                : <Button onClick={handleConnect}>
-                    Connect Wallet and Start
-                  </Button>
+                : isApp
+                    ? <Button onClick={handlePressAppStart}>
+                        Start!
+                      </Button>
+                    : <Button onClick={handleConnect}>
+                        Connect Wallet and Start
+                      </Button>
           }
         </App.Flex>
       </App.Flex>
