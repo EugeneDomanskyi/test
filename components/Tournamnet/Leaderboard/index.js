@@ -2,14 +2,51 @@ import styles from './styles.module.scss'
 import App from '@/components/App'
 import Image from 'next/image'
 import cn from 'classnames'
+import { useRef, useEffect, useState } from "react";
+import Button from "@/components/Tournamnet/Button";
 
 const Leaderboard = ({leaderboard, walletResults, onClickWorks}) => {
+
+  const [isVisible, setIsVisible] = useState(false)
+
+  const leaderboardItems = useRef({})
+  const leaderboardRef = useRef(null)
+
+  const isExistingResult = leaderboard.find(el => el.wallet_address === walletResults?.address)
+
+  useEffect(() => {
+    if (leaderboard.length && walletResults?.address) {
+      setIsVisible(isInViewport(leaderboardItems.current[walletResults?.address]))
+    }
+  }, [leaderboard, walletResults])
   const handleClickWorks = () => {
     onClickWorks()
   }
+  const isInViewport = (element) => {
+    if (!element) {
+      return
+    }
+    const rect = element.getBoundingClientRect();
+    return (
+        rect.top >= element.offsetHeight &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) - element.offsetHeight &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    )
+  }
+
+  const handleScroll = () => {
+    setIsVisible(isInViewport(leaderboardItems.current[walletResults?.address]))
+  }
+
+  const handleScrollToResult = () => {
+    const targetElement = leaderboardItems.current[walletResults?.address]
+    leaderboardRef.current.scrollTo({top: targetElement.offsetTop, behavior: "smooth"})
+  }
+
   return (
       <App.Container sx={{position: 'relative', zIndex: 1}}>
-        <App.Flex>
+        <App.Flex sx={{position: 'relative'}}>
           <App.Flex column flex={1} gap={16}>
             <App.Flex column>
               <App.Text tag="h2" family={'Playfair Display'} size={[64, 46]} color={'#A6DC37'}>Leaderboard</App.Text>
@@ -20,11 +57,19 @@ const Leaderboard = ({leaderboard, walletResults, onClickWorks}) => {
           <App.Flex flex={1}>
             <Image src={'/images/tournament/leaderboard.png'} width={614} height={278} />
           </App.Flex>
+          {
+            !isVisible && isExistingResult
+                ? <Button sx={{position: 'absolute', height: 32, bottom: 0}} onClick={handleScrollToResult}>
+                  <App.Text size={12}>Go to my result</App.Text>
+                </Button>
+                : null
+          }
         </App.Flex>
+
         {
           leaderboard.length
               ? <>
-                  <App.Flex className={styles.row} align={'center'}>
+                  <App.Flex className={styles.row} align={'center'} sx={{position: 'relative'}}>
                     <App.Flex justify={'center'} width={50}>
                       <App.Text color={'#7364FF'} size={14} weight={600}>№</App.Text>
                     </App.Flex>
@@ -38,11 +83,11 @@ const Leaderboard = ({leaderboard, walletResults, onClickWorks}) => {
                       <App.Text color={'#7364FF'} size={14} weight={600}>Reward</App.Text>
                     </App.Flex>
                   </App.Flex>
-                  <App.Flex column className={styles.leaderboard}>
+                  <div className={styles.leaderboard} onScroll={handleScroll} ref={leaderboardRef}>
                     {
                       leaderboard.map((item) => {
                         return (
-                            <App.Flex column key={item.wallet_address}>
+                            <div key={item.wallet_address} ref={ref => leaderboardItems.current[item.wallet_address] = ref}>
                               <App.Flex  className={cn(styles.row, {[styles.active]: item.wallet_address === walletResults.address})} align={'center'}>
                                 <App.Flex justify={'center'} align={'center'} width={50} sx={{position: 'relative'}}>
                                   <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -62,11 +107,11 @@ const Leaderboard = ({leaderboard, walletResults, onClickWorks}) => {
                                   <App.Text color={'#9B99AE'} size={14} weight={600}>{item.reward_currency}</App.Text>
                                 </App.Flex>
                               </App.Flex>
-                            </App.Flex>
+                            </div>
                         )
                       })
                     }
-                  </App.Flex>
+                  </div>
                 </>
               : <App.Text center color={'rgba(255,255,255,0.6)'} sx={{paddingTop: 24, paddingBottom: 24}}>Leaderboard is empty</App.Text>
         }
