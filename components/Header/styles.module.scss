@@ -41,6 +41,12 @@
     display: block;
     height: 100%;
 
+    &.active {
+      p {
+        color: rgb(166, 220, 55);
+      }
+    }
+
     div > div {
       transition: all .3s ease 0s;
     }
