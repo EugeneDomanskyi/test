@@ -124,8 +124,12 @@ export const api = {
     return request(`https://mb.betora.vip/api/public/dashboard/b41548ce-79fc-42e2-a074-7027087e1cbb/dashcard/5/card/6`, 'GET', {api: 'remote'})
   },
 
+  sevenDaysTradingVolume: () => {
+    return request(`https://mb.betora.vip/api/public/dashboard/b41548ce-79fc-42e2-a074-7027087e1cbb/dashcard/27/card/33`, 'GET', {api: 'remote'})
+  },
+
   totalOrdersCreated: () => {
-    return request(`https://mb.betora.vip/api/public/dashboard/b41548ce-79fc-42e2-a074-7027087e1cbb/dashcard/7/card/9`, 'GET', {api: 'remote'})
+    return request(`https://mb.betora.vip/api/public/dashboard/b41548ce-79fc-42e2-a074-7027087e1cbb/dashcard/25/card/32`, 'GET', {api: 'remote'})
   },
 
   gasSaved: () => {
