@@ -40,7 +40,7 @@ const FAQ = () => {
   }
 
   return (
-      <App.Container maxWidth={990} sx={{ paddingTop: 58, paddingBottom: 77 }} className={styles.container}>
+      <App.Container maxWidth={990} sx={{ paddingTop: 58, paddingBottom: 24 }} className={styles.container}>
         <div className={styles.background1} />
 
         <App.Flex column align="center" gap={90} fullWidth>
