@@ -1,10 +1,10 @@
 import {useEffect, useState} from "react"
 import {useRouter} from "next/router"
+import cn from 'classnames'
 
 import App from '@/components/App'
 import TierBlock from "@/components/Tournamnet/TierBlock";
 import Banner from '@/components/Tournamnet/Banner'
-
 
 import $tournament from  "@/store/tournament"
 import styles from "./styles.module.scss";
@@ -13,9 +13,12 @@ import Leaderboard from "@/components/Tournamnet/Leaderboard";
 import HowWorks from "@/components/Tournamnet/HowWorks";
 import FAQ from '@/components/Tournamnet/FAQ'
 
+import useApp from '@/myhooks/useApp'
+
 const TournamentPage = () => {
   const router = useRouter()
   const { wallet } = useWalletConnect()
+  const { isApp } = useApp()
 
   const [tournament, setTournament] = useState({tiers: []})
   const [walletResults, setWalletResults] = useState({position: 0, points: 0, volume: 0, address: ''})
@@ -48,21 +51,22 @@ const TournamentPage = () => {
   }, [wallet])
 
   return (
-      <App.Flex column className={styles.container}>
-        <Banner tournament={tournament} />
-        <TierBlock
-          tiers={tournament.tiers}
-          walletResults={walletResults}
-          onClickWorks={() => setOpenModal(true)} />
-        <Leaderboard
-          leaderboard={leaderboard}
-          walletResults={walletResults}
-          onClickWorks={() => setOpenModal(true)} />
-        <FAQ />
-        <App.Dialog hideClose hideHeader width={1000} open={openModal} onClose={() => setOpenModal(false)}>
-          <HowWorks tournament={tournament} onClose={() => setOpenModal(false)} />
-        </App.Dialog>
-      </App.Flex>
+    <App.Flex column className={cn(styles.container, {[styles.appContainer]: isApp})}>
+      <App.Text color="#fff">{ isApp }</App.Text>
+      <Banner tournament={tournament} />
+      <TierBlock
+        tiers={tournament.tiers}
+        walletResults={walletResults}
+        onClickWorks={() => setOpenModal(true)} />
+      <Leaderboard
+        leaderboard={leaderboard}
+        walletResults={walletResults}
+        onClickWorks={() => setOpenModal(true)} />
+      <FAQ />
+      <App.Dialog hideClose hideHeader width={1000} open={openModal} onClose={() => setOpenModal(false)}>
+        <HowWorks tournament={tournament} onClose={() => setOpenModal(false)} />
+      </App.Dialog>
+    </App.Flex>
   )
 }
 
