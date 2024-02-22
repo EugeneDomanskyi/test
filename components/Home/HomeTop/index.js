@@ -29,13 +29,13 @@ const HomeTop = () => {
           </App.Flex>
         </App.Flex>
 
-        {tournament?.alias ? (
+        {/* {tournament?.alias ? (
           <Link href={`/tournament/${tournament.alias}`}>
             <App.ButtonGradient>Earn Points</App.ButtonGradient>
           </Link>
         ) : (
           <App.ButtonGradient>{loading ? 'Loading...' : 'There are no active tournaments'}</App.ButtonGradient>
-        )}
+        )} */}
       </App.Flex>
     </App.Container>
   )
