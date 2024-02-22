@@ -91,7 +91,7 @@ const Header = () => {
                       <App.Text size={14} weight={600}>Exchange</App.Text>
                     </App.Flex>
                   </Link>
-
+{/* 
                   <div className={styles.navLine} />
 
                   {tournament?.alias ? (
@@ -106,7 +106,7 @@ const Header = () => {
                         <App.Text size={14} weight={600}>Earn</App.Text>
                       </App.Flex>
                     </App.Flex>
-                  )}
+                  )} */}
                 </App.Flex>
             ) : null}
            <HeaderWallet />
@@ -129,7 +129,7 @@ const Header = () => {
                 </App.Flex>
               </Link>
               
-              {tournament?.alias ? (
+              {/* {tournament?.alias ? (
                 <Link href={`/tournament/${tournament.alias}`} className={cn(styles.link)}>
                   <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                     <App.Icon icon="menuEarn" />
@@ -143,7 +143,7 @@ const Header = () => {
                     <App.Text size={14} weight={700}>Earn</App.Text>
                   </App.Flex>
                 </div>
-              )}
+              )} */}
 
               <div className={styles.line} />
 
