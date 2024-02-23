@@ -18,7 +18,7 @@ const HomeFeatures = () => {
 
           <App.Flex column>
             <App.Text size={16} weight={400} color="rgba(255, 255, 255, .6)">
-              Enjoy the Best of Both Worlds!
+              Enjoy the best of both worlds!
             </App.Text>
           </App.Flex>
         </App.Flex>

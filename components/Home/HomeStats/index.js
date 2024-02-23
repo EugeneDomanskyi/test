@@ -94,8 +94,7 @@ const HomeStats = () => {
             </App.Flex>
 
             <App.Flex column>
-              <App.Text size={14} weight={400} color="#9B99AE" className={styles.bottomText}>Interested in More Statistics?</App.Text>
-              <App.Text size={14} weight={400} color="#9B99AE" className={styles.bottomText}><a href="https://stats.tegro.com/?utm_source=home&utm_medium=tegro&utm_campaign=testnet" target="_blank" rel="noreferrer">View More Stats &gt;</a></App.Text>
+              <App.Text size={14} weight={400} color="#9B99AE" className={styles.bottomText}><a href="https://stats.tegro.com/?utm_source=home&utm_medium=tegro&utm_campaign=testnet" target="_blank" rel="noreferrer">View more stats &gt;</a></App.Text>
             </App.Flex>
           </App.Flex>
 
@@ -137,7 +136,7 @@ const HomeStats = () => {
           <App.Flex row flex={1} gap={16}>
             <App.Flex column flex={7} gap={8} className={cn(styles.statsBox, styles.noPadding)}>
               <App.Flex column gap={12} className={styles.volumeBack}>
-                <App.Text size={24} weight={700}>7 Days <App.Text inline size={24} weight={700} italic family="Playfair Display">Trading</App.Text> Volume</App.Text>
+                <App.Text size={24} weight={700}>7-Day <App.Text inline size={24} weight={700} italic family="Playfair Display">Trading</App.Text> Volume</App.Text>
 
                 {loading ? (
                   <App.Flex height={60} align="center">
@@ -228,7 +227,7 @@ const HomeStats = () => {
           <App.Flex column flex={1} gap={8} className={cn(styles.statsBox, styles.noPadding)}>
             <App.Flex column gap={12} className={styles.volumeBack}>
               <App.Text size={20} weight={700}>
-                7 Days<br />
+                7-Day<br />
                 <App.Text inline size={20} weight={700} italic family="Playfair Display">Trading</App.Text><br />
                 Volume
               </App.Text>
@@ -260,7 +259,7 @@ const HomeStats = () => {
         </App.Flex>
 
         <App.Flex center>
-          <App.Text center size={14} weight={400} color="#9B99AE" className={styles.bottomText}>Interested in More Statistics? <a href="https://stats.tegro.com/?utm_source=home&utm_medium=tegro&utm_campaign=testnet" target="_blank" rel="noreferrer">View More Stats &gt;</a></App.Text>
+          <App.Text center size={14} weight={400} color="#9B99AE" className={styles.bottomText}><a href="https://stats.tegro.com/?utm_source=home&utm_medium=tegro&utm_campaign=testnet" target="_blank" rel="noreferrer">View more stats &gt;</a></App.Text>
         </App.Flex>
       </App.Flex>
     </App.Container>
