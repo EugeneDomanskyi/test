@@ -14,20 +14,19 @@ const HomeFaq = () => {
   const questions = [
     {
       question: 'What is Tegro Gen2 Decentralized Exchange?',
-      answer: `Tegro Gen2 Decentralized Exchange is reshaping DeFi with its cutting-edge orderbook system, offering gasless quotes, swift trades, MEV protection, and custody-less transfers. Ideal for both retail and high-frequency traders seeking speed and security on-chain. Experience the future of decentralized trading with Tegro Gen2 DEX.`,
+      answer: `Tegro Gen2 DEX unlocks the future of on-chain trading with unmatched gas efficiency and market tools. Experience CEX-like trading on Tegro with gasless bids and asks—a feat not achievable with AMM platforms—resulting in tighter spreads and real-time price discovery. With up to a 3x reduction in gas fees and simple API integration akin to Binance or Coinbase, Tegro is perfect for retail and high-frequency traders who prioritize speed and security on-chain.`,
     }, {
       question: 'What are the benefits of using a Gen2 Decentralized Exchange like Tegro?',
       answer: `
       <ul>
         The Tegro Gen2 Decentralized Exchange is packed with power features, such as:
-        <li><b>Efficient Orderbooks:</b> Real-time buy/sell prices for optimal execution without slippage.</li>
-        <li><b>Gasless Quotes:</b> Free trade placement and adjustment, enabling true price discovery without gas fees.</li>
-        <li><b>Lightning-fast Orders:</b> Immediate trade execution, comparable to centralized exchanges.</li>
-        <li><b>Binance-like APIs Support:</b> Facilitates complex strategies with easy integration, enhancing trading efficiency.</li>
-        <li><b>Optimized Gas Efficiency:</b> Batches orders to minimize gas costs, maximizing your trading potential.</li>
-        <li><b>Robust MEV Protection:</b> Safeguards against predatory practices, ensuring fair trade execution.</li>
-        <li><b>Uncompromised Self-custody:</b> Full control over your assets with custody-less fund transfers.</li>
-        <li><b>Intuitive User Interface:</b> Easy transition from centralized to decentralized trading, designed for simplicity and efficiency.</li>
+        <li><b>Efficient Orderbooks:</b> Trade with tighter market spreads, rivaling a CEX.</li>
+        <li><b>Gasless Quotes:</b> Actively manage trading positions without worrying about gas.</li>
+        <li><b>Lightning-fast Matching Engine:</b> Achieve peak trading performance with up to 500K trades settled in a second.</li>
+        <li><b>Binance-like APIs:</b> Import CeFi algo strategies with simple plug & play API integration.</li>
+        <li><b>Gas Efficiency:</b> Save up to 3X on gas with trade roll-ups, beating other DEXs.</li>
+        <li><b>MEV Resistant:</b> Your trades are protected against bots or any predatory practices. Trade worry-free!</li>
+        <li><b>Custody-less Trading:</b> Trade direct from wallet with 100% self-custody, no deposits required.</li>
       </ul>
       `,
     }, {
@@ -58,10 +57,7 @@ const HomeFaq = () => {
             return (
               <App.Flex key={i} column className={cn(styles.faqItem, {[styles.open]: openIndex == i})} onClick={handleToggle(i)}>
                 <App.Flex row align="center" justify="space-between" gap={16} sx={{ cursor: 'pointer' }}>
-                  <App.Flex column gap={8}>
-                    <App.Text italic size={14} weight={700} family="Playfair Display" color="#A6DC37">Question {i + 1}</App.Text>
-                    <App.Text tag="h3" size={16} weight={700}>{item.question}</App.Text>
-                  </App.Flex>
+                  <App.Text tag="h3" size={16} weight={700}>{item.question}</App.Text>
 
                   <App.Frame padding={0} radius={32} width={32} height={32} gradient="linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)">
                     <App.Flex full center>

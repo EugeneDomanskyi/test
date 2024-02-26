@@ -55,7 +55,7 @@ const Footer = () => {
                   </App.Text>
 
                   <App.Text size={16} weight={400} height={1}>
-                    <a href="mailto:aditi@tegro.com" className={styles.link}>Marketing Collaboration</a>
+                    <a href="mailto:kevin@tegro.com" className={styles.link}>Marketing Collaboration</a>
                   </App.Text>
                 </App.Flex>
               </App.Flex>
