@@ -109,7 +109,8 @@ const Header = () => {
                   )} */}
                 </App.Flex>
             ) : null}
-           <HeaderWallet />
+            <SwitchBlockchain />
+            <HeaderWallet />
          </App.Flex>
 
           <div className={cn(styles.mobileMenu, {[styles.show]: mobileMenuShow})}>
