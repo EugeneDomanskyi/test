@@ -51,11 +51,19 @@ const Footer = () => {
 
                 <App.Flex column gap={8}>
                   <App.Text size={16} weight={400} height={1}>
-                    <a href="mailto:partnerships@tegro.com" className={styles.link}>General Contact</a>
+                    <a href="mailto:anmol@tegro.com" className={styles.link}>Partnerships</a>
                   </App.Text>
 
                   <App.Text size={16} weight={400} height={1}>
                     <a href="mailto:kevin@tegro.com" className={styles.link}>Marketing Collaboration</a>
+                  </App.Text>
+
+                  <App.Text size={16} weight={400} height={1}>
+                    <a href="mailto:anmol@tegro.com" className={styles.link}>General Enquiry</a>
+                  </App.Text>
+
+                  <App.Text size={16} weight={400} height={1}>
+                    <a href="mailto:support@tegro.com" className={styles.link}>Support</a>
                   </App.Text>
                 </App.Flex>
               </App.Flex>

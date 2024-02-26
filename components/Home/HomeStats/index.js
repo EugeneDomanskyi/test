@@ -76,7 +76,10 @@ const HomeStats = () => {
   return !isMobile ? (
     <App.Container maxWidth={1230} sx={{ paddingBottom: 32 }} className={styles.container}>
       <App.Flex column gap={32}>
-        <App.Text center size={48} weight={800} height={1}>Explore the Future of On-chain Trading with Unmatched Gas Efficiency and Market Tools</App.Text>
+        <App.Text center size={[64, 48]} weight={700} height={1}>
+          DEX with <App.Text inline italic size={[64, 48]} weight={700} height={1} family="Playfair Display" color="#A8DC43">Unmatched Gas Efficiency</App.Text><br />and <App.Text inline italic size={[64, 48]} weight={700} height={1} family="Playfair Display" color="#7364FF">Market Tools</App.Text>
+        </App.Text>
+
         <App.Flex row fullWidth gap={16}>
           <App.Flex row flex={1} gap={16}>
             <App.Flex column flex={1} gap={16}>
@@ -172,7 +175,10 @@ const HomeStats = () => {
   ) : (
     <App.Container className={styles.container}>
       <App.Flex column gap={32}>
-        <App.Text center size={32} weight={800} height={1.2}>Explore the Future of On-chain Trading with Unmatched Gas Efficiency and Market Tools</App.Text>
+      <App.Text center size={[64, 48]} weight={700} height={1}>
+          DEX with <App.Text inline italic size={[64, 48]} weight={700} height={1} family="Playfair Display" color="#A8DC43">Unmatched Gas Efficiency</App.Text><br />and <App.Text inline italic size={[64, 48]} weight={700} height={1} family="Playfair Display" color="#7364FF">Market Tools</App.Text>
+        </App.Text>
+        
         <App.Flex fullWidth column gap={16}>
           <App.Flex column center gap={12} className={styles.statsGradientBox}>
             <App.Flex center column>
