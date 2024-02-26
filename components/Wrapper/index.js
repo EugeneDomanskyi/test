@@ -45,7 +45,7 @@ const Wrapper = ({ children }) => {
   }
 
   return (
-    <div>
+    <div style={{ height: '100%' }}>
       <App.TopBanner id="tegro-at-ethdenver" mode="dark">
         <App.Flex align={['center', 'flex-start']} justify="center" direction={['row', 'column']} gap={16}>
           <App.Text>🐯 Tegro will be at ETHDenver 2024 (27 Feb - 4 Mar, 2024) - Let&apos;s meet! 👋</App.Text>
