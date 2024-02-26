@@ -18,7 +18,7 @@ const HomeFeatures = () => {
 
           <App.Flex column>
             <App.Text size={16} weight={400} color="rgba(255, 255, 255, .6)">
-              Enjoy the Best of Both Worlds!
+              Enjoy the best of both worlds!
             </App.Text>
           </App.Flex>
         </App.Flex>
@@ -38,7 +38,7 @@ const HomeFeatures = () => {
             </App.Flex>
 
             <App.Text center={[null, true]} size={16} weight={400} color="#9B99AE">
-              Real-time market depth at your fingertips, mirroring CEX precision.
+              Trade with tighter market spreads, rivaling a CEX.
             </App.Text>
           </App.Flex>
 
@@ -58,7 +58,7 @@ const HomeFeatures = () => {
             </App.Flex>
 
             <App.Text center={[null, true]} size={16} weight={400} color="#9B99AE">
-              Order creation and cancellation without gas fees for seamless price discovery.
+              Actively manage trading positions without worrying about gas.
             </App.Text>
           </App.Flex>
 
@@ -72,13 +72,13 @@ const HomeFeatures = () => {
               <App.Flex column>
                 <App.Text tag="h3" italic size={24} weight={700} family="Playfair Display">
                   Lightning-fast<br />
-                  <App.Text inline size={24} weight={600}>Orders</App.Text>
+                  <App.Text inline size={24} weight={600}>Matching Engine</App.Text>
                 </App.Text>
               </App.Flex>
             </App.Flex>
 
             <App.Text center={[null, true]} size={16} weight={400} color="#9B99AE">
-              Your trades settled in seconds. Trade at scale!
+              Achieve peak trading performance with up to 500K trades settled in a second.
             </App.Text>
           </App.Flex>
 
@@ -92,13 +92,13 @@ const HomeFeatures = () => {
               <App.Flex column>
                 <App.Text tag="h3" size={24} weight={600}>
                   Binance-like<br />
-                  <App.Text italic inline size={24} weight={700} family="Playfair Display">APIs Support</App.Text>
+                  <App.Text italic inline size={24} weight={700} family="Playfair Display">APIs</App.Text>
                 </App.Text>
               </App.Flex>
             </App.Flex>
 
             <App.Text center={[null, true]} size={16} weight={400} color="#9B99AE">
-              Easily deploy bots and trading strategies with user-friendly API integration. Trade smarter on-chain!
+              Import CeFi algo strategies with simple plug & play API integration.
             </App.Text>
           </App.Flex>
 
@@ -118,7 +118,7 @@ const HomeFeatures = () => {
             </App.Flex>
 
             <App.Text center={[null, true]} size={16} weight={400} color="#9B99AE">
-              Enjoy up to 60% savings on every transaction! Spend less & trade more.
+              Save up to 3X on gas with trade roll-ups, beating other DEXs.
             </App.Text>
           </App.Flex>
 
@@ -158,7 +158,7 @@ const HomeFeatures = () => {
             </App.Flex>
 
             <App.Text center={[null, true]} size={16} weight={400} color="#9B99AE">
-              Buy or sell your favorite tokens with 100% self-custody over your assets. Your keys, your crypto.
+              Trade direct from wallet with 100% self-custody, no deposits required.
             </App.Text>
           </App.Flex>
         </App.Flex>

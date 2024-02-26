@@ -135,11 +135,11 @@ const HomeCommunity = () => {
 
             <App.Flex direction={['row', 'column']} align={['center', 'flex-start']} fullWidth gap={12}>
               <App.Flex column width={[430, '100%']}>
-                <App.Text capitalize size={20} weight={600}>
-                  Never miss <App.Text inline italic size={20} weight={700} family="Playfair Display" color="#7364FF">an update</App.Text>
+                <App.Text size={20} weight={600}>
+                  Never miss <App.Text inline italic size={20} weight={700} family="Playfair Display" color="#7364FF">an Update</App.Text>
                 </App.Text>
 
-                <App.Text capitalize size={14} weight={500} color="#9B99BD">
+                <App.Text size={14} weight={500} color="#9B99BD">
                   Subscribe to our weekly newsletter and stay informed!
                 </App.Text>
               </App.Flex>

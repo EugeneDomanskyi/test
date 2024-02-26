@@ -8,6 +8,7 @@ import Amplitude from '@/libs/amplitude.lib'
 
 import $app from '@/store/app'
 
+import App from '@/components/App'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
@@ -44,11 +45,20 @@ const Wrapper = ({ children }) => {
   }
 
   return (
-    <div style={{height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden'}}>
-      <Analytics />
-      {!isCampaign && !isApp ? <Header /> : null}
-      {children}
-      {!isCampaign && !isApp && !isExchange ? <Footer /> : null}
+    <div style={{ height: '100%' }}>
+      <App.TopBanner id="tegro-at-ethdenver" mode="dark">
+        <App.Flex align={['center', 'flex-start']} justify="center" direction={['row', 'column']} gap={16}>
+          <App.Text>🐯 Tegro will be at ETHDenver 2024 (27 Feb - 4 Mar, 2024) - Let&apos;s meet! 👋</App.Text>
+          <App.Button href="https://bit.ly/meet-ashish-tegro" small>Let&apos;s meet!</App.Button>
+        </App.Flex>
+      </App.TopBanner>
+
+      <div style={{height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden'}}>
+        <Analytics />
+        {!isCampaign && !isApp ? <Header /> : null}
+        {children}
+        {!isCampaign && !isApp && !isExchange ? <Footer /> : null}
+      </div>
     </div>
   )
 }

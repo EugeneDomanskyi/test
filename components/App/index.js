@@ -20,6 +20,7 @@ import AppTooltip from '@/components/App/AppTooltip'
 import AppShadowText from '@/components/App/AppShadowText'
 import AppNumber from '@/components/App/AppNumber'
 import AppButtonGradient from '@/components/App/AppButtonGradient'
+import AppTopBanner from '@/components/App/AppTopBanner'
 
 export default {
   Alert: AppAlert,
@@ -44,4 +45,5 @@ export default {
   ShadowText: AppShadowText,
   Number: AppNumber,
   ButtonGradient: AppButtonGradient,
+  TopBanner: AppTopBanner,
 }
