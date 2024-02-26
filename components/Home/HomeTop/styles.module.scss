@@ -3,4 +3,17 @@
   height: 8px;
   border-radius: 50%;
   background-color: #1cbc7c;
+  animation: circleAnimation 1.5s infinite;
+}
+
+@keyframes circleAnimation {
+  0% {
+    background-color: #1cbc7c;
+  }
+  50% {
+    background-color: #053421;
+  }
+  100% {
+    background-color: #1cbc7c;
+  }
 }
