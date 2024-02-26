@@ -18,7 +18,7 @@
     "@rainbow-me/rainbowkit": "^1.1.2",
     "@reduxjs/toolkit": "^1.9.5",
     "@sentry/nextjs": "^7.43.0",
-    "@wagmi/chains": "^1.7.0",
+    "@wagmi/chains": "^1.8.0",
     "alchemy-sdk": "^2.9.0",
     "amplitude-js": "^8.21.9",
     "classnames": "^2.3.2",
