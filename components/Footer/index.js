@@ -17,11 +17,11 @@ const Footer = () => {
               <App.Icon icon="logo" />
             </Link>
 
-            <div className={styles.line} />
+            {/* <div className={styles.line} />
 
             <Link href="https://tegro.com">
               <App.ButtonGradient icon="arrow-45">tegro.com</App.ButtonGradient>
-            </Link>
+            </Link> */}
           </App.Flex>
 
           <App.Flex column flex={1} gap={40}>

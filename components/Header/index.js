@@ -72,7 +72,7 @@ const Header = () => {
               </Link>
             </App.Flex>
             
-            {!isMobile ? (
+            {/* {!isMobile ? (
               <>
                 <div className={styles.line} />
 
@@ -80,7 +80,7 @@ const Header = () => {
                   <App.ButtonGradient icon="arrow-45">tegro.com</App.ButtonGradient>
                 </Link>
               </>
-            ) : null}
+            ) : null} */}
           </App.Flex>
 
           <App.Flex row fullHeight gap={8} align="center">
@@ -114,13 +114,13 @@ const Header = () => {
 
           <div className={cn(styles.mobileMenu, {[styles.show]: mobileMenuShow})}>
             <div className={styles.content}>
-              <App.Flex sx={{ padding: 16 }}>
+              {/* <App.Flex sx={{ padding: 16 }}>
                 <Link href="https://tegro.com">
                   <App.ButtonGradient icon="arrow-45">tegro.com</App.ButtonGradient>
                 </Link>
               </App.Flex>
 
-              <div className={styles.line} />
+              <div className={styles.line} /> */}
 
               <Link href="/exchange" className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>

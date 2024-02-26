@@ -23,9 +23,9 @@ const HomeTop = () => {
               </App.Flex>
             </App.Button>
 
-            <App.Text center size={16} weight={400} color="rgba(255, 255, 255, .6)">
+            {/* <App.Text center size={16} weight={400} color="rgba(255, 255, 255, .6)">
               Trade for FREE & Earn POINTS!
-            </App.Text>
+            </App.Text> */}
           </App.Flex>
         </App.Flex>
 
