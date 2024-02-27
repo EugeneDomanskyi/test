@@ -1,19 +1,19 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import cn from 'classnames'
 
 import Link from 'next/link'
-import Image from 'next/image'
+// import Image from 'next/image'
 import { useRouter } from 'next/router'
 
-import { CHAINS } from '@/config'
+// import { CHAINS } from '@/config'
 import $tournament from '@/store/tournament'
 
 import App from '@/components/App'
 import SwitchBlockchain from '@/components/Header/SwitchBlockchain'
-import NavbarDropdown from '@/components/Header/NavbarDropdown'
+// import NavbarDropdown from '@/components/Header/NavbarDropdown'
 import HeaderWallet from '@/components/Header/HeaderWallet'
-import StoriesButton from '@/components/Header/StoriesButton'
+// import StoriesButton from '@/components/Header/StoriesButton'
 
 import styles from './styles.module.scss'
 
@@ -22,9 +22,11 @@ const Header = () => {
   
   const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
-  const tournament = useSelector(({ $tournament }) => $tournament.current)
+  // const tournament = useSelector(({ $tournament }) => $tournament.current)
 
   const [mobileMenuShow, setMobileMenuShow] = useState(false)
+
+  const isExchange = router.asPath?.includes('/exchange')
 
   useEffect(() => {
     dispatch($tournament.set.loading(true))
@@ -109,7 +111,11 @@ const Header = () => {
                   )} */}
                 </App.Flex>
             ) : null}
-            <SwitchBlockchain />
+            {
+              isExchange
+                  ? <SwitchBlockchain />
+                  : null
+            }
             <HeaderWallet />
          </App.Flex>
 
