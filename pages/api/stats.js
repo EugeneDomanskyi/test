@@ -92,7 +92,7 @@ const handler = async (req, res) => {
   const file = path.join(storage, 'stats.json')
 
   try {
-    const data = fs.readFileSync(file, 'utf8')
+    const data = fs.readFileSync(file)
     if (data) {
       stats = JSON.parse(data)
       stats.message = 'Read JSON file'
@@ -103,7 +103,7 @@ const handler = async (req, res) => {
     }
   } catch (err) {
     stats = await refreshData(stats)
-    stats.message = 'No JSON file'
+    stats.message = err.toString()
   }
 
   res.status(200).json(stats)
