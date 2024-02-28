@@ -80,6 +80,7 @@ const refreshData = async (stats) => {
 
     return stats
   } catch (error) {
+    stats.message = error.toString()
     return stats
   }
 }
@@ -103,7 +104,7 @@ const handler = async (req, res) => {
     }
   } catch (err) {
     stats = await refreshData(stats)
-    stats.message = err.toString()
+    //stats.message = 'No JSON file'
   }
 
   res.status(200).json(stats)
