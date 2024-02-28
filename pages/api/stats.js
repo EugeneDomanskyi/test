@@ -95,12 +95,15 @@ const handler = async (req, res) => {
     const data = fs.readFileSync(file, 'utf8')
     if (data) {
       stats = JSON.parse(data)
+      stats.message = 'Read JSON file'
       if (stats.day > today) {
         refreshData(stats)
+        stats.message = 'Refresh JSON file'
       }
     }
   } catch (err) {
     stats = await refreshData(stats)
+    stats.message = 'No JSON file'
   }
 
   res.status(200).json(stats)
