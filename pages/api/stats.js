@@ -76,7 +76,7 @@ const refreshData = async (stats) => {
     if (!fs.existsSync(storage)) {
       fs.mkdirSync(storage, { recursive: true })
     }
-    fs.writeFileSync(file, JSON.stringify(stats))
+    // fs.writeFileSync(file, JSON.stringify(stats))
 
     return stats
   } catch (error) {
