@@ -63,7 +63,7 @@ export const request = async (uri, method = 'GET', {api, ...data} = {}) => {
     }
   }
 
-  const base_url = api == 'remote' ? '' : process.env.NEXT_PUBLIC_BACKEND_URL
+  const base_url = api == 'remote' ? '' : (api == 'local' ? '/' : process.env.NEXT_PUBLIC_BACKEND_URL)
   const response = await fetch(`${base_url}${uri}${query}`, options).catch(errorHandler)
 
   if (response?.ok) {
