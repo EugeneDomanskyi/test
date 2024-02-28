@@ -143,6 +143,10 @@ export const api = {
   totalOrdersCancelled: () => {
     return request(`https://mb.betora.vip/api/public/dashboard/b41548ce-79fc-42e2-a074-7027087e1cbb/dashcard/6/card/10`, 'GET', {api: 'remote'})
   },
+
+  stats: () => {
+    return request(`api/stats`, 'GET', {api: 'local'})
+  },
 }
 
 export default {

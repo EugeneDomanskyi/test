@@ -13,7 +13,7 @@ const HomeStats = () => {
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
   const [loading, setLoading] = useState(true)
-  const [stats, setStats] = useState({ volume: 0, created: 0, gas: 0, settled: 0, cancelled: 0 })
+  const [stats, setStats] = useState({ day: 0, volume: 0, created: 0, gas: 0, settled: 0, cancelled: 0 })
 
   const date = moment().startOf('day').format('MMM DD, hh:mm A')
 
@@ -22,39 +22,10 @@ const HomeStats = () => {
   }, [])
 
   const fetchStats = async () => {
-    const calls = [
-      $app.api.sevenDaysTradingVolume(),
-      $app.api.totalOrdersCreated(),
-      $app.api.gasSaved(),
-      $app.api.totalTradesSettled(),
-      $app.api.totalOrdersCancelled(),
-    ]
-
-    const [volume, created, gas, settled, cancelled] = await Promise.all(calls)
-    const newStats = { ...stats }
-    if (volume?.data) {
-      const value = volume.data.rows[0][0]
-      newStats.volume = formatNumber(value)
-    }
-
-    if (created?.data) {
-      const value = created.data.rows[0][0]
-      newStats.created = formatNumber(value)
-    }
-
-    if (gas?.data) {
-      const value = gas.data.rows[0][0]
-      newStats.gas = formatNumber(value)
-    }
-
-    if (settled?.data) {
-      const value = settled.data.rows[0][0]
-      newStats.settled = formatNumber(value)
-    }
-
-    if (cancelled?.data) {
-      const value = cancelled.data.rows[0][0]
-      newStats.cancelled = formatNumber(value)
+    let newStats = {...stats}
+    const result = await $app.api.stats()
+    if (result) {
+      newStats = result
     }
 
     setStats(newStats)
