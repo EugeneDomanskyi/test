@@ -1,8 +1,9 @@
 import fs from 'fs'
 import path from 'path'
+import { tmpdir } from 'os'
 import moment from 'moment'
 
-const storage = path.join(process.cwd(), 'public', 'storage')
+const storage = path.join(tmpdir(), 'public', 'storage')
 const file = path.join(storage, 'stats.json')
 
 const formatNumber = (number) => {
