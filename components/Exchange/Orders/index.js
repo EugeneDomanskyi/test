@@ -103,7 +103,12 @@ const Orders = ({global, type, version, onClickOrder}) => {
     if (signature) {
       const result = await $orders.api.cancelAll({ wallet_address: wallet, chain_id: blockchain.id, signature })
       if (result?.data) {
-        dispatch($orders.set.list(result.data))
+        const updatedOrders = orders.open.reduce((acc, o) => ({
+          ...acc,
+          [o.orderId]: 'cancelled',
+        }), {})
+        console.log(updatedOrders)
+        dispatch($orders.set.updateOrderStatus(updatedOrders))
         dispatch($alert.set.success({ title: 'All Orders Cancelled', text: 'All your live orders has been cancelled successfully!' }))
       }
     } else {
@@ -150,7 +155,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
       const result = await $orders.api.cancel({ id: order.orderId, chain_id: blockchain.id, signature })
       if (result) {
         Amplitude.event('Cancel Order Success', eventPost)
-        dispatch($orders.set.list(result.data))
+        dispatch($orders.set.updateOrderStatus({[order.orderId]: 'cancelled'}))
         dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
       } else {
         dispatch($alert.set.error({ title: 'Order Not Cancelled', text: result }))

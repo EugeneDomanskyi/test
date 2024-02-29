@@ -63,6 +63,10 @@ export const ordersSlice = createSlice({
       state.list = state.list.map(o => o.id === payload.orderId ? template(payload) : o)
     },
 
+    updateOrderStatus: (state, { payload }) => {
+      state.list = state.list.map(o => o.id in payload ? {...o, status: payload[o.id]} : o)
+    },
+
     interval: (state, {payload}) => {
       state.interval = payload
     },
