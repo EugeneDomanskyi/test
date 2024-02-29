@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import moment from 'moment'
 
-const storage = 'public/storage/'
+const storage = './public/storage/'
 const file = path.join(storage, 'stats.json')
 
 const formatNumber = (number) => {
@@ -101,7 +101,7 @@ const handler = async (req, res) => {
     }
   } catch (err) {
     stats = await refreshData(stats)
-    stats.message = 'No JSON file'
+    stats.message = stats.message ?? 'No JSON file'
   }
 
   res.status(200).json(stats)
