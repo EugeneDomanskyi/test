@@ -36,7 +36,7 @@ const TEST_NETWORKS = [
     code: 'optimism-sepolia',
     currency: optimismSepolia.nativeCurrency.symbol,
     decimals: optimismSepolia.nativeCurrency.decimals,
-    scanUrl: optimismSepolia.blockExplorers.default,
+    scanUrl: optimismSepolia.blockExplorers.default.url,
     pages: ['earn', 'exchange'],
     raffle: {
       subgraph: 'https://api.thegraph.com/subgraphs/name/gulshanweb3/raffle-mumbai',
