@@ -2,6 +2,9 @@ import fs from 'fs'
 import path from 'path'
 import moment from 'moment'
 
+const storage = 'public/storage/'
+const file = path.join(storage, 'stats.json')
+
 const formatNumber = (number) => {
   const suffixes = ['', 'K', 'M', 'B', 'T', 'Q']
   let suffixIndex = 0
@@ -15,9 +18,6 @@ const formatNumber = (number) => {
 }
 
 const refreshData = async (stats) => {
-  const storage = path.join(process.cwd(), '/public/storage/')
-  const file = path.join(storage, 'stats.json')
-
   const options = {
     method: 'GET',
     headers: {
@@ -76,7 +76,7 @@ const refreshData = async (stats) => {
     if (!fs.existsSync(storage)) {
       fs.mkdirSync(storage, { recursive: true })
     }
-    // fs.writeFileSync(file, JSON.stringify(stats))
+    fs.writeFileSync(file, JSON.stringify(stats))
 
     return stats
   } catch (error) {
@@ -88,9 +88,6 @@ const refreshData = async (stats) => {
 const handler = async (req, res) => {
   const today = moment().startOf('day').valueOf()
   let stats = { day: 0, volume: 0, created: 0, gas: 0, settled: 0, cancelled: 0 }
-
-  const storage = path.join(process.cwd(), '/public/storage/')
-  const file = path.join(storage, 'stats.json')
 
   try {
     const data = fs.readFileSync(file)
@@ -104,7 +101,7 @@ const handler = async (req, res) => {
     }
   } catch (err) {
     stats = await refreshData(stats)
-    //stats.message = 'No JSON file'
+    stats.message = 'No JSON file'
   }
 
   res.status(200).json(stats)
