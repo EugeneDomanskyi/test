@@ -36,4 +36,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# custom
+/public/storage
+
 certificates
