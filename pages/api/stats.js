@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import moment from 'moment'
 
-const storage = './public/storage/'
+const storage = path.join(process.cwd(), 'public', 'storage')
 const file = path.join(storage, 'stats.json')
 
 const formatNumber = (number) => {
