@@ -183,7 +183,7 @@ const Exchange = () => {
   }
 
   return (
-    <App.Flex gap={GRID_GAP} className={styles.container}>
+    <App.Flex gap={GRID_GAP} className={cn(styles.container, {[styles.appContainer]: isApp})}>
       {!isMobile ? (
         <>
           <Sidebar />
