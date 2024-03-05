@@ -46,12 +46,12 @@ const Wrapper = ({ children }) => {
 
   return (
     <div style={{ height: '100%' }}>
-      <App.TopBanner id="tegro-at-ethdenver" mode="dark">
+      {/* <App.TopBanner id="tegro-at-ethdenver" mode="dark">
         <App.Flex align={['center', 'flex-start']} justify="center" direction={['row', 'column']} gap={16}>
           <App.Text>🐯 Tegro will be at ETHDenver 2024 (27 Feb - 4 Mar, 2024)</App.Text>
           <App.Button href="https://bit.ly/meet-ashish-tegro" small>Let&apos;s meet!</App.Button>
         </App.Flex>
-      </App.TopBanner>
+      </App.TopBanner> */}
 
       <div style={{height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden'}}>
         <Analytics />
