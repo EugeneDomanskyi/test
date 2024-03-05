@@ -5,9 +5,6 @@ import moment from 'moment'
 
 import $tournament from  '@/store/tournament'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
-import useApp from '@/myhooks/useApp'
-
 import App from '@/components/App'
 import TournamentCountdown from '@/components/Tournamnet/TournamentCountdown'
 import TournamentLeaderboard from '@/components/Tournamnet/TournamentLeaderboard'
@@ -17,45 +14,19 @@ import styles from './styles.module.scss'
 
 const TournamentPage = () => {
   const router = useRouter()
-  const { wallet } = useWalletConnect()
 
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
   const [tournament, setTournament] = useState({tiers: []})
-  const [walletResults, setWalletResults] = useState({position: 0, points: 0, volume: 0, address: ''})
-  const [leaderboard, setLeaderboard] = useState([])
-
+  
   useEffect(() => {
     fetchTournament()
-    fetchLeaderboard()
   }, [])
-
-  useEffect(() => {
-    if (wallet) {
-      fetchResults()
-    } else {
-      setWalletResults({position: 0, points: 0, volume: 0, address: ''})
-    }
-  }, [wallet])
 
   const fetchTournament = async () => {
     const result = await $tournament.api.get(router.query.alias)
     if (result && result?.data) {
       setTournament(result.data)
-    }
-  }
-
-  const fetchLeaderboard = async () => {
-    const result = await $tournament.api.leaderboard(router.query.alias)
-    if (result && result?.data) {
-      setLeaderboard(result.data)
-    }
-  }
-
-  const fetchResults = async () => {
-    const result = await $tournament.api.walletResult(router.query.alias, wallet)
-    if (result && result?.data) {
-      setWalletResults(result.data)
     }
   }
 
@@ -99,17 +70,15 @@ const TournamentPage = () => {
             </App.Flex>
           </App.Flex>
           
-          {leaderboard.length && walletResults?.tier && tournament?.id ? (
-            <App.Flex direction={['row', 'column']} gap={[126, 62]}>
-              <App.Flex flex={1} order={[1, 2]}>
-                <TournamentLeaderboard leaderboard={leaderboard} walletResults={walletResults} />
-              </App.Flex>
-
-              <App.Flex flex={1} order={[2, 1]}>
-                <TournamentInfo tiers={tournament?.tiers} tournament={tournament} results={walletResults} />
-              </App.Flex>
+          <App.Flex direction={['row', 'column']} gap={[126, 62]}>
+            <App.Flex flex={1} order={[1, 2]}>
+              <TournamentLeaderboard />
             </App.Flex>
-          ) : null}
+
+            <App.Flex flex={1} order={[2, 1]}>
+              <TournamentInfo tournament={tournament} />
+            </App.Flex>
+          </App.Flex>
         </App.Flex>
       </App.Container>
     </App.Flex>
