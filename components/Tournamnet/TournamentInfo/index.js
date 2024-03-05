@@ -8,13 +8,15 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import $tournament from  '@/store/tournament'
 
 import App from '@/components/App'
-import HowWorks from '@/components/Tournamnet/HowWorks'
+import TournamentHowItWorks from '@/components/Tournamnet/TournamentHowItWorks'
 
 import styles from './styles.module.scss'
 
 const TournamentInfo = ({ tournament }) => {
   const router = useRouter()
   const { wallet, connect, connection } = useWalletConnect()
+
+  // const wallet = '0x4e51edd49b62eaca9e06b4afff9a7aab729a6c49'
 
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
@@ -53,7 +55,7 @@ const TournamentInfo = ({ tournament }) => {
   const calculateWidth = () => {
     let width = 0
 
-    if (results?.level && tournament?.tiers?.length) {
+    if (results?.tier?.level && tournament?.tiers?.length) {
       const value = results.volume
       const level = results.tier.level
       const currentTier = tournament.tiers.find(item => item.level == level)
@@ -162,7 +164,7 @@ const TournamentInfo = ({ tournament }) => {
           <App.Flex direction={['row', 'column']} align={['center', 'flex-start']} justify="space-between" gap={[0, 12]}>
             <App.Flex row align="flex-end" gap={8}>
               <App.Text size={20} weight={600} height={1}>Tier <App.Text inline size={20} weight={600} italic family="Playfair Display" height={1}>Benefits:</App.Text></App.Text>
-              <App.Text size={20} weight={700} italic family="Playfair Display" color="#7364FD" height={1}>x{results?.tier?.multiplier}</App.Text>
+              <App.Text size={20} weight={700} italic family="Playfair Display" color="#7364FD" height={1}>1 Trade = {results?.tier?.multiplier} Point{results?.tier?.multiplier > 1 ? 's' : ''}</App.Text>
             </App.Flex>
 
             <App.Flex row center sx={{ cursor: 'pointer' }} onClick={handleHowTo}>
@@ -180,7 +182,7 @@ const TournamentInfo = ({ tournament }) => {
         </App.Flex>
 
         <App.Dialog hideClose hideHeader width={1000} open={openModal} onClose={() => setOpenModal(false)}>
-          <HowWorks tournament={tournament} onClose={() => setOpenModal(false)} />
+          <TournamentHowItWorks tournament={tournament} onClose={() => setOpenModal(false)} />
         </App.Dialog>
       </App.Flex>
     ) : (

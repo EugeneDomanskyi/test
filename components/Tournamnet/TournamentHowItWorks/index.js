@@ -13,12 +13,12 @@ const marks = [...new Array(21)].map((_, i) => {
   }
 })
 
-const HowWorks = ({tournament, onClose}) => {
+const TournamentHowItWorks = ({tournament, onClose}) => {
   const [points, setPoints] = useState(8)
   const [activeTier, setActiveTier] = useState(tournament.tiers[0])
   const [bonusActive, setBonusActive] = useState(false)
 
-  const bonusMultiplier = 0.25
+  const bonusMultiplier = tournament.bonus_multiplier
   const [tier1, tier2, tier3] = tournament.tiers
 
   const total = points * activeTier.multiplier + (bonusActive ? points * bonusMultiplier : 0)
@@ -36,7 +36,7 @@ const HowWorks = ({tournament, onClose}) => {
         </App.Flex>
         <App.Flex gap={[64, 24]} align={'center'} className={styles.header}>
           <App.Text size={40} weight={800}>How it &nbsp;<App.Text inline size={40} color={'#7364FF'} family={'Playfair Display'}>Works</App.Text></App.Text>
-          <App.Text size={12} weight={500} color={'rgba(255,255,255,0.6)'} lines={2} sx={{width: 400}}>Habitant porttitor morbi amet molestie euismod egestas. Massa nisl in eget tristique semper facilisi sit.</App.Text>
+          <App.Text size={12} weight={500} color={'rgba(255,255,255,0.6)'} lines={2} sx={{width: 400}}>Input the number of trades along with the different multipliers to understand the total points that can be scored</App.Text>
         </App.Flex>
         <App.Flex flex={1} gap={24} className={styles.content}>
           <App.Flex flex={1.2} column gap={30} className={styles.plate} sx={{padding: 32}}>
@@ -73,10 +73,9 @@ const HowWorks = ({tournament, onClose}) => {
             </App.Flex>
           </App.Flex>
           <App.Flex flex={2} column gap={16}>
-            <App.Flex align={'center'} gap={8}>
-              <App.Text size={20} weight={700}>Select</App.Text>
-              <App.Text family={'Playfair Display'} size={20}>Multiplier</App.Text>
-              <App.Text color={'#9B99AE'} size={14} weight={400}>(Based on Lifetime volume)</App.Text>
+            <App.Flex direction={['row', 'column']} align={['center', 'flex-start']} gap={8}>
+              <App.Text size={20} weight={700}>Select <App.Text inline family={'Playfair Display'} size={20}>Multiplier</App.Text></App.Text>
+              <App.Text color={'#9B99AE'} size={14} weight={400}>(Based on trading volume during tournament)</App.Text>
             </App.Flex>
             <App.Flex flex={1} gap={20} className={styles.tiers}>
               <App.Flex column flex={1} gap={20}>
@@ -131,4 +130,4 @@ const HowWorks = ({tournament, onClose}) => {
   )
 }
 
-export default HowWorks
+export default TournamentHowItWorks
