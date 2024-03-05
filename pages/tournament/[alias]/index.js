@@ -1,71 +1,117 @@
-import {useEffect, useState} from "react"
-import {useRouter} from "next/router"
-import cn from 'classnames'
+import {useEffect, useState} from 'react'
+import { useSelector } from 'react-redux'
+import {useRouter} from 'next/router'
+import moment from 'moment'
+
+import $tournament from  '@/store/tournament'
+
+import useWalletConnect from '@/myhooks/wallet-connect'
+import useApp from '@/myhooks/useApp'
 
 import App from '@/components/App'
-import TierBlock from "@/components/Tournamnet/TierBlock";
-import Banner from '@/components/Tournamnet/Banner'
+import TournamentCountdown from '@/components/Tournamnet/TournamentCountdown'
+import TournamentLeaderboard from '@/components/Tournamnet/TournamentLeaderboard'
+import TournamentInfo from '@/components/Tournamnet/TournamentInfo'
 
-import $tournament from  "@/store/tournament"
-import styles from "./styles.module.scss";
-import useWalletConnect from "@/myhooks/wallet-connect";
-import Leaderboard from "@/components/Tournamnet/Leaderboard";
-import HowWorks from "@/components/Tournamnet/HowWorks";
-import FAQ from '@/components/Tournamnet/FAQ'
-
-import useApp from '@/myhooks/useApp'
+import styles from './styles.module.scss'
 
 const TournamentPage = () => {
   const router = useRouter()
   const { wallet } = useWalletConnect()
-  const { isApp } = useApp()
+
+  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
   const [tournament, setTournament] = useState({tiers: []})
   const [walletResults, setWalletResults] = useState({position: 0, points: 0, volume: 0, address: ''})
   const [leaderboard, setLeaderboard] = useState([])
-  const [openModal, setOpenModal] = useState(false)
 
   useEffect(() => {
-    $tournament.api.get(router.query.alias).then(res => {
-      if (res) {
-        setTournament(res.data)
-      }
-    })
-    $tournament.api.leaderboard(router.query.alias).then(res => {
-      if (res) {
-        setLeaderboard(res.data)
-      }
-    })
+    fetchTournament()
+    fetchLeaderboard()
   }, [])
 
   useEffect(() => {
     if (wallet) {
-      $tournament.api.walletResult(router.query.alias, wallet).then(res => {
-        if (res) {
-          setWalletResults(res.data)
-        }
-      })
+      fetchResults()
     } else {
       setWalletResults({position: 0, points: 0, volume: 0, address: ''})
     }
   }, [wallet])
 
+  const fetchTournament = async () => {
+    const result = await $tournament.api.get(router.query.alias)
+    if (result && result?.data) {
+      setTournament(result.data)
+    }
+  }
+
+  const fetchLeaderboard = async () => {
+    const result = await $tournament.api.leaderboard(router.query.alias)
+    if (result && result?.data) {
+      setLeaderboard(result.data)
+    }
+  }
+
+  const fetchResults = async () => {
+    const result = await $tournament.api.walletResult(router.query.alias, wallet)
+    if (result && result?.data) {
+      setWalletResults(result.data)
+    }
+  }
+
   return (
-    <App.Flex column className={cn(styles.container, {[styles.appContainer]: isApp})}>
-      <App.Text color="#fff">{ isApp }</App.Text>
-      <Banner tournament={tournament} />
-      <TierBlock
-        tiers={tournament.tiers}
-        walletResults={walletResults}
-        onClickWorks={() => setOpenModal(true)} />
-      <Leaderboard
-        leaderboard={leaderboard}
-        walletResults={walletResults}
-        onClickWorks={() => setOpenModal(true)} />
-      <FAQ />
-      <App.Dialog hideClose hideHeader width={1000} open={openModal} onClose={() => setOpenModal(false)}>
-        <HowWorks tournament={tournament} onClose={() => setOpenModal(false)} />
-      </App.Dialog>
+    <App.Flex column fullWidth className={styles.container}>
+      <App.Container maxWidth={1230} sx={[{ paddingTop: 34 }, {paddingTop: 0}]}>
+        <App.Flex column fullWidth gap={[94, 32]}>
+          <App.Flex direction={['row', 'column']} fullWidth align="center" justify="space-between" gap={[0, 140]}>
+            <App.Flex row center gap={16} sx={{ cursor: 'pointer' }}>
+              <App.Icon icon="chevron-left" width={24} height={24} />
+              <App.Text tag="h1" family={'Playfair Display'} size={[40, 32]} weight={600} color="#A6DC37">
+                <App.Text inline size={[40, 32]} weight={600}>{tournament.title}</App.Text> Championship
+              </App.Text>
+            </App.Flex>
+
+            <App.Flex column justify="flex-end" align="center" gap={24}>
+              {isMobile ? (
+                <App.Button href="/exchange" primary rounded>Start Trading <App.Icon icon="arrow-45" /></App.Button>
+              ) : null}
+
+              <App.Flex direction={['row', 'column']} justify="flex-end" align="center" gap={[16, 4]}>
+                {tournament.status === 'active' ?
+                  moment().isAfter(tournament.start_time) ? (
+                    <>
+                      <App.Text weight={600} color="#9B99AE">Ends in</App.Text>
+                      <TournamentCountdown endTime={tournament.end_time} />
+                    </>
+                  ) : (
+                    <>
+                      <App.Text weight={600} color="#9B99AE">Started in</App.Text>
+                      <TournamentCountdown endTime={tournament.start_time} />
+                    </>
+                  )
+                : (
+                  <>
+                    <App.Text weight={600} color="#9B99AE">Closed at</App.Text>
+                    <App.Text weight={700} size={40} height={1.1}>{ moment(tournament.end_time).format('DD.MM.YYYY') }</App.Text>
+                  </>
+                )}
+              </App.Flex>
+            </App.Flex>
+          </App.Flex>
+          
+          {leaderboard.length && walletResults?.tier && tournament?.id ? (
+            <App.Flex direction={['row', 'column']} gap={[126, 62]}>
+              <App.Flex flex={1} order={[1, 2]}>
+                <TournamentLeaderboard leaderboard={leaderboard} walletResults={walletResults} />
+              </App.Flex>
+
+              <App.Flex flex={1} order={[2, 1]}>
+                <TournamentInfo tiers={tournament?.tiers} tournament={tournament} results={walletResults} />
+              </App.Flex>
+            </App.Flex>
+          ) : null}
+        </App.Flex>
+      </App.Container>
     </App.Flex>
   )
 }
