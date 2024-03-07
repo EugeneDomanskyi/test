@@ -1,8 +1,10 @@
+import cn from 'classnames'
+
 import { usePropsHelper } from '@/myhooks/props-helper'
 
 import styles from './styles.module.scss'
 
-const AppFrame = ({ children, border, radius, padding = 16, flex, background, blur, width, height, overflow, gradient, sx = {}, onClick }) => {
+const AppFrame = ({ children, border, radius, padding = 16, flex, background, blur, width, height, overflow, gradient, sx = {}, className, onClick }) => {
   const { propValue } = usePropsHelper()
 
   const styleBox = () => {
@@ -100,7 +102,7 @@ const AppFrame = ({ children, border, radius, padding = 16, flex, background, bl
   }
 
   return (
-    <div className={styles.box} style={styleBox()} onClick={handleClick}>
+    <div className={cn(styles.box, className)} style={styleBox()} onClick={handleClick}>
       <div className={styles.border} style={styleBorder()} />
       <div className={styles.background} style={styleBackground()} />
       <div className={styles.content} style={styleContent()}>

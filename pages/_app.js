@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { userAgentFromString } from 'next/server'
 import nookies from 'nookies'
 import merge from 'lodash.merge'
+import { I18nextProvider } from 'react-i18next'
 
 import { getDefaultWallets, RainbowKitProvider, darkTheme, connectorsForWallets } from '@rainbow-me/rainbowkit'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
@@ -14,6 +15,7 @@ import { publicProvider } from 'wagmi/providers/public'
 import { CHAINS } from '@/config'
 import store from '@/store'
 import $app from '@/store/app'
+import i18nInit from '@/libs/i18n'
 
 import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
@@ -79,15 +81,17 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
 
   return (
     <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains} theme={RainbowTheme}>
-        <Provider store={storeRef}>
-          <Head route={ssRoute} />
-          <Wrapper>
-            <Component {...pageProps} />
-          </Wrapper>
-          <App.Alert />
-        </Provider>
-      </RainbowKitProvider>
+      <I18nextProvider i18n={i18nInit(initialData.language)}>
+        <RainbowKitProvider chains={chains} theme={RainbowTheme}>
+          <Provider store={storeRef}>
+            <Head route={ssRoute} />
+            <Wrapper>
+              <Component {...pageProps} />
+            </Wrapper>
+            <App.Alert />
+          </Provider>
+        </RainbowKitProvider>
+      </I18nextProvider>
     </WagmiConfig>
   )
 }
@@ -136,6 +140,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
   return {
     initialData: {
       blockchain: cookies.blockchain,
+      language: cookies.language ?? 'en',
       isMobile,
       isApp,
       platform,

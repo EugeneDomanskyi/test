@@ -6,12 +6,16 @@ export const tournamentSlice = createSlice({
   name: "$tournament",
 
   initialState: {
-    data: null,
+    all: [],
     current: null,
     loading: true,
   },
 
   reducers: {
+    all: (state, { payload }) => {
+      state.all = payload
+    },
+
     current: (state, { payload }) => {
       state.current = payload
     },
@@ -23,18 +27,26 @@ export const tournamentSlice = createSlice({
 })
 
 const api = {
+  all: () => {
+    return request(`tournament/list`)
+  },
+
   get: (alias) => {
     return request(`tournament/${alias}`)
   },
+
   create: (post) => {
     return request(`tournament/create`, 'POST', post)
   },
+
   current: () => {
     return request(`tournament/current`)
   },
+
   leaderboard: (alias) => {
     return request(`tournament/${alias}/leaderboard`)
   },
+
   walletResult: (alias, wallet) => {
     return request(`tournament/${alias}/leaderboard/${wallet}`) // 0x113128f65d830b5295cef847597f4655f3d8e47c
   },

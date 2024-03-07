@@ -74,43 +74,28 @@ const Header = () => {
               </Link>
             </App.Flex>
             
-            {/* {!isMobile ? (
+            {!isMobile ? (
               <>
                 <div className={styles.line} />
 
-                <Link href="https://tegro.com">
-                  <App.ButtonGradient icon="arrow-45">tegro.com</App.ButtonGradient>
-                </Link>
-              </>
-            ) : null} */}
-          </App.Flex>
-
-          <App.Flex row fullHeight gap={8} align="center">
-            {!isMobile ? (
                 <App.Flex row fullHeight align="center">
                   <Link href="/exchange" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/exchange')})}>
                     <App.Flex center fullHeight>
                       <App.Text size={14} weight={600}>Exchange</App.Text>
                     </App.Flex>
                   </Link>
-{/* 
-                  <div className={styles.navLine} />
 
-                  {tournament?.alias ? (
-                    <Link href={`/tournament/${tournament.alias}`} className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/tournament')})}>
-                      <App.Flex center fullHeight>
-                        <App.Text size={14} weight={600}>Earn</App.Text>
-                      </App.Flex>
-                    </Link>
-                  ) : (
-                    <App.Flex className={cn(styles.navItem, styles.disabled)}>
-                      <App.Flex center fullHeight>
-                        <App.Text size={14} weight={600}>Earn</App.Text>
-                      </App.Flex>
+                  <Link href="/points-dashboard" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/points-dashboard')})}>
+                    <App.Flex center fullHeight>
+                      <App.Text size={14} weight={600}>Ponts Dashboard</App.Text>
                     </App.Flex>
-                  )} */}
+                  </Link>
                 </App.Flex>
+              </>
             ) : null}
+          </App.Flex>
+
+          <App.Flex row fullHeight gap={8} align="center">
             {
               isExchange
                   ? <SwitchBlockchain />

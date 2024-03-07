@@ -1,0 +1,21 @@
+.item {
+  width: calc(33.33% - 24px * 2 / 3);
+  cursor: pointer;
+
+  .badge {
+    padding: 4px 8px;
+    border-radius: 8px;
+
+    &.ongoing {
+      background-color: #A6DC37;
+    }
+
+    &.upcoming {
+      background-color: #7364FF;
+    }
+
+    &.closed {
+      background-color: #6F6C88;
+    }
+  }
+}

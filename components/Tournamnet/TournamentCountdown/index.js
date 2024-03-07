@@ -1,43 +1,47 @@
 import App from '@/components/App'
 import useCountdown from '@/myhooks/useCountdown'
 
-const TournamentCountdown = ({endTime}) => {
+const TournamentCountdown = ({ endTime, small, hideSeconds, color = '#A6DC37' }) => {
   const duration = useCountdown(endTime)
   return (
-      <App.Flex align="center" gap={8}>
+      <App.Flex align="center" gap={small ? 4 : 8}>
         <App.Flex align={'flex-end'}>
-          <App.Flex width={48}>
-            <App.Text weight={600} size={40} height={1}>{ duration.days }</App.Text>
+          <App.Flex width={small ? 34 : 48}>
+            <App.Text weight={600} size={small ? 28 : 40} height={1}>{ duration.days }</App.Text>
           </App.Flex>
-          <App.Text weight={700} family="Playfair Display" italic color={"#A6DC37"} size={24} height={1.2}>d</App.Text>
+          <App.Text weight={700} family="Playfair Display" italic color={color} size={small ? 16 : 24} height={1.2}>d</App.Text>
         </App.Flex>
 
         <App.Text weight={300} size={24} color="#9B99AE" height={1}>:</App.Text>
 
         <App.Flex align={'flex-end'}>
-          <App.Flex width={48}>
-            <App.Text weight={600} size={40} height={1}>{ duration.hours }</App.Text>
+          <App.Flex width={small ? 34 : 48}>
+            <App.Text weight={600} size={small ? 28 : 40} height={1}>{ duration.hours }</App.Text>
           </App.Flex>
-          <App.Text weight={700} family="Playfair Display" italic color={"#A6DC37"} size={24} height={1.2}>h</App.Text>
+          <App.Text weight={700} family="Playfair Display" italic color={color} size={small ? 16 : 24} height={1.2}>h</App.Text>
         </App.Flex>
 
         <App.Text weight={300} size={24} color="#9B99AE" height={1}>:</App.Text>
 
         <App.Flex align={'flex-end'}>
-          <App.Flex width={48}>
-            <App.Text weight={600} size={40} height={1}>{ duration.minutes }</App.Text>
+          <App.Flex width={small ? 34 : 48}>
+            <App.Text weight={600} size={small ? 28 : 40} height={1}>{ duration.minutes }</App.Text>
           </App.Flex>
-          <App.Text weight={700} family="Playfair Display" italic color={"#A6DC37"} size={24} height={1.2}>m</App.Text>
+          <App.Text weight={700} family="Playfair Display" italic color={color} size={small ? 16 : 24} height={1.2}>m</App.Text>
         </App.Flex>
 
-        <App.Text weight={300} size={24} color="#9B99AE" height={1}>:</App.Text>
+        {!hideSeconds ? (
+          <>
+            <App.Text weight={300} size={24} color="#9B99AE" height={1}>:</App.Text>
 
-        <App.Flex align={'flex-end'}>
-          <App.Flex width={48}>
-            <App.Text weight={600} size={40} height={1}>{ duration.seconds }</App.Text>
-          </App.Flex>
-          <App.Text weight={700} family="Playfair Display" italic color={"#A6DC37"} size={24} height={1.2}>s</App.Text>
-        </App.Flex>
+            <App.Flex align={'flex-end'}>
+              <App.Flex width={small ? 34 : 48}>
+                <App.Text weight={600} size={small ? 28 : 40} height={1}>{ duration.seconds }</App.Text>
+              </App.Flex>
+              <App.Text weight={700} family="Playfair Display" italic color={color} size={small ? 16 : 24} height={1.2}>s</App.Text>
+            </App.Flex>
+          </>
+        ) : null}
       </App.Flex>
   )
 }

@@ -1670,6 +1670,44 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
         </svg>
       )
     }
+
+    if (icon == 'earn') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill={color ?? '#fff'} d="M9.677 8.76a3.846 3.846 0 017.252 1.046 2.396 2.396 0 012.147.792l.002-.156A5.942 5.942 0 008.04 7.383a5.932 5.932 0 104.262 10.747 2.404 2.404 0 01-1.228-1.7 3.836 3.836 0 11-3.848-6.618 5.944 5.944 0 003.812 6.191c.004-.771.37-1.457.938-1.893a3.847 3.847 0 01-2.3-5.35z" />
+          <path fill={color ?? '#fff'} d="M21.757 16.024a1.2 1.2 0 00-1.2-1.2h-2.075v-2.055a1.2 1.2 0 00-2.401 0v2.054h-2.055a1.2 1.2 0 100 2.402h2.055v2.074a1.2 1.2 0 102.401 0v-2.074h2.074a1.2 1.2 0 001.201-1.2z" />
+        </svg>
+      )
+    }
+
+    if (icon == 'redeem') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M6.498 2.996l1.5 1.5-1.5 1.501" />
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7.998 4.496h-2a3.001 3.001 0 00-3.002 3.001M17.502 22.003l-1.5-1.5 1.5-1.501" />
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16.002 20.503h2a3.001 3.001 0 003.002-3.001M9.499 20.503a5.502 5.502 0 110-11.005 5.502 5.502 0 010 11.005" />
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8.688 13.98l.81-.814v3.25M8.69 16.418h1.618M10.61 6.16a5.502 5.502 0 017.782 7.782" />
+        </svg>
+      )
+    }
+
+    if (icon == 'question-circle') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <circle stroke={color ?? '#fff'} cx="12" cy="12.5" r="10" strokeWidth="1.5"></circle>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeWidth="1.5" d="M10.125 9.375a1.875 1.875 0 112.828 1.615c-.475.281-.953.708-.953 1.26v1.25" />
+          <circle fill={color ?? '#fff'} cx="12" cy="16.5" r="1"></circle>
+        </svg>
+      )
+    }
+
+    if (icon == 'chevron-down2') {
+      return (
+        <svg width={width ?? 8} height={height ?? 5} viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.6" strokeWidth="2" d="M7 1L4 4 1 1" />
+        </svg>
+      )
+    }
   }
 
   return getIcon()
