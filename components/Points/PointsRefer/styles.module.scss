@@ -1,0 +1,42 @@
+.line {
+  background-color: #FFFFFF1A;
+  height: 1px;
+  width: 100%;
+}
+
+.code {
+  padding: 12px 32px;
+  border-radius: 50px;
+  border: 1px solid #574E74;
+  width: 384px;
+}
+
+.box {
+  padding: 24px;
+  border-radius: 16px;
+  background: radial-gradient(113.88% 113.88% at 67.99% -35.17%, #231F38 0%, #100D21 100%);
+  overflow: hidden;
+
+  &.nopadding {
+    padding: 0;
+  }
+
+  .step1 {
+    padding: 20px 20px 20px 130px;
+    background: url('/images/points/points-step1.png') left center / contain no-repeat;
+  }
+
+  .step2 {
+    padding: 20px 20px 20px 130px;
+    background: url('/images/points/points-step2.png') left center / contain no-repeat;
+  }
+
+  .step3 {
+    padding: 20px 20px 20px 130px;
+    background: url('/images/points/points-step3.png') left center / contain no-repeat;
+  }
+
+  .chartBack {
+    background: url('/images/points/points-chart-background.png') left center / contain no-repeat, url('/images/points/points-chart-dots.png') left center / contain no-repeat;
+  }
+}

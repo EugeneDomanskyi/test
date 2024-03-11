@@ -30,12 +30,16 @@ const TournamentPage = () => {
     }
   }
 
+  const handleDashboard = () => {
+    router.push(`/points-dashboard`)
+  }
+
   return (
     <App.Flex column fullWidth className={styles.container}>
       <App.Container maxWidth={1230} sx={[{ paddingTop: 34 }, {paddingTop: 0}]}>
         <App.Flex column fullWidth gap={[94, 32]}>
           <App.Flex direction={['row', 'column']} fullWidth align="center" justify="space-between" gap={[0, 140]}>
-            <App.Flex row center gap={16} sx={{ cursor: 'pointer' }}>
+            <App.Flex row center gap={16} sx={{ cursor: 'pointer' }} onClick={handleDashboard}>
               <App.Icon icon="chevron-left" width={24} height={24} />
               <App.Text tag="h1" family={'Playfair Display'} size={[40, 32]} weight={600} color="#A6DC37">
                 <App.Text inline size={[40, 32]} weight={600}>{tournament.title}</App.Text> Championship

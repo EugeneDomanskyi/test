@@ -3,3 +3,13 @@
   width: 100%;
   background-color: #FFFFFF1A;
 }
+
+.tabs {
+  @media (max-width: 768px) {
+    overflow-x: auto;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}

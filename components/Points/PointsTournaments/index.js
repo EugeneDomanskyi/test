@@ -52,7 +52,7 @@ const PointsTournaments = () => {
   }
 
   const handleTournament = (alias) => () => {
-    router.push(`/tournament/${alias}`)
+    router.push(`/points-dashboard/tournament/${alias}`)
   }
 
   return (
