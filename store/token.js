@@ -5,7 +5,6 @@ import { CHAINS } from '@/config'
 import { request } from './index'
 
 export const template = (item) => {
-  console.log("item", item)
   const blockchain = CHAINS.find(chain => chain.id == item.chain_id)
 
   if (item?.base_contract_address) {
@@ -65,18 +64,15 @@ export const tokenSlice = createSlice({
     },
 
     all: (state, { payload }) => {
-      console.log("all", payload)
       const tokens = payload.map(token => template(token))
       state.all = state.pages.append ? [...state.all, ...tokens] : tokens
     },
 
     searched: (state, { payload }) => {
-      console.log("searched", payload)
       state.searched = payload.map(token => template(token))
     },
 
     current: (state, { payload }) => {
-      console.log("current", payload)
       state.current = template(payload)
     },
 
