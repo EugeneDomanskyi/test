@@ -2,15 +2,15 @@ import Head from 'next/head'
 
 const HeadDefault = () => {
   const getTitle = () => {
-    return 'Tegro Gen2 DEX'
+    return 'Tegro: The Gen2 DEX for High-frequency Trading'
   }
 
   const getDescription = () => {
-    return 'Tegro Gen2 DEX is revolutionizing on-chain trading with unmatched gas efficiency and market tools!'
+    return 'Tegro is a Gen2 DEX for high-frequency trading with API bot access. Enjoy CEX-level efficiency on-chain with features like efficient orderbooks, unmatched gas efficiency, lightning-fast order matching, and more! Become a part of the next DeFi revolution. Join the Tegro Testnet and start trading for free today!'
   }
 
   const getUrl = () => {
-    return `https://testnet.tegro.com/`
+    return `https://tegro.com/`
   }
 
   return (
@@ -23,14 +23,14 @@ const HeadDefault = () => {
       <meta property="og:type" content="website" />
       <meta property="og:title" content={getTitle()} />
       <meta property="og:description" content={getDescription()} />
-      <meta property="og:image" content="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/exchange-og.png" />
+      <meta property="og:image" content="https://tegro.com/images/og-image.jpg" />
 
       <meta name="twitter:card" content="summary_large_image" />
       <meta property="twitter:domain" content="tegro.com" />
       <meta property="twitter:url" content={getUrl()} />
       <meta name="twitter:title" content={getTitle()} />
       <meta name="twitter:description" content={getDescription()} />
-      <meta name="twitter:image" content="https://tegro-imagekit-tora.s3.eu-central-1.amazonaws.com/images/exchange-og.png" />
+      <meta name="twitter:image" content="https://tegro.com/images/og-image.jpg" />
     </Head>
   )
 }
