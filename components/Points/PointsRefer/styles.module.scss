@@ -8,7 +8,6 @@
   padding: 12px 32px;
   border-radius: 50px;
   border: 1px solid #574E74;
-  width: 384px;
 }
 
 .box {
@@ -38,5 +37,64 @@
 
   .chartBack {
     background: url('/images/points/points-chart-background.png') left center / contain no-repeat, url('/images/points/points-chart-dots.png') left center / contain no-repeat;
+
+    @media (max-width: 768px) {
+      background: url('/images/points/points-chart-background-mobile.png') center top / contain no-repeat;
+
+      .relative {
+        display: none;
+      }
+    }
+  }
+}
+
+.relative,
+.relativeM {
+  position: relative;
+  z-index: 0;
+}
+
+.badge {
+  background-color: #7364FF;
+  padding: 4px 8px;
+  border-radius: 8px;
+  position: absolute;
+  bottom: 32px;
+
+  @media (max-width: 768px) {
+    bottom: 0;
+  }
+}
+
+.line {
+  width: 100%;
+  height: 1px;
+  background-color: #FFFFFF1A;
+}
+
+.scroll {
+  position: relative;
+  z-index: 0;
+  overflow-y: auto;
+
+  .table {
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    .status {
+      padding: 4px 20px;
+      border-radius: 8px;
+
+      &.trade {
+        background-color: #06382F;
+      }
+
+      &.deposit {
+        background-color: #381C8C;
+      }
+    }
   }
 }

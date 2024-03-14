@@ -1,0 +1,55 @@
+.shmBox {
+  width: calc(33.33% - 16px * 2 / 3);
+  padding: 16px;
+  border-radius: 16px;
+  background: radial-gradient(113.88% 113.88% at 67.99% -35.17%, #231F38 0%, #100D21 100%);
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+
+  .shmImage {
+    height: 188px;
+    border-radius: 24px;
+    position: relative;
+    z-index: 0;
+
+    &.gold {
+      background: url('/images/points/points-shm-gold.png') center / cover no-repeat;
+    }
+
+    &.silver {
+      background: url('/images/points/points-shm-silver.png') center / cover no-repeat;
+    }
+
+    &.bronze {
+      background: url('/images/points/points-shm-bronze.png') center / cover no-repeat;
+    }
+
+    .shmSoon {
+      width: 80px;
+      height: 80px;
+      position: absolute;
+      z-index: 1;
+      right: 8px;
+      bottom: -32px;
+      transform: rotate(-15deg);
+      background: url('/images/points/points-shm-soon.png') center / cover no-repeat;
+    }
+  }
+
+  .chest {
+    border-radius: 50px;
+    border: 1px solid #27203C;
+    padding: 0 20px;
+    height: 48px;
+  }
+
+  .buy {
+    border-radius: 50px;
+    border: 1px solid #121019;
+    background-color: #121019;
+    padding: 0 20px;
+    height: 48px;
+  }
+}

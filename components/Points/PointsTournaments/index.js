@@ -59,7 +59,7 @@ const PointsTournaments = () => {
     <App.Flex fullWidth column gap={32}>
       <App.Flex fullWidth column gap={12}>
         <App.Text size={24}>{t('Trading Tournaments')}</App.Text>
-        <App.Text color="#9B99AE">{t('Diam amet nisl turpis ac libero et scelerisque in condimentum. Purus massa at vestibulum donec blandit non venenatis egestas. Massa donec.')}</App.Text>
+        <App.Text color="#9B99AE">{t('Conquer trading battles, stack points, and unlock your loot! Glory awaits.')}</App.Text>
       </App.Flex>
 
       <App.Flex row wrap fullWidth gap={24}>

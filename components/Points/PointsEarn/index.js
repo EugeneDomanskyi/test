@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next'
 import App from '@/components/App'
 import PointsTournaments from '@/components/Points/PointsTournaments'
 import PointsRefer from '@/components/Points/PointsRefer'
+import PointsContributor from '@/components/Points/PointsContributor'
+import PointsQuests from '@/components/Points/PointsQuests'
 
 import styles from './styles.module.scss'
 
@@ -35,16 +37,16 @@ const PointsEarn = () => {
 
   return (
     <App.Flex fullWidth column gap={30} sx={[{ paddingTop: 24, paddingBottom: 24 }, { paddingTop: 16, paddingBottom: 16 }]}>
-      <App.Flex column gap={16} width={[700, '100%']}>
+      <App.Flex column gap={16}>
         <App.Text size={24} weight={800}>{t('Earn')} <App.Text inline italic size={24} weight={700} family="Playfair Display" color="#A6DC37">{t('Points')}</App.Text></App.Text>
-        <App.Text size={[12, 14]} color="#9B99AE">{t('Sit posuere a viverra morbi urna mauris enim quis sagittis. Arcu pellentesque habitant volutpat amet. Non id sed euismod tempus tincidunt sagittis. Nunc urna tellus pretium et tincidunt sit dolor quam. Volutpat urna nec sit congue quis non proin vivamus viverra.')}</App.Text>
+        <App.Text color="#FFFFFF99">{t('Step into the Tegro arena where valor meets value. Join the fray of Trading Tournaments, refer champions like yourself, and complete legendary quests. Every move you make sparks a chance to earn points and ascend to new heights of trading mastery.')}</App.Text>
       </App.Flex>
 
       <App.Flex row gap={20} align="center" className={styles.tabs}>
         {tabs.map(item => {
           const isCurrent = item.value == tab
           return (
-            <App.Frame padding="10px 32px" radius={50} gradient={isCurrent ? 'linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)' : 'transparent'} sx={{ cursor: 'pointer' }} onClick={handleTab(item.value)}>
+            <App.Frame key={item.value} padding="10px 32px" radius={50} gradient={isCurrent ? 'linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)' : 'transparent'} sx={{ cursor: 'pointer' }} onClick={handleTab(item.value)}>
               <App.Text nowrap color={isCurrent ? '#fff' : '#9B99AE'} hoverColor="#fff" >{item.label}</App.Text>
             </App.Frame>
           )

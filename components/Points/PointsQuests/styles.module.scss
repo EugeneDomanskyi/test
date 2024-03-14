@@ -1,0 +1,17 @@
+.questBox {
+  width: calc(33.33% - 16px * 3 / 2);
+  padding: 200px 24px 24px;
+  border-radius: 16px;
+  background: url('/images/points/points-quest-background.png') center top / contain no-repeat, radial-gradient(113.88% 113.88% at 67.99% -35.17%, #231F38 0%, #100D21 100%);
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 160px 16px 16px;
+  }
+
+  .line {
+    width: 100%;
+    height: 1px;
+    background-color: #FFFFFF1A;
+  }
+}

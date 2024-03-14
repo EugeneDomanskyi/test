@@ -41,7 +41,7 @@ const Leaderboard = () => {
   }
 
   const getShort = (address) => {
-    const n = isMobile ? 4 : 10
+    const n = isMobile ? 4 : 8
     return `${address.substring(0, n)}...${address.substring(address.length - n)}`
   }
 

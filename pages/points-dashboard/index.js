@@ -66,7 +66,7 @@ const PointsDashboard = () => {
               <App.Flex column width={[614, '100%']} gap={40} align="flex-start" sx={[{ paddingTop: 186, paddingBottom: 236 }, { paddingTop: 40, paddingBottom: 300 }]}>
                 <App.Flex column gap={8}>
                   <App.Text size={[80, 52]} weight={800} height={1.2}>{t('Start your points')} <App.Text inline italic size={[80, 52]} weight={700} family="Playfair Display" height={1.2} color="#7364FF">{t('Quest')}</App.Text></App.Text>
-                  <App.Text szie={[12, 14]} color="#9B99AE">{t('Dive into the Tegro ecosystem! Complete quests and earn points. Aim for the top to unlock exclusive rewards with the POINTS you accumulate!')}</App.Text>
+                  <App.Text szie={[12, 14]} color="#9B99AE">{t('Join forces with fellow traders on a quest for glory and exclusive rewards. Connect your wallet to unleash the power of points and start your legendary journey.')}</App.Text>
                 </App.Flex>
 
                 <App.ButtonGradient onClick={handleConnect}>{t('Connect Wallet')}</App.ButtonGradient>

@@ -5,6 +5,7 @@ import { userAgentFromString } from 'next/server'
 import nookies from 'nookies'
 import merge from 'lodash.merge'
 import { I18nextProvider } from 'react-i18next'
+import { BanditContextProvider } from '@bandit-network/quest-widget'
 
 import { getDefaultWallets, RainbowKitProvider, darkTheme, connectorsForWallets } from '@rainbow-me/rainbowkit'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
@@ -83,13 +84,15 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
     <WagmiConfig config={wagmiConfig}>
       <I18nextProvider i18n={i18nInit(initialData.language)}>
         <RainbowKitProvider chains={chains} theme={RainbowTheme}>
-          <Provider store={storeRef}>
-            <Head route={ssRoute} />
-            <Wrapper>
-              <Component {...pageProps} />
-            </Wrapper>
-            <App.Alert />
-          </Provider>
+          <BanditContextProvider cluster={"devnet"} apiKey={process.env.NEXT_PUBLIC_BANDIT_API_KEY}>
+            <Provider store={storeRef}>
+              <Head route={ssRoute} />
+              <Wrapper>
+                <Component {...pageProps} />
+              </Wrapper>
+              <App.Alert />
+            </Provider>
+          </BanditContextProvider>
         </RainbowKitProvider>
       </I18nextProvider>
     </WagmiConfig>

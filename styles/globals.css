@@ -157,3 +157,24 @@ a {
     display: none;
   }
 }
+
+.widget .bad-quest__view--header,
+.widget .bad-quest__progress--content,
+.widget .bad-quest__view--footer,
+.widget .mt-4.relative {
+  display: none;
+}
+
+.widget .bad-quest__view--scroll_area {
+  height: auto;
+  padding: 0;
+}
+
+.widget .bad-quest_task__wrapper {
+  border-color: #ffffff33;
+}
+
+.widget .bad-quest_task__check_icon_not_completed,
+.widget .bad-quest_task__lock_icon {
+  color: #ffffff33;
+}
