@@ -68,9 +68,9 @@ const SidebarSearch = () => {
       params.symbol = searchText
     }
 
-    const tokens = await $token.api.all(params)
-    if (tokens) {
-      dispatch($token.set.searched(tokens))
+    const res = await $token.api.all(params)
+    if (res.success) {
+      dispatch($token.set.searched(res.data))
     }
 
     dispatch($token.set.loading(false))

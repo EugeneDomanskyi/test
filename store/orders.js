@@ -161,7 +161,7 @@ const get = {
 
 const api = {
   chart: (params) => {
-    return request(`market/chart`, 'GET', params)
+    return request(`${params.chain_id}/market/chart`, 'GET', {api: 'exchange', ...params})
   },
 
   orderbook: (params) => {
@@ -169,7 +169,7 @@ const api = {
   },
 
   trades: (params) => {
-    return request('market/trades', 'GET', params)
+    return request(`${params.chain_id}/market/trades`, 'GET', {api: 'exchange', ...params})
   },
 
   list: (params) => {
