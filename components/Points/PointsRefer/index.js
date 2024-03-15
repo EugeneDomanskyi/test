@@ -272,7 +272,7 @@ const PointsRefer = () => {
             <App.Icon icon="copy" color="#9281C5" style={{ cursor: 'pointer' }} onClick={handleCopy} />
           </App.Flex>
 
-          <App.ButtonGradient large width={['auto', '100%']} onClick={handleInvite}>{t('Invite Friends with Unique Link')}</App.ButtonGradient>
+          <App.ButtonGradient large width={['auto', '100%']} onClick={handleInvite}>{t('Invite Friends on X')}</App.ButtonGradient>
         </App.Flex>
       </App.Flex>
     </App.Flex>

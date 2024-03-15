@@ -66,8 +66,8 @@ const TournamentPage = () => {
                   )
                 : (
                   <>
-                    <App.Text weight={600} color="#9B99AE">Closed at</App.Text>
-                    <App.Text weight={700} size={40} height={1.1}>{ moment(tournament.end_time).format('DD.MM.YYYY') }</App.Text>
+                    <App.Text weight={600} color="#9B99AE">Time since close</App.Text>
+                    <TournamentCountdown alternate endTime={tournament.end_time} />
                   </>
                 )}
               </App.Flex>

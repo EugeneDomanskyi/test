@@ -4,8 +4,6 @@ import { QuestWidget } from '@bandit-network/quest-widget'
 
 import App from '@/components/App'
 
-import '@bandit-network/quest-widget/dist/styles.css'
-
 const PointsContributor = () => {
   const { t } = useTranslation()
 

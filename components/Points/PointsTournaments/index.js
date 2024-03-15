@@ -44,9 +44,9 @@ const PointsTournaments = () => {
 
   const getTimer = (status) => {
     switch (status) {
-      case 'ongoing': return t('Tournament ends in:')
-      case 'upcoming': return t('Tournament starts in:')
-      case 'closed': return t('Tournament closed at:')
+      case 'ongoing': return t('Ends in:')
+      case 'upcoming': return t('Starts in:')
+      case 'closed': return t('Time since close:')
       default: return t('Unknown')
     }
   }
@@ -85,11 +85,7 @@ const PointsTournaments = () => {
                   <App.Flex fullWidth row align="center" justify="space-between" gap={12}>
                     <App.Flex column gap={8}>
                       <App.Text size={12} color="#9B99AE">{getTimer(status)}</App.Text>
-                      {status == 'closed' ? (
-                        <App.Text weight={700} size={28}>{ moment(item.end_time).format('DD.MM.YYYY') }</App.Text>
-                      ) : (
-                        <TournamentCountdown small color={status == 'closed' ? '#9B99AE' : '#A6DC37'} hideSeconds endTime={item[status == 'ongoing' ? 'end_time' : 'start_time']} />
-                      )}
+                      <TournamentCountdown small alternate={status == 'closed'} color={status == 'closed' ? '#9B99AE' : '#A6DC37'} hideSeconds endTime={item[status != 'upcoming' ? 'end_time' : 'start_time']} />
                     </App.Flex>
 
                     <App.Frame width={130} padding={12} radius={14} background="#0B091566" gradient={status == 'ongoing' ? 'linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)' : '#FFFFFF1A'}>

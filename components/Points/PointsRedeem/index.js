@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import App from '@/components/App'
@@ -19,8 +19,16 @@ const PointsRedeem = () => {
     { value: 'consumables', label: t('Consumables') },
   ]
 
+  useEffect(() => {
+    const currentTab = localStorage.getItem('redeemTab')
+    if (currentTab) {
+      setTab(currentTab)
+    }
+  }, [])
+
   const handleTab = (value) => () => {
     setTab(value)
+    localStorage.setItem('redeemTab', value)
   }
 
   const getTabContent = () => {

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import App from '@/components/App'
@@ -21,8 +21,16 @@ const PointsEarn = () => {
     { value: 'quests', label: t('Third Party Quests') },
   ]
 
+  useEffect(() => {
+    const currentTab = localStorage.getItem('earnTab')
+    if (currentTab) {
+      setTab(currentTab)
+    }
+  }, [])
+
   const handleTab = (value) => () => {
     setTab(value)
+    localStorage.setItem('earnTab', value)
   }
 
   const getTabContent = () => {

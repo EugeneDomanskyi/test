@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 
@@ -17,8 +17,16 @@ const PointsDashboard = () => {
 
   const [section, setSection] = useState('earn')
 
+  useEffect(() => {
+    const currentSection = localStorage.getItem('pointsSection')
+    if (currentSection) {
+      setSection(currentSection)
+    }
+  }, [])
+
   const handleSection = (value) => () => {
     setSection(value)
+    localStorage.setItem('pointsSection', value)
   }
 
   const handleConnect = () => {
@@ -28,51 +36,57 @@ const PointsDashboard = () => {
   return (
     <App.Flex column fullWidth className={styles.container}>
       <App.Flex column fullWidth className={!connection.loading && !connection.connected ? styles.tiger : null}>
-        <App.Container maxWidth={1230} sx={[{ paddingTop: 90 }, { paddingTop: 60 }]}>
-          <App.Flex fullWidth row align="center" justify="space-between" sx={{ padding: '16px 0' }}>
-            <App.Flex center gap={[32, 16]}>
-              <App.Flex center gap={4} sx={{ cursor: 'pointer' }} onClick={handleSection('earn')}>
-                <App.Icon icon="earn" color={section == 'earn' ? '#A6DC37' : '#fff'} />
-                <App.Text weight={700} color={section == 'earn' ? '#A6DC37' : '#fff'}>{t('Earn')}</App.Text>
-              </App.Flex>
+        <App.Container maxWidth={1230} height="100%" sx={[{ paddingTop: 90 }, { paddingTop: 60 }]}>
+          <App.Flex column full>
+            <App.Flex fullWidth row align="center" justify="space-between" sx={{ padding: '16px 0' }}>
+              {!connection.loading && connection.connected ? (
+                <App.Flex center gap={[32, 16]}>
+                  <App.Flex center gap={4} sx={{ cursor: 'pointer' }} onClick={handleSection('earn')}>
+                    <App.Icon icon="earn" color={section == 'earn' ? '#A6DC37' : '#fff'} />
+                    <App.Text weight={700} color={section == 'earn' ? '#A6DC37' : '#fff'}>{t('Earn')}</App.Text>
+                  </App.Flex>
 
-              <div className={styles.hr} />
+                  <div className={styles.hr} />
 
-              <App.Flex center gap={4} sx={{ cursor: 'pointer' }} onClick={handleSection('redeem')}>
-                <App.Icon icon="redeem" color={section == 'redeem' ? '#A6DC37' : '#fff'} />
-                <App.Text weight={700} color={section == 'redeem' ? '#A6DC37' : '#fff'}>{t('Redeem')}</App.Text>
-              </App.Flex>
-            </App.Flex>
-
-            <App.Flex center gap={[20, 10]}>
-              <Link href="/points-dashboard/faq">
-                <App.Icon icon="question-circle" />
-              </Link>
-
-              <SwitchLanguage />
-            </App.Flex>
-          </App.Flex>
-
-          {connection.loading ? (
-            <App.LoaderBlock height={300} />
-          ) : (
-            connection.connected ? (
-              section == 'earn' ? (
-                <PointsEarn />
-              ) : (
-                <PointsRedeem />
-              )
-            ) : (
-              <App.Flex column width={[614, '100%']} gap={40} align="flex-start" sx={[{ paddingTop: 186, paddingBottom: 236 }, { paddingTop: 40, paddingBottom: 300 }]}>
-                <App.Flex column gap={8}>
-                  <App.Text size={[80, 52]} weight={800} height={1.2}>{t('Start your points')} <App.Text inline italic size={[80, 52]} weight={700} family="Playfair Display" height={1.2} color="#7364FF">{t('Quest')}</App.Text></App.Text>
-                  <App.Text szie={[12, 14]} color="#9B99AE">{t('Join forces with fellow traders on a quest for glory and exclusive rewards. Connect your wallet to unleash the power of points and start your legendary journey.')}</App.Text>
+                  <App.Flex center gap={4} sx={{ cursor: 'pointer' }} onClick={handleSection('redeem')}>
+                    <App.Icon icon="redeem" color={section == 'redeem' ? '#A6DC37' : '#fff'} />
+                    <App.Text weight={700} color={section == 'redeem' ? '#A6DC37' : '#fff'}>{t('Redeem')}</App.Text>
+                  </App.Flex>
                 </App.Flex>
+              ) : (
+                <App.Flex />
+              )}
 
-                <App.ButtonGradient onClick={handleConnect}>{t('Connect Wallet')}</App.ButtonGradient>
+              <App.Flex center gap={[20, 10]}>
+                <Link href="/points-dashboard/faq">
+                  <App.Icon icon="question-circle" />
+                </Link>
+
+                <SwitchLanguage />
               </App.Flex>
-            )
-          )}
+            </App.Flex>
+
+            {connection.loading ? (
+              <App.LoaderBlock height={300} />
+            ) : (
+              connection.connected ? (
+                section == 'earn' ? (
+                  <PointsEarn />
+                ) : (
+                  <PointsRedeem />
+                )
+              ) : (
+                <App.Flex column flex={1} width={[614, '100%']} gap={40} align="flex-start" justify={['center', 'flex-start']}>
+                  <App.Flex column gap={8}>
+                    <App.Text size={[80, 52]} weight={800} height={1.2}>{t('Start your points')} <App.Text inline italic size={[80, 52]} weight={700} family="Playfair Display" height={1.2} color="#7364FF">{t('Quest')}</App.Text></App.Text>
+                    <App.Text szie={[12, 14]} color="#9B99AE">{t('Join forces with fellow traders on a quest for glory and exclusive rewards. Connect your wallet to unleash the power of points and start your legendary journey.')}</App.Text>
+                  </App.Flex>
+
+                  <App.ButtonGradient onClick={handleConnect}>{t('Connect Wallet')}</App.ButtonGradient>
+                </App.Flex>
+              )
+            )}
+          </App.Flex>
         </App.Container>
       </App.Flex>
     </App.Flex>

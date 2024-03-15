@@ -1,8 +1,8 @@
 import App from '@/components/App'
 import useCountdown from '@/myhooks/useCountdown'
 
-const TournamentCountdown = ({ endTime, small, hideSeconds, color = '#A6DC37' }) => {
-  const duration = useCountdown(endTime)
+const TournamentCountdown = ({ endTime, small, alternate, hideSeconds, color = '#A6DC37' }) => {
+  const duration = useCountdown(endTime, alternate)
   return (
       <App.Flex align="center" gap={small ? 4 : 8}>
         <App.Flex align={'flex-end'}>

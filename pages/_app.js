@@ -22,6 +22,7 @@ import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
 import Head from '@/components/Head'
 
+import '@bandit-network/quest-widget/dist/styles.css'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import '@rainbow-me/rainbowkit/styles.css'
