@@ -18,9 +18,9 @@ const PointsRefer = () => {
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
   const [points, setPoints] = useState(50)
+  const [hasReferrals, setHasReferrals] = useState(false)
 
   const userCode = 'uoipokkjg267yguidjnp'
-  const hasReferrals = true
 
   const marks = [...new Array(21)].map((_, i) => {
     const isNum = !(i % 5)
@@ -37,6 +37,7 @@ const PointsRefer = () => {
 
   const handleInvite = () => {
     console.log('Invite')
+    setHasReferrals(!hasReferrals)
   }
 
   const handleChangeRange = (value) => {
