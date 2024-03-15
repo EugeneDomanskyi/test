@@ -17,7 +17,7 @@ const PointsEarn = () => {
   const tabs = [
     { value: 'tournaments', label: t('Trading Tournaments') },
     { value: 'refer', label: t('Refer & Earn') },
-    { value: 'contributor', label: t('Become a contributor') },
+    { value: 'contributor', label: t('Become a Contributor') },
     { value: 'quests', label: t('Third Party Quests') },
   ]
 

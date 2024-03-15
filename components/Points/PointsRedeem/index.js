@@ -14,8 +14,8 @@ const PointsRedeem = () => {
   const [tab, setTab] = useState('shm')
 
   const tabs = [
-    { value: 'shm', label: t('SHM lootboxes') },
-    { value: 'tgr', label: t('TGR lootboxes') },
+    { value: 'shm', label: t('SHM Lootboxes') },
+    { value: 'tgr', label: t('TGR Lootboxes') },
     { value: 'consumables', label: t('Consumables') },
   ]
 
