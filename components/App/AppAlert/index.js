@@ -56,7 +56,9 @@ const AppAlert = () => {
               }, message.delay)
             }
           } else {
-            appPost({notification: message})
+            if (message?.title !== 'Congratulations!') {
+              appPost({notification: message})
+            }
           }
         }
 
