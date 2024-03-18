@@ -122,7 +122,9 @@ const Exchange = () => {
     if (!fauceWallets.includes(wallet.toLowerCase())) {
       fauceWallets.push(wallet.toLowerCase())
       localStorage.setItem('faucet-wallets', JSON.stringify(fauceWallets))
-      setIsFaucetOnceVisible(true)
+      if (! isApp) {
+        setIsFaucetOnceVisible(true)
+      }
     }
   }
 
