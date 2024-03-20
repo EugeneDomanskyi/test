@@ -123,18 +123,18 @@ MyApp.getInitialProps = async ({ ctx }) => {
     devMode = ctx.req.headers['x-tegro-dev-mode'] == 'true' ? true : null
 
     const result = await $app.api.chains()
-    if (result) {
-      chains = result.map(item => {
+    if (result?.success) {
+      chains = result.data.map(item => {
         return {
-          id: item.ChainId,
+          id: item.id,
           token: {
-            symbol: item.DefaultQuoteTokenSymbol,
-            address: item.DefaultQuoteTokenContractAddress.toLowerCase(),
-            image: item.Logo || (item.DefaultQuoteTokenSymbol == 'USDT' ? '/images/icon-usdt.png' : '') || `https://storage.googleapis.com/token-assets/assets/${item?.Name}/${item.DefaultQuoteTokenContractAddress.toLowerCase()}.png`
+            symbol: item.default_quote_token_symbol,
+            address: item.default_quote_token_contract_address.toLowerCase(),
+            image: item.logo || (item.default_quote_token_symbol == 'USDT' ? '/images/icon-usdt.png' : '') || `https://storage.googleapis.com/token-assets/assets/${item?.name}/${item.default_quote_token_contract_address.toLowerCase()}.png`
           },
           contract: {
-            exchange: item.ExchangeContract.toLowerCase(),
-            settlement: item.SettlementContract.toLowerCase(),
+            exchange: item.exchange_contract.toLowerCase(),
+            settlement: item.settlement_contract.toLowerCase(),
           },
         }
       })
