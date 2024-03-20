@@ -63,7 +63,7 @@ export const request = async (uri, method = 'GET', {api, ...data} = {}) => {
     }
   }
 
-  const base_url = api == 'remote' ? '' : (api == 'local' ? '/' : process.env.NEXT_PUBLIC_BACKEND_URL)
+  const base_url = getBaseUrl(api)
   const response = await fetch(`${base_url}${uri}${query}`, options).catch(errorHandler)
 
   if (response?.ok) {
@@ -103,6 +103,17 @@ const queryBuilder = (data) => {
   }
   
   return ''
+}
+
+const getBaseUrl = (api) => {
+  switch (api) {
+    case 'accounts':
+      return process.env.NEXT_PUBLIC_ACCOUNTS_URL
+    case 'exchange':
+      return process.env.NEXT_PUBLIC_EXCHANGE_URL
+    default:
+      return process.env.NEXT_PUBLIC_BACKEND_URL
+  }
 }
 
 export default createStore

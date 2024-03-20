@@ -5,21 +5,21 @@ import { CHAINS } from '@/config'
 import { request } from './index'
 
 export const template = (item) => {
-  const blockchain = CHAINS.find(chain => chain.id == item.ChainId)
+  const blockchain = CHAINS.find(chain => chain.id == item.chain_id)
 
-  if (item?.BaseContractAddress) {
+  if (item?.base_contract_address) {
     return {
-      id: item.BaseContractAddress.toLowerCase(),
-      address: item.BaseContractAddress.toLowerCase(),
-      quote: item.QuoteContractAddress.toLowerCase(),
-      marketId: item.ID,
-      name: `${item.BaseSymbol}/${item.QuoteSymbol}`,
-      symbol: item.BaseSymbol,
-      quoteSymbol: item.QuoteSymbol,
-      decimals: item.BaseDecimal,
-      quoteDecimals: item.QuoteDecimal,
+      id: item.base_contract_address,
+      address: item.base_contract_address,
+      quote: item.quote_contract_address,
+      marketId: item.id,
+      name: `${item.base_symbol}/${item.quote_symbol}`,
+      symbol: item.base_symbol,
+      quoteSymbol: item.quote_symbol,
+      decimals: item.base_decimal,
+      quoteDecimals: item.quote_decimal,
       blockchain: blockchain?.code,
-      image: `https://storage.googleapis.com/token-assets/assets/${blockchain?.code}/${item.BaseContractAddress.toLowerCase()}.png`,
+      image: `https://storage.googleapis.com/token-assets/assets/${blockchain?.code}/${item.base_contract_address}.png`,
       volume: item.ticker.quote_volume,
       price: item.ticker.price,
       high: item.ticker.price_high_24h,
@@ -139,7 +139,7 @@ const get = {
 
 const api = {
   all: (params) => {
-    return request('market/list', 'GET', params)
+    return request(`${params.chain_id}/market/list`, 'GET', {api: "exchange", ...params})
   },
 }
 

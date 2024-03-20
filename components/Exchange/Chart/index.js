@@ -123,15 +123,17 @@ const TradeChart = ({ version, showSwitch, top = [] }) => {
     const post = {
       market_id: current.marketId,
       chain_id: blockchain.id,
-      base_asset: current.id,
-      quote_asset: current.quote,
       interval: activeInterval.seconds,
       to: to.getTime(),
       from: from.getTime(),
     }
 
     const result = await $orders.api.chart(post)
-    dispatch($orders.set.chart(result ?? []))
+    if (result && result.success && Array.isArray(result.data)) {
+      dispatch($orders.set.chart(result.data))
+    } else {
+      dispatch($orders.set.chart([]))
+    }
   }
 
   const handleChangeInterval = (interval) => () => {

@@ -117,7 +117,7 @@ export const api = {
   },
 
   chains: () => {
-    return request(`chain/list/`)
+    return request(`chain/list`, 'GET', {api: 'exchange'})
   },
 
   totalTradingVolume: () => {

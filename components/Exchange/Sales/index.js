@@ -40,10 +40,17 @@ const Sales = ({ version, onClickSale }) => {
       address: current.address,
       market_id: current.marketId,
       blockchain: blockchain.code,
+      chain_id: blockchain.id,
       limit: 10,
     })
 
-    dispatch($orders.set.trades({data: result ?? [], token: current}))
+    if (result?.success && Array.isArray(result.data)) {
+      dispatch($orders.set.trades({data: result.data, token: current}))
+    } else {
+      dispatch($orders.set.trades({data: [], token: current}))
+    }
+
+
     setLoading(false)
   }
 
