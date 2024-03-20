@@ -1,19 +1,48 @@
 import { useTranslation } from 'react-i18next'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import cn from 'classnames'
+
+import useWalletConnect from '@/myhooks/wallet-connect'
+
+import $point from '@/store/point'
 
 import App from '@/components/App'
 import SwitchLanguage from '@/components/SwitchLanguage'
 
 import styles from './styles.module.scss'
+import { useEffect } from 'react'
 
 const ReferralHistory = () => {
   const { t } = useTranslation()
   const router = useRouter()
 
+  const { wallet } = useWalletConnect()
+
+  const dispatch = useDispatch()
+  const history = useSelector(({ $point }) => $point.history)
+
+  useEffect(() => {
+    if (wallet) {
+      fetchHistory()
+    }
+  }, [wallet])
+
+  const fetchHistory = async () => {
+    const result = await $point.api.history(wallet, {})
+    if (result && result?.data) {
+      dispatch($point.set.history(result.data))
+    }
+  }
+
   const handleDashboard = () => {
     router.push(`/points-dashboard`)
+  }
+
+  const getShort = (address) => {
+    const n = isMobile ? 4 : 8
+    return `${address.substring(0, n)}...${address.substring(address.length - n)}`
   }
 
   return (
@@ -60,60 +89,30 @@ const ReferralHistory = () => {
               <App.Flex column fullWidth gap={16} className={styles.scroll}>
                 <div className={styles.line} />
 
-                <App.Flex row align="center" fullWidth>
-                  <App.Flex column justify="flex-start" flex={1}>
-                    <App.Text left weight={600}>231nhgj...9fe030</App.Text>
-                    <App.Text left color="#9B99AE">08.11.23</App.Text>
-                  </App.Flex>
+                {history.map(item => {
+                  return (
+                    <React.Fragment key={item.id}>
+                      <App.Flex row align="center" fullWidth>
+                        <App.Flex column justify="flex-start" flex={1}>
+                          <App.Text left weight={600}>{getShort(item.referral_user.wallet_address)}</App.Text>
+                          <App.Text left color="#9B99AE">{moment(item.created_at).format('DD.MM.YY')}</App.Text>
+                        </App.Flex>
 
-                  <App.Flex justify="center" flex={1}>
-                    <App.Flex center className={cn(styles.status, styles.trade)}>
-                      <App.Text center uppercase size={12} weight={700}>{t('Trade Executed')}</App.Text>
-                    </App.Flex>
-                  </App.Flex>
+                        <App.Flex justify="center" flex={1}>
+                          <App.Flex center className={cn(styles.status, styles.trade)}>
+                            <App.Text center uppercase size={12} weight={700}>{t(item.reason)}</App.Text>
+                          </App.Flex>
+                        </App.Flex>
 
-                  <App.Flex justify="flex-end" flex={1} sx={{ paddingRight: 10 }}>
-                    <App.Text right italic size={16} weight={700} family="Playfair Display">{t('{{amount}} points', {amount: 50})}</App.Text>
-                  </App.Flex>
-                </App.Flex>
+                        <App.Flex justify="flex-end" flex={1} sx={{ paddingRight: 10 }}>
+                          <App.Text right italic size={16} weight={700} family="Playfair Display">{t('{{amount}} points', {amount: item.points})}</App.Text>
+                        </App.Flex>
+                      </App.Flex>
 
-                <div className={styles.line} />
-
-                <App.Flex row align="center" fullWidth>
-                  <App.Flex column justify="flex-start" flex={1}>
-                    <App.Text left weight={600}>231nhgj...9fe030</App.Text>
-                    <App.Text left color="#9B99AE">08.11.23</App.Text>
-                  </App.Flex>
-
-                  <App.Flex justify="center" flex={1}>
-                    <App.Flex center className={cn(styles.status, styles.trade)}>
-                      <App.Text center uppercase size={12} weight={700}>{t('Trade Executed')}</App.Text>
-                    </App.Flex>
-                  </App.Flex>
-
-                  <App.Flex justify="flex-end" flex={1} sx={{ paddingRight: 10 }}>
-                    <App.Text right italic size={16} weight={700} family="Playfair Display">{t('{{amount}} points', {amount: 50})}</App.Text>
-                  </App.Flex>
-                </App.Flex>
-
-                <div className={styles.line} />
-
-                <App.Flex row align="center" fullWidth>
-                  <App.Flex column justify="flex-start" flex={1}>
-                    <App.Text left weight={600}>231nhgj...9fe030</App.Text>
-                    <App.Text left color="#9B99AE">08.11.23</App.Text>
-                  </App.Flex>
-
-                  <App.Flex justify="center" flex={1}>
-                    <App.Flex center className={cn(styles.status, styles.trade)}>
-                      <App.Text center uppercase size={12} weight={700}>{t('Trade Executed')}</App.Text>
-                    </App.Flex>
-                  </App.Flex>
-
-                  <App.Flex justify="flex-end" flex={1} sx={{ paddingRight: 10 }}>
-                    <App.Text right italic size={16} weight={700} family="Playfair Display">{t('{{amount}} points', {amount: 50})}</App.Text>
-                  </App.Flex>
-                </App.Flex>
+                      <div className={styles.line} />
+                    </React.Fragment>
+                  )}
+                )}
               </App.Flex>
             </App.Flex>
           </App.Flex>

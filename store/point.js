@@ -1,0 +1,48 @@
+import { createSlice } from '@reduxjs/toolkit'
+
+import { request } from './index'
+
+export const pointSlice = createSlice({
+  name: '$point',
+
+  initialState: {
+    referral: {
+      id: 0,
+      points: 0,
+      referral_code: '',
+      referrals_count: 0,
+    },
+
+    history: [],
+  },
+
+  reducers: {
+    referral: (state, { payload }) => {
+      state.referral = payload
+    },
+
+    history: (state, { payload }) => {
+      state.history = payload
+    },
+  },
+})
+
+export const api = {
+  register: (params) => {
+    return request(`user/create`, 'POST', {api: 'accounts', ...params})
+  },
+
+  referral: (wallet) => {
+    return request(`user/${wallet}`, 'GET', {api: 'accounts'})
+  },
+
+  history: (wallet, params) => {
+    return request(`user/${wallet}/referral/transactions`, 'GET', {api: 'accounts', ...params})
+  },
+}
+
+export default {
+  reducer: pointSlice.reducer,
+  set: pointSlice.actions,
+  api,
+}

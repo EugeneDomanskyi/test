@@ -9,6 +9,7 @@ import $raffle from './raffle'
 import $markets from './markets'
 import $portfolio from './portfolio'
 import $tournament from './tournament'
+import $point from './point'
 
 const createStore = (initialData) => {
   return configureStore({
@@ -21,6 +22,7 @@ const createStore = (initialData) => {
       $markets: $markets.reducer,
       $portfolio: $portfolio.reducer,
       $tournament: $tournament.reducer,
+      $point: $point.reducer,
     },
 
     preloadedState: {
@@ -63,7 +65,22 @@ export const request = async (uri, method = 'GET', {api, ...data} = {}) => {
     }
   }
 
-  const base_url = api == 'remote' ? '' : (api == 'local' ? '/' : process.env.NEXT_PUBLIC_BACKEND_URL)
+  let base_url = process.env.NEXT_PUBLIC_BACKEND_URL
+  switch (api) {
+    case 'remote':
+      base_url = ''
+      break
+    case 'local':
+      base_url = '/'
+      break
+    case 'accounts':
+      base_url = process.env.NEXT_PUBLIC_ACCOUNTS_URL
+      break
+    default:
+      base_url = process.env.NEXT_PUBLIC_BACKEND_URL
+      break
+  }
+
   const response = await fetch(`${base_url}${uri}${query}`, options).catch(errorHandler)
 
   if (response?.ok) {
