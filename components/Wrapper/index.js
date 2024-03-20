@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
@@ -26,11 +26,18 @@ const Wrapper = ({ children }) => {
   const isExchange = router.asPath?.includes('/exchange')
   const { referral } = router.query
 
+  const [isInIframe, setIsInIframe] = useState(false);
+
   const { isApp, platform } = useApp()
   Amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY, !isApp, platform ?? 'Web')
 
   useEffect(() => {
     window.addEventListener('resize', handleWindowResize)
+
+    if (window.self !== window.top) {
+      setIsInIframe(true)
+    }
+
     return () => {
       window.removeEventListener('resize', handleWindowResize)
     }
@@ -78,12 +85,16 @@ const Wrapper = ({ children }) => {
         </App.Flex>
       </App.TopBanner> */}
 
-      <div style={{height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden'}}>
-        <Analytics />
-        {!isCampaign && !isApp ? <Header /> : null}
-        {children}
-        {!isCampaign && !isApp && !isExchange ? <Footer /> : null}
-      </div>
+      {
+        ! isInIframe
+          ? <div style={{height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden'}}>
+              <Analytics />
+              {!isCampaign && !isApp ? <Header /> : null}
+              {children}
+              {!isCampaign && !isApp && !isExchange ? <Footer /> : null}
+            </div>
+          : <Footer />
+      }
     </div>
   )
 }
