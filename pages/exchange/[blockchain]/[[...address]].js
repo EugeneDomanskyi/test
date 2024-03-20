@@ -250,7 +250,7 @@ const Exchange = () => {
         appConnectionLoading ? (
           <App.Flex column center gap={8} className={styles.appLoader}>
             <App.Loader />
-            <App.Text>Connection...</App.Text>
+            <App.Text>Connecting...</App.Text>
           </App.Flex>
         ) : (
           ! connection.connected ? (

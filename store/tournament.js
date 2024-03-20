@@ -32,7 +32,7 @@ const api = {
   },
 
   get: (alias) => {
-    return request(`tournament/${alias}`)
+    return request(`tournament/${alias}`, 'GET', {api: 'exchange'})
   },
 
   create: (post) => {
@@ -40,15 +40,15 @@ const api = {
   },
 
   current: () => {
-    return request(`tournament/current`)
+    return request(`tournament/current`, 'GET', {api: 'exchange'})
   },
 
   leaderboard: (alias) => {
-    return request(`tournament/${alias}/leaderboard`)
+    return request(`tournament/${alias}/leaderboard`, 'GET', {api: 'exchange'})
   },
 
   walletResult: (alias, wallet) => {
-    return request(`tournament/${alias}/leaderboard/${wallet}`) // 0x113128f65d830b5295cef847597f4655f3d8e47c
+    return request(`tournament/${alias}/leaderboard/${wallet}`, 'GET', {api: 'exchange'}) // 0x113128f65d830b5295cef847597f4655f3d8e47c
   },
 }
 

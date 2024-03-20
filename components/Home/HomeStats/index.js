@@ -42,6 +42,7 @@ const HomeStats = () => {
         <App.Flex row fullWidth gap={16}>
           <App.Flex row flex={1} gap={16}>
             <App.Flex column flex={1} gap={16}>
+              <App.Text center tag="h2" uppercase size={40} weight={700} height={1}>Testnet Stats</App.Text>
               <App.Flex column center gap={32} className={styles.statsGradientBox}>
                 <App.Flex center column>
                   <App.Text center size={24} weight={700} height={1.2}>Total Trades Settled</App.Text>
@@ -58,7 +59,7 @@ const HomeStats = () => {
               </App.Flex>
 
               <App.Flex column>
-                <App.Text size={14} weight={400} color="#9B99AE" className={styles.bottomText}><a href="https://stats.tegro.com/?utm_source=home&utm_medium=tegro&utm_campaign=testnet" target="_blank" rel="noreferrer">View more stats &gt;</a></App.Text>
+                <App.Text size={14} weight={400} color="#9B99AE" className={styles.bottomText} height={1}><a href="https://stats.tegro.com/?utm_source=home&utm_medium=tegro&utm_campaign=testnet" target="_blank" rel="noreferrer">View more Testnet Stats &gt;</a></App.Text>
               </App.Flex>
             </App.Flex>
 
@@ -139,6 +140,8 @@ const HomeStats = () => {
         </App.Text>
         
         <App.Flex fullWidth column gap={16}>
+          <App.Text center tag="h2" uppercase size={40} weight={700} height={1}>Testnet Stats</App.Text>
+
           <App.Flex column center gap={12} className={styles.statsGradientBox}>
             <App.Flex center column>
               <App.Text center size={20} weight={700} height={1.2}>Total Trades Settled</App.Text>
@@ -229,7 +232,7 @@ const HomeStats = () => {
           </App.Flex>
 
           <App.Flex center>
-            <App.Text center size={14} weight={400} color="#9B99AE" className={styles.bottomText}><a href="https://stats.tegro.com/?utm_source=home&utm_medium=tegro&utm_campaign=testnet" target="_blank" rel="noreferrer">View more stats &gt;</a></App.Text>
+            <App.Text center size={14} weight={400} color="#9B99AE" className={styles.bottomText}><a href="https://stats.tegro.com/?utm_source=home&utm_medium=tegro&utm_campaign=testnet" target="_blank" rel="noreferrer">View more Testnet Stats &gt;</a></App.Text>
           </App.Flex>
         </App.Flex>
       </App.Flex>
