@@ -1,4 +1,4 @@
-import { polygonMumbai } from '@wagmi/chains'
+import { polygonMumbai, arbitrum } from '@wagmi/chains'
 import { optimismSepolia } from 'wagmi/chains'
 
 const mumbaiWithCustomRPC = {
@@ -46,10 +46,22 @@ const TEST_NETWORKS = [
       txUrl: 'https://mumbai.polygonscan.com/tx/',
       rewardEndpoint: 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status',
     },
-    defaultFor: 'local',
+  }
+]
+
+const MAINNET_NETWORKS = [
+  {
+    ...arbitrum,
+    code: 'arbitrum',
+    currency: arbitrum.nativeCurrency.symbol,
+    decimals: arbitrum.nativeCurrency.decimals,
+    scanUrl: arbitrum.blockExplorers.default.url,
+    pages: ['earn', 'exchange'],
   }
 ]
 
 export const CHAINS = [
-  ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? TEST_NETWORKS : []),
+  // ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? TEST_NETWORKS : []),
+  ...MAINNET_NETWORKS,
+  ...TEST_NETWORKS,
 ]
