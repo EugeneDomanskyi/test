@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
@@ -12,7 +13,6 @@ import App from '@/components/App'
 import SwitchLanguage from '@/components/SwitchLanguage'
 
 import styles from './styles.module.scss'
-import { useEffect } from 'react'
 
 const ReferralHistory = () => {
   const { t } = useTranslation()
