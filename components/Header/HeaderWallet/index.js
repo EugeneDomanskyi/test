@@ -31,6 +31,7 @@ const HeaderWallet = () => {
   const portfolioList = useSelector(({ $portfolio }) => $portfolio.list)
   const raffleLoading = useSelector(({ $raffle }) => $raffle.loadingUser)
   const raffleBalance = useSelector(({ $raffle }) => $raffle.balance)
+  const referral = useSelector(({ $point }) => $point.referral)
 
   const [isDisconnectDialogOpen, setIsDisconnectDialogOpen] = useState(false)
   const [balanceLoading, setBalanceLoading] = useState(true)
@@ -155,7 +156,7 @@ const HeaderWallet = () => {
           {isPoints ? (
             <>
               <App.Flex row center gap={12}>
-                <App.Text nowrap weight={600}>230 points</App.Text>
+                <App.Text nowrap weight={600}>{referral.points} points</App.Text>
 
                 <App.Frame padding={0} radius={24} width={24} height={24} sx={{ cursor: 'pointer' }} onClick={handleTransactions} gradient="linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)">
                   <App.Flex full center>
