@@ -107,6 +107,10 @@ const queryBuilder = (data) => {
 
 const getBaseUrl = (api) => {
   switch (api) {
+    case 'remote':
+      return ''
+    case 'local':
+      return '/'
     case 'accounts':
       return process.env.NEXT_PUBLIC_ACCOUNTS_URL
     case 'exchange':
