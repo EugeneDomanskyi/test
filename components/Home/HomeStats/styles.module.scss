@@ -3,6 +3,11 @@
   border-radius: 16px;
   background: radial-gradient(113.88% 113.88% at 67.99% -35.17%, #231F38 0%, #100D21 100%);
 
+  &.gradient {
+    background: linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%);
+    border: 0;
+  }
+
   .inner {
     padding: 24px;
     border-radius: 16px;
@@ -14,6 +19,10 @@
 
     &.inner2 {
       background: url('/images/home/features-new-2.png') center bottom / contain no-repeat;
+    }
+
+    &.inner3 {
+      background: url('/images/home/features-new-3.png') right center / contain no-repeat;
     }
   }
 }
