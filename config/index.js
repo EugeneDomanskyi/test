@@ -56,7 +56,7 @@ const MAINNET_NETWORKS = [
     currency: arbitrum.nativeCurrency.symbol,
     decimals: arbitrum.nativeCurrency.decimals,
     scanUrl: arbitrum.blockExplorers.default.url,
-    pages: ['earn', 'exchange'],
+    pages: ['earn', 'exchange']
   }
 ]
 
