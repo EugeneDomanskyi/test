@@ -1,64 +1,85 @@
-.container {
-  position: relative;
-  z-index: 0;
+.box {
+  border: 1px solid #574E74;
+  border-radius: 16px;
+  background: radial-gradient(113.88% 113.88% at 67.99% -35.17%, #231F38 0%, #100D21 100%);
 
-  .background1 {
-    width: 600px;
-    height: 570px;
-    position: absolute;
-    z-index: -1;
-    left: -154px;
-    top: 0;
-    background: url('/images/home/features-6.png') center no-repeat;
-    background-size: cover;
+  &.gradient {
+    background: linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%);
+    border: 0;
   }
 
-  .background2 {
-    width: 1132px;
-    height: 1228px;
-    position: absolute;
-    z-index: -1;
-    right: -624px;
-    top: -364px;
-    background: url('/images/home/features-7.png') center no-repeat;
-    background-size: cover;
+  .inner {
+    padding: 24px;
+    border-radius: 16px;
+
+    @media (max-width: 768px) {
+      padding: 16px;
+    }
+
+    &.inner1 {
+      background: url('/images/home/features-new-1.png') center bottom / contain no-repeat;
+      height: 458px;
+
+      @media (max-width: 768px) {
+        height: 336px;
+      }
+    }
+
+    &.inner2 {
+      background: url('/images/home/features-new-2.png') center bottom / contain no-repeat;
+
+      @media (max-width: 768px) {
+        height: 240px;
+      }
+    }
+
+    &.inner3 {
+      background: url('/images/home/features-new-3.png') right center / contain no-repeat;
+
+      @media (max-width: 768px) {
+        background: url('/images/home/features-new-3m.png') right bottom no-repeat;
+        height: 240px;
+      }
+    }
+
+    &.inner4 {
+      background: url('/images/home/features-new-4.png') center bottom / contain no-repeat;
+      height: 400px;
+
+      @media (max-width: 768px) {
+        background: url('/images/home/features-new-4m.png') center bottom / contain no-repeat;
+        height: 240px;
+      }
+    }
+
+    &.inner5 {
+      background: url('/images/home/features-new-5.png') center bottom / contain no-repeat;
+      height: 400px;
+
+      @media (max-width: 768px) {
+        background: url('/images/home/features-new-5m.png') center bottom / contain no-repeat;
+        height: 240px;
+      }
+    }
+
+    &.inner6 {
+      background: url('/images/home/features-new-6.png') center bottom / contain no-repeat;
+      height: 400px;
+
+      @media (max-width: 768px) {
+        background: url('/images/home/features-new-6m.png') center bottom / contain no-repeat;
+        height: 240px;
+      }
+    }
+
+    &.inner7 {
+      background: url('/images/home/features-new-7.png') right bottom / cover no-repeat;
+      height: 180px;
+
+      @media (max-width: 768px) {
+        background: url('/images/home/features-new-7m.png') center bottom / contain no-repeat;
+        height: 240px;
+      }
+    }
   }
-}
-
-.sep {
-  height: 52px;
-  width: 1px;
-  background-color: rgba(255, 255, 255, .1);
-
-  @media (max-width: 768px) {
-    display: none;
-  }
-}
-
-.name {
-  position: relative;
-  z-index: 0;
-
-  .ellipse {
-    position: absolute;
-    width: 200.71px;
-    height: 318.13px;
-    left: calc(50% - 170px);
-    top: calc(50% - 318.13px/2);
-
-    background: radial-gradient(66.09% 50% at 50% 50%, rgba(56, 28, 140, 0.4) 0%, rgba(56, 28, 140, 0) 100%);
-    filter: blur(40px);
-    transform: matrix(-0.87, 0.5, 0.5, 0.87, 0, 0);
-
-    flex: none;
-    order: 2;
-    flex-grow: 0;
-    z-index: 2;
-  }
-}
-
-.hr {
-  width: 100%;
-  height: 1px;
-  background-color: rgba(255, 255, 255, .1);
 }
