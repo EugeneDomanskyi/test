@@ -49,16 +49,7 @@ const TEST_NETWORKS = [
   }
 ]
 
-const MAINNET_NETWORKS = [
-  {
-    ...arbitrum,
-    code: 'arbitrum',
-    currency: arbitrum.nativeCurrency.symbol,
-    decimals: arbitrum.nativeCurrency.decimals,
-    scanUrl: arbitrum.blockExplorers.default.url,
-    pages: ['earn', 'exchange'],
-  }
-]
+const MAINNET_NETWORKS = []
 
 export const CHAINS = [
   // ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? TEST_NETWORKS : []),
