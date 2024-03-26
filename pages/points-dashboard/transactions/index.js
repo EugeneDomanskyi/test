@@ -1,18 +1,44 @@
-import { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+
+import useWalletConnect from '@/myhooks/wallet-connect'
+
+import $point from '@/store/point'
 
 import App from '@/components/App'
 import SwitchLanguage from '@/components/SwitchLanguage'
 
 import styles from './styles.module.scss'
+import moment from 'moment'
 
 const Transactions = () => {
   const { t } = useTranslation()
   const router = useRouter()
 
+  const { wallet } = useWalletConnect()
+
+  const dispatch = useDispatch()
+  const transactions = useSelector(({ $point }) => $point.transactions)
+
+  const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
+
+  useEffect(() => {
+    if (wallet) {
+      fetchTransactions()
+    }
+  }, [wallet])
+
+  const fetchTransactions = async () => {
+    const result = await $point.api.transactions(wallet, {})
+    if (result && result?.data) {
+      dispatch($point.set.transactions(result.data))
+    }
+    setLoading(false)
+  }
 
   const handleDashboard = () => {
     router.push(`/points-dashboard`)
@@ -20,6 +46,10 @@ const Transactions = () => {
 
   const handleFilter = (type) => () => {
     setFilter(type)
+  }
+
+  const getTransactions = () => {
+    return transactions.filter(item => filter == 'credit' ? item.reason == 'credit' : true)
   }
 
   return (
@@ -76,54 +106,32 @@ const Transactions = () => {
               <App.Flex column fullWidth gap={16} className={styles.scroll}>
                 <div className={styles.line} />
 
-                <App.Flex row align="center" fullWidth>
-                  <App.Flex column justify="flex-start" flex={1}>
-                    <App.Text left weight={600}>08.11.23</App.Text>
-                    <App.Text left color="#9B99AE">{t('at {{time}}', {time: '11:09 AM'})}</App.Text>
-                  </App.Flex>
+                {loading ? (
+                  <App.LoaderBlock height={200} />
+                ) : (
+                  getTransactions().map(item => {
+                    return (
+                      <React.Fragment key={item.id}>
+                        <App.Flex row align="center" fullWidth>
+                          <App.Flex column justify="flex-start" flex={1}>
+                            <App.Text left weight={600}>{moment(item.created_at).format('DD.MM.YY')}</App.Text>
+                            <App.Text left color="#9B99AE">{t('at {{time}}', {time: moment(item.created_at).format('h:mm A')})}</App.Text>
+                          </App.Flex>
 
-                  <App.Flex justify="center" flex={1}>
-                    <App.Text center weight={600}>{t('Tournaments: Bonus')}</App.Text>
-                  </App.Flex>
+                          <App.Flex justify="center" flex={1}>
+                            <App.Text center weight={600}>{t(item.reason)}</App.Text>
+                          </App.Flex>
 
-                  <App.Flex justify="flex-end" flex={1} sx={{ paddingRight: 10 }}>
-                    <App.Text right italic size={16} weight={700} color="#53F19C" family="Playfair Display">{t('+ {{amount}} points', {amount: 50})}</App.Text>
-                  </App.Flex>
-                </App.Flex>
+                          <App.Flex justify="flex-end" flex={1} sx={{ paddingRight: 10 }}>
+                            <App.Text right italic size={16} weight={700} color="#53F19C" family="Playfair Display">{item.type == 'earn' ? '+' : '-'} {t('{{amount}} point' + (item.amount > 1 ? 's' : ''), {amount: item.points})}</App.Text>
+                          </App.Flex>
+                        </App.Flex>
 
-                <div className={styles.line} />
-
-                <App.Flex row align="center" fullWidth>
-                  <App.Flex column justify="flex-start" flex={1}>
-                    <App.Text left weight={600}>08.11.23</App.Text>
-                    <App.Text left color="#9B99AE">{t('at {{time}}', {time: '11:09 AM'})}</App.Text>
-                  </App.Flex>
-
-                  <App.Flex justify="center" flex={1}>
-                    <App.Text center weight={600}>{t('Tournaments: Bonus')}</App.Text>
-                  </App.Flex>
-
-                  <App.Flex justify="flex-end" flex={1} sx={{ paddingRight: 10 }}>
-                    <App.Text right italic size={16} weight={700} color="#53F19C" family="Playfair Display">{t('+ {{amount}} points', {amount: 50})}</App.Text>
-                  </App.Flex>
-                </App.Flex>
-
-                <div className={styles.line} />
-
-                <App.Flex row align="center" fullWidth>
-                  <App.Flex column justify="flex-start" flex={1}>
-                    <App.Text left weight={600}>08.11.23</App.Text>
-                    <App.Text left color="#9B99AE">{t('at {{time}}', {time: '11:09 AM'})}</App.Text>
-                  </App.Flex>
-
-                  <App.Flex justify="center" flex={1}>
-                    <App.Text center weight={600}>{t('Tournaments: Bonus')}</App.Text>
-                  </App.Flex>
-
-                  <App.Flex justify="flex-end" flex={1} sx={{ paddingRight: 10 }}>
-                    <App.Text right italic size={16} weight={700} color="#53F19C" family="Playfair Display">{t('+ {{amount}} points', {amount: 50})}</App.Text>
-                  </App.Flex>
-                </App.Flex>
+                        <div className={styles.line} />
+                      </React.Fragment>
+                    )}
+                  )
+                )}
               </App.Flex>
             </App.Flex>
           </App.Flex>

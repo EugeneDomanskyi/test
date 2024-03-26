@@ -196,7 +196,7 @@ const PointsRefer = () => {
 
             <App.Flex row fullWidth align="center" justify="space-between">
               <App.Text color="#FFFFFF99">{t('Rewards')}</App.Text>
-              <App.Text size={32} weight={700}>1250 <App.Text inline italic size={16} weight={700} family="Playfair Display">{t('Points')}</App.Text></App.Text>
+              <App.Text size={32} weight={700}>{points * 25} <App.Text inline italic size={16} weight={700} family="Playfair Display">{t('Points')}</App.Text></App.Text>
             </App.Flex>
           </App.Flex>
 
