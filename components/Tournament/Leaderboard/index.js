@@ -3,7 +3,7 @@ import App from '@/components/App'
 import Image from 'next/image'
 import cn from 'classnames'
 import { useRef, useEffect, useState } from "react";
-import Button from "@/components/Tournamnet/Button";
+import Button from "@/components/Tournament/Button";
 
 const Leaderboard = ({leaderboard, walletResults, onClickWorks}) => {
 

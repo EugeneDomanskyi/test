@@ -52,7 +52,7 @@ const PointsRefer = () => {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(link)
-    dispatch($alert.set.success({ title: t('Code Copied'), text: t('The referral code has been successfully copied to clipboard') }))
+    dispatch($alert.set.success({ title: t('Link Copied'), text: t('The referral link has been successfully copied to clipboard') }))
   }
 
   const handleInvite = () => {

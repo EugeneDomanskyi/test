@@ -8,7 +8,7 @@ import cn from 'classnames'
 import $tournament from '@/store/tournament'
 
 import App from '@/components/App'
-import TournamentCountdown from '@/components/Tournamnet/TournamentCountdown'
+import TournamentCountdown from '@/components/Tournament/TournamentCountdown'
 
 import styles from './styles.module.scss'
 

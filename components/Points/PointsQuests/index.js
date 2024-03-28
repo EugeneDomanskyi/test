@@ -24,7 +24,7 @@ const PointsQuests = () => {
     if (wallet) {
       fetchQuests()
     }
-  }, [])
+  }, [wallet])
 
   const fetchQuests = async () => {
     const result = await $point.api.quests(wallet, {})
@@ -32,6 +32,17 @@ const PointsQuests = () => {
       dispatch($point.set.quests(result.data))
     }
     setLoading(false)
+  }
+
+  const handleClick = (url) => () => {
+    window.open(url ?? 'https://galxe.com/', '_blank')
+  }
+
+  const handleClaim = (id) => async () => {
+    const result = await $point.api.questClaim(wallet, { quest_id: id })
+    if (result && result?.data) {
+      fetchQuests()
+    }
   }
 
   return (
@@ -50,7 +61,7 @@ const PointsQuests = () => {
               <App.Flex key={item.id} column gap={16} className={styles.questBox}>
                 <Image src="/images/points/points-galxe-logo.png" width={44} height={44} alt="" />
 
-                <App.Flex row align="center" gap={12}>
+                <App.Flex row align="center" gap={12} sx={{ cursor: 'pointer' }} onClick={handleClick(item?.url)}>
                   <App.Text size={24} weight={700}>{item.name}</App.Text>
 
                   <App.Frame padding={0} radius={32} width={32} height={32} gradient="linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)">
@@ -63,7 +74,17 @@ const PointsQuests = () => {
                 <div className={styles.line} />
 
                 <App.Flex row align="center" justify="space-between">
-                  <App.Text color="#FFFFFF99">{t('Rewards')}</App.Text>
+                  {item.can_claim ? (
+                    item.claimed ? (
+                      <App.Flex center width={160} height={40} className={styles.claimed}>
+                        <App.Text color="#9B99AE">{t('Claimed')}</App.Text>
+                      </App.Flex>
+                    ) : (
+                      <App.ButtonGradient width={160} onClick={handleClaim(item.id)}>{t('Claim')}</App.ButtonGradient>
+                    )
+                  ) : (
+                    <App.Text color="#FFFFFF99">{t('Rewards')}</App.Text>
+                  )}
 
                   <App.Flex row align="center" gap={8}>
                     <App.Text size={24} weight={700}>{item.points}</App.Text>

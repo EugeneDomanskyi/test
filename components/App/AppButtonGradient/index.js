@@ -11,8 +11,8 @@ const AppButtonGradient = ({ children, icon, large, width, onClick }) => {
   }
 
   return (
-    <AppFrame padding={large ? '16px 32px' : '10px 24px'} width={width} radius={50} gradient="linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)" sx={{ cursor: 'pointer' }} onClick={handleClick}>
-      <AppFlex row center gap={16}>
+    <AppFrame button padding={large ? '16px 32px' : '10px 24px'} width={width} radius={50} gradient="linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)" sx={{ cursor: 'pointer' }} onClick={handleClick}>
+      <AppFlex row center fullWidth gap={16}>
         <AppText center nowrap>{children}</AppText>
         {icon ? <AppIcon icon={icon} /> : null}
       </AppFlex>

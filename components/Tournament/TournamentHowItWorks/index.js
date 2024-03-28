@@ -1,9 +1,11 @@
-import styles from './styles.module.scss'
+import { useState} from 'react'
+import { useTranslation } from 'react-i18next'
 import cn from 'classnames'
 
 import App from '@/components/App'
-import { useState} from "react";
-import Radio from "@/components/Tournamnet/Radio";
+import Radio from '@/components/Tournament/Radio'
+
+import styles from './styles.module.scss'
 
 const marks = [...new Array(21)].map((_, i) => {
   const isNum = !(i%5)
@@ -14,6 +16,8 @@ const marks = [...new Array(21)].map((_, i) => {
 })
 
 const TournamentHowItWorks = ({tournament, onClose}) => {
+  const { t } = useTranslation()
+
   const [points, setPoints] = useState(8)
   const [activeTier, setActiveTier] = useState(tournament.tiers[0])
   const [bonusActive, setBonusActive] = useState(false)
@@ -35,16 +39,16 @@ const TournamentHowItWorks = ({tournament, onClose}) => {
           </App.Flex>
         </App.Flex>
         <App.Flex gap={[64, 24]} align={'center'} className={styles.header}>
-          <App.Text size={40} weight={800}>How it &nbsp;<App.Text inline size={40} color={'#7364FF'} family={'Playfair Display'}>Works</App.Text></App.Text>
-          <App.Text size={12} weight={500} color={'rgba(255,255,255,0.6)'} lines={2} sx={{width: 400}}>Input the number of trades along with the different multipliers to understand the total points that can be scored</App.Text>
+          <App.Text size={40} weight={800}>{t('How it')} &nbsp;<App.Text inline size={40} color={'#7364FF'} family={'Playfair Display'}>{t('Works')}</App.Text></App.Text>
+          <App.Text size={12} weight={500} color={'rgba(255,255,255,0.6)'} lines={2} sx={{width: 400}}>{t('Input the number of trades along with the different multipliers to understand the total points that can be scored')}</App.Text>
         </App.Flex>
         <App.Flex flex={1} gap={24} className={styles.content}>
           <App.Flex flex={1.2} column gap={30} className={styles.plate} sx={{padding: 32}}>
             <App.Flex>
               <App.Flex flex={1} column>
-                <App.Text size={28} weight={700}>Complete</App.Text>
-                <App.Text size={28} weight={700} family={'Playfair Display'}>Trades</App.Text>
-                <App.Text color={'#A6DC37'} size={14} weight={400}>{ activeTier.multiplier } point per trade</App.Text>
+                <App.Text size={28} weight={700}>{t('Complete')}</App.Text>
+                <App.Text size={28} weight={700} family={'Playfair Display'}>{t('Trades')}</App.Text>
+                <App.Text color={'#A6DC37'} size={14} weight={400}>{ activeTier.multiplier } {t('point per trade')}</App.Text>
               </App.Flex>
               <App.Flex flex={1} justify={'flex-end'}>
                 <App.Flex column align={'center'} justify={'center'}>
@@ -65,17 +69,17 @@ const TournamentHowItWorks = ({tournament, onClose}) => {
                   marks={marks}/>
             </App.Flex>
             <App.Flex justify={'space-between'} align={'center'} sx={{borderTop: '1px solid rgba(255,255,255,0.1)'}}>
-              <App.Text size={14} weight={400} color={'rgba(255,255,255,0.6)'}>In total for trades:</App.Text>
+              <App.Text size={14} weight={400} color={'rgba(255,255,255,0.6)'}>{t('In total for trades')}:</App.Text>
               <App.Flex column align={'flex-end'}>
                 <App.Text size={32} weight={700}>{points}</App.Text>
-                <App.Text family={'Playfair Display'} size={16}>Points</App.Text>
+                <App.Text family={'Playfair Display'} size={16}>{t('Points')}</App.Text>
               </App.Flex>
             </App.Flex>
           </App.Flex>
           <App.Flex flex={2} column gap={16}>
             <App.Flex direction={['row', 'column']} align={['center', 'flex-start']} gap={8}>
-              <App.Text size={20} weight={700}>Select <App.Text inline family={'Playfair Display'} size={20}>Multiplier</App.Text></App.Text>
-              <App.Text color={'#9B99AE'} size={14} weight={400}>(Based on trading volume during tournament)</App.Text>
+              <App.Text size={20} weight={700}>{t('Select')} <App.Text inline family={'Playfair Display'} size={20}>{t('Multiplier')}</App.Text></App.Text>
+              <App.Text color={'#9B99AE'} size={14} weight={400}>({t('Based on trading volume during tournament')})</App.Text>
             </App.Flex>
             <App.Flex flex={1} gap={20} className={styles.tiers}>
               <App.Flex column flex={1} gap={20}>
@@ -112,18 +116,18 @@ const TournamentHowItWorks = ({tournament, onClose}) => {
                     sx={{position: 'absolute', right: 16, top: 16}}
                     active={bonusActive}
                     onChange={val => setBonusActive(val)} />
-                <App.Text size={20} family={'Playfair Display'}>White Tigers</App.Text>
-                <App.Text color={'rgba(255,255,255,0.6)'} size={14} weight={600}>Early adopter NFT</App.Text>
-                <App.Text size={32} weight={700}>{bonusMultiplier} <App.Text inline size={14} weight={700}>bonus</App.Text></App.Text>
+                <App.Text size={20} family={'Playfair Display'}>{t('White Tigers')}</App.Text>
+                <App.Text color={'rgba(255,255,255,0.6)'} size={14} weight={600}>{t('Early adopter NFT')}</App.Text>
+                <App.Text size={32} weight={700}>{bonusMultiplier} <App.Text inline size={14} weight={700}>{t('bonus')}</App.Text></App.Text>
               </App.Flex>
             </App.Flex>
           </App.Flex>
         </App.Flex>
         <App.Flex className={styles.footer} justify={'space-between'} align={'center'}>
-          <App.Text size={20} weight={700}>In total <App.Text color={'#A6DC37'} inline size={20} family={'Playfair Display'}>you get:</App.Text></App.Text>
+          <App.Text size={20} weight={700}>{t('In total')} <App.Text color={'#A6DC37'} inline size={20} family={'Playfair Display'}>{t('you get')}:</App.Text></App.Text>
           <App.Flex column align={'flex-end'}>
-            <App.Text size={36} weight={700}>{total} <App.Text size={32} inline family={'Playfair Display'}>Points</App.Text></App.Text>
-            <App.Text color={'#9B99AE'} size={14} weight={500}>(Multipliers: <App.Text size={14} inline family={'Playfair Display'}>{activeTier.title}</App.Text>)</App.Text>
+            <App.Text size={36} weight={700}>{total} <App.Text size={32} inline family={'Playfair Display'}>{t('Points')}</App.Text></App.Text>
+            <App.Text color={'#9B99AE'} size={14} weight={500}>({t('Multipliers')}: <App.Text size={14} inline family={'Playfair Display'}>{activeTier.title}</App.Text>)</App.Text>
           </App.Flex>
         </App.Flex>
       </App.Flex>

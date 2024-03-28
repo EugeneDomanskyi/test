@@ -4,7 +4,7 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 
 import styles from './styles.module.scss'
 
-const AppFrame = ({ children, border, radius, padding = 16, flex, background, blur, width, height, overflow, gradient, sx = {}, className, onClick }) => {
+const AppFrame = ({ children, border, radius, padding = 16, button, flex, background, blur, width, height, overflow, gradient, sx = {}, className, onClick }) => {
   const { propValue } = usePropsHelper()
 
   const styleBox = () => {
@@ -84,11 +84,11 @@ const AppFrame = ({ children, border, radius, padding = 16, flex, background, bl
       result.height = overflow == 'hidden' ? '100%' : height
     }
 
-    if (width) {
+    if (width && !button) {
       result.width = propValue(width)
     }
 
-    if (height) {
+    if (height && !button) {
       result.height = propValue(height)
     }
 

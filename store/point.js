@@ -16,6 +16,7 @@ export const pointSlice = createSlice({
     history: [],
     transactions: [],
     quests: [],
+    tasks: [],
   },
 
   reducers: {
@@ -33,6 +34,10 @@ export const pointSlice = createSlice({
 
     quests: (state, { payload }) => {
       state.quests = payload
+    },
+
+    tasks: (state, { payload }) => {
+      state.tasks = payload
     },
   },
 })
@@ -56,6 +61,18 @@ export const api = {
 
   quests: (wallet, params) => {
     return request(`user/${wallet}/quests`, 'GET', {api: 'accounts', ...params})
+  },
+
+  questClaim: (wallet, params) => {
+    return request(`user/${wallet}/quests/claim`, 'POST', {api: 'accounts', ...params})
+  },
+
+  tasks: (wallet, params) => {
+    return request(`user/${wallet}/contributor/tasks`, 'GET', {api: 'accounts', ...params})
+  },
+
+  taskClaim: (wallet, params) => {
+    return request(`user/${wallet}/contributor/tasks/claim`, 'POST', {api: 'accounts', ...params})
   },
 }
 

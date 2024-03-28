@@ -2,9 +2,9 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-import ProgressBar from "@/components/Tournamnet/ProgressBar";
+import ProgressBar from "@/components/Tournament/ProgressBar";
 import useWalletConnect from "@/myhooks/wallet-connect";
-import Button from "@/components/Tournamnet/Button";
+import Button from "@/components/Tournament/Button";
 
 import useApp from '@/myhooks/useApp'
 

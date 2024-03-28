@@ -4,7 +4,7 @@ import numeral from 'numeral'
 
 import styles from './styles.module.scss'
 import useWalletConnect from "@/myhooks/wallet-connect";
-import Button from "@/components/Tournamnet/Button";
+import Button from "@/components/Tournament/Button";
 import Link from "next/link";
 import {useDispatch} from "react-redux";
 import $alert from '@/store/alert'

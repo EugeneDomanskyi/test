@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
 import cn from 'classnames'
 
 import $tournament from  '@/store/tournament'
@@ -12,6 +13,7 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const Leaderboard = () => {
+  const { t } = useTranslation()
   const router = useRouter()
   const { wallet } = useWalletConnect()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
@@ -48,9 +50,9 @@ const Leaderboard = () => {
   return (
     <App.Flex column fullWidth>
       <App.Flex row align="center" justify="space-between">
-        <App.Text tag="h2" size={[32, 28]} weight={600}>Leaderboard</App.Text>
+        <App.Text tag="h2" size={[32, 28]} weight={600}>{t('Leaderboard')}</App.Text>
         {!isMobile ? (
-          <App.Button href="/exchange" primary rounded>Start Trading <App.Icon icon="arrow-45" /></App.Button>
+          <App.Button href="/exchange" primary rounded>{t('Start Trading')} <App.Icon icon="arrow-45" /></App.Button>
         ) : null}
       </App.Flex>
 
@@ -60,15 +62,15 @@ const Leaderboard = () => {
         </App.Flex>
 
         <App.Flex flex={[1, 2]} sx={[{paddingLeft: 30}, {paddingLeft: 10}]}>
-          <App.Text color="#7E91F1" weight={600}>Wallet{!isMobile ? ' Address' : ''}</App.Text>
+          <App.Text color="#7E91F1" weight={600}>{t('Wallet' + (!isMobile ? ' Address' : ''))}</App.Text>
         </App.Flex>
 
         <App.Flex flex={[1, 3]} justify="center">
-          <App.Text color="#7E91F1" weight={600}>Points Earned</App.Text>
+          <App.Text color="#7E91F1" weight={600}>{t('Points Earned')}</App.Text>
         </App.Flex>
 
         <App.Flex justify="flex-end" width={[120, 90]} sx={{paddingRight: 10}}>
-          <App.Text right color="#7E91F1" weight={600}>Reward</App.Text>
+          <App.Text right color="#7E91F1" weight={600}>{t('Reward')}</App.Text>
         </App.Flex>
       </App.Flex>
 
@@ -104,7 +106,7 @@ const Leaderboard = () => {
               )
             })
           ) : (
-            <App.Text center color={'rgba(255,255,255,0.6)'} sx={{paddingTop: 24, paddingBottom: 24}}>Leaderboard is empty</App.Text>
+            <App.Text center color={'rgba(255,255,255,0.6)'} sx={{paddingTop: 24, paddingBottom: 24}}>{t('Leaderboard is empty')}</App.Text>
           )
         )}
       </div>

@@ -2,9 +2,9 @@ import App from '@/components/App'
 
 
 import styles from './styles.module.scss'
-import Tiers from "@/components/Tournamnet/Tiers";
-import TierInfo from "@/components/Tournamnet/TierInfo";
-import TierStats from "@/components/Tournamnet/TierStats";
+import Tiers from "@/components/Tournament/Tiers";
+import TierInfo from "@/components/Tournament/TierInfo";
+import TierStats from "@/components/Tournament/TierStats";
 import useWalletConnect from "@/myhooks/wallet-connect";
 
 const TierBlock = ({tiers, walletResults, onClickWorks}) => {

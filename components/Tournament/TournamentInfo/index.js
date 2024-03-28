@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
 import cn from 'classnames'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -8,11 +9,12 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import $tournament from  '@/store/tournament'
 
 import App from '@/components/App'
-import TournamentHowItWorks from '@/components/Tournamnet/TournamentHowItWorks'
+import TournamentHowItWorks from '@/components/Tournament/TournamentHowItWorks'
 
 import styles from './styles.module.scss'
 
 const TournamentInfo = ({ tournament }) => {
+  const { t } = useTranslation()
   const router = useRouter()
   const { wallet, connect, connection } = useWalletConnect()
 
@@ -92,7 +94,7 @@ const TournamentInfo = ({ tournament }) => {
         <App.Flex row fullWidth gap={24}>
           <App.Frame flex={1} padding={0} radius={16} background="radial-gradient(134.18% 120.73% at 67.99% -35.17%, #231F38 0%, #100D21 100%)" gradient="linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)">
             <App.Flex direction={['row', 'column']} sx={[{ padding: 12 }, { padding: '8px 12px' }]} align={['center', 'flex-start']} justify="space-between" height={[68, 'auto']}>
-              <App.Text size={[16, 14]} weight={700}>Current <App.Text inline italic family="Playfair Display" size={[16, 14]} weight={700}>Position</App.Text></App.Text>
+              <App.Text size={[16, 14]} weight={700}>{t('Current')} <App.Text inline italic family="Playfair Display" size={[16, 14]} weight={700}>{t('Position')}</App.Text></App.Text>
               {loading ? (
                 <App.Loader size={[40, 32]} />
               ) : (
@@ -102,7 +104,7 @@ const TournamentInfo = ({ tournament }) => {
           </App.Frame>
 
           <App.Flex direction={['row', 'column']} flex={1} className={styles.pointsBox} align={['center', 'flex-start']} justify="space-between" height={[68, 'auto']}>
-            <App.Text size={[16, 14]} weight={700}>Points <App.Text inline italic family="Playfair Display" size={[16, 14]} weight={700}>Earned</App.Text></App.Text>
+            <App.Text size={[16, 14]} weight={700}>{t('Points')} <App.Text inline italic family="Playfair Display" size={[16, 14]} weight={700}>{t('Earned')}</App.Text></App.Text>
             {loading ? (
                 <App.Loader size={[40, 32]} />
               ) : (
@@ -113,7 +115,7 @@ const TournamentInfo = ({ tournament }) => {
 
         <App.Flex column fullWidth gap={32} className={styles.tier}>
           <App.Flex row align="flex-end" gap={8}>
-            <App.Text size={[24, 20]} weight={600} height={1}>Current Tier:</App.Text>
+            <App.Text size={[24, 20]} weight={600} height={1}>{t('Current Tier')}:</App.Text>
             {loading ? (
                 <App.Loader size={[32, 24]} />
               ) : (
@@ -163,21 +165,21 @@ const TournamentInfo = ({ tournament }) => {
           
           <App.Flex direction={['row', 'column']} align={['center', 'flex-start']} justify="space-between" gap={[0, 12]}>
             <App.Flex row align="flex-end" gap={8}>
-              <App.Text size={20} weight={600} height={1}>Tier <App.Text inline size={20} weight={600} italic family="Playfair Display" height={1}>Benefits:</App.Text></App.Text>
-              <App.Text size={20} weight={700} italic family="Playfair Display" color="#7364FD" height={1}>1 Trade = {results?.tier?.multiplier} Point{results?.tier?.multiplier > 1 ? 's' : ''}</App.Text>
+              <App.Text size={20} weight={600} height={1}>{t('Tier')} <App.Text inline size={20} weight={600} italic family="Playfair Display" height={1}>{t('Benefits')}:</App.Text></App.Text>
+              <App.Text size={20} weight={700} italic family="Playfair Display" color="#7364FD" height={1}>1 {t('Trade')} = {results?.tier?.multiplier} {t(`Point${results?.tier?.multiplier > 1 ? 's' : ''}`)}</App.Text>
             </App.Flex>
 
             <App.Flex row center sx={{ cursor: 'pointer' }} onClick={handleHowTo}>
-              <App.Text weight={600} color="#A6DC37">How are points calculated?</App.Text>
+              <App.Text weight={600} color="#A6DC37">{t('How are points calculated?')}</App.Text>
               <App.Icon icon="chevron-right" width={16} height={16} color="#A6DC37" />
             </App.Flex>
           </App.Flex>
         </App.Flex>
 
         <App.Flex align="center" justify="space-between" gap={16}>
-          <App.Text weight={700} color="rgba(255, 255, 255, .6)">Want to know more about the tournaments?</App.Text>
+          <App.Text weight={700} color="rgba(255, 255, 255, .6)">{t('Want to know more about the tournaments?')}</App.Text>
           <a href="https://blog.tegro.com/?utm_source=homepage&utm_medium=footer&utm_campaign=testnet" target="_blank" rel="noreferrer">
-            <App.ButtonGradient icon="arrow-45">Visit Blog</App.ButtonGradient>
+            <App.ButtonGradient icon="arrow-45">{t('Visit Blog')}</App.ButtonGradient>
           </a>
         </App.Flex>
 
@@ -187,7 +189,7 @@ const TournamentInfo = ({ tournament }) => {
       </App.Flex>
     ) : (
       <App.Flex fullWidth justify="center" align="flex-start">
-        <App.ButtonGradient onClick={handleConnect}>Connect Wallet</App.ButtonGradient>
+        <App.ButtonGradient onClick={handleConnect}>{t('Connect Wallet')}</App.ButtonGradient>
       </App.Flex>
     )
   ) : null
