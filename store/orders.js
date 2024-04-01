@@ -184,7 +184,7 @@ const api = {
   },
 
   place: (params) => {
-    return request('market/orders', 'POST', params)
+    return request('market/orders/place', 'POST', params)
   },
 
   cancel: (params) => {
