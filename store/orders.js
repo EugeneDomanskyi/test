@@ -180,7 +180,7 @@ const api = {
   },
 
   typedData: (params) => {
-    return request('market/orders/typedData/generate/v2', 'POST', params)
+    return request('market/orders/typedData/generate', 'POST', params)
   },
 
   place: (params) => {
