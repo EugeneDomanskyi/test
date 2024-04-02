@@ -31,7 +31,7 @@ const Header = () => {
   useEffect(() => {
     dispatch($tournament.set.loading(true))
     $tournament.api.current().then(res => {
-      dispatch($tournament.set.current(res?.error ? {} : res.data))
+      dispatch($tournament.set.current(! res ? {} : res.data))
       dispatch($tournament.set.loading(false))
     })
   }, [])

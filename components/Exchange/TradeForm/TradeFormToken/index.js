@@ -13,6 +13,8 @@ import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeForm/TradeInput'
 import OrderConfirm from '@/components/Exchange/OrderConfirm'
 
+import useApp from '@/myhooks/useApp'
+
 import styles from './styles.module.scss'
 
 const trimLeadingZerosBeforeDecimal = number => {
@@ -35,6 +37,7 @@ const checkPrice = (price, tab, marketPrice) => {
 
 const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onSubmit}, ref) => {
   const { wallet, changeNetwork } = useWalletConnect()
+  const { appLog } = useApp()
 
   const blockchain = useSelector($app.get.blockchain)
 
@@ -98,7 +101,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
             ...acc,
             [address === current?.quote ? 'quote' : 'base']: balance,
           }), {quote: 0, base: 0})
-
+          appLog(`balances ${JSON.stringify(result)}`)
           setUserBalances(balances)
           setWasUserBalance(true)
         })

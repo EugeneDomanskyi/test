@@ -16,8 +16,10 @@ const FaucetOnce = ({ onClose }) => {
   const { isApp } = useApp()
 
   const handleClose = () => {
-    dispatch($alert.set.success({ title: 'Congratulations!', text: 'POKEBALLS added to your wallet' }))
-    dispatch($alert.set.success({ title: 'Congratulations!', text: 'KRYPTONITE added to your wallet' }))
+    if (! isApp) {
+      dispatch($alert.set.success({ title: 'Congratulations!', text: 'POKEBALLS added to your wallet' }))
+      dispatch($alert.set.success({ title: 'Congratulations!', text: 'KRYPTONITE added to your wallet' }))
+    }
 
     if (onClose) {
       onClose()
