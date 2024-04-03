@@ -13,8 +13,8 @@ const HomeFaq = () => {
 
   const questions = [
     {
-      question: 'What is Tegro Gen2 Decentralized Exchange?',
-      answer: `Tegro Gen2 DEX unlocks the future of on-chain trading with unmatched gas efficiency and market tools. Experience CEX-like trading on Tegro with gasless bids and asks—a feat not achievable with AMM platforms—resulting in tighter spreads and real-time price discovery. With up to a 3x reduction in gas fees and simple API integration akin to Binance or Coinbase, Tegro is perfect for retail and high-frequency traders who prioritize speed and security on-chain.`,
+      question: 'What is Tegro Gen2 decentralized exchange?',
+      answer: `Tegro is a Gen2 DEX optimized for high-frequency on-chain trading, powered by unmatched gas efficiency and advanced market tools. With lightning-fast orders, gasless bids and asks, and up to a 3x reduction in gas fees, along with API bot access similar to that of Binance or Coinbase, Tegro merges the performance of a CEX with the trust of a DEX. This makes it an ideal option for traders who prioritize speed and security on-chain.`,
     }, {
       question: 'What are the benefits of using a Gen2 Decentralized Exchange like Tegro?',
       answer: `

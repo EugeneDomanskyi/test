@@ -112,7 +112,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
         dispatch($alert.set.success({ title: 'All Orders Cancelled', text: 'All your live orders has been cancelled successfully!' }))
       }
     } else {
-      dispatch($alert.set.error({ title: 'Order Not Cancelled' }))
+      dispatch($alert.set.error({ title: 'Orders not cancelled', text: `Please try again to cancel your ${updatedOrders.length} open orders.` }))
     }
 
     handleDialogClose('approve')()
