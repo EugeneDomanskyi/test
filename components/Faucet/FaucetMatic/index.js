@@ -15,7 +15,7 @@ const FaucetMatic = ({ onComplete }) => {
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(wallet)
-    dispatch($alert.set.success({ title: 'Address Copied', text: 'The address has been successfully copied to clipboard' }))
+    dispatch($alert.set.success({ title: 'Address copied to clipboard', text: 'The address has been successfully copied to clipboard' }))
   }
 
   const handleContinue = () => {
