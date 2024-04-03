@@ -85,7 +85,7 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
     <WagmiConfig config={wagmiConfig}>
       <I18nextProvider i18n={i18nInit(initialData.language)}>
         <RainbowKitProvider chains={chains} theme={RainbowTheme}>
-          <BanditContextProvider cluster={"devnet"} apiKey={process.env.NEXT_PUBLIC_BANDIT_API_KEY}>
+          <BanditContextProvider cluster={"mainnet"} apiKey={process.env.NEXT_PUBLIC_BANDIT_API_KEY}>
             <Provider store={storeRef}>
               <Head route={ssRoute} />
               <Wrapper>

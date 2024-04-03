@@ -58,7 +58,7 @@ const PointsContributor = () => {
         <QuestWidget
           isOpen={true}
           dialog={false}
-          collectionId={1}
+          collectionId={165394}
           mode="quest_only"
           showLeaderBoard={false}
           showParticipants={false}
