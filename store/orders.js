@@ -144,14 +144,12 @@ const get = {
       return {
         ...acc,
         [side]: values.filter(item => item.quantity*1).slice(0, 10).map((row) => {
-          const volume = formatUnits(row.quantity, current.decimals)
-          prevVolume += volume * 1
-
+          prevVolume += row.quantity * 1
           return {
             priceFormatted: formatUnits(row.price, current.quoteDecimals),
             price: row.price,
-            volume: prevVolume,
-            quantity: volume,
+            volume: formatUnits(prevVolume, current.decimals),
+            quantity: formatUnits(row.quantity, current.decimals),
           }
         })
       }

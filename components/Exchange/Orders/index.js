@@ -16,6 +16,7 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
 import OrderDetails from '@/components/Exchange/OrderDetails'
+import { formatNumberWithDecimals } from '@/store/portfolio'
 
 const Orders = ({global, type, version, onClickOrder}) => {
   const router = useRouter()
@@ -289,9 +290,11 @@ const Orders = ({global, type, version, onClickOrder}) => {
               version == 'mobile' ? (
                 <App.Text weight={600} color="#FFAF38" onClick={handleCancelAllClick}>CANCEL ALL</App.Text>
               ) : (
-                <App.Button variant="muted" small onClick={handleCancelAllClick}>
-                  Cancel All
-                </App.Button>
+                orders[ordersType].length > 0 ? (
+                  <App.Button variant="muted" small onClick={handleCancelAllClick}>
+                    Cancel All
+                  </App.Button>
+                ) : null
               )
             )}
           </App.Flex>
