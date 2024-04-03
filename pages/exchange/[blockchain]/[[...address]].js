@@ -132,16 +132,16 @@ const Exchange = () => {
     if ( !isApp) {
       switch (action) {
         case 'order_placed':
-          dispatch($alert.set.success({ title: 'Order placed successfully', text: 'Your Order has been placed successfully!' }))
+          dispatch($alert.set.success({ title: 'Order placed successfully', text: `Your ${data.side} order for ${data.quantity} ${data.baseCurrency} has been placed successfully.` }))
           break
         case 'order_submitted':
           dispatch($alert.set.success({ title: 'Order submitted successfully' }))
           break
         case 'chain_event_OrderFilled':
-          dispatch($alert.set.success({ title: 'Order filled on chain' }))
+          dispatch($alert.set.success({ title: 'Order filled on-chain', text: `Your ${data.side} order for ${data.quantity} ${data.baseCurrency} has been executed ${data.quantity == data.quantityFilled ? 'fully' : 'partially'}.` }))
           break
         case 'chain_event_OrderCancelled':
-          dispatch($alert.set.success({ title: 'Order cancelled on chain' }))
+          dispatch($alert.set.success({ title: 'Order cancelled on-chain' }))
           break
       }
     }
