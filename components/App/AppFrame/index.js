@@ -2,7 +2,7 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 
 import styles from './styles.module.scss'
 
-const AppFrame = ({ children, border, radius, padding = 16, background, blur, width, height, overflow, gradient, sx = {} }) => {
+const AppFrame = ({ children, border, radius, padding = 16, background, blur, width, height, overflow, gradient, sx = {}, onClick }) => {
   const { propValue } = usePropsHelper()
 
   const styleBox = () => {
@@ -89,8 +89,14 @@ const AppFrame = ({ children, border, radius, padding = 16, background, blur, wi
     return result
   }
 
+  const handleClick = () => {
+    if (onClick) {
+      onClick()
+    }
+  }
+
   return (
-    <div className={styles.box} style={styleBox()}>
+    <div className={styles.box} style={styleBox()} onClick={handleClick}>
       <div className={styles.border} style={styleBorder()} />
       <div className={styles.background} style={styleBackground()} />
       <div className={styles.content} style={styleContent()}>

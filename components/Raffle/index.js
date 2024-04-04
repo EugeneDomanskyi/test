@@ -1,4 +1,3 @@
-import RaffleHeader from '@/components/Raffle/RaffleHeader'
 import RaffleTop from '@/components/Raffle/RaffleTop'
 import RaffleBanner from '@/components/Raffle/RaffleBanner'
 import RaffleList from '@/components/Raffle/RaffleList'
@@ -10,7 +9,6 @@ import RaffleSearch from '@/components/Raffle/RaffleSearch'
 import RaffleTimer from '@/components/Raffle/RaffleTimer'
 
 export default {
-  Header: RaffleHeader,
   Top: RaffleTop,
   Banner: RaffleBanner,
   List: RaffleList,

@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import cn from 'classnames'
 import Socket from '@/libs/ws.lib'
 
+import $orders from '@/store/orders'
 import $app from '@/store/app'
-import $orders, { orderBookFormatter } from '@/store/orders'
 
 import App from '@/components/App'
 
@@ -15,47 +15,37 @@ const toLowerFixed = val => {
   return str.substring(0, str.indexOf('.') + 7)
 }
 
-const OrderBook = ({ type, version, onClickOrder }) => {
+const OrderBook = ({ version, onClickOrder }) => {
   const dispatch = useDispatch()
 
   const [loading, setLoading] = useState(true)
 
-  const orderBook = useSelector($orders.get.orderBook(type))
+  const current = useSelector(({ $token }) => $token.current)
   const blockchain = useSelector($app.get.blockchain)
-  const current = useSelector(({ $token, $collection }) => type == 'nfts' ? $collection.current : $token.current)
-
-  const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(current.address)
+  const orderBook = useSelector($orders.get.orderbook)
 
   const maxBuyVolume = orderBook.buy.reduce((acc, { quantity }) => acc + quantity * 1, 0)
   const maxSellVolume = orderBook.sell.reduce((acc, { quantity }) => acc + quantity * 1, 0)
 
   useEffect(() => {
-    Socket.on('order_book_updated', 'order_book', async res => {
-      const sides = {Asks: 'sell', Bids: 'buy'}
-      const temp = Object.entries(res).reduce((acc, [side, values]) => ({
-        ...acc,
-        [sides[side]]: values ?? []
-      }), {})
-      const list = await orderBookFormatter(blockchain.id, temp, current.address, blockchain.usdtContract)
-      dispatch($orders.set.orderBook({type: type, data: list, tokenAddress: current.address}))
+    Socket.on('order_book_diff', 'order_book', async result => {
+      dispatch($orders.set.orderbookUpdate(result))
     })
-  }, [current?.address, blockchain.usdtContract])
+  }, [current?.id])
 
   useEffect(() => {
-    if (isAddress) {
-      setLoading(true)
-      $orders.api.get[type].orderBook({
-        collection: current.address,
-        address: current.address,
-        blockchain: blockchain.code,
-        sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
-        ...(type === 'nfts' ? {} : { statuses: '[1]' })
-      }).then(res => {
-        dispatch($orders.set.orderBook({ type: type, data: res, tokenAddress: current.address }))
-        setLoading(false)
-      })
+    if (current?.id && blockchain?.id) {
+      fetchOrderbook()
     }
-  }, [current.address])
+  }, [current?.id, blockchain?.id])
+
+  const fetchOrderbook = async () => {
+    const result = await $orders.api.orderbook({ market_id: current.marketId, chain_id: blockchain.id })
+    if (result) {
+      dispatch($orders.set.orderbook({data: result, token: current}))
+    }
+    setLoading(false)
+  }
 
   const handleClick = (order, volume) => () => {
     onClickOrder({ ...order, price: order.priceFormatted, quantity: toLowerFixed(volume) })
@@ -117,7 +107,8 @@ const OrderBook = ({ type, version, onClickOrder }) => {
 }
 
 const isEqual = (prev, next) => {
-  return prev.onClickOrder === next.onClickOrder && prev.type === next.type
+  return prev.onClickOrder === next.onClickOrder
+    && prev.version === next.version
 }
 
 export default memo(OrderBook, isEqual)

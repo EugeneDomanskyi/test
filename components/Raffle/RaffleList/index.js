@@ -1,31 +1,32 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import moment from 'moment'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $app from '@/store/app'
-import $modal from '@/store/modal'
 import $raffle from '@/store/raffle'
 
 import App from '@/components/App'
 import Raffle from '@/components/Raffle'
+import RaffleModalParticipate from '@/components/Raffle/RaffleModalParticipate'
 
 const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKeysBalance }) => {
-  const dispatch = useDispatch()
   const router = useRouter()
   const { wallet, connect, changeNetwork } = useWalletConnect()
 
   const blockchain = useSelector($app.get.blockchain)
   const campaigns = useSelector($raffle.get.filtered)
-  const balance = useSelector(({$raffle}) => $raffle.balance)
 
   const [queryCampaignId] = router.query.segments || []
 
   const [tab, setTab] = useState('browse')
+  const [campaign, setCampaign] = useState()
+  const [isParticipateOpen, setIsParticipateOpen] = useState(false)
+  const [modalTitle, setModalTitle] = useState('Case Details')
 
   const tabs = [
     { key: 'browse', title: 'Browse Cases' },
@@ -41,21 +42,9 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
   useEffect(() => {
     if (queryCampaignId && campaigns.length) {
       const item = campaigns.find(campaign => campaign.id === queryCampaignId)
-
       if (item) {
-        dispatch($modal.set.show({modal: 'Raffle/RaffleModalParticipate', props: {
-          size: 'large',
-          item: item,
-          onUpdateUserTKeys,
-          getUserTKeysBalance,
-          onUpdateUserCases,
-          onShare: handleShare,
-          onTop: true,
-          onClose: handleClose,
-          header: {
-            title: `Case Details`,
-          },
-        }}))
+        setCampaign(item)
+        setIsParticipateOpen(true)
       }
     }
   }, [queryCampaignId, campaigns])
@@ -67,20 +56,29 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
     return duration.humanize()
   }
 
-  const handleClose = () => {
+  const handleUpdateTitle = (value) => {
+    setModalTitle(value)
+  }
+
+  const handleParticipateClose = () => {
+    handleCloseModal()
     router.push('/earn', undefined, { scroll: false })
     getUserTKeysBalance()
   }
 
+  const handleCloseModal = () => {
+    setIsParticipateOpen(false)
+  }
+
   const handleTabChange = (value) => {
     if (value === 'my') {
-      trackEvent('View Case History')
+      Amplitude.event('View Case History')
     }
     setTab(value)
   }
 
   const handleParticipate = async (item) => {
-    trackEvent('View Case', {
+    Amplitude.event('View Case', {
       'Name': item.title,
       'Time Left': getTime(item),
       'Tkey Cost': item.tKeyRequired,
@@ -106,22 +104,13 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
 
   const handleMoreCases = () => {
     handleTabChange('browse')
-    dispatch($modal.set.close())
+    setIsParticipateOpen(false)
   }
 
   const getTweeButtonLink = (text) => {
-    // const url = `${window.location.origin}/earn`
     const url = `https://bit.ly/3M8Tkh2`
 
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
-  }
-
-  const handleSearch = (search) => {
-    // trackEvent('Click Search', {
-    //   'Wallet connect Status': wallet ? 'Connected' : 'Not Connected',
-    //   'Tkeys Quantity': balance,
-    //   'Search Term': search,
-    // })
   }
 
   return (
@@ -131,7 +120,7 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
 
         <App.Flex direction={['row', 'column']} gap={12} align={['flex-end', 'flex-start']} justify="space-between" height={[68, 'auto']}>
           <App.Flex fullWidth={[null, true]} flex={1}>{tab == 'browse' ? <Raffle.Sort /> : null}</App.Flex>
-          <App.Flex fullWidth={[null, true]}><Raffle.Search onSearch={handleSearch} /></App.Flex>
+          <App.Flex fullWidth={[null, true]}><Raffle.Search /></App.Flex>
         </App.Flex>
 
         <App.Flex fullWidth sx={{ minHeight: 263 }}>
@@ -142,6 +131,23 @@ const RaffleList = ({ loading, onUpdateUserCases, onUpdateUserTKeys, getUserTKey
           )}
         </App.Flex>
       </App.Flex>
+
+      <App.Dialog
+        title={modalTitle}
+        size="large"
+        open={isParticipateOpen}
+        onClose={handleParticipateClose}
+      >
+        <RaffleModalParticipate
+          item={campaign}
+          onUpdateUserTKeys={onUpdateUserTKeys}
+          getUserTKeysBalance={getUserTKeysBalance}
+          onUpdateUserCases={onUpdateUserCases}
+          onShare={handleShare}
+          onUpdateTitle={handleUpdateTitle}
+          onClose={handleCloseModal}
+        />
+      </App.Dialog>
     </App.Container>
   )
 }

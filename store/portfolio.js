@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { request } from './index'
+import numeral from "numeral";
 
 export const portfolioSlice = createSlice({
   name: '$portfolio',
@@ -13,7 +14,6 @@ export const portfolioSlice = createSlice({
     ticker: {
       type: 'plus',
       percent: 0,
-      usd: 0,
     },
     list: [],
     prefill: {
@@ -25,48 +25,45 @@ export const portfolioSlice = createSlice({
 
   reducers: {
     details: (state, { payload }) => {
-      const native = payload.find(item => item.info?.tags.includes('native'))
+      const native = payload.data.find(item => item.type === 'native')
       state.native = {
-        value: (native?.amount ?? 0).toFixed(4),
-        symbol: native?.info?.symbol,
+        value: (native?.balance ?? 0).toFixed(4),
+        symbol: native?.symbol,
       }
 
-      const usd = payload.reduce((acc, item) => {
-        return acc + item.value_usd
-      }, 0)
-      state.usd = usd.toFixed(4)
-
-      state.list = payload.map(item => {
-        const percent = Math.round((item.roi * 100) * 100) / 100
+      state.list = payload.data.filter(item => item.price > 0 && !['native'].includes(item.type) || item.balance > 1 && ['quote'].includes(item.type)).map(item => {
         return {
-          address: item.contract_address,
-          name: item.info?.name,
-          symbol: item.info?.symbol,
-          decimals: item.decimals,
-          image: item.info?.image,
-          balance: item.amount.toFixed(4),
-          usd: item.value_usd.toFixed(4),
-          price: item.price_to_usd,
+          address: item.address,
+          name: item.name,
+          symbol: item.symbol,
+          image: item.image || (item.type === 'quote' ? '/images/icon-usdt.png' : null) || `https://storage.googleapis.com/token-assets/assets/${payload?.blockchain?.code}/${item.address.toLowerCase()}.png`,
+          balance: item.balance.toLocaleString('fullwide', {useGrouping:false}),
+          price: item.price || (item.type === 'quote' ? item.balance : 0),
+          usd: (item.price || (item.type === 'quote' ? item.balance : 0)).toFixed(4),
           ticker: {
-            type: percent > 0 ? 'plus' : percent < 0 ? 'minus' : 'zero',
-            percent: percent.toFixed(2),
-            usd: item.abs_profit_usd.toFixed(4),
+            type: item.price_change_24_h > 0 ? 'plus' : item.price_change_24_h < 0 ? 'minus' : 'zero',
+            price_change_24_h: item.price_change_24_h,
+            percent: item.price_change_24_h.toFixed(2),
           },
-          isNative: native?.contract_address == item.contract_address,
-          isUsdt: item.info?.symbol == 'USDT',
+          isNative: item.type === 'native',
+          isUsdt: item.type === 'quote',
         }
       })
 
-      const usdTicker = payload.reduce((acc, item) => {
-        return acc + item.abs_profit_usd
+      const usd = state.list.reduce((acc, item) => {
+        return acc + item.price
       }, 0)
+      state.usd = usd.toFixed(4)
 
-      const percent = usd != 0 ? (Math.round((usdTicker * 100 / usd) * 100) / 100) : 0
-      state.ticker = {
-        type: percent > 0 ? 'plus' : percent < 0 ? 'minus' : 'zero',
-        percent: percent.toFixed(2),
-        usd: usdTicker.toFixed(4),
-      }
+      // const usdTicker = state.list.reduce((acc, item) => {
+      //   return acc + (item.price * item.ticker.price_change_24_h / 100)
+      // }, 0)
+
+      // const percent = usd != 0 ? (Math.round((usdTicker * 100 / usd) * 100) / 100) : 0
+      // state.ticker = {
+      //   type: percent > 0 ? 'plus' : percent < 0 ? 'minus' : 'zero',
+      //   percent: percent.toFixed(2),
+      // }
     },
 
     native: (state, { payload }) => {
@@ -81,7 +78,7 @@ export const portfolioSlice = createSlice({
 
 const api = {
   details: (params) => {
-    return request(`api/portfolio/${params.wallet}/${params.blockchain.id}/${params.blockchain.code}`, 'GET', { api: 'local' })
+    return request(`${params.blockchain.id}/${params.wallet}/portfolio`, 'GET', {api: 'accounts'})
   },
 }
 

@@ -1,20 +1,29 @@
-const WS_URL = 'wss://v2.betora.vip/ws'
-// const WS_URL = 'ws://localhost:8080/ws'
-
 class Socket {
   constructor() {
     this.socket = null
     this.callbacks = {}
+    this.channels = []
     this.handleAction = null
   }
 
-  init = async (callback) => {
+  init = async (callback, onClose) => {
     return new Promise(resolve => {
-      this.socket = new WebSocket(WS_URL)
+      this.socket = new WebSocket(process.env.NEXT_PUBLIC_WS_URL)
       this.socket.onmessage = this.handleMessage
-      this.socket.onopen = resolve
+      this.socket.onopen = () => {
+        this.channels.forEach((channelId) => {
+          this.subscribe(channelId)
+        })
+
+        resolve()
+      }
+      this.socket.onclose = onClose
       this.handleAction = callback
     })
+  }
+
+  isOpen = () => {
+    return this.socket?.readyState === WebSocket.OPEN
   }
 
   on = (event, cbId, cb) => {
@@ -27,12 +36,21 @@ class Socket {
   subscribe = (channelId) => {
     if (this.socket?.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify({action: 'subscribe', channelId: channelId}))
+
+      if (!this.channels.includes(channelId)) {
+        this.channels.push(channelId)
+      }
     }
   }
 
   unsubscribe = (channelId) => {
     if (this.socket?.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify({action: 'unsubscribe', channelId: channelId}))
+
+      const index = this.channels.indexOf(channelId)
+      if (index !== -1) {
+        this.channels.splice(index, 1)
+      }
     }
   }
 

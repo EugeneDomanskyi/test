@@ -1,11 +1,8 @@
-import { getAssetsFile } from '@/libs/aws.lib'
-
 function generateSiteMap(markets, origin) {
   return `<?xml version="1.0" encoding="UTF-8"?>
    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-     ${markets
-       .map(market => {
-         return `
+     ${markets.map(market => {
+        return `
        <url>
            <loc>${`${origin}/${market.blockchain}/${market.id}`}</loc>
        </url>
@@ -21,12 +18,9 @@ function SiteMap() {
 }
 
 export async function getServerSideProps({ res, req }) {
-  const origin = `${req.headers['x-forwarded-proto']}://${req.headers.host}`;
+  const origin = `${req.headers['x-forwarded-proto']}://${req.headers.host}`
 
-  const markets = await getAssetsFile()
-  // const markets = marketList.map(item => {
-  //   return {address: item.address, blockchain: item.blockchain}
-  // })
+  const markets = []
 
   const sitemap = generateSiteMap(markets, origin)
 

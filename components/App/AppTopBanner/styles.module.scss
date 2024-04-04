@@ -1,0 +1,31 @@
+.banner {
+  background-image: linear-gradient(102deg, #631DFF 0%, #A91DFF 100%);
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  transition: all .2s;
+  height: 40px;
+
+  @media (max-width: 768px) {
+    height: auto;
+    padding: 12px 40px 12px 12px;
+  }
+
+  &.hide {
+    height: 0;
+    padding: 0;
+  }
+
+  .close {
+    position: absolute;
+    z-index: 0;
+    right: 16px;
+    cursor: pointer;
+
+    &.dark {
+      path {
+        fill: #fff;
+      }
+    }
+  }
+}

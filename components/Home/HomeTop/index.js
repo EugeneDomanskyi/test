@@ -1,23 +1,44 @@
-import { memo } from 'react'
+import { useSelector } from 'react-redux'
+import Link from 'next/link'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const HomeTop = () => {
-  return (
-    <div className={styles.container}>
-      <App.Container className={styles.content}>
-        <div className={styles.rectangle} />
+  const loading = useSelector(({ $tournament }) => $tournament.loading)
+  const tournament = useSelector(({ $tournament }) => $tournament.current)
 
-        <App.Flex column gap={[24, 16]} align="center" sx={[{ padding: 60 }, { padding: 0 }]}>
-          <App.Text center size={48} weight={700} height={1} gradient="linear-gradient(91.7deg, #E792E4 2.92%, #B545BE 49.32%, #7931CB 119.02%, #4D42C9 138.71%)">
-            Bulk Buy & Sell at the best price
-          </App.Text>
+  return (
+    <App.Container fluid sx={[{ padding: '200px 0 96px' }, { padding: '138px 0 78px' }]}>
+      <App.Flex column gap={[64, 40]} center fullWidth>
+        <App.Flex column center gap={20}>
+          <App.Text tag="h1" center size={[80, 64]} weight={800} height={['88px', 1]}>The Gen2 DEX<br /><App.Text inline italic size={[80, 64]} weight={700} color="#7364FF" family="Playfair Display" height={1}>for high-frequency trading!</App.Text></App.Text>
+
+          <App.Flex direction={['row', 'column']} center gap={16}>
+            <App.Button href="/exchange" outlined rounded variant="success">
+              <App.Flex row center gap={8}>
+                <div className={styles.circle} />
+                <App.Text size={16} weight={500} color="#1cbc7c">Testnet Live</App.Text>
+              </App.Flex>
+            </App.Button>
+
+            {/* <App.Text center size={16} weight={400} color="rgba(255, 255, 255, .6)">
+              Trade for FREE & Earn POINTS!
+            </App.Text> */}
+          </App.Flex>
         </App.Flex>
-      </App.Container>
-    </div>
+
+        {/* {tournament?.alias ? (
+          <Link href={`/tournament/${tournament.alias}`}>
+            <App.ButtonGradient>Earn Points</App.ButtonGradient>
+          </Link>
+        ) : (
+          <App.ButtonGradient>{loading ? 'Loading...' : 'There are no active tournaments'}</App.ButtonGradient>
+        )} */}
+      </App.Flex>
+    </App.Container>
   )
 }
 
-export default memo(HomeTop, () => true)
+export default HomeTop

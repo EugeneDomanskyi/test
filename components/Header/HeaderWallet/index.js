@@ -5,7 +5,7 @@ import Image from 'next/image'
 import cn from 'classnames'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
-import { getPageName, trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
@@ -20,7 +20,7 @@ const HeaderWallet = () => {
   const router = useRouter()
   const isEarn = router.pathname.includes('/earn')
 
-  const { wallet, connectorId, connect, disconnect, getBalance, getConnectorName } = useWalletConnect()
+  const { wallet, connectorId, connect, disconnect, blockchain: chain, getBalance, getConnectorName } = useWalletConnect()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -28,6 +28,7 @@ const HeaderWallet = () => {
   const nativeBalance = useSelector(({ $portfolio }) => $portfolio.native)
   const portfolioUsd = useSelector(({ $portfolio }) => $portfolio.usd)
   const portfolioList = useSelector(({ $portfolio }) => $portfolio.list)
+  const raffleLoading = useSelector(({ $raffle }) => $raffle.loadingUser)
   const raffleBalance = useSelector(({ $raffle }) => $raffle.balance)
 
   const [isDisconnectDialogOpen, setIsDisconnectDialogOpen] = useState(false)
@@ -37,9 +38,13 @@ const HeaderWallet = () => {
 
   useEffect(() => {
     if (wallet && blockchain?.id) {
-      getPortfolio()
+      if (isEarn) {
+        setBalanceLoading(raffleLoading)
+      }
+
+      getPortfolio(!isEarn)
     }
-  }, [wallet, blockchain?.id])
+  }, [wallet, blockchain?.id, chain?.id, isEarn, raffleLoading])
 
   const getBalanceString = () => {
     if (isEarn) {
@@ -48,15 +53,6 @@ const HeaderWallet = () => {
       return `${nativeBalance.value} ${nativeBalance.symbol ?? blockchain.currency}`
     }
   }
-
-  // useEffect(() => {
-  //   if (isEarn && ! balance) {
-  //     setBalanceLoading(true)
-  //   } else if (isEarn) {
-  //     setCurrentBalance({amount: balance, symbol: 'TKeys'})
-  //     setBalanceLoading(false)
-  //   }
-  // }, [balance, isEarn])
 
   const getConnectorLogo = () => {
     switch (connectorId) {
@@ -77,15 +73,15 @@ const HeaderWallet = () => {
 
   const handleConnectWallet = async () => {
     if ( ! wallet) {
-      trackEvent('Wallet Connect Clicked', {
-        'Source': getPageName(),
+      Amplitude.event('Wallet Connect Clicked', {
+        'Source': Amplitude.page(),
       })
 
       const result = await connect()
       if (result) {
         const walletName = await getConnectorName()
-        trackEvent('Wallet Connect Success', {
-          'Source': getPageName(),
+        Amplitude.event('Wallet Connect Success', {
+          'Source': Amplitude.event(),
           'Type': walletName,
         })
       }
@@ -97,10 +93,10 @@ const HeaderWallet = () => {
 
     disconnect()
     handleDisconnectDialogToggle(false)()
-    handlePortfolioToggle(false)()
+    handlePortfolioToggle(false)
 
-    trackEvent('Wallet Disconnect Success', {
-      'Source': getPageName(),
+    Amplitude.event('Wallet Disconnect Success', {
+      'Source': Amplitude.page(),
       'Type': walletName,
     })
   }
@@ -109,24 +105,19 @@ const HeaderWallet = () => {
     setIsDisconnectDialogOpen(open)
   }
 
-  const getPortfolio = async () => {
-    setBalanceLoading(true)
-    if (blockchain?.use1Inch) {
-      const result = await $portfolio.api.details({ wallet, blockchain })
-      if (result) {
-        dispatch($portfolio.set.details(result))
-      }
-    } else {
-      const balance = await getBalance('', true)
-      if (balance.formatted) {
-        const amount = balance.formatted * 1
-        dispatch($portfolio.set.native({
-          value: amount.toFixed(4),
-          symbol: balance.symbol,
-        }))
-      }
+  const getPortfolio = async (controlLoading) => {
+    if (controlLoading) {
+      setBalanceLoading(true)
     }
-    setBalanceLoading(false)
+
+    const result = await $portfolio.api.details({ wallet, blockchain })
+    if (result.success) {
+      dispatch($portfolio.set.details({...result, blockchain}))
+    }
+
+    if (controlLoading) {
+      setBalanceLoading(false)
+    }
   }
 
   const handleOrdersDialogOpen = () => {
@@ -135,15 +126,11 @@ const HeaderWallet = () => {
   }
 
   const handleShortPortfolioVisible = (value) => () => {
-    if (blockchain?.use1Inch) {
-      setIsShortPortfolioVisible(value)
-    }
+    setIsShortPortfolioVisible(value)
   }
 
   const handlePortfolioToggle = (value = true) => {
-    if (blockchain?.use1Inch) {
-      setIsPortfolioVisible(value)
-    }
+    setIsPortfolioVisible(value)
   }
 
   return wallet ? (
@@ -175,7 +162,7 @@ const HeaderWallet = () => {
                   <App.Loader size={16} />
                 </App.Flex>
               ) : (
-                <App.Text size={16} height={1}>{getBalanceString()}</App.Text>
+                <App.Text nowrap size={16} height={1}>{getBalanceString()}</App.Text>
               )}
             </App.Flex>
           </App.Flex>
@@ -221,9 +208,11 @@ const HeaderWallet = () => {
       </App.Dialog>
     </>
   ) : (
-    <App.Button primary large={!isMobile} onClick={handleConnectWallet}>
-      Connect{!isMobile ? ' Wallet' : ''}
-    </App.Button>
+    // <App.Button primary large={!isMobile} onClick={handleConnectWallet}>
+    //   Connect{!isMobile ? ' Wallet' : ''}
+    // </App.Button>
+
+    <App.ButtonGradient onClick={handleConnectWallet}>Connect Wallet</App.ButtonGradient>
   )
 }
 

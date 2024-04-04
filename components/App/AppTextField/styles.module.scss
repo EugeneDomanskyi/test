@@ -132,6 +132,70 @@ $borderRadius: 12px;
     }
   }
 
+  /* variant: subscribe */
+  &.subscribe {
+    .input {
+      background-color: #05050B;
+
+      .input_input {
+        font-size: 14px;
+        line-height: 16px;
+        padding: 10px 20px;
+
+        &::placeholder {
+          color: #9B99AE;
+          font-size: 14px;
+          line-height: 16px;
+        }
+      }
+
+      .input_fieldset {
+        border-radius: 52px;
+        border-color: #574E74;
+      }
+    }
+  }
+
+  /* variant: search-app */
+  &.search-app {
+    .input {
+      background-color: #1c192e;
+      padding-left: 16px;
+
+      .input_input {
+        font-size: 16px;
+        line-height: 32px;
+        padding: 10px 16px 10px 0;
+
+        &::placeholder {
+          color: #5E5C6B;
+          font-size: 16px;
+          line-height: 32px;
+          font-feature-settings: 'clig' off, 'liga' off;
+          text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+          opacity: 1;
+        }
+      }
+
+      .input_fieldset {
+        border-radius: 4px;
+        border-color: transparent;
+      }
+    }
+
+    &.notEmpty {
+      .input {
+        &:hover,
+        &.input_focused,
+        &.input_disabled {
+          .input_fieldset {
+            border-color: transparent;
+          }
+        }
+      }
+    }
+  }
+
   /* variant: search-light */
   &.search-light {
     .input {

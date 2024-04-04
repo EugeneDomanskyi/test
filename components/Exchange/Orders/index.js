@@ -1,6 +1,6 @@
 import styles from './styles.module.scss'
 import { useSelector } from 'react-redux'
-import { useState, memo, useEffect, useCallback } from 'react'
+import { useState, memo, useEffect } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
@@ -11,28 +11,23 @@ import $app from '@/store/app'
 import $orders from '@/store/orders'
 import $alert from '@/store/alert'
 
-import { OrderUtils } from '@/libs/helpers'
-import App from '@/components/App'
-import { trackEvent, getPageName } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
-import useOrders from '@/myhooks/useOrders'
 
+import App from '@/components/App'
 import OrderDetails from '@/components/Exchange/OrderDetails'
-import useInterval from '@/myhooks/useInterval'
 
 const Orders = ({global, type, version, onClickOrder}) => {
   const router = useRouter()
-  const [queryTokenId] = router.query.address || []
-  const queryBlockchainCode = router.query.blockchain
+
+  const { wallet, connect, getConnectorName, sign } = useWalletConnect()
 
   const dispatch = useDispatch()
-  const current = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.current : $collection.current)
-  const orders = useSelector($orders.get[type])
   const blockchain = useSelector($app.get.blockchain)
-  const socketConnected = useSelector(({$app}) => $app.socketConnected)
-  const { wallet, connect, getConnectorName } = useWalletConnect()
-
-  const { updateOrders } = useOrders({tokenAddress: queryTokenId, type})
+  const isApp = useSelector(({ $app }) => $app.isApp)
+  const socketConnected = useSelector(({ $app }) => $app.socketConnected)
+  const current = useSelector(({ $token }) => $token.current)
+  const orders = useSelector($orders.get.list)
 
   const [loading, setLoading] = useState(true)
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
@@ -44,62 +39,45 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
   useEffect(() => {
     if (wallet) {
-      getOrders()
+      fetchOrders()
     } else {
-      dispatch($orders.set[type]([]))
+      dispatch($orders.set.list([]))
     }
-  }, [wallet, type, blockchain.code])
 
-  useEffect(() => {
-    if (type === 'tokens') {
+    if (version != 'mobile') {
       Socket.on('order_placed', 'my_orders', (data) => {
-        const order = OrderUtils.formatter(data)
-        dispatch($orders.set.tokensAdd(order))
+        dispatch($orders.set.add(data))
       })
+      
       Socket.on('order_submitted', 'my_orders', (data) => {
-        const order = OrderUtils.formatter(data)
-        dispatch($orders.set.tokensUpdate(order))
+        dispatch($orders.set.update(data))
       })
     }
-  }, [wallet, type, blockchain.code])
+  }, [wallet, current?.id])
 
   useEffect(() => {
-    if (wallet && socketConnected) {
+    if (wallet && socketConnected && version != 'mobile') {
       Socket.subscribe(wallet)
-    }
-    return () => {
-      if (socketConnected) {
+
+      return () => {
         Socket.unsubscribe(wallet)
       }
     }
-  }, [wallet, socketConnected])
+  }, [wallet, socketConnected, version])
 
-  const handleOrdersUpdated = useCallback(() => {
-    if (type == 'tokens') {
-      updateOrders()
-    } else {
-      if (wallet) {
-        $orders.api.get.nfts({
-          blockchain: blockchain.code,
-          maker: wallet,
-          includeCriteriaMetadata: true,
-        }).then(res => {
-          if (res) {
-            dispatch($orders.set.nfts(res))
-          }
-        })
-      }
-  
-      $orders.api.get.nfts.orderBook({
-        collection: queryTokenId,
-        blockchain: blockchain.code,
-      }).then(res => {
-        if (res) {
-          dispatch($orders.set.orderBook({type: 'nfts', data: res}))
-        }
-      })
+  const fetchOrders = async () => {
+    const result = await $orders.api.list({
+      chain_id: blockchain.id,
+      user_address: wallet,
+      page: 1,
+      page_size: 50,
+    })
+    if (result) {
+      dispatch($orders.set.list(result ?? []))
     }
-  }, [wallet, queryTokenId, queryBlockchainCode])
+
+    setLoading(false)
+  }
 
   const handlePressCancelConfirm = (order) => (e) => {
     e.stopPropagation()
@@ -119,13 +97,25 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
   const handleCancelAllConfirm = async () => {
     handleDialogClose('cancelAll')()
+    handleDialogOpen('approve')()
 
-    const hashes = orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map(order => order.orderHash )
-    const result = await $orders.api.cancelAll({ wallet, order_hashes: hashes, chain_id: blockchain.id })
-    if (result) {
-      dispatch($orders.set.tokens(result.data.map(o => OrderUtils.formatter(o))))
-      dispatch($alert.set.success({ title: 'All Orders Cancelled', text: 'All your live orders has been cancelled successfully!' }))
+    const signature = await sign(wallet)
+    if (signature) {
+      const result = await $orders.api.cancelAll({ wallet_address: wallet, chain_id: blockchain.id, signature })
+      if (result?.data) {
+        const updatedOrders = orders.open.reduce((acc, o) => ({
+          ...acc,
+          [o.orderId]: 'cancelled',
+        }), {})
+        console.log(updatedOrders)
+        dispatch($orders.set.updateOrderStatus(updatedOrders))
+        dispatch($alert.set.success({ title: 'Orders cancelled', text: `You have cancelled ${orders.open.length} order(s) successfully.` }))
+      }
+    } else {
+      dispatch($alert.set.error({ title: 'Orders not cancelled', text: `Please try again to cancel your ${orders.open.length} open order(s).` }))
     }
+
+    handleDialogClose('approve')()
   }
 
   const handleDialogOpen = (key) => () => {
@@ -158,28 +148,22 @@ const Orders = ({global, type, version, onClickOrder}) => {
       'Total': order.price,
       'Network': blockchain.code.toUpperCase(),
     }
-    trackEvent('Cancel Order Submit', eventPost)
-    if (blockchain?.useBackend) {
-      const result = await $orders.api.cancel({ order_hash: order.orderHash, chain_id: blockchain.id })
+    Amplitude.event('Cancel Order Submit', eventPost)
+
+    const signature = await sign(wallet)
+    if (signature) {
+      const result = await $orders.api.cancel({ id: order.orderId, chain_id: blockchain.id, signature })
       if (result) {
-        trackEvent('Cancel Order Success', eventPost)
-        dispatch($orders.set.tokensUpdate(OrderUtils.formatter(result.data)))
-        dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
+        Amplitude.event('Cancel Order Success', eventPost)
+        dispatch($orders.set.updateOrderStatus({[order.orderId]: 'cancelled'}))
+        dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity} ${order.baseCurrency} has been cancelled successfully.` }))
       } else {
-        dispatch($alert.set.error({ title: 'Order Not Cancelled', text: result }))
+        dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity} ${order.baseCurrency}.` }))
       }
-      handleDialogClose('approve')()
     } else {
-      order.cancel().then(() => {
-        trackEvent('Cancel Order Success', eventPost)
-        dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
-      }).catch(error => {
-        dispatch($alert.set.error({ title: 'Order Not Cancelled', text: error }))
-      }).finally(() => {
-        handleOrdersUpdated()
-        handleDialogClose('approve')()
-      })
+      dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity} ${order.baseCurrency}.` }))
     }
+    handleDialogClose('approve')()
   }
 
   const handlePressCopy = order => (e) => {
@@ -205,9 +189,9 @@ const Orders = ({global, type, version, onClickOrder}) => {
   }
 
   const handleChangeOrdersType = type => () => {
-    trackEvent(`View ${type == 'open' ? 'Open' : 'Completed'} Order`, {
+    Amplitude.event(`View ${type == 'open' ? 'Open' : 'Completed'} Order`, {
       'Base Currency': current?.symbol ?? 'Global',
-      'Quote Currency': 'USDT',
+      'Quote Currency': current?.quoteSymbol,
       'Network': blockchain.code.toUpperCase(),
     })
 
@@ -220,36 +204,19 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
   const handleConnectWallet = async () => {
     if ( ! wallet) {
-      trackEvent('Wallet Connect Clicked', {
-        'Source': getPageName(),
+      Amplitude.event('Wallet Connect Clicked', {
+        'Source': Amplitude.page(),
       })
 
       const result = await connect()
       if (result) {
         const walletName = await getConnectorName()
-        trackEvent('Wallet Connect Success', {
-          'Source': getPageName(),
+        Amplitude.event('Wallet Connect Success', {
+          'Source': Amplitude.page(),
           'Type': walletName,
         })
       }
     }
-  }
-
-  const getOrders = async () => {
-    const res = await $orders.api.get[type]({
-      blockchain: blockchain.code,
-      maker: wallet,
-      includeCriteriaMetadata: true,
-      address: wallet,
-      sortBy: type === 'nfts' ? 'createdAt' : 'createDateTime',
-      statuses: '[1,2,3]',
-    })
-
-    if (res) {
-      dispatch($orders.set[type](res))
-    }
-
-    setLoading(false)
   }
 
   const filterByAddress = (order) => {
@@ -257,31 +224,21 @@ const Orders = ({global, type, version, onClickOrder}) => {
   }
 
   const filteredByStatus = order => {
-    return type !== 'tokens' || !hideCancelledOrders || (order.status !== 'cancelled')
+    return !hideCancelledOrders || (order.status !== 'cancelled')
   }
-
-  useInterval(getOrders, wallet ? 5000 : null)
 
   return (
     <App.Flex column className={cn(styles.container, {[styles[version]]: version})}>
-      {
-        type === 'tokens'
-          ? <App.Flex className={styles.header}>
-              <App.Flex flex={1} center className={cn(styles.tab, {[styles.active]: ordersType === 'open'})} onClick={handleChangeOrdersType('open')}>
-                <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'open' ? '#fff' : '#5E5C6B'} height={1}>Open Orders</App.Text>
-              </App.Flex>
-              <App.Flex flex={1} center className={cn(styles.tab, {[styles.active]: ordersType === 'closed'})} onClick={handleChangeOrdersType('closed')}>
-                <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'closed' ? '#fff' : '#5E5C6B'} height={1}>Completed Orders</App.Text>
-              </App.Flex>
+      <App.Flex className={styles.header}>
+        <App.Flex flex={1} center className={cn(styles.tab, {[styles.active]: ordersType === 'open'})} onClick={handleChangeOrdersType('open')}>
+          <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'open' ? '#fff' : '#5E5C6B'} height={1}>Open Orders</App.Text>
+        </App.Flex>
+        <App.Flex flex={1} center className={cn(styles.tab, {[styles.active]: ordersType === 'closed'})} onClick={handleChangeOrdersType('closed')}>
+          <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'closed' ? '#fff' : '#5E5C6B'} height={1}>Completed Orders</App.Text>
+        </App.Flex>
 
-              <div className={styles.badge} style={{transform: `translateX(${ordersType === 'open' ? 0 : 100}%)`}} />
-            </App.Flex>
-          : version != 'mobile' ? (
-            <App.Flex className={styles.header} align="center">
-              <App.Text size={[12, 14]} uppercase={[true, null]} weight={600} height={1}>My Orders</App.Text>
-            </App.Flex>
-          ) : null
-      }
+        <div className={styles.badge} style={{transform: `translateX(${ordersType === 'open' ? 0 : 100}%)`}} />
+      </App.Flex>
 
       {!wallet && version == 'mobile' ? (
         <App.Flex column center full gap={16}>
@@ -307,22 +264,17 @@ const Orders = ({global, type, version, onClickOrder}) => {
                   onChange={handleChangeSwitch}
                 />
 
-                {type === 'nfts' ? (
-                  current?.image ? <Image alt="" src={current?.image} width={20} height={20} /> : null
+                {version == 'mobile' ? (
+                  <App.Text size={12} height={1}>{current?.symbol}/{current?.quoteSymbol}</App.Text>
                 ) : (
-                  version == 'mobile' ? (
-                    <App.Text size={12} height={1}>{current?.symbol}/USDT</App.Text>
-                  ) : (
-                    <App.Text color="#B9B8C5" size={10} weight={600} height={1}>{current?.symbol} - USDT Orders</App.Text>
-                  )
+                  <App.Text color="#B9B8C5" size={10} weight={600} height={1}>{current?.symbol} - {current?.quoteSymbol} Orders</App.Text>
                 )}
               </App.Flex>
             ) : (
               <App.Flex />
             )}
 
-            {type === 'tokens' ? (
-              ordersType === 'closed' ? (
+            {ordersType === 'closed' ? (
               <App.Flex align="center" gap={8} flex={1}>
                 <App.Switch
                   width={40}
@@ -333,34 +285,31 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
                 <App.Text color="#B9B8C5" size={[10, 12]} weight={600} height={1}>{version != 'mobile' ? 'Hide All Cancelled Orders' : 'Hide Cancelled Orders'}</App.Text>
               </App.Flex>
+            ) : (
+              version == 'mobile' ? (
+                <App.Text weight={600} color="#FFAF38" onClick={handleCancelAllClick}>CANCEL ALL</App.Text>
               ) : (
-                blockchain?.useBackend ? (
-                  version == 'mobile' ? (
-                    <App.Text weight={600} color="#FFAF38" onClick={handleCancelAllClick}>CANCEL ALL</App.Text>
-                  ) : (
-                    <App.Button variant="muted" small onClick={handleCancelAllClick}>
-                      Cancel All
-                    </App.Button>
-                  )
-                ) : null
+                <App.Button variant="muted" small onClick={handleCancelAllClick}>
+                  Cancel All
+                </App.Button>
               )
-            ) : null}
+            )}
           </App.Flex>
 
           {version != 'mobile' ? (
             <>
               <App.Flex align="center" sx={{borderBottom: '1px solid #19162D'}}>
-                <App.Flex column sx={{width: 60, padding: '4px 8px 10px'}} align="center">
+                <App.Flex column sx={{width: 90, padding: '4px 8px 10px'}} align="center">
                   <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Asset</App.Text>
                 </App.Flex>
                 <App.Flex column sx={{width: 60, padding: '4px 8px 10px'}} align="center">
                   <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Qty</App.Text>
                 </App.Flex>
                 <App.Flex column flex={1} sx={{padding: '4px 8px 10px'}} align="center">
-                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Price {type === 'tokens' ? '(USDT)' : ''}</App.Text>
+                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Price ({current?.quoteSymbol})</App.Text>
                 </App.Flex>
                 <App.Flex column flex={1} sx={{padding: '4px 8px 10px'}} align="center">
-                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Total {type === 'tokens' ? '(USDT)' : ''}</App.Text>
+                  <App.Text size={10} weight={600} color="#B9B8C5" center height={1}>Total ({current?.quoteSymbol})</App.Text>
                 </App.Flex>
               </App.Flex>
 
@@ -372,15 +321,15 @@ const Orders = ({global, type, version, onClickOrder}) => {
                       <App.Flex column className={styles.orderContainer}>
                         <App.Flex align="center" className={cn(styles.order, {[styles.disabled]: order.status === 'completed' || order.status === 'cancelled'})}>
                           <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
-                          <App.Flex column align="center" justify="center" sx={{width: 60, padding: 8}}>
+                          <App.Flex column align="center" justify="center" sx={{width: 90, padding: 8}}>
                             {order.image && type === 'nfts' ? (
                               <Image alt="" src={order.image} width={35} height={35} />
                             ) : (
                               order.quoteCurrency ? (
                                 <App.Flex column gap={4}>
-                                  <App.Text size={12} weight={600} center height={1}>{ order.quoteCurrency }</App.Text>
+                                  <App.Text size={12} weight={600} center height={1}>{ order.baseCurrency }</App.Text>
                                   <div style={{width: '100%', minWidth: 20, height: 1, background: '#B9B8C5'}} />
-                                  <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ order.baseCurrency }</App.Text>
+                                  <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ order.quoteCurrency }</App.Text>
                                 </App.Flex>
                               ) : null
                             )}
@@ -475,7 +424,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                           <App.Flex row justify="space-between" flex={1}>
                             <App.Flex column gap={8}>
                               <App.Flex row center gap={10} height={25} className={styles.currency} onClick={handleClickDetails(order)}>
-                                <App.Text size={12} weight={700} height={1}>{order.quoteCurrency} <App.Text inline size={10} weight={700} color="#5E5C6B" height={1}>/ {order.baseCurrency}</App.Text></App.Text>
+                                <App.Text size={12} weight={700} height={1}>{order.baseCurrency} <App.Text inline size={10} weight={700} color="#5E5C6B" height={1}>/ {order.quoteCurrency}</App.Text></App.Text>
                                 <App.Icon icon="chevron-right2" />
                               </App.Flex>
 
@@ -572,8 +521,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
             <Image src="/images/order-cancel-loader.gif" width={150} height={150} alt="" />
           </App.Flex>
 
-          <App.Text center size={16} weight={700} height={1}>Waiting for Approval</App.Text>
-          <App.Text center size={10} height={1} color="#5E5C6B">Please Proceed in Your Wallet</App.Text>
+          <App.Text center size={16} weight={700} height={1}>Waiting for {isApp ? 'Blockchain Confirmation' : 'Approval'}</App.Text>
+          <App.Text center size={10} height={1} color="#5E5C6B">{isApp ? 'It will take a few seconds' : 'Please Proceed in Your Wallet'}</App.Text>
         </App.Flex>
       </App.Dialog>
 

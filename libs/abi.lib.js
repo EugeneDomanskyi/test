@@ -1,4 +1,126 @@
 export default {
+  erc20: {
+    getFreeToken: [{
+      "name": "getFreeToken",
+      "stateMutability": "nonpayable",
+      "type": "function",
+      "inputs": [],
+      "outputs": [],
+    }],
+
+    nextClaimTime: [{
+      "name": "nextClaimTime",
+      "stateMutability": "view",
+      "type": "function",
+      "inputs": [{
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }, {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }],
+      "outputs": [{
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256",
+      }],
+    }],
+
+    tokens: [{
+      "name": "tokens",
+      "stateMutability": "view",
+      "type": "function",
+      "inputs": [{
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }],
+      "outputs": [{
+        "internalType": "contract IERC20",
+        "name": "token",
+        "type": "address"
+      }, {
+        "internalType": "uint256",
+        "name": "amountPerMint",
+        "type": "uint256"
+      }, {
+        "internalType": "uint256",
+        "name": "balance",
+        "type": "uint256"
+      }],
+    }],
+
+    allowance: [{
+      "name": "allowance",
+      "stateMutability": "view",
+      "type": "function",
+      "inputs": [{
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }, {
+        "internalType": "address",
+        "name": "spender",
+        "type": "address",
+      }],
+      "outputs": [{
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256",
+      }],
+    }],
+
+    approve: [{
+      "name": "approve",
+      "stateMutability": "nonpayable",
+      "type": "function",
+      "inputs": [{
+        "internalType": "address",
+        "name": "spender",
+        "type": "address",
+      }, {
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256",
+      }],
+      "outputs": [{
+        "internalType": "bool",
+        "name": "",
+        "type": "bool",
+      }],
+    }],
+
+    balanceOf: [{
+      "name": "balanceOf",
+      "stateMutability": "view",
+      "type": "function",
+      "inputs": [{
+        "internalType": "address",
+        "name": "account",
+        "type": "address",
+      }],
+      "outputs": [{
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256",
+      }],
+    }],
+
+    decimals: [{
+      "name": "decimals",
+      "stateMutability": "view",
+      "type": "function",
+      "inputs": [],
+      "outputs": [{
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8",
+      }],
+    }],
+  },
+
   erc721: {
     bulkTransfer: [{
       "name": "bulkTransfer",

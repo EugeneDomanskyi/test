@@ -1,6 +1,9 @@
-import { prepareWriteContract, waitForTransaction, writeContract, readContract } from '@wagmi/core'
+import { prepareWriteContract, waitForTransaction, writeContract, readContract, multicall, watchMulticall } from '@wagmi/core'
+import { formatUnits } from 'viem'
 
 import abi from './abi.lib'
+
+import useApp from '@/myhooks/useApp'
 
 export const defaultOperator = '0x1E0049783F008A0085193E00003D00cd54003c71' // Use OpenSea operator for OpenSea contract
 export const defaultContract = '0x0000000000c2d145a2526bD8C716263bFeBe1A72' // Use OpenSea contract
@@ -8,6 +11,8 @@ export const conduitKey = '0x0000007b02230091a7ed01230072f7006a004d60a8d4e71d599
 
 export default function Contracts(defaultGasLimit = null) {
   const isDebugMode = process.env.NEXT_PUBLIC_APP_ENV != 'production'
+
+  const { appLog } = useApp()
 
   const methods = {
     debugMessage: (error, title = null) => {
@@ -23,25 +28,19 @@ export default function Contracts(defaultGasLimit = null) {
         }
       }
 
-      return { error: error?.message || error?.name || error }
+      return { error: error?.shortMessage || error?.message || error?.name || error }
     },
 
     prepareWriteContract: async (contractConfig, gasLimit = defaultGasLimit) => {
       const place = contractConfig?.functionName
       let errorCode = null
-      let errorData = {}
       let config = {}
       try {
         config = await prepareWriteContract(contractConfig)
       } catch (error) {
         errorCode = error?.code
-        // errorData.error = error
-        methods.debugMessage(error, `Prepare "${place}"`)
+        return methods.debugMessage(error, `Prepare "${place}"`)
       }
-
-      // if (errorData) {
-      //   return errorData
-      // }
 
       if (errorCode) {
         if (errorCode == 'UNPREDICTABLE_GAS_LIMIT' && gasLimit) {
@@ -289,18 +288,141 @@ export default function Contracts(defaultGasLimit = null) {
       return result
     },
 
-    balanceOfTkeys: async (wallet, contract, tokenId) => {
+    balanceOfTkeys: async (wallet, contract) => {
       const result = await methods.readContract({
         address: contract,
-        abi: abi.tkeys.balanceOf,
+        abi: abi.erc721.balanceOf,
         functionName: 'balanceOf',
         args: [
           wallet,
-          tokenId,
         ],
       })
 
       return parseFloat(result)
+    },
+
+    getFreeToken: async (contract) => {
+      const config = await methods.prepareWriteContract({
+        address: contract,
+        abi: abi.erc20.getFreeToken,
+        functionName: 'getFreeToken',
+        args: [],
+      })
+
+      if (config?.error) {
+        return config
+      }
+
+      const result = await methods.writeContract(config)
+      return result
+    },
+
+    nextClaimTime: async (wallet, contract, tokenId) => {
+      const result = await methods.readContract({
+        address: contract,
+        abi: abi.erc20.nextClaimTime,
+        functionName: 'nextClaimTime',
+        args: [
+          tokenId,
+          wallet,
+        ],
+      })
+
+      return Number(result)
+    },
+
+    tokens: async (contract, tokenId) => {
+      const result = await methods.readContract({
+        address: contract,
+        abi: abi.erc20.tokens,
+        functionName: 'tokens',
+        args: [
+          tokenId,
+        ],
+      })
+
+      return result
+    },
+
+    allowance: async (wallet, contract, exchangeContract) => {
+      const result = await methods.readContract({
+        address: contract,
+        abi: abi.erc20.allowance,
+        functionName: 'allowance',
+        args: [
+          wallet,
+          exchangeContract,
+        ],
+      })
+
+      return result
+    },
+
+    approve: async (contract, exchangeContract, amount) => {
+      const config = await methods.prepareWriteContract({
+        address: contract,
+        abi: abi.erc20.approve,
+        functionName: 'approve',
+        args: [
+          exchangeContract,
+          amount,
+        ],
+      })
+
+      const result = await methods.writeContract(config)
+      return result
+    },
+
+    watchBalance: async (wallet, contracts, callback) => {
+      const calls = contracts.flatMap((contract) => ([{
+        address: contract,
+        abi: abi.erc20.decimals,
+        functionName: 'decimals',
+        args: [],
+      }, {
+        address: contract,
+        abi: abi.erc20.balanceOf,
+        functionName: 'balanceOf',
+        args: [
+          wallet,
+        ],
+      }]))
+
+      multicall({
+        contracts: calls,
+        listenToBlock: true,
+      })
+      // console.log('calls', calls);
+      appLog(`calls ${JSON.stringify(calls)}`)
+
+      return watchMulticall({
+        contracts: calls,
+        listenToBlock: true,
+      }, (data) => {
+        const result = data.reduce((acc, response, i, array) => {
+          BigInt.prototype.toJSON = function() { return this.toString() }
+          appLog(`response JSON ${JSON.stringify(response)}`)
+          // appLog(`response ${response.toString()}`)
+          if (!response.hasOwnProperty('result')) {
+            return acc
+          }
+
+          const isBalance = i % 2
+          if (isBalance) {
+            const decimals = array[i - 1].result
+            return {
+              ...acc,
+              [contracts[parseInt(i / 2)]]: formatUnits(response?.result ?? '', decimals)
+            }
+          }
+
+          return acc
+        }, {})
+
+        if (callback) {
+          callback(result)
+        }
+      })
     },
   }
 
