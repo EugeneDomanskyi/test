@@ -189,9 +189,12 @@ a {
   min-width: 100px;
 }
 
-.widget .flex {
-  display: flex;
-  gap: 16px;
+.widget .bad-button__default + .bad-button__default {
+  margin-left: 16px;
+}
+
+.widget .bad-quest__view-overlay--open {
+  display: none;
 }
 
 [data-rk] .ju367v9g {
