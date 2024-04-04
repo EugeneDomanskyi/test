@@ -3,7 +3,7 @@ import Slider from 'react-slick'
 import cn from 'classnames'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 import App from '@/components/App'
 
@@ -97,7 +97,7 @@ const RaffleBanner = () => {
   }
 
   const handleButtonClick = () => {
-    trackEvent('Click Get Tkeys', {
+    Amplitude.event('Click Get Tkeys', {
       'Source': 'Carousel',
     })
 

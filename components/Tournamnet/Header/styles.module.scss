@@ -1,0 +1,25 @@
+.container {
+  height: 89px;
+
+  .logo {
+    position: relative;
+    padding-top: 11px;
+
+    .badge {
+      position: absolute;
+      background-color: #FFD600;
+      border-radius: 2px;
+      color: #08051C;
+      text-align: center;
+      font-family: 'Gilroy';
+      font-style: italic;
+      font-weight: 700;
+      font-size: 8.725px;
+      line-height: 11px;
+      line-height: 1;
+      padding: 2px 6px 0px 6px;
+      right: 0;
+      top: 0;
+    }
+  }
+}

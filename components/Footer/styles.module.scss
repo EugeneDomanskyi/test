@@ -1,3 +1,32 @@
 .container {
-  background: linear-gradient(180deg, rgba(64, 22, 152, 0.00) 0%, #29015B 100%);
+  border-top: 1px solid #FFFFFF1A;
+  padding: 24px 0;
+
+  @media (max-width: 768px) {
+    padding: 24px 0;
+  }
+
+  .line {
+    width: 1px;
+    height: 16px;
+    background-color: #6F6C88;
+
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+
+  .link {
+    opacity: .7;
+    transition: all .2s;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.bottom {
+  border-top: 1px solid #FFFFFF1A;
+  padding: 24px 0;
 }

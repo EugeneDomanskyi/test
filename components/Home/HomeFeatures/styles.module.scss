@@ -1,0 +1,85 @@
+.box {
+  border: 1px solid #574E74;
+  border-radius: 16px;
+  background: radial-gradient(113.88% 113.88% at 67.99% -35.17%, #231F38 0%, #100D21 100%);
+
+  &.gradient {
+    background: linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%);
+    border: 0;
+  }
+
+  .inner {
+    padding: 24px;
+    border-radius: 16px;
+
+    @media (max-width: 768px) {
+      padding: 16px;
+    }
+
+    &.inner1 {
+      background: url('/images/home/features-new-1.png') center bottom / contain no-repeat;
+      height: 458px;
+
+      @media (max-width: 768px) {
+        height: 336px;
+      }
+    }
+
+    &.inner2 {
+      background: url('/images/home/features-new-2.png') center bottom / contain no-repeat;
+
+      @media (max-width: 768px) {
+        height: 240px;
+      }
+    }
+
+    &.inner3 {
+      background: url('/images/home/features-new-3.png') right center / contain no-repeat;
+
+      @media (max-width: 768px) {
+        background: url('/images/home/features-new-3m.png') right bottom no-repeat;
+        height: 240px;
+      }
+    }
+
+    &.inner4 {
+      background: url('/images/home/features-new-4.png') center bottom / contain no-repeat;
+      height: 400px;
+
+      @media (max-width: 768px) {
+        background: url('/images/home/features-new-4m.png') center bottom / contain no-repeat;
+        height: 240px;
+      }
+    }
+
+    &.inner5 {
+      background: url('/images/home/features-new-5.png') center bottom / contain no-repeat;
+      height: 400px;
+
+      @media (max-width: 768px) {
+        background: url('/images/home/features-new-5m.png') center bottom / contain no-repeat;
+        height: 240px;
+      }
+    }
+
+    &.inner6 {
+      background: url('/images/home/features-new-6.png') center bottom / contain no-repeat;
+      height: 400px;
+
+      @media (max-width: 768px) {
+        background: url('/images/home/features-new-6m.png') center bottom / contain no-repeat;
+        height: 240px;
+      }
+    }
+
+    &.inner7 {
+      background: url('/images/home/features-new-7.png') right bottom / cover no-repeat;
+      height: 180px;
+
+      @media (max-width: 768px) {
+        background: url('/images/home/features-new-7m.png') center bottom / contain no-repeat;
+        height: 240px;
+      }
+    }
+  }
+}

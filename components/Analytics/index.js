@@ -1,45 +1,53 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import amplitude from 'amplitude-js'
 import Smartlook from 'smartlook-client'
-import { v4 as uuid } from 'uuid'
-import { useAccount, useNetwork } from 'wagmi'
-import { connectWalletVid } from '@/libs/magic-square.lib'
+import * as Sentry from '@sentry/nextjs'
+import { useAccount } from 'wagmi'
+
+import Amplitude from '@/libs/amplitude.lib'
+
+import $app from '@/store/app'
+
+if (process.env.NEXT_PUBLIC_APP_ENV !== 'local') {
+  Sentry.init({
+    dsn: 'https://b6059579615abe9ca86108562cbeb308@o1399663.ingest.sentry.io/4505906094538752',
+    tracesSampleRate: 0.1, // Capture 100% of the transactions, reduce in production!
+    replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+    replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+  })
+}
 
 const Analytics = () => {
   const router = useRouter()
   const { address, isConnected } = useAccount()
-  const { chain } = useNetwork()
 
   useEffect(() => {
-    const deviceId = localStorage.getItem('device_id')
-    if (!deviceId) {
-      localStorage.setItem('device_id', uuid())
+    if (process.env.NEXT_PUBLIC_APP_ENV !== 'local') {
+      Smartlook.init(process.env.NEXT_PUBLIC_SMARTLOOK_API_KEY)
     }
-  }, [])
 
-  useEffect(() => {
     if (isConnected && address) {
-      const identifyObj = new amplitude.Identify()
-      identifyObj.set('wallet', address)
-      amplitude.identify(identifyObj)
+      Amplitude.identify(address)
 
-      Smartlook.identify(address)
+      if (process.env.NEXT_PUBLIC_APP_ENV !== 'local') {
+        Smartlook.identify(address)
+      }
+
+      const vid = localStorage.getItem('ms_vid')
+      if (vid) {
+        $app.api.vid({
+          wallet_address: address,
+          vid,
+        })
+      }
     }
   }, [address, isConnected])
-
-  useEffect(() => {
-    if (isConnected && address && chain?.id) {
-      fetch(`https://39bd5ye5v9.execute-api.eu-north-1.amazonaws.com/connected_wallets?wallet_address=${address}&chain_id=${chain.id}`, { method: 'POST' })
-      connectWalletVid(address)
-    }
-  }, [address, isConnected, chain?.id])
 
   useEffect(() => {
     if (router.query) {
       const utmParams = Object.entries(router.query).filter(([key]) => key.startsWith('utm_')).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
       if (Object.keys(utmParams).length) {
-        amplitude.getInstance().setUserProperties(utmParams)
+        Amplitude.utm(utmParams)
       }
     }
   }, [router.query])

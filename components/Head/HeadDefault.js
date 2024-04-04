@@ -1,32 +1,16 @@
 import Head from 'next/head'
 
-const HeadDefault = ({currentPage, currentSymbol}) => {
+const HeadDefault = () => {
   const getTitle = () => {
-    if (!currentSymbol) {
-      return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'
-    }
-    switch (currentPage) {
-      case 'nfts':
-        return `${currentSymbol} Trading and Charts | Tegro: The CEX-DEX`
-      case 'tokens':
-        return `${currentSymbol}/USDT Trading and Charts | Tegro: The CEX-DEX`
-      default:
-        return 'Tegro: The CEX-DEX | Buy, Sell, & Trade Tokens or NFTs'
-    }
+    return 'Tegro: The Gen2 DEX for High-frequency Trading'
   }
 
   const getDescription = () => {
-    if (!currentSymbol) {
-      return 'Buy, sell, and trade Tokens or NFTs instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade Tokens and NFTs at the best prices.'
-    }
-    switch (currentPage) {
-      case 'nfts':
-        return `Buy, sell, and trade ${currentSymbol} instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${currentSymbol} at the best prices.`
-      case 'tokens':
-        return `Buy, sell, and trade ${currentSymbol}/USDT instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade ${currentSymbol} at the best prices.`
-      default:
-        return 'Buy, sell, and trade Tokens or NFTs instantly. Use orderbooks, limit orders, and more on Tegro: The CEX-DEX to trade Tokens and NFTs at the best prices.'
-    }
+    return 'Tegro is a Gen2 DEX for high-frequency trading with API bot access. Enjoy CEX-level efficiency on-chain with features like efficient orderbooks, unmatched gas efficiency, lightning-fast order matching, and more! Become a part of the next DeFi revolution. Join the Tegro Testnet and start trading for free today!'
+  }
+
+  const getUrl = () => {
+    return `https://tegro.com/`
   }
 
   return (
@@ -34,6 +18,19 @@ const HeadDefault = ({currentPage, currentSymbol}) => {
       <title>{getTitle()}</title>
       <meta content={getDescription()} property="description" key="description" />
       <meta name="keywords" content="Blockchain Crypto Exchange, Cryptocurrency Exchange, Bitcoin Trading, Ethereum price trend, DEX, Decentralized Exchange, BTC price, ETH wallet, ETH price, MATIC price, Uniswap, dYdX, Pancakeswap" data-shuvi-head="true"></meta>
+
+      <meta property="og:url" content={getUrl()} />
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content={getTitle()} />
+      <meta property="og:description" content={getDescription()} />
+      <meta property="og:image" content="https://tegro.com/images/og-image.jpg" />
+
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta property="twitter:domain" content="tegro.com" />
+      <meta property="twitter:url" content={getUrl()} />
+      <meta name="twitter:title" content={getTitle()} />
+      <meta name="twitter:description" content={getDescription()} />
+      <meta name="twitter:image" content="https://tegro.com/images/og-image.jpg" />
     </Head>
   )
 }

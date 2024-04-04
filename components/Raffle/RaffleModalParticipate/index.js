@@ -9,11 +9,10 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
 import $app from '@/store/app'
-import $modal from '@/store/modal'
 import $raffle from '@/store/raffle'
 
 import Contracts from '@/libs/contracts.lib'
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 import App from '@/components/App'
 import Raffle from '@/components/Raffle'
@@ -27,7 +26,7 @@ import RaffleReward from '@/components/Raffle/RaffleModalParticipate/RaffleRewar
 
 import styles from './styles.module.scss'
 
-const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, onUpdateUserCases, onShare }) => {
+const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, onUpdateUserCases, onShare, onClose, onUpdateTitle }) => {
   const dispatch = useDispatch()
   const router = useRouter()
   const { propValue } = usePropsHelper()
@@ -82,7 +81,7 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
       return
     }
 
-    trackEvent('Open Case', {
+    Amplitude.event('Open Case', {
       'Name': item.title,
       'Time Left': getTime(),
       'Tkey Cost': item.tKeyRequired,
@@ -93,20 +92,11 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
     setShowClaim(true)
     setLoading(false)
     if (!isApproved) {
-      dispatch($modal.set.update({
-        header: {
-          title: 'Approve Transaction',
-        },
-      }))
-
+      onUpdateTitle('Approve Transaction')
       return
     }
 
-    dispatch($modal.set.update({
-      header: {
-        title: 'Deposit TKeys',
-      },
-    }))
+    onUpdateTitle('Deposit TKeys')
   }
 
   const getTime = () => {
@@ -129,7 +119,7 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
 
     if (step === 0) {
       if (!isApproved) {
-        trackEvent('Case Opening Confirmation', {
+        Amplitude.event('Case Opening Confirmation', {
           'Name': item.title,
           'Time Left': getTime(),
           'Tkey Cost': item.tKeyRequired,
@@ -144,17 +134,12 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
         }
       }
 
-      dispatch($modal.set.update({
-        header: {
-          title: 'Deposit TKeys',
-        },
-      }))
-
+      onUpdateTitle('Deposit TKeys')
       dispatch($raffle.set.loading(false))
     }
 
     if (step === 1) {
-      trackEvent('Case Opening Confirmation', {
+      Amplitude.event('Case Opening Confirmation', {
         'Name': item.title,
         'Time Left': getTime(),
         'Tkey Cost': item.tKeyRequired,
@@ -170,13 +155,9 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
         return
       }
 
-      dispatch($modal.set.update({
-        header: {
-          title: 'Blockchain Confirmation!',
-        },
-      }))
+      onUpdateTitle('Blockchain Confirmation!')
 
-      trackEvent('Case Opening Confirmation', {
+      Amplitude.event('Case Opening Confirmation', {
         'Name': item.title,
         'Time Left': getTime(),
         'Tkey Cost': item.tKeyRequired,
@@ -189,13 +170,9 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
     }
 
     if (step === 3) {
-      dispatch($modal.set.update({
-        header: {
-          title: 'Congratulations!',
-        },
-      }))
+      onUpdateTitle('Congratulations!')
 
-      trackEvent('Case Opening Confirmation', {
+      Amplitude.event('Case Opening Confirmation', {
         'Name': item.title,
         'Time Left': getTime(),
         'Tkey Cost': item.tKeyRequired,
@@ -225,23 +202,11 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
         } else if (rewardAmount === '0') {
           setStep('error')
           setErrorType('api')
-          dispatch($modal.set.update({
-            header: {
-              title: 'Something went wrong',
-            },
-          }))
+          onUpdateTitle('Something went wrong')
         } else {
           setExpectedReward(rewardAmount)
           setStep(step >= 4 ? 0 : step + 1)
-          dispatch($modal.set.update({
-            header: {
-              title: 'Unlocking Case',
-            },
-            content: {
-              padding: 0,
-            }
-          }))
-
+          onUpdateTitle('Unlocking Case')
           dispatch($raffle.set.loading(false))
         }
         return
@@ -250,21 +215,17 @@ const RaffleModalParticipate = ({ item, onUpdateUserTKeys, getUserTKeysBalance, 
 
     setStep('error')
     setErrorType('api')
-    dispatch($modal.set.update({
-      header: {
-        title: 'Something went wrong',
-      },
-    }))
+    onUpdateTitle('Something went wrong')
   }
 
   const handleCloseModal = () => {
-    dispatch($modal.set.close())
     getUserTKeysBalance()
     onUpdateUserCases(true)
+    onClose()
   }
 
   const handleClickShare = () => {
-    trackEvent('Click Case Share ', {
+    Amplitude.event('Click Case Share ', {
       'Name': item.title,
       'Time Left': getTime(),
       'Tkey Cost': item.tKeyRequired,

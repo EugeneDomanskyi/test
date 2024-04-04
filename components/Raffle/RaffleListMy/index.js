@@ -5,8 +5,6 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Table
 import { usePropsHelper } from '@/myhooks/props-helper'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
-import { trackEvent } from '@/libs/analytics.lib'
-
 import $raffle from '@/store/raffle'
 
 import App from '@/components/App'

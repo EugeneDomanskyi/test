@@ -1,78 +1,19 @@
-.container {
-  .content {
-    position: relative;
-    z-index: 0;
-    padding-top: 112px;
+.circle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #1cbc7c;
+  animation: circleAnimation 1.5s infinite;
+}
 
-    .rectangle {
-      position: absolute;
-      z-index: 0;
-      width: 753.81px;
-      height: 195px;
-      left: calc(50% - 753.81px/2 - 0.1px);
-      top: calc(50% - 195px/2 + 3px);
-      opacity: 0.4;
-      filter: blur(82.6228px);
-      border-radius: 52.3881px;
-      background: linear-gradient(180deg, #401698 0%, #29015B 100%);
-    }
-
-    &:before {
-      content: '';
-      display: block;
-      position: absolute;
-      z-index: 0;
-      width: 271.5px;
-      height: 290.92px;
-      left: 0;
-      bottom: -60px;
-      background: url('/images/background-left.png') center no-repeat;
-      background-size: contain;
-    }
-
-    &:after {
-      content: '';
-      display: block;
-      position: absolute;
-      z-index: 0;
-      width: 271.5px;
-      height: 290.92px;
-      right: 0;
-      bottom: -60px;
-      background: url('/images/background-right.png') center no-repeat;
-      background-size: contain;
-    }
-
-    @media (max-width: 768px) {
-      &:before {
-        display: none;
-        width: 190.05px;
-        height: 203.644px;
-        left: -60px;
-        bottom: -30px;
-      }
-  
-      &:after {
-        display: none;
-        width: 190.05px;
-        height: 203.644px;
-        right: -60px;
-        bottom: -30px;
-      }
-    }
+@keyframes circleAnimation {
+  0% {
+    background-color: #1cbc7c;
   }
-
-  .text {
-    position: absolute;
-    z-index: 0;
-    top: 0;
-    left: 0;
-    width: 100%;
-    opacity: 0;
-    transition: all .3s ease 0s;
-
-    &.active {
-      opacity: 1;
-    }
+  50% {
+    background-color: #053421;
+  }
+  100% {
+    background-color: #1cbc7c;
   }
 }

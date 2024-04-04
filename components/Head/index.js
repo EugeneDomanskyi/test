@@ -1,29 +1,24 @@
 import { useRouter } from 'next/router'
 
 import HeadDefault from './HeadDefault'
-import HeadMarket from './HeadMarket'
 import HeadExchange from './HeadExchange'
-import HeadNfts from './HeadNfts'
+import HeadTournament from "./HeadTournament";
 
-const Head = ({ route, ...props }) => {
+const Head = ({ route }) => {
   const router = useRouter()
 
   const getHead = () => {
     const currentRoute = route || router.asPath
 
-    if (currentRoute.includes('market')) {
-      return <HeadMarket route={currentRoute} />
-    }
-
     if (currentRoute.includes('exchange')) {
-      return <HeadExchange {...props} />
+      return <HeadExchange />
     }
 
-    if (currentRoute.includes('nfts')) {
-      return <HeadNfts {...props} />
+    if (currentRoute.includes('tournament')) {
+      return <HeadTournament />
     }
 
-    return <HeadDefault {...props} />
+    return <HeadDefault />
   }
 
   return getHead()

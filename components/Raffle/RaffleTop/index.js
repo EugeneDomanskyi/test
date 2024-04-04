@@ -9,7 +9,7 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 
 import $app from '@/store/app'
 
-import { trackEvent, getPageName } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 import App from '@/components/App'
 
@@ -54,7 +54,7 @@ const RaffleTop = ({ loading, isFirstTimeUser, landing = false }) => {
   }
 
   const handleMoreClick = () => {
-    trackEvent('Click Get Tkeys', {
+    Amplitude.event('Click Get Tkeys', {
       'Source': 'Hero Banner',
     })
     window.open('https://galxe.com/tegro/campaign/GC9QPUMqMz?utm_source=web', '_blank')
@@ -65,16 +65,16 @@ const RaffleTop = ({ loading, isFirstTimeUser, landing = false }) => {
       router.push('/earn')
     }
     
-    trackEvent('Wallet Connect Clicked', {
-      'Source': getPageName(),
+    Amplitude.event('Wallet Connect Clicked', {
+      'Source': Amplitude.page(),
     })
 
     if ( ! wallet) {
       const result = await connect()
       if (result) {
         const walletName = await getConnectorName()
-        trackEvent('Wallet Connect Success', {
-          'Source': getPageName(),
+        Amplitude.event('Wallet Connect Success', {
+          'Source': Amplitude.page(),
           'Type': walletName,
         })
       }

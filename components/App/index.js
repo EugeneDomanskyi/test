@@ -1,4 +1,3 @@
-import AppAddress from '@/components/App/AppAddress'
 import AppAlert from '@/components/App/AppAlert'
 import AppButton from '@/components/App/AppButton'
 import AppCard from '@/components/App/AppCard'
@@ -11,7 +10,6 @@ import AppHr from '@/components/App/AppHr'
 import AppIcon from '@/components/App/AppIcon'
 import AppLoader from '@/components/App/AppLoader'
 import AppLoaderBlock from '@/components/App/AppLoaderBlock'
-import AppModal from '@/components/App/AppModal'
 import AppPagination from '@/components/App/AppPagination'
 import AppSwitch from '@/components/App/AppSwitch'
 import AppTabs from '@/components/App/AppTabs'
@@ -21,9 +19,10 @@ import AppRangeInput from '@/components/App/AppRangeInput'
 import AppTooltip from '@/components/App/AppTooltip'
 import AppShadowText from '@/components/App/AppShadowText'
 import AppNumber from '@/components/App/AppNumber'
+import AppButtonGradient from '@/components/App/AppButtonGradient'
+import AppTopBanner from '@/components/App/AppTopBanner'
 
 export default {
-  Address: AppAddress,
   Alert: AppAlert,
   Button: AppButton,
   Card: AppCard,
@@ -36,15 +35,15 @@ export default {
   Icon: AppIcon,
   Loader: AppLoader,
   LoaderBlock: AppLoaderBlock,
-  Modal: AppModal,
   Pagination: AppPagination,
   Switch: AppSwitch,
   Tabs: AppTabs,
   Text: AppText,
   TextField: AppTextField,
-  Switch: AppSwitch,
   RangeInput: AppRangeInput,
   Tooltip: AppTooltip,
   ShadowText: AppShadowText,
   Number: AppNumber,
+  ButtonGradient: AppButtonGradient,
+  TopBanner: AppTopBanner,
 }

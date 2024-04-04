@@ -4,24 +4,49 @@
 //   background: transparent; /* Otherwise white in Chrome */
 // }
 .container {
-  width: 300px;
-  padding: 0px 10px;
+  width: 100%;
 
   &.disabled {
     opacity: 0.6;
   }
 
   .root {
-    color: #7204FF;
+    color: #7364FF;
     padding: 13px 0;
   }
 
   .thumb {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
+    background-color: #fff;
   }
 
   .rail {
-    background-color: #7204FF;
+    background-color: rgba(255,255,255,0.1);
+    height: 8px;
+  }
+
+  .track {
+    height: 8px;
+  }
+
+  .mark {
+    background-color: transparent;
+  }
+
+  .markLabel {
+    color: #9B99AE;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Gilroy', Arial, sans-serif;
+  }
+
+  .markLabelActive {
+    color: #7364FF;
+  }
+
+  .thumbTriangle {
+    position: absolute;
+    bottom: -4px;
   }
 }
