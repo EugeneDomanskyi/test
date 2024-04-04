@@ -28,7 +28,7 @@ export const tournamentSlice = createSlice({
 
 const api = {
   all: () => {
-    return request(`tournament/list`)
+    return request(`tournament/list`, 'GET', {api: 'exchange'})
   },
 
   get: (alias) => {
@@ -36,7 +36,7 @@ const api = {
   },
 
   create: (post) => {
-    return request(`tournament/create`, 'POST', post)
+    return request(`tournament/create`, 'POST', {api: 'exchange', ...post})
   },
 
   current: () => {

@@ -61,7 +61,7 @@ const PointsQuests = () => {
               <App.Flex key={item.id} column gap={16} className={styles.questBox}>
                 <Image src="/images/points/points-galxe-logo.png" width={44} height={44} alt="" />
 
-                <App.Flex row align="center" gap={12} sx={{ cursor: 'pointer' }} onClick={handleClick(item?.url)}>
+                <App.Flex row align="center" gap={12} sx={{ cursor: 'pointer' }} onClick={handleClick(item?.external_link)}>
                   <App.Text size={24} weight={700}>{item.name}</App.Text>
 
                   <App.Frame padding={0} radius={32} width={32} height={32} gradient="linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)">
