@@ -3,12 +3,16 @@ import { formatUnits } from 'viem'
 
 import abi from './abi.lib'
 
+import useApp from '@/myhooks/useApp'
+
 export const defaultOperator = '0x1E0049783F008A0085193E00003D00cd54003c71' // Use OpenSea operator for OpenSea contract
 export const defaultContract = '0x0000000000c2d145a2526bD8C716263bFeBe1A72' // Use OpenSea contract
 export const conduitKey = '0x0000007b02230091a7ed01230072f7006a004d60a8d4e71d599b8104250f0000'
 
 export default function Contracts(defaultGasLimit = null) {
   const isDebugMode = process.env.NEXT_PUBLIC_APP_ENV != 'production'
+
+  const { appLog } = useApp()
 
   const methods = {
     debugMessage: (error, title = null) => {
@@ -388,12 +392,17 @@ export default function Contracts(defaultGasLimit = null) {
         contracts: calls,
         listenToBlock: true,
       })
+      // console.log('calls', calls);
+      appLog(`calls ${JSON.stringify(calls)}`)
 
       return watchMulticall({
         contracts: calls,
         listenToBlock: true,
       }, (data) => {
         const result = data.reduce((acc, response, i, array) => {
+          BigInt.prototype.toJSON = function() { return this.toString() }
+          appLog(`response JSON ${JSON.stringify(response)}`)
+          // appLog(`response ${response.toString()}`)
           if (!response.hasOwnProperty('result')) {
             return acc
           }
