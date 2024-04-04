@@ -22,7 +22,8 @@ const middleware = (request) => {
 
   let validBlockhains = CHAINS.filter(item => item.pages.some(el => el == seg1))
   if (!validBlockhains.length) {
-    validBlockhains = CHAINS.filter(item => item.defaultFor == process.env.NEXT_PUBLIC_APP_ENV)
+    // validBlockhains = CHAINS.filter(item => item.defaultFor == process.env.NEXT_PUBLIC_APP_ENV)
+    validBlockhains = CHAINS.filter(item => item.defaultFor)
   }
 
   if (seg1 === 'exchange') {
