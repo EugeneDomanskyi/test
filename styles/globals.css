@@ -160,7 +160,6 @@ a {
 
 .widget .bad-quest__view--header,
 .widget .bad-quest__progress--content,
-.widget .bad-quest__view--footer,
 .widget .mt-4.relative {
   display: none;
 }
@@ -181,6 +180,18 @@ a {
 
 .widget .bad-input_box {
   color: #fff;
+}
+
+.widget .bad-button__default {
+  padding: 6px 8px;
+  border-radius: 100px;
+  background: #7204FF;
+  min-width: 100px;
+}
+
+.widget .flex {
+  display: flex;
+  gap: 16px;
 }
 
 [data-rk] .ju367v9g {
