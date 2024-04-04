@@ -10,13 +10,13 @@ import Socket from '@/libs/ws.lib'
 import $app from '@/store/app'
 import $orders from '@/store/orders'
 import $alert from '@/store/alert'
+import { formatNumberWithDecimals } from '@/store/portfolio'
 
 import Amplitude from '@/libs/amplitude.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
 import OrderDetails from '@/components/Exchange/OrderDetails'
-import { formatNumberWithDecimals } from '@/store/portfolio'
 
 const Orders = ({global, type, version, onClickOrder}) => {
   const router = useRouter()
@@ -287,15 +287,15 @@ const Orders = ({global, type, version, onClickOrder}) => {
                 <App.Text color="#B9B8C5" size={[10, 12]} weight={600} height={1}>{version != 'mobile' ? 'Hide All Cancelled Orders' : 'Hide Cancelled Orders'}</App.Text>
               </App.Flex>
             ) : (
-              version == 'mobile' ? (
-                <App.Text weight={600} color="#FFAF38" onClick={handleCancelAllClick}>CANCEL ALL</App.Text>
-              ) : (
-                orders[ordersType].length > 0 ? (
+              orders[ordersType].length > 0 ? (
+                version == 'mobile' ? (
+                  <App.Text weight={600} color="#FFAF38" onClick={handleCancelAllClick}>CANCEL ALL</App.Text>
+                ) : (
                   <App.Button variant="muted" small onClick={handleCancelAllClick}>
                     Cancel All
                   </App.Button>
-                ) : null
-              )
+                )
+              ) : null
             )}
           </App.Flex>
 
@@ -340,18 +340,18 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
                           <App.Flex column sx={{width: 60, padding: 8}} align="center" justify="center">
                             <App.Flex column gap={4}>
-                              <App.Text size={12} weight={600} center height={1}>{ order.quantityFilled }</App.Text>
+                              <App.Text size={12} weight={600} center height={1}>{ formatNumberWithDecimals(order.quantityFilled, order.baseDecimals) }</App.Text>
                               <div style={{width: '100%', minWidth: 20, height: 1, background: '#B9B8C5'}} />
-                              <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ order.quantity }</App.Text>
+                              <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ formatNumberWithDecimals(order.quantity, order.baseDecimals) }</App.Text>
                             </App.Flex>
                           </App.Flex>
 
                           <App.Flex flex={1} column sx={{padding: 8}} align="center" justify="center">
-                            <App.Text size={12} weight={600} center color="#B9B8C5" height={1}>{ order.itemPrice }</App.Text>
+                            <App.Text size={12} weight={600} center color="#B9B8C5" height={1}>{ formatNumberWithDecimals(order.itemPrice, order.quoteDecimals) }</App.Text>
                           </App.Flex>
 
                           <App.Flex flex={1} column align="center" justify="center" sx={{padding: 8, position: 'relative', height: '100%', overflow: 'hidden'}}>
-                            <App.Text size={12} weight={600}>{ order.price }</App.Text>
+                            <App.Text size={12} weight={600}>{ formatNumberWithDecimals(order.price, order.quoteDecimals) }</App.Text>
                           </App.Flex>
                         </App.Flex>
 
@@ -435,21 +435,21 @@ const Orders = ({global, type, version, onClickOrder}) => {
                                 <App.Flex width={60}>
                                   <App.Text size={12} uppercase height={1} color="#5E5C6B">Amount:</App.Text>
                                 </App.Flex>
-                                <App.Text size={14} weight={600} height={1}>{ order.quantityFilled } <App.Text inline size={12} weight={600} height={1} color="#5E5C6B">/ { order.quantity }</App.Text></App.Text>
+                                <App.Text size={14} weight={600} height={1}>{ formatNumberWithDecimals(order.quantityFilled, order.baseDecimals) } <App.Text inline size={12} weight={600} height={1} color="#5E5C6B">/ { formatNumberWithDecimals(order.quantity, order.baseDecimals) }</App.Text></App.Text>
                               </App.Flex>
 
                               <App.Flex row align="center">
                                 <App.Flex width={60}>
                                   <App.Text size={12} uppercase height={1} color="#5E5C6B">Price:</App.Text>
                                 </App.Flex>
-                                <App.Text size={14} weight={600} height={1}>{ order.itemPrice }</App.Text>
+                                <App.Text size={14} weight={600} height={1}>{ formatNumberWithDecimals(order.itemPrice, order.quoteDecimals) }</App.Text>
                               </App.Flex>
 
                               <App.Flex row align="center">
                                 <App.Flex width={60}>
                                   <App.Text size={12} uppercase height={1} color="#5E5C6B">Total:</App.Text>
                                 </App.Flex>
-                                <App.Text size={14} weight={600} height={1} color="#5E5C6B">{ order.price }</App.Text>
+                                <App.Text size={14} weight={600} height={1} color="#5E5C6B">{ formatNumberWithDecimals(order.price, order.quoteDecimals) }</App.Text>
                               </App.Flex>
                             </App.Flex>
 

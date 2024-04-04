@@ -7,6 +7,7 @@ import Amplitude from '@/libs/amplitude.lib'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
+import { formatNumberWithDecimals } from '@/store/portfolio'
 
 import App from '@/components/App'
 
@@ -157,7 +158,7 @@ const Info = () => {
 
             <App.Flex column gap={6}>
               <App.Text nowrap size={12} height={1} color="#B9B8C5">24h Volume ({current.quoteSymbol})</App.Text>
-              <App.Number size={12} weight={600} height={1} color="#fff">{ (current.volume ?? 0).toFixed(2) }</App.Number>
+              <App.Number size={12} weight={600} height={1} color="#fff">{ formatNumberWithDecimals(current.volume ?? 0, 2) }</App.Number>
             </App.Flex>
           </App.Flex>
         </>
