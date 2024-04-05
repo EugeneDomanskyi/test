@@ -110,10 +110,10 @@ const Orders = ({global, type, version, onClickOrder}) => {
         }), {})
         console.log(updatedOrders)
         dispatch($orders.set.updateOrderStatus(updatedOrders))
-        dispatch($alert.set.success({ title: 'All Orders Cancelled', text: 'All your live orders has been cancelled successfully!' }))
+        dispatch($alert.set.success({ title: 'Orders cancelled', text: `You have cancelled ${orders.open.length} order(s) successfully.` }))
       }
     } else {
-      dispatch($alert.set.error({ title: 'Order Not Cancelled' }))
+      dispatch($alert.set.error({ title: 'Orders not cancelled', text: `Please try again to cancel your ${orders.open.length} open order(s).` }))
     }
 
     handleDialogClose('approve')()
@@ -157,12 +157,12 @@ const Orders = ({global, type, version, onClickOrder}) => {
       if (result) {
         Amplitude.event('Cancel Order Success', eventPost)
         dispatch($orders.set.updateOrderStatus({[order.orderId]: 'cancelled'}))
-        dispatch($alert.set.success({ title: 'Order Cancelled', text: 'Your Order is successfully cancelled' }))
+        dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity} ${order.baseCurrency} has been cancelled successfully.` }))
       } else {
-        dispatch($alert.set.error({ title: 'Order Not Cancelled', text: result }))
+        dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity} ${order.baseCurrency}.` }))
       }
     } else {
-      dispatch($alert.set.error({ title: 'Order Not Cancelled' }))
+      dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity} ${order.baseCurrency}.` }))
     }
     handleDialogClose('approve')()
   }

@@ -20,7 +20,7 @@ const TierStats = ({walletResults, onClickWorks}) => {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(wallet)
-    dispatch($alert.set.success({title: 'Wallet address copied'}))
+    dispatch($alert.set.success({title: 'Wallet address copied to clipboard'}))
   }
 
   return (

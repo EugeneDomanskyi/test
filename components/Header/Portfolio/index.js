@@ -35,7 +35,7 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(wallet)
-    dispatch($alert.set.success({ title: 'Address Copied', text: 'The address has been successfully copied to clipboard' }))
+    dispatch($alert.set.success({ title: 'Address copied to clipboard' }))
   }
 
   const handleDisconnect = async () => {
