@@ -71,6 +71,7 @@ export const wagmiConfig = getDefaultConfig({
   appName: process.env.NEXT_PUBLIC_APP_NAME,
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
   chains: CHAINS,
+  ssr: true,
   transports: CHAINS.reduce((acc, chain) => {
     return {
       ...acc,
