@@ -47,8 +47,9 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       appLog('Check Allowance')
       const spendToken = side === 'buy' ? current.quote : current.address
       const allowance = await contracts.allowance(wallet, spendToken, blockchain?.info?.contract?.exchange)
+      console.log(allowance, 123)
       if (allowance?.error) {
-        return handleError('Trade Not Approved', allowance?.error)
+        return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
       }
 
       appLog('Check Allowance Amount')
@@ -59,13 +60,13 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         if (spendToken === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
           const reset = await contracts.approve(spendToken, blockchain?.info?.contract?.exchange, parseUnits('0', spendDecimals))
           if (reset?.error) {
-            return handleError('Trade Not Approved', reset?.error)
+            return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
           }
         }
 
         const approve = await contracts.approve(spendToken, blockchain?.info?.contract?.exchange, parseUnits(Number.MAX_SAFE_INTEGER.toString(), spendDecimals))
         if (approve?.error) {
-          return handleError('Trade Not Approved', approve?.error)
+          return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
         }
       }
 
@@ -94,7 +95,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       })
 
       if (typedData?.error) {
-        return handleError('Order Not Created', typedData?.error)
+        return handleError('Order not created', 'Please try again to place your order.')
       }
 
       let {types} = typedData.data.sign_data
@@ -107,7 +108,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       appLog('Sign Typed Data')
       const signature = await walletClient.signTypedData(temp).catch(error => {
         appLog(`Signature error ${error.shortMessage}`)
-        return handleError('Order Not Created', error.shortMessage)
+        return handleError('Order not created', 'Please check your wallet and try again to place your order.')
       })
 
       if (!signature) {
@@ -122,7 +123,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       })
 
       if (result?.error) {
-        return handleError('Order Not Created', result?.error)
+        return handleError('Order not created', 'Please try again to place your order.')
       }
 
       appLog(`Place Order Success`)

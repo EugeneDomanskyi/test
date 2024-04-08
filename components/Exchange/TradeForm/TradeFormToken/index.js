@@ -105,31 +105,37 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   }, [form.total, form.amount, currentTab, wasUserBalance])
 
   useEffect(() => {
-    if (wallet && current?.address) {
-      (async () => {
-        unsubscribeRef.current = await contracts.watchBalance(wallet, [current?.address, current?.quote], (result) => {
-          const balances = Object.entries(result).reduce((acc, [address, balance]) => ({
-            ...acc,
-            [address === current?.quote ? 'quote' : 'base']: balance,
-          }), {quote: 0, base: 0})
-          appLog(`balances ${JSON.stringify(result)}`)
-          setUserBalances(balances)
-          setWasUserBalance(true)
-        })
-      })()
+    if (wallet && current?.address && current?.quote) {
+      fetchBalance()
+    } else {
+      setUserBalances({base: 0, quote: 0})
     }
+
     return () => {
       if (unsubscribeRef.current) {
         unsubscribeRef.current()
       }
     }
-  }, [wallet, current?.address])
+  }, [wallet, current?.address, current?.quote])
 
-  useEffect(() => {
-    if (!wallet) {
-      setUserBalances({base: 0, quote: 0})
+  const fetchBalance = async () => {
+    const result = await contracts.fetchBalance(wallet, [current.address, current.quote])
+    if (result) {
+      formatBalance(result)
     }
-  }, [wallet])
+    return contracts.watchBalance(wallet, [current.address, current.quote], formatBalance)
+  }
+
+  const formatBalance = (result) => {
+    if (result[current.address] && result[current.quote]) {
+      const balances = Object.entries(result).reduce((acc, [address, balance]) => ({
+        ...acc,
+        [address === current?.quote ? 'quote' : 'base']: balance,
+      }), {quote: 0, base: 0})
+      setUserBalances(balances)
+      setWasUserBalance(true)
+    }
+  }
 
   const handleSetPrice = (inputByUser = true, tab = currentTab) => {
     const invertedtab = tab == 'buy' ? 'sell' : 'buy'

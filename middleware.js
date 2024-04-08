@@ -1,6 +1,6 @@
 import { NextResponse, userAgent } from 'next/server'
 import { ResponseCookies, RequestCookies } from 'next/dist/server/web/spec-extension/cookies'
-import { CHAINS } from '@/config'
+// import { CHAINS } from '@/config'
 
 const applySetCookie = (req, res) => {
   const setCookies = new ResponseCookies(res.headers)
@@ -20,10 +20,19 @@ const middleware = (request) => {
   const isMobile = device.type === 'mobile'
   const [_, seg1, seg2, seg3] = request.nextUrl.pathname.split('/')
 
-  let validBlockhains = CHAINS.filter(item => item.pages.some(el => el == seg1))
-  if (!validBlockhains.length) {
-    validBlockhains = CHAINS.filter(item => item.defaultFor == process.env.NEXT_PUBLIC_APP_ENV)
-  }
+  // let validBlockhains = CHAINS.filter(item => item.pages.some(el => el == seg1))
+  // if (!validBlockhains.length) {
+  //   // validBlockhains = CHAINS.filter(item => item.defaultFor == process.env.NEXT_PUBLIC_APP_ENV)
+  //   validBlockhains = CHAINS.filter(item => item.defaultFor)
+  // }
+
+  // ###### Hotfix for Dynamic Code Evaluation
+  // ###### Learn More: https://nextjs.org/docs/messages/edge-dynamic-code-evaluation
+  const validBlockhains = [
+    {code: 'mumbai'},
+    {code: 'optimism-sepolia'},
+    {code: 'arbitrum'},
+  ]
 
   if (seg1 === 'exchange') {
     let blockchain = seg2 ?? request.cookies.get('blockchain')?.value
@@ -58,6 +67,12 @@ export const config = {
   matcher: [
     '/((?!api|_next/static|_next/image|fonts|favicon.ico).*)',
   ],
+  // runtime: 'experimental-edge',
+  // unstable_allowDynamic: [
+  //   '/node_modules/@metamask/sdk/dist/browser/umd/metamask-sdk.js',
+  //   '/node_modules/@walletconnect/universal-provider/dist/index.es.js',
+  //   '/node_modules/lodash.isequal/index.js',
+  // ],
 }
 
 export default middleware

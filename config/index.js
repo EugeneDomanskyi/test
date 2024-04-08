@@ -1,5 +1,6 @@
-import { polygonMumbai, arbitrum } from '@wagmi/chains'
-import { optimismSepolia } from 'wagmi/chains'
+import { getDefaultConfig } from '@rainbow-me/rainbowkit'
+import { http } from 'wagmi'
+import { polygonMumbai, arbitrum, optimismSepolia } from 'wagmi/chains'
 
 const mumbaiWithCustomRPC = {
   ...polygonMumbai,
@@ -16,11 +17,11 @@ const mumbaiWithCustomRPC = {
 
 const TEST_NETWORKS = [
   {
-    ...mumbaiWithCustomRPC,
+    ...polygonMumbai,
     code: 'mumbai',
     currency: polygonMumbai.nativeCurrency.symbol,
     decimals: polygonMumbai.nativeCurrency.decimals,
-    scanUrl: polygonMumbai.blockExplorers.etherscan.url,
+    scanUrl: polygonMumbai.blockExplorers.default.url,
     pages: ['earn', 'exchange', 'faucet'],
     raffle: {
       subgraph: 'https://api.thegraph.com/subgraphs/name/gulshanweb3/raffle-mumbai',
@@ -65,3 +66,16 @@ export const CHAINS = [
   ...MAINNET_NETWORKS,
   ...TEST_NETWORKS,
 ]
+
+export const wagmiConfig = getDefaultConfig({
+  appName: process.env.NEXT_PUBLIC_APP_NAME,
+  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
+  chains: CHAINS,
+  ssr: true,
+  transports: CHAINS.reduce((acc, chain) => {
+    return {
+      ...acc,
+      [chain.id]: http(),
+    }
+  }, {}),
+})
