@@ -21,7 +21,7 @@ import OrderDetails from '@/components/Exchange/OrderDetails'
 const Orders = ({global, type, version, onClickOrder}) => {
   const router = useRouter()
 
-  const { wallet, connect, getConnectorName, sign } = useWalletConnect()
+  const { wallet, connect, getConnectorInfo, sign } = useWalletConnect()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -211,10 +211,9 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
       const result = await connect()
       if (result) {
-        const walletName = await getConnectorName()
         Amplitude.event('Wallet Connect Success', {
           'Source': Amplitude.page(),
-          'Type': walletName,
+          'Type': getConnectorInfo().name,
         })
       }
     }

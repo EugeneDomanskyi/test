@@ -47,6 +47,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       appLog('Check Allowance')
       const spendToken = side === 'buy' ? current.quote : current.address
       const allowance = await contracts.allowance(wallet, spendToken, blockchain?.info?.contract?.exchange)
+      console.log(allowance, 123)
       if (allowance?.error) {
         return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
       }
