@@ -59,6 +59,12 @@ export const config = {
   matcher: [
     '/((?!api|_next/static|_next/image|fonts|favicon.ico).*)',
   ],
+  runtime: 'experimental-edge',
+  unstable_allowDynamic: [
+    '/node_modules/@metamask/sdk/dist/browser/umd/metamask-sdk.js',
+    '/node_modules/@walletconnect/universal-provider/dist/index.es.js',
+    '/node_modules/lodash.isequal/index.js',
+  ],
 }
 
 export default middleware

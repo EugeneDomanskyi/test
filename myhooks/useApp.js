@@ -100,10 +100,7 @@ const useApp = () => {
       // })
 
       const connected = await connect(newConfig, {
-        connector: (config) => {
-          const c = customConnector(config)
-          c.onDisplayUri(uri => appLog(uri))
-        },
+        connector: customConnector,
         chainId: blockchain.id,
       }).catch(e => {
         appLog(e)
