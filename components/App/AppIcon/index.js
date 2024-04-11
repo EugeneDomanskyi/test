@@ -1718,6 +1718,30 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
         </svg>
       )
     }
+
+    if (icon == 'chevron-slider-left') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.5" d="M15 19.92L8.48 13.4c-.77-.77-.77-2.03 0-2.8L15 4.08" />
+        </svg>
+      )
+    }
+
+    if (icon == 'chevron-slider-right') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.5" d="M8.91 19.92l6.52-6.52c.77-.77.77-2.03 0-2.8L8.91 4.08" />
+        </svg>
+      )
+    }
+
+    if (icon == 'arrow-long') {
+      return (
+        <svg width={width ?? 223} height={height ?? 17} viewBox="0 0 223 17" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill={color ?? '#A6DC37'} d="M220 17l2.887-5h-5.774L220 17zM0 1.5h212v-1H0v1zM219.5 9v3.5h1V9h-1zM212 1.5a7.5 7.5 0 017.5 7.5h1A8.5 8.5 0 00212 .5v1z" />
+        </svg>
+      )
+    }
   }
 
   return getIcon()

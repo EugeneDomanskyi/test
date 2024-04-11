@@ -1,0 +1,42 @@
+.container {
+  padding: 32px 0;
+
+  .points {
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: radial-gradient(964.62% 282.52% at 50% -228.16%, #262626 0%, #171717 100%);
+  }
+
+  .box {
+    padding: 16px 0;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: linear-gradient(338deg, #517714 14.28%, #8AC31F 85.72%);
+    position: relative;
+    z-index: 1;
+  }
+
+  .statsBox {
+    position: relative;
+    z-index: 0;
+    padding-top: 28px;
+
+    &:after {
+      content: '';
+      height: 1.5px;
+      width: 223px;
+      background-color: #A6DC37;
+      position: absolute;
+      z-index: 0;
+      top: 14px;
+      right: 53%;
+    }
+
+    svg {
+      position: absolute;
+      z-index: 0;
+      top: 14px;
+      right: 48%;
+    }
+  }
+}

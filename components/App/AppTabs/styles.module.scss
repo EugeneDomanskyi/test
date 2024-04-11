@@ -26,6 +26,10 @@
       }
     }
 
+    &.points {
+      border-bottom: solid #A6DC37 1px;
+    }
+
     .option {
       cursor: pointer;
       flex: 1;
@@ -246,6 +250,65 @@
                 background-clip: text;
                 background-image: linear-gradient(90deg, rgb(255, 240, 102), rgb(255, 154, 1));
               }
+            }
+          }
+        }
+      }
+
+      &.points {
+        background: #0F0F0F;
+        border: solid rgba(255, 255, 255, 0.10) 1px;
+        border-bottom-width: 0;
+        flex: 0;
+        border-radius: 12px 12px 0 0;
+
+        @media (max-width: 768px) {
+          flex: 1;
+        }
+
+        &.active {
+          background: #0F0F0F;
+          position: relative;
+          border-color: #A6DC37;
+          border-bottom-width: 1;
+
+          &:after {
+            content: '';
+            height: 1px;
+            position: absolute;
+            z-index: 1;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            background: #0F0F0F;
+          }
+
+          .optionInner {
+            &:before,
+            &:after {
+              display: none;
+            }
+          }
+        }
+
+        .optionInner {
+          padding: 16px 110px;
+          min-width: 300px;
+
+          @media (max-width: 768px) {
+            min-width: 0;
+          }
+
+          .optionText {
+            white-space: nowrap;
+            color: #FFFFFF99;
+
+            &:hover {
+              color: #cdd8b7;
+            }
+    
+            &.active {
+              color: #A6DC37;
             }
           }
         }

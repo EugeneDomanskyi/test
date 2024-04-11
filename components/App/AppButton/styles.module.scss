@@ -122,6 +122,89 @@
     }
   }
 
+  &.primary2 {
+    height: 48px;
+    background-color: #6B41EB;
+    border-color: #6B41EB;
+    border-radius: 100px;
+    padding: 0 16px;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 25px;
+
+    &.active:not(:disabled),
+    &:hover:not(:disabled) {
+      background-color: #3d008c;
+    }
+
+    &.outlined {
+      background-color: transparent;
+      border-color: #6B41EB;
+
+      &.active:not(:disabled),
+      &:hover:not(:disabled) {
+        border-color: #3d008c;
+        background-color: transparent;
+      }
+    }
+  }
+
+  &.secondary2 {
+    height: 48px;
+    background-color: #A6DC37;
+    border-color: #A6DC37;
+    border-radius: 100px;
+    padding: 0 16px;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 25px;
+    color: #1C2C07;
+
+    &.active:not(:disabled),
+    &:hover:not(:disabled) {
+      background-color: #8abd24;
+    }
+
+    &.outlined {
+      background-color: transparent;
+      border-color: #A6DC37;
+      color: #fff;
+
+      &.active:not(:disabled),
+      &:hover:not(:disabled) {
+        border-color: #8abd24;
+        background-color: transparent;
+      }
+    }
+  }
+
+  &.default2 {
+    height: 48px;
+    background-color: #FFFFFF1A;
+    border-color: #FFFFFF1A;
+    border-radius: 100px;
+    padding: 0 16px;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 25px;
+
+    &.active:not(:disabled),
+    &:hover:not(:disabled) {
+      background-color: transparent;
+    }
+
+    &.outlined {
+      background-color: transparent;
+      border-color: #FFFFFF1A;
+
+      &.active:not(:disabled),
+      &:hover:not(:disabled) {
+        border-color: #ffffff3f;
+        background-color: transparent;
+      }
+    }
+  }
+
   &.gray {
     background-color: #5E5C6B;
     border-color: #5E5C6B;

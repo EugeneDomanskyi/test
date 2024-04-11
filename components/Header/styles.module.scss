@@ -6,8 +6,9 @@
   left: 0;
 
   .containerHeader {
-    height: 90px;
+    height: 72px;
     border-bottom: 1px solid #FFFFFF1A;
+    background: #0B091566;
 
     @media (max-width: 768px) {
       height: 60px;
@@ -37,40 +38,16 @@
 
   .navItem {
     position: relative;
-    padding: 0 44px;
     cursor: pointer;
     display: block;
     height: 100%;
+    width: 150px;
 
     &.active {
       p {
         color: rgb(166, 220, 55);
       }
     }
-
-    div > div {
-      transition: all .3s ease 0s;
-    }
-
-    &.disabled {
-      opacity: .5;
-    }
-    
-    &:not(.disabled) {
-      &:hover,
-      &.active {
-        div > div {
-          color: #A6DC37;
-        }
-      }
-    }
-  }
-
-  .navLine {
-    height: 12px;
-    width: 1px;
-    opacity: 0.5;
-    background-color: rgba(255, 255, 255, 0.6);
   }
 
   .supportButton {
