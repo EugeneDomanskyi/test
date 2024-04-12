@@ -101,7 +101,6 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
             ...acc,
             [address === current?.quote ? 'quote' : 'base']: balance,
           }), {quote: 0, base: 0})
-          appLog(`balances ${JSON.stringify(result)}`)
           setUserBalances(balances)
           setWasUserBalance(true)
         })

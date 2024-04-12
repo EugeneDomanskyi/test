@@ -22,6 +22,30 @@
   }
 }
 
+.isApp {
+  .appBadge {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 12px;
+    background-color: #1C172B;
+    gap: 4;
+
+    // &:hover,
+    // &.active {
+    //   border-color: transparent;
+    //   background: transparent;
+    // }
+
+    .badgeTitle {
+      display: block;
+    }
+  }
+}
+
 .menu {
   border-radius: 10px;
   border: 0.6px solid #332D52;
@@ -59,10 +83,3 @@
     }
   }
 }
-
-/* @media (max-width: 768px) {
-  .menu {
-    bottom: 120%;
-    top: auto;
-  }
-} */

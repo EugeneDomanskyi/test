@@ -26,6 +26,12 @@
     position: absolute;
     right: 10px;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent; /* For iOS */
+    -webkit-touch-callout: none; /* Disable callout on long tap */
+    -webkit-user-select: none; /* Disable selection */
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .button {
