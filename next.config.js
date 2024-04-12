@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+  // profiler: true,
   swcMinify: true,
 
   serverRuntimeConfig: {

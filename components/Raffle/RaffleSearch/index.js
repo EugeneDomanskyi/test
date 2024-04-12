@@ -1,21 +1,15 @@
 import { useDispatch, useSelector } from 'react-redux'
 
-import { trackEvent } from '@/libs/analytics.lib'
-
 import $raffle from '@/store/raffle'
 
 import App from '@/components/App'
 
-const RaffleSearch = ({onSearch}) => {
+const RaffleSearch = () => {
   const dispatch = useDispatch()
   const search = useSelector(({ $raffle }) => $raffle.search)
 
   const handleSearchChange = (value) => {
     dispatch($raffle.set.search(value))
-  }
-
-  const handleBlur = () => {
-    onSearch(search)
   }
 
   return (
@@ -32,7 +26,6 @@ const RaffleSearch = ({onSearch}) => {
       withClear
       autoComplete="search no-autocomplete"
       name="search no-autocomplete"
-      onBlur={handleBlur}
     />
   )
 }

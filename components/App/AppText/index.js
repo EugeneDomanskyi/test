@@ -4,8 +4,10 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 
 import styles from './styles.module.scss'
 
-const AppText = ({ children, html, inline, family, size, weight, style, color, gradient, height, spacing, nowrap, lines, uppercase, lowercase, capitalize, center, italic, right, transition, variant, flex, className, id, sx = {}, onClick }) => {
+const AppText = ({ children, tag = 'p', html, inline, family, size, weight, style, color, gradient, height, spacing, nowrap, lines, uppercase, lowercase, capitalize, center, italic, right, transition, variant, flex, className, id, sx = {}, onClick }) => {
   const { propValue } = usePropsHelper()
+
+  const Tag = inline ? 'span' : tag
 
   const classes = () => {
     return cn(
@@ -24,7 +26,7 @@ const AppText = ({ children, html, inline, family, size, weight, style, color, g
   }
 
   const styleObject = () => {
-    const result = {...sx}
+    const result = {...(typeof onClick === 'function' ? {cursor: 'pointer'} : null), ...sx}
 
     if (family) {
       result.fontFamily = propValue(family)
@@ -75,18 +77,10 @@ const AppText = ({ children, html, inline, family, size, weight, style, color, g
     return result
   }
 
-  return inline ? (
-    html ? (
-      <span id={id} className={classes()} style={styleObject()} onClick={(e) => onClick ? onClick(e) : null} dangerouslySetInnerHTML={{ __html: html }} />
-    ) : (
-      <span id={id} className={classes()} style={styleObject()} onClick={(e) => onClick ? onClick(e) : null}>{children}</span>
-    )
+  return html ? (
+    <Tag id={id} className={classes()} style={styleObject()} onClick={(e) => onClick ? onClick(e) : null} dangerouslySetInnerHTML={{ __html: html }} />
   ) : (
-    html ? (
-      <div id={id} className={classes()} style={styleObject()} onClick={(e) => onClick ? onClick(e) : null} dangerouslySetInnerHTML={{ __html: html }} />
-    ) : (
-      <div id={id} className={classes()} style={styleObject()} onClick={(e) => onClick ? onClick(e) : null}>{children}</div>
-    )
+    <Tag id={id} className={classes()} style={styleObject()} onClick={(e) => onClick ? onClick(e) : null}>{children}</Tag>
   )
 }
 

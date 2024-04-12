@@ -9,7 +9,7 @@ const useWalletConnect = () => {
   const debugMode = process.env.NEXT_PUBLIC_APP_ENV != 'production'
 
   const { openConnectModal, connectModalOpen } = useConnectModal()
-  const { address, isConnected, connector } = useAccount()
+  const { address, isConnected, connector, status } = useAccount()
   const { chain, chains } = useNetwork()
   const { data: walletClient } = useWalletClient()
   const publicClient = usePublicClient()
@@ -19,6 +19,7 @@ const useWalletConnect = () => {
   const [connectorId, setConnectorId] = useState(null)
   const [blockchain, setBlockchain] = useState('')
   const [blockchains, setBlockchains] = useState([])
+  const [connection, setConnection] = useState({ loading: true, connected: false })
   const [callback, setCallback] = useState({ success: null, failed: null })
 
   const usdt = {
@@ -42,6 +43,15 @@ const useWalletConnect = () => {
       `https://polygon-mainnet.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_ID}`,
     ],
   }
+
+  useEffect(() => {
+    if (status == 'connected' || status == 'disconnected') {
+      setConnection({
+        loading: false,
+        connected: status == 'connected',
+      })
+    }
+  }, [status])
 
   const isContractAddress = (str) => {
     const contractAddressRegExp = /^(0x)?[0-9a-fA-F]{40}$/;
@@ -103,8 +113,8 @@ const useWalletConnect = () => {
     }) : [])
   }, [chains, isConnected])
 
-  const disconnect = () => {
-    wagmiDisconnect()
+  const disconnect = async () => {
+    await wagmiDisconnect()
   }
 
   const network = (currentChain) => {
@@ -235,6 +245,7 @@ const useWalletConnect = () => {
 
   return {
     wallet,
+    connection,
     connectorId,
     blockchain,
     blockchains,
@@ -248,6 +259,7 @@ const useWalletConnect = () => {
     getBalance,
     getPrice,
     scanUrl,
+    sign,
     usdt,
     jsonRpcEndpoints,
     getAddress,

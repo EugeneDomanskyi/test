@@ -2,7 +2,7 @@ import App from '@/components/App'
 import ClaimImage from '@/components/Raffle/RaffleModalParticipate/ClaimImage'
 import ClaimText from '@/components/Raffle/RaffleModalParticipate/ClaimText'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 const errors = {
   'api' : {
@@ -17,7 +17,7 @@ const errors = {
 
 const ErrorStep = ({onSubmit, type}) => {
   const handleClickNextStep = () => {
-    trackEvent('Click Get Tkeys', {
+    Amplitude.event('Click Get Tkeys', {
       'Source': 'Case Details',
     })
 

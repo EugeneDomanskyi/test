@@ -35,7 +35,7 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(wallet)
-    dispatch($alert.set.success({ title: 'Address Copied', text: 'The address has been successfully copied to clipboard' }))
+    dispatch($alert.set.success({ title: 'Address copied to clipboard' }))
   }
 
   const handleDisconnect = async () => {
@@ -85,7 +85,7 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
                   <App.Icon icon="copy3" onClick={handleCopy} style={{ cursor: 'pointer' }} />
 
                   <a href={scanUrl(wallet, 'address', blockchain)} target="_blank" rel="noreferrer" style={{ lineHeight: 1 }}>
-                    <App.Icon icon={blockchain.code == 'polygon' ? 'polyscan' : 'etherscan'} width={16} height={16} opacity={1} color="#fff" />
+                    <App.Icon icon={blockchain.code == 'polygon' || blockchain.code == 'mumbai' ? 'polyscan' : 'etherscan'} width={16} height={16} opacity={1} color="#fff" />
                   </a>
                 </App.Flex>
 
@@ -96,14 +96,14 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
                 <App.Text size={12} weight={600} height={1} color="#B9B8C5">Balance</App.Text>
                 <App.Text size={[32, 24]} weight={700} height={1}>${portfolioUsd}</App.Text>
 
-                {portfolioUsd * 0 > 0 ? (
+                {/* {portfolioUsd * 0 > 0 ? (
                   <App.Flex align="center" gap={4}>
                     {portfolioTicker?.type != 'zero' ? (
                       <App.Icon style={{transform: `rotate(${portfolioTicker?.type == 'minus' ? '0' : '180'}deg)`}} icon="caret-down" color={portfolioTicker?.type == 'minus' ? '#FF1D61' : '#53F19C' } width={12} height={12} />
                     ) : null}
                     <App.Text size={[16, 14]} height={1} color={portfolioTicker?.type == 'minus' ? '#FF1D61' : portfolioTicker?.type == 'plus' ? '#53F19C' : '#B9B8C5'}>{ portfolioTicker?.percent }%</App.Text>
                   </App.Flex>
-                ) : null}
+                ) : null} */}
               </App.Flex>
             </App.Flex>
           </App.Frame>
@@ -122,7 +122,11 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
                     <App.Flex key={item.address} column className={cn(styles.row, styles.clickable)} onMouseLeave={handleClick(null)} onClick={handleClick(item.address)}>
                       <App.Flex row align="center" justify="space-between">
                         <App.Flex row gap={8} align="center">
-                          <Image src={item.image} width={40} height={40} alt="" />
+                          {item.image ? (
+                            <Image src={item.image} width={40} height={40} alt="" />
+                          ) : (
+                            <div className={styles.emptyImage} />
+                          )}
 
                           <App.Flex column gap={6}>
                             <App.Text size={16} weight={700} height={1}>{item.name}</App.Text>

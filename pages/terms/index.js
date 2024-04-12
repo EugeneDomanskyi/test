@@ -5,7 +5,7 @@ import styles from './styles.module.scss'
 export default function LandingPage() {
   return (
     <App.Container className={styles.container}>
-      <App.Flex column align="center" sx={{padding: '0 128px'}}>
+      <App.Flex column align="center" className={styles.wrapper}>
         <h1>USER AGREEMENT</h1>
 
         <p>VERSION 0.10</p>
@@ -21,7 +21,7 @@ export default function LandingPage() {
         
         <p>
           The <b>“User”</b>, <b>“you”</b>, <b>“your”</b> shall refer to any natural person or entity and its authorized users
-          that subscribes or uses the Services. Certain features of the website <a href="http://www.tegro.com">www.tegro.com</a> (<b>“Site”</b>) may be subject to additional guidelines,
+          that subscribes or uses the Services. Certain features of the website <a href="https://www.tegro.com">www.tegro.com</a> (<b>“Site”</b>) may be subject to additional guidelines,
           terms, or rules, which will be posted on the Site in connection with such features. All such additional terms,
           guidelines, and rules are incorporated by reference into this Agreement.
         </p>

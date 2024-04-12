@@ -4,8 +4,6 @@ import cn from 'classnames'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 
-import { trackEvent } from '@/libs/analytics.lib'
-
 import $raffle from '@/store/raffle'
 
 import App from '@/components/App'

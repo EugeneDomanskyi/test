@@ -5,7 +5,7 @@ import moment from 'moment'
 
 import $app from '@/store/app'
 
-import { trackEvent } from '@/libs/analytics.lib'
+import Amplitude from '@/libs/amplitude.lib'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 
@@ -30,7 +30,7 @@ const RaffleListMyItem = ({ item, number, onShare }) => {
   }
 
   const handleClickShare = () => {
-    trackEvent('Click Case Share ', {
+    Amplitude.event('Click Case Share ', {
       'Name': item.title,
       'Time Left': getTime(),
       'Tkey Cost': item.tKeyRequired,

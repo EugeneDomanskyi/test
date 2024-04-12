@@ -1,22 +1,16 @@
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import styles from './styles.module.scss'
+
+import useWalletConnect from '@/myhooks/wallet-connect'
+
+import $token from '@/store/token'
 
 import App from '@/components/App'
 import SectionTitle from '@/components/Market/SectionTitle'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
-
-import $collection from '@/store/collection'
-import $token from '@/store/token'
+import styles from './styles.module.scss'
 
 export default function Trending() {
-  const router = useRouter()
-  const { getPrice, network } = useWalletConnect()
-  
-  const isNfts = router.asPath?.includes('nfts')
-  const queryMarketType = isNfts ? 'nfts' : 'tokens'
-  const queryBlockchainCode = router.query.blockchain
+  const { getPrice } = useWalletConnect()
 
   const [trending, setTrending] = useState([])
   
@@ -26,47 +20,28 @@ export default function Trending() {
 
   const handleFetchTrending = async () => {
     let topResults = []
-    if (queryMarketType === 'nfts') {
-      const result = await $collection.api.top({
-        blockchain: queryBlockchainCode,
-        limit: 10,
-        useNonFlaggedFloorAsk: true,
-      })
+    
+    const result = await $token.api.coingecko.top()
+    const rate = await getPrice('bitcoin', 'usd')
 
-      topResults = result.collections.map(item => {
+    if (result) {
+      topResults = result.coins.map(item => {
+        item = item.item        
         return {
           name: item.name,
-          price: item.floorAsk?.price?.amount?.usd ?? 0,
-          symbol: item.floorAsk?.price?.currency?.symbol,
-          image: item.image,
-          coin_id: item.coin_id ?? null,
+          price: (rate * item.price_btc).toFixed(4),
+          symbol: item.symbol,
+          image: item.small,
+          coin_id: item.coin_id,
         }
       })
-    } else {
-      const result = await $token.api.coingecko.top()
-      const rate = await getPrice('bitcoin', 'usd')
-
-      if (result) {
-        topResults = result.coins.map(item => {
-          item = item.item        
-          return {
-            name: item.name,
-            price: (rate * item.price_btc).toFixed(4),
-            symbol: item.symbol,
-            image: item.small,
-            coin_id: item.coin_id,
-          }
-        })
-
-        
-      }
     }
     setTrending(topResults)
   }
 
   return (
     <App.Flex column gap={16}>
-      <SectionTitle>Trending {queryMarketType === 'nfts' ? 'NFTs' : 'Tokens'}</SectionTitle>
+      <SectionTitle>Trending Tokens</SectionTitle>
 
       <App.Flex column gap={16}>
         {

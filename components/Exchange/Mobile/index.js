@@ -6,7 +6,10 @@ import Image from 'next/image'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
-import { fetchPrices, getTokens } from '@/api_services/tokens'
+import $orders from '@/store/orders'
+
+import useWalletConnect from '@/myhooks/wallet-connect'
+import Socket from '@/libs/ws.lib'
 
 import App from '@/components/App'
 import TradeFormWrapper from '@/components/Exchange/Mobile/TradeFormWrapper'
@@ -30,16 +33,23 @@ const formatNumber = (number) => {
   }
 }
 
-const Mobile = forwardRef(({ type, onOrdersUpdate }, ref) => {
+const Mobile = forwardRef((_, ref) => {
   const router = useRouter()
   const [queryAddress] = router.query.address || []
   const address = queryAddress ? queryAddress?.toLowerCase() : ''
   const queryBlockchainCode = router.query.blockchain
 
+  const { wallet } = useWalletConnect()
+
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
-  const list = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.all : $collection.all)
-  const item = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.current : $collection.current)
+  const socketConnected = useSelector(({ $app }) => $app.socketConnected)
+  const isApp = useSelector(({ $app }) => $app.isApp)
+  const list = useSelector(({ $token }) => $token.all)
+  const item = useSelector(({ $token }) => $token.current)
+  const sort = useSelector(({ $token }) => $token.sort)
+
+  const [sortBy, sortDirection] = sort.split(':')
 
   const [tab, setTab] = useState('charts')
   const [isTradeDialogOpen, setIsTradeDialogOpen] = useState(false)
@@ -62,6 +72,26 @@ const Mobile = forwardRef(({ type, onOrdersUpdate }, ref) => {
   }))
 
   useEffect(() => {
+    Socket.on('order_placed', 'my_orders', (data) => {
+      dispatch($orders.set.add(data))
+    })
+    
+    Socket.on('order_submitted', 'my_orders', (data) => {
+      dispatch($orders.set.update(data))
+    })
+  }, [wallet, item?.id])
+
+  useEffect(() => {
+    if (wallet && socketConnected) {
+      Socket.subscribe(wallet)
+
+      return () => {
+        Socket.unsubscribe(wallet)
+      }
+    }
+  }, [wallet, socketConnected])
+
+  useEffect(() => {
     if (item?.id) {
       setChartTop([
         {value: formatNumber(item.volume ?? 0), text: 'Vol'},
@@ -69,41 +99,26 @@ const Mobile = forwardRef(({ type, onOrdersUpdate }, ref) => {
         {value: formatNumber(item.low ?? 0), text: 'Low'},
       ])
     } else {
-      if (type == 'tokens') {
-        fetchToken()
-      } else {
-        // Fetch collection
-      }
+      fetchToken(address)
     }
   }, [item?.id])
 
-  const fetchToken = async () => {
-    const existInList = list.find(item => item.id === address)
+  const fetchToken = async (currentAddress) => {
+    const existInList = list.find(item => item.id === currentAddress)
     if (!existInList) {
-      const post = {
-        currentPage: 1,
-        perPage: 1,
-        orderBy: 'name',
-        orderDirection: 'asc',
-        searchText: address,
-        searchField: 'contract_address',
-      }
+      const id = `${blockchain.id}_${currentAddress}_${blockchain.info?.token?.address}`
+      const res = await $token.api.all({
+        page: 1,
+        page_size: 1,
+        chain_id: blockchain.id,
+        sort_by: sortBy,
+        sort_order: sortDirection,
+        market_id: id,
+        verified: true,
+      })
 
-      const [token] = await getTokens(blockchain, post)
-      if (token) {
-        let currentToken = {
-          ...token,
-        }
-
-        const prices = await fetchPrices(blockchain, [token])
-        if (prices[token.id]) {
-          currentToken = {
-            ...currentToken,
-            ...prices[token.id],
-          }
-        }
-
-        dispatch($token.set.current(currentToken))
+      if (res.success && res.data.length) {
+        dispatch($token.set.current(res.data[0]))
       }
     } else {
       dispatch($token.set.current(existInList))
@@ -151,7 +166,7 @@ const Mobile = forwardRef(({ type, onOrdersUpdate }, ref) => {
             )}
 
             <App.Flex column sx={{ maxWidth: 170 }}>
-              <App.Text nowrap uppercase size={16} weight={600}>{item.symbol ?? item?.slug}{type == 'tokens' ? (<App.Text inline color="#B9B8C5" size={10} weight={600} >/USDT</App.Text>) : null}</App.Text>
+              <App.Text nowrap uppercase size={16} weight={600}>{item.symbol ?? item?.slug}<App.Text inline color="#B9B8C5" size={10} weight={600} >/USDT</App.Text></App.Text>
               <App.Text nowrap size={12} color="#5E5C6B">{item.name}</App.Text>
             </App.Flex>
           </App.Flex>
@@ -167,26 +182,26 @@ const Mobile = forwardRef(({ type, onOrdersUpdate }, ref) => {
       </App.Flex>
 
       <App.Flex column gap={16} sx={{ padding: '0 8px' }} flex={1}>
-        <App.Tabs options={tabs} active={tab} onChange={handleTabChange} height={22} variant="mobile" />
+        <App.Tabs options={tabs} active={tab} onChange={handleTabChange} height={22} variant={`mobile${isApp ? '-app' : ''}`} />
 
         <App.Flex column flex={1} sx={{ position: 'relative' }}>
           {(currentTab => {
             switch (currentTab) {
               case 'charts':
                 return (
-                  <App.Flex className={styles.absolute}><Chart type={type} version="mobile" showSwitch top={chartTop} /></App.Flex>
+                  <App.Flex className={styles.absolute}><Chart version="mobile" showSwitch top={chartTop} /></App.Flex>
                 )
               case 'orderbook':
                 return (
-                  <OrderBook type={type} version="mobile" onClickOrder={handleClickOrder} />
+                  <OrderBook version="mobile" onClickOrder={handleClickOrder} />
                 )
               case 'trades':
                 return (
-                  <Sales type={type} version="mobile" onClickSale={handleClickOrder} />
+                  <Sales version="mobile" onClickSale={handleClickOrder} />
                 )
               case 'orders':
                 return (
-                  <Orders current={item} version="mobile" type={type} onClickOrder={handleClickOrder} />
+                  <Orders current={item} version="mobile" onClickOrder={handleClickOrder} />
                 )
               default: return null
             }
@@ -211,7 +226,6 @@ const Mobile = forwardRef(({ type, onOrdersUpdate }, ref) => {
           <TradeFormWrapper
             ref={tradeForm}
             item={item}
-            type={type}
             side={tradeSide}
             onClose={handleTradeDialogClose}
           />

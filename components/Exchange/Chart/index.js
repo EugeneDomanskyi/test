@@ -5,7 +5,8 @@ import moment from 'moment'
 import cn from 'classnames'
 import * as LightweightCharts from 'lightweight-charts'
 
-import $exchange from '@/store/exchange'
+import $app from '@/store/app'
+import $orders from '@/store/orders'
 
 import App from '@/components/App'
 
@@ -45,7 +46,6 @@ const CHART_CONFIG = {
     horzLines: { color: 'rgba(161, 159, 255, 0.3)', style: 3 },
   },
   timeScale: {
-    borderColor: 'rgba(161, 159, 255, 0.2)',
     borderColor: 'transparent',
     tickMarkFormatter: (time) => {
       return moment(time).format('DD MMM HH:mm')
@@ -85,19 +85,12 @@ const INTERVALS = [
   {key: '1w', count: 1, unit: 'weeks', seconds: 7*24*60*60},
 ]
 
-const TradeChart = ({type, version, showSwitch, top = []}) => {
-  const router = useRouter()
-  const [urlAddress] = router.query.address || []
-  const address = urlAddress ? urlAddress?.toLowerCase() : ''
-  const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(address)
-  const urlBlockchain = router.query.blockchain
-
+const TradeChart = ({ version, showSwitch, top = [] }) => {
   const dispatch = useDispatch()
-  const activeInterval = useSelector(({$exchange}) => $exchange.interval)
-  const current = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.current : $collection.current)
-  const kLineData = useSelector($exchange.get.kLineData(activeInterval))
-  const tokenChartData = useSelector($exchange.get.chartData)
-  const chartData = type === 'nfts' ? kLineData : tokenChartData
+  const blockchain = useSelector($app.get.blockchain)
+  const current = useSelector(({ $token }) => $token.current)
+  const activeInterval = useSelector(({$orders}) => $orders.interval)
+  const chartData = useSelector(({ $orders }) => $orders.chart)
 
   const [variant, setVariant] = useState('candlesticks')
 
@@ -118,22 +111,33 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
   }, [chartData, variant])
 
   useEffect(() => {
-    if (current?.id && current.id === address && isAddress) {
-      if (type == 'tokens') {
-        fetchTokenChartData()
-      } else {
-        // Fetch NFTs chart data
-      }
+    if (current?.id) {
+      fetchTokenChartData()
     }
-  }, [address, current?.id, urlBlockchain, activeInterval.seconds, isAddress])
+  }, [current?.id, activeInterval.seconds])
 
   const fetchTokenChartData = async () => {
-    const result = await $exchange.api.get.tokenChartData(address, urlBlockchain, activeInterval.seconds)
-    dispatch($exchange.set.chartData({type: 'tokens', data: ((result && result?.data) ? result.data : [])}))
+    const to = new Date()
+    const from = new Date(to)
+    from.setDate(to.getDate() - 10)
+    const post = {
+      market_id: current.marketId,
+      chain_id: blockchain.id,
+      interval: activeInterval.seconds,
+      to: to.getTime(),
+      from: from.getTime(),
+    }
+
+    const result = await $orders.api.chart(post)
+    if (result && result.success && Array.isArray(result.data)) {
+      dispatch($orders.set.chart(result.data))
+    } else {
+      dispatch($orders.set.chart([]))
+    }
   }
 
   const handleChangeInterval = (interval) => () => {
-    dispatch($exchange.set.interval(interval))
+    dispatch($orders.set.interval(interval))
   }
 
   const buildChart = () => {
@@ -223,8 +227,7 @@ const TradeChart = ({type, version, showSwitch, top = []}) => {
 }
 
 const isEqual = (prevProps, nextProps) => {
-  return prevProps.type === nextProps.type
-    && prevProps.version === nextProps.version
+  return prevProps.version === nextProps.version
     && prevProps.showSwitch === nextProps.showSwitch
     && prevProps.top === nextProps.top
 }

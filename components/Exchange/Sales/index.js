@@ -3,60 +3,63 @@ import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
 import cn from 'classnames'
 
-import $orders from '@/store/orders'
-import $app from '@/store/app'
 import Socket from '@/libs/ws.lib'
+
+import $app from '@/store/app'
+import $orders from '@/store/orders'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const Sales = ({onClickSale, version, type}) => {
+const Sales = ({ version, onClickSale }) => {
   const dispatch = useDispatch()
+  const blockchain = useSelector($app.get.blockchain)
+  const current = useSelector(({ $token }) => $token.current)
+  const trades = useSelector(({ $orders }) => $orders.trades)
 
   const [loading, setLoading] = useState(true)
-
-  const trades = useSelector($orders.get.recentTrades(type, 50))
-  const blockchain = useSelector($app.get.blockchain)
-  const current = useSelector(({$token, $collection}) => type == 'nfts' ? $collection.current : $token.current)
-  const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(current.address)
 
   let previousPrice = 0
 
   useEffect(() => {
-    if (type === 'tokens') {
-      Socket.on('order_submitted', 'trades', () => {
-        getTrades()
+    if (current?.id) {
+      Socket.on('trade_created', 'trades', (trade) => {
+        dispatch($orders.set.addTrades(trade))
       })
-    }
-  }, [type, current.address])
+      Socket.on('trade_updated', 'trades', (trade) => {
+        dispatch($orders.set.updateTrade(trade))
+      })
 
-  useEffect(() => {
-    if (type === 'tokens' && isAddress) {
       getTrades()
-    } else {
-      setLoading(false)
     }
-  }, [current.address])
+  }, [current?.id])
 
   const getTrades = async () => {
-    setLoading(true)
-    dispatch($orders.set.trades({type: 'tokens', data: []}))
-    const res = await $orders.api.get.tokens.trades({
+    const result = await $orders.api.trades({
       address: current.address,
+      market_id: current.marketId,
       blockchain: blockchain.code,
-      sortBy: 'createDateTime',
-      statuses: '[3]',
-      limit: 100,
+      chain_id: blockchain.id,
+      limit: 10,
     })
-    if (res) {
-      dispatch($orders.set.trades({type: 'tokens', data: res}))
+
+    if (result?.success && Array.isArray(result.data)) {
+      dispatch($orders.set.trades({data: result.data, token: current}))
+    } else {
+      dispatch($orders.set.trades({data: [], token: current}))
     }
+
+
     setLoading(false)
   }
 
-  const handleClick = sale => () => {
-    onClickSale({quantity: sale.amount, price: sale.priceFormatted, side: sale.side})
+  const handleClick = (sale) => () => {
+    onClickSale({
+      quantity: sale.amount,
+      price: sale.price,
+      side: sale.side,
+    })
   }
 
   return version == 'mobile' && loading ? (
@@ -73,19 +76,19 @@ const Sales = ({onClickSale, version, type}) => {
         <App.Flex className={styles.rowHeader} justify="space-between" align="center">
           <App.Text flex={1} size={[10, 12]} color="#B9B8C5" weight={[600, 500]} height={1}>Price</App.Text>
           <App.Text flex={1} size={[10, 12]} color="#B9B8C5" center weight={[600, 500]} height={1}>Volume</App.Text>
+          <App.Text flex={1} size={[10, 12]} color="#B9B8C5" center weight={[600, 500]} height={1}>Status</App.Text>
           <App.Text flex={1} size={[10, 12]} color="#B9B8C5" right weight={[600, 500]} height={1}>Time</App.Text>
         </App.Flex>
 
         <App.Flex flex={1} column sx={{overflow: 'auto'}}>
           {
-            trades.slice(0, 10).map(sale => {
-              const price = sale.priceFormatted
+            trades.map(sale => {
               let color = {
                 price: '#53F19C',
                 row: '#06382f',
                 side: 'buy',
               }
-              if (price * 1 < previousPrice) {
+              if (sale.price * 1 < previousPrice) {
                 color = {
                   price: '#EB3169',
                   row: '#4d0e27',
@@ -93,13 +96,27 @@ const Sales = ({onClickSale, version, type}) => {
                 }
               }
 
-              previousPrice = price * 1
+              previousPrice = sale.price * 1
               return (
                 <App.Flex key={sale.id || sale.signature} column>
                   <App.Flex  justify="space-between" align="center" className={styles.sale} sx={{backgroundColor: color.row}} onClick={handleClick({...sale, side: color.side})}>
-                    <App.Text flex={1} size={12} color={color.price} height={1}>{ price }</App.Text>
+                    <App.Text flex={1} size={12} color={color.price} height={1}>{ sale.price }</App.Text>
                     <App.Text flex={1} size={12} weight={600} center height={1}>{ sale.amount }</App.Text>
-                    <App.Text flex={1} size={12} right height={1}>{ moment(sale.timestamp*1000).format('hh:mm:ss A') }</App.Text>
+                    <App.Flex flex={1} size={12} weight={600} center height={1}>
+                      { (state => {
+                        switch (state) {
+                          case 'success':
+                            return <App.Icon icon={"check"} />
+                          case 'failed':
+                            return <App.Icon width={14} height={11} color="#fff" icon={"cross"} />
+                          case 'matched':
+                            return <App.Icon width={20} height={20} color="#fff" icon={"hourglass"} />
+                          default:
+                            return null
+                        }
+                      })(sale.state) }
+                    </App.Flex>
+                    <App.Text flex={1} size={12} right height={1}>{ moment(sale.time).format('hh:mm:ss A') }</App.Text>
                   </App.Flex>
                 </App.Flex>
               )
@@ -113,6 +130,7 @@ const Sales = ({onClickSale, version, type}) => {
 
 const isEqual = (prev, next) => {
   return prev.onClickSale === next.onClickSale
+    && prev.version === next.version
 }
 
 export default memo(Sales, isEqual)

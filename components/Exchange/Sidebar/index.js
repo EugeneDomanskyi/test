@@ -1,61 +1,48 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
+import dynamic from 'next/dynamic'
 import cn from 'classnames'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
-import $collection from '@/store/collection'
-
-import { fetchPrices, getTokens } from '@/api_services/tokens'
 
 import App from '@/components/App'
-import SidebarSearch from '@/components/Exchange/Sidebar/SidebarSearch'
-import SidebarSort from '@/components/Exchange/Sidebar/SidebarSort'
+// import SidebarSearch from '@/components/Exchange/Sidebar/SidebarSearch'
+// import SidebarSort from '@/components/Exchange/Sidebar/SidebarSort'
 import SidebarItem from '@/components/Exchange/Sidebar/SidebarItem'
+
+const SidebarSearch = dynamic(() => import('@/components/Exchange/Sidebar/SidebarSearch'), {ssr: false})
+const SidebarSort = dynamic(() => import('@/components/Exchange/Sidebar/SidebarSort'), {ssr: false})
 
 import styles from './styles.module.scss'
 
-const Sidebar = ({ version, type }) => {
+const Sidebar = ({ version }) => {
   const router = useRouter()
   const urlBlockchain = router.query.blockchain
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
-  const all = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.all : $collection.all)
-  const searched = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.searched : $collection.searched)
-  const loading = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.loading : $collection.loading)
-  const searching = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.searching : $collection.searching)
-  const sort = useSelector(({ $token, $collection }) => type == 'tokens' ? $token.sort : $collection.sort)
-  const pages = useSelector(type == 'tokens' ? $token.get.pages : $collection.get.pages)
-  const tokensPerPage = useSelector(({ $token }) => $token.pages.perPage)
-  const current = useSelector(({$token, $collection}) => type === 'tokens' ? $token.current :  $collection.current)
+  const all = useSelector(({ $token }) => $token.all)
+  const searched = useSelector(({ $token }) => $token.searched)
+  const loading = useSelector(({ $token }) => $token.loading)
+  const searching = useSelector(({ $token }) => $token.searching)
+  const sort = useSelector(({ $token }) => $token.sort)
+  const pages = useSelector($token.get.pages)
+  const current = useSelector(({ $token }) => $token.current)
 
   const mobileContainerRef = useRef()
   const mobileNextRef = useRef()
 
   const list = searching ? searched : all
-
   const [sortBy, sortDirection] = sort.split(':')
-  let orderBy = sortBy.toLowerCase()
-  if (type == 'tokens' && orderBy == 'volume') {
-    orderBy = 'volumeUSD'
-  }
-
-  if (type == 'tokens' && orderBy == 'price') {
-    orderBy = 'derivedETH'
-  }
 
   useEffect(() => {
     if (blockchain.code !== urlBlockchain) {
       return
     }
 
-    if (type == 'tokens') {
-      fetchTokensList()
-    } else {
-      // Fetch collections
-    }
+    fetchTokensList()
   }, [blockchain.code, sort, pages.current, urlBlockchain])
 
   useEffect(() => {
@@ -82,28 +69,25 @@ const Sidebar = ({ version, type }) => {
 
       const containerBottom = containerRect.top + containerRect.height
       if (nextRect.top - containerBottom <= 50) {
-        if (type == 'tokens') {
-          dispatch($token.set.pages({current: pages.next ?? 1, append: true}))
-        } else {
-          dispatch($collection.set.pages({current: pages.next ?? 'init', append: true}))
-        }
+        dispatch($token.set.pages({current: pages.next ?? 1, append: true}))
       }
     }
   }
 
   const fetchTokensList = async () => {
-    const post = {
-      currentPage: pages.current,
-      perPage: tokensPerPage,
-      orderBy: orderBy,
-      orderDirection: sortDirection.toLowerCase(),
-    }
+    const res = await $token.api.all({
+      page: pages.current,
+      page_size: pages.perPage,
+      chain_id: blockchain.id,
+      sort_by: sortBy,
+      sort_order: sortDirection,
+      verified: true,
+    })
 
-    const tokens = await getTokens(blockchain, post)
-    dispatch($token.set.all(tokens))
-    dispatch($token.set.pages({ next: (pages.current * 1 + 1) }))
-    const prices = await fetchPrices(blockchain, tokens)
-    dispatch($token.set.updatedAll(prices))
+    if (res.success) {
+      dispatch($token.set.all(res.data))
+      dispatch($token.set.pages({ next: (pages.current * 1 + 1) }))
+    }
 
     dispatch($token.set.loading(false))
   }
@@ -112,9 +96,9 @@ const Sidebar = ({ version, type }) => {
     <App.Flex column className={cn(styles.container, styles[version])}>
       <App.Flex column>
         <App.Flex center full sx={{ padding: '8px 10px' }}>
-          <SidebarSearch type={type} />
+          <SidebarSearch />
         </App.Flex>
-        <SidebarSort type={type} />
+        <SidebarSort />
       </App.Flex>
 
       <div className={styles.cardBox}>
@@ -132,18 +116,9 @@ const Sidebar = ({ version, type }) => {
                 <App.Text center>No results were found for your search</App.Text>
               ) : (
                 <>
-                  {list.map((item, i) => {
-                    return (
-                      <SidebarItem
-                        key={item.id}
-                        item={item}
-                        type={type}
-                        version={version}
-                      />
-                    )
-                  })}
+                  {list.map((item, i) => <SidebarItem key={item.id} item={item} version={version} />)}
 
-                  {pages.next && ! searching && (all.length % 20 == 0) ? (
+                  {pages.next && ! searching && all.length > 0 && (all.length % 20 == 0) ? (
                     <div ref={mobileNextRef}>
                       <App.Flex center full>
                         <App.Loader size={40} />

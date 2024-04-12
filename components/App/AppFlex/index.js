@@ -43,10 +43,12 @@ const AppFlex = ({ children, row, column, direction, center, align, justify, gap
 
     if (width) {
       result.width = propValue(width)
+      result.minWidth = propValue(width)
     }
 
     if (height) {
       result.height = propValue(height)
+      result.minHeight = propValue(height)
     }
 
     if (fullWidth) {

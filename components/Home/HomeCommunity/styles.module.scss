@@ -1,0 +1,74 @@
+.glow {
+  background: radial-gradient(66.09% 50% at 50% 50%, rgba(56, 28, 140, 0.4) 0%, rgba(56, 28, 140, 0) 100%);
+}
+
+.container {
+  border-top: 1px solid #FFFFFF1A;
+  position: relative;
+  z-index: 1;
+
+  .background1 {
+    width: 782px;
+    height: 437px;
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: -100px;
+    background: url('/images/home/community-1.png') 0 center no-repeat;
+
+    @media (max-width: 768px) {
+      left: 55%;
+      margin-left: -391px;
+    } 
+  }
+
+  .inner {
+    padding: 93px 0 78px 475px;
+
+    .line {
+      width: 100%;
+      height: 1px;
+      background-color: #FFFFFF1A;
+    }
+
+    .item {
+      cursor: pointer;
+      position: relative;
+      z-index: 0;
+      border-radius: 12px;
+
+      img {
+        width: 48px;
+        height: 48px;
+      }
+
+      .arrow {
+        position: absolute;
+        z-index: 0;
+        right: 10px;
+        top: 12px;
+        opacity: 0.4;
+        transition: all .2s;
+      }
+
+      &:hover {
+        background-color: #6c41eb21;
+        .arrow {
+          opacity: 1;
+        }
+      }
+    }
+
+    @media (max-width: 768px) {
+      padding: 460px 0 20px;
+
+      .item {
+        padding-bottom: 10px;
+
+        .arrow {
+          opacity: 1;
+        }
+      }
+    }
+  }
+}

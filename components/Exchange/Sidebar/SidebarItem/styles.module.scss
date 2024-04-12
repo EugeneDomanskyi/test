@@ -1,16 +1,14 @@
-.collection {
+.market {
   padding: 16px 12px;
   cursor: pointer;
   transition: all .2s ease 0s;
-  background: transparent;
+  border-bottom: solid #000 1px;
   position: relative;
   z-index: 0;
   background-color: #08051C;
   overflow: hidden;
 
   &:nth-of-type(odd) {
-    border-top: solid #000 1px;
-    border-bottom: solid #000 1px;
     background-color: #0E0B23;
   }
 
