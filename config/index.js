@@ -43,18 +43,18 @@ const TEST_NETWORKS = [
     decimals: optimismSepolia.nativeCurrency.decimals,
     scanUrl: optimismSepolia.blockExplorers.default.url,
     pages: ['exchange'],
-  }
+  }, 
 ]
 
 const MAINNET_NETWORKS = [
-  {
-    ...arbitrum,
-    code: 'arbitrum',
-    currency: arbitrum.nativeCurrency.symbol,
-    decimals: arbitrum.nativeCurrency.decimals,
-    scanUrl: arbitrum.blockExplorers.default.url,
-    pages: ['exchange']
-  }
+  // {
+  //   ...arbitrum,
+  //   code: 'arbitrum',
+  //   currency: arbitrum.nativeCurrency.symbol,
+  //   decimals: arbitrum.nativeCurrency.decimals,
+  //   scanUrl: arbitrum.blockExplorers.default.url,
+  //   pages: ['exchange']
+  // }
 ]
 
 export const CHAINS = [

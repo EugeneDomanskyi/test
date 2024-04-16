@@ -45,7 +45,6 @@ const useWalletConnect = () => {
   useEffect(() => {
     const unwatch = watchAccount(wagmiConfig, {
       onChange(data) {
-        console.log(data)
         if (data.isConnected || data.isDisconnected) {
           const connected = data.isConnected
           if (connection.loading || connection.connected != connected) {
@@ -92,7 +91,7 @@ const useWalletConnect = () => {
     if (wallet) {
       const currentChain = getCurrentChain()
       const newChain = getChainByCode(newChainCode)
-
+      
       if (currentChain && newChain) {
         if (currentChain.id == newChain.id) {
           return true
