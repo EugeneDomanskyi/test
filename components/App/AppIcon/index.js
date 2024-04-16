@@ -1742,6 +1742,15 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
         </svg>
       )
     }
+
+    if (icon == 'warning-circle') {
+      return (
+        <svg width={width ?? 17} height={height ?? 16} viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#A6DC37'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.028" d="M8.334 14.667C12 14.667 15 11.667 15 8s-3-6.667-6.666-6.667c-3.667 0-6.667 3-6.667 6.667s3 6.667 6.667 6.667zM8.334 5.333v3.334" />
+          <path stroke={color ?? '#A6DC37'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.37" d="M8.33 10.667h.006" />
+        </svg>
+      )
+    }
   }
 
   return getIcon()

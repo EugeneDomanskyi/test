@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -7,14 +6,26 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 import App from '@/components/App'
 import PointsBar from '@/components/Points/PointsBar'
 import PointsHome from '@/components/Points/PointsHome'
+import PointsLiquidity from '@/components/Points/PointsLiquidity'
+import PointsRefer from '@/components/Points/PointsRefer'
+import PointsContributor from '@/components/Points/PointsContributor'
+import PointsQuests from '@/components/Points/PointsQuests'
 
 import styles from './styles.module.scss'
 
 const PointsDashboard = () => {
   const { t } = useTranslation()
-  const { wallet, connection, connect } = useWalletConnect()
+  const { wallet } = useWalletConnect()
 
   const [tab, setTab] = useState('home')
+
+  const tabs = [
+    { title: t('Dashboard'), key: 'home' },
+    { title: t('Liquidity Mining'), key: 'liquidity' },
+    { title: t('Refer & Earn'), key: 'refer' },
+    { title: t('Become a Contributor'), key: 'contributor' },
+    { title: t('Third Party Quests'), key: 'quests' },
+  ]
 
   useEffect(() => {
     const currentTab = localStorage.getItem('pointsTab')
@@ -23,45 +34,28 @@ const PointsDashboard = () => {
     }
   }, [wallet])
 
-  const handleConnect = () => {
-    connect()
+  const handleTab = (value) => {
+    localStorage.setItem('pointsTab', value)
+    setTab(value)
   }
 
   const getPointsComponent = () => {
     switch (tab) {
       case 'home': return <PointsHome />
+      case 'liquidity': return <PointsLiquidity />
+      case 'refer': return <PointsRefer />
+      case 'contributor': return <PointsContributor />
+      case 'quests': return <PointsQuests />
+      default: return <PointsHome />
     }
   }
 
   return (
     <App.Flex column full className={styles.container}>
-      <App.Flex column full sx={[{ backgriund: 'red', paddingTop: 72 }, { paddingTop: 60 }]}>
-        <PointsBar />
+      <App.Flex column full sx={[{ paddingTop: 72 }, { paddingTop: 60 }]}>
+        <PointsBar tabs={tabs} tab={tab} onTab={handleTab} />
         
         {getPointsComponent()}
-
-        {/* <App.Flex column full>
-          {connection.loading ? (
-            <App.LoaderBlock height={300} />
-          ) : (
-            connection.connected ? (
-              section == 'earn' ? (
-                <PointsEarn />
-              ) : (
-                <PointsRedeem />
-              )
-            ) : (
-              <App.Flex column flex={1} width={[614, '100%']} gap={40} align="flex-start" justify={['center', 'flex-start']}>
-                <App.Flex column gap={8}>
-                  <App.Text size={[80, 52]} weight={800} height={1.2}>{t('Start your points')} <App.Text inline italic size={[80, 52]} weight={700} family="Playfair Display" height={1.2} color="#7364FF">{t('Quest')}</App.Text></App.Text>
-                  <App.Text szie={[12, 14]} color="#9B99AE">{t('Join forces with fellow traders on a quest for glory and exclusive rewards. Connect your wallet to unleash the power of points and start your legendary journey.')}</App.Text>
-                </App.Flex>
-
-                <App.ButtonGradient onClick={handleConnect}>{t('Connect Wallet')}</App.ButtonGradient>
-              </App.Flex>
-            )
-          )}
-        </App.Flex> */}
       </App.Flex>
     </App.Flex>
   )

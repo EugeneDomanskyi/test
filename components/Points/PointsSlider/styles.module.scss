@@ -1,0 +1,56 @@
+// .input {
+//   -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+//   width: 100%; /* Specific width is required for Firefox. */
+//   background: transparent; /* Otherwise white in Chrome */
+// }
+.container {
+  width: 100%;
+
+  &.disabled {
+    opacity: 0.6;
+  }
+
+  .root {
+    color: #7364FF;
+    padding: 13px 0;
+  }
+
+  .thumb {
+    width: 24px;
+    height: 24px;
+    background-color: #fff;
+  }
+
+  .rail {
+    background-color: rgba(255,255,255,0.1);
+    height: 8px;
+  }
+
+  .track {
+    height: 8px;
+  }
+
+  .mark {
+    background-color: transparent;
+  }
+
+  .markLabel {
+    color: #9B99AE;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Gilroy', Arial, sans-serif;
+  }
+
+  .markLabelActive {
+    color: #7364FF;
+  }
+
+  .thumbTriangle {
+    position: absolute;
+    bottom: -4px;
+  }
+
+  .valueLabel {
+    background: red;
+  }
+}
