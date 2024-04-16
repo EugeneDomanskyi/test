@@ -19,7 +19,7 @@ import styles from './styles.module.scss'
 const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
   const { chain } = useNetwork()
   const { changeNetwork } = useWalletConnect()
-  const { isApp, appLog } = useApp()
+  const { isApp, appPost } = useApp()
 
   const router = useRouter()
   const [_, page] = router.asPath.split('/')
@@ -129,6 +129,8 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
         dispatch($token.set.loading(true))
         dispatch($token.set.clear())
       }
+
+      appPost({chain: newBlockchain.code})
 
       setMenuShow(false)
 
