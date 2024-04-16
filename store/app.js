@@ -23,6 +23,7 @@ export const appSlice = createSlice({
     isApp: false,
     platform: null,
     initWallet: null,
+    appTheme: null,
     statsLoading: true,
     stats: {
       totalTradingVolume: 0,
@@ -36,6 +37,10 @@ export const appSlice = createSlice({
   reducers: {
     devMode: (state, { payload }) => {
       state.devMode = payload
+    },
+    
+    appTheme: (state, { payload }) => {
+      state.appTheme = payload
     },
 
     code: (state, { payload }) => {

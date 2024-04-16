@@ -392,8 +392,6 @@ export default function Contracts(defaultGasLimit = null) {
         contracts: calls,
         listenToBlock: true,
       })
-      // console.log('calls', calls);
-      appLog(`calls ${JSON.stringify(calls)}`)
 
       return watchMulticall({
         contracts: calls,
@@ -401,8 +399,6 @@ export default function Contracts(defaultGasLimit = null) {
       }, (data) => {
         const result = data.reduce((acc, response, i, array) => {
           BigInt.prototype.toJSON = function() { return this.toString() }
-          appLog(`response JSON ${JSON.stringify(response)}`)
-          // appLog(`response ${response.toString()}`)
           if (!response.hasOwnProperty('result')) {
             return acc
           }
