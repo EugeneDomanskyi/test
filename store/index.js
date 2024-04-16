@@ -34,6 +34,7 @@ const createStore = (initialData) => {
         isApp: initialData.isApp,
         platform: initialData.platform,
         initWallet: initialData.initWallet,
+        appTheme: initialData.appTheme,
         devMode: initialData.devMode,
       },
     },
@@ -78,7 +79,7 @@ const responseHandler = async (response) => {
 }
 
 const errorHandler = async (response) => {
-  // console.log(response)
+  // console.log('errorHandler', response)
   return null
 }
 

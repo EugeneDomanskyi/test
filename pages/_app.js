@@ -101,6 +101,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
   let platform = null
   let initWallet = null
   let devMode = null
+  let appTheme = null
   let chains = []
 
   if (ctx?.req) {
@@ -113,6 +114,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
     platform = ctx.req.headers['x-tegro-platform']
     initWallet = ctx.req.headers['x-tegro-wallet'] == 'null' ? null : ctx.req.headers['x-tegro-wallet']
     devMode = ctx.req.headers['x-tegro-dev-mode'] == 'true' ? true : null
+    appTheme = ctx.req.headers['x-tegro-theme'] == 'null' ? null : ctx.req.headers['x-tegro-theme']
 
     const result = await $app.api.chains()
     if (result?.success) {
@@ -140,6 +142,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
       isApp,
       platform,
       initWallet,
+      appTheme,
       devMode,
       chains,
     },
