@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { connect } from '@wagmi/core'
-import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect'
+import { createConfig, http, connect } from '@wagmi/core'
+import { walletConnect } from '@wagmi/connectors'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
-import { CHAINS } from '@/config'
+import { wagmiConfig, CHAINS } from '@/config'
 
 import $app from '@/store/app'
 
@@ -66,30 +66,40 @@ const useApp = () => {
     }
 
     if (needConnect) {
-      const customConnector = new WalletConnectConnector({
-        chains: CHAINS,
-        options: {
-          projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
-          showQrModal: false,
-          metadata: {
-            name: 'TegroWebView',
-            description: 'Tegro Wallet Dapp',
-            url: 'tegro.com',
-            icons: ['https://tegro.com/images/tegro-connect-wallet.png']
-          }
+      const customConnector = walletConnect({
+        projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
+        showQrModal: false,
+        metadata: {
+          name: 'TegroWebView',
+          description: 'Tegro Wallet Dapp',
+          url: 'tegro.com',
+          icons: ['https://tegro.com/images/tegro-connect-wallet.png']
         },
       })
 
-      appLog(`Created Connector`)
+      appLog(`Created Config`)
 
-      customConnector.on('message', ({type, data}) => {
-        if (type == 'display_uri') {
-          appPost({ wcUri: data})
-          appLog(`Post URI`)
-        }
+      const newConfig = createConfig({
+        chains: CHAINS,
+        transports: CHAINS.reduce((acc, chain) => {
+          return {
+            ...acc,
+            [chain.id]: http(),
+          }
+        }, {}),
+        connectors: [
+          customConnector,
+        ],
       })
+      
+      // customConnector().getProvider().on('message', ({type, data}) => {
+      //   if (type == 'display_uri') {
+      //     appPost({ wcUri: data})
+      //     appLog(`Post URI`)
+      //   }
+      // })
 
-      const connected = await connect({
+      const connected = await connect(newConfig, {
         connector: customConnector,
         chainId: blockchain.id,
       }).catch(e => {
@@ -101,8 +111,8 @@ const useApp = () => {
         return
       }
 
-      setAppWallet(connected.account.toLowerCase())
-      appLog(`Connected to wallet ${connected.account}`)
+      setAppWallet(connected.accounts[0].toLowerCase())
+      appLog(`Connected to wallet ${connected.accounts[0]}`)
     } else {
       appLog(`Do not need to Connect: ${wallet}`)
     }
@@ -111,7 +121,7 @@ const useApp = () => {
       onComplete()
     }
   }
-
+  
   return { isApp, appWallet, platform, appConnect, appPost, appLog }
 }
 

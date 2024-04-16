@@ -3,15 +3,15 @@ import {useRouter} from "next/router"
 import cn from 'classnames'
 
 import App from '@/components/App'
-import TierBlock from "@/components/Tournamnet/TierBlock";
-import Banner from '@/components/Tournamnet/Banner'
+import TierBlock from "@/components/Tournament/TierBlock";
+import Banner from '@/components/Tournament/Banner'
 
 import $tournament from  "@/store/tournament"
 import styles from "./styles.module.scss";
 import useWalletConnect from "@/myhooks/wallet-connect";
-import Leaderboard from "@/components/Tournamnet/Leaderboard";
-import HowWorks from "@/components/Tournamnet/HowWorks";
-import FAQ from '@/components/Tournamnet/FAQ'
+import Leaderboard from "@/components/Tournament/Leaderboard";
+import HowWorks from "@/components/Tournament/HowWorks";
+import FAQ from '@/components/Tournament/FAQ'
 
 import useApp from '@/myhooks/useApp'
 

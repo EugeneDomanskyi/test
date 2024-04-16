@@ -1,35 +1,40 @@
-import { polygonMumbai, arbitrum } from '@wagmi/chains'
-import { optimismSepolia } from 'wagmi/chains'
+import { defineChain } from 'viem'
+import { getDefaultConfig } from '@rainbow-me/rainbowkit'
+import { http } from 'wagmi'
+import { arbitrum, optimismSepolia } from 'wagmi/chains'
 
-const mumbaiWithCustomRPC = {
-  ...polygonMumbai,
+const polygonAmoy = defineChain({
+  id: 80_002,
+  name: 'Polygon Amoy',
+  nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
   rpcUrls: {
-    ...polygonMumbai.rpcUrls,
     default: {
-      http: ['https://rpc-mumbai.maticvigil.com/'],
+      http: ['https://rpc-amoy.polygon.technology'],
     },
-    public: {
-      http: ['https://rpc-mumbai.maticvigil.com/'],
+  },
+  blockExplorers: {
+    default: {
+      name: 'OK LINK',
+      url: 'https://www.oklink.com/amoy',
     },
-  }
-}
+  },
+  contracts: {
+    multicall3: {
+      address: '0xca11bde05977b3631167028862be2a173976ca11',
+      blockCreated: 3127388,
+    },
+  },
+  testnet: true,
+})
 
 const TEST_NETWORKS = [
   {
-    ...mumbaiWithCustomRPC,
-    code: 'mumbai',
-    currency: polygonMumbai.nativeCurrency.symbol,
-    decimals: polygonMumbai.nativeCurrency.decimals,
-    scanUrl: polygonMumbai.blockExplorers.etherscan.url,
-    pages: ['earn', 'exchange', 'faucet'],
-    raffle: {
-      subgraph: 'https://api.thegraph.com/subgraphs/name/gulshanweb3/raffle-mumbai',
-      contract: '0x9bfdfdac362f810ff15240045e600a7468caf91c',
-      factory: '0x3897BdBAFA001CA14576Cb07ecdfbC1BcdF09ca7',
-      alchemy: 'MATIC_MUMBAI',
-      txUrl: 'https://mumbai.polygonscan.com/tx/',
-      rewardEndpoint: 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status',
-    },
+    ...polygonAmoy,
+    code: 'amoy',
+    currency: polygonAmoy.nativeCurrency.symbol,
+    decimals: polygonAmoy.nativeCurrency.decimals,
+    scanUrl: polygonAmoy.blockExplorers.default.url,
+    pages: ['exchange'],
     defaultFor: 'local',
   }, {
     ...optimismSepolia,
@@ -37,22 +42,36 @@ const TEST_NETWORKS = [
     currency: optimismSepolia.nativeCurrency.symbol,
     decimals: optimismSepolia.nativeCurrency.decimals,
     scanUrl: optimismSepolia.blockExplorers.default.url,
-    pages: ['earn', 'exchange'],
-    raffle: {
-      subgraph: 'https://api.thegraph.com/subgraphs/name/gulshanweb3/raffle-mumbai',
-      contract: '0x9bfdfdac362f810ff15240045e600a7468caf91c',
-      factory: '0x3897BdBAFA001CA14576Cb07ecdfbC1BcdF09ca7',
-      alchemy: 'MATIC_MUMBAI',
-      txUrl: 'https://mumbai.polygonscan.com/tx/',
-      rewardEndpoint: 'https://us-central1-vibrant-waters-399406.cloudfunctions.net/rewards-status',
-    },
-  }
+    pages: ['exchange'],
+  }, 
 ]
 
-const MAINNET_NETWORKS = []
+const MAINNET_NETWORKS = [
+  // {
+  //   ...arbitrum,
+  //   code: 'arbitrum',
+  //   currency: arbitrum.nativeCurrency.symbol,
+  //   decimals: arbitrum.nativeCurrency.decimals,
+  //   scanUrl: arbitrum.blockExplorers.default.url,
+  //   pages: ['exchange']
+  // }
+]
 
 export const CHAINS = [
   // ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? TEST_NETWORKS : []),
   ...MAINNET_NETWORKS,
   ...TEST_NETWORKS,
 ]
+
+export const wagmiConfig = getDefaultConfig({
+  appName: process.env.NEXT_PUBLIC_APP_NAME,
+  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
+  chains: CHAINS,
+  ssr: true,
+  transports: CHAINS.reduce((acc, chain) => {
+    return {
+      ...acc,
+      [chain.id]: http(),
+    }
+  }, {}),
+})
