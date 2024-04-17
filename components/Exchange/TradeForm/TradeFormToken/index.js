@@ -146,7 +146,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const handleChangePrice = (type) => () => {
     const step = 0.1
     const newPrice = type == 'plus' ? (form.price * 1 + step) : (form.price * 1 - step)
-    handleChangeForm('price', true)(newPrice)
+    handleChangeForm('price', true)(formatNumberWithDecimals(newPrice, current.quoteDecimals))
   }
 
   const handleChangeForm = (field, inputByUser = false) => value => {
