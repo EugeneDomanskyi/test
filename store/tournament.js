@@ -9,6 +9,7 @@ export const tournamentSlice = createSlice({
     all: [],
     current: null,
     loading: true,
+    leaderboard: [],
   },
 
   reducers: {
@@ -22,6 +23,10 @@ export const tournamentSlice = createSlice({
 
     loading: (state, { payload }) => {
       state.loading = payload
+    },
+
+    leaderboard: (state, { payload }) => {
+      state.leaderboard = payload
     },
   }
 })
