@@ -32,6 +32,7 @@ const Info = () => {
   const [sortBy, sortDirection] = sort.split(':')
 
   const [image, setImage] = useState()
+  const [emptyCurrent, setEmptyCurrent] = useState(false)
 
   const scanLink = `${blockchain.scanUrl}/address/${current.id}`
   const websiteLink = `https://tegro.com/${blockchain.code}/${current.id}`
@@ -53,6 +54,17 @@ const Info = () => {
     setImage(current?.image ?? null)
   }, [current?.id])
 
+  useEffect(() => {
+    if (emptyCurrent && list.length) {
+      const current = list.find(item => item.id === address)
+      if (current) {
+        dispatch($token.set.current(current))
+      } else {
+        dispatch($token.set.current(list[0]))
+      }
+    }
+  }, [emptyCurrent, list])
+
   const fetchToken = async (currentAddress) => {
     const existInList = list.find(item => item.id === currentAddress)
     if (!existInList) {
@@ -69,6 +81,8 @@ const Info = () => {
 
       if (res.success && res.data.length) {
         dispatch($token.set.current(res.data[0]))
+      } else {
+        setEmptyCurrent(true)
       }
     } else {
       dispatch($token.set.current(existInList))
