@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import { useSelector } from 'react-redux'
 import numeral from 'numeral'
+import Decimal from 'decimal.js'
 import cn from 'classnames'
 
 import $app from '@/store/app'
@@ -106,9 +107,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
 
   useEffect(() => {
     if (wallet && current?.address && current?.quote) {
-      fetchBalance()
-    } else {
-      setUserBalances({base: 0, quote: 0})
+      unsubscribeRef.current = fetchBalance()
     }
 
     return () => {
@@ -117,6 +116,12 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       }
     }
   }, [wallet, current?.address, current?.quote])
+
+  useEffect(() => {
+    if (!wallet) {
+      setUserBalances({base: 0, quote: 0})
+    }
+  }, [wallet])
 
   const fetchBalance = async () => {
     const result = await contracts.fetchBalance(wallet, [current.address, current.quote])
@@ -261,9 +266,11 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
 
   const handleClickMultipler = (percentage) => () => {
     if (currentTab === 'buy') {
-      handleChangeForm('total', true)(userBalances.quote * percentage)
+      const number = new Decimal(userBalances.quote * percentage)
+      handleChangeForm('total', true)(number.toFixed())
     } else {
-      handleChangeForm('amount', true)(userBalances.base * percentage)
+      const number = new Decimal(userBalances.base * percentage)
+      handleChangeForm('amount', true)(number.toFixed())
     }
   }
 
