@@ -56,7 +56,6 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const isDisabled = !(form.amount*1) || !(form.price*1) || !(form.total*1)
 
   const loadingRef = useRef(false)
-  const unsubscribeRef = useRef()
 
   const contracts = new Contracts()
 
@@ -107,13 +106,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
 
   useEffect(() => {
     if (wallet && current?.address && current?.quote) {
-      unsubscribeRef.current = fetchBalance()
-    }
-
-    return () => {
-      if (unsubscribeRef.current) {
-        unsubscribeRef.current()
-      }
+      fetchBalance()
     }
   }, [wallet, current?.address, current?.quote])
 
