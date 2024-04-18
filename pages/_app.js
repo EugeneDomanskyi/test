@@ -96,7 +96,6 @@ MyApp.getInitialProps = async ({ ctx }) => {
     const result = await $app.api.chains()
     if (result?.success) {
       chains = result.data.map(item => {
-        console.log(item)
         return {
           id: item.id,
           token: {
