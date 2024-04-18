@@ -33,7 +33,6 @@ const Header = () => {
     $tournament.api.current().then(res => {
       dispatch($tournament.set.current(res?.data ? res.data : {}))
       dispatch($tournament.set.loading(false))
-      
     })
   }, [])
 
