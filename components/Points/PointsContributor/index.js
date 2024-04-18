@@ -13,8 +13,8 @@ const PointsContributor = () => {
       <App.Container maxWidth={1230}>
         <App.Flex column fullWidth gap={32}>
           <App.Flex fullWidth column gap={16}>
-            <App.Text size={24} weight={600} height={1}>{t('Join the Tegro Tribe!')}</App.Text>
-            <App.Text size={16} weight={400} height={1} color="#FFFFFF99">{t('Be more than a trader; become a Tegro insider. Complete these simple steps, join our vibrant community, and boost your points balance along the way.')}</App.Text>
+            <App.Text size={[24, 20]} weight={600} height={1}>{t('Join the Tegro Tribe!')}</App.Text>
+            <App.Text size={[16, 14]} weight={400} height={1.4} color="#FFFFFF99">{t('Be more than a trader; become a Tegro insider. Complete these simple steps, join our vibrant community, and boost your points balance along the way.')}</App.Text>
           </App.Flex>
 
           <App.Flex className="widget">

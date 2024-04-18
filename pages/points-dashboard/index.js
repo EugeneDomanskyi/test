@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -16,6 +17,8 @@ import styles from './styles.module.scss'
 const PointsDashboard = () => {
   const { t } = useTranslation()
   const { wallet } = useWalletConnect()
+
+  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
   const [tab, setTab] = useState('home')
 
@@ -51,8 +54,8 @@ const PointsDashboard = () => {
   }
 
   return (
-    <App.Flex column full className={styles.container}>
-      <App.Flex column full sx={[{ paddingTop: 72 }, { paddingTop: 60 }]}>
+    <App.Flex column fullWidth fullHeight={!isMobile} className={styles.container}>
+      <App.Flex column fullWidth fullHeight={!isMobile} sx={[{ paddingTop: 72 }, { paddingTop: 60 }]}>
         <PointsBar tabs={tabs} tab={tab} onTab={handleTab} />
         
         {getPointsComponent()}

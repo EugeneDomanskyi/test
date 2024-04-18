@@ -1,11 +1,12 @@
-import styles from './styles.module.scss'
-import Slider from '@mui/material/Slider'
+import { useTranslation } from 'react-i18next'
+import { Slider, SliderThumb } from "@mui/material"
 import cn from 'classnames'
-import {SliderThumb} from "@mui/material"
-import Tooltip from '@mui/material/Tooltip'
-import App from "@/components/App"
+
+import App from '/components/App'
+import styles from './styles.module.scss'
 
 const PointsSlider = ({value, onChange, containerStyle = {}, disabled, ...props}) => {
+  const { t } = useTranslation()
   const handleChange = (e, value) => {
     onChange(value)
   }
@@ -15,7 +16,6 @@ const PointsSlider = ({value, onChange, containerStyle = {}, disabled, ...props}
       <Slider
         value={value}
         onChange={handleChange}
-        valueLabelDisplay="on"
         classes={{
           root: styles.root,
           rail: styles.rail,
@@ -24,24 +24,21 @@ const PointsSlider = ({value, onChange, containerStyle = {}, disabled, ...props}
           markLabel: styles.markLabel,
           markLabelActive: styles.markLabelActive,
           mark: styles.mark,
-          valueLabel: styles.valueLabel,
+          markActive: styles.markActive,
         }}
         slots={{
           thumb: (props) => {
             const { children, ...rest } = props
+            const current = rest.ownerState.marks.find(item => item.value === rest.ownerState.value)
+            const value = current ? current.label * 0.25 : 0
             return (
               <SliderThumb {...rest} size={32}>
                 { children }
+                <App.Flex column center gap={4} className={styles.label}>
+                  <App.Text size={[16, 12]} weight={400} height={1}>{t('Your Points')}</App.Text>
+                  <App.Text size={[32, 16]} weight={600} height={1}>{value}</App.Text>
+                </App.Flex>
               </SliderThumb>
-            )
-          },
-
-          valueLabel: (props) => {
-            const { children, value } = props
-            return (
-              <Tooltip enterDelay={0} enterTouchDelay={0} placement="top" open={true} arrow title={value}>
-                {children}
-              </Tooltip>
             )
           },
         }}

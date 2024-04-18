@@ -1743,6 +1743,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon == 'arrow-long-rotate') {
+      return (
+        <svg width={width ?? 17} height={height ?? 92} viewBox="0 0 17 92" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill={color ?? '#A6DC37'} d="M17 89l-5 2.887v-5.774L17 89zM1.5 0v81h-1V0h1zM9 88.5h3.5v1H9v-1zM1.5 81A7.5 7.5 0 009 88.5v1A8.5 8.5 0 01.5 81h1z" />
+        </svg>
+      )
+    }
+
     if (icon == 'warning-circle') {
       return (
         <svg width={width ?? 17} height={height ?? 16} viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>

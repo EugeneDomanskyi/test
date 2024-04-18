@@ -11,11 +11,150 @@
     z-index: 0;
     padding: 20px;
 
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+
     .overallBox {
       border-radius: 5px;
       border: 1px solid #6B41EB;
       padding: 10px;
       width: 185px;
+
+      @media (max-width: 768px) {
+        width: 100%;
+      }
+    }
+
+    .glow {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      
+      &:before {
+        content: '';
+        display: block;
+        width: 488.471px;
+        height: 488.471px;
+        flex-shrink: 0;
+        border-radius: 488.471px;
+        background: rgba(120, 121, 241, 0.50);
+        filter: blur(67px);
+        position: absolute;
+        top: -420px;
+        left: 50%;
+        margin-left: -244px;
+
+        @media (max-width: 768px) {
+          width: 256px;
+          height: 256px;
+          top: -230px;
+          margin-left: -128px;
+        }
+      }
+    }
+
+    .overallSlider {
+      position: absolute;
+      top: 0;
+      left: 224px;
+      right: 0;
+      bottom: 0;
+      padding: 0 44px;
+      z-index: 0;
+
+      @media (max-width: 768px) {
+        left: 0;
+        top: 122px;
+        padding: 0 20px;
+      }
+
+      .dashedTop {
+        position: relative;
+
+        &:before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 1px;
+          background: linear-gradient(180deg, transparent, #5E5C6B);
+          -webkit-mask-image: repeating-linear-gradient(
+            0deg, transparent, red 1px 5px, transparent 6px 10px);
+          mask-image: repeating-linear-gradient(
+            0deg, transparent, red 1px 5px, transparent 6px 10px);
+        }
+
+        &:last-of-type {
+          &:after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(180deg, transparent, #5E5C6B);
+            -webkit-mask-image: repeating-linear-gradient(
+              0deg, transparent, red 1px 5px, transparent 6px 10px);
+            mask-image: repeating-linear-gradient(
+              0deg, transparent, red 1px 5px, transparent 6px 10px);
+          }
+        }
+      }
+
+      .dashedBottom {
+        position: relative;
+
+        &:before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 1px;
+          background: linear-gradient(0deg, transparent, #5E5C6B);
+          -webkit-mask-image: repeating-linear-gradient(
+            0deg, transparent, red 1px 5px, transparent 6px 10px);
+          mask-image: repeating-linear-gradient(
+            0deg, transparent, red 1px 5px, transparent 6px 10px);
+        }
+
+        &:last-of-type {
+          &:after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(0deg, transparent, #5E5C6B);
+            -webkit-mask-image: repeating-linear-gradient(
+              0deg, transparent, red 1px 5px, transparent 6px 10px);
+            mask-image: repeating-linear-gradient(
+              0deg, transparent, red 1px 5px, transparent 6px 10px);
+          }
+        }
+
+        .text {
+          width: 80px;
+          height: 40px;
+          position: absolute;
+          z-index: 0;
+          top: 20px;
+          left: -40px;
+        }
+
+        .textLast {
+          width: 80px;
+          height: 40px;
+          position: absolute;
+          z-index: 0;
+          top: 20px;
+          right: -40px;
+        }
+      }
     }
   }
 
@@ -59,11 +198,19 @@
     background: radial-gradient(134.18% 120.73% at 67.99% -35.17%, #352668 0%, #140E28 100%);
     padding: 16px;
 
+    @media (max-width: 768px) {
+      padding: 8px;
+    }
+
     .insideBox {
       border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.10);
       background: linear-gradient(158deg, #6B41EB -6.02%, #241164 85.68%);
       padding: 16px;
+
+      @media (max-width: 768px) {
+        padding: 16px 0;
+      }
     }
   }
 }

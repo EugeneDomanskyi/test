@@ -5,11 +5,20 @@
 .container {
   padding: 32px 0;
 
+  @media (max-width: 768px) {
+    padding: 20px 0;
+  }
+
   .box {
     padding: 16px;
     border-radius: 12px;
     background: linear-gradient(158.14deg, #6B41EB -6.02%, #241164 85.68%);
     border: 1px solid #FFFFFF1A;
+
+    @media (max-width: 768px) {
+      width: calc(50% - 10px);
+      padding: 8px 12px;
+    }
   }
 
   .sliderContainer {
@@ -49,6 +58,9 @@
       }
 
       .sliderInner {
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
         position: absolute;
         z-index: 0;
         top: 0;

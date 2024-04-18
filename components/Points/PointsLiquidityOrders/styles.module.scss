@@ -1,6 +1,10 @@
 .container {
   padding: 32px 0;
 
+  @media (max-width: 768px) {
+    padding: 0;
+  }
+
   .gradient {
     height: 54px;
     width: 1px;
@@ -16,6 +20,13 @@
 
       &:not(:last-of-type) {
         border-bottom: solid rgba(255, 255, 255, 0.10) 1px;
+      }
+
+      .more {
+        width: 32px;
+        height: 32px;
+        border-radius: 44px;
+        border: solid #A6DC37 1px;
       }
     }
   }
