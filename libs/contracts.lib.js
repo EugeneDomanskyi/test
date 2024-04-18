@@ -50,17 +50,17 @@ export default function Contracts(defaultGasLimit = null) {
     },
 
     writeContract: async (config) => {
-      const place = config?.functionName
-      if (config?.mode == 'prepared') {
+      const place = config?.request?.functionName
+      if (config?.result) {
         try {
-          const { hash } = await writeContract(wagmiConfig, config)
+          const { hash } = await writeContract(wagmiConfig, config.request)
           return hash
         }
         catch (error) {
           return methods.debugMessage(error, `Write "${place}"`)
         }
       } else {
-        return methods.debugMessage({ message: ('Prepare config.mode is ' + config?.mode) })
+        return methods.debugMessage({ message: ('Prepare result is false') })
       }
     },
 
