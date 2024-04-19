@@ -71,6 +71,8 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
   const router = useRouter()
   const storeRef = useRef(store(initialData)).current
 
+  const currentChain = initialData.chains.find(item => item.id == initialData.blockchain)
+
   useEffect(() => {
     if (router?.query?.vid) {
       localStorage.setItem('ms_vid', router.query.vid)
@@ -79,7 +81,7 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
 
   return (
     <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains} theme={RainbowTheme}>
+      <RainbowKitProvider chains={chains} theme={RainbowTheme} initialChain={currentChain}>
         <Provider store={storeRef}>
           <Head route={ssRoute} />
           <Wrapper>
