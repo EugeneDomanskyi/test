@@ -13,10 +13,13 @@ export const pointSlice = createSlice({
       referrals_count: 0,
     },
 
+    stats: {},
+
     history: [],
     transactions: [],
     quests: [],
     tasks: [],
+    leaderboard: [],
   },
 
   reducers: {
@@ -38,6 +41,14 @@ export const pointSlice = createSlice({
 
     tasks: (state, { payload }) => {
       state.tasks = payload
+    },
+
+    stats: (state, { payload }) => {
+      state.stats = payload
+    },
+
+    leaderboard: (state, { payload }) => {
+      state.leaderboard = payload
     },
   },
 })
@@ -73,6 +84,10 @@ export const api = {
 
   taskClaim: (wallet, params) => {
     return request(`user/${wallet}/contributor/tasks/claim`, 'POST', {api: 'accounts', ...params})
+  },
+
+  stats: (wallet, params) => {
+    return request(`user/${wallet}/daily-stats`, 'GET', {api: 'accounts', ...params})
   },
 }
 

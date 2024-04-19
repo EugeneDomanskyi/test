@@ -21,7 +21,7 @@ const PointsHome = () => {
     <App.Flex column fullWidth flex={1}>
       <PointsDropsBar />
 
-      <App.Flex flex={1}>
+      <App.Flex flex={!connection.loading && !connection.connected ? 1 : null}>
         {connection.loading ? (
           <App.LoaderBlock height={300} />
         ) : (

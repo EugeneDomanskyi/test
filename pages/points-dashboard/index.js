@@ -54,8 +54,8 @@ const PointsDashboard = () => {
   }
 
   return (
-    <App.Flex column fullWidth fullHeight={!isMobile} className={styles.container}>
-      <App.Flex column fullWidth fullHeight={!isMobile} sx={[{ paddingTop: 72 }, { paddingTop: 60 }]}>
+    <App.Flex column fullWidth className={styles.container}>
+      <App.Flex column fullWidth sx={[{ paddingTop: 72 }, { paddingTop: 60 }]}>
         <PointsBar tabs={tabs} tab={tab} onTab={handleTab} />
         
         {getPointsComponent()}
