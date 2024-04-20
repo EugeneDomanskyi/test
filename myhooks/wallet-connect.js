@@ -177,7 +177,7 @@ const useWalletConnect = () => {
   }
 
   const scanUrl = (address, type = 'tx', chain) => {
-    return `${chain.scanUrl}/${type}/${address}`
+    return `${chain?.scanUrl}/${type}/${address}`
   }
 
   const changeNetwork = async (newChain) => {

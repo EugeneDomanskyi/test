@@ -36,6 +36,7 @@ const TEST_NETWORKS = [
     decimals: polygonAmoy.nativeCurrency.decimals,
     scanUrl: polygonAmoy.blockExplorers.default.url,
     pages: ['exchange'],
+    defaultFor: 'local',
   }, {
     ...optimismSepolia,
     code: 'optimism-sepolia',
