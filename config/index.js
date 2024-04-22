@@ -1,7 +1,7 @@
 import { defineChain } from 'viem'
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
 import { http } from 'wagmi'
-import { arbitrum, optimismSepolia } from 'wagmi/chains'
+import { arbitrum, optimismSepolia, base } from 'wagmi/chains'
 
 const polygonAmoy = defineChain({
   id: 80_002,
@@ -54,7 +54,15 @@ const MAINNET_NETWORKS = [
   //   decimals: arbitrum.nativeCurrency.decimals,
   //   scanUrl: arbitrum.blockExplorers.default.url,
   //   pages: ['exchange']
-  // }
+  // },
+  {
+    ...base,
+    code: 'base',
+    currency: base.nativeCurrency.symbol,
+    decimals: base.nativeCurrency.decimals,
+    scanUrl: base.blockExplorers.default.url,
+    pages: ['exchange']
+  }
 ]
 
 export const CHAINS = [

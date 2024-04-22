@@ -31,6 +31,7 @@ const middleware = (request) => {
   const validBlockhains = [
     {code: 'amoy'},
     {code: 'optimism-sepolia'},
+    {code: 'base'},
     // {code: 'arbitrum'},
   ]
 
