@@ -9,7 +9,7 @@ const LandingPage = () => {
       <div className={styles.background} />
 
       <Home.Top />
-      <Home.Stats />
+      {/* <Home.Stats /> */}
       <Home.Features />
       <Home.Press />
       <Home.Team />

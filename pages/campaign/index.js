@@ -32,7 +32,7 @@ const getApolloClient = (blockchain) => {
 const LandingPage = () => {
   const dispatch = useDispatch()
   const router = useRouter()
-  const { wallet, connect, getConnectorName } = useWalletConnect()
+  const { wallet, connect, getConnectorInfo } = useWalletConnect()
 
   const campaigns = useSelector(({ $raffle }) => $raffle.all)
   const blockchain = CHAINS.find(item => item.id === 137)
@@ -95,10 +95,9 @@ const LandingPage = () => {
       const result = await connect()
       if (result) {
         router.push(tradeLink)
-        const walletName = await getConnectorName()
         Amplitude.event('Wallet Connect Success', {
           'Source': Amplitude.page(),
-          'Type': walletName,
+          'Type': getConnectorInfo().name,
         })
       }
     }
