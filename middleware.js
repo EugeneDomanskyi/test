@@ -29,8 +29,6 @@ const middleware = (request) => {
   // ###### Hotfix for Dynamic Code Evaluation
   // ###### Learn More: https://nextjs.org/docs/messages/edge-dynamic-code-evaluation
   const validBlockhains = [
-    {code: 'amoy'},
-    {code: 'optimism-sepolia'},
     {code: 'base'},
     // {code: 'arbitrum'},
   ]

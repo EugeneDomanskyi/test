@@ -19,7 +19,7 @@ const HomeTop = () => {
             <App.Button href="/exchange" outlined rounded variant="success">
               <App.Flex row center gap={8}>
                 <div className={styles.circle} />
-                <App.Text size={16} weight={500} color="#1cbc7c">Testnet Live</App.Text>
+                <App.Text size={16} weight={500} color="#1cbc7c">Beta Live</App.Text>
               </App.Flex>
             </App.Button>
 

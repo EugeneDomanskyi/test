@@ -28,13 +28,13 @@ const Header = () => {
 
   const isExchange = router.asPath?.includes('/exchange')
 
-  useEffect(() => {
-    dispatch($tournament.set.loading(true))
-    $tournament.api.current().then(res => {
-      dispatch($tournament.set.current(res?.data ? res.data : {}))
-      dispatch($tournament.set.loading(false))
-    })
-  }, [])
+  // useEffect(() => {
+  //   dispatch($tournament.set.loading(true))
+  //   $tournament.api.current().then(res => {
+  //     dispatch($tournament.set.current(res?.data ? res.data : {}))
+  //     dispatch($tournament.set.loading(false))
+  //   })
+  // }, [])
 
   const handleMobileMenuClick = () => {
     if (mobileMenuShow) {
@@ -67,7 +67,7 @@ const Header = () => {
               <Link href="/" style={{ lineHeight: 0 }}>
                 <div className={styles.logo}>
                   <App.Flex center row className={styles.badge}>
-                    <App.Text center italic size={8.7} weight={700} color="#08051C" height={1}>TESTNET</App.Text>
+                    <App.Text center italic size={8.7} weight={700} color="#08051C" height={1}>BETA</App.Text>
                   </App.Flex>
                   <App.Icon icon="tegro" width={117} height={25} />
                 </div>

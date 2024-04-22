@@ -28,22 +28,22 @@ const polygonAmoy = defineChain({
 })
 
 const TEST_NETWORKS = [
-  {
-    ...polygonAmoy,
-    code: 'amoy',
-    currency: polygonAmoy.nativeCurrency.symbol,
-    decimals: polygonAmoy.nativeCurrency.decimals,
-    scanUrl: polygonAmoy.blockExplorers.default.url,
-    pages: ['exchange'],
-    defaultFor: 'local',
-  }, {
-    ...optimismSepolia,
-    code: 'optimism-sepolia',
-    currency: optimismSepolia.nativeCurrency.symbol,
-    decimals: optimismSepolia.nativeCurrency.decimals,
-    scanUrl: optimismSepolia.blockExplorers.default.url,
-    pages: ['exchange'],
-  }, 
+  // {
+  //   ...polygonAmoy,
+  //   code: 'amoy',
+  //   currency: polygonAmoy.nativeCurrency.symbol,
+  //   decimals: polygonAmoy.nativeCurrency.decimals,
+  //   scanUrl: polygonAmoy.blockExplorers.default.url,
+  //   pages: ['exchange'],
+  //   defaultFor: 'local',
+  // }, {
+  //   ...optimismSepolia,
+  //   code: 'optimism-sepolia',
+  //   currency: optimismSepolia.nativeCurrency.symbol,
+  //   decimals: optimismSepolia.nativeCurrency.decimals,
+  //   scanUrl: optimismSepolia.blockExplorers.default.url,
+  //   pages: ['exchange'],
+  // }, 
 ]
 
 const MAINNET_NETWORKS = [
@@ -61,7 +61,8 @@ const MAINNET_NETWORKS = [
     currency: base.nativeCurrency.symbol,
     decimals: base.nativeCurrency.decimals,
     scanUrl: base.blockExplorers.default.url,
-    pages: ['exchange']
+    pages: ['exchange'],
+    defaultFor: 'production',
   }
 ]
 

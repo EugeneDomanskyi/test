@@ -6,7 +6,7 @@ import styles from './styles.module.scss'
 
 const HomeFeatures = () => {
   return (
-    <App.Container maxWidth={1200} sx={{ paddingTop: 160, paddingBottom: 90 }}>
+    <App.Container maxWidth={1200} sx={{ paddingTop: 60, paddingBottom: 90 }}>
       <App.Flex fullWidth column gap={[64, 24]}>
         <App.Flex align={['center', 'flex-start']} column gap={10}>
           <App.Text tag="h2" size={[80, 60]} weight={800} height={1}>CEX Speed, <App.Text inline italic size={[80, 60]} weight={700} family="Playfair Display" color="#A6DC37">DEX Trust</App.Text></App.Text>
