@@ -21,7 +21,7 @@ const HeaderWallet = () => {
   const router = useRouter()
   const isEarn = router.pathname.includes('/earn')
 
-  const { wallet, connectorId, connect, disconnect, blockchain: chain, getBalance, getConnectorName } = useWalletConnect()
+  const { wallet, connectorId, connect, disconnect, blockchain: chain, getBalance, getConnectorInfo } = useWalletConnect()
   const { isApp, appLog } = useApp()
 
   const dispatch = useDispatch()
@@ -161,7 +161,7 @@ const HeaderWallet = () => {
                         <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
                       </App.Flex>
                     ) : (
-                      <Image src={getConnectorLogo()} width={24} height={24} alt="" />
+                      <Image src={getConnectorInfo().logo} width={24} height={24} alt="" />
                     )}
                     
                     {balanceLoading ? (
@@ -194,7 +194,7 @@ const HeaderWallet = () => {
               </App.Flex>
             )}
   
-        <Portfolio open={isPortfolioVisible} address={shorterAddress(5)} logo={getConnectorLogo()} onClose={handlePortfolioToggle} onDisconnect={handleDisconnectDialogToggle(true)} />
+        <Portfolio open={isPortfolioVisible} address={shorterAddress(5)} logo={getConnectorInfo().logo} onClose={handlePortfolioToggle} onDisconnect={handleDisconnectDialogToggle(true)} />
   
         <App.Dialog open={isDisconnectDialogOpen} width={420} onClose={handleDisconnectDialogToggle(false)} title="Disconnect Wallet">
           <App.Flex column>
