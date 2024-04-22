@@ -489,11 +489,11 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
           <App.Flex row gap={16} sx={{padding: 16}}>
             <App.Flex flex={1}>
-              <App.Button xl fullWidth primary noPadding outlined onClick={handleCancelConfirm}>Cancel</App.Button>
+              <App.Button xl fullWidth primary noPadding onClick={handleCancelConfirm}>Cancel</App.Button>
             </App.Flex>
 
             <App.Flex flex={1}>
-              <App.Button xl fullWidth primary noPadding onClick={handleDialogClose('cancel')}>Don&apos;t Cancel</App.Button>
+              <App.Button xl fullWidth primary noPadding outlined onClick={handleDialogClose('cancel')}>Don&apos;t Cancel</App.Button>
             </App.Flex>
           </App.Flex>
         </App.Flex>
@@ -507,11 +507,11 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
           <App.Flex row gap={16} sx={{padding: 16}}>
             <App.Flex flex={1}>
-              <App.Button xl fullWidth primary noPadding outlined onClick={handleCancelAllConfirm}>Cancel All Orders</App.Button>
+              <App.Button xl fullWidth primary noPadding onClick={handleCancelAllConfirm}>Cancel All Orders</App.Button>
             </App.Flex>
 
             <App.Flex flex={1}>
-              <App.Button xl fullWidth primary noPadding onClick={handleDialogClose('cancelAll')}>Don&apos;t Cancel</App.Button>
+              <App.Button xl fullWidth primary noPadding outlined onClick={handleDialogClose('cancelAll')}>Don&apos;t Cancel</App.Button>
             </App.Flex>
           </App.Flex>
         </App.Flex>
