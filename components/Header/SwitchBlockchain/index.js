@@ -114,6 +114,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
       if (wagmiChainId && wagmiChainId != newBlockchain.id) {
         const result = await changeNetwork(newBlockchain.code)
         if (result) {
+          router.replace(`/${page}/${newBlockchain.code}/0x`)
           dispatch($app.set.code(newBlockchain.code))
         }
       } else {
