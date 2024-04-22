@@ -15,7 +15,7 @@ const SidebarSort = dynamic(() => import('@/components/Exchange/Sidebar/SidebarS
 
 import styles from './styles.module.scss'
 
-const Sidebar = ({ version }) => {
+const Sidebar = ({ version, isApp }) => {
   const router = useRouter()
   const urlBlockchain = router.query.blockchain
 
@@ -91,7 +91,7 @@ const Sidebar = ({ version }) => {
   }
 
   return (
-    <App.Flex column className={cn(styles.container, styles[version])}>
+    <App.Flex column className={cn(styles.container, styles[version], {[styles.appContainer]: isApp})}>
       <App.Flex column>
         <App.Flex center full sx={{ padding: '8px 10px' }}>
           <SidebarSearch />

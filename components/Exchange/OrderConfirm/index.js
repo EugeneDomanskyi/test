@@ -66,8 +66,10 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         }
 
         const approve = await contracts.approve(spendToken, blockchain?.info?.contract?.exchange, parseUnits(Number.MAX_SAFE_INTEGER.toString(), spendDecimals))
+        // appLog(`approve?.error ${JSON.stringify(approve)}`)
         if (approve?.error) {
           console.log(3, approve?.error)
+          // return handleError('Order creation error', approve?.error)
           return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
         }
       }
@@ -96,7 +98,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         amount: amount * 1,
       })
 
-      if (typedData?.error) {
+      if (typedData?.error || ! typedData) {
         return handleError('Order not created', 'Please try again to place your order.')
       }
 

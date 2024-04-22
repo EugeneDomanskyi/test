@@ -1,0 +1,22 @@
+.container {
+  width: 100%;
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  // background-color: red;
+  padding: 0 12px;
+
+  .containerHeader {
+    @media (max-width: 768px) {
+      height: 36px;
+    }
+
+    .line {
+      height: 20px;
+      width: 1px;
+      opacity: 0.5;
+      background-color: rgba(255, 255, 255, 0.6);
+    }
+  }
+}
