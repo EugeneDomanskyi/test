@@ -66,7 +66,6 @@ const MAINNET_NETWORKS = [
 ]
 
 export const CHAINS = [
-  // ...(process.env.NEXT_PUBLIC_APP_ENV == 'local' ? TEST_NETWORKS : []),
   ...MAINNET_NETWORKS,
   ...TEST_NETWORKS,
 ]
