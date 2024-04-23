@@ -37,7 +37,7 @@ const PointsHomeStats = () => {
 
   return (
     <App.Flex column gap={16} className={styles.container}>
-      <App.Text size={20} weight={600} height={1}>{t('Your Daily Stats')}</App.Text>
+      <App.Text size={20} weight={600} height={1}>{t('Your Stats')}</App.Text>
 
       {loading ? (
         <App.LoaderBlock height={110} />
@@ -84,8 +84,8 @@ const PointsHomeStats = () => {
             </App.Flex>
           </App.Flex>
 
-          <App.Flex row gap={24}>
-            <App.Flex width={[180, 'auto']} flex={[null, 1]} column gap={8} align="center" className={styles.box}>
+          <App.Flex width={384} row gap={24}>
+            {/* <App.Flex width={[180, 'auto']} flex={[null, 1]} column gap={8} align="center" className={styles.box}>
               <App.Text center size={[14, 12]} weight={600} height={1}>{t('Your Points Share')}</App.Text>
               <App.Text center size={[32, 24]} weight={600} height={1}>{stats.points_percentage}%</App.Text>
               <App.Text center size={12} weight={400} height={1}>{t('Your Points ÷ Total Points')}</App.Text>
@@ -95,7 +95,7 @@ const PointsHomeStats = () => {
               <App.Text center size={[14, 12]} weight={600} height={1}>{t('Live Earnings')}</App.Text>
               <App.Text center size={[32, 24]} weight={600} height={1}>{stats.points_pool} <App.Text center inline size={[16, 12]} weight={600} height={1}>USDT</App.Text></App.Text>
               <App.Text center size={12} weight={400} height={1}>{t('Yours Share × Total Drop')}</App.Text>
-            </App.Flex>
+            </App.Flex> */}
           </App.Flex>
         </App.Flex>
       )}
