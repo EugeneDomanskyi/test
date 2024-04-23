@@ -117,29 +117,33 @@ export default function Contracts(defaultGasLimit = null) {
         ],
       }]))
 
-      const data = await multicall(wagmiConfig, {
-        contracts: calls,
-      })
+      try {
+        const data = await multicall(wagmiConfig, {
+          contracts: calls,
+        })
 
-      const result = data.reduce((acc, response, i, array) => {
-        BigInt.prototype.toJSON = function() { return this.toString() }
-        if (!response.hasOwnProperty('result')) {
-          return acc
-        }
-
-        const isBalance = i % 2
-        if (isBalance) {
-          const decimals = array[i - 1].result
-          return {
-            ...acc,
-            [contracts[parseInt(i / 2)]]: formatUnits(response?.result ?? '', decimals)
+        const result = data.reduce((acc, response, i, array) => {
+          BigInt.prototype.toJSON = function() { return this.toString() }
+          if (!response.hasOwnProperty('result')) {
+            return acc
           }
-        }
 
-        return acc
-      }, {})
+          const isBalance = i % 2
+          if (isBalance) {
+            const decimals = array[i - 1].result
+            return {
+              ...acc,
+              [contracts[parseInt(i / 2)]]: formatUnits(response?.result ?? '', decimals)
+            }
+          }
 
-      return result
+          return acc
+        }, {})
+
+        return result
+      } catch (error) {
+        return methods.debugMessage(error, 'Fetch balance')
+      }
     },
 
     watchBalance: async (wallet, contracts, callback) => {
