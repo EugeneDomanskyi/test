@@ -1,11 +1,12 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
 
+import Chains from '@/libs/Chains.lib'
 import { CHAINS } from '@/config'
 
 import { request } from './index'
 
 export const template = (item) => {
-  const blockchain = CHAINS.find(chain => chain.id == item.chain_id)
+  const blockchain = Chains.codeById(item.chain_id)
 
   if (item?.base_contract_address) {
     return {

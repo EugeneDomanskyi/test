@@ -6,7 +6,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
-import { CHAINS } from '@/config'
 import $tournament from '@/store/tournament'
 
 import App from '@/components/App'
@@ -21,10 +20,6 @@ const Header = () => {
   const router = useRouter()
   
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
-
-  const path = router.asPath.split('/')
-  const blockchain = path[1]
-  const isMarket = CHAINS.some(chain => chain.code === blockchain)
 
   const isLanding = router.pathname == '/'
   const isEarn = router.pathname.includes('/earn')
@@ -157,7 +152,7 @@ const Header = () => {
 
               <StoriesButton />
 
-              { ! isEarn && ! isLanding && ! isMarket ? <SwitchBlockchain /> : <App.Flex />}
+              { ! isEarn && ! isLanding ? <SwitchBlockchain /> : <App.Flex />}
               
               <App.Flex row align="center" gap={16}>
                 <HeaderWallet />

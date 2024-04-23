@@ -8,10 +8,9 @@ import merge from 'lodash.merge'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
 import { WagmiProvider } from 'wagmi'
-import { wagmiConfig } from '@/config'
 
+import Chains, { wagmiConfig } from '@/libs/Chains.lib'
 import store from '@/store'
-import $app from '@/store/app'
 
 import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
@@ -72,8 +71,6 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
 }
 
 MyApp.getInitialProps = async ({ ctx }) => {
-  const cookies = nookies.get(ctx)
-
   let ssRoute = ''
   let isMobile = null
   let isApp = null
@@ -81,6 +78,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
   let initWallet = null
   let devMode = null
   let chains = []
+  let blockchain = null
 
   if (ctx?.req) {
     ssRoute = ctx.req.url
@@ -93,28 +91,25 @@ MyApp.getInitialProps = async ({ ctx }) => {
     initWallet = ctx.req.headers['x-tegro-wallet'] == 'null' ? null : ctx.req.headers['x-tegro-wallet']
     devMode = ctx.req.headers['x-tegro-dev-mode'] == 'true' ? true : null
 
-    const result = await $app.api.chains()
-    if (result?.success) {
-      chains = result.data.map(item => {
-        return {
-          id: item.id,
-          token: {
-            symbol: item.default_quote_token_symbol,
-            address: item.default_quote_token_contract_address.toLowerCase(),
-            image: item.logo || (item.default_quote_token_symbol == 'USDT' ? '/images/icon-usdt.png' : '') || `https://storage.googleapis.com/token-assets/assets/${item?.name}/${item.default_quote_token_contract_address.toLowerCase()}.png`
-          },
-          contract: {
-            exchange: item.exchange_contract.toLowerCase(),
-            settlement: item.settlement_contract.toLowerCase(),
-          },
-        }
-      })
+    const domainName = ctx.req ? ctx.req.headers.host : window.location.hostname
+    chains = await Chains.list(domainName)
+
+    const cookies = nookies.get(ctx, 'blockchain')
+    blockchain = cookies.blockchain
+    if (!blockchain) {
+      blockchain = chains[0]?.code
+      nookies.set(ctx, 'blockchain', blockchain, {path: '/'})
+    } else {
+      if (!chains.some(item => item.code == blockchain)) {
+        blockchain = chains[0]?.code
+        nookies.set(ctx, 'blockchain', blockchain, {path: '/'})
+      }
     }
   }
   
   return {
     initialData: {
-      blockchain: cookies.blockchain,
+      blockchain,
       isMobile,
       isApp,
       platform,

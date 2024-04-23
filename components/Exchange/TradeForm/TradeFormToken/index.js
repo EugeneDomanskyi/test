@@ -19,6 +19,7 @@ import OrderConfirm from '@/components/Exchange/OrderConfirm'
 import useApp from '@/myhooks/useApp'
 
 import styles from './styles.module.scss'
+import useInterval from '@/myhooks/useInterval'
 
 const trimLeadingZerosBeforeDecimal = number => {
   return number ? number.toString().replace(/^0+(?=\d+(\.\d*)?$)/, '').replace(/^\.(\d*)$/, '0.$1') : 0
@@ -102,13 +103,13 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     if (wasUserBalance) {
       setIsErrorBalance(currentTab == 'buy' && (form.total * 1 > userBalances.quote * 1) || currentTab == 'sell' && (form.amount * 1 > userBalances.base * 1))
     }
-  }, [form.total, form.amount, currentTab, wasUserBalance])
+  }, [form.total, form.amount, currentTab, wasUserBalance, userBalances])
 
   useEffect(() => {
     if (wallet && current?.address && current?.quote) {
       fetchBalance()
     }
-  }, [wallet, current?.address, current?.quote])
+  }, [wallet, blockchain?.id, current?.address, current?.quote])
 
   useEffect(() => {
     if (!wallet) {
@@ -119,10 +120,12 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const fetchBalance = async () => {
     const result = await contracts.fetchBalance(wallet, [current.address, current.quote])
     if (result) {
-      formatBalance(result)
+      return formatBalance(result)
     }
-    return contracts.watchBalance(wallet, [current.address, current.quote], formatBalance)
+    return {quote: 0, base: 0}
   }
+
+  useInterval(fetchBalance, 5000)
 
   const formatBalance = (result) => {
     if (result[current.address] && result[current.quote]) {
@@ -132,7 +135,11 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       }), {quote: 0, base: 0})
       setUserBalances(balances)
       setWasUserBalance(true)
+
+      return balances
     }
+
+    return {quote: 0, base: 0}
   }
 
   const handleSetPrice = (inputByUser = true, tab = currentTab) => {
@@ -194,7 +201,10 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       return
     }
 
-    if (isErrorBalance) {
+    const newUserBalances = await fetchBalance()
+    const newIsErrorBalance = currentTab == 'buy' && (form.total * 1 > newUserBalances.quote * 1) || currentTab == 'sell' && (form.amount * 1 > newUserBalances.base * 1)
+    setIsErrorBalance(newIsErrorBalance)
+    if (newIsErrorBalance) {
       setWasUserInput(true)
       return
     }
@@ -274,11 +284,17 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const renderBalance = () => {
     return (
       <App.Flex className={cn(styles.balance, {[styles.error]: isErrorBalance && wasUserInput})}>
-        <App.Flex flex={1} align="center" gap={4}>
-          <App.Icon icon="wallet" width={10} height={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} />
-          <App.Text size={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} height={1}>
-            {currentTab === 'buy' ? `${userBalances.quote} ${current.quoteSymbol}` : `${userBalances.base} ${current.symbol}`}
-          </App.Text>
+        <App.Flex column flex={1} gap={4}>
+          <App.Flex row align="center" gap={4}>
+            <App.Icon icon="wallet" width={10} height={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} />
+            <App.Text size={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} height={1}>
+              {currentTab === 'buy' ? `${userBalances.quote} ${current.quoteSymbol}` : `${userBalances.base} ${current.symbol}`}
+            </App.Text>
+          </App.Flex>
+
+          <App.Flex sx={{ paddingLeft: 14 }}>
+            <App.Text size={10} color="#b9b8c5">Fee: {blockchain.info.fee}</App.Text>
+          </App.Flex>
         </App.Flex>
 
         <App.Flex className={styles.multipler} align="center" gap={8}>

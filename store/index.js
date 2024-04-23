@@ -11,19 +11,9 @@ import $portfolio from './portfolio'
 import $tournament from './tournament'
 
 const createStore = (initialData) => {
-  return configureStore({
-    reducer: {
-      $app: $app.reducer,
-      $alert: $alert.reducer,
-      $token: $token.reducer,
-      $orders: $orders.reducer,
-      $raffle: $raffle.reducer,
-      $markets: $markets.reducer,
-      $portfolio: $portfolio.reducer,
-      $tournament: $tournament.reducer,
-    },
-
-    preloadedState: {
+  let preloadedState = {}
+  if (initialData) {
+    preloadedState = {
       $app: {
         ...appSlice.getInitialState(),
         code: initialData.blockchain,
@@ -36,7 +26,22 @@ const createStore = (initialData) => {
         initWallet: initialData.initWallet,
         devMode: initialData.devMode,
       },
+    }
+  }
+
+  return configureStore({
+    reducer: {
+      $app: $app.reducer,
+      $alert: $alert.reducer,
+      $token: $token.reducer,
+      $orders: $orders.reducer,
+      $raffle: $raffle.reducer,
+      $markets: $markets.reducer,
+      $portfolio: $portfolio.reducer,
+      $tournament: $tournament.reducer,
     },
+
+    preloadedState,
 
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
       immutableCheck: false,

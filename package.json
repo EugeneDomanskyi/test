@@ -46,7 +46,7 @@
     "slick-carousel": "^1.8.1",
     "smartlook-client": "^8.2.0",
     "viem": "^2.9.9",
-    "wagmi": "^2.5.19"
+    "wagmi": "^2.5.20"
   },
   "devDependencies": {
     "eslint": "8.42.0",
