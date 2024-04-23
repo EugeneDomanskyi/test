@@ -72,12 +72,12 @@ const OrderDetails = ({order}) => {
 
           <App.Flex row align="center" justify="space-between">
             <App.Text color="#5E5C6B" size={12} height={1}>Average / Price</App.Text>
-            <App.Text color="#B9B8C5" size={12} height={1}>{formatNumberWithDecimals(order.itemPrice, order.quoteDecimals)} {order.quoteCurrency} / {formatNumberWithDecimals(order.itemPrice, order.quoteDecimals)} {order.quoteCurrency}</App.Text>
+            <App.Text color="#B9B8C5" size={12} height={1}>{formatNumberWithDecimals(order.price, order.quoteDecimals)} {order.quoteCurrency} / {formatNumberWithDecimals(order.itemPrice, order.quoteDecimals)} {order.quoteCurrency}</App.Text>
           </App.Flex>
 
           <App.Flex row align="center" justify="space-between">
             <App.Text color="#5E5C6B" size={12} height={1}>Total</App.Text>
-            <App.Text color="#B9B8C5" size={12} height={1}>{formatNumberWithDecimals(order.price, order.quoteDecimals)} {order.quoteCurrency}</App.Text>
+            <App.Text color="#B9B8C5" size={12} height={1}>{formatNumberWithDecimals(order.total, order.quoteDecimals)} {order.quoteCurrency}</App.Text>
           </App.Flex>
 
           <App.Flex row align="center" justify="space-between">

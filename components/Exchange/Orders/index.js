@@ -346,11 +346,11 @@ const Orders = ({global, type, version, onClickOrder}) => {
                           </App.Flex>
 
                           <App.Flex flex={1} column sx={{padding: 8}} align="center" justify="center">
-                            <App.Text size={12} weight={600} center color="#B9B8C5" height={1}>{ formatNumberWithDecimals(order.itemPrice, order.quoteDecimals) }</App.Text>
+                            <App.Text size={12} weight={600} center color="#B9B8C5" height={1}>{ formatNumberWithDecimals(order.price, order.quoteDecimals) }</App.Text>
                           </App.Flex>
 
                           <App.Flex flex={1} column align="center" justify="center" sx={{padding: 8, position: 'relative', height: '100%', overflow: 'hidden'}}>
-                            <App.Text size={12} weight={600}>{ formatNumberWithDecimals(order.price, order.quoteDecimals) }</App.Text>
+                            <App.Text size={12} weight={600}>{ formatNumberWithDecimals(order.total, order.quoteDecimals) }</App.Text>
                           </App.Flex>
                         </App.Flex>
 
@@ -441,14 +441,14 @@ const Orders = ({global, type, version, onClickOrder}) => {
                                 <App.Flex width={60}>
                                   <App.Text size={12} uppercase height={1} color="#5E5C6B">Price:</App.Text>
                                 </App.Flex>
-                                <App.Text size={14} weight={600} height={1}>{ formatNumberWithDecimals(order.itemPrice, order.quoteDecimals) }</App.Text>
+                                <App.Text size={14} weight={600} height={1}>{ formatNumberWithDecimals(order.price, order.quoteDecimals) }</App.Text>
                               </App.Flex>
 
                               <App.Flex row align="center">
                                 <App.Flex width={60}>
                                   <App.Text size={12} uppercase height={1} color="#5E5C6B">Total:</App.Text>
                                 </App.Flex>
-                                <App.Text size={14} weight={600} height={1} color="#5E5C6B">{ formatNumberWithDecimals(order.price, order.quoteDecimals) }</App.Text>
+                                <App.Text size={14} weight={600} height={1} color="#5E5C6B">{ formatNumberWithDecimals(order.total, order.quoteDecimals) }</App.Text>
                               </App.Flex>
                             </App.Flex>
 
