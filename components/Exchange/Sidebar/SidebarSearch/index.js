@@ -63,7 +63,7 @@ const SidebarSearch = () => {
 
     const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(searchText)
     if (isAddress) {
-      params.market_id = `${blockchain.id}_${searchText}_${blockchain.info?.token?.address}`
+      params.market_id = `${blockchain.id}_${searchText}_${blockchain.token?.address}`
     } else {
       params.symbol = searchText
     }

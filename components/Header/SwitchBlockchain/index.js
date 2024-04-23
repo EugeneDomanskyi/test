@@ -5,8 +5,8 @@ import Image from 'next/image'
 import cn from 'classnames'
 
 import Amplitude from '@/libs/amplitude.lib'
+import { wagmiConfig } from '@/libs/Chains.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
-import { wagmiConfig } from '@/config'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
@@ -25,7 +25,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
   const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const blockchain = useSelector($app.get.blockchain)
-  const pageBlockchains = useSelector($app.get.pageBlockchains(page))
+  const pageBlockchains = useSelector(({ $app }) => $app.chains)
 
   const [menuShow, setMenuShow] = useState(false)
   const [queryBlockchainChecked, setQueryBlockchainChecked] = useState(false)
@@ -114,11 +114,12 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
       if (wagmiChainId && wagmiChainId != newBlockchain.id) {
         const result = await changeNetwork(newBlockchain.code)
         if (result) {
+          router.replace(`/${page}/${newBlockchain.code}` + (isMobile ? '' : '/0x'))
           dispatch($app.set.code(newBlockchain.code))
         }
       } else {
         if (queryBlockchain && queryBlockchain != newBlockchain.code) {
-          router.replace(`/${page}/${newBlockchain.code}/0x`)
+          router.replace(`/${page}/${newBlockchain.code}` + (isMobile ? '' : '/0x'))
         }
         dispatch($app.set.code(newBlockchain.code))
       }
@@ -149,8 +150,8 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
   return (
     <App.Flex row align="center" justify={justify} gap={8} sx={{ position: 'relative' }} id="blockchain" onMouseEnter={() => setMenuShow(true)} onMouseLeave={() => setMenuShow(false)}>
       <App.Flex row center gap={8} className={cn(styles.badge, {[styles.active]: menuShow})} sx={{ cursor: 'pointer' }} onClick={isMobile ? handleMenuToggle : null}>
-        <Image src={`/images/icon-${blockchain.code}.png`} width={24} height={24} alt="" />
-        {! isMobile ? <App.Text nowrap size={16} className={styles.badgeTitle}>{blockchain.name}</App.Text> : null}
+        <Image src={`/images/icon-${blockchain?.code}.png`} width={24} height={24} alt="" />
+        {! isMobile ? <App.Text nowrap size={16} className={styles.badgeTitle}>{blockchain?.name}</App.Text> : null}
       </App.Flex>
 
       <div className={cn(styles.menu, {[styles.active]: menuShow})}>

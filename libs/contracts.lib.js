@@ -1,7 +1,7 @@
 import { simulateContract, writeContract, readContract, multicall, watchBlockNumber } from '@wagmi/core'
 import { formatUnits } from 'viem'
 
-import { wagmiConfig } from '@/config'
+import { wagmiConfig } from '@/libs/Chains.lib'
 import abi from './abi.lib'
 
 export default function Contracts(defaultGasLimit = null) {
@@ -68,8 +68,7 @@ export default function Contracts(defaultGasLimit = null) {
       try {
         const result = await readContract(wagmiConfig, config)
         return result
-      }
-      catch (error) {
+      } catch (error) {
         return methods.debugMessage(error, `Read`)
       }
     },
