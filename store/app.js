@@ -5,6 +5,7 @@ import { CHAINS } from '@/config'
 
 import { request } from './index'
 
+
 export const appSlice = createSlice({
   name: '$app',
 

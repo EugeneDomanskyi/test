@@ -35,7 +35,7 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(wallet)
-    dispatch($alert.set.success({ title: 'Address Copied', text: 'The address has been successfully copied to clipboard' }))
+    dispatch($alert.set.success({ title: 'Address copied to clipboard' }))
   }
 
   const handleDisconnect = async () => {
@@ -135,7 +135,7 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
                         </App.Flex>
 
                         <App.Flex column gap={6}>
-                          <App.Text size={16} weight={700} height={1}>${item.usd}</App.Text>
+                          <App.Text size={16} weight={700} height={1}>${item.usdFormatted}</App.Text>
 
                           <App.Flex align="center" justify="flex-end" gap={4}>
                             {item.ticker?.type != 'zero' ? (

@@ -15,7 +15,6 @@ const Footer = () => {
   useEffect(() => {
     if (footerRef.current) {
       const height = footerRef.current.getBoundingClientRect().height
-      console.log('height', height);
       window.parent.postMessage({ height }, '*')
     }
   }, [footerRef])

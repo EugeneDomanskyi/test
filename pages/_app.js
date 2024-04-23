@@ -7,13 +7,11 @@ import merge from 'lodash.merge'
 import { I18nextProvider } from 'react-i18next'
 import { BanditContextProvider } from '@bandit-network/quest-widget'
 
-import { getDefaultWallets, RainbowKitProvider, darkTheme, connectorsForWallets } from '@rainbow-me/rainbowkit'
-import { configureChains, createConfig, WagmiConfig } from 'wagmi'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
-import { infuraProvider } from 'wagmi/providers/infura'
-import { publicProvider } from 'wagmi/providers/public'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
+import { WagmiProvider } from 'wagmi'
+import { wagmiConfig } from '@/config'
 
-import { CHAINS } from '@/config'
 import store from '@/store'
 import $app from '@/store/app'
 import i18nInit from '@/libs/i18n'
@@ -29,30 +27,7 @@ import '@rainbow-me/rainbowkit/styles.css'
 import '@/styles/globals.css'
 import '@/styles/roulette_design.css'
 
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  CHAINS, [
-  alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }),
-  infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_ID }),
-  publicProvider(),
-]
-)
-
-const { wallets: [popularWallets] } = getDefaultWallets({
-  appName: process.env.NEXT_PUBLIC_APP_NAME,
-  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
-  chains,
-})
-
-const connectors = connectorsForWallets([
-  popularWallets
-])
-
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors: connectors,
-  publicClient,
-  webSocketPublicClient,
-})
+const queryClient = new QueryClient()
 
 const RainbowTheme = merge(darkTheme({ overlayBlur: 'small' }), {
   colors: {
@@ -75,6 +50,8 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
   const router = useRouter()
   const storeRef = useRef(store(initialData)).current
 
+  const currentChain = initialData.chains.find(item => item.id == initialData.blockchain)
+
   useEffect(() => {
     if (router?.query?.vid) {
       localStorage.setItem('ms_vid', router.query.vid)
@@ -82,21 +59,23 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
   }, [])
 
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <I18nextProvider i18n={i18nInit(initialData.language)}>
-        <RainbowKitProvider chains={chains} theme={RainbowTheme}>
-          <BanditContextProvider cluster={"mainnet"} apiKey={process.env.NEXT_PUBLIC_BANDIT_API_KEY}>
-            <Provider store={storeRef}>
-              <Head route={ssRoute} />
-              <Wrapper>
-                <Component {...pageProps} />
-              </Wrapper>
-              <App.Alert />
-            </Provider>
-          </BanditContextProvider>
-        </RainbowKitProvider>
-      </I18nextProvider>
-    </WagmiConfig>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <I18nextProvider i18n={i18nInit(initialData.language)}>
+          <RainbowKitProvider theme={RainbowTheme} initialChain={currentChain}>
+            <BanditContextProvider cluster={"mainnet"} apiKey={process.env.NEXT_PUBLIC_BANDIT_API_KEY}>
+              <Provider store={storeRef}>
+                <Head route={ssRoute} />
+                <Wrapper>
+                  <Component {...pageProps} />
+                </Wrapper>
+                <App.Alert />
+              </Provider>
+            </BanditContextProvider>
+          </RainbowKitProvider>
+        </I18nextProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   )
 }
 
