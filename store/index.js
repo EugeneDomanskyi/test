@@ -71,11 +71,15 @@ export const request = async (uri, method = 'GET', {api, ...data} = {}) => {
   const base_url = getBaseUrl(api)
   const response = await fetch(`${base_url}${uri}${query}`, options).catch(errorHandler)
 
-  if (response?.ok) {
+  if (response && response?.status) {
     return responseHandler(response)
   }
+
+  // if (response?.ok) {
+  //   return responseHandler(response)
+  // }
   
-  return errorHandler(response)
+  // return errorHandler(response)
 }
 
 const responseHandler = async (response) => {
