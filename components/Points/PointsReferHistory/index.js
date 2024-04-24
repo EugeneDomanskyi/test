@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import cn from 'classnames'
+import moment from 'moment'
 
 import App from '@/components/App'
 
@@ -10,6 +11,7 @@ const PointsReferHistory = () => {
   const { t } = useTranslation()
 
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
+  const history = useSelector(({ $point }) => $point.history)
 
   const getShort = (address) => {
     const n = isMobile ? 4 : 8
@@ -43,55 +45,42 @@ const PointsReferHistory = () => {
         </App.Flex>
 
         <App.Flex column>
-          <App.Flex row className={styles.row}>
-            <App.Flex column gap={4} flex={1} justify="center" align={['center', 'flex-start']} sx={{paddingLeft: 8}}>
-              <App.Text center={!isMobile} weight={[600, 400]} height={1}>{getShort('0xa9aFbdAc88f12a704EE328B5D40ac44a47Bb3074')}</App.Text>
-              {isMobile ? (
-                <App.Text size={12} weight={500} height={1} color="#9B99AE">01-04-2024</App.Text>
-              ) : null}
-            </App.Flex>
-            
-            {!isMobile ? (
-              <App.Flex flex={1} center>
-                <App.Text center weight={600} height={1}>01-04-2024</App.Text>
+          {history.length ? (
+            history.map((item, index) => (
+              <App.Flex key={index} row className={styles.row}>
+                <App.Flex column gap={4} flex={1} justify="center" align={['center', 'flex-start']} sx={{paddingLeft: 8}}>
+                  <App.Text center={!isMobile} weight={[600, 400]} height={1}>{getShort(item.referral_user.wallet_address)}</App.Text>
+                  {isMobile ? (
+                    <App.Text size={12} weight={500} height={1} color="#9B99AE">{moment(item.created_at).format('DD-MM-YYYY')}</App.Text>
+                  ) : null}
+                </App.Flex>
+                
+                {!isMobile ? (
+                  <App.Flex flex={1} center>
+                    <App.Text center weight={600} height={1}>{moment(item.created_at).format('DD-MM-YYYY')}</App.Text>
+                  </App.Flex>
+                ) : null}
+
+                <App.Flex flex={1} center>
+                  <App.Flex className={cn(styles.badge, styles.trade)}>
+                    {item.reason === 'liquidity_order_matched' ? (
+                      <App.Text center uppercase size={12} weight={700} height={1}>{t('TRADED')}</App.Text>
+                    ) : (
+                      <App.Text center uppercase size={12} weight={700} height={1}>{item.reason}</App.Text>
+                    )}
+                  </App.Flex>
+                </App.Flex>
+
+                <App.Flex flex={1} align="center" justify={['center', 'flex-end']} sx={{paddingRight: 8}}>
+                  <App.Text center weight={[600, 400]} height={1}>{item.points} Points</App.Text>
+                </App.Flex>
               </App.Flex>
-            ) : null}
-
-            <App.Flex flex={1} center>
-              <App.Flex className={cn(styles.badge, styles.trade)}>
-                <App.Text center uppercase size={12} weight={700} height={1}>TRADED</App.Text>
-              </App.Flex>
+            ))
+          ) : (
+            <App.Flex center height={200}>
+              <App.Text>{t('There is no data yet')}</App.Text>
             </App.Flex>
-
-            <App.Flex flex={1} align="center" justify={['center', 'flex-end']} sx={{paddingRight: 8}}>
-              <App.Text center weight={[600, 400]} height={1}>50 Points</App.Text>
-            </App.Flex>
-          </App.Flex>
-
-          <App.Flex row className={styles.row}>
-            <App.Flex column gap={4} flex={1} justify="center" align={['center', 'flex-start']} sx={{paddingLeft: 8}}>
-              <App.Text center={!isMobile} weight={[600, 400]} height={1}>{getShort('0xa9aFbdAc88f12a704EE328B5D40ac44a47Bb3074')}</App.Text>
-              {isMobile ? (
-                <App.Text size={12} weight={500} height={1} color="#9B99AE">01-04-2024</App.Text>
-              ) : null}
-            </App.Flex>
-            
-            {!isMobile ? (
-              <App.Flex flex={1} center>
-                <App.Text center weight={600} height={1}>01-04-2024</App.Text>
-              </App.Flex>
-            ) : null}
-
-            <App.Flex flex={1} center>
-              <App.Flex className={cn(styles.badge, styles.trade)}>
-                <App.Text center uppercase size={12} weight={700} height={1}>TRADED</App.Text>
-              </App.Flex>
-            </App.Flex>
-
-            <App.Flex flex={1} align="center" justify={['center', 'flex-end']} sx={{paddingRight: 8}}>
-              <App.Text center weight={[600, 400]} height={1}>50 Points</App.Text>
-            </App.Flex>
-          </App.Flex>
+          )}
         </App.Flex>
       </App.Flex>
     </App.Flex>

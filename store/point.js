@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import moment from 'moment'
 
 import { request } from './index'
 
@@ -20,6 +21,14 @@ export const pointSlice = createSlice({
     quests: [],
     tasks: [],
     leaderboard: [],
+
+    liquidity: {
+      open: [],
+      completed: [],
+      total_open_orders: 0,
+      total_liquidity: 0,
+      points_earned_today: 0,
+    }
   },
 
   reducers: {
@@ -49,6 +58,28 @@ export const pointSlice = createSlice({
 
     leaderboard: (state, { payload }) => {
       state.leaderboard = payload
+    },
+
+    liquidity: (state, { payload }) => {
+      const open = payload.filter(order => order.status === 'active').sort((a, b) => new Date(b.date) - new Date(a.date))
+      const completed = payload.filter(order => order.status !== 'active').sort((a, b) => new Date(b.date) - new Date(a.date))
+      const total_open_orders = open.length
+      const total_liquidity = payload.reduce((acc, order) => acc + order.order_size, 0).toFixed(2)
+      const points_earned_today = payload.reduce((acc, order) => {
+        if (moment(order.date).isSame(moment(), 'day')) {
+          return acc + order.points
+        }
+
+        return acc
+      }, 0).toFixed(2)
+
+      state.liquidity = {
+        open,
+        completed,
+        total_open_orders,
+        total_liquidity,
+        points_earned_today,
+      }
     },
   },
 })
@@ -88,6 +119,10 @@ export const api = {
 
   stats: (wallet, params) => {
     return request(`user/${wallet}/daily-stats`, 'GET', {api: 'accounts', ...params})
+  },
+
+  liquidity: (wallet, params) => {
+    return request(`user/${wallet}/order-liquidity`, 'GET', {api: 'accounts', ...params})
   },
 }
 

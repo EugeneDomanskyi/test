@@ -53,6 +53,14 @@ const useWalletConnect = () => {
         }
       },
     })
+
+    const account = getAccount(wagmiConfig)
+    if (account.isConnected || account.isDisconnected) {
+      const connected = account.isConnected
+      if (connection.loading || connection.connected != connected) {
+        setConnection({ loading: false, connected: connected })
+      }
+    }
     
     return unwatch
   }, [])

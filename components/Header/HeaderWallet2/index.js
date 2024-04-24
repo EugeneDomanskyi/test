@@ -125,9 +125,9 @@ const HeaderWallet2 = () => {
         </App.Flex>
       ) : (
         <App.Flex gap={24}>
-          <App.Button default2 outlined onClick={handleEarnings}>
+          {/* <App.Button default2 outlined onClick={handleEarnings}>
             My Earnings
-          </App.Button>
+          </App.Button> */}
 
           <App.Flex className={styles.relative}>
             <App.Button primary2 onClick={handlePortfolioToggle} onMouseEnter={handleShortPortfolioVisible(true)} onMouseLeave={handleShortPortfolioVisible(false)}>

@@ -19,7 +19,7 @@ const PointsHome = () => {
 
   return (
     <App.Flex column fullWidth flex={1}>
-      {/* <PointsDropsBar /> */}
+      <PointsDropsBar />
 
       <App.Flex flex={!connection.loading && !connection.connected ? 1 : null}>
         {connection.loading ? (

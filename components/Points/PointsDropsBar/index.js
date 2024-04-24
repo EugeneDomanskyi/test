@@ -101,6 +101,8 @@ const PointsDropsBar = () => {
     }
   }
 
+  return
+
   return (
     <App.Flex className={styles.border}>
       <App.Container maxWidth={1230}>

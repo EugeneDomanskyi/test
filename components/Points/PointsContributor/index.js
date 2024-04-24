@@ -18,14 +18,14 @@ const PointsContributor = () => {
           </App.Flex>
 
           <App.Flex className="widget">
-            <QuestWidget
+            {/* <QuestWidget
               isOpen={true}
               dialog={false}
               collectionId={165394}
               mode="quest_only"
               showLeaderBoard={false}
               showParticipants={false}
-            />
+            /> */}
           </App.Flex>
         </App.Flex>
       </App.Container>
