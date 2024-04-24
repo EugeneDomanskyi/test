@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { useRouter } from 'next/router'
 import { userAgentFromString } from 'next/server'
-import nookies from 'nookies'
+import nookies, { parseCookies } from 'nookies'
 import merge from 'lodash.merge'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -45,14 +45,23 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
   const router = useRouter()
   const storeRef = useRef(store(initialData)).current
 
-  const currentChain = initialData.chains.find(item => item.id == initialData.blockchain)
+  let currentChain = initialData.chains.find(item => item.code == initialData.blockchain)
 
   useEffect(() => {
     if (router?.query?.vid) {
       localStorage.setItem('ms_vid', router.query.vid)
     }
-  }, [])
 
+    (async () => {
+      if (!currentChain) {
+        const code = parseCookies(null)?.blockchain
+        if (code) {
+          currentChain = await Chains.chainByCode(code)
+        }
+      }
+    })()
+  }, [])
+  console.log(currentChain)
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
