@@ -8,7 +8,6 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
-import { formatNumberWithDecimals } from '@/store/portfolio'
 
 import App from '@/components/App'
 
@@ -67,17 +66,17 @@ const OrderDetails = ({order}) => {
 
           <App.Flex row align="center" justify="space-between">
             <App.Text color="#5E5C6B" size={12} height={1}>Filled / Amount</App.Text>
-            <App.Text color="#B9B8C5" size={12} height={1}>{formatNumberWithDecimals(order.quantityFilled, order.baseDecimals)} {order.baseCurrency} / {formatNumberWithDecimals(order.quantity, order.baseDecimals)} {order.baseCurrency}</App.Text>
+            <App.Text color="#B9B8C5" size={12} height={1}>{order.quantityFilled} {order.baseCurrency} / {order.quantity} {order.baseCurrency}</App.Text>
           </App.Flex>
 
           <App.Flex row align="center" justify="space-between">
             <App.Text color="#5E5C6B" size={12} height={1}>Average / Price</App.Text>
-            <App.Text color="#B9B8C5" size={12} height={1}>{formatNumberWithDecimals(order.price, order.quoteDecimals)} {order.quoteCurrency} / {formatNumberWithDecimals(order.itemPrice, order.quoteDecimals)} {order.quoteCurrency}</App.Text>
+            <App.Text color="#B9B8C5" size={12} height={1}>{order.price} {order.quoteCurrency} / {order.price} {order.quoteCurrency}</App.Text>
           </App.Flex>
 
           <App.Flex row align="center" justify="space-between">
             <App.Text color="#5E5C6B" size={12} height={1}>Total</App.Text>
-            <App.Text color="#B9B8C5" size={12} height={1}>{formatNumberWithDecimals(order.total, order.quoteDecimals)} {order.quoteCurrency}</App.Text>
+            <App.Text color="#B9B8C5" size={12} height={1}>{order.total} {order.quoteCurrency}</App.Text>
           </App.Flex>
 
           <App.Flex row align="center" justify="space-between">
@@ -120,11 +119,11 @@ const OrderDetails = ({order}) => {
                     </App.Flex>
 
                     <App.Flex row width={100} align="center" flex={1}>
-                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{formatNumberWithDecimals(item.amount, order.baseDecimals)} {order.baseCurrency}</App.Text>
+                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{item.amount} {order.baseCurrency}</App.Text>
                     </App.Flex>
 
                     <App.Flex row width={100} align="center" gap={10} justify="flex-end" flex={1}>
-                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{formatNumberWithDecimals(item.price, order.quoteDecimals)} {order.quoteCurrency}</App.Text>
+                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{item.price} {order.quoteCurrency}</App.Text>
                       {item.txHash && !isApp ? (
                         <a href={scanUrl(item.txHash, 'tx', blockchain)} target="_blank" rel="noreferrer" style={{ lineHeight: 0 }}>
                           <App.Icon icon="external-link" />

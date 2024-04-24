@@ -1,14 +1,10 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
 import { parseCookies } from 'nookies'
 
-import Chains from '@/libs/Chains.lib'
-import { CHAINS } from '@/config'
-
 import { request } from './index'
 
 export const template = (item) => {
   const blockchainCode = parseCookies(null)?.blockchain
-  
   if (item?.base_contract_address) {
     return {
       id: item.base_contract_address,

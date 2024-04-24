@@ -24,7 +24,6 @@ export const template = (item) => {
     ...item,
     id: item.orderId,
     status,
-    itemPrice: item.price / item.quantity,
     time: moment(item.time).format('DD MMM, HH:mm'),
     timeMoment: moment(item.time),
   }

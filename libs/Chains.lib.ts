@@ -134,6 +134,16 @@ class Chains {
 
     return null
   }
+
+  chainByCode = async (code: string) => {
+    const chains = await this.list(window ? window.location.hostname : null)
+    const correctChain = chains.find((item: any) => item.code == code)
+    if (correctChain) {
+      return correctChain
+    }
+
+    return null
+  }
 }
 
 export default new Chains()
