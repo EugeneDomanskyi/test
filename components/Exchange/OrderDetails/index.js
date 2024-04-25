@@ -81,7 +81,7 @@ const OrderDetails = ({order}) => {
           </App.Flex>
 
           <App.Flex row align="center" justify="space-between">
-            <App.Text color="#5E5C6B" italic size={12} height={1}>Fee: 0 | Gas: 0 </App.Text>
+            <App.Text color="#5E5C6B" italic size={12} height={1}>Fee: {blockchain.info.fee}% | Gas: 0 </App.Text>
           </App.Flex>
         </App.Flex>
       </App.Flex>

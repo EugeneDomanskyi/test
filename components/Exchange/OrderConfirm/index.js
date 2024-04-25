@@ -238,7 +238,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
                     </App.Flex>
 
                     <App.Flex row align="center" justify="space-between">
-                      <App.Text size={12} height={1} italic color="#5E5C6B">Fee: 0 | Gas: 0 </App.Text>
+                      <App.Text size={12} height={1} italic color="#5E5C6B">Fee: {blockchain.info.fee}% | Gas: 0 </App.Text>
                     </App.Flex>
                   </App.Flex>
                 </App.Flex>

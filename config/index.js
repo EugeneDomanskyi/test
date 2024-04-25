@@ -1,7 +1,7 @@
 import { defineChain } from 'viem'
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
-import { http } from 'wagmi'
-import { arbitrum, optimismSepolia, base } from 'wagmi/chains'
+import { createConfig, http } from 'wagmi'
+import * as wagmiChains from 'wagmi/chains'
 
 const polygonAmoy = defineChain({
   id: 80_002,
@@ -35,8 +35,7 @@ const TEST_NETWORKS = [
   //   decimals: polygonAmoy.nativeCurrency.decimals,
   //   scanUrl: polygonAmoy.blockExplorers.default.url,
   //   pages: ['exchange'],
-  //   defaultFor: 'local',
-  // }, {
+  // }, //{
   //   ...optimismSepolia,
   //   code: 'optimism-sepolia',
   //   currency: optimismSepolia.nativeCurrency.symbol,
@@ -46,6 +45,7 @@ const TEST_NETWORKS = [
   // }, 
 ]
 
+const base = wagmiChains.base
 const MAINNET_NETWORKS = [
   // {
   //   ...arbitrum,
@@ -63,7 +63,7 @@ const MAINNET_NETWORKS = [
     scanUrl: base.blockExplorers.default.url,
     pages: ['exchange'],
     defaultFor: 'production',
-  }
+  },
 ]
 
 export const CHAINS = [
@@ -71,12 +71,22 @@ export const CHAINS = [
   ...TEST_NETWORKS,
 ]
 
+const chains = Object.values(wagmiChains).sort((a, b) => {
+  if (a.id === CHAINS[0].id) {
+    return -1;
+  } else if (b.id === CHAINS[0].id) {
+    return 1;
+  } else {
+    return 0;
+  }
+})
+
 export const wagmiConfig = getDefaultConfig({
   appName: process.env.NEXT_PUBLIC_APP_NAME,
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
-  chains: CHAINS,
+  chains: chains,
   ssr: true,
-  transports: CHAINS.reduce((acc, chain) => {
+  transports: chains.reduce((acc, chain) => {
     return {
       ...acc,
       [chain.id]: http(),

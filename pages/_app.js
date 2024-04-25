@@ -46,7 +46,7 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
   const router = useRouter()
   const storeRef = useRef(store(initialData)).current
 
-  const currentChain = initialData.chains.find(item => item.id == initialData.blockchain)
+  const currentChain = initialData.chains.find(item => item.code == initialData.blockchain)
 
   useEffect(() => {
     if (router?.query?.vid) {
@@ -98,17 +98,24 @@ MyApp.getInitialProps = async ({ ctx }) => {
     const result = await $app.api.chains()
     if (result?.success) {
       chains = result.data.map(item => {
+        console.log(item)
         return {
           id: item.id,
           token: {
             symbol: item.default_quote_token_symbol,
             address: item.default_quote_token_contract_address.toLowerCase(),
-            image: item.logo || (item.default_quote_token_symbol == 'USDT' ? '/images/icon-usdt.png' : '') || `https://storage.googleapis.com/token-assets/assets/${item?.name}/${item.default_quote_token_contract_address.toLowerCase()}.png`
+            image: item.logo || (item.default_quote_token_symbol == 'USDT' ? '/images/icon-usdt.png' : '') || (item.default_quote_token_symbol == 'USDC' ? '/images/icon-usdc.png' : '') || `https://storage.googleapis.com/token-assets/assets/${item?.name}/${item.default_quote_token_contract_address.toLowerCase()}.png`
           },
           contract: {
             exchange: item.exchange_contract.toLowerCase(),
             settlement: item.settlement_contract.toLowerCase(),
           },
+          min_order_value: item.min_order_value,
+          fee: item.fee * 100,
+          native_token_price: item.native_token_price,
+          gas_per_trade: item.gas_per_trade,
+          gas_price: item.gas_price,
+          default_gas_limit: item.default_gas_limit,
         }
       })
     }
