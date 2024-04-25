@@ -20,6 +20,10 @@ export const template = (item) => {
       break
   }
 
+  if (status == 'cancelled' && item.quantityFilled > 0) {
+    status = 'partial'
+  }
+
   return {
     ...item,
     id: item.orderId,

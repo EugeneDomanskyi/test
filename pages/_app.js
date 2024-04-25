@@ -111,7 +111,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
             settlement: item.settlement_contract.toLowerCase(),
           },
           min_order_value: item.min_order_value,
-          fee: item.fee,
+          fee: item.fee * 100,
           native_token_price: item.native_token_price,
           gas_per_trade: item.gas_per_trade,
           gas_price: item.gas_price,
