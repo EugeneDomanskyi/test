@@ -98,6 +98,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
     const result = await $app.api.chains()
     if (result?.success) {
       chains = result.data.map(item => {
+        console.log(item)
         return {
           id: item.id,
           token: {
@@ -109,6 +110,12 @@ MyApp.getInitialProps = async ({ ctx }) => {
             exchange: item.exchange_contract.toLowerCase(),
             settlement: item.settlement_contract.toLowerCase(),
           },
+          min_order_value: item.min_order_value,
+          fee: item.fee,
+          native_token_price: item.native_token_price,
+          gas_per_trade: item.gas_per_trade,
+          gas_price: item.gas_price,
+          default_gas_limit: item.default_gas_limit,
         }
       })
     }
