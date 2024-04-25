@@ -12,6 +12,7 @@ import $app from '@/store/app'
 import App from '@/components/App'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import MobileAppHeader from '@/components/Header/MobileAppHeader'
 
 const Analytics = dynamic(import('@/components/Analytics'), {ssr: false})
 
@@ -77,6 +78,7 @@ const Wrapper = ({ children }) => {
           ? <div style={{height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden'}}>
               <Analytics />
               {!isCampaign && !isApp ? <Header /> : null}
+              { isApp ? <MobileAppHeader /> : null }
               {children}
               {!isCampaign && !isApp && !isExchange ? <Footer /> : null}
             </div>

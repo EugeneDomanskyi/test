@@ -22,8 +22,8 @@ const HomeTeam = () => {
           </App.Text>
         </App.Flex>
 
-        <App.Flex direction={['row', 'column']} justify="center" gap={32}>
-          <App.Flex column width={[482, '100%']} gap={20}>
+        <App.Flex direction={['row', 'column']} justify="center" gap={[256, 32]}>
+          <App.Flex column width={[270, '100%']} gap={20}>
             <img src="/images/home/team-2.png" alt="" className={styles.img} />
 
             <App.Flex row align="center" justify="space-between">
@@ -44,7 +44,7 @@ const HomeTeam = () => {
             </App.Flex>
           </App.Flex>
 
-          <App.Flex column width={[482, '100%']} gap={20}>
+          <App.Flex column width={[270, '100%']} gap={20}>
             <img src="/images/home/team-3.png" alt="" className={styles.img} />
 
             <App.Flex row align="center" justify="space-between">
