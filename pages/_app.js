@@ -61,7 +61,7 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
       }
     })()
   }, [])
-  console.log(currentChain)
+
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>

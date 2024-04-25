@@ -27,13 +27,13 @@ const Header = () => {
 
   const isExchange = router.asPath?.includes('/exchange')
 
-  useEffect(() => {
-    dispatch($tournament.set.loading(true))
-    $tournament.api.current().then(res => {
-      dispatch($tournament.set.current(res?.data ? res.data : {}))
-      dispatch($tournament.set.loading(false))
-    })
-  }, [])
+  // useEffect(() => {
+  //   dispatch($tournament.set.loading(true))
+  //   $tournament.api.current().then(res => {
+  //     dispatch($tournament.set.current(res?.data ? res.data : {}))
+  //     dispatch($tournament.set.loading(false))
+  //   })
+  // }, [])
 
   const handleMobileMenuClick = () => {
     if (mobileMenuShow) {
