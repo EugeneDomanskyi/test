@@ -89,17 +89,17 @@ const Exchange = () => {
     }
   }, [socketConnected, blockchain?.id, current?.id])
 
-  useEffect(() => {
-    if (!connection?.loading && !isApp) {
-      faucetCheck()
-    }
-  }, [connection])
+  // useEffect(() => {
+  //   if (!connection?.loading && !isApp) {
+  //     faucetCheck()
+  //   }
+  // }, [connection])
 
-  useEffect(() => {
-    if (!connection?.loading && wallet) {
-      faucetWalletCheck()
-    }
-  }, [connection, wallet])
+  // useEffect(() => {
+  //   if (!connection?.loading && wallet) {
+  //     faucetWalletCheck()
+  //   }
+  // }, [connection, wallet])
 
   const faucetCheck = () => {
     if (!connection.connected) {

@@ -293,7 +293,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
           </App.Flex>
 
           <App.Flex sx={{ paddingLeft: 14 }}>
-            <App.Text size={10} color="#b9b8c5">Fee: {blockchain.info.fee}</App.Text>
+            <App.Text size={10} color="#b9b8c5">Fee: {blockchain.info.fee}%</App.Text>
           </App.Flex>
         </App.Flex>
 
