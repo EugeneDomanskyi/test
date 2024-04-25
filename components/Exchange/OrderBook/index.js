@@ -52,7 +52,8 @@ const OrderBook = ({ version, onClickOrder }) => {
   }
 
   const handleClick = (order, volume) => () => {
-    onClickOrder({ ...order, price: order.priceFormatted, quantity: toLowerFixed(volume) })
+    // onClickOrder({ ...order, price: order.priceFormatted, quantity: toLowerFixed(volume) })
+    onClickOrder(order)
   }
 
   return version == 'mobile' && loading ? (
