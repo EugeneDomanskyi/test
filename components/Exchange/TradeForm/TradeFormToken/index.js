@@ -170,7 +170,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
         setForm(state => ({
           ...state,
           price: value,
-          total: formatNumberWithDecimals(value * state.amount, current.quoteDecimals),
+          total: formatNumberWithDecimals(new Decimal(value * state.amount).toFixed(), current.decimals),
         }))
         return
       case 'amount':
@@ -178,13 +178,13 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
           return {
             ...state,
             amount: value,
-            total: formatNumberWithDecimals(value * state.price, current.quoteDecimals),
+            total: formatNumberWithDecimals(new Decimal(value * state.price).toFixed(), current.decimals),
           }
         })
         return
       case 'total':
         setForm(state => {
-          const amount = formatNumberWithDecimals(value / state.price, current.decimals)
+          const amount = formatNumberWithDecimals(new Decimal(value / state.price).toFixed(), current.decimals)
           return {
             ...state,
             total: value,
@@ -217,7 +217,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       current: current,
       price: form.price,
       amount: form.amount,
-      total: formatNumberWithDecimals(form.price * form.amount, current.quoteDecimals),
+      total: form.total,
     }
 
     if (version == 'mobile') {
@@ -234,13 +234,13 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       'Side': currentTab.toUpperCase(),
       'Quantity': form.amount,
       'Price': form.price,
-      'Total': formatNumberWithDecimals(form.price * form.amount, current.quoteDecimals),
+      'Total': new Decimal(form.price * form.amount).toFixed(),
       'Network': blockchain.code.toUpperCase(),
     })
   }
 
   const handleTotalBlur = () => {
-    handleChangeForm('price', true)(formatNumberWithDecimals(form.total / form.amount, current.quoteDecimals))
+    handleChangeForm('price', true)(new Decimal(form.total / form.amount).toFixed())
     Amplitude.event('Add Total', {
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
@@ -430,7 +430,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
           current={current}
           price={form.price}
           amount={form.amount}
-          total={numeral(form.amount * form.price).format('0.0[0000]')}
+          total={form.total}
           onClose={handleOrderConfirmClose}
         />
       </App.Dialog>
