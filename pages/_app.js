@@ -46,7 +46,7 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
   const router = useRouter()
   const storeRef = useRef(store(initialData)).current
 
-  const currentChain = initialData.chains.find(item => item.id == initialData.blockchain)
+  const currentChain = initialData.chains.find(item => item.code == initialData.blockchain)
 
   useEffect(() => {
     if (router?.query?.vid) {

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useAccount, useWalletClient, usePublicClient } from 'wagmi'
-import { getChains, getChainId, switchChain, getAccount, watchAccount, signMessage, disconnect as wagmiDisconnect } from '@wagmi/core'
+import { getChains, getChainId, switchChain, getAccount, watchAccount, watchChainId, signMessage, disconnect as wagmiDisconnect } from '@wagmi/core'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 
-import { wagmiConfig } from '@/config'
+import { wagmiConfig, CHAINS } from '@/config'
 
 class Callbacks {
   constructor() {
@@ -91,9 +91,9 @@ const useWalletConnect = () => {
     if (wallet) {
       const currentChain = getCurrentChain()
       const newChain = getChainByCode(newChainCode)
-      
-      if (currentChain && newChain) {
-        if (currentChain.id == newChain.id) {
+
+      if (newChain) {
+        if (currentChain?.id == newChain.id) {
           return true
         }
 
@@ -160,12 +160,14 @@ const useWalletConnect = () => {
   }
 
   const getChainByCode = (chainCode) => {
+    const chainId = CHAINS.find(item => item.code == chainCode)?.id
     const chains = getChains(wagmiConfig)
-    return chains.find(item => item.code.toLowerCase() == chainCode.toLowerCase())
+    return chains.find(item => item.id == chainId)
   }
 
   const getCurrentChain = () => {
     const currentChainId = getChainId(wagmiConfig)
+    console.log(wagmiConfig)
     const chains = getChains(wagmiConfig)
     return chains.find(item => item.id == currentChainId)
   }
