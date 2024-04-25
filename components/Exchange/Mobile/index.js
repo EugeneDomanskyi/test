@@ -166,7 +166,7 @@ const Mobile = forwardRef((_, ref) => {
             )}
 
             <App.Flex column sx={{ maxWidth: 170 }}>
-              <App.Text nowrap uppercase size={16} weight={600}>{item.symbol ?? item?.slug}<App.Text inline color="#B9B8C5" size={10} weight={600} >/USDT</App.Text></App.Text>
+              <App.Text nowrap uppercase size={16} weight={600}>{item.symbol ?? item?.slug}<App.Text inline color="#B9B8C5" size={10} weight={600} >/{item?.name ? item.name.split('/')[1] : 'USDT'}</App.Text></App.Text>
               <App.Text nowrap size={12} color="#5E5C6B">{item.name}</App.Text>
             </App.Flex>
           </App.Flex>

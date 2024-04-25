@@ -103,7 +103,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
           token: {
             symbol: item.default_quote_token_symbol,
             address: item.default_quote_token_contract_address.toLowerCase(),
-            image: item.logo || (item.default_quote_token_symbol == 'USDT' ? '/images/icon-usdt.png' : '') || `https://storage.googleapis.com/token-assets/assets/${item?.name}/${item.default_quote_token_contract_address.toLowerCase()}.png`
+            image: item.logo || (item.default_quote_token_symbol == 'USDT' ? '/images/icon-usdt.png' : '') || (item.default_quote_token_symbol == 'USDC' ? '/images/icon-usdc.png' : '') || `https://storage.googleapis.com/token-assets/assets/${item?.name}/${item.default_quote_token_contract_address.toLowerCase()}.png`
           },
           contract: {
             exchange: item.exchange_contract.toLowerCase(),
