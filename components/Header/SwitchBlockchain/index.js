@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 import cn from 'classnames'
-import { useNetwork } from 'wagmi'
 
 import Amplitude from '@/libs/amplitude.lib'
+import { wagmiConfig } from '@/libs/Chains.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
 import useApp from '@/myhooks/useApp'
 
@@ -17,7 +17,6 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
-  const { chain } = useNetwork()
   const { changeNetwork } = useWalletConnect()
   const { isApp, appPost } = useApp()
 
@@ -28,12 +27,13 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
   const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const blockchain = useSelector($app.get.blockchain)
-  const pageBlockchains = useSelector($app.get.pageBlockchains(page))
+  const pageBlockchains = useSelector(({ $app }) => $app.chains)
 
   const [menuShow, setMenuShow] = useState(false)
   const [queryBlockchainChecked, setQueryBlockchainChecked] = useState(false)
 
-  const prevWalletChainId = useRef(chain?.id)
+  const wagmiChainId = wagmiConfig.state.chainId
+  const prevWalletChainId = useRef(wagmiChainId)
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, false)
@@ -49,8 +49,8 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
           const newBlockchainCode = pageBlockchains.some(item => item.code == queryBlockchain) ? queryBlockchain : pageBlockchains?.[0]?.code
           if (newBlockchainCode != blockchain.code) {
             const newBlockchain = pageBlockchains.find(item => item.code == newBlockchainCode)
-            if (chain?.id) {
-              if (chain.id != newBlockchain.id) {
+            if (wagmiChainId) {
+              if (wagmiChainId != newBlockchain.id) {
                 const result = await changeNetwork(newBlockchainCode)
                 if (result) {
                   dispatch($app.set.code(newBlockchain.code))
@@ -63,8 +63,8 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
           }
         } else {
           const newBlockchain = pageBlockchains.find(item => item.code == queryBlockchain)
-          if (chain?.id) {
-            if (chain.id != newBlockchain.id) {
+          if (wagmiChainId) {
+            if (wagmiChainId != newBlockchain.id) {
               const result = await changeNetwork(queryBlockchain)
               if (result) {
                 dispatch($app.set.code(queryBlockchain))
@@ -80,9 +80,9 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
 
   useEffect(() => {
     (async () => {
-      if (chain?.id && queryBlockchainChecked) {
-        if (chain.id != blockchain.id) {
-          const supportCode = pageBlockchains.find(item => item.id == chain.id)?.code
+      if (wagmiChainId && queryBlockchainChecked) {
+        if (wagmiChainId != blockchain.id) {
+          const supportCode = pageBlockchains.find(item => item.id == wagmiChainId)?.code
           if (supportCode && prevWalletChainId.current) {
             if (queryBlockchain && queryBlockchain != supportCode) {
               router.replace(`/${page}/${supportCode}/0x`)
@@ -95,7 +95,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
               dispatch($token.set.clear())
             }
 
-            prevWalletChainId.current = chain.id
+            prevWalletChainId.current = wagmiChainId
           } else {
             await changeNetwork(blockchain.code)
             prevWalletChainId.current = blockchain.id
@@ -103,7 +103,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
         }
       }
     })()
-  }, [chain?.id, queryBlockchainChecked, page])
+  }, [wagmiChainId, queryBlockchainChecked, page])
 
   const handleBlockchainChange = async (val) => {
     if (val != blockchain.code) {
@@ -113,14 +113,15 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
       })
 
       const newBlockchain = pageBlockchains.find(item => item.code == val)
-      if (chain?.id && chain.id != newBlockchain.id) {
+      if (wagmiChainId && wagmiChainId != newBlockchain.id) {
         const result = await changeNetwork(newBlockchain.code)
         if (result) {
+          router.replace(`/${page}/${newBlockchain.code}` + (isMobile ? '' : '/0x'))
           dispatch($app.set.code(newBlockchain.code))
         }
       } else {
         if (queryBlockchain && queryBlockchain != newBlockchain.code) {
-          router.replace(`/${page}/${newBlockchain.code}/0x`)
+          router.replace(`/${page}/${newBlockchain.code}` + (isMobile ? '' : '/0x'))
         }
         dispatch($app.set.code(newBlockchain.code))
       }

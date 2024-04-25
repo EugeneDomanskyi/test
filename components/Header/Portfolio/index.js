@@ -85,7 +85,7 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
                   <App.Icon icon="copy3" onClick={handleCopy} style={{ cursor: 'pointer' }} />
 
                   <a href={scanUrl(wallet, 'address', blockchain)} target="_blank" rel="noreferrer" style={{ lineHeight: 1 }}>
-                    <App.Icon icon={blockchain.code == 'polygon' || blockchain.code == 'mumbai' ? 'polyscan' : 'etherscan'} width={16} height={16} opacity={1} color="#fff" />
+                    <App.Icon icon={blockchain?.code == 'polygon' || blockchain?.code == 'amoy' ? 'polyscan' : 'etherscan'} width={16} height={16} opacity={1} color="#fff" />
                   </a>
                 </App.Flex>
 
@@ -135,7 +135,7 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
                         </App.Flex>
 
                         <App.Flex column gap={6}>
-                          <App.Text size={16} weight={700} height={1}>${item.usd}</App.Text>
+                          <App.Text size={16} weight={700} height={1}>${item.usdFormatted}</App.Text>
 
                           <App.Flex align="center" justify="flex-end" gap={4}>
                             {item.ticker?.type != 'zero' ? (

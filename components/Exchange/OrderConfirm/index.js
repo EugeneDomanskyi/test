@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import Image from 'next/image'
 import { formatUnits, parseUnits } from 'viem'
 import numeral from 'numeral'
@@ -45,8 +45,9 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       setStep('sign')
       appLog('Check Allowance')
       const spendToken = side === 'buy' ? current.quote : current.address
-      const allowance = await contracts.allowance(wallet, spendToken, blockchain?.info?.contract?.exchange)
+      const allowance = await contracts.allowance(wallet, spendToken, blockchain?.contract?.exchange)
       if (allowance?.error) {
+        console.log(1, allowance?.error)
         return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
       }
 
@@ -56,16 +57,16 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       if (allowanceAmount * 1 < amount * 1) {
         appLog('Change Allowance Amount')
         if (spendToken === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
-          const reset = await contracts.approve(spendToken, blockchain?.info?.contract?.exchange, parseUnits('0', spendDecimals))
+          const reset = await contracts.approve(spendToken, blockchain?.contract?.exchange, parseUnits('0', spendDecimals))
           if (reset?.error) {
+            console.log(2, reset?.error)
             return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
           }
         }
 
-        const approve = await contracts.approve(spendToken, blockchain?.info?.contract?.exchange, parseUnits(Number.MAX_SAFE_INTEGER.toString(), spendDecimals))
-        // appLog(`approve?.error ${JSON.stringify(approve)}`)
+        const approve = await contracts.approve(spendToken, blockchain?.contract?.exchange, parseUnits(Number.MAX_SAFE_INTEGER.toString(), spendDecimals))
         if (approve?.error) {
-          // return handleError('Order creation error', approve?.error)
+          console.log(3, approve?.error)
           return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
         }
       }
@@ -123,7 +124,8 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       })
 
       if (result?.error) {
-        return handleError('Order not created', 'Please try again to place your order.')
+        // return handleError('Order not created', 'Please try again to place your order.')
+        return handleError('Order not created', result.error)
       }
 
       appLog(`Place Order Success`)
@@ -158,11 +160,11 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
 
           <App.Flex justify="space-between">
             <App.Flex row align="center" gap={4}>
-              <Image src={side === 'buy' ? blockchain?.info?.token?.image : current.image} width={25} height={25} alt="" />
+              <Image src={side === 'buy' ? blockchain?.token?.image : current.image} width={25} height={25} alt="" />
               <App.Flex column gap={4}>
-                <App.Text size={12} weight={600} height={1} color="#B9B8C5">{ numeral(side === 'buy' ? total : amount).format('0.[00000]') } {side === 'buy' ? current.quoteSymbol : current.symbol}</App.Text>
+                <App.Text size={12} weight={600} height={1} color="#B9B8C5">{side === 'buy' ? total : amount } {side === 'buy' ? current.quoteSymbol : current.symbol}</App.Text>
                 {side === 'buy' ? (
-                    <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ numeral(total).format('0.[00000]') }</App.Text>
+                    <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ total }</App.Text>
                 ) : null}
               </App.Flex>
             </App.Flex>
@@ -170,11 +172,11 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
             <App.Icon icon="arrow-right-long" />
 
             <App.Flex align="center" gap={4}>
-              <Image src={side === 'buy' ? current.image : blockchain?.info?.token?.image} width={25} height={25} alt="" />
+              <Image src={side === 'buy' ? current.image : blockchain?.token?.image} width={25} height={25} alt="" />
               <App.Flex column gap={4}>
-                <App.Text size={12} weight={600} height={1} color="#B9B8C5">{ numeral(side === 'buy' ? amount : total).format('0.[00000]') } {side === 'buy' ? current.symbol : current.quoteSymbol}</App.Text>
+                <App.Text size={12} weight={600} height={1} color="#B9B8C5">{ side === 'buy' ? amount : total } {side === 'buy' ? current.symbol : current.quoteSymbol}</App.Text>
                 {side === 'sell' ? (
-                    <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ numeral(total).format('0.[00000]') }</App.Text>
+                    <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ total }</App.Text>
                 ) : null}
               </App.Flex>
             </App.Flex>
@@ -234,7 +236,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
                     </App.Flex>
 
                     <App.Flex row align="center" justify="space-between">
-                      <App.Text size={12} height={1} italic color="#5E5C6B">Fee: 0 | Gas: 0 </App.Text>
+                      <App.Text size={12} height={1} italic color="#5E5C6B">Fee: {blockchain.info.fee}% | Gas: 0 </App.Text>
                     </App.Flex>
                   </App.Flex>
                 </App.Flex>

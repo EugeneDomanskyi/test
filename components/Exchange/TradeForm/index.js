@@ -68,6 +68,9 @@ const TradeForm = forwardRef(({ version, onSubmit, prevProps }, ref) => {
 
   const handleChangeTab = tab => {
     setCurrentTab(tab)
+    tokenFormRef.current.setForm({
+      side: tab,
+    })
   }
 
   return (

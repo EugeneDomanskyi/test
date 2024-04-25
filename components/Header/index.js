@@ -6,7 +6,6 @@ import Link from 'next/link'
 // import Image from 'next/image'
 import { useRouter } from 'next/router'
 
-// import { CHAINS } from '@/config'
 import $tournament from '@/store/tournament'
 
 import App from '@/components/App'
@@ -28,14 +27,13 @@ const Header = () => {
 
   const isExchange = router.asPath?.includes('/exchange')
 
-  useEffect(() => {
-    dispatch($tournament.set.loading(true))
-    $tournament.api.current().then(res => {
-      dispatch($tournament.set.current(res?.data ? res.data : {}))
-      dispatch($tournament.set.loading(false))
-      
-    })
-  }, [])
+  // useEffect(() => {
+  //   dispatch($tournament.set.loading(true))
+  //   $tournament.api.current().then(res => {
+  //     dispatch($tournament.set.current(res?.data ? res.data : {}))
+  //     dispatch($tournament.set.loading(false))
+  //   })
+  // }, [])
 
   const handleMobileMenuClick = () => {
     if (mobileMenuShow) {

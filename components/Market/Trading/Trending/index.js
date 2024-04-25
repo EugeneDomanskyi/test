@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
-
 import $token from '@/store/token'
 
 import App from '@/components/App'
@@ -10,8 +8,6 @@ import SectionTitle from '@/components/Market/SectionTitle'
 import styles from './styles.module.scss'
 
 export default function Trending() {
-  const { getPrice } = useWalletConnect()
-
   const [trending, setTrending] = useState([])
   
   useEffect(() => {
@@ -22,7 +18,7 @@ export default function Trending() {
     let topResults = []
     
     const result = await $token.api.coingecko.top()
-    const rate = await getPrice('bitcoin', 'usd')
+    const rate = 0
 
     if (result) {
       topResults = result.coins.map(item => {

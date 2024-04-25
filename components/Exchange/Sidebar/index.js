@@ -38,21 +38,21 @@ const Sidebar = ({ version, isApp }) => {
   const [sortBy, sortDirection] = sort.split(':')
 
   useEffect(() => {
-    if (blockchain.code !== urlBlockchain) {
-      return
-    }
+    // if (blockchain.code !== urlBlockchain) {
+    //   return
+    // }
 
     fetchTokensList()
-  }, [blockchain.code, sort, pages.current, urlBlockchain])
+  }, [blockchain?.code, sort, pages.current, urlBlockchain])
 
-  useEffect(() => {
-    if (!loading && current?.id && current.blockchain === urlBlockchain) {
-      const exist = all.find(item => item.id === current.id)
-      if (!exist) {
-        dispatch($token.set.all([current, ...all]))
-      }
-    }
-  }, [current?.id, loading, urlBlockchain])
+  // useEffect(() => {
+  //   if (!loading && current?.id && current.blockchain === urlBlockchain) {
+  //     const exist = all.find(item => item.id === current.id)
+  //     if (!exist) {
+  //       dispatch($token.set.all([current, ...all]))
+  //     }
+  //   }
+  // }, [current?.id, loading, urlBlockchain])
 
   useEffect(() => {
     handleScroll()

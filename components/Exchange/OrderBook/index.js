@@ -35,7 +35,9 @@ const OrderBook = ({ version, onClickOrder }) => {
 
   useEffect(() => {
     if (current?.id && blockchain?.id) {
-      fetchOrderbook()
+      if (current.blockchain == blockchain.code) {
+        fetchOrderbook()
+      }
     }
   }, [current?.id, blockchain?.id])
 
@@ -43,12 +45,15 @@ const OrderBook = ({ version, onClickOrder }) => {
     const result = await $orders.api.orderbook({ market_id: current.marketId, chain_id: blockchain.id })
     if (result) {
       dispatch($orders.set.orderbook({data: result, token: current}))
+    } else {
+      dispatch($orders.set.orderbook({data: {Asks: [], Bids: []}, token: current}))
     }
     setLoading(false)
   }
 
   const handleClick = (order, volume) => () => {
-    onClickOrder({ ...order, price: order.priceFormatted, quantity: toLowerFixed(volume) })
+    // onClickOrder({ ...order, price: order.priceFormatted, quantity: toLowerFixed(volume) })
+    onClickOrder(order)
   }
 
   return version == 'mobile' && loading ? (

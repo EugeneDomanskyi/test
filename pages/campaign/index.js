@@ -11,8 +11,6 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
 
-import { CHAINS } from '@/config'
-
 import $app from '@/store/app'
 import $raffle from '@/store/raffle'
 
@@ -32,10 +30,11 @@ const getApolloClient = (blockchain) => {
 const LandingPage = () => {
   const dispatch = useDispatch()
   const router = useRouter()
-  const { wallet, connect, getConnectorName } = useWalletConnect()
+  const { wallet, connect, getConnectorInfo } = useWalletConnect()
 
   const campaigns = useSelector(({ $raffle }) => $raffle.all)
-  const blockchain = CHAINS.find(item => item.id === 137)
+  const chains = useSelector(({ $app }) => $app.chains)
+  const blockchain = chains.find(item => item.id === 137)
 
   const apollo = useRef()
 
@@ -95,10 +94,9 @@ const LandingPage = () => {
       const result = await connect()
       if (result) {
         router.push(tradeLink)
-        const walletName = await getConnectorName()
         Amplitude.event('Wallet Connect Success', {
           'Source': Amplitude.page(),
-          'Type': walletName,
+          'Type': getConnectorInfo().name,
         })
       }
     }

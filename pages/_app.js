@@ -2,18 +2,15 @@ import { useRef, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { useRouter } from 'next/router'
 import { userAgentFromString } from 'next/server'
-import nookies from 'nookies'
+import nookies, { parseCookies } from 'nookies'
 import merge from 'lodash.merge'
 
-import { getDefaultWallets, RainbowKitProvider, darkTheme, connectorsForWallets } from '@rainbow-me/rainbowkit'
-import { configureChains, createConfig, WagmiConfig } from 'wagmi'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
-import { infuraProvider } from 'wagmi/providers/infura'
-import { publicProvider } from 'wagmi/providers/public'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
+import { WagmiProvider } from 'wagmi'
 
-import { CHAINS } from '@/config'
+import Chains, { wagmiConfig } from '@/libs/Chains.lib'
 import store from '@/store'
-import $app from '@/store/app'
 
 import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
@@ -25,30 +22,7 @@ import '@rainbow-me/rainbowkit/styles.css'
 import '@/styles/globals.css'
 import '@/styles/roulette_design.css'
 
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  CHAINS, [
-  alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }),
-  infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_ID }),
-  publicProvider(),
-]
-)
-
-const { wallets: [popularWallets] } = getDefaultWallets({
-  appName: process.env.NEXT_PUBLIC_APP_NAME,
-  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
-  chains,
-})
-
-const connectors = connectorsForWallets([
-  popularWallets
-])
-
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors: connectors,
-  publicClient,
-  webSocketPublicClient,
-})
+const queryClient = new QueryClient()
 
 const RainbowTheme = merge(darkTheme({ overlayBlur: 'small' }), {
   colors: {
@@ -71,30 +45,41 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
   const router = useRouter()
   const storeRef = useRef(store(initialData)).current
 
+  let currentChain = initialData.chains.find(item => item.code == initialData.blockchain)
+
   useEffect(() => {
     if (router?.query?.vid) {
       localStorage.setItem('ms_vid', router.query.vid)
     }
+
+    (async () => {
+      if (!currentChain) {
+        const code = parseCookies(null)?.blockchain
+        if (code) {
+          currentChain = await Chains.chainByCode(code)
+        }
+      }
+    })()
   }, [])
 
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains} theme={RainbowTheme}>
-        <Provider store={storeRef}>
-          <Head route={ssRoute} />
-          <Wrapper>
-            <Component {...pageProps} />
-          </Wrapper>
-          <App.Alert />
-        </Provider>
-      </RainbowKitProvider>
-    </WagmiConfig>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider theme={RainbowTheme} initialChain={currentChain}>
+          <Provider store={storeRef}>
+            <Head route={ssRoute} />
+            <Wrapper>
+              <Component {...pageProps} />
+            </Wrapper>
+            <App.Alert />
+          </Provider>
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   )
 }
 
 MyApp.getInitialProps = async ({ ctx }) => {
-  const cookies = nookies.get(ctx)
-
   let ssRoute = ''
   let isMobile = null
   let isApp = null
@@ -103,6 +88,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
   let devMode = null
   let appTheme = null
   let chains = []
+  let blockchain = null
 
   if (ctx?.req) {
     ssRoute = ctx.req.url
@@ -116,28 +102,25 @@ MyApp.getInitialProps = async ({ ctx }) => {
     devMode = ctx.req.headers['x-tegro-dev-mode'] == 'true' ? true : null
     appTheme = ctx.req.headers['x-tegro-theme'] == 'null' ? null : ctx.req.headers['x-tegro-theme']
 
-    const result = await $app.api.chains()
-    if (result?.success) {
-      chains = result.data.map(item => {
-        return {
-          id: item.id,
-          token: {
-            symbol: item.default_quote_token_symbol,
-            address: item.default_quote_token_contract_address.toLowerCase(),
-            image: item.logo || (item.default_quote_token_symbol == 'USDT' ? '/images/icon-usdt.png' : '') || `https://storage.googleapis.com/token-assets/assets/${item?.name}/${item.default_quote_token_contract_address.toLowerCase()}.png`
-          },
-          contract: {
-            exchange: item.exchange_contract.toLowerCase(),
-            settlement: item.settlement_contract.toLowerCase(),
-          },
-        }
-      })
+    const domainName = ctx.req ? ctx.req.headers.host : window.location.hostname
+    chains = await Chains.list(domainName)
+
+    const cookies = nookies.get(ctx, 'blockchain')
+    blockchain = cookies.blockchain
+    if (!blockchain) {
+      blockchain = chains[0]?.code
+      nookies.set(ctx, 'blockchain', blockchain, {path: '/'})
+    } else {
+      if (!chains.some(item => item.code == blockchain)) {
+        blockchain = chains[0]?.code
+        nookies.set(ctx, 'blockchain', blockchain, {path: '/'})
+      }
     }
   }
   
   return {
     initialData: {
-      blockchain: cookies.blockchain,
+      blockchain,
       isMobile,
       isApp,
       platform,
