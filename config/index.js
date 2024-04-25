@@ -1,6 +1,6 @@
 import { defineChain } from 'viem'
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
-import { http } from 'wagmi'
+import { createConfig, http } from 'wagmi'
 import { arbitrum, optimismSepolia, base } from 'wagmi/chains'
 
 const polygonAmoy = defineChain({
@@ -71,7 +71,7 @@ export const CHAINS = [
   ...TEST_NETWORKS,
 ]
 
-export const wagmiConfig = getDefaultConfig({
+export const wagmiConfig = createConfig({
   appName: process.env.NEXT_PUBLIC_APP_NAME,
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
   chains: CHAINS,
