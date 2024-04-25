@@ -8,7 +8,8 @@ const LandingPage = () => {
     <App.Flex column className={styles.container}>
       <div className={styles.background} />
 
-      <Home.Top />
+      {/* <Home.Top /> */}
+      <Home.Hero />
       <Home.Stats />
       <Home.Features />
       <Home.Press />
