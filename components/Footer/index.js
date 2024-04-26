@@ -33,6 +33,11 @@ const Footer = () => {
                 <App.Text size={27} weight={600}>The Gen2 DEX</App.Text>
                 <App.Text inline size={14} weight={600} color="#A6DC37">for High-Frequency Trading</App.Text>
               </App.Flex>
+
+              <App.Button rounded primary xl sx={{width: 253, background: '#0052FF', alignSelf: 'auto'}} href="https://tegro.com/exchange/base/0x4200000000000000000000000000000000000006?utm_source=homepage&utm_medium=hero&utm_campaign=exchange">
+                <App.Text size={16}>Trade on BASE</App.Text>
+                <App.Icon icon="base-icon" />
+              </App.Button>
             </App.Flex>
 
             <App.Flex column gap={40}>
