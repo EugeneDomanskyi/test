@@ -51,10 +51,15 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
       }
 
+      console.log('--- Result from Allowance check', allowance)
+
       appLog('Check Allowance Amount')
       const spendDecimals = side === 'buy' ? current.quoteDecimals : current.decimals
       const allowanceAmount = formatUnits(allowance, spendDecimals)
-      if (allowanceAmount * 1 < amount * 1) {
+
+      const requiredAmount = side === 'buy' ? total : amount
+      console.log('--- Result from Allowance using decimals', allowanceAmount)
+      if (allowanceAmount * 1 < requiredAmount * 1) {
         appLog('Change Allowance Amount')
         if (spendToken === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
           const reset = await contracts.approve(spendToken, blockchain?.contract?.exchange, parseUnits('0', spendDecimals))
@@ -69,6 +74,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
           console.log(3, approve?.error)
           return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
         }
+        console.log('--- Result from Approve', approve)
       }
 
       setStep('place')
