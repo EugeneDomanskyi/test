@@ -60,9 +60,11 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
 
       const requiredAmount = side === 'buy' ? total : amount
       const requiredAmountWithOrders = orders.open.reduce((acc, order) => {
-        if (order.side === side) {
+        if (order.side == 'buy' && side == 'buy') {
           acc += order.total * 1
-        } else {
+        }
+        
+        if (order.side == 'sell' && side == 'sell') {
           acc += order.quantity * 1
         }
         return acc
