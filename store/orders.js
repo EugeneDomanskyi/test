@@ -15,6 +15,9 @@ export const template = (item) => {
     case 'Filled':
       status = 'completed'
       break
+    case 'Partial':
+      status = 'partial'
+      break
     case 'Cancelled':
       status = 'cancelled'
       break
@@ -124,7 +127,7 @@ const get = {
   ], (orders) => {
     return {
       open: orders.filter(order => order.status === 'open'),
-      closed: orders.filter(order => order.status === 'completed' || order.status === 'cancelled')
+      closed: orders.filter(order => order.status === 'completed' || order.status === 'cancelled' || order.status === 'partial')
     }
   }),
   orderbook: createSelector([
