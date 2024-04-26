@@ -53,7 +53,7 @@ export default function Contracts(defaultGasLimit = null) {
       const place = config?.request?.functionName
       if (config?.result) {
         try {
-          const { hash } = await writeContract(wagmiConfig, config.request)
+          const hash = await writeContract(wagmiConfig, config.request)
           return hash
         }
         catch (error) {

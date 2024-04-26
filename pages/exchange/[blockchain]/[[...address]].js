@@ -12,6 +12,7 @@ import useApp from '@/myhooks/useApp'
 import $alert from '@/store/alert'
 import $orders from '@/store/orders'
 import $app from '@/store/app'
+import $portfolio from '@/store/portfolio'
 
 import App from '@/components/App'
 import Sidebar from '@/components/Exchange/Sidebar'
@@ -130,12 +131,14 @@ const Exchange = () => {
 
   const handleAction = useCallback(({action, data}) => {
     if ( !isApp) {
+      dispatch($portfolio.set.update(true))
+
       switch (action) {
         case 'order_placed':
           dispatch($alert.set.success({ title: 'Order placed successfully', text: `Your ${data.side} order for ${data.quantity} ${data.baseCurrency} has been placed successfully.` }))
           break
         case 'order_submitted':
-          dispatch($alert.set.success({ title: 'Order submitted successfully' }))
+          dispatch($alert.set.success({ title: 'Matched & pending settlement' }))
           break
         case 'chain_event_OrderFilled':
           dispatch($alert.set.success({ title: 'Order filled on-chain', text: `Your ${data.side} order for ${data.quantity} ${data.baseCurrency} has been executed ${data.quantity == data.quantityFilled ? 'fully' : 'partially'}.` }))

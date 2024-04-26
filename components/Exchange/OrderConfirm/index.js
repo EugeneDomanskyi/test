@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import { formatUnits, parseUnits } from 'viem'
 import numeral from 'numeral'
@@ -23,6 +23,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
   const { isApp, appLog } = useApp()
 
   const dispatch = useDispatch()
+  const orders = useSelector($orders.get.list)
 
   const [step, setStep] = useState('preview')
 
@@ -58,8 +59,17 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       const allowanceAmount = formatUnits(allowance, spendDecimals)
 
       const requiredAmount = side === 'buy' ? total : amount
+      const requiredAmountWithOrders = orders.open.reduce((acc, order) => {
+        if (order.side === side) {
+          acc += order.total * 1
+        } else {
+          acc += order.quantity * 1
+        }
+        return acc
+      }, requiredAmount)
+      
       console.log('--- Result from Allowance using decimals', allowanceAmount)
-      if (allowanceAmount * 1 < requiredAmount * 1) {
+      if (allowanceAmount * 1 < requiredAmountWithOrders * 1) {
         appLog('Change Allowance Amount')
         if (spendToken === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
           const reset = await contracts.approve(spendToken, blockchain?.contract?.exchange, parseUnits('0', spendDecimals))
@@ -74,7 +84,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
           console.log(3, approve?.error)
           return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
         }
-        console.log('--- Result from Approve', approve)
+        console.log('--- Result from Approve TxID', approve)
       }
 
       setStep('place')
