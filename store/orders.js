@@ -3,6 +3,7 @@ import { formatUnits, parseUnits } from 'viem'
 import moment from 'moment'
 
 import { request } from './index'
+import Decimal from 'decimal.js'
 
 export const template = (item) => {
   let status = 'unknown'
@@ -150,7 +151,7 @@ const get = {
           return {
             priceFormatted: row.price_float,
             price: row.price_float,
-            volume: prevVolume,
+            volume: new Decimal(prevVolume).toFixed(),
             quantity: row.quantity_float,
           }
         })
