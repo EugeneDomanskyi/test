@@ -16,12 +16,10 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.5",
-    "@rainbow-me/rainbowkit": "^2.0.5",
+    "@rainbow-me/rainbowkit": "^2.0.6",
     "@reduxjs/toolkit": "^1.9.5",
     "@sentry/nextjs": "^7.43.0",
-    "@tanstack/react-query": "^5.28.14",
-    "@wagmi/connectors": "^4.1.25",
-    "@wagmi/core": "^2.6.16",
+    "@tanstack/react-query": "^5.32.0",
     "alchemy-sdk": "^3.2.1",
     "amplitude-js": "^8.21.9",
     "classnames": "^2.3.2",
@@ -47,8 +45,8 @@
     "sass": "^1.63.4",
     "slick-carousel": "^1.8.1",
     "smartlook-client": "^8.2.0",
-    "viem": "^2.9.9",
-    "wagmi": "^2.5.21"
+    "viem": "^2.9.28",
+    "wagmi": "^2.5.20"
   },
   "devDependencies": {
     "eslint": "8.42.0",

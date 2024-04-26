@@ -6,6 +6,7 @@ import cn from 'classnames'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 import Amplitude from '@/libs/amplitude.lib'
+import useApp from '@/myhooks/useApp'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
