@@ -28,6 +28,7 @@ const HeaderWallet = () => {
   const nativeBalance = useSelector(({ $portfolio }) => $portfolio.native)
   const portfolioUsd = useSelector(({ $portfolio }) => $portfolio.usd)
   const portfolioList = useSelector(({ $portfolio }) => $portfolio.list)
+  const updatePortfolio = useSelector(({ $portfolio }) => $portfolio.update)
   const raffleLoading = useSelector(({ $raffle }) => $raffle.loadingUser)
   const raffleBalance = useSelector(({ $raffle }) => $raffle.balance)
 
@@ -45,6 +46,13 @@ const HeaderWallet = () => {
       getPortfolio(!isEarn)
     }
   }, [wallet, blockchain?.id, chain?.id, isEarn, raffleLoading])
+
+  useEffect(() => {
+    if (updatePortfolio) {
+      getPortfolio(false)
+      dispatch($portfolio.set.update(false))
+    }
+  }, [updatePortfolio])
 
   const getBalanceString = () => {
     if (isEarn) {
