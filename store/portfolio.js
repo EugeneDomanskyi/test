@@ -27,6 +27,7 @@ export const portfolioSlice = createSlice({
       side: 'buy',
       amount: 0,
     },
+    update: false,
   },
 
   reducers: {
@@ -44,7 +45,7 @@ export const portfolioSlice = createSlice({
           address: item.address,
           name: item.name,
           symbol: item.symbol,
-          image: item.image || (item.type === 'quote' ? '/images/icon-usdt.png' : null) || `https://storage.googleapis.com/token-assets/assets/${payload?.blockchain?.code}/${item.address.toLowerCase()}.png`,
+          image: item.image || (item.symbol === 'USDT' ? '/images/icon-usdt.png' : null) || (item.symbol === 'USDC' ? '/images/icon-usdc.png' : null) || (item.symbol === 'WETH' ? 'https://tegro.com/images/0x4200000000000000000000000000000000000006.png' : null) || `https://storage.googleapis.com/token-assets/assets/${payload?.blockchain?.code}/${item.address.toLowerCase()}.png`,
           balance: formatNumberWithDecimals(Number(item.balance), item.decimal),
           price: formatNumberWithDecimals(Number(item.price || (item.type === 'quote' ? item.balance : 0)), 6),
           usd,
@@ -81,6 +82,10 @@ export const portfolioSlice = createSlice({
 
     prefill: (state, { payload }) => {
       state.prefill = payload
+    },
+
+    update: (state, { payload }) => {
+      state.update = payload
     },
   },
 })

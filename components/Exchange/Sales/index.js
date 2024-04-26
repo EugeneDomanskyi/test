@@ -74,10 +74,21 @@ const Sales = ({ version, onClickSale }) => {
 
       <App.Flex column height={version != 'mobile' ? 'calc(100% - 32px)' : '100%'}>
         <App.Flex className={styles.rowHeader} justify="space-between" align="center">
-          <App.Text flex={1} size={[10, 12]} color="#B9B8C5" weight={[600, 500]} height={1}>Price</App.Text>
-          <App.Text flex={1} size={[10, 12]} color="#B9B8C5" center weight={[600, 500]} height={1}>Volume</App.Text>
-          <App.Text flex={1} size={[10, 12]} color="#B9B8C5" center weight={[600, 500]} height={1}>Status</App.Text>
-          <App.Text flex={1} size={[10, 12]} color="#B9B8C5" right weight={[600, 500]} height={1}>Time</App.Text>
+          <App.Flex flex={1}>
+            <App.Text size={[10, 12]} color="#B9B8C5" weight={[600, 500]} height={1}>Price</App.Text>
+          </App.Flex>
+
+          <App.Flex flex={1}>
+            <App.Text size={[10, 12]} color="#B9B8C5" center weight={[600, 500]} height={1}>Volume</App.Text>
+          </App.Flex>
+
+          <App.Flex width={50}>
+            <App.Text flex={1} size={[10, 12]} color="#B9B8C5" center weight={[600, 500]} height={1}>Status</App.Text>
+          </App.Flex>
+
+          <App.Flex width={80}>
+            <App.Text flex={1} size={[10, 12]} color="#B9B8C5" right weight={[600, 500]} height={1}>Time</App.Text>
+          </App.Flex>
         </App.Flex>
 
         <App.Flex flex={1} column sx={{overflow: 'auto'}}>
@@ -100,9 +111,15 @@ const Sales = ({ version, onClickSale }) => {
               return (
                 <App.Flex key={sale.id || sale.signature} column>
                   <App.Flex  justify="space-between" align="center" className={styles.sale} sx={{backgroundColor: color.row}} onClick={handleClick({...sale, side: color.side})}>
-                    <App.Text flex={1} size={12} color={color.price} height={1}>{ sale.price }</App.Text>
-                    <App.Text flex={1} size={12} weight={600} center height={1}>{ sale.amount }</App.Text>
-                    <App.Flex flex={1} size={12} weight={600} center height={1}>
+                    <App.Flex flex={1}>
+                      <App.Text size={12} color={color.price} height={1}>{ sale.price }</App.Text>
+                    </App.Flex>
+
+                    <App.Flex flex={1}>
+                      <App.Text size={12} weight={600} center height={1}>{ sale.amount }</App.Text>
+                    </App.Flex>
+
+                    <App.Flex center width={50}>
                       { (state => {
                         switch (state) {
                           case 'success':
@@ -116,7 +133,10 @@ const Sales = ({ version, onClickSale }) => {
                         }
                       })(sale.state) }
                     </App.Flex>
-                    <App.Text flex={1} size={12} right height={1}>{ moment(sale.time).format('hh:mm:ss A') }</App.Text>
+
+                    <App.Flex width={80}>
+                      <App.Text flex={1} size={12} right height={1}>{ moment(sale.time).format('hh:mm:ss A') }</App.Text>
+                    </App.Flex>
                   </App.Flex>
                 </App.Flex>
               )
