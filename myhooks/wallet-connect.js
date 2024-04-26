@@ -118,7 +118,8 @@ const useWalletConnect = () => {
   }
 
   const scanUrl = (address, type = 'tx', chain) => {
-    return `${chain?.scanUrl}/${type}/${address}`
+    const url = chain?.scanUrl ?? chain?.blockExplorers?.default?.url
+    return `${url}${type}/${address}`
   }
 
   const sign = async (message = address) => {
