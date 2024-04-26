@@ -167,7 +167,6 @@ const useWalletConnect = () => {
 
   const getCurrentChain = () => {
     const currentChainId = getChainId(wagmiConfig)
-    console.log(wagmiConfig)
     const chains = getChains(wagmiConfig)
     return chains.find(item => item.id == currentChainId)
   }
