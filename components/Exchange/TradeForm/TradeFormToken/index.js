@@ -45,6 +45,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
 
   const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector($orders.get.orderbook)
+  const orders = useSelector($orders.get.list)
 
   const [form, setForm] = useState({price: '0', amount: '1', total: '0'})
   const [userBalances, setUserBalances] = useState({base: 0, quote: 0})
@@ -109,7 +110,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     if (wallet && current?.address && current?.quote) {
       fetchBalance()
     }
-  }, [wallet, blockchain?.id, current?.address, current?.quote])
+  }, [wallet, blockchain?.id, current?.address, current?.quote, orders.open])
 
   useEffect(() => {
     if (!wallet) {
@@ -133,7 +134,17 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
         ...acc,
         [address === current?.quote ? 'quote' : 'base']: balance,
       }), {quote: 0, base: 0})
-      setUserBalances(balances)
+
+      const finalBalance = orders.open.reduce((acc, order) => {
+        if (order.side === 'buy') {
+          acc.quote -= order.total * 1
+        } else {
+          acc.base -= order.quantity * 1
+        }
+        return acc
+      }, balances)
+
+      setUserBalances(finalBalance)
       setWasUserBalance(true)
 
       return balances
