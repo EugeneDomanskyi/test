@@ -26,18 +26,40 @@ const PointsHomeLeaderboard = () => {
   ]
 
   useEffect(() => {
+    fetchCurrentTournament()
+  }, [])
+
+  useEffect(() => {
     fetchLeaderboard()
   }, [current?.alias])
 
+  const fetchCurrentTournament = async () => {
+    const result = await $tournament.api.current()
+    if (result && result?.data) {
+      dispatch($tournament.set.current(result.data))
+    }
+  }
+
   const fetchLeaderboard = async () => {
     if (current?.alias) {
-      const result = await $tournament.api.leaderboard(current.alias)
-      if (result && result?.data) {
-        dispatch($tournament.set.leaderboard(result.data))
-      }
-    }
+      const calls = [
+        $tournament.api.leaderboard(current.alias, true),
+        $tournament.api.leaderboard(current.alias)
+      ]
 
-    setLoading(false)
+      const result = { daily: [], cumulative: [] }
+      const results = await Promise.all(calls)
+      if (results[0] && results[0]?.data) {
+        result.daily = results[0].data
+      }
+
+      if (results[1] && results[1]?.data) {
+        result.cumulative = results[1].data
+      }
+
+      dispatch($tournament.set.leaderboard(result))
+      setLoading(false)
+    }
   }
 
   const handleTab = (value) => {
@@ -59,7 +81,7 @@ const PointsHomeLeaderboard = () => {
   }
 
   const getLeaderboard = () => {
-    const result = tab == 'daily' ? [] : [...leaderboard]
+    const result = [...leaderboard[tab]]
     result.sort((a, b) => { return a.position - b.position })
     return result
   }
@@ -78,7 +100,7 @@ const PointsHomeLeaderboard = () => {
             <App.Text center weight={600} height={1} color="#A6DC37">{t('№')}</App.Text>
           </App.Flex>
 
-          <App.Flex width={[200, 80]} align="center">
+          <App.Flex width={[200, 'auto']} flex={[null, 1]} align="center">
             <App.Text weight={600} height={1} color="#A6DC37">{t(`Wallet${isMobile ? '' : ' Address'}`)}</App.Text>
           </App.Flex>
 
@@ -111,7 +133,7 @@ const PointsHomeLeaderboard = () => {
                     <App.Text color={getColor(item.position, item.reward)} size={[16, 14]} weight={600} sx={{position: 'absolute'}}>{item.position}</App.Text>
                   </App.Flex>
 
-                  <App.Flex width={[200, 80]} align="center">
+                  <App.Flex width={[200, 'auto']} flex={[null, 1]} align="center">
                     <App.Text size={[16, 14]} weight={[600, 400]} height={1}>{getShort(item.wallet_address)}</App.Text>
                   </App.Flex>
 

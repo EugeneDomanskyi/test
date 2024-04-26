@@ -42,9 +42,26 @@ const PointsRefer = () => {
 
   useEffect(() => {
     if (wallet) {
-      fetchHistory()
+      fetchInfo()
     }
   }, [wallet])
+
+  const fetchInfo = async () => {
+    const calls = [
+      fetchReferral(),
+      fetchHistory(),
+    ]
+
+    await Promise.all(calls)
+    setLoading(false)
+  }
+
+  const fetchReferral = async () => {
+    const result = await $point.api.referral(wallet)
+    if (result && result?.data) {
+      dispatch($point.set.referral(result?.data))
+    }
+  }
 
   const fetchHistory = async () => {
     const result = await $point.api.history(wallet, {})
@@ -52,7 +69,6 @@ const PointsRefer = () => {
       dispatch($point.set.history(result.data))
       setPointsToday(result.data.filter(item => moment(item.created_at).isSame(new Date(), 'day')).reduce((acc, item) => acc + item.points, 0))
     }
-    setLoading(false)
   }
 
   const handleCopy = () => {
@@ -87,8 +103,8 @@ const PointsRefer = () => {
     <App.Flex column fullWidth gap={32} className={styles.container}>
       {loading ? (
         <App.LoaderBlock height={200} />
-      ) : ( 
-        history.length ? (
+      ) : (
+        referral.referrals_count == 0 ? (
           <App.Flex column gap={32}>
             <App.Container maxWidth={1230}>
               <App.Flex direction={['row', 'column']} gap={24}>
@@ -100,7 +116,7 @@ const PointsRefer = () => {
                   </App.Flex>
 
                   <App.Flex row wrap={isMobile} gap={[24, 20]}>
-                    <App.Flex width={['auto', 'calc(50% - 12px)']} flex={[1, null]} center column gap={8} className={styles.insideBox}>
+                    <App.Flex width={['auto', 'calc(50% - 12px)']} order={1} flex={[1, null]} center column gap={8} className={styles.insideBox}>
                       <App.Text size={[14, 12]} weight={400} height={1}>{t('Referrals')}</App.Text>
                       {loading ? (
                         <App.Loader size={[32, 24]} />
@@ -109,21 +125,21 @@ const PointsRefer = () => {
                       )}
                     </App.Flex>
 
-                    <App.Flex width={['auto', 'calc(50% - 12px)']} flex={[1, null]} center column gap={8} className={styles.insideBox}>
+                    <App.Flex width={['auto', '100%']} order={[2, 3]} flex={[1, null]} center column gap={8} className={styles.insideBox}>
+                      <App.Text size={[14, 12]} weight={400} height={1}>{t('Points Earned From Referral')}</App.Text>
+                      {loading ? (
+                        <App.Loader size={[32, 24]} />
+                      ) : (
+                        <App.Text size={[32, 24]} weight={600} height={1}>{referral.points_referral}</App.Text>
+                      )}
+                    </App.Flex>
+
+                    <App.Flex width={['auto', 'calc(50% - 12px)']} order={[3, 2]} flex={[1, null]} center column gap={8} className={styles.insideBox}>
                       <App.Text size={[14, 12]} weight={400} height={1}>{t('Points Earned Today')}</App.Text>
                       {loading ? (
                         <App.Loader size={[32, 24]} />
                       ) : (
                         <App.Text size={[32, 24]} weight={600} height={1}>{pointsToday}</App.Text>
-                      )}
-                    </App.Flex>
-
-                    <App.Flex width={['auto', '100%']} flex={[1, null]} center column gap={8} className={styles.insideBox}>
-                      <App.Text size={[14, 12]} weight={400} height={1}>{t('Points Earned In Total')}</App.Text>
-                      {loading ? (
-                        <App.Loader size={[32, 24]} />
-                      ) : (
-                        <App.Text size={[32, 24]} weight={600} height={1}>{referral.points_referral}</App.Text>
                       )}
                     </App.Flex>
                   </App.Flex>
@@ -140,7 +156,7 @@ const PointsRefer = () => {
                       <App.Text color="#FFFFFF99">{referral.referral_code}</App.Text>
                       <App.Icon icon="copy" color="#FFFFFF99" />
                     </App.Flex>
-                    <App.Button primary2 onClick={handleInvite}>{t('Invite Friends')}</App.Button>
+                    <App.Button primary2 onClick={handleInvite}>{t('Share on X')}</App.Button>
                   </App.Flex>
                 </App.Flex>
               </App.Flex>
@@ -151,20 +167,49 @@ const PointsRefer = () => {
             <App.Container maxWidth={1230}>
               <PointsReferHistory />
             </App.Container>
+
+            <div className={styles.line} />
+
+            <App.Container maxWidth={1230}>
+              <App.Flex direction={['row', 'column']} gap={24} align={['center', 'flex-start']} justify="space-between">
+                <App.Flex column gap={8}>
+                  <App.Text size={[24, 20]} weight={600} height={1}>{t('Unleash the power of community!')}</App.Text>
+                  <App.Text size={[24, 20]} weight={600} height={1}>{t('Earn')} <App.Text inline size={[24, 20]} weight={600} height={1} color="#A6DC37">{t('25% Points')}</App.Text> {t('of')} <App.Text inline size={[24, 20]} weight={600} height={1} color="#A6DC37">{t('Every referral!')}</App.Text></App.Text>
+                </App.Flex>
+
+                <App.Flex direction={['row', 'column']} align={['center', 'stretch']} justify="center" gap={24}>
+                  <App.Flex row align="center" width={[384, 'auto']} justify="space-between" className={styles.copyAddress} onClick={handleCopy}>
+                    <App.Text color="#FFFFFF99">{referral.referral_code}</App.Text>
+                    <App.Icon icon="copy" color="#FFFFFF99" />
+                  </App.Flex>
+                  <App.Button primary2 onClick={handleInvite}>{t('Share on X')}</App.Button>
+                </App.Flex>
+              </App.Flex>
+            </App.Container>
           </App.Flex>
         ) : (
           <App.Container maxWidth={1230}>
             <App.Flex column gap={32}>
               <App.Flex direction={['row', 'column']} gap={24}>
                 <App.Flex column flex={1} gap={24}>
-                  <App.Text size={[24, 20]} weight={600} height={1}>{t('Refer & Earn')}</App.Text>
-                  <App.Text size={[20, 16]} weight={600}>{t('Unleash the power of community! Earn up to')} <App.Text inline size={[20, 16]} weight={600} color="#A6DC37">{t('100k Points')}</App.Text> {t('with')} <App.Text inline size={[20, 16]} weight={600} color="#A6DC37">{t('every referral!')}</App.Text></App.Text>
+                  <App.Text size={[32, 20]} weight={600} height={1}>{t('Refer & Earn')}</App.Text>
+
+                  <App.Flex column>
+                    <App.Text size={[24, 16]} weight={600}>{t('Unleash the power of community!')}</App.Text>
+                    <App.Text size={[24, 16]} weight={600}>{t('Earn')} <App.Text inline size={[24, 16]} weight={600} color="#A6DC37">{t('25% Points')}</App.Text> {t('of')} <App.Text inline size={[24, 16]} weight={600} color="#A6DC37">{t('Every referral!')}</App.Text></App.Text>
+                  </App.Flex>
+
+                  <App.Flex column gap={12}>
+                    <App.Flex row align="center" width={[384, 'auto']} justify="space-between" className={styles.copyAddress} onClick={handleCopy}>
+                      <App.Text color="#FFFFFF99">{referral.referral_code}</App.Text>
+                      <App.Icon icon="copy" color="#FFFFFF99" />
+                    </App.Flex>
+                    <App.Button primary2 onClick={handleInvite}>{t('Share on X')}</App.Button>
+                  </App.Flex>
                 </App.Flex>
 
                 <App.Flex className={styles.overall} column gap={16}>
-                  <App.Text size={24} weight={600} height={1}>{t('Overall')} <App.Text inline size={24} weight={600} height={1} color="#A6DC37">{t('Statistics')}</App.Text></App.Text>
-
-                  <App.Flex className={styles.overallBox}>
+                  <App.Flex center className={styles.overallBox}>
                     <App.Text size={14} weight={400}>{t('Earn')} <b>{values.my}</b> {t('points when your friend earns')} <b>{values.his}</b>!</App.Text>
                   </App.Flex>
 
@@ -260,25 +305,6 @@ const PointsRefer = () => {
           </App.Container>
         )
       )}
-
-      <div className={styles.line} />
-
-      <App.Container maxWidth={1230}>
-        <App.Flex direction={['row', 'column']} gap={24} align={['center', 'flex-start']} justify="space-between">
-          <App.Flex column gap={8}>
-            <App.Text size={[24, 20]} weight={600} height={1}>{t('Unleash the power of community!')}</App.Text>
-            <App.Text size={[24, 20]} weight={600} height={1}>{t('Earn')} <App.Text inline size={[24, 20]} weight={600} height={1} color="#A6DC37">{t('25% Points')}</App.Text> {t('of')} <App.Text inline size={[24, 20]} weight={600} height={1} color="#A6DC37">{t('Every referral!')}</App.Text></App.Text>
-          </App.Flex>
-
-          <App.Flex direction={['row', 'column']} align={['center', 'stretch']} justify="center" gap={24}>
-            <App.Flex row align="center" width={[384, 'auto']} justify="space-between" className={styles.copyAddress} onClick={handleCopy}>
-              <App.Text color="#FFFFFF99">{referral.referral_code}</App.Text>
-              <App.Icon icon="copy" color="#FFFFFF99" />
-            </App.Flex>
-            <App.Button primary2 onClick={handleInvite}>{t('Invite Friends with Unique Link')}</App.Button>
-          </App.Flex>
-        </App.Flex>
-      </App.Container>
     </App.Flex>
   )
 }

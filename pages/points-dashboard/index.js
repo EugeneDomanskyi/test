@@ -26,7 +26,7 @@ const PointsDashboard = () => {
     { title: t('Dashboard'), key: 'home' },
     { title: t('Liquidity Mining'), key: 'liquidity' },
     { title: t('Refer & Earn'), key: 'refer' },
-    { title: t('Become a Contributor'), key: 'contributor' },
+    { title: t('Contributor Tasks'), key: 'contributor' },
     { title: t('Third Party Quests'), key: 'quests' },
   ]
 

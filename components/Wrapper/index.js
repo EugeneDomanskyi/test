@@ -13,6 +13,7 @@ import $point from '@/store/point'
 import App from '@/components/App'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import PointsFooter from '@/components/Points/PointsFooter'
 
 const Analytics = dynamic(import('@/components/Analytics'), {ssr: false})
 
@@ -24,6 +25,7 @@ const Wrapper = ({ children }) => {
   const router = useRouter()
   const isCampaign = router.asPath?.includes('/campaign')
   const isExchange = router.asPath?.includes('/exchange')
+  const isPD = router.asPath?.includes('/points-dashboard')
   const { referral } = router.query
 
   const [isInIframe, setIsInIframe] = useState(false);
@@ -91,7 +93,7 @@ const Wrapper = ({ children }) => {
               <Analytics />
               {!isCampaign && !isApp ? <Header /> : null}
               {children}
-              {!isCampaign && !isApp && !isExchange ? <Footer /> : null}
+              {!isCampaign && !isApp && !isExchange ? (isPD ? <PointsFooter /> : <Footer />) : null}
             </div>
           : <Footer />
       }

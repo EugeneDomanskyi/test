@@ -61,17 +61,11 @@ export const pointSlice = createSlice({
     },
 
     liquidity: (state, { payload }) => {
-      const open = payload.filter(order => order.status === 'active').sort((a, b) => new Date(b.date) - new Date(a.date))
-      const completed = payload.filter(order => order.status !== 'active').sort((a, b) => new Date(b.date) - new Date(a.date))
-      const total_open_orders = open.length
-      const total_liquidity = payload.reduce((acc, order) => acc + order.order_size, 0).toFixed(2)
-      const points_earned_today = payload.reduce((acc, order) => {
-        if (moment(order.date).isSame(moment(), 'day')) {
-          return acc + order.points
-        }
-
-        return acc
-      }, 0).toFixed(2)
+      const open = payload.orders.filter(order => order.status === 'active').sort((a, b) => new Date(b.date) - new Date(a.date))
+      const completed = payload.orders.filter(order => order.status !== 'active').sort((a, b) => new Date(b.date) - new Date(a.date))
+      const total_open_orders = payload.total_open_orders
+      const total_liquidity = payload.total_user_amount
+      const points_earned_today = payload.total_user_points
 
       state.liquidity = {
         open,
@@ -118,7 +112,7 @@ export const api = {
   },
 
   stats: (wallet, params) => {
-    return request(`user/${wallet}/daily-stats`, 'GET', {api: 'accounts', ...params})
+    return request(`user/${wallet}/points-stats`, 'GET', {api: 'accounts', ...params})
   },
 
   liquidity: (wallet, params) => {

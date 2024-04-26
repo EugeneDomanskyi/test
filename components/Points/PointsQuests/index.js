@@ -35,7 +35,9 @@ const PointsQuests = () => {
   }
 
   const handleClick = (url) => () => {
-    window.open(url ?? 'https://galxe.com/', '_blank')
+    if (url) {
+      window.open(url ?? 'https://galxe.com/', '_blank')
+    }
   }
 
   const handleClaim = (id) => async () => {
@@ -60,10 +62,10 @@ const PointsQuests = () => {
             ) : (
               quests.map(item => {
                 return (
-                  <App.Flex key={item.id} column gap={16} className={styles.questBox}>
+                  <App.Flex key={item.id} column gap={16} sx={{ cursor: item.can_claim ? 'default' : 'pointer' }} className={styles.questBox} onClick={handleClick(item.can_claim ? null : item?.external_link)}>
                     <Image src="/images/points/points-galxe-logo.png" width={44} height={44} alt="" />
 
-                    <App.Flex row align="center" gap={12} sx={{ cursor: 'pointer' }} onClick={handleClick(item?.external_link)}>
+                    <App.Flex row align="center" gap={12}>
                       <App.Text size={[24, 20]} weight={600} height={1}>{item.name}</App.Text>
 
                       <App.Flex center className={styles.arrow}>
@@ -74,19 +76,20 @@ const PointsQuests = () => {
                     <div className={styles.line} />
 
                     <App.Flex row align="center" justify="space-between">
+                      <App.Flex column>
+                        <App.Text color="#FFFFFF99">{t('Rewards')}</App.Text>
+                        <App.Text size={[24, 20]} weight={600} height={1}>{item.points} {t('Points')}</App.Text>
+                      </App.Flex>
+
                       {item.can_claim ? (
                         item.claimed ? (
                           <App.Flex center width={160} height={48} className={styles.claimed}>
                             <App.Text size={16} weight={600} height={1} color="#9B99AE">{t('Claimed')}</App.Text>
                           </App.Flex>
                         ) : (
-                          <App.Button secondary2 sx={{width: 160}} onClick={handleClaim(item.id)}>{t('Claim')}</App.Button>
+                          <App.Button primary2 sx={{width: 160}} onClick={handleClaim(item.id)}>{t('Claim')}</App.Button>
                         )
-                      ) : (
-                        <App.Text color="#FFFFFF99">{t('Rewards')}</App.Text>
-                      )}
-
-                      <App.Text size={[24, 20]} weight={600} height={1}>{item.points} {t('Points')}</App.Text>
+                      ) : null}
                     </App.Flex>
                   </App.Flex>
                 )

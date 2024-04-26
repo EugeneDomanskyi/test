@@ -9,7 +9,10 @@ export const tournamentSlice = createSlice({
     all: [],
     current: null,
     loading: true,
-    leaderboard: [],
+    leaderboard: {
+      daily: [],
+      cumulative: []
+    },
   },
 
   reducers: {
@@ -48,8 +51,8 @@ const api = {
     return request(`tournament/current`, 'GET', {api: 'exchange'})
   },
 
-  leaderboard: (alias) => {
-    return request(`tournament/${alias}/leaderboard`, 'GET', {api: 'exchange'})
+  leaderboard: (alias, daily) => {
+    return request(`tournament/${alias}/leaderboard${daily ? '/daily' : ''}`, 'GET', {api: 'exchange'})
   },
 
   walletResult: (alias, wallet) => {

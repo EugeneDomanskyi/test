@@ -76,7 +76,7 @@ const PointsLiquidityOrders = ({ loading }) => {
               </App.Flex>
 
               <App.Flex flex={1} center>
-                <App.Text center weight={600} height={1} color="#A6DC37">{t('Total Reward Earned')}</App.Text>
+                <App.Text center weight={600} height={1} color="#A6DC37">{t('Total Points Earned')}</App.Text>
               </App.Flex>
             </>
           ) : (
@@ -90,7 +90,7 @@ const PointsLiquidityOrders = ({ loading }) => {
               </App.Flex>
 
               <App.Flex flex={1} center>
-                <App.Text center weight={600} height={1} color="#A6DC37">{t('Reward')}</App.Text>
+                <App.Text center weight={600} height={1} color="#A6DC37">{t('Points')}</App.Text>
               </App.Flex>
 
               <App.Flex width={44} center>
@@ -112,7 +112,7 @@ const PointsLiquidityOrders = ({ loading }) => {
                   return (
                     <App.Flex key={index} row className={styles.row}>
                       <App.Flex width={220} center>
-                        <App.Text center weight={600} height={1}>{moment(item.date).format('DD-MM-YYYY hh:mm:ss A Z')}</App.Text>
+                        <App.Text center weight={600} height={1.4}>{moment(item.date).format('DD-MM-YYYY')}<br />{moment(item.date).format('hh:mm:ss A Z')}</App.Text>
                       </App.Flex>
 
                       <App.Flex width={180} column gap={4} center>
@@ -130,7 +130,7 @@ const PointsLiquidityOrders = ({ loading }) => {
                       </App.Flex>
 
                       <App.Flex flex={1} column center>
-                        <App.Text center size={16} weight={600} height={1}>{item.order_size}</App.Text>
+                        <App.Text center size={16} weight={600} height={1}>{item.order_size} USDT</App.Text>
                       </App.Flex>
 
                       <App.Flex flex={1} center>
@@ -146,7 +146,7 @@ const PointsLiquidityOrders = ({ loading }) => {
                       </App.Flex>
 
                       <App.Flex flex={1} center>
-                        <App.Text center size={16} weight={600} height={1}>{item.reward}</App.Text>
+                        <App.Text center size={16} weight={600} height={1}>{item.points}</App.Text>
                       </App.Flex>
                     </App.Flex>
                 )})
@@ -174,7 +174,7 @@ const PointsLiquidityOrders = ({ loading }) => {
                       </App.Flex>
 
                       <App.Flex flex={1} center>
-                        <App.Text center size={[16, 14]} weight={[600, 400]} height={1}>{item.reward}</App.Text>
+                        <App.Text center size={[16, 14]} weight={[600, 400]} height={1}>{item.points}</App.Text>
                       </App.Flex>
 
                       <App.Flex width={44} center>
@@ -204,7 +204,7 @@ const PointsLiquidityOrders = ({ loading }) => {
 
             <App.Flex row align="center" justify="space-between">
               <App.Text size={14} weight={400} height={1}>{t('Order Size')}</App.Text>
-              <App.Text size={14} weight={600} height={1}>{currentOrder.order_size}</App.Text>
+              <App.Text size={14} weight={600} height={1}>{currentOrder.order_size} USDT</App.Text>
             </App.Flex>
 
             <App.Flex row align="center" justify="space-between">
@@ -223,8 +223,8 @@ const PointsLiquidityOrders = ({ loading }) => {
             </App.Flex>
 
             <App.Flex row align="center" justify="space-between">
-              <App.Text size={14} weight={400} height={1}>{t('Total Reward Earned')}</App.Text>
-              <App.Text size={14} weight={600} height={1}>{currentOrder.reward}</App.Text>
+              <App.Text size={14} weight={400} height={1}>{t('Total Points Earned')}</App.Text>
+              <App.Text size={14} weight={600} height={1}>{currentOrder.points}</App.Text>
             </App.Flex>
           </App.Flex>
         ) : null}

@@ -19,7 +19,7 @@ const PointsHome = () => {
 
   return (
     <App.Flex column fullWidth flex={1}>
-      <PointsDropsBar />
+      {/* <PointsDropsBar /> */}
 
       <App.Flex flex={!connection.loading && !connection.connected ? 1 : null}>
         {connection.loading ? (
@@ -33,7 +33,7 @@ const PointsHome = () => {
               </App.Container>
             </App.Flex>
           ) : (
-            <App.Flex column full className={styles.tiger}>
+            <App.Flex column fullWidth className={styles.tiger}>
               <App.Container maxWidth={1230} height="100%">
                 <App.Flex full column justify={['center', 'flex-start']}>
                   <App.Flex column align="flex-start" width={[486, 'auto']} gap={32} sx={[{ paddingBottom: 64 }, { paddingTop: 32 }]}>

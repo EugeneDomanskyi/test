@@ -18,7 +18,7 @@ import styles from './styles.module.scss'
 const HeaderWallet2 = () => {
   const router = useRouter()
 
-  const { wallet, connectorId, connect, disconnect, blockchain: chain, getBalance, getConnectorName } = useWalletConnect()
+  const { wallet, connectorId, connect, disconnect, blockchain: chain, getBalance, getConnectorInfo } = useWalletConnect()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -36,19 +36,7 @@ const HeaderWallet2 = () => {
     }
   }, [wallet, blockchain?.id])
 
-  const getConnectorLogo = () => {
-    switch (connectorId) {
-      case 'metaMask': return '/images/metamask-logo.png'
-      case 'walletConnect': return '/images/walletconnect-logo.png'
-      case 'magic': return '/images/magic-logo.png'
-      case 'rainbow': return '/images/rainbow-logo.png'
-      case 'coinbase': return '/images/coinbase-logo.png'
-      case 'brave': return '/images/brave-logo.png'
-      case 'safe': return '/images/safe-logo.png'
-      default: return '/images/default-wallet-logo.png'
-    }
-  }
-
+  
   const shorterAddress = (size = 6) => {
     return wallet ? (wallet.slice(0, size) + '...' + wallet.slice(wallet.length - size)) : ''
   }
@@ -61,7 +49,7 @@ const HeaderWallet2 = () => {
 
       const result = await connect()
       if (result) {
-        const walletName = await getConnectorName()
+        const walletName = await getConnectorInfo().name
         Amplitude.event('Wallet Connect Success', {
           'Source': Amplitude.event(),
           'Type': walletName,
@@ -71,7 +59,7 @@ const HeaderWallet2 = () => {
   }
 
   const handleDisconnect = async () => {
-    const walletName = await getConnectorName()
+    const walletName = await getConnectorInfo().name
 
     disconnect()
     handleDisconnectDialogToggle(false)()
@@ -151,7 +139,7 @@ const HeaderWallet2 = () => {
         </App.Flex>
       )}
 
-      <Portfolio open={isPortfolioVisible} address={shorterAddress(5)} logo={getConnectorLogo()} onClose={handlePortfolioToggle} onDisconnect={handleDisconnectDialogToggle(true)} />
+      <Portfolio open={isPortfolioVisible} address={shorterAddress(5)} logo={getConnectorInfo().logo} onClose={handlePortfolioToggle} onDisconnect={handleDisconnectDialogToggle(true)} />
 
       <App.Dialog open={isDisconnectDialogOpen} width={420} onClose={handleDisconnectDialogToggle(false)} title="Disconnect Wallet">
         <App.Flex column>

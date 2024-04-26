@@ -72,7 +72,7 @@ const Header = () => {
 
                 <Link href="/points-dashboard" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/points-dashboard')})}>
                   <App.Flex center fullHeight>
-                    <App.Text size={16} weight={600}>Ponts Dashboard</App.Text>
+                    <App.Text size={16} weight={600}>Points Dashboard</App.Text>
                   </App.Flex>
                 </Link>
               </App.Flex>

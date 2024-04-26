@@ -164,7 +164,7 @@ const HeaderWallet = () => {
                     <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
                   </App.Flex>
                 ) : (
-                  <Image src={getConnectorLogo()} width={24} height={24} alt="" />
+                  <Image src={getConnectorInfo().logo} width={24} height={24} alt="" />
                 )}
                 
                 {balanceLoading ? (

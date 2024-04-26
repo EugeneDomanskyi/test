@@ -45,7 +45,7 @@ const PointsHomeStats = () => {
         <App.Flex direction={['row', 'column']} gap={24}>
           <App.Flex direction={['row', 'column']} flex={1} className={styles.points}>
             <App.Flex width={[160, 'auto']} column gap={10} align="center" className={styles.box}>
-              <App.Text center size={[16, 12]} weight={[600, 400]} height={1}>{t('Toptal Points')}</App.Text>
+              <App.Text center size={[16, 12]} weight={[600, 400]} height={1}>{t('Total Points')}</App.Text>
               <App.Text center size={[48, 20]} weight={600} height={1}>{stats.total_points}</App.Text>
             </App.Flex>
 
@@ -70,7 +70,7 @@ const PointsHomeStats = () => {
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
-                <App.Text center size={[14, 12]} weight={400} height={1} color="#A6DC37">{t('Contributor')}</App.Text>
+                <App.Text center size={[14, 12]} weight={400} height={1} color="#A6DC37">{t('Contributor Tasks')}</App.Text>
                 <App.Text center size={[32, 24]} weight={600} height={1}>{stats.contributor}</App.Text>
               </App.Flex>
 
@@ -78,7 +78,7 @@ const PointsHomeStats = () => {
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
-                <App.Text center size={[14, 12]} weight={400} height={1} color="#A6DC37">{t('Third Party Quest')}</App.Text>
+                <App.Text center size={[14, 12]} weight={400} height={1} color="#A6DC37">{t('Third Party Quests')}</App.Text>
                 <App.Text center size={[32, 24]} weight={600} height={1}>{stats.quest}</App.Text>
               </App.Flex>
             </App.Flex>
