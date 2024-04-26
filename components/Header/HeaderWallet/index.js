@@ -21,7 +21,7 @@ const HeaderWallet = () => {
   const router = useRouter()
   const isEarn = router.pathname.includes('/earn')
 
-  const { wallet, connectorId, connect, disconnect, blockchain: chain, getBalance, getConnectorName } = useWalletConnect()
+  const { wallet, connectorId, connect, disconnect, blockchain: chain, getBalance, getConnectorInfo } = useWalletConnect()
   const { isApp, appLog } = useApp()
 
   const dispatch = useDispatch()
@@ -66,19 +66,6 @@ const HeaderWallet = () => {
     }
   }
 
-  const getConnectorLogo = () => {
-    switch (connectorId) {
-      case 'metaMask': return '/images/metamask-logo.png'
-      case 'walletConnect': return '/images/walletconnect-logo.png'
-      case 'magic': return '/images/magic-logo.png'
-      case 'rainbow': return '/images/rainbow-logo.png'
-      case 'coinbase': return '/images/coinbase-logo.png'
-      case 'brave': return '/images/brave-logo.png'
-      case 'safe': return '/images/safe-logo.png'
-      default: return '/images/default-wallet-logo.png'
-    }
-  }
-
   const shorterAddress = (size = 6) => {
     return wallet ? (wallet.slice(0, size) + '...' + wallet.slice(wallet.length - size)) : ''
   }
@@ -91,25 +78,23 @@ const HeaderWallet = () => {
 
       const result = await connect()
       if (result) {
-        const walletName = await getConnectorName()
         Amplitude.event('Wallet Connect Success', {
           'Source': Amplitude.event(),
-          'Type': walletName,
+          'Type': getConnectorInfo().name,
         })
       }
     }
   }
 
   const handleDisconnect = async () => {
-    const walletName = await getConnectorName()
-
+    const connectorName = getConnectorInfo().name
     disconnect()
     handleDisconnectDialogToggle(false)()
     handlePortfolioToggle(false)
 
     Amplitude.event('Wallet Disconnect Success', {
       'Source': Amplitude.page(),
-      'Type': walletName,
+      'Type': connectorName,
     })
   }
 
@@ -123,8 +108,10 @@ const HeaderWallet = () => {
     }
 
     const result = await $portfolio.api.details({ wallet, blockchain })
-    if (result.success) {
+    if (result?.success) {
       dispatch($portfolio.set.details({...result, blockchain}))
+    } else {
+      dispatch($portfolio.set.details({data: [], blockchain}))
     }
 
     if (controlLoading) {
@@ -174,7 +161,7 @@ const HeaderWallet = () => {
                         <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
                       </App.Flex>
                     ) : (
-                      <Image src={getConnectorLogo()} width={24} height={24} alt="" />
+                      <Image src={getConnectorInfo().logo} width={24} height={24} alt="" />
                     )}
                     
                     {balanceLoading ? (
@@ -207,7 +194,7 @@ const HeaderWallet = () => {
               </App.Flex>
             )}
   
-        <Portfolio open={isPortfolioVisible} address={shorterAddress(5)} logo={getConnectorLogo()} onClose={handlePortfolioToggle} onDisconnect={handleDisconnectDialogToggle(true)} />
+        <Portfolio open={isPortfolioVisible} address={shorterAddress(5)} logo={getConnectorInfo().logo} onClose={handlePortfolioToggle} onDisconnect={handleDisconnectDialogToggle(true)} />
   
         <App.Dialog open={isDisconnectDialogOpen} width={420} onClose={handleDisconnectDialogToggle(false)} title="Disconnect Wallet">
           <App.Flex column>

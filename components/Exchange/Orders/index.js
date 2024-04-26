@@ -10,6 +10,7 @@ import Socket from '@/libs/ws.lib'
 import $app from '@/store/app'
 import $orders from '@/store/orders'
 import $alert from '@/store/alert'
+import { formatNumberWithDecimals } from '@/store/portfolio'
 
 import Amplitude from '@/libs/amplitude.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -20,7 +21,7 @@ import OrderDetails from '@/components/Exchange/OrderDetails'
 const Orders = ({global, type, version, onClickOrder}) => {
   const router = useRouter()
 
-  const { wallet, connect, getConnectorName, sign } = useWalletConnect()
+  const { wallet, connect, getConnectorInfo, sign } = useWalletConnect()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -31,7 +32,6 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
   const [loading, setLoading] = useState(true)
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
-  const [hideCancelledOrders, setHideCancelledOrders] = useState(true)
   const [ordersType, setOrderTypes] = useState('open')
   const [orderForCancel, setOrderForCancel] = useState()
   const [detailsOrder, setDetailsOrder] = useState()
@@ -107,7 +107,6 @@ const Orders = ({global, type, version, onClickOrder}) => {
           ...acc,
           [o.orderId]: 'cancelled',
         }), {})
-        console.log(updatedOrders)
         dispatch($orders.set.updateOrderStatus(updatedOrders))
         dispatch($alert.set.success({ title: 'Orders cancelled', text: `You have cancelled ${orders.open.length} order(s) successfully.` }))
       }
@@ -138,12 +137,12 @@ const Orders = ({global, type, version, onClickOrder}) => {
     if (order.status === 'completed' || order.status === 'cancelled') {
       return
     }
-    
+
     const eventPost = {
       'Base Currency': order.baseCurrency,
       'Quote Currency': order.quoteCurrency,
       'Side': order.side.toUpperCase(),
-      'Quantity': order.quantity,
+      'Quantity': order.quantity - order.quantityFilled,
       'Price': order.itemPrice,
       'Total': order.price,
       'Network': blockchain.code.toUpperCase(),
@@ -156,12 +155,12 @@ const Orders = ({global, type, version, onClickOrder}) => {
       if (result) {
         Amplitude.event('Cancel Order Success', eventPost)
         dispatch($orders.set.updateOrderStatus({[order.orderId]: 'cancelled'}))
-        dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity} ${order.baseCurrency} has been cancelled successfully.` }))
+        dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency} has been cancelled successfully.` }))
       } else {
-        dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity} ${order.baseCurrency}.` }))
+        dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.` }))
       }
     } else {
-      dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity} ${order.baseCurrency}.` }))
+      dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.` }))
     }
     handleDialogClose('approve')()
   }
@@ -198,10 +197,6 @@ const Orders = ({global, type, version, onClickOrder}) => {
     setOrderTypes(type)
   }
 
-  const handleHideCancelledOrders = value => {
-    setHideCancelledOrders(value)
-  }
-
   const handleConnectWallet = async () => {
     if ( ! wallet) {
       Amplitude.event('Wallet Connect Clicked', {
@@ -210,10 +205,9 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
       const result = await connect()
       if (result) {
-        const walletName = await getConnectorName()
         Amplitude.event('Wallet Connect Success', {
           'Source': Amplitude.page(),
-          'Type': walletName,
+          'Type': getConnectorInfo().name,
         })
       }
     }
@@ -223,10 +217,6 @@ const Orders = ({global, type, version, onClickOrder}) => {
     return !showCollectionOrders || (!global && order.contractAddress === current?.address)
   }
 
-  const filteredByStatus = order => {
-    return !hideCancelledOrders || (order.status !== 'cancelled')
-  }
-
   return (
     <App.Flex column className={cn(styles.container, {[styles[version]]: version})}>
       <App.Flex className={styles.header}>
@@ -234,7 +224,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
           <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'open' ? '#fff' : '#5E5C6B'} height={1}>Open Orders</App.Text>
         </App.Flex>
         <App.Flex flex={1} center className={cn(styles.tab, {[styles.active]: ordersType === 'closed'})} onClick={handleChangeOrdersType('closed')}>
-          <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'closed' ? '#fff' : '#5E5C6B'} height={1}>Completed Orders</App.Text>
+          <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'closed' ? '#fff' : '#5E5C6B'} height={1}>Order History</App.Text>
         </App.Flex>
 
         <div className={styles.badge} style={{transform: `translateX(${ordersType === 'open' ? 0 : 100}%)`}} />
@@ -274,18 +264,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
               <App.Flex />
             )}
 
-            {ordersType === 'closed' ? (
-              <App.Flex align="center" gap={8} flex={1}>
-                <App.Switch
-                  width={40}
-                  height={20}
-                  checked={hideCancelledOrders}
-                  onChange={handleHideCancelledOrders}
-                />
-
-                <App.Text color="#B9B8C5" size={[10, 12]} weight={600} height={1}>{version != 'mobile' ? 'Hide All Cancelled Orders' : 'Hide Cancelled Orders'}</App.Text>
-              </App.Flex>
-            ) : (
+            {ordersType !== 'closed' && orders[ordersType].length > 0 ? (
               version == 'mobile' ? (
                 <App.Text weight={600} color="#FFAF38" onClick={handleCancelAllClick}>CANCEL ALL</App.Text>
               ) : (
@@ -293,7 +272,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                   Cancel All
                 </App.Button>
               )
-            )}
+            ) : null}
           </App.Flex>
 
           {version != 'mobile' ? (
@@ -315,7 +294,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
               <App.Flex column flex={1} sx={{overflow: 'auto'}}>
               {
-                orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map((order) => {
+                orders[ordersType].filter(order => filterByAddress(order)).map((order) => {
                   return (
                     <App.Flex column key={order.id}>
                       <App.Flex column className={styles.orderContainer}>
@@ -337,18 +316,18 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
                           <App.Flex column sx={{width: 60, padding: 8}} align="center" justify="center">
                             <App.Flex column gap={4}>
-                              <App.Text size={12} weight={600} center height={1}>{ order.quantityFilled }</App.Text>
+                              <App.Text size={12} weight={600} center height={1}>{ formatNumberWithDecimals(order.quantityFilled, order.baseDecimals) }</App.Text>
                               <div style={{width: '100%', minWidth: 20, height: 1, background: '#B9B8C5'}} />
-                              <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ order.quantity }</App.Text>
+                              <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ formatNumberWithDecimals(order.quantity, order.baseDecimals) }</App.Text>
                             </App.Flex>
                           </App.Flex>
 
                           <App.Flex flex={1} column sx={{padding: 8}} align="center" justify="center">
-                            <App.Text size={12} weight={600} center color="#B9B8C5" height={1}>{ order.itemPrice }</App.Text>
+                            <App.Text size={12} weight={600} center color="#B9B8C5" height={1}>{ formatNumberWithDecimals(order.itemPrice, order.quoteDecimals) }</App.Text>
                           </App.Flex>
 
                           <App.Flex flex={1} column align="center" justify="center" sx={{padding: 8, position: 'relative', height: '100%', overflow: 'hidden'}}>
-                            <App.Text size={12} weight={600}>{ order.price }</App.Text>
+                            <App.Text size={12} weight={600}>{ formatNumberWithDecimals(order.price, order.quoteDecimals) }</App.Text>
                           </App.Flex>
                         </App.Flex>
 
@@ -391,8 +370,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
             ) : (
               <App.Flex column flex={1} fullWidth sx={{position: 'relative' }}>
                 <App.Flex column sx={{position: 'absolute', inset: 0, overflow: 'auto'}}>
-                  {orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).length ? 
-                    orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map((order) => {
+                  {orders[ordersType].filter(order => filterByAddress(order)).length ? 
+                    orders[ordersType].filter(order => filterByAddress(order)).map((order) => {
                       const percent = Math.round(order.quantityFilled * 100 / order.quantity)
                       const perimeter =  2 * Math.PI * 19.5
                       const length = (1 + Math.max(0, Math.min(percent / 100, 1))) * perimeter
@@ -432,21 +411,21 @@ const Orders = ({global, type, version, onClickOrder}) => {
                                 <App.Flex width={60}>
                                   <App.Text size={12} uppercase height={1} color="#5E5C6B">Amount:</App.Text>
                                 </App.Flex>
-                                <App.Text size={14} weight={600} height={1}>{ order.quantityFilled } <App.Text inline size={12} weight={600} height={1} color="#5E5C6B">/ { order.quantity }</App.Text></App.Text>
+                                <App.Text size={14} weight={600} height={1}>{ formatNumberWithDecimals(order.quantityFilled, order.baseDecimals) } <App.Text inline size={12} weight={600} height={1} color="#5E5C6B">/ { formatNumberWithDecimals(order.quantity, order.baseDecimals) }</App.Text></App.Text>
                               </App.Flex>
 
                               <App.Flex row align="center">
                                 <App.Flex width={60}>
                                   <App.Text size={12} uppercase height={1} color="#5E5C6B">Price:</App.Text>
                                 </App.Flex>
-                                <App.Text size={14} weight={600} height={1}>{ order.itemPrice }</App.Text>
+                                <App.Text size={14} weight={600} height={1}>{ formatNumberWithDecimals(order.itemPrice, order.quoteDecimals) }</App.Text>
                               </App.Flex>
 
                               <App.Flex row align="center">
                                 <App.Flex width={60}>
                                   <App.Text size={12} uppercase height={1} color="#5E5C6B">Total:</App.Text>
                                 </App.Flex>
-                                <App.Text size={14} weight={600} height={1} color="#5E5C6B">{ order.price }</App.Text>
+                                <App.Text size={14} weight={600} height={1} color="#5E5C6B">{ formatNumberWithDecimals(order.price, order.quoteDecimals) }</App.Text>
                               </App.Flex>
                             </App.Flex>
 

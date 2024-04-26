@@ -2,12 +2,12 @@
   padding: 8px;
   background-color: #0E0B23;
   border-radius: 100px;
-  border: 0.5px solid #332D52;
+  border: 1px solid #332D52;
   transition: .3s;
 
   &:hover,
   &.active {
-    border: 0.5px solid #7204FF;
+    border: 1px solid #7204FF;
     background: rgba(114, 4, 255, 0.32);
   }
 
@@ -48,7 +48,7 @@
 
 .menu {
   border-radius: 10px;
-  border: 0.6px solid #332D52;
+  border: 1px solid #332D52;
   background-color: #060416;
   position: absolute;
   right: 0;

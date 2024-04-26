@@ -1,6 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
+
 import { request } from './index'
-import numeral from "numeral";
+
+export const formatNumberWithDecimals = (num, decimals) => {
+  let formattedNum = Number(num).toFixed(decimals)
+  formattedNum = formattedNum.replace(/(?:\.0*|(\.\d+?)0+)$/, '$1')
+  return formattedNum
+}
 
 export const portfolioSlice = createSlice({
   name: '$portfolio',
@@ -32,14 +38,17 @@ export const portfolioSlice = createSlice({
       }
 
       state.list = payload.data.filter(item => item.price > 0 && !['native'].includes(item.type) || item.balance > 1 && ['quote'].includes(item.type)).map(item => {
+        const usd = Number(item.type === 'quote' ? item.balance : (item.price * item.balance))
+        const usdFormatted = formatNumberWithDecimals(usd, 6)
         return {
           address: item.address,
           name: item.name,
           symbol: item.symbol,
-          image: item.image || (item.type === 'quote' ? '/images/icon-usdt.png' : null) || `https://storage.googleapis.com/token-assets/assets/${payload?.blockchain?.code}/${item.address.toLowerCase()}.png`,
-          balance: item.balance.toLocaleString('fullwide', {useGrouping:false}),
-          price: item.price || (item.type === 'quote' ? item.balance : 0),
-          usd: (item.price || (item.type === 'quote' ? item.balance : 0)).toFixed(4),
+          image: item.image || (item.symbol === 'USDT' ? '/images/icon-usdt.png' : null) || (item.symbol === 'USDC' ? '/images/icon-usdc.png' : null) || `https://storage.googleapis.com/token-assets/assets/${payload?.blockchain?.code}/${item.address.toLowerCase()}.png`,
+          balance: formatNumberWithDecimals(Number(item.balance), item.decimal),
+          price: formatNumberWithDecimals(Number(item.price || (item.type === 'quote' ? item.balance : 0)), 6),
+          usd,
+          usdFormatted,
           ticker: {
             type: item.price_change_24_h > 0 ? 'plus' : item.price_change_24_h < 0 ? 'minus' : 'zero',
             price_change_24_h: item.price_change_24_h,
@@ -51,9 +60,9 @@ export const portfolioSlice = createSlice({
       })
 
       const usd = state.list.reduce((acc, item) => {
-        return acc + item.price
+        return acc + item.usd
       }, 0)
-      state.usd = usd.toFixed(4)
+      state.usd = formatNumberWithDecimals(usd, 6)
 
       // const usdTicker = state.list.reduce((acc, item) => {
       //   return acc + (item.price * item.ticker.price_change_24_h / 100)

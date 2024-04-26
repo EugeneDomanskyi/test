@@ -1,16 +1,16 @@
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import Image from 'next/image'
 import moment from 'moment'
 import cn from 'classnames'
 
+import useWalletConnect from '@/myhooks/wallet-connect'
+
 import $app from '@/store/app'
 import $orders from '@/store/orders'
+import { formatNumberWithDecimals } from '@/store/portfolio'
 
 import App from '@/components/App'
-
-import { useEffect, useState } from 'react'
-import Image from 'next/image'
-
-import useWalletConnect from '@/myhooks/wallet-connect'
 
 import styles from './styles.module.scss'
 
@@ -67,21 +67,21 @@ const OrderDetails = ({order}) => {
 
           <App.Flex row align="center" justify="space-between">
             <App.Text color="#5E5C6B" size={12} height={1}>Filled / Amount</App.Text>
-            <App.Text color="#B9B8C5" size={12} height={1}>{order.quantityFilled} {order.baseCurrency} / {order.quantity} {order.baseCurrency}</App.Text>
+            <App.Text color="#B9B8C5" size={12} height={1}>{formatNumberWithDecimals(order.quantityFilled, order.baseDecimals)} {order.baseCurrency} / {formatNumberWithDecimals(order.quantity, order.baseDecimals)} {order.baseCurrency}</App.Text>
           </App.Flex>
 
           <App.Flex row align="center" justify="space-between">
             <App.Text color="#5E5C6B" size={12} height={1}>Average / Price</App.Text>
-            <App.Text color="#B9B8C5" size={12} height={1}>{order.itemPrice} {order.quoteCurrency} / {order.itemPrice} {order.quoteCurrency}</App.Text>
+            <App.Text color="#B9B8C5" size={12} height={1}>{formatNumberWithDecimals(order.itemPrice, order.quoteDecimals)} {order.quoteCurrency} / {formatNumberWithDecimals(order.itemPrice, order.quoteDecimals)} {order.quoteCurrency}</App.Text>
           </App.Flex>
 
           <App.Flex row align="center" justify="space-between">
             <App.Text color="#5E5C6B" size={12} height={1}>Total</App.Text>
-            <App.Text color="#B9B8C5" size={12} height={1}>{order.price} {order.quoteCurrency}</App.Text>
+            <App.Text color="#B9B8C5" size={12} height={1}>{formatNumberWithDecimals(order.price, order.quoteDecimals)} {order.quoteCurrency}</App.Text>
           </App.Flex>
 
           <App.Flex row align="center" justify="space-between">
-            <App.Text color="#5E5C6B" italic size={12} height={1}>Fee: 0 | Gas: 0 </App.Text>
+            <App.Text color="#5E5C6B" italic size={12} height={1}>Fee: {blockchain.info.fee}% | Gas: 0 </App.Text>
           </App.Flex>
         </App.Flex>
       </App.Flex>
@@ -120,11 +120,11 @@ const OrderDetails = ({order}) => {
                     </App.Flex>
 
                     <App.Flex row width={100} align="center" flex={1}>
-                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{item.amount} {order.baseCurrency}</App.Text>
+                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{formatNumberWithDecimals(item.amount, order.baseDecimals)} {order.baseCurrency}</App.Text>
                     </App.Flex>
 
                     <App.Flex row width={100} align="center" gap={10} justify="flex-end" flex={1}>
-                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{item.price} {order.quoteCurrency}</App.Text>
+                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{formatNumberWithDecimals(item.price, order.quoteDecimals)} {order.quoteCurrency}</App.Text>
                       {item.txHash && !isApp ? (
                         <a href={scanUrl(item.txHash, 'tx', blockchain)} target="_blank" rel="noreferrer" style={{ lineHeight: 0 }}>
                           <App.Icon icon="external-link" />

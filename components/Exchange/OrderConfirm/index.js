@@ -17,6 +17,7 @@ import $alert from '@/store/alert'
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
+import { formatNumberWithDecimals } from '@/store/portfolio'
 
 const OrderConfirm = ({ side, blockchain, current, price, amount, total, version, onBack, onClose }) => {
   const { wallet, walletClient } = useWalletConnect()
@@ -47,6 +48,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       const spendToken = side === 'buy' ? current.quote : current.address
       const allowance = await contracts.allowance(wallet, spendToken, blockchain?.info?.contract?.exchange)
       if (allowance?.error) {
+        console.log(1, allowance?.error)
         return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
       }
 
@@ -58,6 +60,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         if (spendToken === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
           const reset = await contracts.approve(spendToken, blockchain?.info?.contract?.exchange, parseUnits('0', spendDecimals))
           if (reset?.error) {
+            console.log(2, reset?.error)
             return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
           }
         }
@@ -65,6 +68,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         const approve = await contracts.approve(spendToken, blockchain?.info?.contract?.exchange, parseUnits(Number.MAX_SAFE_INTEGER.toString(), spendDecimals))
         // appLog(`approve?.error ${JSON.stringify(approve)}`)
         if (approve?.error) {
+          console.log(3, approve?.error)
           // return handleError('Order creation error', approve?.error)
           return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
         }
@@ -160,9 +164,9 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
             <App.Flex row align="center" gap={4}>
               <Image src={side === 'buy' ? blockchain?.info?.token?.image : current.image} width={25} height={25} alt="" />
               <App.Flex column gap={4}>
-                <App.Text size={12} weight={600} height={1} color="#B9B8C5">{ numeral(side === 'buy' ? total : amount).format('0.[00000]') } {side === 'buy' ? current.quoteSymbol : current.symbol}</App.Text>
+                <App.Text size={12} weight={600} height={1} color="#B9B8C5">{side === 'buy' ? formatNumberWithDecimals(total, current.quoteDecimals) : formatNumberWithDecimals(amount, current.decimals) } {side === 'buy' ? current.quoteSymbol : current.symbol}</App.Text>
                 {side === 'buy' ? (
-                    <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ numeral(total).format('0.[00000]') }</App.Text>
+                    <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ formatNumberWithDecimals(total, current.quoteDecimals) }</App.Text>
                 ) : null}
               </App.Flex>
             </App.Flex>
@@ -172,9 +176,9 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
             <App.Flex align="center" gap={4}>
               <Image src={side === 'buy' ? current.image : blockchain?.info?.token?.image} width={25} height={25} alt="" />
               <App.Flex column gap={4}>
-                <App.Text size={12} weight={600} height={1} color="#B9B8C5">{ numeral(side === 'buy' ? amount : total).format('0.[00000]') } {side === 'buy' ? current.symbol : current.quoteSymbol}</App.Text>
+                <App.Text size={12} weight={600} height={1} color="#B9B8C5">{ side === 'buy' ? formatNumberWithDecimals(amount, current.decimals) : formatNumberWithDecimals(total, current.quoteDecimals) } {side === 'buy' ? current.symbol : current.quoteSymbol}</App.Text>
                 {side === 'sell' ? (
-                    <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ numeral(total).format('0.[00000]') }</App.Text>
+                    <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ formatNumberWithDecimals(total, current.quoteDecimals) }</App.Text>
                 ) : null}
               </App.Flex>
             </App.Flex>
@@ -220,21 +224,21 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
 
                     <App.Flex row align="center" justify="space-between">
                       <App.Text size={12} height={1} color="#5E5C6B">At Price</App.Text>
-                      <App.Text size={12} height={1} color="#B9B8C5">{ price } {current.quoteSymbol}</App.Text>
+                      <App.Text size={12} height={1} color="#B9B8C5">{ formatNumberWithDecimals(price, current.quoteDecimals) } {current.quoteSymbol}</App.Text>
                     </App.Flex>
 
                     <App.Flex row align="center" justify="space-between">
                       <App.Text size={12} height={1} color="#5E5C6B">Amount</App.Text>
-                      <App.Text size={12} height={1} color="#B9B8C5">{ amount } {current.symbol}</App.Text>
+                      <App.Text size={12} height={1} color="#B9B8C5">{ formatNumberWithDecimals(amount, current.decimals) } {current.symbol}</App.Text>
                     </App.Flex>
 
                     <App.Flex row align="center" justify="space-between">
                       <App.Text size={12} height={1} color="#5E5C6B">Total</App.Text>
-                      <App.Text size={12} height={1} color="#B9B8C5">{ total } {current.quoteSymbol}</App.Text>
+                      <App.Text size={12} height={1} color="#B9B8C5">{ formatNumberWithDecimals(total, current.quoteDecimals) } {current.quoteSymbol}</App.Text>
                     </App.Flex>
 
                     <App.Flex row align="center" justify="space-between">
-                      <App.Text size={12} height={1} italic color="#5E5C6B">Fee: 0 | Gas: 0 </App.Text>
+                      <App.Text size={12} height={1} italic color="#5E5C6B">Fee: {blockchain.info.fee}% | Gas: 0 </App.Text>
                     </App.Flex>
                   </App.Flex>
                 </App.Flex>

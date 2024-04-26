@@ -8,8 +8,6 @@ import $app from '@/store/app'
 import $token from '@/store/token'
 
 import App from '@/components/App'
-// import SidebarSearch from '@/components/Exchange/Sidebar/SidebarSearch'
-// import SidebarSort from '@/components/Exchange/Sidebar/SidebarSort'
 import SidebarItem from '@/components/Exchange/Sidebar/SidebarItem'
 
 const SidebarSearch = dynamic(() => import('@/components/Exchange/Sidebar/SidebarSearch'), {ssr: false})
@@ -38,21 +36,21 @@ const Sidebar = ({ version, isApp }) => {
   const [sortBy, sortDirection] = sort.split(':')
 
   useEffect(() => {
-    if (blockchain.code !== urlBlockchain) {
-      return
-    }
+    // if (blockchain.code !== urlBlockchain) {
+    //   return
+    // }
 
     fetchTokensList()
   }, [blockchain.code, sort, pages.current, urlBlockchain])
 
-  useEffect(() => {
-    if (!loading && current?.id && current.blockchain === urlBlockchain) {
-      const exist = all.find(item => item.id === current.id)
-      if (!exist) {
-        dispatch($token.set.all([current, ...all]))
-      }
-    }
-  }, [current?.id, loading, urlBlockchain])
+  // useEffect(() => {
+  //   if (!loading && current?.id && current.blockchain === urlBlockchain) {
+  //     const exist = all.find(item => item.id === current.id)
+  //     if (!exist) {
+  //       dispatch($token.set.all([current, ...all]))
+  //     }
+  //   }
+  // }, [current?.id, loading, urlBlockchain])
 
   useEffect(() => {
     handleScroll()
