@@ -15,6 +15,9 @@ export const template = (item) => {
     case 'Filled':
       status = 'completed'
       break
+    case 'Partial':
+      status = 'partial'
+      break
     case 'Cancelled':
       status = 'cancelled'
       break

@@ -274,11 +274,17 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const renderBalance = () => {
     return (
       <App.Flex className={cn(styles.balance, {[styles.error]: isErrorBalance && wasUserInput})}>
-        <App.Flex flex={1} align="center" gap={4}>
-          <App.Icon icon="wallet" width={10} height={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} />
-          <App.Text size={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} height={1}>
-            {currentTab === 'buy' ? `${userBalances.quote} ${current.quoteSymbol}` : `${userBalances.base} ${current.symbol}`}
-          </App.Text>
+        <App.Flex column flex={1} gap={4}>
+          <App.Flex row align="center" gap={4}>
+            <App.Icon icon="wallet" width={10} height={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} />
+            <App.Text size={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} height={1}>
+              {currentTab === 'buy' ? `${userBalances.quote} ${current.quoteSymbol}` : `${userBalances.base} ${current.symbol}`}
+            </App.Text>
+          </App.Flex>
+
+          <App.Flex sx={{ paddingLeft: 14 }}>
+            <App.Text size={10} color="#b9b8c5">Fee: {blockchain.info.fee}%</App.Text>
+          </App.Flex>
         </App.Flex>
 
         <App.Flex className={styles.multipler} align="center" gap={8}>
