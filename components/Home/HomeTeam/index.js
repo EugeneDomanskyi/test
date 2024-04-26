@@ -13,7 +13,7 @@ const HomeTeam = () => {
           <App.Flex column>
             <App.Text tag="h2" size={[64, 48]} weight={800} height={1}>
               Powered by Expertise that Empowered<br />
-              <App.Text inline italic size={[64, 48]} weight={700} height={1} family="Playfair Display" color="#7364FF">15 Million Traders</App.Text>
+              <App.Text inline size={[64, 48]} weight={700} height={1} color="#7364FF">15 Million Traders</App.Text>
             </App.Text>
           </App.Flex>
 
@@ -29,7 +29,7 @@ const HomeTeam = () => {
             <App.Flex row align="center" justify="space-between">
               <App.Flex column>
                 <App.Text size={16} weight={600}>SIDDHARTH MENON</App.Text>
-                <App.Text italic size={16} weight={700} family="Playfair Display">Founder & CEO</App.Text>
+                <App.Text size={16} weight={700}>Founder & CEO</App.Text>
               </App.Flex>
 
               <App.Flex row gap={8}>
@@ -50,7 +50,7 @@ const HomeTeam = () => {
             <App.Flex row align="center" justify="space-between">
               <App.Flex column>
                 <App.Text size={16} weight={600}>ASHISH RAWAT</App.Text>
-                <App.Text italic size={16} weight={700} family="Playfair Display">Co-Founder and COO</App.Text>
+                <App.Text size={16} weight={700}>Co-Founder and COO</App.Text>
               </App.Flex>
 
               <App.Flex row gap={8}>

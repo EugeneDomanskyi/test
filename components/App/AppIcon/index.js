@@ -1670,6 +1670,22 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
         </svg>
       )
     }
+
+    if (icon == 'base-icon') {
+      return (
+        <svg width={32} height={33} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <g clipPath="url(#a)">
+            <path fill="#0052FF" d="M16 32.5a16 16 0 1 0 0-32 16 16 0 0 0 0 32Z" />
+            <path fill="#fff" d="M15.962 27.768c6.223 0 11.268-5.045 11.268-11.268 0-6.223-5.045-11.268-11.268-11.268-5.903 0-10.746 4.54-11.228 10.32h16.72v1.876H4.732c.472 5.789 5.32 10.34 11.23 10.34Z" />
+          </g>
+          <defs>
+            <clipPath id="a">
+              <path fill="#fff" d="M0 .5h32v32H0z" />
+            </clipPath>
+          </defs>
+        </svg>
+      )
+    }
   }
 
   return getIcon()

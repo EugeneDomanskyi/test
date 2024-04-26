@@ -216,7 +216,7 @@ const HeaderWallet = () => {
       </>
     ) : (
     ! isApp   
-      ? <App.ButtonGradient onClick={handleConnectWallet}>Connect Wallet</App.ButtonGradient>
+      ? <App.Button primary rounded onClick={handleConnectWallet}>Connect Wallet</App.Button>
       : <App.Loader />
   )
 }
