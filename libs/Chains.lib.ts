@@ -112,7 +112,7 @@ class Chains {
               settlement: item.settlement_contract.toLowerCase(),
             },
             info: {
-              fee: item.fee,
+              fee: item.fee * 100,
               min_order_value: item.min_order_value,
               gas_per_trade: item.gas_per_trade,
               gas_price: item.gas_price,

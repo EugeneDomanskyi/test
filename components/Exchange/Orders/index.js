@@ -134,7 +134,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
   const handlePressCancel = (order) => async (e) => {
     e.stopPropagation()
     handleDialogOpen('approve')()
-    if (order.status === 'completed' || order.status === 'cancelled') {
+    if (order.status === 'completed' || order.status === 'cancelled' || order.status === 'partial') {
       return
     }
     
@@ -298,7 +298,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                   return (
                     <App.Flex column key={order.id}>
                       <App.Flex column className={styles.orderContainer}>
-                        <App.Flex align="center" className={cn(styles.order, {[styles.disabled]: order.status === 'completed' || order.status === 'cancelled'})}>
+                        <App.Flex align="center" className={cn(styles.order, {[styles.disabled]: order.status === 'completed' || order.status === 'cancelled' || order.status === 'partial'})}>
                           <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
                           <App.Flex column align="center" justify="center" sx={{width: 90, padding: 8}}>
                             {order.image && type === 'nfts' ? (
@@ -335,7 +335,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                           <App.Text color="rgba(185, 184, 197, 1)" size={10} weight={500} sx={{marginRight: 12}} height={1}>{ order.time }</App.Text>
                           {order.status !== 'open' ? (
                             <App.Text color="#B9B8C5" size={10} weight={600} uppercase height={1}>
-                              {(order.status === 'completed' || order.status === 'cancelled') ? order.status : 'Cancel order'}
+                              {(order.status === 'completed' || order.status === 'cancelled' || order.status === 'partial') ? order.status : 'Cancel order'}
                             </App.Text>
                           ) : null}
                           
