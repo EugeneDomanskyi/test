@@ -66,7 +66,9 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
           acc += order.quantity * 1
         }
         return acc
-      }, requiredAmount)
+      }, requiredAmount * 1)
+
+      console.log('Required Amount For Approval With Total Orders Amount', requiredAmountWithOrders)
       
       console.log('--- Result from Allowance using decimals', allowanceAmount)
       if (allowanceAmount * 1 < requiredAmountWithOrders * 1) {
