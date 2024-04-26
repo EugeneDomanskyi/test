@@ -102,8 +102,8 @@
   }
 
   &.primary {
-    background-color: #7204FF;
-    border-color: #7204FF;
+    background-color: #0052FF;
+    border-color: #0052FF;
 
     &.active:not(:disabled),
     &:hover:not(:disabled) {
@@ -112,7 +112,7 @@
 
     &.outlined {
       background-color: transparent;
-      border-color: #7204FF;
+      border-color: #0052FF;
 
       &.active:not(:disabled),
       &:hover:not(:disabled) {
