@@ -136,7 +136,7 @@ const HomeCommunity = () => {
             <App.Flex direction={['row', 'column']} align={['center', 'flex-start']} fullWidth gap={12}>
               <App.Flex column width={[430, '100%']}>
                 <App.Text size={20} weight={600}>
-                  Never miss <App.Text inline size={20} weight={700} color="#7364FF">an Update</App.Text>
+                  Never miss <App.Text inline size={20} weight={700} color="#7364FF">an update</App.Text>
                 </App.Text>
 
                 <App.Text size={14} weight={500} color="#9B99BD">

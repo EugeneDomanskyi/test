@@ -84,7 +84,14 @@ const Header = () => {
                 ? <SwitchBlockchain />
                 : null
             }
-            <HeaderWallet />
+            {
+              isExchange
+                ? <HeaderWallet />
+                : <Link href="/exchange">
+                    <App.Button primary rounded>Launch app</App.Button>
+                  </Link>
+            }
+            
          </App.Flex>
 
           <div className={cn(styles.mobileMenu, {[styles.show]: mobileMenuShow})}>
