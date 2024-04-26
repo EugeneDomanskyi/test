@@ -3,6 +3,7 @@ import { formatUnits, parseUnits } from 'viem'
 import moment from 'moment'
 
 import { request } from './index'
+import Decimal from 'decimal.js'
 
 export const template = (item) => {
   let status = 'unknown'
@@ -31,7 +32,6 @@ export const template = (item) => {
     ...item,
     id: item.orderId,
     status,
-    itemPrice: item.price / item.quantity,
     time: moment(item.time).format('DD MMM, HH:mm'),
     timeMoment: moment(item.time),
   }
@@ -132,7 +132,7 @@ const get = {
   ], (orders) => {
     return {
       open: orders.filter(order => order.status === 'open'),
-      closed: orders.filter(order => order.status === 'completed' || order.status === 'cancelled')
+      closed: orders.filter(order => order.status === 'completed' || order.status === 'cancelled' || order.status === 'partial')
     }
   }),
   orderbook: createSelector([
@@ -155,7 +155,7 @@ const get = {
           return {
             priceFormatted: row.price_float,
             price: row.price_float,
-            volume: prevVolume,
+            volume: new Decimal(prevVolume).toFixed(),
             quantity: row.quantity_float,
           }
         })

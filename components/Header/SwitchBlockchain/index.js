@@ -5,8 +5,8 @@ import Image from 'next/image'
 import cn from 'classnames'
 
 import Amplitude from '@/libs/amplitude.lib'
+import { wagmiConfig } from '@/libs/Chains.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
-import { wagmiConfig } from '@/config'
 import useApp from '@/myhooks/useApp'
 
 import $app from '@/store/app'
@@ -27,7 +27,7 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
   const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const blockchain = useSelector($app.get.blockchain)
-  const pageBlockchains = useSelector($app.get.pageBlockchains(page))
+  const pageBlockchains = useSelector(({ $app }) => $app.chains)
 
   const [menuShow, setMenuShow] = useState(false)
   const [queryBlockchainChecked, setQueryBlockchainChecked] = useState(false)
@@ -116,12 +116,12 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
       if (wagmiChainId && wagmiChainId != newBlockchain.id) {
         const result = await changeNetwork(newBlockchain.code)
         if (result) {
-          router.replace(`/${page}/${newBlockchain.code}/0x`)
+          router.replace(`/${page}/${newBlockchain.code}` + (isMobile ? '' : '/0x'))
           dispatch($app.set.code(newBlockchain.code))
         }
       } else {
         if (queryBlockchain && queryBlockchain != newBlockchain.code) {
-          router.replace(`/${page}/${newBlockchain.code}/0x`)
+          router.replace(`/${page}/${newBlockchain.code}` + (isMobile ? '' : '/0x'))
         }
         dispatch($app.set.code(newBlockchain.code))
       }

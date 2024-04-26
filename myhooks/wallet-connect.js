@@ -3,7 +3,8 @@ import { useAccount, useWalletClient, usePublicClient } from 'wagmi'
 import { getChains, getChainId, switchChain, getAccount, watchAccount, watchChainId, signMessage, disconnect as wagmiDisconnect } from '@wagmi/core'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 
-import { wagmiConfig, CHAINS } from '@/config'
+import { wagmiConfig } from '@/libs/Chains.lib'
+import { useSelector } from 'react-redux'
 
 class Callbacks {
   constructor() {
@@ -36,6 +37,8 @@ const useWalletConnect = () => {
   const { address, isConnected } = useAccount()
   const { data: walletClient } = useWalletClient()
   const publicClient = usePublicClient()
+
+  const chains = useSelector(({ $app }) => $app.chains)
 
   const [wallet, setWallet] = useState(null)
   const [connection, setConnection] = useState({ loading: true, connected: false })
@@ -115,7 +118,8 @@ const useWalletConnect = () => {
   }
 
   const scanUrl = (address, type = 'tx', chain) => {
-    return `${chain.scanUrl}/${type}/${address}`
+    const url = chain?.scanUrl ?? chain?.blockExplorers?.default?.url
+    return `${url}${type}/${address}`
   }
 
   const sign = async (message = address) => {
@@ -160,14 +164,11 @@ const useWalletConnect = () => {
   }
 
   const getChainByCode = (chainCode) => {
-    const chainId = CHAINS.find(item => item.code == chainCode)?.id
-    const chains = getChains(wagmiConfig)
-    return chains.find(item => item.id == chainId)
+    return chains.find(item => item.code.toLowerCase() == chainCode.toLowerCase())
   }
 
   const getCurrentChain = () => {
     const currentChainId = getChainId(wagmiConfig)
-    const chains = getChains(wagmiConfig)
     return chains.find(item => item.id == currentChainId)
   }
 
