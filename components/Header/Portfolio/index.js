@@ -131,7 +131,7 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
 
                           <App.Flex column gap={6}>
                             <App.Text size={16} weight={700} height={1}>{item.name}</App.Text>
-                            <App.Text size={12} weight={600} height={1} color="#5E5C6B">{item.balance} {item.symbol}</App.Text>
+                            <App.Text size={12} weight={600} height={1} color="#5E5C6B">{item.available} {item.symbol}</App.Text>
                           </App.Flex>
                         </App.Flex>
 
