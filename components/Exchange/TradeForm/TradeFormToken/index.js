@@ -19,6 +19,7 @@ import OrderConfirm from '@/components/Exchange/OrderConfirm'
 import useApp from '@/myhooks/useApp'
 
 import styles from './styles.module.scss'
+import useInterval from '@/myhooks/useInterval'
 
 const trimLeadingZerosBeforeDecimal = number => {
   return number ? number.toString().replace(/^0+(?=\d+(\.\d*)?$)/, '').replace(/^\.(\d*)$/, '0.$1') : 0
@@ -44,6 +45,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
 
   const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector($orders.get.orderbook)
+  const orders = useSelector($orders.get.list)
 
   const [form, setForm] = useState({price: '0', amount: '1', total: '0'})
   const [userBalances, setUserBalances] = useState({base: 0, quote: 0})
@@ -102,13 +104,13 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     if (wasUserBalance) {
       setIsErrorBalance(currentTab == 'buy' && (form.total * 1 > userBalances.quote * 1) || currentTab == 'sell' && (form.amount * 1 > userBalances.base * 1))
     }
-  }, [form.total, form.amount, currentTab, wasUserBalance])
+  }, [form.total, form.amount, currentTab, wasUserBalance, userBalances])
 
   useEffect(() => {
     if (wallet && current?.address && current?.quote) {
       fetchBalance()
     }
-  }, [wallet, current?.address, current?.quote])
+  }, [wallet, blockchain?.id, current?.address, current?.quote, orders.open])
 
   useEffect(() => {
     if (!wallet) {
@@ -119,10 +121,12 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const fetchBalance = async () => {
     const result = await contracts.fetchBalance(wallet, [current.address, current.quote])
     if (result) {
-      formatBalance(result)
+      return formatBalance(result)
     }
-    return contracts.watchBalance(wallet, [current.address, current.quote], formatBalance)
+    return {quote: 0, base: 0}
   }
+
+  useInterval(fetchBalance, 5000)
 
   const formatBalance = (result) => {
     if (result[current.address] && result[current.quote]) {
@@ -130,9 +134,23 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
         ...acc,
         [address === current?.quote ? 'quote' : 'base']: balance,
       }), {quote: 0, base: 0})
-      setUserBalances(balances)
+
+      const finalBalance = orders.open.reduce((acc, order) => {
+        if (order.side === 'buy') {
+          acc.quote -= order.total * 1
+        } else {
+          acc.base -= order.quantity * 1
+        }
+        return acc
+      }, balances)
+
+      setUserBalances(finalBalance)
       setWasUserBalance(true)
+
+      return balances
     }
+
+    return {quote: 0, base: 0}
   }
 
   const handleSetPrice = (inputByUser = true, tab = currentTab) => {
@@ -163,7 +181,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
         setForm(state => ({
           ...state,
           price: value,
-          total: formatNumberWithDecimals(value * state.amount, current.quoteDecimals),
+          total: formatNumberWithDecimals(new Decimal(value * state.amount).toFixed(), current.decimals),
         }))
         return
       case 'amount':
@@ -171,13 +189,13 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
           return {
             ...state,
             amount: value,
-            total: formatNumberWithDecimals(value * state.price, current.quoteDecimals),
+            total: formatNumberWithDecimals(new Decimal(value * state.price).toFixed(), current.decimals),
           }
         })
         return
       case 'total':
         setForm(state => {
-          const amount = formatNumberWithDecimals(value / state.price, current.decimals)
+          const amount = formatNumberWithDecimals(new Decimal(value / state.price).toFixed(), current.decimals)
           return {
             ...state,
             total: value,
@@ -194,7 +212,10 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       return
     }
 
-    if (isErrorBalance) {
+    const newUserBalances = await fetchBalance()
+    const newIsErrorBalance = currentTab == 'buy' && (form.total * 1 > newUserBalances.quote * 1) || currentTab == 'sell' && (form.amount * 1 > newUserBalances.base * 1)
+    setIsErrorBalance(newIsErrorBalance)
+    if (newIsErrorBalance) {
       setWasUserInput(true)
       return
     }
@@ -207,7 +228,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       current: current,
       price: form.price,
       amount: form.amount,
-      total: formatNumberWithDecimals(form.price * form.amount, current.quoteDecimals),
+      total: form.total,
     }
 
     if (version == 'mobile') {
@@ -224,13 +245,13 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       'Side': currentTab.toUpperCase(),
       'Quantity': form.amount,
       'Price': form.price,
-      'Total': formatNumberWithDecimals(form.price * form.amount, current.quoteDecimals),
+      'Total': new Decimal(form.price * form.amount).toFixed(),
       'Network': blockchain.code.toUpperCase(),
     })
   }
 
   const handleTotalBlur = () => {
-    handleChangeForm('price', true)(formatNumberWithDecimals(form.total / form.amount, current.quoteDecimals))
+    handleChangeForm('price', true)(new Decimal(form.total / form.amount).toFixed())
     Amplitude.event('Add Total', {
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
@@ -420,7 +441,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
           current={current}
           price={form.price}
           amount={form.amount}
-          total={numeral(form.amount * form.price).format('0.0[0000]')}
+          total={form.total}
           onClose={handleOrderConfirmClose}
         />
       </App.Dialog>

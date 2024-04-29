@@ -11,8 +11,6 @@ import useWalletConnect from '@/myhooks/wallet-connect'
 
 import App from '@/components/App'
 
-import { CHAINS } from '@/config'
-
 import $app from '@/store/app'
 import $raffle from '@/store/raffle'
 
@@ -35,7 +33,8 @@ const LandingPage = () => {
   const { wallet, connect, getConnectorInfo } = useWalletConnect()
 
   const campaigns = useSelector(({ $raffle }) => $raffle.all)
-  const blockchain = CHAINS.find(item => item.id === 137)
+  const chains = useSelector(({ $app }) => $app.chains)
+  const blockchain = chains.find(item => item.id === 137)
 
   const apollo = useRef()
 

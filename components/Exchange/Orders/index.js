@@ -10,7 +10,6 @@ import Socket from '@/libs/ws.lib'
 import $app from '@/store/app'
 import $orders from '@/store/orders'
 import $alert from '@/store/alert'
-import { formatNumberWithDecimals } from '@/store/portfolio'
 
 import Amplitude from '@/libs/amplitude.lib'
 import useWalletConnect from '@/myhooks/wallet-connect'
@@ -134,7 +133,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
   const handlePressCancel = (order) => async (e) => {
     e.stopPropagation()
     handleDialogOpen('approve')()
-    if (order.status === 'completed' || order.status === 'cancelled') {
+    if (order.status === 'completed' || order.status === 'cancelled' || order.status === 'partial') {
       return
     }
 
@@ -298,7 +297,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                   return (
                     <App.Flex column key={order.id}>
                       <App.Flex column className={styles.orderContainer}>
-                        <App.Flex align="center" className={cn(styles.order, {[styles.disabled]: order.status === 'completed' || order.status === 'cancelled'})}>
+                        <App.Flex align="center" className={cn(styles.order, {[styles.disabled]: order.status === 'completed' || order.status === 'cancelled' || order.status === 'partial'})}>
                           <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
                           <App.Flex column align="center" justify="center" sx={{width: 90, padding: 8}}>
                             {order.image && type === 'nfts' ? (
@@ -316,18 +315,18 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
                           <App.Flex column sx={{width: 60, padding: 8}} align="center" justify="center">
                             <App.Flex column gap={4}>
-                              <App.Text size={12} weight={600} center height={1}>{ formatNumberWithDecimals(order.quantityFilled, order.baseDecimals) }</App.Text>
+                              <App.Text size={12} weight={600} center height={1}>{ order.quantityFilled }</App.Text>
                               <div style={{width: '100%', minWidth: 20, height: 1, background: '#B9B8C5'}} />
-                              <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ formatNumberWithDecimals(order.quantity, order.baseDecimals) }</App.Text>
+                              <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ order.quantity }</App.Text>
                             </App.Flex>
                           </App.Flex>
 
                           <App.Flex flex={1} column sx={{padding: 8}} align="center" justify="center">
-                            <App.Text size={12} weight={600} center color="#B9B8C5" height={1}>{ formatNumberWithDecimals(order.itemPrice, order.quoteDecimals) }</App.Text>
+                            <App.Text size={12} weight={600} center color="#B9B8C5" height={1}>{ order.price }</App.Text>
                           </App.Flex>
 
                           <App.Flex flex={1} column align="center" justify="center" sx={{padding: 8, position: 'relative', height: '100%', overflow: 'hidden'}}>
-                            <App.Text size={12} weight={600}>{ formatNumberWithDecimals(order.price, order.quoteDecimals) }</App.Text>
+                            <App.Text size={12} weight={600}>{ order.total }</App.Text>
                           </App.Flex>
                         </App.Flex>
 
@@ -335,7 +334,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                           <App.Text color="rgba(185, 184, 197, 1)" size={10} weight={500} sx={{marginRight: 12}} height={1}>{ order.time }</App.Text>
                           {order.status !== 'open' ? (
                             <App.Text color="#B9B8C5" size={10} weight={600} uppercase height={1}>
-                              {(order.status === 'completed' || order.status === 'cancelled') ? order.status : 'Cancel order'}
+                              {(order.status === 'completed' || order.status === 'cancelled' || order.status === 'partial') ? order.status : 'Cancel order'}
                             </App.Text>
                           ) : null}
                           
@@ -411,21 +410,21 @@ const Orders = ({global, type, version, onClickOrder}) => {
                                 <App.Flex width={60}>
                                   <App.Text size={12} uppercase height={1} color="#5E5C6B">Amount:</App.Text>
                                 </App.Flex>
-                                <App.Text size={14} weight={600} height={1}>{ formatNumberWithDecimals(order.quantityFilled, order.baseDecimals) } <App.Text inline size={12} weight={600} height={1} color="#5E5C6B">/ { formatNumberWithDecimals(order.quantity, order.baseDecimals) }</App.Text></App.Text>
+                                <App.Text size={14} weight={600} height={1}>{ order.quantityFilled } <App.Text inline size={12} weight={600} height={1} color="#5E5C6B">/ { order.quantity }</App.Text></App.Text>
                               </App.Flex>
 
                               <App.Flex row align="center">
                                 <App.Flex width={60}>
                                   <App.Text size={12} uppercase height={1} color="#5E5C6B">Price:</App.Text>
                                 </App.Flex>
-                                <App.Text size={14} weight={600} height={1}>{ formatNumberWithDecimals(order.itemPrice, order.quoteDecimals) }</App.Text>
+                                <App.Text size={14} weight={600} height={1}>{ order.price }</App.Text>
                               </App.Flex>
 
                               <App.Flex row align="center">
                                 <App.Flex width={60}>
                                   <App.Text size={12} uppercase height={1} color="#5E5C6B">Total:</App.Text>
                                 </App.Flex>
-                                <App.Text size={14} weight={600} height={1} color="#5E5C6B">{ formatNumberWithDecimals(order.price, order.quoteDecimals) }</App.Text>
+                                <App.Text size={14} weight={600} height={1} color="#5E5C6B">{ order.total }</App.Text>
                               </App.Flex>
                             </App.Flex>
 

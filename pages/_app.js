@@ -2,16 +2,15 @@ import { useRef, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { useRouter } from 'next/router'
 import { userAgentFromString } from 'next/server'
-import nookies from 'nookies'
+import nookies, { parseCookies } from 'nookies'
 import merge from 'lodash.merge'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
 import { WagmiProvider } from 'wagmi'
-import { wagmiConfig } from '@/config'
 
+import Chains, { wagmiConfig } from '@/libs/Chains.lib'
 import store from '@/store'
-import $app from '@/store/app'
 
 import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
@@ -46,12 +45,21 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
   const router = useRouter()
   const storeRef = useRef(store(initialData)).current
 
-  const currentChain = initialData.chains.find(item => item.code == initialData.blockchain)
+  let currentChain = initialData.chains.find(item => item.code == initialData.blockchain)
 
   useEffect(() => {
     if (router?.query?.vid) {
       localStorage.setItem('ms_vid', router.query.vid)
     }
+
+    (async () => {
+      if (!currentChain) {
+        const code = parseCookies(null)?.blockchain
+        if (code) {
+          currentChain = await Chains.chainByCode(code)
+        }
+      }
+    })()
   }, [])
 
   return (
@@ -72,8 +80,6 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
 }
 
 MyApp.getInitialProps = async ({ ctx }) => {
-  const cookies = nookies.get(ctx)
-
   let ssRoute = ''
   let isMobile = null
   let isApp = null
@@ -82,6 +88,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
   let devMode = null
   let appTheme = null
   let chains = []
+  let blockchain = null
 
   if (ctx?.req) {
     ssRoute = ctx.req.url
@@ -95,35 +102,25 @@ MyApp.getInitialProps = async ({ ctx }) => {
     devMode = ctx.req.headers['x-tegro-dev-mode'] == 'true' ? true : null
     appTheme = ctx.req.headers['x-tegro-theme'] == 'null' ? null : ctx.req.headers['x-tegro-theme']
 
-    const result = await $app.api.chains()
-    if (result?.success) {
-      chains = result.data.map(item => {
-        console.log(item)
-        return {
-          id: item.id,
-          token: {
-            symbol: item.default_quote_token_symbol,
-            address: item.default_quote_token_contract_address.toLowerCase(),
-            image: item.logo || (item.default_quote_token_symbol == 'USDT' ? '/images/icon-usdt.png' : '') || (item.default_quote_token_symbol == 'USDC' ? '/images/icon-usdc.png' : '') || `https://storage.googleapis.com/token-assets/assets/${item?.name}/${item.default_quote_token_contract_address.toLowerCase()}.png`
-          },
-          contract: {
-            exchange: item.exchange_contract.toLowerCase(),
-            settlement: item.settlement_contract.toLowerCase(),
-          },
-          min_order_value: item.min_order_value,
-          fee: item.fee * 100,
-          native_token_price: item.native_token_price,
-          gas_per_trade: item.gas_per_trade,
-          gas_price: item.gas_price,
-          default_gas_limit: item.default_gas_limit,
-        }
-      })
+    const domainName = ctx.req ? ctx.req.headers.host : window.location.hostname
+    chains = await Chains.list(domainName)
+
+    const cookies = nookies.get(ctx, 'blockchain')
+    blockchain = cookies.blockchain
+    if (!blockchain) {
+      blockchain = chains[0]?.code
+      nookies.set(ctx, 'blockchain', blockchain, {path: '/'})
+    } else {
+      if (!chains.some(item => item.code == blockchain)) {
+        blockchain = chains[0]?.code
+        nookies.set(ctx, 'blockchain', blockchain, {path: '/'})
+      }
     }
   }
   
   return {
     initialData: {
-      blockchain: cookies.blockchain,
+      blockchain,
       isMobile,
       isApp,
       platform,

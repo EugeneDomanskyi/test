@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 
+import useWalletConnect from '@/myhooks/wallet-connect'
 import useApp from '@/myhooks/useApp'
 import Amplitude from '@/libs/amplitude.lib'
 
@@ -17,6 +18,9 @@ const Analytics = dynamic(import('@/components/Analytics'), {ssr: false})
 
 const Wrapper = ({ children }) => {
   const dispatch = useDispatch()
+  const blockchain = useSelector($app.get.blockchain)
+
+  const { changeNetwork } = useWalletConnect()
 
   const router = useRouter()
   const isCampaign = router.asPath?.includes('/campaign')
@@ -29,6 +33,7 @@ const Wrapper = ({ children }) => {
 
   useEffect(() => {
     window.addEventListener('resize', handleWindowResize)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
 
     if (window.self !== window.top) {
       setIsInIframe(true)
@@ -36,8 +41,15 @@ const Wrapper = ({ children }) => {
 
     return () => {
       window.removeEventListener('resize', handleWindowResize)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [])
+
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === 'visible') {
+      changeNetwork(blockchain.code)
+    }
+  }
 
   const getWindowSize = () => {
     if (typeof window !== 'undefined') {

@@ -4,7 +4,6 @@ import { createConfig, http, connect } from '@wagmi/core'
 import { walletConnect } from '@wagmi/connectors'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
-import { wagmiConfig, CHAINS } from '@/config'
 
 import $app from '@/store/app'
 
@@ -82,18 +81,7 @@ const useApp = () => {
 
       appLog(`Created Config`)
 
-      const newConfig = createConfig({
-        chains: CHAINS,
-        transports: CHAINS.reduce((acc, chain) => {
-          return {
-            ...acc,
-            [chain.id]: http(),
-          }
-        }, {}),
-        connectors: [
-          customConnector,
-        ],
-      })
+      const newConfig = null
       
       // customConnector().getProvider().on('message', ({type, data}) => {
       //   if (type == 'display_uri') {

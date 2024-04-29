@@ -41,7 +41,7 @@ const Sidebar = ({ version, isApp }) => {
     // }
 
     fetchTokensList()
-  }, [blockchain.code, sort, pages.current, urlBlockchain])
+  }, [blockchain?.code, sort, pages.current, urlBlockchain])
 
   // useEffect(() => {
   //   if (!loading && current?.id && current.blockchain === urlBlockchain) {
