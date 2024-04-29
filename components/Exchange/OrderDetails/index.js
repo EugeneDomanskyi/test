@@ -4,7 +4,7 @@ import Image from 'next/image'
 import moment from 'moment'
 import cn from 'classnames'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import WagmiHelper from '@/libs/WagmiHelper'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
@@ -14,8 +14,6 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const OrderDetails = ({order}) => {
-  const { scanUrl } = useWalletConnect()
-
   const blockchain = useSelector($app.get.blockchain)
   const isApp = useSelector(({ $app }) => $app.isApp)
 
@@ -125,7 +123,7 @@ const OrderDetails = ({order}) => {
                     <App.Flex row width={100} align="center" gap={10} justify="flex-end" flex={1}>
                       <App.Text size={12} weight={600} height={1} color="#B9B8C5">{item.price} {order.quoteCurrency}</App.Text>
                       {item.txHash && !isApp ? (
-                        <a href={scanUrl(item.txHash, 'tx', blockchain)} target="_blank" rel="noreferrer" style={{ lineHeight: 0 }}>
+                        <a href={WagmiHelper.generateScanUrl(item.txHash)} target="_blank" rel="noreferrer" style={{ lineHeight: 0 }}>
                           <App.Icon icon="external-link" />
                         </a>
                       ) : null}

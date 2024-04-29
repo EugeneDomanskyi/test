@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { createConfig, http, connect } from '@wagmi/core'
 import { walletConnect } from '@wagmi/connectors'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import useWagmiHelper from './useWagmiHelper'
 
 import $app from '@/store/app'
 
 const useApp = () => {
-  const { wallet, disconnect } = useWalletConnect()
+  const { wallet } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -60,7 +59,6 @@ const useApp = () => {
     appLog(`${wallet} --- ${currentWallet}`)
     if (wallet && wallet != currentWallet) {
       appLog(`Disconnect ${wallet}`)
-      await disconnect()
       return
     }
 
@@ -87,20 +85,19 @@ const useApp = () => {
       //   }
       // })
 
-      const connected = await connect(newConfig, {
-        connector: customConnector,
-        chainId: blockchain.id,
-      }).catch(e => {
-        appLog(e)
-        disconnect()
-      })
+      // const connected = await connect(newConfig, {
+      //   connector: customConnector,
+      //   chainId: blockchain.id,
+      // }).catch(e => {
+      //   appLog(e)
+      // })
 
-      if (!connected) {
-        return
-      }
+      // if (!connected) {
+      //   return
+      // }
 
-      setAppWallet(connected.accounts[0].toLowerCase())
-      appLog(`Connected to wallet ${connected.accounts[0]}`)
+      // setAppWallet(connected.accounts[0].toLowerCase())
+      // appLog(`Connected to wallet ${connected.accounts[0]}`)
     } else {
       appLog(`Do not need to Connect: ${wallet}`)
     }
