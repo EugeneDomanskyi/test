@@ -19,23 +19,11 @@ const HomeTop = () => {
             <App.Button href="/exchange" outlined rounded variant="success">
               <App.Flex row center gap={8}>
                 <div className={styles.circle} />
-                <App.Text size={16} weight={500} color="#1cbc7c">Testnet Live</App.Text>
+                <App.Text size={16} weight={500} color="#1cbc7c">Beta Live</App.Text>
               </App.Flex>
             </App.Button>
-
-            {/* <App.Text center size={16} weight={400} color="rgba(255, 255, 255, .6)">
-              Trade for FREE & Earn POINTS!
-            </App.Text> */}
           </App.Flex>
         </App.Flex>
-
-        {/* {tournament?.alias ? (
-          <Link href={`/tournament/${tournament.alias}`}>
-            <App.ButtonGradient>Earn Points</App.ButtonGradient>
-          </Link>
-        ) : (
-          <App.ButtonGradient>{loading ? 'Loading...' : 'There are no active tournaments'}</App.ButtonGradient>
-        )} */}
       </App.Flex>
     </App.Container>
   )
