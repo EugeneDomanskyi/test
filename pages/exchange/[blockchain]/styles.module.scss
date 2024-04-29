@@ -6,11 +6,11 @@
   max-height: 920px;
 
   &.appContainer {
-    padding-top: 0;
+    background-color: #05050b;
   }
 
   @media (max-width: 1100px) {
-    height: auto;
+    height: 100%;
   }
 
   @media (max-width: 768px) {

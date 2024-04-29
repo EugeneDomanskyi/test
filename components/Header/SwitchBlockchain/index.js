@@ -96,6 +96,8 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
         dispatch($token.set.clear())
       }
 
+      appPost({chain: newBlockchain.code})
+
       setMenuShow(false)
 
       if (onMobileMenuClose) {
@@ -115,11 +117,18 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
   }
 
   return (
-    <App.Flex row align="center" justify={justify} gap={8} sx={{ position: 'relative' }} id="blockchain" onMouseEnter={() => setMenuShow(true)} onMouseLeave={() => setMenuShow(false)}>
-      <App.Flex row center gap={8} className={cn(styles.badge, {[styles.active]: menuShow})} sx={{ cursor: 'pointer' }} onClick={isMobile ? handleMenuToggle : null}>
-        <Image src={`/images/icon-${blockchain?.code}.png`} width={24} height={24} alt="" />
-        {! isMobile ? <App.Text nowrap size={16} className={styles.badgeTitle}>{blockchain?.name}</App.Text> : null}
-      </App.Flex>
+    <App.Flex row align="center" justify={justify} gap={8} sx={{ position: 'relative' }} id="blockchain" onMouseEnter={() => setMenuShow(true)} onMouseLeave={() => setMenuShow(false)} className={isApp ? styles.isApp : null}>
+      {
+        isApp
+          ? <App.Flex row center gap={8} className={cn(styles.appBadge, {[styles.active]: menuShow})} onClick={isMobile ? handleMenuToggle : null}>
+              <App.Text nowrap size={14} weight={600} className={styles.badgeTitle}>{blockchain.name}</App.Text>
+              <App.Icon icon="chevron-down" />
+            </App.Flex>
+          : <App.Flex row center gap={8} className={cn(styles.badge, {[styles.active]: menuShow})} sx={{ cursor: 'pointer' }} onClick={isMobile ? handleMenuToggle : null}>
+              <Image src={`/images/icon-${blockchain.code}.png`} width={24} height={24} alt="" />
+              {! isMobile ? <App.Text nowrap size={16} className={styles.badgeTitle}>{blockchain.name}</App.Text> : null}
+            </App.Flex>
+      }
 
       <div className={cn(styles.menu, {[styles.active]: menuShow})}>
         <App.Flex column>

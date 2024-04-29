@@ -165,7 +165,7 @@ const Exchange = () => {
       ) : (
         <>
           {!queryTokenId || queryTokenId == '0x' ? (
-            <Sidebar version="mobile" />
+            <Sidebar version="mobile" isApp={isApp} />
           ) : (
             <Mobile ref={mobileRef} />
           )}

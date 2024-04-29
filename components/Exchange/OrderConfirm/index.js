@@ -106,7 +106,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         amount: amount * 1,
       })
 
-      if (typedData?.error) {
+      if (typedData?.error || ! typedData) {
         return handleError('Order not created', 'Please try again to place your order.')
       }
 

@@ -11,7 +11,6 @@ const useApp = () => {
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
-  const devMode = useSelector(({ $app }) => $app.devMode)
   const isApp = useSelector(({ $app }) => $app.isApp)
   const platform = useSelector(({ $app }) => $app.platform)
   const initWallet = useSelector(({ $app }) => $app.initWallet)
@@ -32,6 +31,10 @@ const useApp = () => {
       if (data?.walletAddress && data.walletAddress.toLowerCase() != wallet) {
         setAppWallet(data.walletAddress.toLowerCase())
         appConnect(null, data.walletAddress.toLowerCase())
+      }
+
+      if (data?.walletTheme) {
+        dispatch($app.set.appTheme(data.walletTheme))
       }
 
       if (data?.clearLocalStorage) {
