@@ -143,24 +143,29 @@ const get = {
       buy: structuredClone(orderbook.buy),
       sell: structuredClone(orderbook.sell),
     }
-    sorted.buy.sort((a, b) => b.price_float * 1 - a.price_float * 1)
-    sorted.sell.sort((a, b) => a.price_float * 1 - b.price_float * 1)
 
-    return Object.entries(sorted).reduce((acc, [side, values]) => {
-      let prevVolume = 0
-      return {
-        ...acc,
-        [side]: values.filter(item => item.quantity_float * 1).slice(0, 10).map((row) => {
-          prevVolume += row.quantity_float * 1
-          return {
-            priceFormatted: row.price_float,
-            price: row.price_float,
-            volume: new Decimal(prevVolume).toFixed(),
-            quantity: row.quantity_float,
-          }
-        })
-      }
-    }, {})
+    if (sorted?.buy && sorted?.sell) {
+      sorted.buy.sort((a, b) => b.price_float * 1 - a.price_float * 1)
+      sorted.sell.sort((a, b) => a.price_float * 1 - b.price_float * 1)
+
+      return Object.entries(sorted).reduce((acc, [side, values]) => {
+        let prevVolume = 0
+        return {
+          ...acc,
+          [side]: values.filter(item => item.quantity_float * 1).slice(0, 10).map((row) => {
+            prevVolume += row.quantity_float * 1
+            return {
+              priceFormatted: row.price_float,
+              price: row.price_float,
+              volume: new Decimal(prevVolume).toFixed(),
+              quantity: row.quantity_float,
+            }
+          })
+        }
+      }, {})
+    }
+
+    return {buy: [], sell: []}
   }),
 }
 
