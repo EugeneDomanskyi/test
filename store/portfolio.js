@@ -38,7 +38,7 @@ export const portfolioSlice = createSlice({
         symbol: native?.symbol,
       }
 
-      state.list = payload.data.filter(item => item.price > 0 && !['native'].includes(item.type) || item.balance > 1 && ['quote'].includes(item.type)).map(item => {
+      state.list = payload.data.filter(item => !['native'].includes(item.type)).map(item => {
         const usd = Number(item.type === 'quote' ? item.balance : (item.price * item.balance))
         const usdFormatted = formatNumberWithDecimals(usd, 6)
         return {
