@@ -4,8 +4,9 @@ import { useRouter } from 'next/router'
 import Image from 'next/image'
 import cn from 'classnames'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import WagmiHelper from '@/libs/WagmiHelper'
 import Amplitude from '@/libs/amplitude.lib'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
@@ -20,7 +21,7 @@ const HeaderWallet = () => {
   const router = useRouter()
   const isEarn = router.pathname.includes('/earn')
 
-  const { wallet, connect, disconnect, blockchain: chain, getConnectorInfo } = useWalletConnect()
+  const { wallet, connect } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -45,7 +46,7 @@ const HeaderWallet = () => {
 
       getPortfolio(!isEarn)
     }
-  }, [wallet, blockchain?.id, chain?.id, isEarn, raffleLoading])
+  }, [wallet, blockchain?.id, isEarn, raffleLoading])
 
   useEffect(() => {
     if (updatePortfolio) {
@@ -76,15 +77,15 @@ const HeaderWallet = () => {
       if (result) {
         Amplitude.event('Wallet Connect Success', {
           'Source': Amplitude.event(),
-          'Type': getConnectorInfo().name,
+          'Type': WagmiHelper.getConnectorInfo().name,
         })
       }
     }
   }
 
   const handleDisconnect = async () => {
-    const connectorName = getConnectorInfo().name
-    disconnect()
+    const connectorName = WagmiHelper.getConnectorInfo().name
+    WagmiHelper.disconnect()
     handleDisconnectDialogToggle(false)()
     handlePortfolioToggle(false)
 
@@ -147,7 +148,7 @@ const HeaderWallet = () => {
                   <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
                 </App.Flex>
               ) : (
-                <Image src={getConnectorInfo().logo} width={24} height={24} alt="" />
+                <Image src={WagmiHelper.getConnectorInfo().logo} width={24} height={24} alt="" />
               )}
               
               {balanceLoading ? (
@@ -180,7 +181,7 @@ const HeaderWallet = () => {
         </App.Flex>
       )}
 
-      <Portfolio open={isPortfolioVisible} address={shorterAddress(5)} logo={getConnectorInfo().logo} onClose={handlePortfolioToggle} onDisconnect={handleDisconnectDialogToggle(true)} />
+      <Portfolio open={isPortfolioVisible} address={shorterAddress(5)} logo={WagmiHelper.getConnectorInfo().logo} onClose={handlePortfolioToggle} onDisconnect={handleDisconnectDialogToggle(true)} />
 
       <App.Dialog open={isDisconnectDialogOpen} width={420} onClose={handleDisconnectDialogToggle(false)} title="Disconnect Wallet">
         <App.Flex column>

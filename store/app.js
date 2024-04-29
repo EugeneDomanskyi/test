@@ -41,7 +41,7 @@ export const appSlice = createSlice({
 
     code: (state, { payload }) => {
       state.code = payload
-      setCookie(null, 'blockchain', payload, {path: '/'})
+      setCookie(null, 'currentChainCode', payload, {path: '/'})
     },
 
     socketConnected: (state, { payload }) => {

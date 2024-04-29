@@ -1,7 +1,8 @@
 import { useSelector } from 'react-redux'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
 import useApp from '@/myhooks/useApp'
+import WagmiHelper from '@/libs/WagmiHelper'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $app from '@/store/app'
 
@@ -11,12 +12,12 @@ import styles from './styles.module.scss'
 
 const DevModal = () => {
   const { appPost } = useApp()
-  const { wallet, getConnectorInfo, disconnect } = useWalletConnect()
+  const { wallet } = useWagmiHelper()
 
   const blockchain = useSelector($app.get.blockchain)
 
   const handleDisonnect = () => {
-    disconnect()
+    WagmiHelper.disconnect()
   }
 
   const handleReload = () => {
@@ -41,7 +42,7 @@ const DevModal = () => {
 
       <App.Flex column>
         <App.Text size={12} color="#B9B8C5">Connector</App.Text>
-        <App.Text>{(getConnectorInfo().name != '' ? getConnectorInfo().name : null) ?? 'Disconnected'}</App.Text>
+        <App.Text>{WagmiHelper.getConnectorInfo().name}</App.Text>
       </App.Flex>
 
       <App.Button primary outlined onClick={handleDisonnect}>{wallet ? 'Reconnect Wallet' : 'Connecting...'}</App.Button>

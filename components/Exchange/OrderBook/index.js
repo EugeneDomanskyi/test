@@ -34,12 +34,10 @@ const OrderBook = ({ version, onClickOrder }) => {
   }, [current?.id])
 
   useEffect(() => {
-    if (current?.id && blockchain?.id) {
-      if (current.blockchain == blockchain.code) {
-        fetchOrderbook()
-      }
+    if (current?.id) {
+      fetchOrderbook()
     }
-  }, [current?.id, blockchain?.id])
+  }, [current?.id])
 
   const fetchOrderbook = async () => {
     const result = await $orders.api.orderbook({ market_id: current.marketId, chain_id: blockchain.id })
@@ -52,7 +50,6 @@ const OrderBook = ({ version, onClickOrder }) => {
   }
 
   const handleClick = (order, volume) => () => {
-    // onClickOrder({ ...order, price: order.priceFormatted, quantity: toLowerFixed(volume) })
     onClickOrder(order)
   }
 

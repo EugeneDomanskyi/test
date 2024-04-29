@@ -46,8 +46,10 @@ export const portfolioSlice = createSlice({
           name: item.name,
           symbol: item.symbol,
           image: item.image || (item.symbol === 'USDT' ? '/images/icon-usdt.png' : null) || (item.symbol === 'USDC' ? '/images/icon-usdc.png' : null) || (item.symbol === 'WETH' ? 'https://tegro.com/images/0x4200000000000000000000000000000000000006.png' : null) || `https://storage.googleapis.com/token-assets/assets/${payload?.blockchain?.code}/${item.address.toLowerCase()}.png`,
-          balance: formatNumberWithDecimals(Number(item.balance), item.decimal),
-          price: formatNumberWithDecimals(Number(item.price || (item.type === 'quote' ? item.balance : 0)), 6),
+          balance: item.balance,
+          placed: item.placed_amount,
+          available: item.balance - item.placed_amount,
+          price: (item.price || (item.type === 'quote' ? item.balance : 0)),
           usd,
           usdFormatted,
           ticker: {
