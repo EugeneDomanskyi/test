@@ -107,7 +107,6 @@ const Orders = ({global, type, version, onClickOrder}) => {
           ...acc,
           [o.orderId]: 'cancelled',
         }), {})
-        console.log(updatedOrders)
         dispatch($orders.set.updateOrderStatus(updatedOrders))
         dispatch($alert.set.success({ title: 'Orders cancelled', text: `You have cancelled ${orders.open.length} order(s) successfully.` }))
       }
@@ -138,12 +137,12 @@ const Orders = ({global, type, version, onClickOrder}) => {
     if (order.status === 'completed' || order.status === 'cancelled' || order.status === 'partial') {
       return
     }
-    
+
     const eventPost = {
       'Base Currency': order.baseCurrency,
       'Quote Currency': order.quoteCurrency,
       'Side': order.side.toUpperCase(),
-      'Quantity': order.quantity,
+      'Quantity': order.quantity - order.quantityFilled,
       'Price': order.itemPrice,
       'Total': order.price,
       'Network': blockchain.code.toUpperCase(),
@@ -156,12 +155,12 @@ const Orders = ({global, type, version, onClickOrder}) => {
       if (result) {
         Amplitude.event('Cancel Order Success', eventPost)
         dispatch($orders.set.updateOrderStatus({[order.orderId]: 'cancelled'}))
-        dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity} ${order.baseCurrency} has been cancelled successfully.` }))
+        dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency} has been cancelled successfully.` }))
       } else {
-        dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity} ${order.baseCurrency}.` }))
+        dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.` }))
       }
     } else {
-      dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity} ${order.baseCurrency}.` }))
+      dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.` }))
     }
     handleDialogClose('approve')()
   }
