@@ -12,6 +12,7 @@ import { formatNumberWithDecimals } from '@/store/portfolio'
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
+import WagmiHelper from '@/libs/WagmiHelper'
 
 const Info = () => {
   const router = useRouter()
@@ -34,8 +35,7 @@ const Info = () => {
   const [image, setImage] = useState()
   const [emptyCurrent, setEmptyCurrent] = useState(false)
 
-  const scanLink = `${blockchain?.scanUrl}/address/${current.id}`
-  const websiteLink = `https://tegro.com/${blockchain?.code}/${current.id}`
+  const scanLink = WagmiHelper.generateScanUrl(current.id, 'address')
 
   useEffect(() => {
     if (!isAddress && blockchain?.code === urlBlockchain && list.length && !isMobile && !loading) {

@@ -1,7 +1,8 @@
 import { userAgentFromString } from 'next/server'
-import nookies from 'nookies'
 
-import Chains from '@/libs/Chains.lib'
+import WagmiHelper from '@/libs/WagmiHelper'
+
+import $token from '@/store/token'
 
 const Exchange = () => {
   return (
@@ -10,26 +11,14 @@ const Exchange = () => {
 }
 
 export async function getServerSideProps(ctx) {
-  const cookies = nookies.get(ctx, 'blockchain')
-  let blockchain = cookies.blockchain
-  const domainName = ctx.req ? ctx.req.headers.host : window.location.hostname
-  const chains = await Chains.list(domainName)
-  if (!blockchain) {
-    blockchain = chains[0]?.code
-    nookies.set(ctx, 'blockchain', blockchain, {path: '/'})
-  } else {
-    if (!chains.some(item => item.code == blockchain)) {
-      blockchain = chains[0]?.code
-      nookies.set(ctx, 'blockchain', blockchain, {path: '/'})
-    }
-  }
-
+  const chainCode = WagmiHelper.getCurrentChainCode(ctx)
+  
   const { device } = userAgentFromString(ctx.req.headers['user-agent'])
   const isMobile = device.type === 'mobile'
 
   return {
     redirect: {
-      destination: `/exchange/${blockchain}` + (isMobile ? '' : '/0x'),
+      destination: `/exchange/${chainCode}` + (isMobile ? '' : `/0x`),
       permanent: false,
     },
   }

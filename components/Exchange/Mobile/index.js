@@ -8,7 +8,7 @@ import $app from '@/store/app'
 import $token from '@/store/token'
 import $orders from '@/store/orders'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 import Socket from '@/libs/ws.lib'
 
 import App from '@/components/App'
@@ -39,7 +39,7 @@ const Mobile = forwardRef((_, ref) => {
   const address = queryAddress ? queryAddress?.toLowerCase() : ''
   const queryBlockchainCode = router.query.blockchain
 
-  const { wallet } = useWalletConnect()
+  const { wallet } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)

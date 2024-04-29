@@ -1,25 +1,23 @@
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
-import { useSelector } from 'react-redux'
-import numeral from 'numeral'
+import { useDispatch, useSelector } from 'react-redux'
+import { formatUnits } from 'viem'
 import Decimal from 'decimal.js'
 import cn from 'classnames'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
+import $alert from '@/store/alert'
 import { formatNumberWithDecimals } from '@/store/portfolio'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import WagmiHelper from '@/libs/WagmiHelper'
 import Amplitude from '@/libs/amplitude.lib'
-import Contracts from '@/libs/contracts.lib'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeForm/TradeInput'
 import OrderConfirm from '@/components/Exchange/OrderConfirm'
 
-import useApp from '@/myhooks/useApp'
-
 import styles from './styles.module.scss'
-import useInterval from '@/myhooks/useInterval'
 
 const trimLeadingZerosBeforeDecimal = number => {
   return number ? number.toString().replace(/^0+(?=\d+(\.\d*)?$)/, '').replace(/^\.(\d*)$/, '0.$1') : 0
@@ -40,12 +38,13 @@ const checkPrice = (price, tab, marketPrice) => {
 }
 
 const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onSubmit}, ref) => {
-  const { wallet, changeNetwork } = useWalletConnect()
-  const { appLog } = useApp()
+  const { wallet, connect } = useWagmiHelper()
 
+  const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector($orders.get.orderbook)
   const orders = useSelector($orders.get.list)
+  const portfolio = useSelector(({ $portfolio }) => $portfolio.list)
 
   const [form, setForm] = useState({price: '0', amount: '1', total: '0'})
   const [userBalances, setUserBalances] = useState({base: 0, quote: 0})
@@ -58,8 +57,6 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const isDisabled = !(form.amount*1) || !(form.price*1) || !(form.total*1)
 
   const loadingRef = useRef(false)
-
-  const contracts = new Contracts()
 
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
@@ -101,57 +98,19 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   }, [prevProps])
 
   useEffect(() => {
-    if (wasUserBalance) {
-      setIsErrorBalance(currentTab == 'buy' && (form.total * 1 > userBalances.quote * 1) || currentTab == 'sell' && (form.amount * 1 > userBalances.base * 1))
-    }
-  }, [form.total, form.amount, currentTab, wasUserBalance, userBalances])
-
-  useEffect(() => {
-    if (wallet && current?.address && current?.quote) {
-      fetchBalance()
-    }
-  }, [wallet, blockchain?.id, current?.address, current?.quote, orders.open])
+    setIsErrorBalance(currentTab == 'buy' && (form.total * 1 > userBalances.quote * 1) || currentTab == 'sell' && (form.amount * 1 > userBalances.base * 1))
+  }, [form.total, form.amount, currentTab, userBalances])
 
   useEffect(() => {
     if (!wallet) {
       setUserBalances({base: 0, quote: 0})
+    } else {
+      setUserBalances({
+        base: portfolio.find(item => item.address == current.address)?.available ?? 0,
+        quote: portfolio.find(item => item.address == current.quote)?.available ?? 0,
+      })
     }
-  }, [wallet])
-
-  const fetchBalance = async () => {
-    const result = await contracts.fetchBalance(wallet, [current.address, current.quote])
-    if (result) {
-      return formatBalance(result)
-    }
-    return {quote: 0, base: 0}
-  }
-
-  useInterval(fetchBalance, 5000)
-
-  const formatBalance = (result) => {
-    if (result[current.address] && result[current.quote]) {
-      const balances = Object.entries(result).reduce((acc, [address, balance]) => ({
-        ...acc,
-        [address === current?.quote ? 'quote' : 'base']: balance,
-      }), {quote: 0, base: 0})
-
-      const finalBalance = orders.open.reduce((acc, order) => {
-        if (order.side === 'buy') {
-          acc.quote -= order.total * 1
-        } else {
-          acc.base -= order.quantity * 1
-        }
-        return acc
-      }, balances)
-
-      setUserBalances(finalBalance)
-      setWasUserBalance(true)
-
-      return balances
-    }
-
-    return {quote: 0, base: 0}
-  }
+  }, [wallet, portfolio, current])
 
   const handleSetPrice = (inputByUser = true, tab = currentTab) => {
     const invertedtab = tab == 'buy' ? 'sell' : 'buy'
@@ -207,17 +166,30 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   }
 
   const handleSubmit = async () => {
-    const network = await changeNetwork(blockchain.code)
+    const wallet = await connect()
+    if (!wallet) {
+      return
+    }
+console.log(wallet)
+    const network = await WagmiHelper.changeChain(blockchain.code)
     if (!network) {
       return
     }
 
-    const newUserBalances = await fetchBalance()
-    const newIsErrorBalance = currentTab == 'buy' && (form.total * 1 > newUserBalances.quote * 1) || currentTab == 'sell' && (form.amount * 1 > newUserBalances.base * 1)
-    setIsErrorBalance(newIsErrorBalance)
-    if (newIsErrorBalance) {
+    if (isErrorBalance) {
       setWasUserInput(true)
       return
+    }
+
+    if (blockchain?.info?.min_order_value) {
+      const minTotal = formatUnits(blockchain.info.min_order_value, current.quoteDecimals)
+      if (minTotal > form.total) {
+        dispatch($alert.set.error({
+          title: 'Order Error',
+          text: `The minimum order value is ${minTotal} ${current.quoteSymbol}.`,
+        }))
+        return
+      }
     }
     
     loadingRef.current = true
@@ -304,7 +276,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
           </App.Flex>
 
           <App.Flex sx={{ paddingLeft: 14 }}>
-            <App.Text size={10} color="#b9b8c5">Fee: {blockchain.info.fee}%</App.Text>
+            <App.Text size={10} color="#b9b8c5">Fee: {blockchain?.info?.fee ?? 0}%</App.Text>
           </App.Flex>
         </App.Flex>
 
