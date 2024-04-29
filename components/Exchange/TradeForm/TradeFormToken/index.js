@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { formatUnits } from 'viem'
 import Decimal from 'decimal.js'
 import cn from 'classnames'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
+import $alert from '@/store/alert'
 import { formatNumberWithDecimals } from '@/store/portfolio'
 
 import WagmiHelper from '@/libs/WagmiHelper'
@@ -38,6 +40,7 @@ const checkPrice = (price, tab, marketPrice) => {
 const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onSubmit}, ref) => {
   const { wallet } = useWagmiHelper()
 
+  const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector($orders.get.orderbook)
   const orders = useSelector($orders.get.list)
@@ -173,7 +176,16 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       return
     }
 
-    console.log(blockchain)
+    if (blockchain?.info?.min_order_value) {
+      const minTotal = formatUnits(blockchain.info.min_order_value, current.quoteDecimals)
+      if (minTotal > form.total) {
+        dispatch($alert.set.error({
+          title: 'Order Error',
+          text: `The minimum order value is ${minTotal} ${current.quoteSymbol}.`,
+        }))
+        return
+      }
+    }
     
     loadingRef.current = true
 

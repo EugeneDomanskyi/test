@@ -112,7 +112,6 @@ class WagmiHelper {
 
   createWagmiConfig = (chains: Array<any>) => {
     if (!this.wagmiConfig.hasOwnProperty('state')) {
-      console.log('Create')
       if (!chains.length) {
         chains = this.getBackendChains()
       }
