@@ -170,7 +170,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     if (!wallet) {
       return
     }
-console.log(wallet)
+
     const network = await WagmiHelper.changeChain(blockchain.code)
     if (!network) {
       return
