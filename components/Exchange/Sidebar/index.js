@@ -8,8 +8,6 @@ import $app from '@/store/app'
 import $token from '@/store/token'
 
 import App from '@/components/App'
-// import SidebarSearch from '@/components/Exchange/Sidebar/SidebarSearch'
-// import SidebarSort from '@/components/Exchange/Sidebar/SidebarSort'
 import SidebarItem from '@/components/Exchange/Sidebar/SidebarItem'
 
 const SidebarSearch = dynamic(() => import('@/components/Exchange/Sidebar/SidebarSearch'), {ssr: false})

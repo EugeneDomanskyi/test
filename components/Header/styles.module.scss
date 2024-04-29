@@ -14,7 +14,6 @@
 
     .logo {
       position: relative;
-      padding-top: 11px;
   
       .badge {
         position: absolute;
@@ -41,6 +40,11 @@
     display: block;
     height: 100%;
 
+    p {
+      transition: .3s;
+    }
+
+    &:hover,
     &.active {
       p {
         color: rgb(166, 220, 55);
