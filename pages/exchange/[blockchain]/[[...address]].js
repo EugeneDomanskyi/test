@@ -89,14 +89,13 @@ const Exchange = () => {
 
   const handleAction = useCallback(({action, data}) => {
     if ( !isApp) {
-      dispatch($portfolio.set.update(true))
-
       switch (action) {
         case 'order_placed':
           dispatch($alert.set.success({ title: 'Order placed successfully', text: `Your ${data.side} order for ${data.quantity} ${data.baseCurrency} has been placed successfully.` }))
           break
         case 'order_submitted':
           dispatch($alert.set.success({ title: 'Matched & pending settlement' }))
+          dispatch($portfolio.set.update(true))
           break
         case 'chain_event_OrderFilled':
           dispatch($alert.set.success({ title: 'Order filled on-chain', text: `Your ${data.side} order for ${data.quantity} ${data.baseCurrency} has been executed ${data.quantity == data.quantityFilled ? 'fully' : 'partially'}.` }))
