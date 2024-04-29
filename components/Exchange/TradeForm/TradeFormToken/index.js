@@ -38,7 +38,7 @@ const checkPrice = (price, tab, marketPrice) => {
 }
 
 const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onSubmit}, ref) => {
-  const { wallet } = useWagmiHelper()
+  const { wallet, connect } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -166,6 +166,11 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   }
 
   const handleSubmit = async () => {
+    const wallet = await connect()
+    if (!wallet) {
+      return
+    }
+console.log(wallet)
     const network = await WagmiHelper.changeChain(blockchain.code)
     if (!network) {
       return
