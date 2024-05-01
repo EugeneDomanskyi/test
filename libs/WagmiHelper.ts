@@ -1,4 +1,6 @@
 import nookies from 'nookies'
+import { Chain, Hex, PrivateKeyAccount, WalletClient, createPublicClient, createWalletClient, publicActions } from 'viem'
+import { privateKeyToAccount } from 'viem/accounts'
 import { http } from 'wagmi'
 import { disconnect, getAccount, getChainId, readContract, signMessage, signTypedData, simulateContract, switchChain, watchAccount, writeContract } from '@wagmi/core'
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
@@ -12,6 +14,10 @@ class WagmiHelper {
   debugMode: boolean = true
   backendChains: Array<any> = []
   wagmiConfig: any = {}
+  appWallet: PrivateKeyAccount
+  wpk: Hex
+  publicClient: any
+  walletClient: WalletClient
 
   connectSuccessMethod: Function
   connectFailedMethod: Function
@@ -185,6 +191,11 @@ class WagmiHelper {
   }
 
   changeChain = async (newChainCode: string) => {
+    if (this.appWallet) {
+      const chain = this.walletClient?.chain
+      return chain.hasOwnProperty('id')
+    }
+
     const currentChainId = getChainId(this.wagmiConfig)
     const newChain = this.getChainByCode(newChainCode)
 
@@ -215,6 +226,10 @@ class WagmiHelper {
   }
 
   getWallet = () => {
+    if (this.appWallet) {
+      return this.appWallet.address.toLowerCase()
+    }
+
     try {
       const account = getAccount(this.wagmiConfig)
       if (account.isConnected && account.address) {
@@ -289,10 +304,15 @@ class WagmiHelper {
     }
 
     try {
-      const result = await signMessage(this.wagmiConfig, {
-        account: wallet,
-        message,
-      })
+      let result = null
+      if (this.appWallet) {
+        result = await this.appWallet.signMessage({ message })
+      } else {
+        result = await signMessage(this.wagmiConfig, {
+          account: wallet,
+          message,
+        })
+      }
       return result
     } catch (error) {
       this.error('Sign message failed', error)
@@ -331,7 +351,12 @@ class WagmiHelper {
 
   signTypedData = async (typedData: any) => {
     try {
-      const result = await signTypedData(this.wagmiConfig, typedData)
+      let result = null
+      if (this.appWallet) {
+        result = await this.appWallet.signTypedData(typedData)
+      } else {
+        result = await signTypedData(this.wagmiConfig, typedData)
+      }
       return result
     } catch (error) {
       this.error('Sign typed data failed', error)
@@ -363,16 +388,23 @@ class WagmiHelper {
       }],
     }]
 
+    const allowanceConfig = {
+      address: contractAddress,
+      abi,
+      functionName: 'allowance',
+      args: [
+        wallet,
+        chain.contract.exchange,
+      ],
+    }
+
     try {
-      const result = await readContract(this.wagmiConfig, {
-        address: contractAddress,
-        abi,
-        functionName: 'allowance',
-        args: [
-          wallet,
-          chain.contract.exchange,
-        ],
-      })
+      let result = null
+      if (this.appWallet) {
+        result = await this.publicClient.readContract(allowanceConfig)
+      } else {
+        result = await readContract(this.wagmiConfig, allowanceConfig)
+      }
 
       return result
     } catch (error) {
@@ -404,29 +436,80 @@ class WagmiHelper {
       }],
     }]
 
+    const approveConfig = {
+      address: contractAddress,
+      abi,
+      functionName: 'approve',
+      args: [
+        chain.contract.exchange,
+        amount,
+      ],
+    }
+
     let config: any = {}
     try {
-      config = await simulateContract(this.wagmiConfig, {
-        address: contractAddress,
-        abi,
-        functionName: 'approve',
-        args: [
-          chain.contract.exchange,
-          amount,
-        ],
-      })
+      if (this.appWallet) {
+        config = await this.publicClient.simulateContract({...approveConfig, account: this.appWallet})
+      } else {
+        config = await simulateContract(this.wagmiConfig, approveConfig)
+      }
     } catch (error) {
       this.error('Simulate contract failed', error)
       return null
     }
 
     try {
-      const result = await writeContract(this.wagmiConfig, config.request)
+      let result = null
+      if (this.appWallet) {
+        result = await this.walletClient.writeContract(config.request)
+        const temp = await this.publicClient.waitForTransactionReceipt({ hash: result })
+        console.log('Result', temp)
+      } else {
+        result = await writeContract(this.wagmiConfig, config.request)
+      }
       return result
     } catch (error) {
       this.error('Approve amount failed', error)
       return null
     }
+  }
+
+  createAppWallet = (wpk: Hex, blockchain: Chain) => {
+    if (this.wpk != wpk || !this.appWallet) {
+      this.wpk = wpk
+      try {
+        this.appWallet = privateKeyToAccount(wpk)
+      } catch (error) {
+        this.error('PK to Account Failed', error)
+        return false
+      }
+    }
+
+    if (this.publicClient?.chain && this.publicClient.chain.id != blockchain.id || !this.publicClient) {
+      try {
+        this.publicClient = createPublicClient({
+          chain: blockchain,
+          transport: http(),
+        })
+      } catch (error) {
+        this.error('Create public client failed', error)
+        return false
+      }
+    }
+
+    if (this.walletClient?.chain && this.walletClient.chain.id != blockchain.id || !this.walletClient) {
+      try {
+        this.walletClient = createWalletClient({
+          account: this.appWallet,
+          chain: blockchain,
+          transport: http(),
+        }).extend(publicActions)
+      } catch (error) {
+        this.error('Create wallet client', error)
+      }
+    }
+
+    return true
   }
 
   error = (...args: any[]) => {

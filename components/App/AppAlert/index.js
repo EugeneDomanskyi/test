@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { gsap } from 'gsap'
 import cn from 'classnames'
 
-import useApp from '@/myhooks/useApp'
-
 import $alert from '@/store/alert'
 
 import AppFlex from '@/components/App/AppFlex'

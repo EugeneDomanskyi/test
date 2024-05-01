@@ -73,11 +73,10 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
 MyApp.getInitialProps = async ({ ctx }) => {
   let ssRoute = ''
   let isMobile = null
+
   let isApp = null
   let platform = null
-  let initWallet = null
-  let devMode = null
-  let appTheme = null
+
   let chains = []
   let blockchain = null
 
@@ -87,11 +86,9 @@ MyApp.getInitialProps = async ({ ctx }) => {
     const { device } = userAgentFromString(ctx.req.headers['user-agent'])
     isMobile = device.type === 'mobile'
 
-    isApp = ctx.req.headers['x-tegro-app'] == 'native'
+    // isApp = ctx.req.headers['x-tegro-app'] == 'native'
+    isApp = true
     platform = ctx.req.headers['x-tegro-platform']
-    initWallet = ctx.req.headers['x-tegro-wallet'] == 'null' ? null : ctx.req.headers['x-tegro-wallet']
-    devMode = ctx.req.headers['x-tegro-dev-mode'] == 'true' ? true : null
-    appTheme = ctx.req.headers['x-tegro-theme'] == 'null' ? null : ctx.req.headers['x-tegro-theme']
 
     chains = await WagmiHelper.fetchChains(ctx)
     blockchain = WagmiHelper.getCurrentChainCode(ctx, chains)
@@ -99,13 +96,10 @@ MyApp.getInitialProps = async ({ ctx }) => {
   
   return {
     initialData: {
-      blockchain,
       isMobile,
       isApp,
       platform,
-      initWallet,
-      appTheme,
-      devMode,
+      blockchain,
       chains,
     },
     ssRoute,

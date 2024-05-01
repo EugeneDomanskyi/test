@@ -7,7 +7,6 @@ import cn from 'classnames'
 import $app from '@/store/app'
 import $orders from '@/store/orders'
 import $alert from '@/store/alert'
-import { formatNumberWithDecimals } from '@/store/portfolio'
 
 import WagmiHelper from '@/libs/WagmiHelper'
 import Amplitude from '@/libs/amplitude.lib'
@@ -43,12 +42,10 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector($orders.get.orderbook)
-  const orders = useSelector($orders.get.list)
   const portfolio = useSelector(({ $portfolio }) => $portfolio.list)
 
   const [form, setForm] = useState({price: '0', amount: '1', total: '0'})
   const [userBalances, setUserBalances] = useState({base: 0, quote: 0})
-  const [wasUserBalance, setWasUserBalance] = useState(false)
   const [wasUserInput, setWasUserInput] = useState(false)
   const [isErrorBalance, setIsErrorBalance] = useState(false)
   const [isOrderConfirmOpen, setIsOrderConfirmOpen] = useState(false)
@@ -75,7 +72,6 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   }))
 
   useEffect(() => {
-    setWasUserBalance(false)
     setWasUserInput(false)
     setIsErrorBalance(false)
 
@@ -121,7 +117,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const handleChangePrice = (type) => () => {
     const step = 0.1
     const newPrice = type == 'plus' ? (form.price * 1 + step) : (form.price * 1 - step)
-    handleChangeForm('price', true)(formatNumberWithDecimals(newPrice, current.quoteDecimals))
+    handleChangeForm('price', true)(new Decimal(newPrice).toDecimalPlaces(current.quoteDecimals).toFixed())
   }
 
   const handleChangeForm = (field, inputByUser = false) => value => {
@@ -134,27 +130,28 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     if (!decimalRegExp.test(value) && value) {
       return
     }
-
     switch (field) {
       case 'price':
-        setForm(state => ({
-          ...state,
-          price: value,
-          total: formatNumberWithDecimals(new Decimal(value * state.amount).toFixed(), current.decimals),
-        }))
+        setForm(state => {
+          return {
+            ...state,
+            price: value,
+            total: new Decimal(value * state.amount).toDecimalPlaces(current.quoteDecimals).toFixed(),
+          }
+        })
         return
       case 'amount':
         setForm(state => {
           return {
             ...state,
             amount: value,
-            total: formatNumberWithDecimals(new Decimal(value * state.price).toFixed(), current.decimals),
+            total: new Decimal(value * state.price).toDecimalPlaces(current.quoteDecimals).toFixed(),
           }
         })
         return
       case 'total':
         setForm(state => {
-          const amount = formatNumberWithDecimals(new Decimal(value / state.price).toFixed(), current.decimals)
+          const amount = new Decimal(value / state.price).toDecimalPlaces(current.decimals).toFixed()
           return {
             ...state,
             total: value,
@@ -183,7 +180,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
 
     if (blockchain?.info?.min_order_value) {
       const minTotal = formatUnits(blockchain.info.min_order_value, current.quoteDecimals)
-      if (minTotal > form.total) {
+      if (minTotal * 1 > form.total * 1) {
         dispatch($alert.set.error({
           title: 'Order Error',
           text: `The minimum order value is ${minTotal} ${current.quoteSymbol}.`,
