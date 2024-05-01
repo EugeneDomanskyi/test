@@ -15,11 +15,8 @@ const useAppHelper = () => {
   }, [])
 
   const receive = (data: any) => {
-    if (data.hasOwnProperty('devMode')) {
-      dispatch($app.set.devMode(data.devMode))
-    }
-
     if (data?.wpk) {
+      dispatch($app.set.appConnected(false))
       dispatch($app.set.wpk(data.wpk))
     }
 

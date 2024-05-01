@@ -67,7 +67,7 @@ const Wrapper = ({ children }) => {
         ! isInIframe
           ? <div style={{height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden'}}>
               <Analytics />
-              {!isCampaign && isApp ? <Header /> : null}
+              {!isCampaign && !isApp ? <Header /> : null}
               {children}
               {!isCampaign && !isApp && !isExchange ? <Footer /> : null}
             </div>

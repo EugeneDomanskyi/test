@@ -86,8 +86,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
     const { device } = userAgentFromString(ctx.req.headers['user-agent'])
     isMobile = device.type === 'mobile'
 
-    // isApp = ctx.req.headers['x-tegro-app'] == 'native'
-    isApp = true
+    isApp = ctx.req.headers['x-tegro-app'] == 'native'
     platform = ctx.req.headers['x-tegro-platform']
 
     chains = await WagmiHelper.fetchChains(ctx)
