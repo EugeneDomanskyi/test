@@ -1,11 +1,10 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useSelector } from 'react-redux'
+import Image from 'next/image'
 import cn from 'classnames'
 
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-
-import $tournament from '@/store/tournament'
 
 import App from '@/components/App'
 import SwitchBlockchain from '@/components/Header/SwitchBlockchain'
@@ -15,21 +14,12 @@ import styles from './styles.module.scss'
 
 const Header = () => {
   const router = useRouter()
+  const isExchange = router.asPath?.includes('/exchange')
   
-  const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
   const [mobileMenuShow, setMobileMenuShow] = useState(false)
-
-  const isExchange = router.asPath?.includes('/exchange')
-
-  // useEffect(() => {
-  //   dispatch($tournament.set.loading(true))
-  //   $tournament.api.current().then(res => {
-  //     dispatch($tournament.set.current(res?.data ? res.data : {}))
-  //     dispatch($tournament.set.loading(false))
-  //   })
-  // }, [])
+  const [supportIsOpen, setSupportIsOpen] = useState(false)
 
   const handleMobileMenuClick = () => {
     if (mobileMenuShow) {
@@ -39,6 +29,10 @@ const Header = () => {
     }
 
     setMobileMenuShow(!mobileMenuShow)
+  }
+
+  const handleClickDiscord = () => {
+    window.open("https://discord.com/channels/951018857533935627/1107789606612631602/1135635808087462009", '_blank')
   }
 
   return (
@@ -73,11 +67,47 @@ const Header = () => {
                     <App.Text size={14} weight={600}>Exchange</App.Text>
                   </App.Flex>
                 </Link>
+
+                <Link href="/auto-trader" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/auto-trader')})}>
+                  <App.Flex center fullHeight>
+                    <App.Text size={14} weight={600}>Auto-Trader</App.Text>
+                  </App.Flex>
+                </Link>
+
+                <App.Flex className={cn(styles.navItem, styles.disabled, {[styles.active]: router.pathname.includes('/points-dashboard')})}>
+                  <App.Flex center fullHeight>
+                    <App.Text size={14} weight={600}>Points (Coming Soon)</App.Text>
+                  </App.Flex>
+                </App.Flex>
               </App.Flex>
             ) : null}
           </App.Flex>
 
-          <App.Flex row fullHeight gap={8} align="center">
+          <App.Flex row fullHeight gap={16} align="center">
+            { ! isMobile ? (
+              <App.Flex id="support-dropdown" className={cn(styles.supportButton, {[styles.active]: supportIsOpen})} onClick={() => setSupportIsOpen(!supportIsOpen)}>
+                <App.Flex className={styles.linkWrapper}>
+                  <App.Flex className={cn(styles.linkButton, {[styles.active]: supportIsOpen})}>
+                    <App.Icon icon="question" />
+                  </App.Flex>
+                </App.Flex>
+
+                <App.Flex column gap={32} className={cn(styles.dropdownMenu, {[styles.isOpen]: supportIsOpen})}>
+                  <App.Flex column gap={16}>
+                    <App.Flex column gap={4}>
+                      <App.Text size={18} weight={600}>Get Instant Support</App.Text>
+                      <App.Text size={10} color="#B9B8C5">Join our Discord for assistance.</App.Text>
+                    </App.Flex>
+
+                    <App.Flex row align="center" gap={6} className={styles.support} onClick={handleClickDiscord}>
+                      <Image src="/images/discord-blue.png" width={24} height={24} alt="" />
+                      <App.Text size={16} weight={600} height={1}>Discord</App.Text>
+                    </App.Flex>
+                  </App.Flex>
+                </App.Flex>
+              </App.Flex>
+            ) : null}
+
             {
               isExchange
                 ? <SwitchBlockchain />
@@ -97,10 +127,24 @@ const Header = () => {
             <div className={styles.content}>
               <Link href="/exchange" className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
-                  <App.Icon icon="menuExchange" />
+                  {/* <App.Icon icon="menuExchange" /> */}
                   <App.Text size={14} weight={700} color={router.pathname.includes('/exchange') ? '#A6DC37' : '#fff'}>Exchange</App.Text>
                 </App.Flex>
               </Link>
+
+              <Link href="/auto-trader" className={cn(styles.link)}>
+                <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
+                  {/* <App.Icon icon="menuExchange" /> */}
+                  <App.Text size={14} weight={700} color={router.pathname.includes('/auto-trader') ? '#A6DC37' : '#fff'}>Auto-Trader</App.Text>
+                </App.Flex>
+              </Link>
+
+              <App.Flex className={cn(styles.link)}>
+                <App.Flex align="center" height="100%" gap={8}>
+                  {/* <App.Icon icon="menuExchange" /> */}
+                  <App.Text size={14} weight={700} color={router.pathname.includes('/points-dashboard') ? '#A6DC37' : '#fff'}>Points (Coming Soon)</App.Text>
+                </App.Flex>
+              </App.Flex>
 
               <div className={styles.line} />
 
