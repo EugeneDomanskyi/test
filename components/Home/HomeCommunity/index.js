@@ -44,9 +44,9 @@ const HomeCommunity = () => {
     }
 
     if (community) {
-      Amplitude.event('Community Resources Visited', {
-        'Community': community,
-      })
+      // Amplitude.event('Community Resources Visited', {
+      //   'Community': community,
+      // })
     }
 
     window.open(url, '_blank')

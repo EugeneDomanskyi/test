@@ -69,16 +69,16 @@ const HeaderWallet = () => {
 
   const handleConnectWallet = async () => {
     if ( ! wallet) {
-      Amplitude.event('Wallet Connect Clicked', {
-        'Source': Amplitude.page(),
-      })
+      // Amplitude.event('Wallet Connect Clicked', {
+      //   'Source': Amplitude.page(),
+      // })
 
       const result = await connect()
       if (result) {
-        Amplitude.event('Wallet Connect Success', {
-          'Source': Amplitude.event(),
-          'Type': WagmiHelper.getConnectorInfo().name,
-        })
+        // Amplitude.event('Wallet Connect Success', {
+        //   'Source': Amplitude.event(),
+        //   'Type': WagmiHelper.getConnectorInfo().name,
+        // })
       }
     }
   }
@@ -89,10 +89,10 @@ const HeaderWallet = () => {
     handleDisconnectDialogToggle(false)()
     handlePortfolioToggle(false)
 
-    Amplitude.event('Wallet Disconnect Success', {
-      'Source': Amplitude.page(),
-      'Type': connectorName,
-    })
+    // Amplitude.event('Wallet Disconnect Success', {
+    //   'Source': Amplitude.page(),
+    //   'Type': connectorName,
+    // })
   }
 
   const handleDisconnectDialogToggle = (open) => () => {

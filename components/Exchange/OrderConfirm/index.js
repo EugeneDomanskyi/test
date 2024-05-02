@@ -28,17 +28,17 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
 
   const handleNextStep = async () => {
     if (step == 'preview') {
-      Amplitude.event('Confirm Order Submit', {
-        'Base Currency': side === 'buy' ? current.symbol : current.quoteSymbol,
-        'Quote Currency': side === 'buy' ? current.quoteSymbol : current.symbol,
-        'Side': side.toUpperCase(),
-        'Quantity': numeral(amount).format('0.[00000]'),
-        'Price': numeral(price).format('0.[00000]'),
-        'Total': numeral(total).format('0.[00000]'),
-        'Network': blockchain.code.toUpperCase(),
-        'Order Type': 'Limit',
-        'Step': 'Confirm',
-      })
+      // Amplitude.event('Confirm Order Submit', {
+      //   'Base Currency': side === 'buy' ? current.symbol : current.quoteSymbol,
+      //   'Quote Currency': side === 'buy' ? current.quoteSymbol : current.symbol,
+      //   'Side': side.toUpperCase(),
+      //   'Quantity': numeral(amount).format('0.[00000]'),
+      //   'Price': numeral(price).format('0.[00000]'),
+      //   'Total': numeral(total).format('0.[00000]'),
+      //   'Network': blockchain.code.toUpperCase(),
+      //   'Order Type': 'Limit',
+      //   'Step': 'Confirm',
+      // })
 
       setStep('sign')
       const spendToken = side === 'buy' ? current.quote : current.address
@@ -82,17 +82,17 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       }
 
       setStep('place')
-      Amplitude.event('Confirm Order Submit', {
-        'Base Currency': side === 'buy' ? current.symbol : current.quoteSymbol,
-        'Quote Currency': side === 'buy' ? current.quoteSymbol : current.symbol,
-        'Side': side.toUpperCase(),
-        'Quantity': numeral(amount).format('0.[00000]'),
-        'Price': numeral(price).format('0.[00000]'),
-        'Total': numeral(total).format('0.[00000]'),
-        'Network': blockchain.code.toUpperCase(),
-        'Order Type': 'Limit',
-        'Step': 'Sign',
-      })
+      // Amplitude.event('Confirm Order Submit', {
+      //   'Base Currency': side === 'buy' ? current.symbol : current.quoteSymbol,
+      //   'Quote Currency': side === 'buy' ? current.quoteSymbol : current.symbol,
+      //   'Side': side.toUpperCase(),
+      //   'Quantity': numeral(amount).format('0.[00000]'),
+      //   'Price': numeral(price).format('0.[00000]'),
+      //   'Total': numeral(total).format('0.[00000]'),
+      //   'Network': blockchain.code.toUpperCase(),
+      //   'Order Type': 'Limit',
+      //   'Step': 'Sign',
+      // })
 
       const typedData = await $orders.api.typedData({
         chain_id: blockchain.id,

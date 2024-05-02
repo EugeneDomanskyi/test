@@ -208,43 +208,43 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       setIsOrderConfirmOpen(true)
     }
 
-    Amplitude.event('Create Order Click', {
-      'Base Currency': current.symbol,
-      'Quote Currency': current.quoteSymbol,
-      'Side': currentTab.toUpperCase(),
-      'Quantity': form.amount,
-      'Price': form.price,
-      'Total': new Decimal(form.price * form.amount).toFixed(),
-      'Network': blockchain.code.toUpperCase(),
-    })
+    // Amplitude.event('Create Order Click', {
+    //   'Base Currency': current.symbol,
+    //   'Quote Currency': current.quoteSymbol,
+    //   'Side': currentTab.toUpperCase(),
+    //   'Quantity': form.amount,
+    //   'Price': form.price,
+    //   'Total': new Decimal(form.price * form.amount).toFixed(),
+    //   'Network': blockchain.code.toUpperCase(),
+    // })
   }
 
   const handleTotalBlur = () => {
     handleChangeForm('price', true)(new Decimal(form.total / form.amount).toFixed())
-    Amplitude.event('Add Total', {
-      'Base Currency': current.symbol,
-      'Quote Currency': current.quoteSymbol,
-      'Price': form.price,
-      'Network': blockchain.code.toUpperCase(),
-    })
+    // Amplitude.event('Add Total', {
+    //   'Base Currency': current.symbol,
+    //   'Quote Currency': current.quoteSymbol,
+    //   'Price': form.price,
+    //   'Network': blockchain.code.toUpperCase(),
+    // })
   }
 
   const handleBlurPrice = () => {
-    Amplitude.event('Add Price', {
-      'Base Currency': current.symbol,
-      'Quote Currency': current.quoteSymbol,
-      'Price': form.price,
-      'Network': blockchain.code.toUpperCase(),
-    })
+    // Amplitude.event('Add Price', {
+    //   'Base Currency': current.symbol,
+    //   'Quote Currency': current.quoteSymbol,
+    //   'Price': form.price,
+    //   'Network': blockchain.code.toUpperCase(),
+    // })
   }
 
   const handleBlurAmount = () => {
-    Amplitude.event('Add Quantity', {
-      'Base Currency': current.symbol,
-      'Quote Currency': current.quoteSymbol,
-      'Price': form.price,
-      'Network': blockchain.code.toUpperCase(),
-    })
+    // Amplitude.event('Add Quantity', {
+    //   'Base Currency': current.symbol,
+    //   'Quote Currency': current.quoteSymbol,
+    //   'Price': form.price,
+    //   'Network': blockchain.code.toUpperCase(),
+    // })
   }
 
   const handleClickMultipler = (percentage) => () => {

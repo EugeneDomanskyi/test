@@ -91,15 +91,15 @@ const Info = () => {
 
   const handleClickLink = (type) => () => {
     if (type == 'market-page') {
-      Amplitude.event(`Page Visited`, {
-        'Page Name': 'Market Page',
-        'Market': current.marketId,
-        'Network': blockchain.name,
-      })
+      // Amplitude.event(`Page Visited`, {
+      //   'Page Name': 'Market Page',
+      //   'Market': current.marketId,
+      //   'Network': blockchain.name,
+      // })
     } else {
-      Amplitude.event(`Click ${type} Redirect`, {
-        Markets: current.name,
-      })
+      // Amplitude.event(`Click ${type} Redirect`, {
+      //   Markets: current.name,
+      // })
     }
   }
 

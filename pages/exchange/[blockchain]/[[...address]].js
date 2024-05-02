@@ -43,9 +43,9 @@ const Exchange = () => {
   const mobileRef = useRef(null)
 
   useEffect(() => {
-    Amplitude.event('Page Visited', {
-      'Page Name': Amplitude.page(),
-    })
+    // Amplitude.event('Page Visited', {
+    //   'Page Name': Amplitude.page(),
+    // })
 
     Socket.init(handleAction, handleCloseConnection).then(() => {
       dispatch($app.set.socketConnected(true))

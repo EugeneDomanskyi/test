@@ -30,11 +30,11 @@ const SidebarItem = ({ item, version }) => {
   const colors = useRef([getRandomColor(), getRandomColor()])
 
   const handleClick = () => {
-    Amplitude.event('View Market', {
-      'Base Currency': item.symbol,
-      'Quote Currency': item.quoteSymbol,
-      'Network': blockchain.code.toUpperCase(),
-    })
+    // Amplitude.event('View Market', {
+    //   'Base Currency': item.symbol,
+    //   'Quote Currency': item.quoteSymbol,
+    //   'Network': blockchain.code.toUpperCase(),
+    // })
 
     dispatch($token.set.current(item))
     router.push(`/exchange/${blockchain.code}/${item.address}`, undefined, { scroll: false })

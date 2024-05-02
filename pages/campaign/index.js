@@ -83,22 +83,22 @@ const LandingPage = () => {
   }
 
   const handleConnectWallet = async (noWallet = null) => {
-    if (noWallet) {
-      Amplitude.event("Click Don't have a wallet")
-    }
+    // if (noWallet) {
+    //   Amplitude.event("Click Don't have a wallet")
+    // }
 
     if ( ! wallet) {
-      Amplitude.event('Wallet Connect Clicked', {
-        'Source': Amplitude.page(),
-      })
+      // Amplitude.event('Wallet Connect Clicked', {
+      //   'Source': Amplitude.page(),
+      // })
 
       const result = await connect()
       if (result) {
         router.push(tradeLink)
-        Amplitude.event('Wallet Connect Success', {
-          'Source': Amplitude.page(),
-          'Type': WagmiHelper.getConnectorInfo().name,
-        })
+        // Amplitude.event('Wallet Connect Success', {
+        //   'Source': Amplitude.page(),
+        //   'Type': WagmiHelper.getConnectorInfo().name,
+        // })
       }
     }
   }
