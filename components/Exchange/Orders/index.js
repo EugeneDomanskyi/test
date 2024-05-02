@@ -145,9 +145,9 @@ const Orders = ({global, type, version, onClickOrder}) => {
       'Quantity': order.quantity - order.quantityFilled,
       'Price': order.itemPrice,
       'Total': order.price,
-      'Network': blockchain.code.toUpperCase(),
+      'Filled Percent': `${Math.round(order.quantityFilled * 100 / order.quantity)}%`,
     }
-    // Amplitude.event('Cancel Order Submit', eventPost)
+    Amplitude.event('Cancel Order Submit', eventPost)
 
     const signature = await WagmiHelper.signMessage()
     if (signature) {
@@ -199,17 +199,11 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
   const handleConnectWallet = async () => {
     if ( ! wallet) {
-      // Amplitude.event('Wallet Connect Clicked', {
-      //   'Source': Amplitude.page(),
-      // })
+      Amplitude.event('Wallet Connect Clicked', {
+        'Page': Amplitude.page(),
+      })
 
-      const result = await connect()
-      if (result) {
-        // Amplitude.event('Wallet Connect Success', {
-        //   'Source': Amplitude.page(),
-        //   'Type': WagmiHelper.getConnectorInfo().name,
-        // })
-      }
+      await connect()
     }
   }
 
