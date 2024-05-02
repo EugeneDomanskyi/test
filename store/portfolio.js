@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import { request } from './index'
+import Decimal from 'decimal.js'
 
 export const formatNumberWithDecimals = (num, decimals) => {
   let formattedNum = Number(num).toFixed(decimals)
@@ -34,23 +35,29 @@ export const portfolioSlice = createSlice({
     details: (state, { payload }) => {
       const native = payload.data.find(item => item.type === 'native')
       state.native = {
-        value: (native?.balance ?? 0).toFixed(4),
-        symbol: native?.symbol,
+        value: native?.balance ?? 0,
+        symbol: native?.symbol ?? '',
       }
 
-      state.list = payload.data.filter(item => item.price > 0 && !['native'].includes(item.type) || item.balance > 1 && ['quote'].includes(item.type)).map(item => {
-        const usd = Number(item.type === 'quote' ? item.balance : (item.price * item.balance))
-        const usdFormatted = formatNumberWithDecimals(usd, 6)
+      state.list = payload.data.filter(item => !['native'].includes(item.type)).map(item => {
+        const usd = new Decimal(item.type === 'quote' ? item.balance : (item.price * item.balance))
+        const usdFormatted = usd.toDecimalPlaces(6).toFixed()
+        const image = item.image
+          || (item.symbol === 'USDT' ? '/images/icon-usdt.png' : null)
+          || (item.symbol === 'USDC' ? '/images/icon-usdc.png' : null)
+          || (item.symbol === 'WETH' ? 'https://tegro.com/images/0x4200000000000000000000000000000000000006.png' : null)
+          || `https://storage.googleapis.com/token-assets/assets/${payload?.blockchain?.code}/${item.address.toLowerCase()}.png`
+          
         return {
           address: item.address,
           name: item.name,
           symbol: item.symbol,
-          image: item.image || (item.symbol === 'USDT' ? '/images/icon-usdt.png' : null) || (item.symbol === 'USDC' ? '/images/icon-usdc.png' : null) || (item.symbol === 'WETH' ? 'https://tegro.com/images/0x4200000000000000000000000000000000000006.png' : null) || `https://storage.googleapis.com/token-assets/assets/${payload?.blockchain?.code}/${item.address.toLowerCase()}.png`,
+          image,
           balance: item.balance,
           placed: item.placed_amount,
           available: item.balance - item.placed_amount,
           price: (item.price || (item.type === 'quote' ? item.balance : 0)),
-          usd,
+          usd: usd.toFixed(),
           usdFormatted,
           ticker: {
             type: item.price_change_24_h > 0 ? 'plus' : item.price_change_24_h < 0 ? 'minus' : 'zero',
@@ -63,9 +70,9 @@ export const portfolioSlice = createSlice({
       })
 
       const usd = state.list.reduce((acc, item) => {
-        return acc + item.usd
+        return acc + item.usd * 1
       }, 0)
-      state.usd = formatNumberWithDecimals(usd, 6)
+      state.usd = new Decimal(usd).toDecimalPlaces(6).toFixed()
 
       // const usdTicker = state.list.reduce((acc, item) => {
       //   return acc + (item.price * item.ticker.price_change_24_h / 100)

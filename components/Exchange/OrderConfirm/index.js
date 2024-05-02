@@ -6,7 +6,6 @@ import numeral from 'numeral'
 import cn from 'classnames'
 
 import Amplitude from '@/libs/amplitude.lib'
-import useApp from '@/myhooks/useApp'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $app from '@/store/app'
@@ -20,10 +19,9 @@ import WagmiHelper from '@/libs/WagmiHelper'
 
 const OrderConfirm = ({ side, blockchain, current, price, amount, total, version, onBack, onClose }) => {
   const { wallet } = useWagmiHelper()
-  const { isApp, appLog } = useApp()
 
   const dispatch = useDispatch()
-  const orders = useSelector($orders.get.list)
+  const isApp = useSelector(({ $app }) => $app.isApp)
   const portfolio = useSelector(({ $portfolio }) => $portfolio.list)
 
   const [step, setStep] = useState('preview')
@@ -58,10 +56,10 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       let requiredAmount = 0
       if (side === 'buy') {
         const placed = portfolio.find(item => item.address == current.quote)?.placed ?? 0
-        requiredAmount = total * 1 + placed * 1
+        requiredAmount = Math.ceil(total * 1 + placed * 1)
       } else {
         const placed = portfolio.find(item => item.address == current.address)?.placed ?? 0
-        requiredAmount = amount * 1 + placed * 1
+        requiredAmount = Math.ceil(amount * 1 + placed * 1)
       }
       console.log('--- Required amount for Approval with placed amount', requiredAmount)
       
@@ -96,7 +94,6 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         'Step': 'Sign',
       })
 
-      appLog('Generate Typed Data')
       const typedData = await $orders.api.typedData({
         chain_id: blockchain.id,
         wallet_address: wallet,
@@ -110,25 +107,14 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         return handleError('Order not created', 'Please try again to place your order.')
       }
 
-      // let {types} = typedData.data.sign_data
-      // delete types.EIP712Domain
-      // const temp = {
-      //   ...typedData.data.sign_data,
-      //   types,
-      // }
-
-      appLog('Sign Typed Data')
       const signature = await WagmiHelper.signTypedData(typedData.data.sign_data).catch(error => {
-        appLog(`Signature error ${error.shortMessage}`)
         return handleError('Order not created', 'Please check your wallet and try again to place your order.')
       })
 
       if (!signature) {
-        appLog(`Signature failed`)
         return
       }
 
-      appLog(`Place Order`)
       const result = await $orders.api.place({
         ...typedData.data.limit_order,
         signature,
@@ -139,7 +125,6 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         return handleError('Order not created', result.error)
       }
 
-      appLog(`Place Order Success`)
       const vid = localStorage.getItem('ms_vid')
       if (vid) {
         $app.api.volume({

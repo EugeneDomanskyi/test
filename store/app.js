@@ -28,6 +28,10 @@ export const appSlice = createSlice({
       totalTradesSettled: 0,
       totalOrdersCancelled: 0,
     },
+    wpk: null,
+    connection: { loading: true, connected: false },
+    wallet: null,
+    appConnected: false,
   },
 
   reducers: {
@@ -54,6 +58,22 @@ export const appSlice = createSlice({
         windowWidth: payload?.width,
         windowHeight: payload?.height,
       }
+    },
+
+    wpk: (state, { payload }) => {
+      state.wpk = payload
+    },
+
+    connection: (state, { payload }) => {
+      state.connection = payload
+    },
+
+    wallet: (state, { payload }) => {
+      state.wallet = payload
+    },
+
+    appConnected: (state, { payload }) => {
+      state.appConnected = payload
     },
   },
 })
