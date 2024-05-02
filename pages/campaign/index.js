@@ -6,8 +6,9 @@ import Link from 'next/link'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 import cn from 'classnames'
 
+import WagmiHelper from '@/libs/WagmiHelper'
 import Amplitude from '@/libs/amplitude.lib'
-import useWalletConnect from '@/myhooks/wallet-connect'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import App from '@/components/App'
 
@@ -30,7 +31,7 @@ const getApolloClient = (blockchain) => {
 const LandingPage = () => {
   const dispatch = useDispatch()
   const router = useRouter()
-  const { wallet, connect, getConnectorInfo } = useWalletConnect()
+  const { wallet, connect } = useWagmiHelper()
 
   const campaigns = useSelector(({ $raffle }) => $raffle.all)
   const chains = useSelector(({ $app }) => $app.chains)
@@ -96,7 +97,7 @@ const LandingPage = () => {
         router.push(tradeLink)
         Amplitude.event('Wallet Connect Success', {
           'Source': Amplitude.page(),
-          'Type': getConnectorInfo().name,
+          'Type': WagmiHelper.getConnectorInfo().name,
         })
       }
     }

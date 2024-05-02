@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { gsap } from 'gsap'
 import cn from 'classnames'
 
-import useApp from '@/myhooks/useApp'
+import AppHelper from '@/libs/AppHelper'
 
 import $alert from '@/store/alert'
 
@@ -47,21 +47,16 @@ const AppAlert = () => {
         const unvisibleMessages = currentMessages.filter(item => ! item.visible)
         for (const message of unvisibleMessages) {
           const isOpen = await handleOpen(message.id)
+          if (!isApp) {
+            const isOpen = await handleOpen(message.id)
             if (isOpen) {
               timerRef.current[message.id] = setTimeout(async () => {
                 handleClose(message.id)
               }, message.delay)
             }
-          // if (!isApp) {
-          //   const isOpen = await handleOpen(message.id)
-          //   if (isOpen) {
-          //     timerRef.current[message.id] = setTimeout(async () => {
-          //       handleClose(message.id)
-          //     }, message.delay)
-          //   }
-          // } else {
-          //   appPost({notification: message})
-          // }
+          } else {
+            AppHelper.send({notification: message})
+          }
         }
 
         setCurrentMessages(state => {

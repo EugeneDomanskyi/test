@@ -28,6 +28,11 @@ export const appSlice = createSlice({
       totalTradesSettled: 0,
       totalOrdersCancelled: 0,
     },
+    wpk: null,
+    // wpk: '0x2b6b11c2b1034a3fd897cf5b681bb5d1d356381346adfac929bceacf0998a220',
+    connection: { loading: true, connected: false },
+    wallet: null,
+    appConnected: false,
   },
 
   reducers: {
@@ -41,7 +46,7 @@ export const appSlice = createSlice({
 
     code: (state, { payload }) => {
       state.code = payload
-      setCookie(null, 'blockchain', payload, {path: '/'})
+      setCookie(null, 'currentChainCode', payload, {path: '/'})
     },
 
     socketConnected: (state, { payload }) => {
@@ -54,6 +59,22 @@ export const appSlice = createSlice({
         windowWidth: payload?.width,
         windowHeight: payload?.height,
       }
+    },
+
+    wpk: (state, { payload }) => {
+      state.wpk = payload
+    },
+
+    connection: (state, { payload }) => {
+      state.connection = payload
+    },
+
+    wallet: (state, { payload }) => {
+      state.wallet = payload
+    },
+
+    appConnected: (state, { payload }) => {
+      state.appConnected = payload
     },
   },
 })

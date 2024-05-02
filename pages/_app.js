@@ -2,14 +2,13 @@ import { useRef, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { useRouter } from 'next/router'
 import { userAgentFromString } from 'next/server'
-import nookies, { parseCookies } from 'nookies'
 import merge from 'lodash.merge'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
 import { WagmiProvider } from 'wagmi'
 
-import Chains, { wagmiConfig } from '@/libs/Chains.lib'
+import WagmiHelper from '@/libs/WagmiHelper'
 import store from '@/store'
 
 import App from '@/components/App'
@@ -45,21 +44,13 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
   const router = useRouter()
   const storeRef = useRef(store(initialData)).current
 
-  let currentChain = initialData.chains.find(item => item.code == initialData.blockchain)
+  const wagmiConfig = WagmiHelper.createWagmiConfig(initialData.chains)
+  const currentChain = WagmiHelper.getChainByCode(initialData.blockchain, initialData.chains)
 
   useEffect(() => {
     if (router?.query?.vid) {
       localStorage.setItem('ms_vid', router.query.vid)
     }
-
-    (async () => {
-      if (!currentChain) {
-        const code = parseCookies(null)?.blockchain
-        if (code) {
-          currentChain = await Chains.chainByCode(code)
-        }
-      }
-    })()
   }, [])
 
   return (
@@ -82,11 +73,10 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
 MyApp.getInitialProps = async ({ ctx }) => {
   let ssRoute = ''
   let isMobile = null
+
   let isApp = null
   let platform = null
-  let initWallet = null
-  let devMode = null
-  let appTheme = null
+
   let chains = []
   let blockchain = null
 
@@ -97,36 +87,19 @@ MyApp.getInitialProps = async ({ ctx }) => {
     isMobile = device.type === 'mobile'
 
     isApp = ctx.req.headers['x-tegro-app'] == 'native'
+    // isApp = true
     platform = ctx.req.headers['x-tegro-platform']
-    initWallet = ctx.req.headers['x-tegro-wallet'] == 'null' ? null : ctx.req.headers['x-tegro-wallet']
-    devMode = ctx.req.headers['x-tegro-dev-mode'] == 'true' ? true : null
-    appTheme = ctx.req.headers['x-tegro-theme'] == 'null' ? null : ctx.req.headers['x-tegro-theme']
 
-    const domainName = ctx.req ? ctx.req.headers.host : window.location.hostname
-    chains = await Chains.list(domainName)
-
-    const cookies = nookies.get(ctx, 'blockchain')
-    blockchain = cookies.blockchain
-    if (!blockchain) {
-      blockchain = chains[0]?.code
-      nookies.set(ctx, 'blockchain', blockchain, {path: '/'})
-    } else {
-      if (!chains.some(item => item.code == blockchain)) {
-        blockchain = chains[0]?.code
-        nookies.set(ctx, 'blockchain', blockchain, {path: '/'})
-      }
-    }
+    chains = await WagmiHelper.fetchChains(ctx)
+    blockchain = WagmiHelper.getCurrentChainCode(ctx, chains)
   }
   
   return {
     initialData: {
-      blockchain,
       isMobile,
       isApp,
       platform,
-      initWallet,
-      appTheme,
-      devMode,
+      blockchain,
       chains,
     },
     ssRoute,

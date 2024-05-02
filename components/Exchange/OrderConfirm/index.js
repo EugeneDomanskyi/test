@@ -6,9 +6,7 @@ import numeral from 'numeral'
 import cn from 'classnames'
 
 import Amplitude from '@/libs/amplitude.lib'
-import useWalletConnect from '@/myhooks/wallet-connect'
-import Contracts from '@/libs/contracts.lib'
-import useApp from '@/myhooks/useApp'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
@@ -17,17 +15,16 @@ import $alert from '@/store/alert'
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
+import WagmiHelper from '@/libs/WagmiHelper'
 
 const OrderConfirm = ({ side, blockchain, current, price, amount, total, version, onBack, onClose }) => {
-  const { wallet, walletClient } = useWalletConnect()
-  const { isApp, appLog } = useApp()
+  const { wallet } = useWagmiHelper()
 
   const dispatch = useDispatch()
-  const orders = useSelector($orders.get.list)
+  const isApp = useSelector(({ $app }) => $app.isApp)
+  const portfolio = useSelector(({ $portfolio }) => $portfolio.list)
 
   const [step, setStep] = useState('preview')
-
-  const contracts = new Contracts()
 
   const handleNextStep = async () => {
     if (step == 'preview') {
@@ -44,55 +41,47 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       })
 
       setStep('sign')
-      appLog('Check Allowance')
       const spendToken = side === 'buy' ? current.quote : current.address
-      const allowance = await contracts.allowance(wallet, spendToken, blockchain?.contract?.exchange)
-      if (allowance?.error) {
-        console.log(1, allowance?.error)
+      const allowanceAmountBigInt = await WagmiHelper.getAllowance(spendToken)
+      if (allowanceAmountBigInt == null) {
+        onClose()
         return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
       }
+      console.log('--- Result from Allowance check', allowanceAmountBigInt)
 
-      console.log('--- Result from Allowance check', allowance)
-
-      appLog('Check Allowance Amount')
       const spendDecimals = side === 'buy' ? current.quoteDecimals : current.decimals
-      const allowanceAmount = formatUnits(allowance, spendDecimals)
+      const allowanceAmount = formatUnits(allowanceAmountBigInt, spendDecimals)
+      console.log(`--- Result from Allowance using decimals ${spendDecimals}`, allowanceAmount)
 
-      const requiredAmount = side === 'buy' ? total : amount
-      const requiredAmountWithOrders = orders.open.reduce((acc, order) => {
-        if (order.side == 'buy' && side == 'buy') {
-          acc += order.total * 1
-        }
-        
-        if (order.side == 'sell' && side == 'sell') {
-          acc += order.quantity * 1
-        }
-        return acc
-      }, requiredAmount * 1)
-
-      console.log('Required Amount For Approval With Total Orders Amount', requiredAmountWithOrders)
+      let requiredAmount = 0
+      if (side === 'buy') {
+        const placed = portfolio.find(item => item.address == current.quote)?.placed ?? 0
+        requiredAmount = Math.ceil(total * 1 + placed * 1)
+      } else {
+        const placed = portfolio.find(item => item.address == current.address)?.placed ?? 0
+        requiredAmount = Math.ceil(amount * 1 + placed * 1)
+      }
+      console.log('--- Required amount for Approval with placed amount', requiredAmount)
       
-      console.log('--- Result from Allowance using decimals', allowanceAmount)
-      if (allowanceAmount * 1 < requiredAmountWithOrders * 1) {
-        appLog('Change Allowance Amount')
+      
+      if (allowanceAmount * 1 < requiredAmount * 1) {
         if (spendToken === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
-          const reset = await contracts.approve(spendToken, blockchain?.contract?.exchange, parseUnits('0', spendDecimals))
-          if (reset?.error) {
-            console.log(2, reset?.error)
+          const reset = await WagmiHelper.approveAmount(spendToken, parseUnits('0', spendDecimals))
+          if (reset == null) {
+            onClose()
             return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
           }
         }
 
-        const approve = await contracts.approve(spendToken, blockchain?.contract?.exchange, parseUnits(Number.MAX_SAFE_INTEGER.toString(), spendDecimals))
-        if (approve?.error) {
-          console.log(3, approve?.error)
+        const approveTxId = await WagmiHelper.approveAmount(spendToken, parseUnits(Number.MAX_SAFE_INTEGER.toString(), spendDecimals))
+        if (approveTxId == null) {
+          onClose()
           return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
         }
-        console.log('--- Result from Approve TxID', approve)
+        console.log('--- Result from Approve TxID', approveTxId)
       }
 
       setStep('place')
-
       Amplitude.event('Confirm Order Submit', {
         'Base Currency': side === 'buy' ? current.symbol : current.quoteSymbol,
         'Quote Currency': side === 'buy' ? current.quoteSymbol : current.symbol,
@@ -105,7 +94,6 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         'Step': 'Sign',
       })
 
-      appLog('Generate Typed Data')
       const typedData = await $orders.api.typedData({
         chain_id: blockchain.id,
         wallet_address: wallet,
@@ -116,39 +104,32 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       })
 
       if (typedData?.error || ! typedData) {
+        onClose()
         return handleError('Order not created', 'Please try again to place your order.')
       }
 
-      let {types} = typedData.data.sign_data
-      delete types.EIP712Domain
-      const temp = {
-        ...typedData.data.sign_data,
-        types,
-      }
-
-      appLog('Sign Typed Data')
-      const signature = await walletClient.signTypedData(temp).catch(error => {
-        appLog(`Signature error ${error.shortMessage}`)
+      const signature = await WagmiHelper.signTypedData(typedData.data.sign_data).catch(error => {
+        onClose()
         return handleError('Order not created', 'Please check your wallet and try again to place your order.')
       })
 
       if (!signature) {
-        appLog(`Signature failed`)
+        onClose()
+        return handleError('Order not created', 'Please check your wallet and try again to place your order.')
         return
       }
 
-      appLog(`Place Order`)
       const result = await $orders.api.place({
         ...typedData.data.limit_order,
         signature,
       })
 
       if (result?.error) {
+        onClose()
         // return handleError('Order not created', 'Please try again to place your order.')
         return handleError('Order not created', result.error)
       }
 
-      appLog(`Place Order Success`)
       const vid = localStorage.getItem('ms_vid')
       if (vid) {
         $app.api.volume({

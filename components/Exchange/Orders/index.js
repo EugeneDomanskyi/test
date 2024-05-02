@@ -11,8 +11,9 @@ import $app from '@/store/app'
 import $orders from '@/store/orders'
 import $alert from '@/store/alert'
 
+import WagmiHelper from '@/libs/WagmiHelper'
 import Amplitude from '@/libs/amplitude.lib'
-import useWalletConnect from '@/myhooks/wallet-connect'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import App from '@/components/App'
 import OrderDetails from '@/components/Exchange/OrderDetails'
@@ -20,7 +21,7 @@ import OrderDetails from '@/components/Exchange/OrderDetails'
 const Orders = ({global, type, version, onClickOrder}) => {
   const router = useRouter()
 
-  const { wallet, connect, getConnectorInfo, sign } = useWalletConnect()
+  const { wallet, connect } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -98,7 +99,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
     handleDialogClose('cancelAll')()
     handleDialogOpen('approve')()
 
-    const signature = await sign(wallet)
+    const signature = await WagmiHelper.signMessage()
     if (signature) {
       const result = await $orders.api.cancelAll({ wallet_address: wallet, chain_id: blockchain.id, signature })
       if (result?.data) {
@@ -148,7 +149,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
     Amplitude.event('Cancel Order Submit', eventPost)
 
-    const signature = await sign(wallet)
+    const signature = await WagmiHelper.signMessage()
     if (signature) {
       const result = await $orders.api.cancel({ id: order.orderId, chain_id: blockchain.id, signature })
       if (result) {
@@ -206,7 +207,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
       if (result) {
         Amplitude.event('Wallet Connect Success', {
           'Source': Amplitude.page(),
-          'Type': getConnectorInfo().name,
+          'Type': WagmiHelper.getConnectorInfo().name,
         })
       }
     }
