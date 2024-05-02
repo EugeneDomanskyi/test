@@ -56,10 +56,10 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       let requiredAmount = 0
       if (side === 'buy') {
         const placed = portfolio.find(item => item.address == current.quote)?.placed ?? 0
-        requiredAmount = total * 1 + placed * 1
+        requiredAmount = Math.ceil(total * 1 + placed * 1)
       } else {
         const placed = portfolio.find(item => item.address == current.address)?.placed ?? 0
-        requiredAmount = amount * 1 + placed * 1
+        requiredAmount = Math.ceil(amount * 1 + placed * 1)
       }
       console.log('--- Required amount for Approval with placed amount', requiredAmount)
       
