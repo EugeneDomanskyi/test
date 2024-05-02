@@ -6,8 +6,6 @@ import cn from 'classnames'
 
 import Socket from '@/libs/ws.lib'
 import Amplitude from '@/libs/amplitude.lib'
-import useWagmiHelper from '@/myhooks/useWagmiHelper'
-import useApp from '@/myhooks/useApp'
 
 import $alert from '@/store/alert'
 import $orders from '@/store/orders'
@@ -22,7 +20,6 @@ import Sales from '@/components/Exchange/Sales'
 import TradeForm from '@/components/Exchange/TradeForm'
 import Info from '@/components/Exchange/Info'
 import Orders from '@/components/Exchange/Orders'
-import DevModal from '@/components/DevModal'
 
 import styles from './styles.module.scss'
 
@@ -34,20 +31,13 @@ const Exchange = () => {
   const router = useRouter()
   const [queryTokenId] = router.query.address || []
 
-  const { connection } = useWagmiHelper()
-
-  const { isApp, appLog, appConnect } = useApp()
-
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
-  const devMode = useSelector(({ $app }) => $app.devMode)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
+  const isApp = useSelector(({ $app }) => $app.isApp)
   const current = useSelector(({ $token }) => $token.current)
   const myOrdersDialogOpen = useSelector(({ $orders }) => $orders.myOrdersDialogOpen)
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
-
-  const [devModalVisible, setDevModalVisible] = useState(false)
-  const [appConnectionLoading, setAppConnectionLoading] = useState(true)
 
   const tradeForm = useRef(null)
   const mobileRef = useRef(null)
@@ -67,17 +57,6 @@ const Exchange = () => {
   }, [])
 
   useEffect(() => {
-    if (isApp) {
-      if (connection.loading) {
-        setAppConnectionLoading(true)
-      } else {
-        appLog(connection)
-        appConnect(() => setAppConnectionLoading(false))
-      }
-    }
-  }, [isApp, connection])
-
-  useEffect(() => {
     if (socketConnected && blockchain?.id && current?.id) {
       Socket.subscribe(`${blockchain.id}/${current.id}`)
 
@@ -88,6 +67,7 @@ const Exchange = () => {
   }, [socketConnected, blockchain?.id, current?.id])
 
   const handleAction = useCallback(({action, data}) => {
+    dispatch($portfolio.set.update(true))
     if ( !isApp) {
       switch (action) {
         case 'order_placed':
@@ -95,7 +75,6 @@ const Exchange = () => {
           break
         case 'order_submitted':
           dispatch($alert.set.success({ title: 'Matched & pending settlement' }))
-          dispatch($portfolio.set.update(true))
           break
         case 'chain_event_OrderFilled':
           dispatch($alert.set.success({ title: 'Order filled on-chain', text: `Your ${data.side} order for ${data.quantity} ${data.baseCurrency} has been executed ${data.quantity == data.quantityFilled ? 'fully' : 'partially'}.` }))
@@ -130,10 +109,6 @@ const Exchange = () => {
       mobileRef.current.handleClickOrder(order)
       handleCloseOrdersDialog()
     }, 300)
-  }
-
-  const handleDevModal = () => {
-    setDevModalVisible(state => !state)
   }
 
   return (
@@ -185,18 +160,6 @@ const Exchange = () => {
               </App.Flex>
             </App.Flex>
           </App.Dialog>
-
-          {devMode ? (
-            <>
-              <App.Flex className={styles.devModeButton}>
-                <App.Button primary onClick={handleDevModal}>Dev</App.Button>
-              </App.Flex>
-
-              <App.Dialog open={devModalVisible} onClose={handleDevModal} title="Developer Mode Settings">
-                <DevModal />
-              </App.Dialog>
-            </>
-          ) : null}
         </>
       )}
     </App.Flex>

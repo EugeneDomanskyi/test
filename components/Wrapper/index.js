@@ -3,28 +3,30 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 
-import useApp from '@/myhooks/useApp'
 import Amplitude from '@/libs/amplitude.lib'
+import useAppHelper from '@/myhooks/useAppHelper'
 
 import $app from '@/store/app'
 
 import App from '@/components/App'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import MobileAppHeader from '@/components/Header/MobileAppHeader'
 
 const Analytics = dynamic(import('@/components/Analytics'), {ssr: false})
 
 const Wrapper = ({ children }) => {
-  const dispatch = useDispatch()
+  useAppHelper()
 
   const router = useRouter()
   const isCampaign = router.asPath?.includes('/campaign')
   const isExchange = router.asPath?.includes('/exchange')
 
-  const [isInIframe, setIsInIframe] = useState(false);
+  const dispatch = useDispatch()
+  const isApp = useSelector(({ $app }) => $app.isApp)
+  const platform = useSelector(({ $app }) => $app.platform)
 
-  const { isApp, platform } = useApp()
+  const [isInIframe, setIsInIframe] = useState(false)
+
   Amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY, !isApp, platform ?? 'Web')
 
   useEffect(() => {
@@ -66,7 +68,6 @@ const Wrapper = ({ children }) => {
           ? <div style={{height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden'}}>
               <Analytics />
               {!isCampaign && !isApp ? <Header /> : null}
-              { isApp ? <MobileAppHeader /> : null }
               {children}
               {!isCampaign && !isApp && !isExchange ? <Footer /> : null}
             </div>
