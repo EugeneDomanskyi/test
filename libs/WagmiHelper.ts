@@ -2,7 +2,7 @@ import nookies from 'nookies'
 import { Chain, Hex, PrivateKeyAccount, WalletClient, createPublicClient, createWalletClient, publicActions } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { http } from 'wagmi'
-import { disconnect, getAccount, getChainId, readContract, signMessage, signTypedData, simulateContract, switchChain, watchAccount, writeContract } from '@wagmi/core'
+import { disconnect, getAccount, getChainId, readContract, signMessage, signTypedData, simulateContract, switchChain, watchAccount, writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
 import * as wagmiChains from 'wagmi/chains'
 
@@ -462,11 +462,12 @@ class WagmiHelper {
       let result = null
       if (this.appWallet) {
         result = await this.walletClient.writeContract(config.request)
-        const temp = await this.publicClient.waitForTransactionReceipt({ hash: result })
-        console.log('Result', temp)
+        await this.publicClient.waitForTransactionReceipt({ hash: result })
       } else {
         result = await writeContract(this.wagmiConfig, config.request)
+        await waitForTransactionReceipt(this.wagmiConfig, { hash: result })
       }
+
       return result
     } catch (error) {
       this.error('Approve amount failed', error)
