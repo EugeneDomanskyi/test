@@ -43,8 +43,8 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       setStep('sign')
       const spendToken = side === 'buy' ? current.quote : current.address
       const allowanceAmountBigInt = await WagmiHelper.getAllowance(spendToken)
-      if (allowanceAmountBigInt?.error) {
-        console.log('--- Error from Allowance check', allowanceAmountBigInt?.error)
+      if (allowanceAmountBigInt == null) {
+        onClose()
         return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
       }
       console.log('--- Result from Allowance check', allowanceAmountBigInt)
@@ -67,15 +67,15 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       if (allowanceAmount * 1 < requiredAmount * 1) {
         if (spendToken === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
           const reset = await WagmiHelper.approveAmount(spendToken, parseUnits('0', spendDecimals))
-          if (reset?.error) {
-            console.log('--- Error from Approve for set 0 to USDT', reset?.error)
+          if (reset == null) {
+            onClose()
             return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
           }
         }
 
-        const approveTxId = await WagmiHelper.approveAmount(spendToken, parseUnits(requiredAmount.toString(), spendDecimals))
-        if (approveTxId?.error) {
-          console.log('--- Error from Approve', approveTxId?.error)
+        const approveTxId = await WagmiHelper.approveAmount(spendToken, parseUnits(Number.MAX_SAFE_INTEGER.toString(), spendDecimals))
+        if (approveTxId == null) {
+          onClose()
           return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
         }
         console.log('--- Result from Approve TxID', approveTxId)
@@ -104,14 +104,18 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       })
 
       if (typedData?.error || ! typedData) {
+        onClose()
         return handleError('Order not created', 'Please try again to place your order.')
       }
 
       const signature = await WagmiHelper.signTypedData(typedData.data.sign_data).catch(error => {
+        onClose()
         return handleError('Order not created', 'Please check your wallet and try again to place your order.')
       })
 
       if (!signature) {
+        onClose()
+        return handleError('Order not created', 'Please check your wallet and try again to place your order.')
         return
       }
 
@@ -121,6 +125,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       })
 
       if (result?.error) {
+        onClose()
         // return handleError('Order not created', 'Please try again to place your order.')
         return handleError('Order not created', result.error)
       }

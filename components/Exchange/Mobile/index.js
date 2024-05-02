@@ -7,6 +7,7 @@ import Image from 'next/image'
 import $app from '@/store/app'
 import $token from '@/store/token'
 import $orders from '@/store/orders'
+import $portfolio from '@/store/portfolio'
 
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 import Socket from '@/libs/ws.lib'
@@ -44,6 +45,7 @@ const Mobile = forwardRef((_, ref) => {
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
+  const updatePortfolio = useSelector(({ $portfolio }) => $portfolio.update)
   const isApp = useSelector(({ $app }) => $app.isApp)
   const list = useSelector(({ $token }) => $token.all)
   const item = useSelector(({ $token }) => $token.current)
@@ -92,6 +94,19 @@ const Mobile = forwardRef((_, ref) => {
   }, [wallet, socketConnected])
 
   useEffect(() => {
+    if (isApp, wallet && blockchain?.id) {
+      getPortfolio()
+    }
+  }, [isApp, wallet, blockchain?.id])
+
+  useEffect(() => {
+    if (isApp, updatePortfolio) {
+      getPortfolio()
+      dispatch($portfolio.set.update(false))
+    }
+  }, [isApp, updatePortfolio])
+
+  useEffect(() => {
     if (item?.id) {
       setChartTop([
         {value: formatNumber(item.volume ?? 0), text: 'Vol'},
@@ -122,6 +137,15 @@ const Mobile = forwardRef((_, ref) => {
       }
     } else {
       dispatch($token.set.current(existInList))
+    }
+  }
+
+  const getPortfolio = async () => {
+    const result = await $portfolio.api.details({ wallet, blockchain })
+    if (result?.success) {
+      dispatch($portfolio.set.details({...result, blockchain}))
+    } else {
+      dispatch($portfolio.set.details({data: [], blockchain}))
     }
   }
 
