@@ -40,6 +40,12 @@ const useWagmiHelper = () => {
   }, [isApp, wpk, appConnected])
 
   useEffect(() => {
+    if (isApp && blockchain?.id) {
+      WagmiHelper.createApWalletClients(blockchain)
+    }
+  }, [blockchain?.id])
+
+  useEffect(() => {
     if (connectModalOpen && isConnected) {
       WagmiHelper.connectSuccess()
     }
