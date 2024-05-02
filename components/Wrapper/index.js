@@ -93,7 +93,7 @@ const Wrapper = ({ children }) => {
               <Analytics />
               {!isCampaign && !isApp ? <Header /> : null}
               {children}
-              {!isCampaign && !isApp && !isExchange ? (isPD ? <PointsFooter /> : <Footer />) : null}
+              {!isCampaign && !isApp && !isExchange ? <Footer /> : null}
             </div>
           : <Footer />
       }

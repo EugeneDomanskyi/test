@@ -5,6 +5,7 @@ import Image from 'next/image'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
 
+import $alert from '@/store/alert'
 import $point from '@/store/point'
 
 import App from '@/components/App'
@@ -21,8 +22,14 @@ const PointsQuests = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    document.addEventListener('visibilitychange', handleVisible)
+
     if (wallet) {
       fetchQuests()
+    }
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisible)
     }
   }, [wallet])
 
@@ -34,15 +41,23 @@ const PointsQuests = () => {
     setLoading(false)
   }
 
+  const handleVisible = () => {
+    if (!document.hidden) {
+      fetchQuests()
+    }
+  }
+
   const handleClick = (url) => () => {
     if (url) {
       window.open(url ?? 'https://galxe.com/', '_blank')
     }
   }
 
-  const handleClaim = (id) => async () => {
+  const handleClaim = (id, points) => async (e) => {
+    e.stopPropagation()
     const result = await $point.api.questClaim(wallet, { quest_id: id })
     if (result && result?.data) {
+      dispatch($alert.set.success({ title: 'Congratulations!', text: `${points} points credited` }))
       fetchQuests()
     }
   }
@@ -87,7 +102,7 @@ const PointsQuests = () => {
                             <App.Text size={16} weight={600} height={1} color="#9B99AE">{t('Claimed')}</App.Text>
                           </App.Flex>
                         ) : (
-                          <App.Button primary2 sx={{width: 160}} onClick={handleClaim(item.id)}>{t('Claim')}</App.Button>
+                          <App.Button primary2 variant="quest" sx={{width: 160}} onClick={handleClaim(item.id, item.points)}>{t('Claim')}</App.Button>
                         )
                       ) : null}
                     </App.Flex>

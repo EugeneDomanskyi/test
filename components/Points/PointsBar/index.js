@@ -45,7 +45,7 @@ const PointsBar = ({ tabs, tab, onTab }) => {
               <App.Icon icon="question-circle" />
             </Link>
 
-            <SwitchLanguage />
+            {/* <SwitchLanguage /> */}
           </App.Flex>
         </App.Flex>
       </App.Container>

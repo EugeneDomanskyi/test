@@ -1,10 +1,10 @@
 .tiger {
   position: relative;
   z-index: 0;
-  height: calc(100vh - 188px);
+  height: calc(100vh - 134px);
 
   @media (max-width: 768px) {
-    height: calc(100vh - 170px);
+    height: calc(100vh - 116px);
   }
 
   &:after {

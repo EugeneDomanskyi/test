@@ -33,7 +33,7 @@ export const portfolioSlice = createSlice({
     details: (state, { payload }) => {
       const native = payload.data.find(item => item.type === 'native')
       state.native = {
-        value: (native?.balance ?? 0).toFixed(4),
+        value: native?.balance,
         symbol: native?.symbol,
       }
 

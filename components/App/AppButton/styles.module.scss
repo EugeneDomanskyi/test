@@ -132,9 +132,15 @@
     font-size: 16px;
     line-height: 25px;
 
+    &.quest {
+      border-radius: 12px;
+      background: linear-gradient(180deg, #6B41EB -6.02%, #241164 85.68%);
+      border-bottom: 2px solid #6B41EB;
+    }
+
     &.active:not(:disabled),
     &:hover:not(:disabled) {
-      background-color: #3d008c;
+      background: linear-gradient(180deg, #3d008c -6.02%, #241164 85.68%);
     }
 
     &.outlined {
