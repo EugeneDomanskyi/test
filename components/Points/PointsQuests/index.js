@@ -105,7 +105,9 @@ const PointsQuests = () => {
                           <App.Button primary2 variant="quest" sx={{width: 160}} onClick={handleClaim(item.id, item.points)}>{t('Claim')}</App.Button>
                         )
                       ) : (
-                        <App.Button primary2 variant="quest" sx={{width: 160}}>{t('Claim')}</App.Button>
+                        <App.Flex center width={160} height={48} className={styles.claimed}>
+                          <App.Text size={16} weight={600} height={1} color="#9B99AE">{t('Claim')}</App.Text>
+                        </App.Flex>
                       )}
                     </App.Flex>
                   </App.Flex>
