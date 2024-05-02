@@ -26,7 +26,7 @@ const PointsDashboard = () => {
     { title: t('Dashboard'), key: 'home' },
     { title: t('Liquidity Mining'), key: 'liquidity' },
     { title: t('Refer & Earn'), key: 'refer' },
-    { title: t('Contributor Tasks'), key: 'contributor' },
+    // { title: t('Contributor Tasks'), key: 'contributor' },
     { title: t('Third Party Quests'), key: 'quests' },
   ]
 
@@ -47,7 +47,7 @@ const PointsDashboard = () => {
       case 'home': return <PointsHome />
       case 'liquidity': return <PointsLiquidity />
       case 'refer': return <PointsRefer />
-      case 'contributor': return <PointsContributor />
+      // case 'contributor': return <PointsContributor />
       case 'quests': return <PointsQuests />
       default: return <PointsHome />
     }

@@ -104,7 +104,9 @@ const PointsQuests = () => {
                         ) : (
                           <App.Button primary2 variant="quest" sx={{width: 160}} onClick={handleClaim(item.id, item.points)}>{t('Claim')}</App.Button>
                         )
-                      ) : null}
+                      ) : (
+                        <App.Button primary2 variant="quest" sx={{width: 160}}>{t('Claim')}</App.Button>
+                      )}
                     </App.Flex>
                   </App.Flex>
                 )
