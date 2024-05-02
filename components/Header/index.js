@@ -68,11 +68,11 @@ const Header = () => {
                   </App.Flex>
                 </Link>
 
-                <Link href="/auto-trader" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/auto-trader')})}>
+                <a href="https://tegro.readme.io/reference/market-maker" target="_blank" rel="noreferrer" className={cn(styles.navItem)}>
                   <App.Flex center fullHeight>
                     <App.Text size={14} weight={600}>Auto-Trader</App.Text>
                   </App.Flex>
-                </Link>
+                </a>
 
                 <App.Flex className={cn(styles.navItem, styles.disabled, {[styles.active]: router.pathname.includes('/points-dashboard')})}>
                   <App.Flex center fullHeight>
@@ -132,12 +132,12 @@ const Header = () => {
                 </App.Flex>
               </Link>
 
-              <Link href="/auto-trader" className={cn(styles.link)}>
+              <a href="https://tegro.readme.io/reference/market-maker" target="_blank" rel="noreferrer" className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   {/* <App.Icon icon="menuExchange" /> */}
-                  <App.Text size={14} weight={700} color={router.pathname.includes('/auto-trader') ? '#A6DC37' : '#fff'}>Auto-Trader</App.Text>
+                  <App.Text size={14} weight={700}>Auto-Trader</App.Text>
                 </App.Flex>
-              </Link>
+              </a>
 
               <App.Flex className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8}>
