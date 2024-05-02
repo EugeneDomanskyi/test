@@ -46,7 +46,7 @@ const PointsLiquidity = () => {
     <App.Flex column fullWidth gap={32} className={styles.container}>
       <App.Container maxWidth={1230}>
         <App.Flex column fullWidth gap={32}>
-          <App.Flex row className={styles.banner} align="center" justify="space-between">
+          {/* <App.Flex row className={styles.banner} align="center" justify="space-between">
             <App.Text weight={600}>{t('Launch your 24x7 mining bot in 3 clicks')}</App.Text>
             {!isMobile ? (
               <>
@@ -80,7 +80,7 @@ const PointsLiquidity = () => {
                 <App.Button secondary2 xs>{t('Launch Bot')} <App.Icon icon="arrow-45" color="#052E16" /></App.Button>
               </>
             ) : null}
-          </App.Flex>
+          </App.Flex> */}
 
           <App.Flex direction={['row', 'column']} align="center" row gap={24}>
             <App.Flex column align="flex-start" flex={1} gap={12}>

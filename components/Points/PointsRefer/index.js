@@ -91,7 +91,14 @@ const PointsRefer = () => {
   }
 
   const handleShare = () => {
-    console.log('Share')
+    const link = `${window.location.origin}?referral=${referral.referral_code}`
+    const tweetText = encodeURIComponent(`
+I'm getting 💸 pre-rich with Tegro! 🐅 Simply open an order to begin farming ✨POINTS!✨
+Sign up with my link today to get started! ✅${link}
+Don't fade on this gem💎
+`)
+    const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}`
+    window.open(tweetUrl, '_blank')
   }
 
   const getShort = (address) => {
@@ -104,7 +111,7 @@ const PointsRefer = () => {
       {loading ? (
         <App.LoaderBlock height={200} />
       ) : (
-        referral.referrals_count == 0 ? (
+        referral.referrals_count > 0 ? (
           <App.Flex column gap={32}>
             <App.Container maxWidth={1230}>
               <App.Flex direction={['row', 'column']} gap={24}>
@@ -156,7 +163,7 @@ const PointsRefer = () => {
                       <App.Text color="#FFFFFF99">{referral.referral_code}</App.Text>
                       <App.Icon icon="copy" color="#FFFFFF99" />
                     </App.Flex>
-                    <App.Button primary2 onClick={handleInvite}>{t('Share on X')}</App.Button>
+                    <App.Button primary2 onClick={handleShare}>{t('Share on X')}</App.Button>
                   </App.Flex>
                 </App.Flex>
               </App.Flex>
@@ -182,7 +189,7 @@ const PointsRefer = () => {
                     <App.Text color="#FFFFFF99">{referral.referral_code}</App.Text>
                     <App.Icon icon="copy" color="#FFFFFF99" />
                   </App.Flex>
-                  <App.Button primary2 onClick={handleInvite}>{t('Share on X')}</App.Button>
+                  <App.Button primary2  onClick={handleShare}>{t('Share on X')}</App.Button>
                 </App.Flex>
               </App.Flex>
             </App.Container>
@@ -204,7 +211,7 @@ const PointsRefer = () => {
                       <App.Text color="#FFFFFF99">{referral.referral_code}</App.Text>
                       <App.Icon icon="copy" color="#FFFFFF99" />
                     </App.Flex>
-                    <App.Button primary2 onClick={handleInvite}>{t('Share on X')}</App.Button>
+                    <App.Button primary2 onClick={handleShare}>{t('Share on X')}</App.Button>
                   </App.Flex>
                 </App.Flex>
 

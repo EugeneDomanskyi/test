@@ -138,7 +138,7 @@ const PointsLiquidityOrders = ({ loading }) => {
                       </App.Flex>
 
                       <App.Flex flex={1} center>
-                        <App.Text center size={16} weight={600} height={1}>{item.price_deviation}%</App.Text>
+                        <App.Text center size={16} weight={600} height={1}>{Math.abs(item.price_deviation)}%</App.Text>
                       </App.Flex>
 
                       <App.Flex flex={1} center>
@@ -214,7 +214,7 @@ const PointsLiquidityOrders = ({ loading }) => {
 
             <App.Flex row align="center" justify="space-between">
               <App.Text size={14} weight={400} height={1}>{t('Price Deviation')}</App.Text>
-              <App.Text size={14} weight={600} height={1}>{currentOrder.price_deviation}%</App.Text>
+              <App.Text size={14} weight={600} height={1}>{Math.abs(currentOrder.price_deviation)}%</App.Text>
             </App.Flex>
 
             <App.Flex row align="center" justify="space-between">

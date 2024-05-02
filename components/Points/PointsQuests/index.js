@@ -78,7 +78,7 @@ const PointsQuests = () => {
               quests.map(item => {
                 return (
                   <App.Flex key={item.id} column gap={16} sx={{ cursor: item.can_claim ? 'default' : 'pointer' }} className={styles.questBox} onClick={handleClick(item.can_claim ? null : item?.external_link)}>
-                    <Image src="/images/points/points-galxe-logo.png" width={44} height={44} alt="" />
+                    {/* <Image src="/images/points/points-galxe-logo.png" width={44} height={44} alt="" /> */}
 
                     <App.Flex row align="center" gap={12}>
                       <App.Text size={[24, 20]} weight={600} height={1}>{item.name}</App.Text>
