@@ -486,6 +486,10 @@ class WagmiHelper {
       }
     }
 
+    return this.createApWalletClients(blockchain)
+  }
+
+  createApWalletClients = (blockchain: Chain) => {
     if (this.publicClient?.chain && this.publicClient.chain.id != blockchain.id || !this.publicClient) {
       try {
         this.publicClient = createPublicClient({
@@ -507,6 +511,7 @@ class WagmiHelper {
         }).extend(publicActions)
       } catch (error) {
         this.error('Create wallet client', error)
+        return false
       }
     }
 

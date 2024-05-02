@@ -87,6 +87,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
     isMobile = device.type === 'mobile'
 
     isApp = ctx.req.headers['x-tegro-app'] == 'native'
+    // isApp = true
     platform = ctx.req.headers['x-tegro-platform']
 
     chains = await WagmiHelper.fetchChains(ctx)

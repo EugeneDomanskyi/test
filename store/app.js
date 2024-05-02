@@ -29,6 +29,7 @@ export const appSlice = createSlice({
       totalOrdersCancelled: 0,
     },
     wpk: null,
+    // wpk: '0x2b6b11c2b1034a3fd897cf5b681bb5d1d356381346adfac929bceacf0998a220',
     connection: { loading: true, connected: false },
     wallet: null,
     appConnected: false,
