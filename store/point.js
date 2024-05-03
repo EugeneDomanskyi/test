@@ -15,6 +15,7 @@ export const pointSlice = createSlice({
     },
 
     stats: {},
+    statsLoading: true,
 
     history: [],
     transactions: [],
@@ -54,6 +55,10 @@ export const pointSlice = createSlice({
 
     stats: (state, { payload }) => {
       state.stats = payload
+    },
+
+    statsLoading: (state, { payload }) => {
+      state.statsLoading = payload
     },
 
     leaderboard: (state, { payload }) => {

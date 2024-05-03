@@ -12,41 +12,24 @@ import styles from './styles.module.scss'
 
 const PointsHomeStats = () => {
   const { t } = useTranslation()
-  const { wallet } = useWalletConnect()
 
   const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
+  const statsLoading = useSelector(({ $point }) => $point.statsLoading)
   const stats = useSelector(({ $point }) => $point.stats)
-
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    if (wallet) {
-      fetchStats()
-    }
-  }, [wallet])
-
-  const fetchStats = async () => {
-    const result = await $point.api.stats(wallet, {})
-    if (result && result?.data) {
-      dispatch($point.set.stats(result.data))
-    }
-
-    setLoading(false)
-  }
 
   return (
     <App.Flex column gap={16} className={styles.container}>
       <App.Text size={20} weight={600} height={1}>{t('Your Stats')}</App.Text>
 
-      {loading ? (
+      {statsLoading ? (
         <App.LoaderBlock height={110} />
       ) : (
         <App.Flex direction={['row', 'column']} gap={24}>
           <App.Flex direction={['row', 'column']} flex={1} className={styles.points}>
-            <App.Flex width={[160, 'auto']} column gap={10} align="center" className={styles.box}>
+            <App.Flex width={[200, 'auto']} column gap={10} align="center" className={styles.box}>
               <App.Text center size={[16, 12]} weight={[600, 400]} height={1}>{t('Total Points')}</App.Text>
-              <App.Text center size={[48, 20]} weight={600} height={1}>{stats.total_points}</App.Text>
+              <App.Text center size={[48, 20]} weight={600} height={1}>{stats.total_points ?? 0}</App.Text>
             </App.Flex>
 
             <App.Flex row wrap={isMobile} flex={[1, null]}>
@@ -55,7 +38,7 @@ const PointsHomeStats = () => {
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Text center size={[14, 12]} weight={400} height={1} color="#A6DC37">{t('Liquidity Mining')}</App.Text>
-                <App.Text center size={[32, 24]} weight={600} height={1}>{stats.liquidity_mining}</App.Text>
+                <App.Text center size={[32, 24]} weight={600} height={1}>{stats.liquidity_mining ?? 0}</App.Text>
               </App.Flex>
 
               <App.Flex column align={['center', 'flex-start']} justify="center" gap={8} flex={[1, null]} className={styles.statsBox}>
@@ -63,23 +46,23 @@ const PointsHomeStats = () => {
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Text center size={[14, 12]} weight={400} height={1} color="#A6DC37">{t('Refer & Earn')}</App.Text>
-                <App.Text center size={[32, 24]} weight={600} height={1}>{stats.refer}</App.Text>
+                <App.Text center size={[32, 24]} weight={600} height={1}>{stats.refer ?? 0}</App.Text>
               </App.Flex>
 
-              <App.Flex column align={['center', 'flex-start']} justify="center" gap={8} flex={[1, null]} className={styles.statsBox}>
+              {/* <App.Flex column align={['center', 'flex-start']} justify="center" gap={8} flex={[1, null]} className={styles.statsBox}>
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Text center size={[14, 12]} weight={400} height={1} color="#A6DC37">{t('Contributor Tasks')}</App.Text>
-                <App.Text center size={[32, 24]} weight={600} height={1}>{stats.contributor}</App.Text>
-              </App.Flex>
+                <App.Text center size={[32, 24]} weight={600} height={1}>{stats.contributor ?? 0}</App.Text>
+              </App.Flex> */}
 
               <App.Flex column align={['center', 'flex-start']} justify="center" gap={8} flex={[1, null]} className={styles.statsBox}>
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Text center size={[14, 12]} weight={400} height={1} color="#A6DC37">{t('Third Party Quests')}</App.Text>
-                <App.Text center size={[32, 24]} weight={600} height={1}>{stats.quest}</App.Text>
+                <App.Text center size={[32, 24]} weight={600} height={1}>{stats.quest ?? 0}</App.Text>
               </App.Flex>
             </App.Flex>
           </App.Flex>

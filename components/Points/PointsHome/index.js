@@ -1,6 +1,10 @@
+import { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 
 import useWalletConnect from '@/myhooks/wallet-connect'
+
+import $point from '@/store/point'
 
 import App from '@/components/App'
 import PointsDropsBar from '@/components/Points/PointsDropsBar'
@@ -11,7 +15,25 @@ import styles from './styles.module.scss'
 
 const PointsHome = () => {
   const { t } = useTranslation()
-  const { connection, connect } = useWalletConnect()
+  const { connection, connect, wallet } = useWalletConnect()
+
+  const dispatch = useDispatch()
+  const statsLoading = useSelector(({ $point }) => $point.statsLoading)
+
+  useEffect(() => {
+    if (wallet) {
+      fetchStats()
+    }
+  }, [wallet])
+
+  const fetchStats = async () => {
+    const result = await $point.api.stats(wallet, {})
+    if (result && result?.data) {
+      dispatch($point.set.stats(result.data))
+    }
+
+    dispatch($point.set.statsLoading(false))
+  }
 
   const handleConnect = () => {
     connect()

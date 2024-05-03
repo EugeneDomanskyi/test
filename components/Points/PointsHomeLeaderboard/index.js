@@ -13,54 +13,15 @@ const PointsHomeLeaderboard = () => {
 
   const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
-  const current = useSelector(({ $tournament }) => $tournament.current)
-  const leaderboard = useSelector(({ $tournament }) => $tournament.leaderboard)
-
-  const [loading, setLoading] = useState(true)
-
-  const [tab, setTab] = useState('daily')
+  const statsLoading = useSelector(({ $point }) => $point.statsLoading)
+  const stats = useSelector(({ $point }) => $point.stats)
+  
+  const [tab, setTab] = useState('weekly')
 
   const tabs = [
-    { title: t(`Daily${isMobile ? '' : ' leaderboard'}`), key: 'daily' },
-    { title: t(`Cumulative${isMobile ? '' : ' leaderboard'}`), key: 'cumulative' },
+    { title: t(`Weekly${isMobile ? '' : ' leaderboard'}`), key: 'weekly' },
+    // { title: t(`Cumulative${isMobile ? '' : ' leaderboard'}`), key: 'cumulative' },
   ]
-
-  useEffect(() => {
-    fetchCurrentTournament()
-  }, [])
-
-  useEffect(() => {
-    fetchLeaderboard()
-  }, [current?.alias])
-
-  const fetchCurrentTournament = async () => {
-    const result = await $tournament.api.current()
-    if (result && result?.data) {
-      dispatch($tournament.set.current(result.data))
-    }
-  }
-
-  const fetchLeaderboard = async () => {
-    if (current?.alias) {
-      const calls = [
-        $tournament.api.leaderboard(current.alias, true),
-        $tournament.api.leaderboard(current.alias)
-      ]
-
-      const result = { daily: [], cumulative: [] }
-      const results = await Promise.all(calls)
-      if (results[0] && results[0]?.data) {
-        result.daily = results[0].data
-      }
-
-      if (results[1] && results[1]?.data) {
-        result.cumulative = results[1].data
-      }
-
-      dispatch($tournament.set.leaderboard(result))
-      setLoading(false)
-    }
-  }
 
   const handleTab = (value) => {
     setTab(value)
@@ -78,12 +39,6 @@ const PointsHomeLeaderboard = () => {
   const getShort = (address) => {
     const n = isMobile ? 4 : 8
     return `${address.substring(0, n)}...${address.substring(address.length - n)}`
-  }
-
-  const getLeaderboard = () => {
-    const result = [...leaderboard[tab]]
-    result.sort((a, b) => { return a.position - b.position })
-    return result
   }
 
   return (
@@ -120,11 +75,11 @@ const PointsHomeLeaderboard = () => {
         </App.Flex>
 
         <App.Flex column className={styles.table}>
-          {loading ? (
+          {statsLoading ? (
             <App.LoaderBlock height={200} />
           ) : (
-            getLeaderboard().length ? (
-              getLeaderboard().map((item, index) => (
+            stats?.leaderboard ? (
+              stats?.leaderboard.map((item, index) => (
                 <App.Flex key={index} row className={styles.row}>
                   <App.Flex width={[92, 44]} center>
                     <svg width={isMobile ? 24 : 44} height={isMobile ? 24 : 44} viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
