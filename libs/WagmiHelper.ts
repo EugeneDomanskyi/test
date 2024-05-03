@@ -95,15 +95,14 @@ class WagmiHelper {
     const [_, page, queryChainCode] = ctx.req.url.split('/')
     let currentChainCode = (page != '_next' ? queryChainCode : null) ?? nookies.get(ctx)?.currentChainCode
     if (!currentChainCode) {
-      currentChainCode = chains.length ? chains[0]?.code : null
-      nookies.set(ctx, 'currentChainCode', currentChainCode, {path: '/'})
+      currentChainCode = chains[0]?.code
     } else {
       if (chains.length && !chains.some(item => item.code == currentChainCode)) {
         currentChainCode = chains[0]?.code
-        nookies.set(ctx, 'currentChainCode', currentChainCode, {path: '/'})
       }
     }
 
+    nookies.set(ctx, 'currentChainCode', currentChainCode, {path: '/'})
     return currentChainCode
   }
 
@@ -122,6 +121,8 @@ class WagmiHelper {
         chains = this.getBackendChains()
       }
 
+      console.log('Backend Chains Ids', chains.map((chain: any) => chain.id))
+
       const inChains = wagmiChainsValues
         .filter((chain: any) => chains.some((c: any) => c.id === chain.id))
         .sort((a: any, b: any) => {
@@ -139,7 +140,7 @@ class WagmiHelper {
         appName: process.env.NEXT_PUBLIC_APP_NAME,
         projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
         chains: sortedWagmiChains as any,
-        // ssr: true,
+        ssr: true,
         transports: sortedWagmiChains.reduce((acc, chain) => {
           return {
             ...acc,
@@ -147,6 +148,8 @@ class WagmiHelper {
           }
         }, {}),
       })
+
+      console.log('Create Wagmi Config available chains', this.wagmiConfig.chains.length)
     }
 
     return this.wagmiConfig
@@ -198,13 +201,15 @@ class WagmiHelper {
 
     const currentChainId = getChainId(this.wagmiConfig)
     const newChain = this.getChainByCode(newChainCode)
-
+    console.log('Change Chain - currentChainId', currentChainId)
+    console.log('Change Chain - new chain Id', newChain?.id)
     if (newChain) {
       if (currentChainId == newChain?.id) {
         return true
       }
 
       try {
+        console.log('Change Chain - wagmi Config Chains length', this.wagmiConfig.chains.length)
         const result = await switchChain(this.wagmiConfig, { chainId: newChain.id })
         return result.hasOwnProperty('id')
       } catch (error) {
