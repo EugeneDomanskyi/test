@@ -139,7 +139,7 @@ class WagmiHelper {
         appName: process.env.NEXT_PUBLIC_APP_NAME,
         projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
         chains: sortedWagmiChains as any,
-        // ssr: true,
+        ssr: true,
         transports: sortedWagmiChains.reduce((acc, chain) => {
           return {
             ...acc,
