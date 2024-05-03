@@ -78,8 +78,8 @@ const PointsHomeLeaderboard = () => {
           {statsLoading ? (
             <App.LoaderBlock height={200} />
           ) : (
-            stats?.leaderboard ? (
-              stats?.leaderboard.map((item, index) => (
+            stats?.weekly_leaderboard ? (
+              stats.weekly_leaderboard.map((item, index) => (
                 <App.Flex key={index} row className={styles.row}>
                   <App.Flex width={[92, 44]} center>
                     <svg width={isMobile ? 24 : 44} height={isMobile ? 24 : 44} viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
