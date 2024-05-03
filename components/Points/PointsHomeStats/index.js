@@ -29,7 +29,7 @@ const PointsHomeStats = () => {
           <App.Flex direction={['row', 'column']} flex={1} className={styles.points}>
             <App.Flex width={[200, 'auto']} column gap={10} align="center" className={styles.box}>
               <App.Text center size={[16, 12]} weight={[600, 400]} height={1}>{t('Total Points')}</App.Text>
-              <App.Text center size={[48, 20]} weight={600} height={1}>{stats.total_points ?? 0}</App.Text>
+              <App.Text center size={[36, 20]} weight={600} height={1}>{stats.total_points ?? 0}</App.Text>
             </App.Flex>
 
             <App.Flex row wrap={isMobile} flex={[1, null]}>
