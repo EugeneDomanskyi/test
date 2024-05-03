@@ -46,7 +46,6 @@ const AppAlert = () => {
       if (currentMessages.some(item => ! item.visible)) {
         const unvisibleMessages = currentMessages.filter(item => ! item.visible)
         for (const message of unvisibleMessages) {
-          const isOpen = await handleOpen(message.id)
           if (!isApp) {
             const isOpen = await handleOpen(message.id)
             if (isOpen) {
