@@ -122,6 +122,8 @@ class WagmiHelper {
         chains = this.getBackendChains()
       }
 
+      console.log('Backend Chains Ids', chains.map((chain: any) => chain.id))
+
       const inChains = wagmiChainsValues
         .filter((chain: any) => chains.some((c: any) => c.id === chain.id))
         .sort((a: any, b: any) => {
@@ -147,6 +149,8 @@ class WagmiHelper {
           }
         }, {}),
       })
+
+      console.log('Create Wagmi Config available chains', this.wagmiConfig.chains.length)
     }
 
     return this.wagmiConfig
@@ -198,13 +202,15 @@ class WagmiHelper {
 
     const currentChainId = getChainId(this.wagmiConfig)
     const newChain = this.getChainByCode(newChainCode)
-
+    console.log('Change Chain - currentChainId', currentChainId)
+    console.log('Change Chain - new chain Id', newChain?.id)
     if (newChain) {
       if (currentChainId == newChain?.id) {
         return true
       }
 
       try {
+        console.log('Change Chain - wagmi Config Chains length', this.wagmiConfig.chains.length)
         const result = await switchChain(this.wagmiConfig, { chainId: newChain.id })
         return result.hasOwnProperty('id')
       } catch (error) {
