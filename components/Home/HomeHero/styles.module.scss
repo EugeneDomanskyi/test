@@ -1,3 +1,8 @@
+.heroWrapper {
+  width: 560px;
+  height: 563px;
+}
+
 .heroImg {
   position: absolute;
   right: -120px;
@@ -23,8 +28,22 @@
     width: 100%;
   }
 
-  .heroImg {
-    display: none;
+  .heroWrapper {
+    width: 100%;
+    
+    .heroImg {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 380px) {
+  .heroWrapper {
+    width: 100%;
+    
+    .heroImg {
+      display: none;
+    }
   }
 }
 
