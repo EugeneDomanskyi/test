@@ -23,13 +23,11 @@ const PointsRefer = () => {
   const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const referral = useSelector(({ $point }) => $point.referral)
-  const history = useSelector(({ $point }) => $point.history)
 
   const [points, setPoints] = useState(1)
   const [values, setValues] = useState({ my: 250, his: 1000 })
   const [hasReferrals, setHasReferrals] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [pointsToday, setPointsToday] = useState(0)
 
   const marks = [
     { value: 0, label: 0 },
@@ -49,7 +47,7 @@ const PointsRefer = () => {
   const fetchInfo = async () => {
     const calls = [
       fetchReferral(),
-      fetchHistory(),
+      fetchReferrals(),
     ]
 
     await Promise.all(calls)
@@ -63,11 +61,10 @@ const PointsRefer = () => {
     }
   }
 
-  const fetchHistory = async () => {
-    const result = await $point.api.history(wallet, {})
+  const fetchReferrals = async () => {
+    const result = await $point.api.referrals(wallet, {})
     if (result && result?.data) {
-      dispatch($point.set.history(result.data))
-      setPointsToday(result.data.filter(item => moment(item.created_at).isSame(new Date(), 'day')).reduce((acc, item) => acc + item.points, 0))
+      dispatch($point.set.referrals(result.data))
     }
   }
 

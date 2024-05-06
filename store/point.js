@@ -18,6 +18,7 @@ export const pointSlice = createSlice({
     statsLoading: true,
 
     history: [],
+    referrals: [],
     transactions: [],
     quests: [],
     tasks: [],
@@ -39,6 +40,10 @@ export const pointSlice = createSlice({
 
     history: (state, { payload }) => {
       state.history = payload
+    },
+
+    referrals: (state, { payload }) => {
+      state.referrals = payload
     },
 
     transactions: (state, { payload }) => {
@@ -90,6 +95,10 @@ export const api = {
 
   referral: (wallet) => {
     return request(`user/${wallet}`, 'GET', {api: 'accounts'})
+  },
+  
+  referrals: (wallet, params) => {
+    return request(`user/${wallet}/referrals`, 'GET', {api: 'accounts', ...params})
   },
 
   history: (wallet, params) => {
