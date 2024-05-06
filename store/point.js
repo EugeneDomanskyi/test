@@ -66,8 +66,8 @@ export const pointSlice = createSlice({
     },
 
     liquidity: (state, { payload }) => {
-      const open = payload.orders.filter(order => order.status === 'active').sort((a, b) => new Date(b.date) - new Date(a.date))
-      const completed = payload.orders.filter(order => order.status !== 'active').sort((a, b) => new Date(b.date) - new Date(a.date))
+      const open = payload.orders ? payload.orders.filter(order => order.status === 'active').sort((a, b) => new Date(b.date) - new Date(a.date)) : []
+      const completed = payload.orders ? payload.orders.filter(order => order.status !== 'active').sort((a, b) => new Date(b.date) - new Date(a.date)) : []
       const total_open_orders = payload.total_open_orders
       const total_liquidity = payload.total_user_amount
       const points_earned_today = payload.total_user_points

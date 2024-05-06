@@ -34,7 +34,7 @@ const PointsLiquidity = () => {
     if (result && result?.data) {
       dispatch($point.set.liquidity(result.data))
     }
-
+    
     setLoading(false)
   }
 
