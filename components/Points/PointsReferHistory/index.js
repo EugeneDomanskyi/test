@@ -62,13 +62,19 @@ const PointsReferHistory = () => {
                 ) : null}
 
                 <App.Flex flex={1} center>
-                  <App.Flex className={cn(styles.badge, styles.trade)}>
                     {item.reason === 'liquidity_order_matched' ? (
-                      <App.Text center uppercase size={12} weight={700} height={1}>{t('TRADED')}</App.Text>
+                      <App.Flex className={cn(styles.badge, styles.trade)}>
+                        <App.Text center uppercase size={12} weight={700} height={1}>{t('TRADED')}</App.Text>
+                      </App.Flex>
+                    ) : item.reason === 'created_user' ? (
+                      <App.Flex className={cn(styles.badge, styles.sign)}>
+                        <App.Text center uppercase size={12} weight={700} height={1} color="#1C2C07">{t('SIGNED IN')}</App.Text>
+                      </App.Flex>
                     ) : (
-                      <App.Text center uppercase size={12} weight={700} height={1}>{item.reason}</App.Text>
+                      <App.Flex className={cn(styles.badge, styles.trade)}>
+                        <App.Text center uppercase size={12} weight={700} height={1}>{item.reason}</App.Text>
+                      </App.Flex>
                     )}
-                  </App.Flex>
                 </App.Flex>
 
                 <App.Flex flex={1} align="center" justify={['center', 'flex-end']} sx={{paddingRight: 8}}>
