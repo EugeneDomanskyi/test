@@ -116,14 +116,13 @@ Don't fade on this gem💎
             <App.Container maxWidth={1230}>
               <App.Flex direction={['row', 'column']} gap={24}>
                 <App.Flex column gap={[12, 20]} flex={[65, null]} className={styles.topBox}>
-                  <App.Flex row align={['stretch', 'center']} justify="space-between">
+                  <App.Flex column>
                     <App.Text size={[24, 20]} weight={600}>{t('Refer & Earn Stats')}</App.Text>
-
-                    <App.Button primary2 onClick={handleShare}>{t('Share Now')} <App.Icon icon="arrow-45" /></App.Button>
+                    <App.Text color="#9b99ae">{t('Points will be added every 12 hours')}</App.Text>
                   </App.Flex>
 
                   <App.Flex row wrap={isMobile} gap={[24, 20]}>
-                    <App.Flex width={['auto', 'calc(50% - 12px)']} order={1} flex={[1, null]} center column gap={8} className={styles.insideBox}>
+                    <App.Flex width={['auto', '100%']} flex={[1, null]} center column gap={8} className={styles.insideBox}>
                       <App.Text size={[14, 12]} weight={400} height={1}>{t('Referrals')}</App.Text>
                       {loading ? (
                         <App.Loader size={[32, 24]} />
@@ -132,8 +131,8 @@ Don't fade on this gem💎
                       )}
                     </App.Flex>
 
-                    <App.Flex width={['auto', '100%']} order={[2, 3]} flex={[1, null]} center column gap={8} className={styles.insideBox}>
-                      <App.Text size={[14, 12]} weight={400} height={1}>{t('Points Earned From Referral')}</App.Text>
+                    <App.Flex width={['auto', '100%']} flex={[1, null]} center column gap={8} className={styles.insideBox}>
+                      <App.Text size={[14, 12]} weight={400} height={1}>{t('Referral Points')}</App.Text>
                       {loading ? (
                         <App.Loader size={[32, 24]} />
                       ) : (
@@ -141,14 +140,14 @@ Don't fade on this gem💎
                       )}
                     </App.Flex>
 
-                    <App.Flex width={['auto', 'calc(50% - 12px)']} order={[3, 2]} flex={[1, null]} center column gap={8} className={styles.insideBox}>
-                      <App.Text size={[14, 12]} weight={400} height={1}>{t('Points Earned Today')}</App.Text>
+                    {/* <App.Flex width={['auto', 'calc(50% - 12px)']} order={[3, 2]} flex={[1, null]} center column gap={8} className={styles.insideBox}>
+                      <App.Text size={[14, 12]} weight={400} height={1}>{t('Points Earned')}</App.Text>
                       {loading ? (
                         <App.Loader size={[32, 24]} />
                       ) : (
                         <App.Text size={[32, 24]} weight={600} height={1}>{pointsToday}</App.Text>
                       )}
-                    </App.Flex>
+                    </App.Flex> */}
                   </App.Flex>
                 </App.Flex>
 
@@ -173,25 +172,6 @@ Don't fade on this gem💎
 
             <App.Container maxWidth={1230}>
               <PointsReferHistory />
-            </App.Container>
-
-            <div className={styles.line} />
-
-            <App.Container maxWidth={1230}>
-              <App.Flex direction={['row', 'column']} gap={24} align={['center', 'flex-start']} justify="space-between">
-                <App.Flex column gap={8}>
-                  <App.Text size={[24, 20]} weight={600} height={1}>{t('Unleash the power of community!')}</App.Text>
-                  <App.Text size={[24, 20]} weight={600} height={1}>{t('Earn')} <App.Text inline size={[24, 20]} weight={600} height={1} color="#A6DC37">{t('25% Points')}</App.Text> {t('of')} <App.Text inline size={[24, 20]} weight={600} height={1} color="#A6DC37">{t('Every referral!')}</App.Text></App.Text>
-                </App.Flex>
-
-                <App.Flex direction={['row', 'column']} align={['center', 'stretch']} justify="center" gap={24}>
-                  <App.Flex row align="center" width={[384, 'auto']} justify="space-between" className={styles.copyAddress} onClick={handleCopy}>
-                    <App.Text color="#FFFFFF99">{referral.referral_code}</App.Text>
-                    <App.Icon icon="copy" color="#FFFFFF99" />
-                  </App.Flex>
-                  <App.Button primary2  onClick={handleShare}>{t('Share on X')}</App.Button>
-                </App.Flex>
-              </App.Flex>
             </App.Container>
           </App.Flex>
         ) : (

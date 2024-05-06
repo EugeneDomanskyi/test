@@ -43,7 +43,10 @@ const PointsHomeLeaderboard = () => {
 
   return (
     <App.Flex column gap={16} className={styles.container}>
-      <App.Text size={20} weight={600} height={1}>{t('Leaderboard')}</App.Text>
+      <App.Flex column>
+        <App.Text size={20} weight={600} height={1}>{t('Leaderboard')}</App.Text>
+        <App.Text color="#9b99ae">{t('Points will be added every 12 hours')}</App.Text>
+      </App.Flex>
 
       <App.Flex column>
         <App.Tabs active={tab} options={tabs} variant="points" onChange={handleTab} />

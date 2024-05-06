@@ -40,7 +40,7 @@ const PointsReferHistory = () => {
           </App.Flex>
 
           <App.Flex flex={1} align="center" justify={['center', 'flex-end']} sx={{paddingRight: 8}}>
-            <App.Text center weight={600} height={1} color="#A6DC37">{t(isMobile ? 'Points Earned' : 'Points Earned Today')}</App.Text>
+            <App.Text center weight={600} height={1} color="#A6DC37">{t('Points Earned')}</App.Text>
           </App.Flex>
         </App.Flex>
 
