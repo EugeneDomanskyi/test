@@ -8,15 +8,15 @@ import styles from './styles.module.scss'
 
 const NavbarDropdown = ({isOpen, onClose}) => {
   const handlePageEvent = (page) => () => {
-    Amplitude.event('Page Visited', {
-      'Page Name': page,
-    })
+    // Amplitude.event('Page Visited', {
+    //   'Page Name': page,
+    // })
   }
 
   const handleResourceEvent = (community) => () => {
-    Amplitude.event('Community Resources Visited', {
-      'Community': community,
-    })
+    // Amplitude.event('Community Resources Visited', {
+    //   'Community': community,
+    // })
   }
   
   return (

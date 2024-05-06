@@ -72,10 +72,10 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
 
   const handleBlockchainChange = async (val) => {
     if (val != blockchain.code) {
-      Amplitude.event('Switch Network', {
-        'Old Network': blockchain.code.toUpperCase(),
-        'New Network': val.toUpperCase(),
-      })
+      // Amplitude.event('Switch Network', {
+      //   'Old Network': blockchain.code.toUpperCase(),
+      //   'New Network': val.toUpperCase(),
+      // })
 
       const newBlockchain = pageBlockchains.find(item => item.code == val)
       if (wagmiChainId && wagmiChainId != newBlockchain.id) {

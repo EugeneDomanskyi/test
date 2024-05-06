@@ -207,16 +207,6 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     } else {
       setIsOrderConfirmOpen(true)
     }
-
-    Amplitude.event('Create Order Click', {
-      'Base Currency': current.symbol,
-      'Quote Currency': current.quoteSymbol,
-      'Side': currentTab.toUpperCase(),
-      'Quantity': form.amount,
-      'Price': form.price,
-      'Total': new Decimal(form.price * form.amount).toFixed(),
-      'Network': blockchain.code.toUpperCase(),
-    })
   }
 
   const handleTotalBlur = () => {
@@ -224,8 +214,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     Amplitude.event('Add Total', {
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
-      'Price': form.price,
-      'Network': blockchain.code.toUpperCase(),
+      'Total': form.total,
     })
   }
 
@@ -234,7 +223,6 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
       'Price': form.price,
-      'Network': blockchain.code.toUpperCase(),
     })
   }
 
@@ -242,8 +230,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     Amplitude.event('Add Quantity', {
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
-      'Price': form.price,
-      'Network': blockchain.code.toUpperCase(),
+      'Quantity': form.amount,
     })
   }
 

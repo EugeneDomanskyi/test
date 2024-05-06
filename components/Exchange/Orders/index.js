@@ -145,7 +145,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
       'Quantity': order.quantity - order.quantityFilled,
       'Price': order.itemPrice,
       'Total': order.price,
-      'Network': blockchain.code.toUpperCase(),
+      'Filled Percent': `${Math.round(order.quantityFilled * 100 / order.quantity)}%`,
     }
     Amplitude.event('Cancel Order Submit', eventPost)
 
@@ -153,7 +153,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
     if (signature) {
       const result = await $orders.api.cancel({ id: order.orderId, chain_id: blockchain.id, signature })
       if (result) {
-        Amplitude.event('Cancel Order Success', eventPost)
+        // Amplitude.event('Cancel Order Success', eventPost)
         dispatch($orders.set.updateOrderStatus({[order.orderId]: 'cancelled'}))
         dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency} has been cancelled successfully.` }))
       } else {
@@ -188,11 +188,11 @@ const Orders = ({global, type, version, onClickOrder}) => {
   }
 
   const handleChangeOrdersType = type => () => {
-    Amplitude.event(`View ${type == 'open' ? 'Open' : 'Completed'} Order`, {
-      'Base Currency': current?.symbol ?? 'Global',
-      'Quote Currency': current?.quoteSymbol,
-      'Network': blockchain.code.toUpperCase(),
-    })
+    // Amplitude.event(`View ${type == 'open' ? 'Open' : 'Completed'} Order`, {
+    //   'Base Currency': current?.symbol ?? 'Global',
+    //   'Quote Currency': current?.quoteSymbol,
+    //   'Network': blockchain.code.toUpperCase(),
+    // })
 
     setOrderTypes(type)
   }
@@ -200,16 +200,10 @@ const Orders = ({global, type, version, onClickOrder}) => {
   const handleConnectWallet = async () => {
     if ( ! wallet) {
       Amplitude.event('Wallet Connect Clicked', {
-        'Source': Amplitude.page(),
+        'Page': Amplitude.page(),
       })
 
-      const result = await connect()
-      if (result) {
-        Amplitude.event('Wallet Connect Success', {
-          'Source': Amplitude.page(),
-          'Type': WagmiHelper.getConnectorInfo().name,
-        })
-      }
+      await connect()
     }
   }
 

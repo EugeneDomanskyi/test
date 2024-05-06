@@ -8,7 +8,6 @@ import useAppHelper from '@/myhooks/useAppHelper'
 
 import $app from '@/store/app'
 
-import App from '@/components/App'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
@@ -20,6 +19,7 @@ const Wrapper = ({ children }) => {
   const router = useRouter()
   const isCampaign = router.asPath?.includes('/campaign')
   const isExchange = router.asPath?.includes('/exchange')
+  const [_, page] = router.asPath.split('/')
 
   const dispatch = useDispatch()
   const isApp = useSelector(({ $app }) => $app.isApp)
@@ -41,6 +41,10 @@ const Wrapper = ({ children }) => {
     }
   }, [])
 
+  useEffect(() => {
+    Amplitude.event(`Page Visited`, { Page: Amplitude.page(), Source: isApp ? 'App' : 'Web'})
+  }, [page])
+
   const getWindowSize = () => {
     if (typeof window !== 'undefined') {
       const {innerWidth, innerHeight} = window
@@ -56,13 +60,6 @@ const Wrapper = ({ children }) => {
 
   return (
     <div style={{ height: '100%' }}>
-      {/* <App.TopBanner id="tegro-at-ethdenver" mode="dark">
-        <App.Flex align={['center', 'flex-start']} justify="center" direction={['row', 'column']} gap={16}>
-          <App.Text>🐯 Tegro will be at ETHDenver 2024 (27 Feb - 4 Mar, 2024)</App.Text>
-          <App.Button href="https://bit.ly/meet-ashish-tegro" small>Let&apos;s meet!</App.Button>
-        </App.Flex>
-      </App.TopBanner> */}
-
       {
         ! isInIframe
           ? <div style={{height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden'}}>
