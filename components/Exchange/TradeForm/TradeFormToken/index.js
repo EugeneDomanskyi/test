@@ -191,6 +191,15 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     
     loadingRef.current = true
 
+    Amplitude.event('Create Order Click', {
+      'Base Currency': current.symbol,
+      'Quote Currency': current.quoteSymbol,
+      'Side': currentTab.toUpperCase(),
+      'Price': form.price,
+      'Quantity': form.amount,
+      'Total': form.total,
+    })
+
     const props = {
       side: currentTab,
       blockchain: blockchain,

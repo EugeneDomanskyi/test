@@ -63,7 +63,6 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       }
       console.log('--- Required amount for Approval with placed amount', requiredAmount)
       
-      
       if (allowanceAmount * 1 < requiredAmount * 1) {
         if (spendToken === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
           const reset = await WagmiHelper.approveAmount(spendToken, parseUnits('0', spendDecimals))
@@ -82,17 +81,6 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       }
 
       setStep('place')
-      // Amplitude.event('Confirm Order Submit', {
-      //   'Base Currency': side === 'buy' ? current.symbol : current.quoteSymbol,
-      //   'Quote Currency': side === 'buy' ? current.quoteSymbol : current.symbol,
-      //   'Side': side.toUpperCase(),
-      //   'Quantity': numeral(amount).format('0.[00000]'),
-      //   'Price': numeral(price).format('0.[00000]'),
-      //   'Total': numeral(total).format('0.[00000]'),
-      //   'Network': blockchain.code.toUpperCase(),
-      //   'Order Type': 'Limit',
-      //   'Step': 'Sign',
-      // })
 
       const typedData = await $orders.api.typedData({
         chain_id: blockchain.id,
