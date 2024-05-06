@@ -20,8 +20,10 @@ const PointsReferHistory = () => {
 
   return (
     <App.Flex column gap={16} className={styles.container}>
-      <App.Text size={20} weight={600} height={1}>{t('Referral History')}</App.Text>
-      <App.Text weight={400} height={1.2} color="#9B99AE">{t('Every action your referrals take not only furthers their journey but also enhances yours. Witness your impact and rewards grow with each trade and milestone they achieve.')}</App.Text>
+      <App.Flex column>
+        <App.Text size={20} weight={600} height={1}>{t('Referral History')}</App.Text>
+        <App.Text size={12} color="#9b99ae">{t('Points will be added every 12 hours')}</App.Text>
+      </App.Flex>
 
       <App.Flex column className={styles.table}>
         <App.Flex row className={styles.row}>
@@ -35,9 +37,9 @@ const PointsReferHistory = () => {
             </App.Flex>
           ) : null}
 
-          <App.Flex flex={1} center>
+          {/* <App.Flex flex={1} center>
             <App.Text center weight={600} height={1} color="#A6DC37">{t('Status')}</App.Text>
-          </App.Flex>
+          </App.Flex> */}
 
           <App.Flex flex={1} align="center" justify={['center', 'flex-end']} sx={{paddingRight: 8}}>
             <App.Text center weight={600} height={1} color="#A6DC37">{t('Points Earned')}</App.Text>
@@ -61,7 +63,7 @@ const PointsReferHistory = () => {
                   </App.Flex>
                 ) : null}
 
-                <App.Flex flex={1} center>
+                {/* <App.Flex flex={1} center>
                     {item.reason === 'liquidity_order_matched' ? (
                       <App.Flex className={cn(styles.badge, styles.trade)}>
                         <App.Text center uppercase size={12} weight={700} height={1}>{t('TRADED')}</App.Text>
@@ -75,7 +77,7 @@ const PointsReferHistory = () => {
                         <App.Text center uppercase size={12} weight={700} height={1}>{item.reason}</App.Text>
                       </App.Flex>
                     )}
-                </App.Flex>
+                </App.Flex> */}
 
                 <App.Flex flex={1} align="center" justify={['center', 'flex-end']} sx={{paddingRight: 8}}>
                   <App.Text center weight={[600, 400]} height={1}>{item.points} Points</App.Text>

@@ -116,10 +116,7 @@ Don't fade on this gem💎
             <App.Container maxWidth={1230}>
               <App.Flex direction={['row', 'column']} gap={24}>
                 <App.Flex column gap={[12, 20]} flex={[65, null]} className={styles.topBox}>
-                  <App.Flex column>
-                    <App.Text size={[24, 20]} weight={600}>{t('Refer & Earn Stats')}</App.Text>
-                    <App.Text color="#9b99ae">{t('Points will be added every 12 hours')}</App.Text>
-                  </App.Flex>
+                  <App.Text size={[24, 20]} weight={600}>{t('Refer & Earn Stats')}</App.Text>
 
                   <App.Flex row wrap={isMobile} gap={[24, 20]}>
                     <App.Flex width={['auto', '100%']} flex={[1, null]} center column gap={8} className={styles.insideBox}>
