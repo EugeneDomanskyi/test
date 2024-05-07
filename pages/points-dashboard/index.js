@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import App from '@/components/App'
 import PointsBar from '@/components/Points/PointsBar'
@@ -10,13 +10,14 @@ import PointsHome from '@/components/Points/PointsHome'
 import PointsLiquidity from '@/components/Points/PointsLiquidity'
 import PointsRefer from '@/components/Points/PointsRefer'
 import PointsContributor from '@/components/Points/PointsContributor'
+import PointsTransactions from '@/components/Points/PointsTransactions'
 import PointsQuests from '@/components/Points/PointsQuests'
 
 import styles from './styles.module.scss'
 
 const PointsDashboard = () => {
   const { t } = useTranslation()
-  const { wallet } = useWalletConnect()
+  const { wallet } = useWagmiHelper()
 
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
@@ -28,6 +29,7 @@ const PointsDashboard = () => {
     { title: t('Refer & Earn'), key: 'refer' },
     // { title: t('Contributor Tasks'), key: 'contributor' },
     { title: t('Third Party Quests'), key: 'quests' },
+    { title: t('Transaction History'), key: 'transactions' },
   ]
 
   useEffect(() => {
@@ -49,6 +51,7 @@ const PointsDashboard = () => {
       case 'refer': return <PointsRefer />
       // case 'contributor': return <PointsContributor />
       case 'quests': return <PointsQuests />
+      case 'transactions': return <PointsTransactions />
       default: return <PointsHome />
     }
   }

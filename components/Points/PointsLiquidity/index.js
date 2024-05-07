@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $point from '@/store/point'
 
@@ -14,7 +14,7 @@ import styles from './styles.module.scss'
 
 const PointsLiquidity = () => {
   const { t } = useTranslation()
-  const { wallet } = useWalletConnect()
+  const { wallet } = useWagmiHelper()
   const router = useRouter()
 
   const dispatch = useDispatch()

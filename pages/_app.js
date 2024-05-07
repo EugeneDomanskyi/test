@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { userAgentFromString } from 'next/server'
 import merge from 'lodash.merge'
 import { I18nextProvider } from 'react-i18next'
+import nookies from 'nookies'
 import { BanditContextProvider } from '@bandit-network/quest-widget'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -102,7 +103,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
   
   return {
     initialData: {
-      language: cookies.language ?? 'en',
+      language: nookies.get()?.language ?? 'en',
       isMobile,
       isApp,
       platform,

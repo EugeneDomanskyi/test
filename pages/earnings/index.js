@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
-import cn from 'classnames'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import App from '@/components/App'
 
@@ -13,7 +12,7 @@ import styles from './styles.module.scss'
 const Earnings = () => {
   const { t } = useTranslation()
   const router = useRouter()
-  const { wallet, connection } = useWalletConnect()
+  const { wallet, connection } = useWagmiHelper()
 
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 

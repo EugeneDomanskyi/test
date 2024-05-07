@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $tournament from '@/store/tournament'
 
@@ -14,7 +14,7 @@ import styles from './styles.module.scss'
 
 const PointsDropsBar = () => {
   const { t } = useTranslation()
-  const { wallet } = useWalletConnect()
+  const { wallet } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)

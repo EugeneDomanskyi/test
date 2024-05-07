@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 
 import Amplitude from '@/libs/amplitude.lib'
 import useAppHelper from '@/myhooks/useAppHelper'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $app from '@/store/app'
 import $point from '@/store/point'
@@ -12,12 +13,13 @@ import $point from '@/store/point'
 import App from '@/components/App'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import PointsFooter from '@/components/Points/PointsFooter'
 
 const Analytics = dynamic(import('@/components/Analytics'), {ssr: false})
 
 const Wrapper = ({ children }) => {
   useAppHelper()
+
+  const { wallet, connection } = useWagmiHelper()
 
   const router = useRouter()
   const isCampaign = router.asPath?.includes('/campaign')

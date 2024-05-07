@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import cn from 'classnames'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import App from '@/components/App'
 import SwitchLanguage from '@/components/SwitchLanguage'
@@ -12,7 +12,7 @@ import styles from './styles.module.scss'
 
 const PointsBar = ({ tabs, tab, onTab }) => {
   const { t } = useTranslation()
-  const { wallet, connection } = useWalletConnect()
+  const { wallet } = useWagmiHelper()
 
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 

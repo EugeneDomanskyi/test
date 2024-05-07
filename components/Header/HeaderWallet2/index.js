@@ -3,8 +3,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import WagmiHelper from '@/libs/WagmiHelper'
 import Amplitude from '@/libs/amplitude.lib'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
@@ -18,7 +19,7 @@ import styles from './styles.module.scss'
 const HeaderWallet2 = () => {
   const router = useRouter()
 
-  const { wallet, connectorId, connect, disconnect, blockchain: chain, getBalance, getConnectorInfo } = useWalletConnect()
+  const { wallet, connect } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -49,7 +50,7 @@ const HeaderWallet2 = () => {
 
       const result = await connect()
       if (result) {
-        const walletName = await getConnectorInfo().name
+        const walletName = WagmiHelper.getConnectorInfo().name
         Amplitude.event('Wallet Connect Success', {
           'Source': Amplitude.event(),
           'Type': walletName,
@@ -58,10 +59,10 @@ const HeaderWallet2 = () => {
     }
   }
 
-  const handleDisconnect = async () => {
-    const walletName = await getConnectorInfo().name
+  const handleDisconnect = () => {
+    const walletName = WagmiHelper.getConnectorInfo().name
 
-    disconnect()
+    WagmiHelper.disconnect()
     handleDisconnectDialogToggle(false)()
     handlePortfolioToggle(false)
 
@@ -75,7 +76,7 @@ const HeaderWallet2 = () => {
     setIsDisconnectDialogOpen(open)
   }
 
-  const getPortfolio = async (controlLoading) => {
+  const getPortfolio = async () => {
     const result = await $portfolio.api.details({ wallet, blockchain })
     if (result?.success) {
       dispatch($portfolio.set.details({...result, blockchain}))
@@ -85,10 +86,6 @@ const HeaderWallet2 = () => {
   const handleOrdersDialogOpen = () => {
     router.push('/exchange')
     dispatch($orders.set.myOrdersDialogOpen(true))
-  }
-
-  const handleEarnings = () => {
-    router.push('/earnings')
   }
 
   const handleShortPortfolioVisible = (value) => () => {
@@ -139,7 +136,7 @@ const HeaderWallet2 = () => {
         </App.Flex>
       )}
 
-      <Portfolio open={isPortfolioVisible} address={shorterAddress(5)} logo={getConnectorInfo().logo} onClose={handlePortfolioToggle} onDisconnect={handleDisconnectDialogToggle(true)} />
+      <Portfolio open={isPortfolioVisible} address={shorterAddress(5)} logo={WagmiHelper.getConnectorInfo().logo} onClose={handlePortfolioToggle} onDisconnect={handleDisconnectDialogToggle(true)} />
 
       <App.Dialog open={isDisconnectDialogOpen} width={420} onClose={handleDisconnectDialogToggle(false)} title="Disconnect Wallet">
         <App.Flex column>

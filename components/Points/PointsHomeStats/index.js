@@ -2,8 +2,6 @@ import { use, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
-
 import $point from '@/store/point'
 
 import App from '@/components/App'
@@ -13,7 +11,6 @@ import styles from './styles.module.scss'
 const PointsHomeStats = () => {
   const { t } = useTranslation()
 
-  const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const statsLoading = useSelector(({ $point }) => $point.statsLoading)
   const stats = useSelector(({ $point }) => $point.stats)

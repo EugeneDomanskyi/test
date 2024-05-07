@@ -8,13 +8,14 @@ import { useRouter } from 'next/router'
 
 import App from '@/components/App'
 import SwitchBlockchain from '@/components/Header/SwitchBlockchain'
-import HeaderWallet from '@/components/Header/HeaderWallet'
+import HeaderWallet2 from '@/components/Header/HeaderWallet2'
 
 import styles from './styles.module.scss'
 
 const Header = () => {
   const router = useRouter()
   const isExchange = router.asPath?.includes('/exchange')
+  const isPD = router.asPath?.includes('/points-dashboard')
   
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
@@ -73,11 +74,11 @@ const Header = () => {
                   </App.Flex>
                 </a>
 
-                <App.Flex className={cn(styles.navItem, styles.disabled, {[styles.active]: router.pathname.includes('/points-dashboard')})}>
+                <Link href="/points-dashboard" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/points-dashboard')})}>
                   <App.Flex center fullHeight>
-                    <App.Text size={14} weight={600}>Points (Coming Soon)</App.Text>
+                    <App.Text size={14} weight={600}>Points Dashboard</App.Text>
                   </App.Flex>
-                </App.Flex>
+                </Link>
               </App.Flex>
             ) : null}
           </App.Flex>
@@ -107,19 +108,8 @@ const Header = () => {
               </App.Flex>
             ) : null}
 
-            {
-              isExchange
-                ? <SwitchBlockchain />
-                : null
-            }
-            {
-              isExchange
-                ? <HeaderWallet />
-                : <Link href="/exchange">
-                    <App.Button primary rounded>Launch app</App.Button>
-                  </Link>
-            }
-            
+            {isExchange ? <SwitchBlockchain /> : null}
+            {isExchange || isPD ? <HeaderWallet2 /> : <App.Button primary rounded href="/exchange">Launch app</App.Button>}
          </App.Flex>
 
           <div className={cn(styles.mobileMenu, {[styles.show]: mobileMenuShow})}>
@@ -138,16 +128,9 @@ const Header = () => {
                 </App.Flex>
               </a>
 
-              <App.Flex className={cn(styles.link)}>
-                <App.Flex align="center" height="100%" gap={8}>
-                  {/* <App.Icon icon="menuExchange" /> */}
-                  <App.Text size={14} weight={700} color={router.pathname.includes('/points-dashboard') ? '#A6DC37' : '#fff'}>Points (Coming Soon)</App.Text>
-                </App.Flex>
-              </App.Flex>
-
               <Link href="/points-dashboard" className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
-                  <App.Icon icon="menuExchange" />
+                  {/* <App.Icon icon="menuExchange" /> */}
                   <App.Text size={14} weight={700} color={router.pathname.includes('/points-dashboard') ? '#A6DC37' : '#fff'}>Points Dashboard</App.Text>
                 </App.Flex>
               </Link>

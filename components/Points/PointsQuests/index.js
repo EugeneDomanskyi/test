@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import Image from 'next/image'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $alert from '@/store/alert'
 import $point from '@/store/point'
@@ -14,7 +13,7 @@ import styles from './styles.module.scss'
 
 const PointsQuests = () => {
   const { t } = useTranslation()
-  const { wallet } = useWalletConnect()
+  const { wallet } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const quests = useSelector(({ $point }) => $point.quests)
@@ -78,8 +77,6 @@ const PointsQuests = () => {
               quests.map(item => {
                 return (
                   <App.Flex key={item.id} column gap={16} sx={{ cursor: item.can_claim ? 'default' : 'pointer' }} className={styles.questBox} onClick={handleClick(item.can_claim ? null : item?.external_link)}>
-                    {/* <Image src="/images/points/points-galxe-logo.png" width={44} height={44} alt="" /> */}
-
                     <App.Flex row align="center" gap={12}>
                       <App.Text size={[24, 20]} weight={600} height={1}>{item.name}</App.Text>
 

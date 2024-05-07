@@ -3,9 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import Link from 'next/link'
 import cn from 'classnames'
-import moment from 'moment'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $point from '@/store/point'
 import $alert from '@/store/alert'
@@ -18,7 +17,7 @@ import styles from './styles.module.scss'
 
 const PointsRefer = () => {
   const { t } = useTranslation()
-  const { wallet } = useWalletConnect()
+  const { wallet } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
@@ -26,7 +25,6 @@ const PointsRefer = () => {
 
   const [points, setPoints] = useState(1)
   const [values, setValues] = useState({ my: 250, his: 1000 })
-  const [hasReferrals, setHasReferrals] = useState(false)
   const [loading, setLoading] = useState(true)
 
   const marks = [
@@ -73,11 +71,6 @@ const PointsRefer = () => {
     dispatch($alert.set.success({ title: t('Link copied to clipboard') }))
   }
 
-  const handleInvite = () => {
-    console.log('Invite')
-    setHasReferrals(!hasReferrals)
-  }
-
   const handleChangeRange = (value) => {
     setPoints(value)
 
@@ -96,11 +89,6 @@ Don't fade on this gem💎
 `)
     const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}`
     window.open(tweetUrl, '_blank')
-  }
-
-  const getShort = (address) => {
-    const n = isMobile ? 4 : 8
-    return `${address.substring(0, n)}...${address.substring(address.length - n)}`
   }
 
   return (
@@ -133,15 +121,6 @@ Don't fade on this gem💎
                         <App.Text size={[32, 24]} weight={600} height={1}>{referral.points_referral}</App.Text>
                       )}
                     </App.Flex>
-
-                    {/* <App.Flex width={['auto', 'calc(50% - 12px)']} order={[3, 2]} flex={[1, null]} center column gap={8} className={styles.insideBox}>
-                      <App.Text size={[14, 12]} weight={400} height={1}>{t('Points Earned')}</App.Text>
-                      {loading ? (
-                        <App.Loader size={[32, 24]} />
-                      ) : (
-                        <App.Text size={[32, 24]} weight={600} height={1}>{pointsToday}</App.Text>
-                      )}
-                    </App.Flex> */}
                   </App.Flex>
                 </App.Flex>
 
