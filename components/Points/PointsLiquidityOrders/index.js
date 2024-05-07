@@ -68,7 +68,9 @@ const PointsLiquidityOrders = ({ loading }) => {
 
               <App.Flex flex={1} row gap={4} center>
                 <App.Text center weight={600} height={1} color="#A6DC37">{t('Price Deviation')}</App.Text>
-                <App.Icon icon="warning-circle" />
+                <App.Tooltip placement="bottom" text="This denotes the difference between your order price and the mid price of the market">
+                  <App.Icon icon="warning-circle" />
+                </App.Tooltip>
               </App.Flex>
 
               <App.Flex flex={1} center>
@@ -109,6 +111,9 @@ const PointsLiquidityOrders = ({ loading }) => {
               !isMobile ? (
                 liquidity[tab].map((item, index) => {
                   const chainCode = chains.find(chain => chain.id == item.market.chain_id)?.code ?? blockchain.code
+                  const image = item.market.image != '' ? item.market.image : (
+                    item.market.name.includes('WETH') ? 'https://tegro.com/images/0x4200000000000000000000000000000000000006.png' : `https://storage.googleapis.com/token-assets/assets/${chainCode}/${item.market.base_token}.png`
+                  )
                   return (
                     <App.Flex key={index} row className={styles.row}>
                       <App.Flex width={220} center>
@@ -118,7 +123,7 @@ const PointsLiquidityOrders = ({ loading }) => {
                       <App.Flex width={180} column gap={4} center>
                         <App.Flex row center gap={6}>
                           <App.Flex center sx={{ position: 'relative' }}>
-                            <Image src={item.market.image} width={24} height={24} alt="" />
+                            <Image src={image} width={24} height={24} alt="" />
                             <App.Flex center sx={{ position: 'absolute', top: 0, left: -6, }}>
                               <Image src={`/images/icon-${chainCode}.png`} width={12} height={12} alt="" />
                             </App.Flex>
