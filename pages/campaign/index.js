@@ -36,6 +36,7 @@ const LandingPage = () => {
   const campaigns = useSelector(({ $raffle }) => $raffle.all)
   const chains = useSelector(({ $app }) => $app.chains)
   const blockchain = chains.find(item => item.id === 137)
+  const current = useSelector(({ $token }) => $token.current)
 
   const apollo = useRef()
 
@@ -86,6 +87,8 @@ const LandingPage = () => {
     if ( ! wallet) {
       Amplitude.event('Wallet Connect Clicked', {
         'Page': Amplitude.page(),
+        'Chain ID': blockchain?.id,
+        'Market ID': current?.address,
       })
 
       const result = await connect()
@@ -93,12 +96,6 @@ const LandingPage = () => {
         router.push(tradeLink)
       }
     }
-  }
-
-  const handleClickTrade = () => {
-    Amplitude.event('Campaign Click Trade Now', {
-      'Source': Amplitude.page(),
-    })
   }
 
   return (
@@ -174,7 +171,7 @@ const LandingPage = () => {
                 </App.Flex>
               : <App.Flex align="center" className={styles.buttonsWrapper}>
                 <Link href={tradeLink}>
-                  <App.Button rounded primary sx={{paddingLeft: 32, paddingRight: 32}} onClick={handleClickTrade}>
+                  <App.Button rounded primary sx={{paddingLeft: 32, paddingRight: 32}}>
                     Trade Now
                     <App.Icon icon="stars" />
                   </App.Button>

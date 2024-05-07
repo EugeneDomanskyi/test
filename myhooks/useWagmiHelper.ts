@@ -19,6 +19,7 @@ const useWagmiHelper = () => {
   const connection = useSelector(({ $app }) => $app.connection)
   const wallet = useSelector(({ $app }) => $app.wallet)
   const appConnected = useSelector(({ $app }) => $app.appConnected)
+  const current = useSelector(({ $token }) => $token.current)
 
   const connectedCount = useRef(0)
 
@@ -59,6 +60,8 @@ const useWagmiHelper = () => {
     if (connectedCount.current == 1) {
       Amplitude.event('Wallet Connect Success', {
         'Page': Amplitude.page(),
+        'Chain ID': blockchain?.id,
+        'Market ID': current?.address,
       })
     }
   }, [connectedCount])
