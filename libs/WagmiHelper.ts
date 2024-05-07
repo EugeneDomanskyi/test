@@ -82,10 +82,9 @@ class WagmiHelper {
           }
         })
       }
-
-      nookies.set(ctx, 'backendChains', JSON.stringify(this.backendChains), {path: '/'})
     }
 
+    nookies.set(ctx, 'backendChains', JSON.stringify(this.backendChains), {path: '/'})
     const fullInfoChains = this.getFullInfoChains(this.backendChains)
 
     return this.filteredChains(ctx.req.headers.host, fullInfoChains)
@@ -121,8 +120,6 @@ class WagmiHelper {
         chains = this.getBackendChains()
       }
 
-      console.log('Backend Chains Ids', chains.map((chain: any) => chain.id))
-
       const inChains = wagmiChainsValues
         .filter((chain: any) => chains.some((c: any) => c.id === chain.id))
         .sort((a: any, b: any) => {
@@ -148,8 +145,6 @@ class WagmiHelper {
           }
         }, {}),
       })
-
-      console.log('Create Wagmi Config available chains', this.wagmiConfig.chains.length)
     }
 
     return this.wagmiConfig
@@ -201,8 +196,6 @@ class WagmiHelper {
 
     const currentChainId = getChainId(this.wagmiConfig)
     const newChain = this.getChainByCode(newChainCode)
-    console.log('Change Chain - currentChainId', currentChainId)
-    console.log('Change Chain - new chain Id', newChain?.id)
     if (newChain) {
       if (currentChainId == newChain?.id) {
         return true
@@ -298,7 +291,11 @@ class WagmiHelper {
       chain = this.getChainByCode()
     }
 
-    const url =chain?.blockExplorers?.default?.url
+    let url = chain?.blockExplorers?.default?.url
+    if (!url.endsWith('/')) {
+      url += '/'
+    }
+
     return url ? `${url}${type}/${hash}` : hash
   }
 
