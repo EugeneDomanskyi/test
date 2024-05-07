@@ -7,18 +7,6 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const NavbarDropdown = ({isOpen, onClose}) => {
-  const handlePageEvent = (page) => () => {
-    // Amplitude.event('Page Visited', {
-    //   'Page Name': page,
-    // })
-  }
-
-  const handleResourceEvent = (community) => () => {
-    // Amplitude.event('Community Resources Visited', {
-    //   'Community': community,
-    // })
-  }
-  
   return (
     <App.Flex column gap={32} className={cn(styles.dropdownMenu, {[styles.isOpen]: isOpen})} onMouseLeave={onClose}>
       <App.Flex gap={24}>

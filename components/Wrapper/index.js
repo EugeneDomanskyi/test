@@ -24,6 +24,7 @@ const Wrapper = ({ children }) => {
   const dispatch = useDispatch()
   const isApp = useSelector(({ $app }) => $app.isApp)
   const platform = useSelector(({ $app }) => $app.platform)
+  const blockchain = useSelector($app.get.blockchain)
 
   const [isInIframe, setIsInIframe] = useState(false)
 
@@ -42,7 +43,11 @@ const Wrapper = ({ children }) => {
   }, [])
 
   useEffect(() => {
-    Amplitude.event(`Page Visited`, { Page: Amplitude.page(), Source: isApp ? 'App' : 'Web'})
+    Amplitude.event(`Page Visited`, {
+      'Page': Amplitude.page(),
+      'Chain ID': blockchain?.id,
+      'Source': isApp ? 'App' : 'Web',
+    })
   }, [page])
 
   const getWindowSize = () => {

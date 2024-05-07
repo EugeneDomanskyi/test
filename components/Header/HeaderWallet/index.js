@@ -32,6 +32,7 @@ const HeaderWallet = () => {
   const updatePortfolio = useSelector(({ $portfolio }) => $portfolio.update)
   const raffleLoading = useSelector(({ $raffle }) => $raffle.loadingUser)
   const raffleBalance = useSelector(({ $raffle }) => $raffle.balance)
+  const current = useSelector(({ $token }) => $token.current)
 
   const [isDisconnectDialogOpen, setIsDisconnectDialogOpen] = useState(false)
   const [balanceLoading, setBalanceLoading] = useState(true)
@@ -71,6 +72,8 @@ const HeaderWallet = () => {
     if ( ! wallet) {
       Amplitude.event('Wallet Connect Clicked', {
         'Page': Amplitude.page(),
+        'Chain ID': blockchain?.id,
+        'Market ID': current?.address,
       })
 
       await connect()
@@ -84,6 +87,8 @@ const HeaderWallet = () => {
 
     Amplitude.event('Wallet Disconnect Success', {
       'Page': Amplitude.page(),
+      'Chain ID': blockchain?.id,
+      'Market ID': current?.address,
     })
   }
 
@@ -122,6 +127,8 @@ const HeaderWallet = () => {
     if (value) {
       Amplitude.event('Wallet Panel Open', {
         'Page': Amplitude.page(),
+        'Chain ID': blockchain?.id,
+        'Market ID': current?.address,
       })
     }
   }
