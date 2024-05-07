@@ -3,7 +3,8 @@ import { useRouter } from 'next/router'
 import Image from 'next/image'
 import cn from 'classnames'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import WagmiHelper from '@/libs/WagmiHelper'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $app from '@/store/app'
 import $alert from '@/store/alert'
@@ -17,7 +18,7 @@ import { useState } from 'react'
 const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
   const router = useRouter()
 
-  const { wallet, scanUrl } = useWalletConnect()
+  const { wallet } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -84,8 +85,8 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
 
                   <App.Icon icon="copy3" onClick={handleCopy} style={{ cursor: 'pointer' }} />
 
-                  <a href={scanUrl(wallet, 'address', blockchain)} target="_blank" rel="noreferrer" style={{ lineHeight: 1 }}>
-                    <App.Icon icon={blockchain.code == 'polygon' || blockchain.code == 'mumbai' ? 'polyscan' : 'etherscan'} width={16} height={16} opacity={1} color="#fff" />
+                  <a href={WagmiHelper.generateScanUrl(wallet, 'address')} target="_blank" rel="noreferrer" style={{ lineHeight: 1 }}>
+                    <App.Icon icon={blockchain?.code == 'polygon' || blockchain?.code == 'amoy' ? 'polyscan' : 'etherscan'} width={16} height={16} opacity={1} color="#fff" />
                   </a>
                 </App.Flex>
 
@@ -130,7 +131,7 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
 
                           <App.Flex column gap={6}>
                             <App.Text size={16} weight={700} height={1}>{item.name}</App.Text>
-                            <App.Text size={12} weight={600} height={1} color="#5E5C6B">{item.balance} {item.symbol}</App.Text>
+                            <App.Text size={12} weight={600} height={1} color="#5E5C6B">{item.available} {item.symbol}</App.Text>
                           </App.Flex>
                         </App.Flex>
 

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { gsap } from 'gsap'
 import cn from 'classnames'
 
-import useApp from '@/myhooks/useApp'
+import AppHelper from '@/libs/AppHelper'
 
 import $alert from '@/store/alert'
 
@@ -14,8 +14,6 @@ import AppIcon from '@/components/App/AppIcon'
 import styles from './styles.module.scss'
 
 const AppAlert = () => {
-  const { appPost } = useApp()
-
   const dispatch = useDispatch()
   const isApp = useSelector(({ $app }) => $app.isApp)
   const messages = useSelector(({ $alert }) => $alert.messages)
@@ -56,7 +54,7 @@ const AppAlert = () => {
               }, message.delay)
             }
           } else {
-            appPost({notification: message})
+            AppHelper.send({notification: message})
           }
         }
 

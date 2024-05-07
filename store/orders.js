@@ -3,6 +3,7 @@ import { formatUnits, parseUnits } from 'viem'
 import moment from 'moment'
 
 import { request } from './index'
+import Decimal from 'decimal.js'
 
 export const template = (item) => {
   let status = 'unknown'
@@ -15,16 +16,22 @@ export const template = (item) => {
     case 'Filled':
       status = 'completed'
       break
+    case 'Partial':
+      status = 'partial'
+      break
     case 'Cancelled':
       status = 'cancelled'
       break
+  }
+
+  if (status == 'cancelled' && item.quantityFilled > 0) {
+    status = 'partial'
   }
 
   return {
     ...item,
     id: item.orderId,
     status,
-    itemPrice: item.price / item.quantity,
     time: moment(item.time).format('DD MMM, HH:mm'),
     timeMoment: moment(item.time),
   }
@@ -125,7 +132,7 @@ const get = {
   ], (orders) => {
     return {
       open: orders.filter(order => order.status === 'open'),
-      closed: orders.filter(order => order.status === 'completed' || order.status === 'cancelled')
+      closed: orders.filter(order => order.status === 'completed' || order.status === 'cancelled' || order.status === 'partial')
     }
   }),
   orderbook: createSelector([
@@ -136,24 +143,29 @@ const get = {
       buy: structuredClone(orderbook.buy),
       sell: structuredClone(orderbook.sell),
     }
-    sorted.buy.sort((a, b) => b.price_float * 1 - a.price_float * 1)
-    sorted.sell.sort((a, b) => a.price_float * 1 - b.price_float * 1)
 
-    return Object.entries(sorted).reduce((acc, [side, values]) => {
-      let prevVolume = 0
-      return {
-        ...acc,
-        [side]: values.filter(item => item.quantity_float * 1).slice(0, 10).map((row) => {
-          prevVolume += row.quantity_float * 1
-          return {
-            priceFormatted: row.price_float,
-            price: row.price_float,
-            volume: prevVolume,
-            quantity: row.quantity_float,
-          }
-        })
-      }
-    }, {})
+    if (sorted?.buy && sorted?.sell) {
+      sorted.buy.sort((a, b) => b.price_float * 1 - a.price_float * 1)
+      sorted.sell.sort((a, b) => a.price_float * 1 - b.price_float * 1)
+
+      return Object.entries(sorted).reduce((acc, [side, values]) => {
+        let prevVolume = 0
+        return {
+          ...acc,
+          [side]: values.filter(item => item.quantity_float * 1).slice(0, 10).map((row) => {
+            prevVolume += row.quantity_float * 1
+            return {
+              priceFormatted: row.price_float,
+              price: row.price_float,
+              volume: new Decimal(prevVolume).toFixed(),
+              quantity: row.quantity_float,
+            }
+          })
+        }
+      }, {})
+    }
+
+    return {buy: [], sell: []}
   }),
 }
 

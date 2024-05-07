@@ -6,9 +6,7 @@ import numeral from 'numeral'
 import cn from 'classnames'
 
 import Amplitude from '@/libs/amplitude.lib'
-import useWalletConnect from '@/myhooks/wallet-connect'
-import Contracts from '@/libs/contracts.lib'
-import useApp from '@/myhooks/useApp'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
@@ -17,17 +15,16 @@ import $alert from '@/store/alert'
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
-import { formatNumberWithDecimals } from '@/store/portfolio'
+import WagmiHelper from '@/libs/WagmiHelper'
 
 const OrderConfirm = ({ side, blockchain, current, price, amount, total, version, onBack, onClose }) => {
-  const { wallet, walletClient } = useWalletConnect()
-  const { isApp, appLog } = useApp()
+  const { wallet } = useWagmiHelper()
 
   const dispatch = useDispatch()
+  const isApp = useSelector(({ $app }) => $app.isApp)
+  const portfolio = useSelector(({ $portfolio }) => $portfolio.list)
 
   const [step, setStep] = useState('preview')
-
-  const contracts = new Contracts()
 
   const handleNextStep = async () => {
     if (step == 'preview') {
@@ -44,36 +41,47 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       })
 
       setStep('sign')
-      appLog('Check Allowance')
       const spendToken = side === 'buy' ? current.quote : current.address
-      const allowance = await contracts.allowance(wallet, spendToken, blockchain?.info?.contract?.exchange)
-      if (allowance?.error) {
-        console.log(1, allowance?.error)
+      const allowanceAmountBigInt = await WagmiHelper.getAllowance(spendToken)
+      if (allowanceAmountBigInt == null) {
+        onClose()
         return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
       }
+      console.log('--- Result from Allowance check', allowanceAmountBigInt)
 
-      appLog('Check Allowance Amount')
       const spendDecimals = side === 'buy' ? current.quoteDecimals : current.decimals
-      const allowanceAmount = formatUnits(allowance, spendDecimals)
-      if (allowanceAmount * 1 < amount * 1) {
-        appLog('Change Allowance Amount')
+      const allowanceAmount = formatUnits(allowanceAmountBigInt, spendDecimals)
+      console.log(`--- Result from Allowance using decimals ${spendDecimals}`, allowanceAmount)
+
+      let requiredAmount = 0
+      if (side === 'buy') {
+        const placed = portfolio.find(item => item.address == current.quote)?.placed ?? 0
+        requiredAmount = Math.ceil(total * 1 + placed * 1)
+      } else {
+        const placed = portfolio.find(item => item.address == current.address)?.placed ?? 0
+        requiredAmount = Math.ceil(amount * 1 + placed * 1)
+      }
+      console.log('--- Required amount for Approval with placed amount', requiredAmount)
+      
+      
+      if (allowanceAmount * 1 < requiredAmount * 1) {
         if (spendToken === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
-          const reset = await contracts.approve(spendToken, blockchain?.info?.contract?.exchange, parseUnits('0', spendDecimals))
-          if (reset?.error) {
-            console.log(2, reset?.error)
+          const reset = await WagmiHelper.approveAmount(spendToken, parseUnits('0', spendDecimals))
+          if (reset == null) {
+            onClose()
             return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
           }
         }
 
-        const approve = await contracts.approve(spendToken, blockchain?.info?.contract?.exchange, parseUnits(Number.MAX_SAFE_INTEGER.toString(), spendDecimals))
-        if (approve?.error) {
-          console.log(3, approve?.error)
+        const approveTxId = await WagmiHelper.approveAmount(spendToken, parseUnits(Number.MAX_SAFE_INTEGER.toString(), spendDecimals))
+        if (approveTxId == null) {
+          onClose()
           return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
         }
+        console.log('--- Result from Approve TxID', approveTxId)
       }
 
       setStep('place')
-
       Amplitude.event('Confirm Order Submit', {
         'Base Currency': side === 'buy' ? current.symbol : current.quoteSymbol,
         'Quote Currency': side === 'buy' ? current.quoteSymbol : current.symbol,
@@ -86,7 +94,6 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         'Step': 'Sign',
       })
 
-      appLog('Generate Typed Data')
       const typedData = await $orders.api.typedData({
         chain_id: blockchain.id,
         wallet_address: wallet,
@@ -96,39 +103,33 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         amount: amount * 1,
       })
 
-      if (typedData?.error) {
+      if (typedData?.error || ! typedData) {
+        onClose()
         return handleError('Order not created', 'Please try again to place your order.')
       }
 
-      let {types} = typedData.data.sign_data
-      delete types.EIP712Domain
-      const temp = {
-        ...typedData.data.sign_data,
-        types,
-      }
-
-      appLog('Sign Typed Data')
-      const signature = await walletClient.signTypedData(temp).catch(error => {
-        appLog(`Signature error ${error.shortMessage}`)
+      const signature = await WagmiHelper.signTypedData(typedData.data.sign_data).catch(error => {
+        onClose()
         return handleError('Order not created', 'Please check your wallet and try again to place your order.')
       })
 
       if (!signature) {
-        appLog(`Signature failed`)
+        onClose()
+        return handleError('Order not created', 'Please check your wallet and try again to place your order.')
         return
       }
 
-      appLog(`Place Order`)
       const result = await $orders.api.place({
         ...typedData.data.limit_order,
         signature,
       })
 
       if (result?.error) {
-        return handleError('Order not created', 'Please try again to place your order.')
+        onClose()
+        // return handleError('Order not created', 'Please try again to place your order.')
+        return handleError('Order not created', result.error)
       }
 
-      appLog(`Place Order Success`)
       const vid = localStorage.getItem('ms_vid')
       if (vid) {
         $app.api.volume({
@@ -160,11 +161,11 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
 
           <App.Flex justify="space-between">
             <App.Flex row align="center" gap={4}>
-              <Image src={side === 'buy' ? blockchain?.info?.token?.image : current.image} width={25} height={25} alt="" />
+              <Image src={side === 'buy' ? blockchain?.token?.image : current.image} width={25} height={25} alt="" />
               <App.Flex column gap={4}>
-                <App.Text size={12} weight={600} height={1} color="#B9B8C5">{side === 'buy' ? formatNumberWithDecimals(total, current.quoteDecimals) : formatNumberWithDecimals(amount, current.decimals) } {side === 'buy' ? current.quoteSymbol : current.symbol}</App.Text>
+                <App.Text size={12} weight={600} height={1} color="#B9B8C5">{side === 'buy' ? total : amount } {side === 'buy' ? current.quoteSymbol : current.symbol}</App.Text>
                 {side === 'buy' ? (
-                    <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ formatNumberWithDecimals(total, current.quoteDecimals) }</App.Text>
+                    <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ total }</App.Text>
                 ) : null}
               </App.Flex>
             </App.Flex>
@@ -172,11 +173,11 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
             <App.Icon icon="arrow-right-long" />
 
             <App.Flex align="center" gap={4}>
-              <Image src={side === 'buy' ? current.image : blockchain?.info?.token?.image} width={25} height={25} alt="" />
+              <Image src={side === 'buy' ? current.image : blockchain?.token?.image} width={25} height={25} alt="" />
               <App.Flex column gap={4}>
-                <App.Text size={12} weight={600} height={1} color="#B9B8C5">{ side === 'buy' ? formatNumberWithDecimals(amount, current.decimals) : formatNumberWithDecimals(total, current.quoteDecimals) } {side === 'buy' ? current.symbol : current.quoteSymbol}</App.Text>
+                <App.Text size={12} weight={600} height={1} color="#B9B8C5">{ side === 'buy' ? amount : total } {side === 'buy' ? current.symbol : current.quoteSymbol}</App.Text>
                 {side === 'sell' ? (
-                    <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ formatNumberWithDecimals(total, current.quoteDecimals) }</App.Text>
+                    <App.Text size={10} weight={600} height={1} color="#5E5C6B">${ total }</App.Text>
                 ) : null}
               </App.Flex>
             </App.Flex>
@@ -222,21 +223,21 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
 
                     <App.Flex row align="center" justify="space-between">
                       <App.Text size={12} height={1} color="#5E5C6B">At Price</App.Text>
-                      <App.Text size={12} height={1} color="#B9B8C5">{ formatNumberWithDecimals(price, current.quoteDecimals) } {current.quoteSymbol}</App.Text>
+                      <App.Text size={12} height={1} color="#B9B8C5">{ price } {current.quoteSymbol}</App.Text>
                     </App.Flex>
 
                     <App.Flex row align="center" justify="space-between">
                       <App.Text size={12} height={1} color="#5E5C6B">Amount</App.Text>
-                      <App.Text size={12} height={1} color="#B9B8C5">{ formatNumberWithDecimals(amount, current.decimals) } {current.symbol}</App.Text>
+                      <App.Text size={12} height={1} color="#B9B8C5">{ amount } {current.symbol}</App.Text>
                     </App.Flex>
 
                     <App.Flex row align="center" justify="space-between">
                       <App.Text size={12} height={1} color="#5E5C6B">Total</App.Text>
-                      <App.Text size={12} height={1} color="#B9B8C5">{ formatNumberWithDecimals(total, current.quoteDecimals) } {current.quoteSymbol}</App.Text>
+                      <App.Text size={12} height={1} color="#B9B8C5">{ total } {current.quoteSymbol}</App.Text>
                     </App.Flex>
 
                     <App.Flex row align="center" justify="space-between">
-                      <App.Text size={12} height={1} italic color="#5E5C6B">Fee: 0 | Gas: 0 </App.Text>
+                      <App.Text size={12} height={1} italic color="#5E5C6B">Fee: {blockchain.info.fee}% | Gas: 0 </App.Text>
                     </App.Flex>
                   </App.Flex>
                 </App.Flex>

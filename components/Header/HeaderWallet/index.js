@@ -4,8 +4,9 @@ import { useRouter } from 'next/router'
 import Image from 'next/image'
 import cn from 'classnames'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import WagmiHelper from '@/libs/WagmiHelper'
 import Amplitude from '@/libs/amplitude.lib'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
@@ -19,9 +20,8 @@ import styles from './styles.module.scss'
 const HeaderWallet = () => {
   const router = useRouter()
   const isEarn = router.pathname.includes('/earn')
-  const isPoints = router.pathname.includes('/points-dashboard')
 
-  const { wallet, connect, disconnect, blockchain: chain, getConnectorInfo } = useWalletConnect()
+  const { wallet, connect } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -29,9 +29,9 @@ const HeaderWallet = () => {
   const nativeBalance = useSelector(({ $portfolio }) => $portfolio.native)
   const portfolioUsd = useSelector(({ $portfolio }) => $portfolio.usd)
   const portfolioList = useSelector(({ $portfolio }) => $portfolio.list)
+  const updatePortfolio = useSelector(({ $portfolio }) => $portfolio.update)
   const raffleLoading = useSelector(({ $raffle }) => $raffle.loadingUser)
   const raffleBalance = useSelector(({ $raffle }) => $raffle.balance)
-  const referral = useSelector(({ $point }) => $point.referral)
 
   const [isDisconnectDialogOpen, setIsDisconnectDialogOpen] = useState(false)
   const [balanceLoading, setBalanceLoading] = useState(true)
@@ -46,7 +46,14 @@ const HeaderWallet = () => {
 
       getPortfolio(!isEarn)
     }
-  }, [wallet, blockchain?.id, chain?.id, isEarn, raffleLoading])
+  }, [wallet, blockchain?.id, isEarn, raffleLoading])
+
+  useEffect(() => {
+    if (updatePortfolio) {
+      getPortfolio(false)
+      dispatch($portfolio.set.update(false))
+    }
+  }, [updatePortfolio])
 
   const getBalanceString = () => {
     if (isEarn) {
@@ -70,15 +77,15 @@ const HeaderWallet = () => {
       if (result) {
         Amplitude.event('Wallet Connect Success', {
           'Source': Amplitude.event(),
-          'Type': getConnectorInfo().name,
+          'Type': WagmiHelper.getConnectorInfo().name,
         })
       }
     }
   }
 
   const handleDisconnect = async () => {
-    const connectorName = getConnectorInfo().name
-    disconnect()
+    const connectorName = WagmiHelper.getConnectorInfo().name
+    WagmiHelper.disconnect()
     handleDisconnectDialogToggle(false)()
     handlePortfolioToggle(false)
 
@@ -109,10 +116,6 @@ const HeaderWallet = () => {
     }
   }
 
-  const handleTransactions = () => {
-    router.push('/points-dashboard/transactions')
-  }
-
   const handleOrdersDialogOpen = () => {
     router.push('/exchange')
     dispatch($orders.set.myOrdersDialogOpen(true))
@@ -139,66 +142,48 @@ const HeaderWallet = () => {
           </App.Flex>
         </App.Flex>
       ) : (
-        <App.Flex row align="center" gap={16}>
-          {isPoints ? (
-            <>
-              <App.Flex row center gap={12}>
-                <App.Text nowrap weight={600}>{referral.points} points</App.Text>
-
-                <App.Frame padding={0} radius={24} width={24} height={24} sx={{ cursor: 'pointer' }} onClick={handleTransactions} gradient="linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%)">
-                  <App.Flex full center>
-                    <App.Icon icon="arrow-45" width={10} height={10} />
-                  </App.Flex>
-                </App.Frame>
-              </App.Flex>
-
-              <div className={styles.line} />
-            </>
-          ): null}
-
-          <App.Flex row center gap={16} className={styles.walletInfo} onClick={handlePortfolioToggle} onMouseEnter={handleShortPortfolioVisible(true)} onMouseLeave={handleShortPortfolioVisible(false)}>
-            <App.Flex>
-              <App.Flex center gap={8}>
-                {isEarn ? (
-                  <App.Flex row center width={24} height={24} className={styles.tkeysBox}>
-                    <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
-                  </App.Flex>
-                ) : (
-                  <Image src={getConnectorInfo().logo} width={24} height={24} alt="" />
-                )}
-                
-                {balanceLoading ? (
-                  <App.Flex center width={95}>
-                    <App.Loader size={16} />
-                  </App.Flex>
-                ) : (
-                  <App.Text nowrap size={16} height={1}>{getBalanceString()}</App.Text>
-                )}
-              </App.Flex>
-            </App.Flex>
-
-            <App.Flex className={styles.walletAddressWrapper}>
-              <App.Text size={16} height={1}>{shorterAddress(5)}</App.Text>
-            </App.Flex>
-
-            <App.Flex column className={cn(styles.walletPortfolioPopup, {[styles.active]: isShortPortfolioVisible})}>
-              <App.Flex row align="center" justify="space-between" className={styles.top}>
-                <App.Text size={16} weight={700} height={1}>Portfolio Value</App.Text>
-                <App.Text size={16} weight={700} height={1}>${portfolioUsd}</App.Text>
-              </App.Flex>
-
-              {portfolioList.map(item => (
-                <App.Flex key={item.address} row align="center" justify="space-between" className={styles.row}>
-                  <App.Text size={12} height={1} color="#B9B8C5">{item.name}</App.Text>
-                  <App.Text size={12} height={1} color="#B9B8C5">{item.balance} {item.symbol}</App.Text>
+        <App.Flex row center gap={16} className={styles.walletInfo} onClick={handlePortfolioToggle} onMouseEnter={handleShortPortfolioVisible(true)} onMouseLeave={handleShortPortfolioVisible(false)}>
+          <App.Flex>
+            <App.Flex center gap={8}>
+              {isEarn ? (
+                <App.Flex row center width={24} height={24} className={styles.tkeysBox}>
+                  <Image src="/images/raffle/tkey-small.png" width={12} height={17} alt="" />
                 </App.Flex>
-              ))}
+              ) : (
+                <Image src={WagmiHelper.getConnectorInfo().logo} width={24} height={24} alt="" />
+              )}
+              
+              {balanceLoading ? (
+                <App.Flex center width={95}>
+                  <App.Loader size={16} />
+                </App.Flex>
+              ) : (
+                <App.Text nowrap size={16} height={1}>{getBalanceString()}</App.Text>
+              )}
             </App.Flex>
+          </App.Flex>
+
+          <App.Flex className={styles.walletAddressWrapper}>
+            <App.Text size={16} height={1}>{shorterAddress(5)}</App.Text>
+          </App.Flex>
+
+          <App.Flex column className={cn(styles.walletPortfolioPopup, {[styles.active]: isShortPortfolioVisible})}>
+            <App.Flex row align="center" justify="space-between" className={styles.top}>
+              <App.Text size={16} weight={700} height={1}>Portfolio Value</App.Text>
+              <App.Text size={16} weight={700} height={1}>${portfolioUsd}</App.Text>
+            </App.Flex>
+
+            {portfolioList.map(item => (
+              <App.Flex key={item.address} row align="center" justify="space-between" className={styles.row}>
+                <App.Text size={12} height={1} color="#B9B8C5">{item.name}</App.Text>
+                <App.Text size={12} height={1} color="#B9B8C5">{item.available} {item.symbol}</App.Text>
+              </App.Flex>
+            ))}
           </App.Flex>
         </App.Flex>
       )}
 
-      <Portfolio open={isPortfolioVisible} address={shorterAddress(5)} logo={getConnectorInfo().logo} onClose={handlePortfolioToggle} onDisconnect={handleDisconnectDialogToggle(true)} />
+      <Portfolio open={isPortfolioVisible} address={shorterAddress(5)} logo={WagmiHelper.getConnectorInfo().logo} onClose={handlePortfolioToggle} onDisconnect={handleDisconnectDialogToggle(true)} />
 
       <App.Dialog open={isDisconnectDialogOpen} width={420} onClose={handleDisconnectDialogToggle(false)} title="Disconnect Wallet">
         <App.Flex column>

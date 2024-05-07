@@ -1,20 +1,21 @@
 import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useRouter } from 'next/router'
+import { useSelector } from 'react-redux'
 import Image from 'next/image'
-import Link from 'next/link'
 import cn from 'classnames'
+
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import App from '@/components/App'
 import SwitchBlockchain from '@/components/Header/SwitchBlockchain'
-import HeaderWallet2 from '@/components/Header/HeaderWallet2'
+import HeaderWallet from '@/components/Header/HeaderWallet'
 
 import styles from './styles.module.scss'
 
 const Header = () => {
   const router = useRouter()
   const isExchange = router.asPath?.includes('/exchange')
-
+  
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
   const [mobileMenuShow, setMobileMenuShow] = useState(false)
@@ -41,7 +42,7 @@ const Header = () => {
           <App.Flex row full gap={24} align="center" justify={['flex-start', 'space-between']}>
             <App.Flex row fullHeight gap={[24, 8]} align="center">
               {isMobile ? (
-                <App.Flex row gap={8} center sx={{ paddingTop: 12 }}>
+                <App.Flex row gap={8} center>
                   <div className={cn(styles.mobileMenuButton, {[styles.show]: mobileMenuShow})} onClick={handleMobileMenuClick}>
                     <span></span>
                     <span></span>
@@ -54,32 +55,34 @@ const Header = () => {
 
               <Link href="/" style={{ lineHeight: 0 }}>
                 <div className={styles.logo}>
-                  <App.Flex center row className={styles.badge}>
-                    <App.Text center italic size={8.7} weight={700} color="#08051C" height={1}>TESTNET</App.Text>
-                  </App.Flex>
                   <App.Icon icon="tegro" width={117} height={25} />
                 </div>
               </Link>
             </App.Flex>
-            
             {!isMobile ? (
               <App.Flex row fullHeight align="center">
                 <Link href="/exchange" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/exchange')})}>
                   <App.Flex center fullHeight>
-                    <App.Text size={16} weight={600}>Exchange</App.Text>
+                    <App.Text size={14} weight={600}>Exchange</App.Text>
                   </App.Flex>
                 </Link>
 
-                <Link href="/points-dashboard" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/points-dashboard')})}>
+                <a href="https://tegro.readme.io/reference/market-maker" target="_blank" rel="noreferrer" className={cn(styles.navItem)}>
                   <App.Flex center fullHeight>
-                    <App.Text size={16} weight={600}>Points Dashboard</App.Text>
+                    <App.Text size={14} weight={600}>Auto-Trader</App.Text>
                   </App.Flex>
-                </Link>
+                </a>
+
+                <App.Flex className={cn(styles.navItem, styles.disabled, {[styles.active]: router.pathname.includes('/points-dashboard')})}>
+                  <App.Flex center fullHeight>
+                    <App.Text size={14} weight={600}>Points (Coming Soon)</App.Text>
+                  </App.Flex>
+                </App.Flex>
               </App.Flex>
             ) : null}
           </App.Flex>
 
-          <App.Flex row fullHeight gap={24} align="center">
+          <App.Flex row fullHeight gap={16} align="center">
             { ! isMobile ? (
               <App.Flex id="support-dropdown" className={cn(styles.supportButton, {[styles.active]: supportIsOpen})} onClick={() => setSupportIsOpen(!supportIsOpen)}>
                 <App.Flex className={styles.linkWrapper}>
@@ -104,18 +107,43 @@ const Header = () => {
               </App.Flex>
             ) : null}
 
-            {isExchange ? <SwitchBlockchain /> : null}
-            <HeaderWallet2 />
+            {
+              isExchange
+                ? <SwitchBlockchain />
+                : null
+            }
+            {
+              isExchange
+                ? <HeaderWallet />
+                : <Link href="/exchange">
+                    <App.Button primary rounded>Launch app</App.Button>
+                  </Link>
+            }
+            
          </App.Flex>
 
           <div className={cn(styles.mobileMenu, {[styles.show]: mobileMenuShow})}>
             <div className={styles.content}>
               <Link href="/exchange" className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
-                  <App.Icon icon="menuExchange" />
+                  {/* <App.Icon icon="menuExchange" /> */}
                   <App.Text size={14} weight={700} color={router.pathname.includes('/exchange') ? '#A6DC37' : '#fff'}>Exchange</App.Text>
                 </App.Flex>
               </Link>
+
+              <a href="https://tegro.readme.io/reference/market-maker" target="_blank" rel="noreferrer" className={cn(styles.link)}>
+                <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
+                  {/* <App.Icon icon="menuExchange" /> */}
+                  <App.Text size={14} weight={700}>Auto-Trader</App.Text>
+                </App.Flex>
+              </a>
+
+              <App.Flex className={cn(styles.link)}>
+                <App.Flex align="center" height="100%" gap={8}>
+                  {/* <App.Icon icon="menuExchange" /> */}
+                  <App.Text size={14} weight={700} color={router.pathname.includes('/points-dashboard') ? '#A6DC37' : '#fff'}>Points (Coming Soon)</App.Text>
+                </App.Flex>
+              </App.Flex>
 
               <Link href="/points-dashboard" className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>

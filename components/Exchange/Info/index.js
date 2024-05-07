@@ -12,6 +12,7 @@ import { formatNumberWithDecimals } from '@/store/portfolio'
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
+import WagmiHelper from '@/libs/WagmiHelper'
 
 const Info = () => {
   const router = useRouter()
@@ -34,21 +35,20 @@ const Info = () => {
   const [image, setImage] = useState()
   const [emptyCurrent, setEmptyCurrent] = useState(false)
 
-  const scanLink = `${blockchain.scanUrl}/address/${current.id}`
-  const websiteLink = `https://tegro.com/${blockchain.code}/${current.id}`
+  const scanLink = WagmiHelper.generateScanUrl(current.id, 'address')
 
   useEffect(() => {
-    if (!isAddress && blockchain.code === urlBlockchain && list.length && !isMobile && !loading) {
+    if (!isAddress && blockchain?.code === urlBlockchain && list.length && !isMobile && !loading) {
       dispatch($token.set.current(list[0]))
       router.replace(`/exchange/${urlBlockchain}/${list[0].id}`)
     }
-  }, [isAddress, list, urlBlockchain, blockchain.code, isMobile, loading])
+  }, [isAddress, list, urlBlockchain, blockchain?.code, isMobile, loading])
 
   useEffect(() => {
-    if (isAddress && blockchain.code === urlBlockchain && (!current?.id || prefill.address)) {
+    if (isAddress && blockchain?.code === urlBlockchain && (!current?.id || prefill.address)) {
       fetchToken(prefill.address ?? address)
     }
-  }, [isAddress, urlBlockchain, blockchain.code, address, current?.id, prefill.address])
+  }, [isAddress, urlBlockchain, blockchain?.code, address, current?.id, prefill.address])
 
   useEffect(() => {
     setImage(current?.image ?? null)
@@ -68,7 +68,7 @@ const Info = () => {
   const fetchToken = async (currentAddress) => {
     const existInList = list.find(item => item.id === currentAddress)
     if (!existInList) {
-      const id = `${blockchain.id}_${currentAddress}_${blockchain.info?.token?.address}`
+      const id = `${blockchain.id}_${currentAddress}_${blockchain.token?.address}`
       const res = await $token.api.all({
         page: 1,
         page_size: 1,

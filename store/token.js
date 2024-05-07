@@ -1,12 +1,10 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
-
-import { CHAINS } from '@/config'
+import { parseCookies } from 'nookies'
 
 import { request } from './index'
 
 export const template = (item) => {
-  const blockchain = CHAINS.find(chain => chain.id == item.chain_id)
-
+  const blockchainCode = parseCookies(null)?.blockchain
   if (item?.base_contract_address) {
     return {
       id: item.base_contract_address,
@@ -18,8 +16,8 @@ export const template = (item) => {
       quoteSymbol: item.quote_symbol,
       decimals: item.base_decimal,
       quoteDecimals: item.quote_decimal,
-      blockchain: blockchain?.code,
-      image: `https://storage.googleapis.com/token-assets/assets/${blockchain?.code}/${item.base_contract_address}.png`,
+      blockchain: blockchainCode,
+      image: item.base_symbol == 'WETH' ? 'https://tegro.com/images/0x4200000000000000000000000000000000000006.png' : `https://storage.googleapis.com/token-assets/assets/${blockchainCode}/${item.base_contract_address}.png`,
       volume: item.ticker.quote_volume,
       price: item.ticker.price,
       high: item.ticker.price_high_24h,

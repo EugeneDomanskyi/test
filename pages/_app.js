@@ -2,7 +2,6 @@ import { useRef, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { useRouter } from 'next/router'
 import { userAgentFromString } from 'next/server'
-import nookies from 'nookies'
 import merge from 'lodash.merge'
 import { I18nextProvider } from 'react-i18next'
 import { BanditContextProvider } from '@bandit-network/quest-widget'
@@ -10,10 +9,9 @@ import { BanditContextProvider } from '@bandit-network/quest-widget'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
 import { WagmiProvider } from 'wagmi'
-import { wagmiConfig } from '@/config'
 
+import WagmiHelper from '@/libs/WagmiHelper'
 import store from '@/store'
-import $app from '@/store/app'
 import i18nInit from '@/libs/i18n'
 
 import App from '@/components/App'
@@ -21,8 +19,6 @@ import Wrapper from '@/components/Wrapper'
 import Head from '@/components/Head'
 
 import '@bandit-network/quest-widget/dist/styles.css'
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css'
 import '@rainbow-me/rainbowkit/styles.css'
 import '@/styles/globals.css'
 import '@/styles/roulette_design.css'
@@ -50,7 +46,8 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
   const router = useRouter()
   const storeRef = useRef(store(initialData)).current
 
-  const currentChain = initialData.chains.find(item => item.id == initialData.blockchain)
+  const wagmiConfig = WagmiHelper.createWagmiConfig(initialData.chains)
+  const currentChain = WagmiHelper.getChainByCode(initialData.blockchain, initialData.chains)
 
   useEffect(() => {
     if (router?.query?.vid) {
@@ -80,15 +77,14 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
 }
 
 MyApp.getInitialProps = async ({ ctx }) => {
-  const cookies = nookies.get(ctx)
-
   let ssRoute = ''
   let isMobile = null
+
   let isApp = null
   let platform = null
-  let initWallet = null
-  let devMode = null
+
   let chains = []
+  let blockchain = null
 
   if (ctx?.req) {
     ssRoute = ctx.req.url
@@ -97,38 +93,20 @@ MyApp.getInitialProps = async ({ ctx }) => {
     isMobile = device.type === 'mobile'
 
     isApp = ctx.req.headers['x-tegro-app'] == 'native'
+    // isApp = true
     platform = ctx.req.headers['x-tegro-platform']
-    initWallet = ctx.req.headers['x-tegro-wallet'] == 'null' ? null : ctx.req.headers['x-tegro-wallet']
-    devMode = ctx.req.headers['x-tegro-dev-mode'] == 'true' ? true : null
 
-    const result = await $app.api.chains()
-    if (result?.success) {
-      chains = result.data.map(item => {
-        return {
-          id: item.id,
-          token: {
-            symbol: item.default_quote_token_symbol,
-            address: item.default_quote_token_contract_address.toLowerCase(),
-            image: item.logo || (item.default_quote_token_symbol == 'USDT' ? '/images/icon-usdt.png' : '') || `https://storage.googleapis.com/token-assets/assets/${item?.name}/${item.default_quote_token_contract_address.toLowerCase()}.png`
-          },
-          contract: {
-            exchange: item.exchange_contract.toLowerCase(),
-            settlement: item.settlement_contract.toLowerCase(),
-          },
-        }
-      })
-    }
+    chains = await WagmiHelper.fetchChains(ctx)
+    blockchain = WagmiHelper.getCurrentChainCode(ctx, chains)
   }
   
   return {
     initialData: {
-      blockchain: cookies.blockchain,
       language: cookies.language ?? 'en',
       isMobile,
       isApp,
       platform,
-      initWallet,
-      devMode,
+      blockchain,
       chains,
     },
     ssRoute,

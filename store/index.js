@@ -12,6 +12,25 @@ import $tournament from './tournament'
 import $point from './point'
 
 const createStore = (initialData) => {
+  let preloadedState = {}
+  if (initialData) {
+    preloadedState = {
+      $app: {
+        ...appSlice.getInitialState(),
+        code: initialData.blockchain,
+        size: {
+          isMobile: initialData.isMobile,
+        },
+        chains: initialData.chains,
+        isApp: initialData.isApp,
+        platform: initialData.platform,
+        initWallet: initialData.initWallet,
+        appTheme: initialData.appTheme,
+        devMode: initialData.devMode,
+      },
+    }
+  }
+
   return configureStore({
     reducer: {
       $app: $app.reducer,
@@ -25,20 +44,7 @@ const createStore = (initialData) => {
       $point: $point.reducer,
     },
 
-    preloadedState: {
-      $app: {
-        ...appSlice.getInitialState(),
-        code: initialData.blockchain,
-        size: {
-          isMobile: initialData.isMobile,
-        },
-        chains: initialData.chains,
-        isApp: initialData.isApp,
-        platform: initialData.platform,
-        initWallet: initialData.initWallet,
-        devMode: initialData.devMode,
-      },
-    },
+    preloadedState,
 
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
       immutableCheck: false,
@@ -68,11 +74,15 @@ export const request = async (uri, method = 'GET', {api, ...data} = {}) => {
   const base_url = getBaseUrl(api)
   const response = await fetch(`${base_url}${uri}${query}`, options).catch(errorHandler)
 
-  if (response?.ok) {
+  if (response && response?.status) {
     return responseHandler(response)
   }
+
+  // if (response?.ok) {
+  //   return responseHandler(response)
+  // }
   
-  return errorHandler(response)
+  // return errorHandler(response)
 }
 
 const responseHandler = async (response) => {
@@ -80,7 +90,7 @@ const responseHandler = async (response) => {
 }
 
 const errorHandler = async (response) => {
-  // console.log(response)
+  // console.log('errorHandler', response)
   return null
 }
 

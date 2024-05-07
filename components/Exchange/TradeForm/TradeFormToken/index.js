@@ -1,22 +1,20 @@
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
-import { useSelector } from 'react-redux'
-import numeral from 'numeral'
+import { useDispatch, useSelector } from 'react-redux'
+import { formatUnits } from 'viem'
 import Decimal from 'decimal.js'
 import cn from 'classnames'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
-import { formatNumberWithDecimals } from '@/store/portfolio'
+import $alert from '@/store/alert'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import WagmiHelper from '@/libs/WagmiHelper'
 import Amplitude from '@/libs/amplitude.lib'
-import Contracts from '@/libs/contracts.lib'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import App from '@/components/App'
 import TradeInput from '@/components/Exchange/TradeForm/TradeInput'
 import OrderConfirm from '@/components/Exchange/OrderConfirm'
-
-import useApp from '@/myhooks/useApp'
 
 import styles from './styles.module.scss'
 
@@ -39,15 +37,15 @@ const checkPrice = (price, tab, marketPrice) => {
 }
 
 const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onSubmit}, ref) => {
-  const { wallet, changeNetwork } = useWalletConnect()
-  const { appLog } = useApp()
+  const { wallet, connect } = useWagmiHelper()
 
+  const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector($orders.get.orderbook)
+  const portfolio = useSelector(({ $portfolio }) => $portfolio.list)
 
   const [form, setForm] = useState({price: '0', amount: '1', total: '0'})
   const [userBalances, setUserBalances] = useState({base: 0, quote: 0})
-  const [wasUserBalance, setWasUserBalance] = useState(false)
   const [wasUserInput, setWasUserInput] = useState(false)
   const [isErrorBalance, setIsErrorBalance] = useState(false)
   const [isOrderConfirmOpen, setIsOrderConfirmOpen] = useState(false)
@@ -56,8 +54,6 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const isDisabled = !(form.amount*1) || !(form.price*1) || !(form.total*1)
 
   const loadingRef = useRef(false)
-
-  const contracts = new Contracts()
 
   useImperativeHandle(ref, () => ({
     setForm: (data) => {
@@ -76,7 +72,6 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   }))
 
   useEffect(() => {
-    setWasUserBalance(false)
     setWasUserInput(false)
     setIsErrorBalance(false)
 
@@ -99,41 +94,19 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   }, [prevProps])
 
   useEffect(() => {
-    if (wasUserBalance) {
-      setIsErrorBalance(currentTab == 'buy' && (form.total * 1 > userBalances.quote * 1) || currentTab == 'sell' && (form.amount * 1 > userBalances.base * 1))
-    }
-  }, [form.total, form.amount, currentTab, wasUserBalance])
-
-  useEffect(() => {
-    if (wallet && current?.address && current?.quote) {
-      fetchBalance()
-    }
-  }, [wallet, current?.address, current?.quote])
+    setIsErrorBalance(currentTab == 'buy' && (form.total * 1 > userBalances.quote * 1) || currentTab == 'sell' && (form.amount * 1 > userBalances.base * 1))
+  }, [form.total, form.amount, currentTab, userBalances])
 
   useEffect(() => {
     if (!wallet) {
       setUserBalances({base: 0, quote: 0})
+    } else {
+      setUserBalances({
+        base: portfolio.find(item => item.address == current.address)?.available ?? 0,
+        quote: portfolio.find(item => item.address == current.quote)?.available ?? 0,
+      })
     }
-  }, [wallet])
-
-  const fetchBalance = async () => {
-    const result = await contracts.fetchBalance(wallet, [current.address, current.quote])
-    if (result) {
-      formatBalance(result)
-    }
-    return contracts.watchBalance(wallet, [current.address, current.quote], formatBalance)
-  }
-
-  const formatBalance = (result) => {
-    if (result[current.address] && result[current.quote]) {
-      const balances = Object.entries(result).reduce((acc, [address, balance]) => ({
-        ...acc,
-        [address === current?.quote ? 'quote' : 'base']: balance,
-      }), {quote: 0, base: 0})
-      setUserBalances(balances)
-      setWasUserBalance(true)
-    }
-  }
+  }, [wallet, portfolio, current])
 
   const handleSetPrice = (inputByUser = true, tab = currentTab) => {
     const invertedtab = tab == 'buy' ? 'sell' : 'buy'
@@ -144,7 +117,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const handleChangePrice = (type) => () => {
     const step = 0.1
     const newPrice = type == 'plus' ? (form.price * 1 + step) : (form.price * 1 - step)
-    handleChangeForm('price', true)(formatNumberWithDecimals(newPrice, current.quoteDecimals))
+    handleChangeForm('price', true)(new Decimal(newPrice).toDecimalPlaces(current.quoteDecimals).toFixed())
   }
 
   const handleChangeForm = (field, inputByUser = false) => value => {
@@ -157,27 +130,28 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     if (!decimalRegExp.test(value) && value) {
       return
     }
-
     switch (field) {
       case 'price':
-        setForm(state => ({
-          ...state,
-          price: value,
-          total: formatNumberWithDecimals(value * state.amount, current.quoteDecimals),
-        }))
+        setForm(state => {
+          return {
+            ...state,
+            price: value,
+            total: new Decimal(value * state.amount).toDecimalPlaces(current.quoteDecimals).toFixed(),
+          }
+        })
         return
       case 'amount':
         setForm(state => {
           return {
             ...state,
             amount: value,
-            total: formatNumberWithDecimals(value * state.price, current.quoteDecimals),
+            total: new Decimal(value * state.price).toDecimalPlaces(current.quoteDecimals).toFixed(),
           }
         })
         return
       case 'total':
         setForm(state => {
-          const amount = formatNumberWithDecimals(value / state.price, current.decimals)
+          const amount = new Decimal(value / state.price).toDecimalPlaces(current.decimals).toFixed()
           return {
             ...state,
             total: value,
@@ -189,7 +163,12 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   }
 
   const handleSubmit = async () => {
-    const network = await changeNetwork(blockchain.code)
+    const wallet = await connect()
+    if (!wallet) {
+      return
+    }
+
+    const network = await WagmiHelper.changeChain(blockchain.code)
     if (!network) {
       return
     }
@@ -197,6 +176,17 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     if (isErrorBalance) {
       setWasUserInput(true)
       return
+    }
+
+    if (blockchain?.info?.min_order_value) {
+      const minTotal = formatUnits(blockchain.info.min_order_value, current.quoteDecimals)
+      if (minTotal * 1 > form.total * 1) {
+        dispatch($alert.set.error({
+          title: 'Order Error',
+          text: `The minimum order value is ${minTotal} ${current.quoteSymbol}.`,
+        }))
+        return
+      }
     }
     
     loadingRef.current = true
@@ -207,7 +197,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       current: current,
       price: form.price,
       amount: form.amount,
-      total: formatNumberWithDecimals(form.price * form.amount, current.quoteDecimals),
+      total: form.total,
     }
 
     if (version == 'mobile') {
@@ -224,13 +214,13 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       'Side': currentTab.toUpperCase(),
       'Quantity': form.amount,
       'Price': form.price,
-      'Total': formatNumberWithDecimals(form.price * form.amount, current.quoteDecimals),
+      'Total': new Decimal(form.price * form.amount).toFixed(),
       'Network': blockchain.code.toUpperCase(),
     })
   }
 
   const handleTotalBlur = () => {
-    handleChangeForm('price', true)(formatNumberWithDecimals(form.total / form.amount, current.quoteDecimals))
+    handleChangeForm('price', true)(new Decimal(form.total / form.amount).toFixed())
     Amplitude.event('Add Total', {
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
@@ -274,11 +264,17 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const renderBalance = () => {
     return (
       <App.Flex className={cn(styles.balance, {[styles.error]: isErrorBalance && wasUserInput})}>
-        <App.Flex flex={1} align="center" gap={4}>
-          <App.Icon icon="wallet" width={10} height={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} />
-          <App.Text size={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} height={1}>
-            {currentTab === 'buy' ? `${userBalances.quote} ${current.quoteSymbol}` : `${userBalances.base} ${current.symbol}`}
-          </App.Text>
+        <App.Flex column flex={1} gap={4}>
+          <App.Flex row align="center" gap={4}>
+            <App.Icon icon="wallet" width={10} height={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} />
+            <App.Text size={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} height={1}>
+              {currentTab === 'buy' ? `${userBalances.quote} ${current.quoteSymbol}` : `${userBalances.base} ${current.symbol}`}
+            </App.Text>
+          </App.Flex>
+
+          <App.Flex sx={{ paddingLeft: 14 }}>
+            <App.Text size={10} color="#b9b8c5">Fee: {blockchain?.info?.fee ?? 0}%</App.Text>
+          </App.Flex>
         </App.Flex>
 
         <App.Flex className={styles.multipler} align="center" gap={8}>
@@ -414,7 +410,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
           current={current}
           price={form.price}
           amount={form.amount}
-          total={numeral(form.amount * form.price).format('0.0[0000]')}
+          total={form.total}
           onClose={handleOrderConfirmClose}
         />
       </App.Dialog>

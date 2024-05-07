@@ -15,7 +15,7 @@ const SidebarSort = dynamic(() => import('@/components/Exchange/Sidebar/SidebarS
 
 import styles from './styles.module.scss'
 
-const Sidebar = ({ version }) => {
+const Sidebar = ({ version, isApp }) => {
   const router = useRouter()
   const urlBlockchain = router.query.blockchain
 
@@ -36,21 +36,8 @@ const Sidebar = ({ version }) => {
   const [sortBy, sortDirection] = sort.split(':')
 
   useEffect(() => {
-    // if (blockchain.code !== urlBlockchain) {
-    //   return
-    // }
-
     fetchTokensList()
-  }, [blockchain.code, sort, pages.current, urlBlockchain])
-
-  // useEffect(() => {
-  //   if (!loading && current?.id && current.blockchain === urlBlockchain) {
-  //     const exist = all.find(item => item.id === current.id)
-  //     if (!exist) {
-  //       dispatch($token.set.all([current, ...all]))
-  //     }
-  //   }
-  // }, [current?.id, loading, urlBlockchain])
+  }, [blockchain?.code, sort, pages.current, urlBlockchain])
 
   useEffect(() => {
     handleScroll()
@@ -91,7 +78,7 @@ const Sidebar = ({ version }) => {
   }
 
   return (
-    <App.Flex column className={cn(styles.container, styles[version])}>
+    <App.Flex column className={cn(styles.container, styles[version], {[styles.appContainer]: isApp})}>
       <App.Flex column>
         <App.Flex center full sx={{ padding: '8px 10px' }}>
           <SidebarSearch />

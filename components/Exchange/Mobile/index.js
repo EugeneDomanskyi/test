@@ -7,8 +7,9 @@ import Image from 'next/image'
 import $app from '@/store/app'
 import $token from '@/store/token'
 import $orders from '@/store/orders'
+import $portfolio from '@/store/portfolio'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 import Socket from '@/libs/ws.lib'
 
 import App from '@/components/App'
@@ -39,11 +40,12 @@ const Mobile = forwardRef((_, ref) => {
   const address = queryAddress ? queryAddress?.toLowerCase() : ''
   const queryBlockchainCode = router.query.blockchain
 
-  const { wallet } = useWalletConnect()
+  const { wallet } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
+  const updatePortfolio = useSelector(({ $portfolio }) => $portfolio.update)
   const isApp = useSelector(({ $app }) => $app.isApp)
   const list = useSelector(({ $token }) => $token.all)
   const item = useSelector(({ $token }) => $token.current)
@@ -92,6 +94,19 @@ const Mobile = forwardRef((_, ref) => {
   }, [wallet, socketConnected])
 
   useEffect(() => {
+    if (isApp, wallet && blockchain?.id) {
+      getPortfolio()
+    }
+  }, [isApp, wallet, blockchain?.id])
+
+  useEffect(() => {
+    if (isApp, updatePortfolio) {
+      getPortfolio()
+      dispatch($portfolio.set.update(false))
+    }
+  }, [isApp, updatePortfolio])
+
+  useEffect(() => {
     if (item?.id) {
       setChartTop([
         {value: formatNumber(item.volume ?? 0), text: 'Vol'},
@@ -106,7 +121,7 @@ const Mobile = forwardRef((_, ref) => {
   const fetchToken = async (currentAddress) => {
     const existInList = list.find(item => item.id === currentAddress)
     if (!existInList) {
-      const id = `${blockchain.id}_${currentAddress}_${blockchain.info?.token?.address}`
+      const id = `${blockchain.id}_${currentAddress}_${blockchain.token?.address}`
       const res = await $token.api.all({
         page: 1,
         page_size: 1,
@@ -122,6 +137,15 @@ const Mobile = forwardRef((_, ref) => {
       }
     } else {
       dispatch($token.set.current(existInList))
+    }
+  }
+
+  const getPortfolio = async () => {
+    const result = await $portfolio.api.details({ wallet, blockchain })
+    if (result?.success) {
+      dispatch($portfolio.set.details({...result, blockchain}))
+    } else {
+      dispatch($portfolio.set.details({data: [], blockchain}))
     }
   }
 
@@ -166,7 +190,7 @@ const Mobile = forwardRef((_, ref) => {
             )}
 
             <App.Flex column sx={{ maxWidth: 170 }}>
-              <App.Text nowrap uppercase size={16} weight={600}>{item.symbol ?? item?.slug}<App.Text inline color="#B9B8C5" size={10} weight={600} >/USDT</App.Text></App.Text>
+              <App.Text nowrap uppercase size={16} weight={600}>{item.symbol ?? item?.slug}<App.Text inline color="#B9B8C5" size={10} weight={600} >/{item?.name ? item.name.split('/')[1] : 'USDT'}</App.Text></App.Text>
               <App.Text nowrap size={12} color="#5E5C6B">{item.name}</App.Text>
             </App.Flex>
           </App.Flex>

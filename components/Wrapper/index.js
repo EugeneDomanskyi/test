@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
-import useApp from '@/myhooks/useApp'
 import Amplitude from '@/libs/amplitude.lib'
+import useAppHelper from '@/myhooks/useAppHelper'
 
 import $app from '@/store/app'
 import $point from '@/store/point'
@@ -18,9 +17,7 @@ import PointsFooter from '@/components/Points/PointsFooter'
 const Analytics = dynamic(import('@/components/Analytics'), {ssr: false})
 
 const Wrapper = ({ children }) => {
-  const { wallet, connection } = useWalletConnect()
-
-  const dispatch = useDispatch()
+  useAppHelper()
 
   const router = useRouter()
   const isCampaign = router.asPath?.includes('/campaign')
@@ -28,9 +25,12 @@ const Wrapper = ({ children }) => {
   const isPD = router.asPath?.includes('/points-dashboard')
   const { referral } = router.query
 
-  const [isInIframe, setIsInIframe] = useState(false);
+  const dispatch = useDispatch()
+  const isApp = useSelector(({ $app }) => $app.isApp)
+  const platform = useSelector(({ $app }) => $app.platform)
 
-  const { isApp, platform } = useApp()
+  const [isInIframe, setIsInIframe] = useState(false)
+
   Amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY, !isApp, platform ?? 'Web')
 
   useEffect(() => {

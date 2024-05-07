@@ -1,10 +1,7 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import { setCookie } from 'nookies'
 
-import { CHAINS } from '@/config'
-
 import { request } from './index'
-
 
 export const appSlice = createSlice({
   name: '$app',
@@ -12,7 +9,6 @@ export const appSlice = createSlice({
   initialState: {
     socketConnected: false,
     code: null,
-    blockchains: CHAINS,
     chains: [],
     size: {
       isMobile: null,
@@ -23,6 +19,7 @@ export const appSlice = createSlice({
     isApp: false,
     platform: null,
     initWallet: null,
+    appTheme: null,
     statsLoading: true,
     stats: {
       totalTradingVolume: 0,
@@ -31,16 +28,25 @@ export const appSlice = createSlice({
       totalTradesSettled: 0,
       totalOrdersCancelled: 0,
     },
+    wpk: null,
+    // wpk: '0x2b6b11c2b1034a3fd897cf5b681bb5d1d356381346adfac929bceacf0998a220',
+    connection: { loading: true, connected: false },
+    wallet: null,
+    appConnected: false,
   },
 
   reducers: {
     devMode: (state, { payload }) => {
       state.devMode = payload
     },
+    
+    appTheme: (state, { payload }) => {
+      state.appTheme = payload
+    },
 
     code: (state, { payload }) => {
       state.code = payload
-      setCookie(null, 'blockchain', payload, {path: '/'})
+      setCookie(null, 'currentChainCode', payload, {path: '/'})
     },
 
     socketConnected: (state, { payload }) => {
@@ -55,21 +61,20 @@ export const appSlice = createSlice({
       }
     },
 
-    chains: (state, { payload }) => {
-      state.chains = payload.map(item => {
-        return {
-          id: item.ChainId,
-          token: {
-            symbol: item.DefaultQuoteTokenSymbol,
-            address: item.DefaultQuoteTokenContractAddress.toLowerCase(),
-            image: item.Logo || `https://storage.googleapis.com/token-assets/assets/${item?.Name}/${item.DefaultQuoteTokenContractAddress.toLowerCase()}.png`
-          },
-          contract: {
-            exchange: item.ExchangeContract.toLowerCase(),
-            settlement: item.SettlementContract.toLowerCase(),
-          },
-        }
-      })
+    wpk: (state, { payload }) => {
+      state.wpk = payload
+    },
+
+    connection: (state, { payload }) => {
+      state.connection = payload
+    },
+
+    wallet: (state, { payload }) => {
+      state.wallet = payload
+    },
+
+    appConnected: (state, { payload }) => {
+      state.appConnected = payload
     },
   },
 })
@@ -77,30 +82,9 @@ export const appSlice = createSlice({
 export const get = {
   blockchain: createSelector([
     (state) => state.$app.code,
-    (state) => state.$app.blockchains,
     (state) => state.$app.chains,
-  ], (code, blockchains, chains) => {
-    const temp = blockchains.find(item => item.code == code)
-    if (temp) {
-      const chain = chains.find(item => item.id == temp.id)
-      if (chain) {
-        const { id, ...info } = chain
-        return {
-          ...temp,
-          info,
-        }
-      }
-
-      return temp
-    }
-
-    return null
-  }),
-
-  pageBlockchains: (page) => createSelector([
-    (state) => state.$app.blockchains,
-  ], (blockchains) => {
-    return blockchains.filter(item => item.pages.some(el => el == page))
+  ], (code, chains) => {
+    return chains.find(item => item.code == code)
   }),
 }
 
