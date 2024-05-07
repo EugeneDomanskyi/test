@@ -18,6 +18,7 @@ class Amplitude {
     const identifyObj = new amplitude.Identify()
     identifyObj.set('wallet', address)
     amplitude.identify(identifyObj)
+    amplitude.getInstance().setUserId(address)
   }
 
   utm = (params) => {
