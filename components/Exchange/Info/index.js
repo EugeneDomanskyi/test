@@ -89,20 +89,6 @@ const Info = () => {
     }
   }
 
-  const handleClickLink = (type) => () => {
-    if (type == 'market-page') {
-      Amplitude.event(`Page Visited`, {
-        'Page Name': 'Market Page',
-        'Market': current.marketId,
-        'Network': blockchain.name,
-      })
-    } else {
-      Amplitude.event(`Click ${type} Redirect`, {
-        Markets: current.name,
-      })
-    }
-  }
-
   const handleCopy = () => {
     navigator.clipboard.writeText(current.address)
   }
@@ -122,9 +108,6 @@ const Info = () => {
               <App.Flex column gap={4}>
                 <App.Flex row align="center" gap={8}>
                   <App.Text size={16} weight={600} uppercase height={1}>{ current?.name}</App.Text>
-                  {/* <a href={websiteLink} style={{ lineHeight: 0 }} target="_blank" rel="noreferrer">
-                    <App.Text size={12} color={websiteLink ? '#4C69FF' : '#B9B8C5'} nowrap height={1} onClick={handleClickLink('market-page')}><App.Icon icon="external-link" /></App.Text>
-                  </a> */}
                 </App.Flex>
 
                 {current?.id ? (
@@ -132,7 +115,7 @@ const Info = () => {
                     <Image src={`/images/icon-${blockchain.code}.png`} width={12} height={12} alt="" />
                     <App.Text inline size={12} weight={600} color="#B9B8C5" nowrap height={1}>{ blockchain?.name }:</App.Text>
                     <a href={scanLink} target="_blank" rel="noreferrer" style={{ lineHeight: 0 }}>
-                      <App.Text inline size={12} weight={600} color="#B9B8C5" nowrap height={1} onClick={handleClickLink(blockchain?.code)} sx={{ cursor: 'pointer' }}>{[current.id.slice(0, 7), current.id.slice(-7)].join('...')}</App.Text>
+                      <App.Text inline size={12} weight={600} color="#B9B8C5" nowrap height={1} sx={{ cursor: 'pointer' }}>{[current.id.slice(0, 7), current.id.slice(-7)].join('...')}</App.Text>
                     </a>
 
                     <App.Flex center sx={{ cursor: 'pointer' }} onClick={handleCopy}>

@@ -43,12 +43,6 @@ const HomeCommunity = () => {
         break
     }
 
-    if (community) {
-      Amplitude.event('Community Resources Visited', {
-        'Community': community,
-      })
-    }
-
     window.open(url, '_blank')
   }
 

@@ -32,6 +32,7 @@ const HeaderWallet = () => {
   const updatePortfolio = useSelector(({ $portfolio }) => $portfolio.update)
   const raffleLoading = useSelector(({ $raffle }) => $raffle.loadingUser)
   const raffleBalance = useSelector(({ $raffle }) => $raffle.balance)
+  const current = useSelector(({ $token }) => $token.current)
 
   const [isDisconnectDialogOpen, setIsDisconnectDialogOpen] = useState(false)
   const [balanceLoading, setBalanceLoading] = useState(true)
@@ -70,28 +71,24 @@ const HeaderWallet = () => {
   const handleConnectWallet = async () => {
     if ( ! wallet) {
       Amplitude.event('Wallet Connect Clicked', {
-        'Source': Amplitude.page(),
+        'Page': Amplitude.page(),
+        'Chain ID': blockchain?.id,
+        'Market ID': current?.address,
       })
 
-      const result = await connect()
-      if (result) {
-        Amplitude.event('Wallet Connect Success', {
-          'Source': Amplitude.event(),
-          'Type': WagmiHelper.getConnectorInfo().name,
-        })
-      }
+      await connect()
     }
   }
 
   const handleDisconnect = async () => {
-    const connectorName = WagmiHelper.getConnectorInfo().name
     WagmiHelper.disconnect()
     handleDisconnectDialogToggle(false)()
     handlePortfolioToggle(false)
 
     Amplitude.event('Wallet Disconnect Success', {
-      'Source': Amplitude.page(),
-      'Type': connectorName,
+      'Page': Amplitude.page(),
+      'Chain ID': blockchain?.id,
+      'Market ID': current?.address,
     })
   }
 
@@ -127,6 +124,13 @@ const HeaderWallet = () => {
 
   const handlePortfolioToggle = (value = true) => {
     setIsPortfolioVisible(value)
+    if (value) {
+      Amplitude.event('Wallet Panel Open', {
+        'Page': Amplitude.page(),
+        'Chain ID': blockchain?.id,
+        'Market ID': current?.address,
+      })
+    }
   }
 
   return wallet ? (

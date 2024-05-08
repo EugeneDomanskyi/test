@@ -43,6 +43,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector($orders.get.orderbook)
   const portfolio = useSelector(({ $portfolio }) => $portfolio.list)
+  const isApp = useSelector(({ $app }) => $app.isApp)
 
   const [form, setForm] = useState({price: '0', amount: '1', total: '0'})
   const [userBalances, setUserBalances] = useState({base: 0, quote: 0})
@@ -191,6 +192,18 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     
     loadingRef.current = true
 
+    Amplitude.event('Create Order Click', {
+      'Base Currency': current.symbol,
+      'Quote Currency': current.quoteSymbol,
+      'Side': currentTab.toUpperCase(),
+      'Price': form.price,
+      'Quantity': form.amount,
+      'Total': form.total,
+      'Source': isApp ? 'App' : 'Web',
+      'Chain ID': blockchain?.id,
+      'Market ID': current?.address,
+    })
+
     const props = {
       side: currentTab,
       blockchain: blockchain,
@@ -207,16 +220,6 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     } else {
       setIsOrderConfirmOpen(true)
     }
-
-    Amplitude.event('Create Order Click', {
-      'Base Currency': current.symbol,
-      'Quote Currency': current.quoteSymbol,
-      'Side': currentTab.toUpperCase(),
-      'Quantity': form.amount,
-      'Price': form.price,
-      'Total': new Decimal(form.price * form.amount).toFixed(),
-      'Network': blockchain.code.toUpperCase(),
-    })
   }
 
   const handleTotalBlur = () => {
@@ -224,8 +227,10 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     Amplitude.event('Add Total', {
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
-      'Price': form.price,
-      'Network': blockchain.code.toUpperCase(),
+      'Total': form.total,
+      'Source': isApp ? 'App' : 'Web',
+      'Chain ID': blockchain?.id,
+      'Market ID': current?.address,
     })
   }
 
@@ -234,7 +239,9 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
       'Price': form.price,
-      'Network': blockchain.code.toUpperCase(),
+      'Source': isApp ? 'App' : 'Web',
+      'Chain ID': blockchain?.id,
+      'Market ID': current?.address,
     })
   }
 
@@ -242,8 +249,10 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     Amplitude.event('Add Quantity', {
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
-      'Price': form.price,
-      'Network': blockchain.code.toUpperCase(),
+      'Quantity': form.amount,
+      'Source': isApp ? 'App' : 'Web',
+      'Chain ID': blockchain?.id,
+      'Market ID': current?.address,
     })
   }
 
