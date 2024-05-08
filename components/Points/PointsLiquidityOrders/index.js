@@ -21,6 +21,8 @@ const PointsLiquidityOrders = ({ loading }) => {
   const [tab, setTab] = useState('open')
   const [currentOrder, setCurrentOrder] = useState()
 
+  const quoteCurrency = process.env.NEXT_PUBLIC_APP_ENV == 'production' ? 'USDC' : 'USDT'
+
   const tabs = [
     { title: t('Open Orders'), key: 'open' },
     { title: t('Completed Orders'), key: 'completed' },
@@ -131,15 +133,15 @@ const PointsLiquidityOrders = ({ loading }) => {
                           <App.Text center size={16} weight={600} height={1}>{item.market.name}</App.Text>
                         </App.Flex>
 
-                        <App.Text center size={10} weight={400} height={1} color="#FFFFFF99">Mid price - {item.market.middle_price} USDT</App.Text>
+                        <App.Text center size={10} weight={400} height={1} color="#FFFFFF99">Mid price - {item.market.middle_price} {quoteCurrency}</App.Text>
                       </App.Flex>
 
                       <App.Flex flex={1} column center>
-                        <App.Text center size={16} weight={600} height={1}>{item.order_size} USDT</App.Text>
+                        <App.Text center size={16} weight={600} height={1}>{item.order_size} {quoteCurrency}</App.Text>
                       </App.Flex>
 
                       <App.Flex flex={1} center>
-                        <App.Text center size={16} weight={600} height={1}>{item.price} USDT</App.Text>
+                        <App.Text center size={16} weight={600} height={1}>{item.price} {quoteCurrency}</App.Text>
                       </App.Flex>
 
                       <App.Flex flex={1} center>
@@ -175,7 +177,7 @@ const PointsLiquidityOrders = ({ loading }) => {
                           <App.Text center size={[16, 14]} weight={600} height={1}>{item.market.name}</App.Text>
                         </App.Flex>
 
-                        <App.Text center size={10} weight={400} height={1} color="#FFFFFF99">Mid price - {item.market.middle_price} USDT</App.Text>
+                        <App.Text center size={10} weight={400} height={1} color="#FFFFFF99">Mid price - {item.market.middle_price} {quoteCurrency}</App.Text>
                       </App.Flex>
 
                       <App.Flex flex={1} center>
@@ -209,12 +211,12 @@ const PointsLiquidityOrders = ({ loading }) => {
 
             <App.Flex row align="center" justify="space-between">
               <App.Text size={14} weight={400} height={1}>{t('Order Size')}</App.Text>
-              <App.Text size={14} weight={600} height={1}>{currentOrder.order_size} USDT</App.Text>
+              <App.Text size={14} weight={600} height={1}>{currentOrder.order_size} {quoteCurrency}</App.Text>
             </App.Flex>
 
             <App.Flex row align="center" justify="space-between">
               <App.Text size={14} weight={400} height={1}>{t('Price')}</App.Text>
-              <App.Text size={14} weight={600} height={1}>{currentOrder.price} USDT</App.Text>
+              <App.Text size={14} weight={600} height={1}>{currentOrder.price} {quoteCurrency}</App.Text>
             </App.Flex>
 
             <App.Flex row align="center" justify="space-between">
