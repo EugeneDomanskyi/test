@@ -18,6 +18,7 @@ class Amplitude {
     const identifyObj = new amplitude.Identify()
     identifyObj.set('wallet', address)
     amplitude.identify(identifyObj)
+    amplitude.getInstance().setUserId(address)
   }
 
   utm = (params) => {
@@ -96,7 +97,8 @@ class Amplitude {
       IsBrowser: this.isBrowser,
       OS: this.os(),
       Device: this.device(),
-      Source: props.Source ? props.Source : 'Web',
+      Source: props?.Source ? props.Source : 'Web',
+      Domain: window.location.hostname
     }
     amplitude.getInstance().logEvent(name, data)
   }

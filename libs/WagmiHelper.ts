@@ -291,7 +291,11 @@ class WagmiHelper {
       chain = this.getChainByCode()
     }
 
-    const url =chain?.blockExplorers?.default?.url
+    let url = chain?.blockExplorers?.default?.url
+    if (url && !url.endsWith('/')) {
+      url += '/'
+    }
+
     return url ? `${url}${type}/${hash}` : hash
   }
 

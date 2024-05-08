@@ -43,6 +43,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const blockchain = useSelector($app.get.blockchain)
   const orderBook = useSelector($orders.get.orderbook)
   const portfolio = useSelector(({ $portfolio }) => $portfolio.list)
+  const isApp = useSelector(({ $app }) => $app.isApp)
 
   const [form, setForm] = useState({price: '0', amount: '1', total: '0'})
   const [userBalances, setUserBalances] = useState({base: 0, quote: 0})
@@ -191,6 +192,18 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     
     loadingRef.current = true
 
+    Amplitude.event('Create Order Click', {
+      'Base Currency': current.symbol,
+      'Quote Currency': current.quoteSymbol,
+      'Side': currentTab.toUpperCase(),
+      'Price': form.price,
+      'Quantity': form.amount,
+      'Total': form.total,
+      'Source': isApp ? 'App' : 'Web',
+      'Chain ID': blockchain?.id,
+      'Market ID': current?.address,
+    })
+
     const props = {
       side: currentTab,
       blockchain: blockchain,
@@ -215,6 +228,9 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
       'Total': form.total,
+      'Source': isApp ? 'App' : 'Web',
+      'Chain ID': blockchain?.id,
+      'Market ID': current?.address,
     })
   }
 
@@ -223,6 +239,9 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
       'Price': form.price,
+      'Source': isApp ? 'App' : 'Web',
+      'Chain ID': blockchain?.id,
+      'Market ID': current?.address,
     })
   }
 
@@ -231,6 +250,9 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
       'Quantity': form.amount,
+      'Source': isApp ? 'App' : 'Web',
+      'Chain ID': blockchain?.id,
+      'Market ID': current?.address,
     })
   }
 

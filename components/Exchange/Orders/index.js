@@ -103,6 +103,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
     if (signature) {
       const result = await $orders.api.cancelAll({ wallet_address: wallet, chain_id: blockchain.id, signature })
       if (result?.data) {
+        Amplitude.event('Bulk Cancel Order')
         const updatedOrders = orders.open.reduce((acc, o) => ({
           ...acc,
           [o.orderId]: 'cancelled',
@@ -146,6 +147,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
       'Price': order.itemPrice,
       'Total': order.price,
       'Filled Percent': `${Math.round(order.quantityFilled * 100 / order.quantity)}%`,
+      'Chain ID': blockchain?.id,
+      'Market ID': current?.address,
     }
     Amplitude.event('Cancel Order Submit', eventPost)
 
@@ -153,7 +156,6 @@ const Orders = ({global, type, version, onClickOrder}) => {
     if (signature) {
       const result = await $orders.api.cancel({ id: order.orderId, chain_id: blockchain.id, signature })
       if (result) {
-        // Amplitude.event('Cancel Order Success', eventPost)
         dispatch($orders.set.updateOrderStatus({[order.orderId]: 'cancelled'}))
         dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency} has been cancelled successfully.` }))
       } else {
@@ -188,12 +190,6 @@ const Orders = ({global, type, version, onClickOrder}) => {
   }
 
   const handleChangeOrdersType = type => () => {
-    // Amplitude.event(`View ${type == 'open' ? 'Open' : 'Completed'} Order`, {
-    //   'Base Currency': current?.symbol ?? 'Global',
-    //   'Quote Currency': current?.quoteSymbol,
-    //   'Network': blockchain.code.toUpperCase(),
-    // })
-
     setOrderTypes(type)
   }
 
@@ -201,6 +197,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
     if ( ! wallet) {
       Amplitude.event('Wallet Connect Clicked', {
         'Page': Amplitude.page(),
+        'Chain ID': blockchain?.id,
+        'Market ID': current?.address,
       })
 
       await connect()
