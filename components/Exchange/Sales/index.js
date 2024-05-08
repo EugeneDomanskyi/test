@@ -7,6 +7,7 @@ import Socket from '@/libs/ws.lib'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
+import $portfolio from '@/store/portfolio'
 
 import App from '@/components/App'
 
@@ -26,9 +27,11 @@ const Sales = ({ version, onClickSale }) => {
     if (current?.id) {
       Socket.on('trade_created', 'trades', (trade) => {
         dispatch($orders.set.addTrades(trade))
+        dispatch($portfolio.set.update(true))
       })
       Socket.on('trade_updated', 'trades', (trade) => {
         dispatch($orders.set.updateTrade(trade))
+        dispatch($portfolio.set.update(true))
       })
 
       getTrades()
