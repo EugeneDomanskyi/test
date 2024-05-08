@@ -30,11 +30,11 @@ const PointsDashboard = () => {
 
   const tabs = [
     { title: t('Dashboard'), key: 'home' },
-    { title: t('Liquidity Mining'), key: 'liquidity' },
-    { title: t('Refer & Earn'), key: 'refer' },
-    // { title: t('Contributor Tasks'), key: 'contributor' },
-    { title: t('Third Party Quests'), key: 'quests' },
-    // { title: t('Transaction History'), key: 'transactions' },
+    { title: t('Liquidity mining'), key: 'liquidity' },
+    { title: t('Refer & earn'), key: 'refer' },
+    // { title: t('Contributor tasks'), key: 'contributor' },
+    { title: t('Side quests'), key: 'quests' },
+    // { title: t('Points history'), key: 'transactions' },
   ]
 
   useEffect(() => {
@@ -52,6 +52,10 @@ const PointsDashboard = () => {
     const currentTab = localStorage.getItem('pointsTab')
     if (currentTab && wallet) {
       setTab(currentTab)
+    }
+
+    if (!wallet) {
+      setTab('home')
     }
   }, [wallet])
 
