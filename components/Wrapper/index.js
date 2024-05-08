@@ -49,11 +49,13 @@ const Wrapper = ({ children }) => {
   }, [])
 
   useEffect(() => {
-    Amplitude.event(`Page Visited`, {
-      'Page': Amplitude.page(),
-      'Chain ID': blockchain?.id,
-      'Source': isApp ? 'App' : 'Web',
-    })
+    if (page != 'points-dashboard') {
+      Amplitude.event(`Page Visited`, {
+        'Page': Amplitude.page(),
+        'Chain ID': blockchain?.id,
+        'Source': isApp ? 'App' : 'Web',
+      })
+    }
   }, [page])
 
   useEffect(() => {
