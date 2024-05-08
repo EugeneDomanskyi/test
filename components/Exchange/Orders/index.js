@@ -103,6 +103,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
     if (signature) {
       const result = await $orders.api.cancelAll({ wallet_address: wallet, chain_id: blockchain.id, signature })
       if (result?.data) {
+        Amplitude.event('Bulk Cancel Order')
         const updatedOrders = orders.open.reduce((acc, o) => ({
           ...acc,
           [o.orderId]: 'cancelled',

@@ -292,7 +292,7 @@ class WagmiHelper {
     }
 
     let url = chain?.blockExplorers?.default?.url
-    if (!url.endsWith('/')) {
+    if (url && !url.endsWith('/')) {
       url += '/'
     }
 
