@@ -1,0 +1,87 @@
+.border {
+  border-bottom: 1px solid #FFFFFF1A;
+}
+
+.container {
+  padding: 32px 0;
+
+  @media (max-width: 768px) {
+    padding: 20px 0;
+  }
+
+  .box {
+    padding: 16px;
+    border-radius: 12px;
+    background: linear-gradient(158.14deg, #6B41EB -6.02%, #241164 85.68%);
+    border: 1px solid #FFFFFF1A;
+
+    @media (max-width: 768px) {
+      width: calc(50% - 10px);
+      padding: 8px 12px;
+    }
+  }
+
+  .sliderContainer {
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #FFFFFF1A;
+    background: url('/images/points/points-drops.png') center / cover no-repeat, radial-gradient(392.38% 881.21% at 50% -228.16%, #262626 0%, #171717 100%);
+    overflow: hidden;
+
+    .slider {
+      height: 72px;
+      position: relative;
+      z-index: 0;
+
+      .arrowLeft {
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        bottom: 0;
+        left: -16px;
+        width: 60px;
+        padding-right: 16px;
+        cursor: pointer;
+        background: linear-gradient(90deg, #1f1f20 0%, rgba(23, 23, 23, 0.00) 100%);
+      }
+
+      .arrowRight {
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        bottom: 0;
+        right: -16px;
+        width: 60px;
+        padding-left: 16px;
+        cursor: pointer;
+        background: linear-gradient(90deg, rgba(23, 23, 23, 0.00) 0%, #171717 100%);
+      }
+
+      .sliderInner {
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
+        position: absolute;
+        z-index: 0;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        transition: all .2s ease;
+
+        .sliderItem {
+          height: 100%;
+          width: 160px;
+          border-radius: 12px;
+          border: 1px solid #74982866;
+          background: #262626;
+
+          .badge {
+            padding: 4px 8px;
+            border-radius: 100px;
+            background: #395017;
+          }
+        }
+      }
+    }
+  }
+}

@@ -33,6 +33,7 @@ const AppTabs = ({width = '100%', height = '100%', options, active, end, variant
       case 'back': return { size: 12, weight: 500 }
       case 'mobile': return { size: 12, weight: 600 }
       case 'mobile-app': return { size: 14, weight: 600 }
+      case 'points': return { size: 14, weight: 600 }
       default: return { size: 14, weight: 500 }
     }
   }
@@ -40,7 +41,7 @@ const AppTabs = ({width = '100%', height = '100%', options, active, end, variant
   return (
     <App.Flex row width={width} height={height} align="center" justify="space-between" className={cn(styles.container, styles[variant])}>
       <div ref={parentRef} className={cn(styles.options, styles[variant])}>
-        {variant != 'classic' ? (
+        {variant != 'classic' && variant != 'points' ? (
           <div className={cn(styles.badge, styles[variant])} style={{width: `${badgeWidth}px`, left: `${badgeLeft}px`}} />
         ) : null}
 

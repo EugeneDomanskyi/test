@@ -1,0 +1,17 @@
+.container {
+  background: url('/images/points/points-background.png') left top no-repeat;
+  min-height: 100vh;
+
+  .tiger {
+    background: url('/images/points/points-tiger.png') right bottom no-repeat;
+    background-size: contain;
+    height: 100vh;
+  }
+}
+
+.hr {
+  height: 20px;
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.6);
+  opacity: .5;
+}
