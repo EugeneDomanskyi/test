@@ -55,7 +55,7 @@ export const portfolioSlice = createSlice({
           image,
           balance: item.balance,
           placed: item.placed_amount,
-          available: new Decimal(item.balance - item.placed_amount).toFixed(),
+          available: new Decimal((item.balance - item.placed_amount) < 0 ? 0 : (item.balance - item.placed_amount)).toFixed(),
           price: (item.price || (item.type === 'quote' ? item.balance : 0)),
           usd: usd.toFixed(),
           usdFormatted,

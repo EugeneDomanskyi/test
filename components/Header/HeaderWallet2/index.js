@@ -24,6 +24,7 @@ const HeaderWallet2 = () => {
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
+  const updatePortfolio = useSelector(({ $portfolio }) => $portfolio.update)
   const portfolioUsd = useSelector(({ $portfolio }) => $portfolio.usd)
   const portfolioList = useSelector(({ $portfolio }) => $portfolio.list)
   const current = useSelector(({ $token }) => $token.current)
@@ -37,6 +38,13 @@ const HeaderWallet2 = () => {
       getPortfolio()
     }
   }, [wallet, blockchain?.id])
+
+  useEffect(() => {
+    if (updatePortfolio) {
+      getPortfolio()
+      dispatch($portfolio.set.update(false))
+    }
+  }, [updatePortfolio])
 
   
   const shorterAddress = (size = 6) => {
@@ -132,7 +140,7 @@ const HeaderWallet2 = () => {
               {portfolioList.map(item => (
                 <App.Flex key={item.address} row align="center" justify="space-between" className={styles.row}>
                   <App.Text size={12} height={1} color="#B9B8C5">{item.name}</App.Text>
-                  <App.Text size={12} height={1} color="#B9B8C5">{item.balance} {item.symbol}</App.Text>
+                  <App.Text size={12} height={1} color="#B9B8C5">{item.available} {item.symbol}</App.Text>
                 </App.Flex>
               ))}
             </App.Flex>
