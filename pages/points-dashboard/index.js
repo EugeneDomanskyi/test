@@ -34,7 +34,7 @@ const PointsDashboard = () => {
     { title: t('Refer & Earn'), key: 'refer' },
     // { title: t('Contributor Tasks'), key: 'contributor' },
     { title: t('Third Party Quests'), key: 'quests' },
-    { title: t('Transaction History'), key: 'transactions' },
+    // { title: t('Transaction History'), key: 'transactions' },
   ]
 
   useEffect(() => {
@@ -67,7 +67,7 @@ const PointsDashboard = () => {
       case 'refer': return <PointsRefer />
       // case 'contributor': return <PointsContributor />
       case 'quests': return <PointsQuests />
-      case 'transactions': return <PointsTransactions />
+      // case 'transactions': return <PointsTransactions />
       default: return <PointsHome />
     }
   }
