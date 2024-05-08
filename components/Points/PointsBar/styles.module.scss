@@ -1,0 +1,48 @@
+.container {
+  .tabsBox {
+    @media (max-width: 768px) {
+      width: 100%;
+      overflow-x: auto;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
+
+  .tab {
+    width: 180px;
+    height: 30px;
+    border-radius: 62px;
+    background-color: #171717;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all .3s;
+
+    @media (max-width: 768px) {
+      width: auto;
+      padding: 0 16px;
+    }
+
+    .text {
+      color: #737373;
+      transition: all .3s;
+    }
+
+    &:hover {
+      background-color: #729e19;
+
+      .text {
+        color: #1C2C07;
+      }
+    }
+
+    &.active {
+      background-color: #A6DC37;
+
+      .text {
+        color: #1C2C07;
+      }
+    }
+  }
+}

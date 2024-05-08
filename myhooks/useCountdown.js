@@ -19,14 +19,17 @@ const getDuration = (startTime, endTime) => {
   }
 }
 
-const useCountdown = (endTime) => {
+const useCountdown = (endTime, alternate) => {
   const [time, setTime] = useState(moment())
 
   const tick = () => {
     setTime(moment())
   }
 
-  const duration = getDuration(time, endTime)
+  const from = alternate ? endTime : time
+  const to = alternate ? time : endTime
+
+  const duration = getDuration(from, to)
 
   useInterval(tick, duration.isEnd ? null : 1000)
 
