@@ -60,9 +60,9 @@ const PointsHome = () => {
               <App.Container maxWidth={1230} height="100%">
                 <App.Flex full column justify={['center', 'flex-start']}>
                   <App.Flex column align="flex-start" width={[486, 'auto']} gap={32} sx={[{ paddingBottom: 64 }, { paddingTop: 32 }]}>
-                    <App.Text size={[80, 52]} weight={700} height={1}>{t('Start your points')} <App.Text inline size={[80, 52]} weight={700} height={1} color="#A6DC37">{t('Quest')}</App.Text></App.Text>
-                    <App.Text size={[16, 14]} weight={400} color="#FFFFFF99">{t('Join forces with fellow traders on a quest for glory and exclusive rewards. Connect your wallet to unleash the power of points and start your legendary journey.')}</App.Text>
-                    <App.Button secondary2 onClick={handleConnect}>{t('Connect Wallet')}</App.Button>
+                    <App.Text size={[80, 52]} weight={700} height={1}>{t('Kick-start your journey to')} <App.Text inline size={[80, 52]} weight={700} height={1} color="#A6DC37">{t('Pre-rich')}</App.Text>!</App.Text>
+                    <App.Text size={[16, 14]} weight={400} color="#FFFFFF99">{t('Collect POINTS on every action, order, and referral you make on Tegro. Get in early, start collecting, and keep your eyes peeled — because we’re just getting started.')}</App.Text>
+                    <App.Button secondary2 onClick={handleConnect}>{t('Connect wallet')}</App.Button>
                   </App.Flex>
                 </App.Flex>
               </App.Container>

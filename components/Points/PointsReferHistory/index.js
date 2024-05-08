@@ -21,24 +21,24 @@ const PointsReferHistory = () => {
   return (
     <App.Flex column gap={16} className={styles.container}>
       <App.Flex column>
-        <App.Text size={20} weight={600} height={1}>{t('Referral History')}</App.Text>
-        <App.Text size={12} color="#9b99ae">{t('Points will be added every 12 hours')}</App.Text>
+        <App.Text size={20} weight={600} height={1}>{t('Referral activity')}</App.Text>
+        <App.Text size={12} color="#9b99ae">{t('Updates every 12 hours')}</App.Text>
       </App.Flex>
 
       <App.Flex column className={styles.table}>
         <App.Flex row className={styles.row}>
           <App.Flex flex={1} align="center" justify={['center', 'flex-start']} sx={{paddingLeft: 8}}>
-            <App.Text center weight={600} height={1} color="#A6DC37">{t('Wallet')}</App.Text>
+            <App.Text center weight={600} height={1} color="#A6DC37">{t('Referred wallet')}</App.Text>
           </App.Flex>
 
           {!isMobile ? (
             <App.Flex flex={1} center>
-              <App.Text center weight={600} height={1} color="#A6DC37">{t('Date Referred')}</App.Text>
+              <App.Text center weight={600} height={1} color="#A6DC37">{t('Date')}</App.Text>
             </App.Flex>
           ) : null}
 
           <App.Flex flex={1} align="center" justify={['center', 'flex-end']} sx={{paddingRight: 8}}>
-            <App.Text center weight={600} height={1} color="#A6DC37">{t('Points Earned')}</App.Text>
+            <App.Text center weight={600} height={1} color="#A6DC37">{t('Points earned')}</App.Text>
           </App.Flex>
         </App.Flex>
 

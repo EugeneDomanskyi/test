@@ -86,14 +86,14 @@ const PointsLiquidity = () => {
 
           <App.Flex direction={['row', 'column']} align="center" row gap={24}>
             <App.Flex column align="flex-start" flex={1} gap={12}>
-              <App.Text size={20} weight={600} height={1}>{t('Liquidity Mining')}</App.Text>
-              <App.Text size={14} weight={400} color="#FFFFFF99">{t('Earn points every minute that order lives on the orderbook based on the order size.')}</App.Text>
-              <App.Button primary2 onClick={handleExchange}>{t('Create Orders')} <App.Icon icon="arrow-45" /></App.Button>
+              <App.Text size={20} weight={600} height={1}>{t('Liquidity mining')}</App.Text>
+              <App.Text size={14} weight={400} color="#FFFFFF99">{t('Collect points every minute your order stays active. The math is easy — open large orders and stay close to the market’s mid-price to maximize your points.')}</App.Text>
+              <App.Button primary2 onClick={handleExchange}>{t('Create orders')} <App.Icon icon="arrow-45" /></App.Button>
             </App.Flex>
 
             <App.Flex row gap={24} wrap={isMobile}>
-              <App.Flex column center width={[200, 'calc(50% - 12px)']} height={[80, 62]} gap={8} className={styles.box}>
-                <App.Text size={[14, 12]} weight={400}>{t('Active Orders')}</App.Text>
+              <App.Flex column center width={[180, 'calc(50% - 12px)']} height={[80, 62]} gap={8} className={styles.box}>
+                <App.Text size={[14, 12]} weight={400}>{t('Active orders')}</App.Text>
                 {loading ? (
                   <App.Loader size={[32, 24]} />
                 ) : (
@@ -101,8 +101,8 @@ const PointsLiquidity = () => {
                 )}
               </App.Flex>
 
-              <App.Flex column center width={[200, 'calc(50% - 12px)']} height={[80, 62]} gap={8} className={styles.box}>
-                <App.Text size={[14, 12]} weight={400}>{t('Active Liquidity')}</App.Text>
+              <App.Flex column center width={[180, 'calc(50% - 12px)']} height={[80, 62]} gap={8} className={styles.box}>
+                <App.Text size={[14, 12]} weight={400}>{t('Active liquidity')}</App.Text>
                 {loading ? (
                   <App.Loader size={[32, 24]} />
                 ) : (
@@ -110,8 +110,8 @@ const PointsLiquidity = () => {
                 )}
               </App.Flex>
 
-              <App.Flex column center width={[200, 'calc(50% - 12px)']} height={[80, 62]} gap={8} className={styles.box}>
-                <App.Text size={[14, 12]} weight={400}>{t('Total Liquidity')}</App.Text>
+              <App.Flex column center width={[180, 'calc(50% - 12px)']} height={[80, 62]} gap={8} className={styles.box}>
+                <App.Text size={[14, 12]} weight={400}>{t('Liquidity provided')}</App.Text>
                 {loading ? (
                   <App.Loader size={[32, 24]} />
                 ) : (
@@ -119,8 +119,8 @@ const PointsLiquidity = () => {
                 )}
               </App.Flex>
 
-              <App.Flex column center width={[200, '100%']} height={[80, 62]} gap={8} className={styles.box}>
-                <App.Text size={[14, 12]} weight={400}>{t('Points Earned')}</App.Text>
+              <App.Flex column center width={[180, '100%']} height={[80, 62]} gap={8} className={styles.box}>
+                <App.Text size={[14, 12]} weight={400}>{t('Points earned')}</App.Text>
                 {loading ? (
                   <App.Loader size={[32, 24]} />
                 ) : (

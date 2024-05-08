@@ -45,7 +45,7 @@ const PointsHomeLeaderboard = () => {
     <App.Flex column gap={16} className={styles.container}>
       <App.Flex column>
         <App.Text size={20} weight={600} height={1}>{t('Leaderboard')}</App.Text>
-        <App.Text size={12} color="#9b99ae">{t('Updates every 12 hours')}</App.Text>
+        <App.Text size={12} color="#9b99ae">{t('Updates every 12 hours!')}</App.Text>
       </App.Flex>
 
       <App.Flex column>
@@ -59,11 +59,11 @@ const PointsHomeLeaderboard = () => {
           </App.Flex>
 
           <App.Flex width={[200, 'auto']} flex={[null, 1]} align="center">
-            <App.Text weight={600} height={1} color="#A6DC37">{t(`Wallet${isMobile ? '' : ' Address'}`)}</App.Text>
+            <App.Text weight={600} height={1} color="#A6DC37">{t(`Wallet${isMobile ? '' : ' address'}`)}</App.Text>
           </App.Flex>
 
           <App.Flex width={['auto', 56]} flex={[1, null]} center>
-            <App.Text center weight={600} height={1} color="#A6DC37">{t(`Points${isMobile ? '' : ' Earned'}`)}</App.Text>
+            <App.Text center weight={600} height={1} color="#A6DC37">{t(`Points${isMobile ? '' : ' earned'}`)}</App.Text>
           </App.Flex>
 
           {/* <App.Flex width={['auto', 64]} flex={[1, null]} center>
