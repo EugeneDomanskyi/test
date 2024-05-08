@@ -21,50 +21,32 @@ const Faq = () => {
 
   const questions = [
     {
-      question: t('What activities can I do to earn points on the Points Dashboard?'),
-      answer: t('Earn points by participating in trading tournaments, referring friends, completing various community engagement tasks, and taking on quests through third-party platforms like Galxe, QuestN etc.'),
+      question: t('What are points?'),
+      answer: t('Points are a fun way to get rewarded for engaging with the Tegro ecosystem. The points you earn can be used in future events or exchanged for some really cool rewards. Weʼll be unveiling more details soon, so stay tuned!'),
     }, {
-      question: t('How do I redeem points for rewards on Tegro?'),
-      answer: t('Accumulate points and head to the \"Redeem\" section. There, you can exchange your points for loot boxes containing SHM Airdrops, TGR Airdrops, fee rebates, exclusive NFTs, and more.'),
+      question: t('How can I earn points?'),
+      answer: t('Itʼs super easy! You stack points on Tegro by getting involved in all sorts of activities. Whether it’s completing tasks, making trades, referring friends, or jumping into side quest campaigns, each action adds points to your total. Get active and watch those points pile up!'),
     }, {
-      question: t('Are points from the Points Dashboard transferrable to another user?'),
-      answer: t('No, points earned on the Points Dashboard are tied to your account and are not transferrable to ensure fairness in the rewards system.'),
+      question: t('What is liquidity mining? How does it work?'),
+      answer: t('Liquidity mining on Tegro lets you earn points by placing open orders. The longer your order stays active, the more points you collect per minute. You can maximize your points collection by placing larger orders or by pricing your orders closer to the market’s mid-price. For instance, the mid-price of the WETH USDC trading pair is $3000 and two traders - Alice places a $50 buy order for WETH at $2990, while Bob places a $75 buy order at $2995. Since Bobʼs order is larger and closer to the mid-price, he earns more points than Alice.'),
     }, {
-      question: t('What is a third-party quest, and how do I participate?'),
-      answer: t('Third-party quests are unique challenges hosted on platforms like Galxe and QuestN. Participate by following the instructions on the quest page, which will link directly from the Points Dashboard.'),
+      question: t('What is deviation?'),
+      answer: t('Deviation measures the difference between the price of your active order and the current marketʼs mid-price. The closer your order price is to this mid-price, the more points youʼll accumulate.'),
     }, {
-      question: t('How can I track the points Iʼve earned from referrals?'),
-      answer: t('You can monitor your referral points in the \"Referral History\" section of the Points Dashboard, which details points earned from each friendʼs activities.'),
+      question: t('Will I collect points on completed orders?'),
+      answer: t('No, once an order is fulfilled, it stops accumulating points. To keep earning points, youʼll need to place new orders.'),
     }, {
-      question: t('Can I use points to get discounts on trading fees?'),
-      answer: t('Yes! You can redeem points for fee rebates, which reduce trading fees, among other exciting rewards.'),
+      question: t('How do referrals work?'),
+      answer: t('Referrals are a fantastic way to earn extra points. Just share your unique referral code with your friends. When a friend uses your code to join Tegro and starts placing their orders, youʼll begin earning 25% of the points they collect from all of their orders.'),
     }, {
-      question: t('What happens to my points if I donʼt redeem them?'),
-      answer: t('Your points remain in your account until you decide to redeem them. They donʼt expire, so you can save up for the biggest rewards!'),
+      question: t('What are side quests?'),
+      answer: t('Side quests are unique campaigns that provide an extra avenue for traders to earn points. Participate in these mini-campaigns on platforms like Galxe, TaskOn, and QuestN to earn additional points.'),
     }, {
-      question: t('How are points awarded in trading tournaments based on tiers?'),
-      answer: t('In our trading tournaments, your points depend on your tier: As a \"Cub\", you earn 1 point per trade. Achieve a \"Simba\" status by surpassing $100k in trading volume to earn 1.5 points per trade. Reach \"Mufasa\" level with a trading volume of over $1 million and earn 2 points per trade.'),
-    }, {
-      question: t('How can I advance to higher tiers like \"Simba\" and \"Mufasa\" in tournaments?'),
-      answer: t('Your tier is determined by your total trading volume in a tournament. Trade more than $100k to ascend to \"Simba\" and over $1 million to rise to \"Mufasa\", unlocking higher point multipliers for each trade you make.'),
-    }, {
-      question: t('What strategies should I adopt to earn more points in trading tournaments?'),
-      answer: t('To maximize points, aim to increase your trading volume while maintaining profitability. Advancing to higher tiers like \"Simba\" and \"Mufasa\" will multiply the points earned per trade, making each of your trades more valuable.'),
-    }, {
-      question: t('How are points calculated for referrals?'),
-      answer: t('Simple and straightforward: You earn 1 point for each trade made by a person youʼve referred. Thereʼs no limit, so the more they trade, the more you earn.'),
-    }, {
-      question: t('Is there a maximum number of referral points I can earn?'),
-      answer: t('Thereʼs no cap on the points you can earn through referrals. Each trade your referral makes continues to add points to your balance, one point at a time.'),
-    }, {
-      question: t('Can I increase the points I earn from referrals?'),
-      answer: t('Currently, each trade your referral makes earns you a flat rate of 1 point. Keep referring to expand your network and multiply your earnings!'),
-    }, {
-      question: t('What should I do to ensure my referral points are properly tracked?'),
-      answer: t('Make sure your friends sign up using your unique referral link. Keep track of your referral points on the dashboard, and if you notice any discrepancies, contact us at support@tegro.com or through Discord/Telegram for assistance.'),
+      question: t('Can I transfer points to another user?'),
+      answer: t('No, the points you earn on Tegro are linked to your connected wallet address and cannot be transferred. This policy helps maintain fairness in the rewards system.'),
     }, {
       question: t('What should I do if I have a dispute or discrepancy in my points?'),
-      answer: t('For any concerns regarding point discrepancies, reach out to us at support@tegro.com. Our dedicated team will investigate and resolve your issues promptly. For quick queries, you can also message us on Discord or Telegram for real-time support.'),
+      answer: t('If you notice any discrepancies with your points, please contact us at <a href="mailto:support@tegro.com">support@tegro.com</a>. Our dedicated team will look into your issue and resolve it promptly. For quicker responses, you can also reach out to us on <a href="https://discord.com/invite/tegro" target="_blank" rel="noreferrer">Discord</a> for real-time support.'),
     },
   ]
 
@@ -93,7 +75,7 @@ const Faq = () => {
           <App.Flex direction={['row', 'column']} gap={16} align={['flex-end', 'flex-start']} justify="space-between">
             <App.Flex column width={[700, 'auto']} gap={16}>
               <App.Text size={24} weight={800}>{t('Frequently asked questions')}</App.Text>
-              <App.Text color="#FFFFFF99">{t('Have questions about how the Points Dashboard works? Weʼve got answers! Browse through our FAQs to get detailed insights and start maximizing your rewards.')}</App.Text>
+              <App.Text color="#FFFFFF99">{t('Hey there! Curious about points and how they work? We’ve got you covered! Browse through the FAQs to learn more.')}</App.Text>
             </App.Flex>
           </App.Flex>
 
