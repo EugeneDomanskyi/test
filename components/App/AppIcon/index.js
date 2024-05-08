@@ -1671,6 +1671,95 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon == 'earn') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill={color ?? '#fff'} d="M9.677 8.76a3.846 3.846 0 017.252 1.046 2.396 2.396 0 012.147.792l.002-.156A5.942 5.942 0 008.04 7.383a5.932 5.932 0 104.262 10.747 2.404 2.404 0 01-1.228-1.7 3.836 3.836 0 11-3.848-6.618 5.944 5.944 0 003.812 6.191c.004-.771.37-1.457.938-1.893a3.847 3.847 0 01-2.3-5.35z" />
+          <path fill={color ?? '#fff'} d="M21.757 16.024a1.2 1.2 0 00-1.2-1.2h-2.075v-2.055a1.2 1.2 0 00-2.401 0v2.054h-2.055a1.2 1.2 0 100 2.402h2.055v2.074a1.2 1.2 0 102.401 0v-2.074h2.074a1.2 1.2 0 001.201-1.2z" />
+        </svg>
+      )
+    }
+
+    if (icon == 'redeem') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M6.498 2.996l1.5 1.5-1.5 1.501" />
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7.998 4.496h-2a3.001 3.001 0 00-3.002 3.001M17.502 22.003l-1.5-1.5 1.5-1.501" />
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16.002 20.503h2a3.001 3.001 0 003.002-3.001M9.499 20.503a5.502 5.502 0 110-11.005 5.502 5.502 0 010 11.005" />
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8.688 13.98l.81-.814v3.25M8.69 16.418h1.618M10.61 6.16a5.502 5.502 0 017.782 7.782" />
+        </svg>
+      )
+    }
+
+    if (icon == 'question-circle') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <circle stroke={color ?? '#fff'} cx="12" cy="12.5" r="10" strokeWidth="1.5"></circle>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeWidth="1.5" d="M10.125 9.375a1.875 1.875 0 112.828 1.615c-.475.281-.953.708-.953 1.26v1.25" />
+          <circle fill={color ?? '#fff'} cx="12" cy="16.5" r="1"></circle>
+        </svg>
+      )
+    }
+
+    if (icon == 'chevron-down2') {
+      return (
+        <svg width={width ?? 8} height={height ?? 5} viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.6" strokeWidth="2" d="M7 1L4 4 1 1" />
+        </svg>
+      )
+    }
+
+    if (icon == 'chest') {
+      return (
+        <svg width={width ?? 22} height={height ?? 23} viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill={color ?? '#9B99AE'} d="M11.75 3.5a.75.75 0 11-1.5 0V1.25a.75.75 0 111.5 0V3.5z" />
+          <path fill={color ?? '#9B99AE'} fillRule="evenodd" clipRule="evenodd" d="M.5 11.75c0-2.482 2.018-4.5 4.5-4.5h12c2.482 0 4.5 2.018 4.5 4.5V20c0 1.24-1.01 2.25-2.25 2.25H2.75C1.51 22.25.5 21.24.5 20v-8.25zm19.5 1.5v-1.5c0-1.36-.915-2.498-2.158-2.865.414.603.658 1.33.658 2.115v2.25H20zm-9.75 0v1.5h1.5v-1.5h-1.5zm.002-1.5h1.5c.827 0 1.5.673 1.5 1.5h3.75V11c0-1.24-1.01-2.25-2.25-2.25h-7.5c-1.241 0-2.25 1.01-2.25 2.25v2.25h3.75c0-.827.672-1.5 1.5-1.5zM4.159 8.885a2.995 2.995 0 00-2.157 2.865v1.5h1.5V11c0-.784.244-1.512.657-2.115zM2.002 20c0 .414.336.75.75.75h.75v-6h-1.5V20zm3-5.25v6h12v-6h-3.75c0 .827-.673 1.5-1.5 1.5h-1.5c-.828 0-1.5-.673-1.5-1.5h-3.75zm14.25 6a.75.75 0 00.75-.75v-5.25h-1.5v6h.75z" />
+          <path fill={color ?? '#9B99AE'} d="M5.654 5.423a.748.748 0 001.044.184.75.75 0 00.184-1.045l-1.29-1.844a.75.75 0 00-1.23.86l1.29 1.844h.002zM16.347 5.422a.748.748 0 01-.615.32.75.75 0 01-.614-1.18l1.29-1.844a.75.75 0 011.23.86l-1.29 1.844z" />
+        </svg>
+      )
+    }
+
+    if (icon == 'chevron-slider-left') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.5" d="M15 19.92L8.48 13.4c-.77-.77-.77-2.03 0-2.8L15 4.08" />
+        </svg>
+      )
+    }
+
+    if (icon == 'chevron-slider-right') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.5" d="M8.91 19.92l6.52-6.52c.77-.77.77-2.03 0-2.8L8.91 4.08" />
+        </svg>
+      )
+    }
+
+    if (icon == 'arrow-long') {
+      return (
+        <svg width={width ?? 223} height={height ?? 17} viewBox="0 0 223 17" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill={color ?? '#A6DC37'} d="M220 17l2.887-5h-5.774L220 17zM0 1.5h212v-1H0v1zM219.5 9v3.5h1V9h-1zM212 1.5a7.5 7.5 0 017.5 7.5h1A8.5 8.5 0 00212 .5v1z" />
+        </svg>
+      )
+    }
+
+    if (icon == 'arrow-long-rotate') {
+      return (
+        <svg width={width ?? 17} height={height ?? 92} viewBox="0 0 17 92" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill={color ?? '#A6DC37'} d="M17 89l-5 2.887v-5.774L17 89zM1.5 0v81h-1V0h1zM9 88.5h3.5v1H9v-1zM1.5 81A7.5 7.5 0 009 88.5v1A8.5 8.5 0 01.5 81h1z" />
+        </svg>
+      )
+    }
+
+    if (icon == 'warning-circle') {
+      return (
+        <svg width={width ?? 17} height={height ?? 16} viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#A6DC37'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.028" d="M8.334 14.667C12 14.667 15 11.667 15 8s-3-6.667-6.666-6.667c-3.667 0-6.667 3-6.667 6.667s3 6.667 6.667 6.667zM8.334 5.333v3.334" />
+          <path stroke={color ?? '#A6DC37'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.37" d="M8.33 10.667h.006" />
+        </svg>
+      )
+    }
+    
     if (icon == 'base-icon') {
       return (
         <svg width={32} height={33} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>

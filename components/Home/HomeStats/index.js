@@ -32,18 +32,6 @@ const HomeStats = () => {
     setLoading(false)
   }
 
-  const formatNumber = (number) => {
-    const suffixes = ['', 'K', 'M', 'B', 'T', 'Q']
-    let suffixIndex = 0
-  
-    while (number >= 1000 && suffixIndex < suffixes.length - 1) {
-      number /= 1000
-      suffixIndex++
-    }
-  
-    return `${number.toFixed(1)}${suffixes[suffixIndex]}`
-  }
-
   return !isMobile ? (
     <App.Container maxWidth={1230} sx={{ paddingBottom: 32 }} className={styles.container}>
       <App.Flex column gap={32}>

@@ -1,0 +1,29 @@
+.container {
+  padding: 32px 0;
+
+  .table {
+    border: solid rgba(255, 255, 255, 0.10) 1px;
+    border-radius: 12px;
+
+    .row {
+      padding: 16px 0;
+
+      &:not(:last-of-type) {
+        border-bottom: solid rgba(255, 255, 255, 0.10) 1px;
+      }
+
+      .badge {
+        border-radius: 8px;
+        padding: 4px 20px;
+
+        &.trade {
+          background: #6B41EB;
+        }
+
+        &.sign {
+          background: #A6DC37;
+        }
+      }
+    }
+  }
+}
