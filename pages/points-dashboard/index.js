@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 
+import Amplitude from '@/libs/amplitude.lib'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
+
+import $app from '@/store/app'
 
 import App from '@/components/App'
 import PointsBar from '@/components/Points/PointsBar'
@@ -20,6 +23,8 @@ const PointsDashboard = () => {
   const { wallet } = useWagmiHelper()
 
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
+  const isApp = useSelector(({ $app }) => $app.isApp)
+  const blockchain = useSelector($app.get.blockchain)
 
   const [tab, setTab] = useState('home')
 
@@ -31,6 +36,17 @@ const PointsDashboard = () => {
     { title: t('Third Party Quests'), key: 'quests' },
     { title: t('Transaction History'), key: 'transactions' },
   ]
+
+  useEffect(() => {
+    const currentTab = localStorage.getItem('pointsTab')
+    if (!currentTab || currentTab == tab) {
+      Amplitude.event(`Page Visited`, {
+        'Page': 'Points Dashboard: ' + tabs.find(t => t.key == tab)?.title,
+        'Chain ID': blockchain?.id,
+        'Source': isApp ? 'App' : 'Web',
+      })
+    }
+  }, [tab])
 
   useEffect(() => {
     const currentTab = localStorage.getItem('pointsTab')
