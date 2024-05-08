@@ -40,11 +40,15 @@ const PointsDashboard = () => {
   useEffect(() => {
     const currentTab = localStorage.getItem('pointsTab')
     if (!currentTab || currentTab == tab) {
-      Amplitude.event(`Page Visited`, {
-        'Page': 'Points Dashboard: ' + tabs.find(t => t.key == tab)?.title,
-        'Chain ID': blockchain?.id,
-        'Source': isApp ? 'App' : 'Web',
-      })
+      try {
+        Amplitude.event(`Page Visited`, {
+          'Page': 'Points Dashboard: ' + tabs.find(t => t.key == tab)?.title,
+          'Chain ID': blockchain?.id,
+          'Source': isApp ? 'App' : 'Web',
+        })
+      } catch (error) {
+        console.log(error)
+      }
     }
   }, [tab])
 
