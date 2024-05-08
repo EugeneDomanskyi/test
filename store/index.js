@@ -86,6 +86,10 @@ export const request = async (uri, method = 'GET', {api, ...data} = {}) => {
 }
 
 const responseHandler = async (response) => {
+  if (response.status == 502) {
+    return null
+  }
+
   return await response.json()
 }
 
