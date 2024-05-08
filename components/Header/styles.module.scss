@@ -6,7 +6,9 @@
   left: 0;
 
   .containerHeader {
-    height: 90px;
+    height: 72px;
+    border-bottom: 1px solid #FFFFFF1A;
+    background: #0B091566;
 
     @media (max-width: 768px) {
       height: 60px;

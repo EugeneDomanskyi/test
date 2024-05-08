@@ -111,7 +111,8 @@ body {
 
 body > div:first-child,
 div#__next,
-div#__next > div {
+div#__next > div,
+div#__next > div > div[data-img-src] {
   height: 100%;
 }
 
@@ -156,4 +157,47 @@ a {
   .hideOnMobile {
     display: none;
   }
+}
+
+.widget .bad-quest__view--header,
+.widget .bad-quest__progress--content,
+.widget .mt-4.relative {
+  display: none;
+}
+
+.widget .bad-quest__view--scroll_area {
+  height: auto;
+  padding: 0;
+}
+
+.widget .bad-quest_task__wrapper {
+  border-color: #ffffff33;
+}
+
+.widget .bad-quest_task__check_icon_not_completed,
+.widget .bad-quest_task__lock_icon {
+  color: #ffffff33;
+}
+
+.widget .bad-input_box {
+  color: #fff;
+}
+
+.widget .bad-button__default {
+  padding: 6px 8px;
+  border-radius: 100px;
+  background: #7204FF;
+  min-width: 100px;
+}
+
+.widget .bad-button__default + .bad-button__default {
+  margin-left: 16px;
+}
+
+.widget .bad-quest__view-overlay--open {
+  display: none;
+}
+
+[data-rk] .ju367v9g {
+  width: auto !important;
 }

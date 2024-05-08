@@ -95,7 +95,7 @@ const handler = async (req, res) => {
     if (data) {
       stats = JSON.parse(data)
       stats.message = 'Read JSON file'
-      if (stats.day > today) {
+      if (stats.day < today) {
         refreshData(stats)
         stats.message = 'Refresh JSON file'
       }

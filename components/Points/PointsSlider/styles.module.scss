@@ -1,0 +1,101 @@
+// .input {
+//   -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+//   width: 100%; /* Specific width is required for Firefox. */
+//   background: transparent; /* Otherwise white in Chrome */
+// }
+.container {
+  width: 100%;
+  height: 3px;
+  position: relative;
+  z-index: 1;
+
+  &.disabled {
+    opacity: 0.6;
+  }
+
+  .root {
+    color: #fff;
+    padding: 0;
+    height: 3px;
+    margin-bottom: 0;
+    top: -12px;
+  }
+
+  .thumb {
+    width: 24px;
+    height: 24px;
+    background-color: #fff;
+    position: relative;
+    z-index: 0;
+
+    &:after {
+      content: '';
+      position: absolute;
+      display: block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: #6B41EB;
+    }
+  }
+
+  .rail {
+    background-color: #5E5C6B;
+    height: 3px;
+    opacity: 1;
+  }
+
+  .track {
+    height: 3px;
+  }
+
+  .mark {
+    width: 12px;
+    height: 12px;
+    margin-left: -5px;
+    border-radius: 50%;
+    background-color: #5E5C6B;
+    opacity: 1;
+  }
+
+  .markActive {
+    background-color: #fff;
+  }
+
+  .markLabel {
+    display: none;
+  }
+
+  .thumbTriangle {
+    position: absolute;
+    bottom: -4px;
+  }
+
+  .label {
+    width: 132px;
+    height: 60px;
+    position: absolute;
+    top: -70px;
+    border-radius: 5px;
+    background: #6B41EB;
+
+    @media (max-width: 768px) {
+      width: 70px;
+      height: 40px;
+      top: -50px
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 5px solid #6B41EB; /* Same color as the box */
+    }
+  }
+}
