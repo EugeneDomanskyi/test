@@ -1,11 +1,12 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useAccount } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 
 import $app from '@/store/app'
 
+import Amplitude from '@/libs/amplitude.lib'
 import WagmiHelper from '@/libs/WagmiHelper'
-import { useDispatch, useSelector } from 'react-redux'
 
 const useWagmiHelper = () => {
   const { address, isConnected } = useAccount()
@@ -18,6 +19,9 @@ const useWagmiHelper = () => {
   const connection = useSelector(({ $app }) => $app.connection)
   const wallet = useSelector(({ $app }) => $app.wallet)
   const appConnected = useSelector(({ $app }) => $app.appConnected)
+  const current = useSelector(({ $token }) => $token.current)
+
+  const connectedCount = useRef(0)
 
   useEffect(() => {
     if (!isApp) {
@@ -47,9 +51,20 @@ const useWagmiHelper = () => {
 
   useEffect(() => {
     if (connectModalOpen && isConnected) {
+      connectedCount.current += 1
       WagmiHelper.connectSuccess()
     }
   }, [connectModalOpen, isConnected])
+
+  useEffect(() => {
+    if (connectedCount.current == 1) {
+      Amplitude.event('Wallet Connect Success', {
+        'Page': Amplitude.page(),
+        'Chain ID': blockchain?.id,
+        'Market ID': current?.address,
+      })
+    }
+  }, [connectedCount])
 
   useEffect(() => {
     if (isApp) {

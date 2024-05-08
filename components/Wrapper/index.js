@@ -10,7 +10,6 @@ import useWagmiHelper from '@/myhooks/useWagmiHelper'
 import $app from '@/store/app'
 import $point from '@/store/point'
 
-import App from '@/components/App'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
@@ -24,12 +23,14 @@ const Wrapper = ({ children }) => {
   const router = useRouter()
   const isCampaign = router.asPath?.includes('/campaign')
   const isExchange = router.asPath?.includes('/exchange')
+  const [_, page] = router.asPath.split('/')
   const isPD = router.asPath?.includes('/points-dashboard')
   const { referral } = router.query
 
   const dispatch = useDispatch()
   const isApp = useSelector(({ $app }) => $app.isApp)
   const platform = useSelector(({ $app }) => $app.platform)
+  const blockchain = useSelector($app.get.blockchain)
 
   const [isInIframe, setIsInIframe] = useState(false)
 
@@ -46,6 +47,14 @@ const Wrapper = ({ children }) => {
       window.removeEventListener('resize', handleWindowResize)
     }
   }, [])
+
+  useEffect(() => {
+    Amplitude.event(`Page Visited`, {
+      'Page': Amplitude.page(),
+      'Chain ID': blockchain?.id,
+      'Source': isApp ? 'App' : 'Web',
+    })
+  }, [page])
 
   useEffect(() => {
     if (!connection.loading && connection.connected && wallet) {
@@ -82,13 +91,6 @@ const Wrapper = ({ children }) => {
 
   return (
     <div style={{ height: '100%' }}>
-      {/* <App.TopBanner id="tegro-at-ethdenver" mode="dark">
-        <App.Flex align={['center', 'flex-start']} justify="center" direction={['row', 'column']} gap={16}>
-          <App.Text>🐯 Tegro will be at ETHDenver 2024 (27 Feb - 4 Mar, 2024)</App.Text>
-          <App.Button href="https://bit.ly/meet-ashish-tegro" small>Let&apos;s meet!</App.Button>
-        </App.Flex>
-      </App.TopBanner> */}
-
       {
         ! isInIframe
           ? <div style={{height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden'}}>
