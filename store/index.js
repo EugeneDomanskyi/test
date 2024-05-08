@@ -9,6 +9,7 @@ import $raffle from './raffle'
 import $markets from './markets'
 import $portfolio from './portfolio'
 import $tournament from './tournament'
+import $point from './point'
 
 const createStore = (initialData) => {
   let preloadedState = {}
@@ -40,6 +41,7 @@ const createStore = (initialData) => {
       $markets: $markets.reducer,
       $portfolio: $portfolio.reducer,
       $tournament: $tournament.reducer,
+      $point: $point.reducer,
     },
 
     preloadedState,
@@ -84,6 +86,10 @@ export const request = async (uri, method = 'GET', {api, ...data} = {}) => {
 }
 
 const responseHandler = async (response) => {
+  if (response.status == 502) {
+    return null
+  }
+
   return await response.json()
 }
 

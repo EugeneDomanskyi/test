@@ -41,11 +41,6 @@ const SidebarSearch = () => {
 
   const handleSearch = (searchQuery) => {
     searchTokens(searchQuery)
-
-    Amplitude.event('Search Market', {
-      'Network': blockchain.code.toUpperCase(),
-      'Search term': searchQuery,
-    })
   }
 
   const searchTokens = async (searchText) => {

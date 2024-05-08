@@ -8,13 +8,13 @@ import styles from './styles.module.scss'
 
 const HomeTop = () => {
   return (
-    <App.Container maxWidth={1230} sx={[{ padding: '200px 0 96px' }, { padding: '138px 0 78px' }]}>
-      <App.Flex fullWidth height={563} align="center">
+    <App.Container maxWidth={1230} sx={[{ padding: '200px 0 96px', zIndex: -1 }, { padding: '138px 0 78px', zIndex: -1 }]}>
+      <App.Flex align="center" className={styles.heroWrapper}>
         <App.Flex column gap={[48, 28]} className={styles.textWrapper}>
           <App.Flex column>
             <App.Text size={[82, 36]} weight={600}>The Gen2 DEX</App.Text>
-            <App.Text size={[41, 28]} weight={600} height={1}>
-              for <App.Text inline size={[41, 28]} weight={600} height={1} color="#A6DC37">High-Frequency Trading</App.Text>
+            <App.Text size={[41, 24]} weight={600} height={1}>
+              for <App.Text inline size={[41, 24]} weight={600} height={1} color="#A6DC37">High-Frequency Trading</App.Text>
             </App.Text>
           </App.Flex>
 
@@ -26,8 +26,12 @@ const HomeTop = () => {
           </App.Button>
         </App.Flex>
 
-        <App.Flex justify="flex-end" fullWidth className={styles.heroImg}>
-          <Image src={`/images/landing/hero-img.png`} width={709} height={560} alt="" />
+        <App.Flex justify="flex-end" className={styles.heroImg}>
+          {/* <Image src={`/images/landing/hero-image.png`} width={709} height={560} alt="" /> */}
+          {/* <Image src={`/images/landing/hero-image.png`} width={2946} height={1758} alt="" /> */}
+          {/* <Image src={`/images/landing/hero-image.png`} width={1473} height={878} alt="" /> */}
+          {/* <Image src={`/images/landing/hero-image.png`} width={736} height={439} alt="" /> */}
+          <Image src={`/images/landing/hero-image.png`} width={1104} height={659} alt="" priority={true} quality={100} />
         </App.Flex>
       </App.Flex>
     </App.Container>

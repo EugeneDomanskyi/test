@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useRef } from 'react' 
 import { useSelector } from 'react-redux'
 import Link from 'next/link'
+import moment from 'moment'
 
 import App from '@/components/App'
 
@@ -47,10 +48,6 @@ const Footer = () => {
 
                   <App.Flex column gap={8}>
                     <App.Text size={14} weight={400}>
-                      <a href="https://blog.tegro.com/career?utm_source=homepage&utm_medium=footer&utm_campaign=testnet" target="_blank" rel="noreferrer" className={styles.link}>Careers</a>
-                    </App.Text>
-
-                    <App.Text size={14} weight={400}>
                       <a href="https://www.notion.so/Tegro-Help-Center-fd988c0a96a04939a5abad30ee5d22e9?pvs=4" target="_blank" rel="noreferrer" className={styles.link}>Support</a>
                     </App.Text>
 
@@ -93,32 +90,30 @@ const Footer = () => {
                     <App.Text size={14} weight={400}>
                       <a href="https://tegro.com/exchange/base/0x4200000000000000000000000000000000000006?utm_source=homepage&utm_medium=footer&utm_campaign=exchange" className={styles.link}>WETH USDC</a>
                     </App.Text>
+                    
+                    <App.Text size={14} weight={400}>
+                      <a href="https://tegro.com/exchange/base/0x4ed4e862860bed51a9570b96d89af5e1b0efefed?utm_source=homepage&utm_medium=footer&utm_campaign=exchange" className={styles.link}>DEGEN USDC</a>
+                    </App.Text>
+                    
+                    <App.Text size={14} weight={400}>
+                      <a href="https://tegro.com/exchange/base/0x532f27101965dd16442e59d40670faf5ebb142e4?utm_source=homepage&utm_medium=footer&utm_campaign=exchange" className={styles.link}>BRETT USDC</a>
+                    </App.Text>
                   </App.Flex>
                 </App.Flex>
               </App.Flex>
             
               <App.Flex direction={['row', 'column']} flex={1} gap={[20, 40]}>
-                <App.Flex column gap={16} flex={1} sx={{width: 180}}>
+                <App.Flex column gap={16} sx={{width: 180}}>
                   <App.Text  size={16} weight={700} color="#7364FF">Ecosystem</App.Text>
 
                   <App.Flex column gap={8}>
                     <App.Text size={14} weight={400}>
-                      <Link href="https://testnet.tegro.com/exchange/optimism-sepolia/0xcf9eb56c69ddd4f9cfdef880c828de7ab06b4614" className={styles.link}>Testnet Exchange</Link>
-                    </App.Text>
-
-                    {/* {tournament?.alias ? (
-                      <App.Text size={14} weight={400}>
-                        <Link href={`/tournament/${tournament?.alias}`} className={styles.link}>Earn</Link>
-                      </App.Text>
-                    ) : null} */}
-
-                    <App.Text size={14} weight={400}>
-                      <a href="https://tegro.readme.io/" target="_blank" rel="noreferrer" className={styles.link}>API Docs</a>
+                      <a href="https://tegro.com/exchange" rel="noreferrer" className={styles.link}>Exchange</a>
                     </App.Text>
                   </App.Flex>
                 </App.Flex>
-
-                <App.Flex column gap={16} flex={1} sx={{width: 180}}>
+                
+                <App.Flex column gap={16} sx={{width: 180}}>
                   <App.Text  size={16} weight={700} color="#7364FF">Resources</App.Text>
 
                   <App.Flex column gap={8}>
@@ -134,9 +129,9 @@ const Footer = () => {
                       <a href="https://press.tegro.com/press-kit/logo?utm_source=homepage&utm_medium=footer&utm_campaign=testnet" target="_blank" rel="noreferrer" className={styles.link}>Press Kit</a>
                     </App.Text>
 
-                    <App.Text size={14} weight={400}>
+                    {/* <App.Text size={14} weight={400}>
                       <a href="https://tegro.readme.io/" target="_blank" rel="noreferrer" className={styles.link}>Docs</a>
-                    </App.Text>
+                    </App.Text> */}
                   </App.Flex>
                 </App.Flex>
 
@@ -174,7 +169,7 @@ const Footer = () => {
           </App.Flex>
           
           <App.Flex center className={styles.bottom}>
-            <App.Text size={14} weight={400}>All Rights Reserved</App.Text>
+            <App.Text size={14} weight={400}>© { moment().format('YYYY') } — Tegro</App.Text>
           </App.Flex>
         </App.Flex>
       </App.Container>

@@ -6,12 +6,20 @@ export const tournamentSlice = createSlice({
   name: "$tournament",
 
   initialState: {
-    data: null,
+    all: [],
     current: null,
     loading: true,
+    leaderboard: {
+      daily: [],
+      cumulative: []
+    },
   },
 
   reducers: {
+    all: (state, { payload }) => {
+      state.all = payload
+    },
+
     current: (state, { payload }) => {
       state.current = payload
     },
@@ -19,22 +27,34 @@ export const tournamentSlice = createSlice({
     loading: (state, { payload }) => {
       state.loading = payload
     },
+
+    leaderboard: (state, { payload }) => {
+      state.leaderboard = payload
+    },
   }
 })
 
 const api = {
+  all: () => {
+    return request(`tournament/list`, 'GET', {api: 'exchange'})
+  },
+
   get: (alias) => {
     return request(`tournament/${alias}`, 'GET', {api: 'exchange'})
   },
+
   create: (post) => {
-    return request(`tournament/create`, 'POST', post)
+    return request(`tournament/create`, 'POST', {api: 'exchange', ...post})
   },
+
   current: () => {
     return request(`tournament/current`, 'GET', {api: 'exchange'})
   },
-  leaderboard: (alias) => {
-    return request(`tournament/${alias}/leaderboard`, 'GET', {api: 'exchange'})
+
+  leaderboard: (alias, daily) => {
+    return request(`tournament/${alias}/leaderboard${daily ? '/daily' : ''}`, 'GET', {api: 'exchange'})
   },
+
   walletResult: (alias, wallet) => {
     return request(`tournament/${alias}/leaderboard/${wallet}`, 'GET', {api: 'exchange'}) // 0x113128f65d830b5295cef847597f4655f3d8e47c
   },

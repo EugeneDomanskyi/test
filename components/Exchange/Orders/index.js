@@ -10,6 +10,7 @@ import Socket from '@/libs/ws.lib'
 import $app from '@/store/app'
 import $orders from '@/store/orders'
 import $alert from '@/store/alert'
+import $portfolio from '@/store/portfolio'
 
 import WagmiHelper from '@/libs/WagmiHelper'
 import Amplitude from '@/libs/amplitude.lib'
@@ -103,12 +104,15 @@ const Orders = ({global, type, version, onClickOrder}) => {
     if (signature) {
       const result = await $orders.api.cancelAll({ wallet_address: wallet, chain_id: blockchain.id, signature })
       if (result?.data) {
+        Amplitude.event('Bulk Cancel Order')
         const updatedOrders = orders.open.reduce((acc, o) => ({
           ...acc,
           [o.orderId]: 'cancelled',
         }), {})
         dispatch($orders.set.updateOrderStatus(updatedOrders))
         dispatch($alert.set.success({ title: 'Orders cancelled', text: `You have cancelled ${orders.open.length} order(s) successfully.` }))
+
+        dispatch($portfolio.set.update(true))
       }
     } else {
       dispatch($alert.set.error({ title: 'Orders not cancelled', text: `Please try again to cancel your ${orders.open.length} open order(s).` }))
@@ -143,9 +147,11 @@ const Orders = ({global, type, version, onClickOrder}) => {
       'Quote Currency': order.quoteCurrency,
       'Side': order.side.toUpperCase(),
       'Quantity': order.quantity - order.quantityFilled,
-      'Price': order.itemPrice,
-      'Total': order.price,
-      'Network': blockchain.code.toUpperCase(),
+      'Price': order.price,
+      'Total': order.price * order.quantity,
+      'Filled Percent': `${Math.round(order.quantityFilled * 100 / order.quantity)}%`,
+      'Chain ID': blockchain?.id,
+      'Market ID': current?.address,
     }
     Amplitude.event('Cancel Order Submit', eventPost)
 
@@ -153,9 +159,10 @@ const Orders = ({global, type, version, onClickOrder}) => {
     if (signature) {
       const result = await $orders.api.cancel({ id: order.orderId, chain_id: blockchain.id, signature })
       if (result) {
-        Amplitude.event('Cancel Order Success', eventPost)
         dispatch($orders.set.updateOrderStatus({[order.orderId]: 'cancelled'}))
         dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency} has been cancelled successfully.` }))
+
+        dispatch($portfolio.set.update(true))
       } else {
         dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.` }))
       }
@@ -188,28 +195,18 @@ const Orders = ({global, type, version, onClickOrder}) => {
   }
 
   const handleChangeOrdersType = type => () => {
-    Amplitude.event(`View ${type == 'open' ? 'Open' : 'Completed'} Order`, {
-      'Base Currency': current?.symbol ?? 'Global',
-      'Quote Currency': current?.quoteSymbol,
-      'Network': blockchain.code.toUpperCase(),
-    })
-
     setOrderTypes(type)
   }
 
   const handleConnectWallet = async () => {
     if ( ! wallet) {
       Amplitude.event('Wallet Connect Clicked', {
-        'Source': Amplitude.page(),
+        'Page': Amplitude.page(),
+        'Chain ID': blockchain?.id,
+        'Market ID': current?.address,
       })
 
-      const result = await connect()
-      if (result) {
-        Amplitude.event('Wallet Connect Success', {
-          'Source': Amplitude.page(),
-          'Type': WagmiHelper.getConnectorInfo().name,
-        })
-      }
+      await connect()
     }
   }
 

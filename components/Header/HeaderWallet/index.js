@@ -70,28 +70,24 @@ const HeaderWallet = () => {
   const handleConnectWallet = async () => {
     if ( ! wallet) {
       Amplitude.event('Wallet Connect Clicked', {
-        'Source': Amplitude.page(),
+        'Page': Amplitude.page(),
+        'Chain ID': blockchain?.id,
+        'Market ID': current?.address,
       })
 
-      const result = await connect()
-      if (result) {
-        Amplitude.event('Wallet Connect Success', {
-          'Source': Amplitude.event(),
-          'Type': WagmiHelper.getConnectorInfo().name,
-        })
-      }
+      await connect()
     }
   }
 
   const handleDisconnect = async () => {
-    const connectorName = WagmiHelper.getConnectorInfo().name
     WagmiHelper.disconnect()
     handleDisconnectDialogToggle(false)()
     handlePortfolioToggle(false)
 
     Amplitude.event('Wallet Disconnect Success', {
-      'Source': Amplitude.page(),
-      'Type': connectorName,
+      'Page': Amplitude.page(),
+      'Chain ID': blockchain?.id,
+      'Market ID': current?.address,
     })
   }
 
