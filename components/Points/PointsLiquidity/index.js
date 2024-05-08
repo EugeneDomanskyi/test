@@ -104,7 +104,7 @@ const PointsLiquidity = () => {
                 {loading ? (
                   <App.Loader size={[32, 24]} />
                 ) : (
-                  <App.Text size={[32, 24]} weight={600} height={1}>{liquidity.total_open_orders}</App.Text>
+                  <App.Text size={[32, 24]} weight={600} height={1}>{liquidity.total_open_amount} <App.Text inline size={14} weight={600} height={1}>USDT</App.Text></App.Text>
                 )}
               </App.Flex>
 
