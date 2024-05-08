@@ -97,7 +97,8 @@ class Amplitude {
       IsBrowser: this.isBrowser,
       OS: this.os(),
       Device: this.device(),
-      Source: props.Source ? props.Source : 'Web',
+      Source: props?.Source ? props.Source : 'Web',
+      Domain: window.location.hostname
     }
     amplitude.getInstance().logEvent(name, data)
   }
