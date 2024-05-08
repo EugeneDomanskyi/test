@@ -63,6 +63,7 @@ const useWagmiHelper = () => {
         'Chain ID': blockchain?.id,
         'Market ID': current?.address,
       })
+      connectedCount.current = 0
     }
   }, [connectedCount])
 
