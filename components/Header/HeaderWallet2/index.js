@@ -128,7 +128,7 @@ const HeaderWallet2 = () => {
               {portfolioList.map(item => (
                 <App.Flex key={item.address} row align="center" justify="space-between" className={styles.row}>
                   <App.Text size={12} height={1} color="#B9B8C5">{item.name}</App.Text>
-                  <App.Text size={12} height={1} color="#B9B8C5">{item.balance} {item.symbol}</App.Text>
+                  <App.Text size={12} height={1} color="#B9B8C5">{item.available} {item.symbol}</App.Text>
                 </App.Flex>
               ))}
             </App.Flex>
