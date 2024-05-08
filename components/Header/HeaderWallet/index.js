@@ -32,7 +32,6 @@ const HeaderWallet = () => {
   const updatePortfolio = useSelector(({ $portfolio }) => $portfolio.update)
   const raffleLoading = useSelector(({ $raffle }) => $raffle.loadingUser)
   const raffleBalance = useSelector(({ $raffle }) => $raffle.balance)
-  const current = useSelector(({ $token }) => $token.current)
 
   const [isDisconnectDialogOpen, setIsDisconnectDialogOpen] = useState(false)
   const [balanceLoading, setBalanceLoading] = useState(true)
@@ -124,13 +123,6 @@ const HeaderWallet = () => {
 
   const handlePortfolioToggle = (value = true) => {
     setIsPortfolioVisible(value)
-    if (value) {
-      Amplitude.event('Wallet Panel Open', {
-        'Page': Amplitude.page(),
-        'Chain ID': blockchain?.id,
-        'Market ID': current?.address,
-      })
-    }
   }
 
   return wallet ? (

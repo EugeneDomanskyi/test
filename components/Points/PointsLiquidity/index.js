@@ -23,6 +23,8 @@ const PointsLiquidity = () => {
 
   const [loading, setLoading] = useState(true)
 
+  const quoteCurrency = process.env.NEXT_PUBLIC_APP_ENV == 'production' ? 'USDC' : 'USDT'
+
   useEffect(() => {
     if (wallet) {
       fetchLiquidity()
@@ -104,7 +106,7 @@ const PointsLiquidity = () => {
                 {loading ? (
                   <App.Loader size={[32, 24]} />
                 ) : (
-                  <App.Text size={[32, 24]} weight={600} height={1}>{liquidity.total_open_amount} <App.Text inline size={14} weight={600} height={1}>USDT</App.Text></App.Text>
+                  <App.Text size={[32, 24]} weight={600} height={1}>{liquidity.total_open_amount} <App.Text inline size={14} weight={600} height={1}>{quoteCurrency}</App.Text></App.Text>
                 )}
               </App.Flex>
 
@@ -113,7 +115,7 @@ const PointsLiquidity = () => {
                 {loading ? (
                   <App.Loader size={[32, 24]} />
                 ) : (
-                  <App.Text size={[32, 24]} weight={600} height={1}>{liquidity.total_liquidity} <App.Text inline size={14} weight={600} height={1}>USDT</App.Text></App.Text>
+                  <App.Text size={[32, 24]} weight={600} height={1}>{liquidity.total_liquidity} <App.Text inline size={14} weight={600} height={1}>{quoteCurrency}</App.Text></App.Text>
                 )}
               </App.Flex>
 
