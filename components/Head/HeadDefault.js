@@ -2,11 +2,11 @@ import Head from 'next/head'
 
 const HeadDefault = () => {
   const getTitle = () => {
-    return 'Tegro: The Gen2 DEX for High-frequency Trading'
+    return 'Tegro - Gen2 order book DEX for high-frequency trading | Trade on Base'
   }
 
   const getDescription = () => {
-    return 'Tegro is a Gen2 DEX for high-frequency trading with API bot access. Enjoy CEX-level efficiency on-chain with features like efficient orderbooks, unmatched gas efficiency, lightning-fast order matching, and more! Become a part of the next DeFi revolution. Join the Tegro Testnet and start trading for free today!'
+    return 'Tegro is a Gen2 order book DEX for high-frequency trading on Base. Tegro brings CEX-like performance on-chain with features like efficient orderbooks, gasless quotes, unmatched gas efficiency, lightning-fast order matching, and more! Explore the future of DEX, trade on Tegro!'
   }
 
   const getUrl = () => {

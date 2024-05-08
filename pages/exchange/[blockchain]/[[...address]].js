@@ -1,11 +1,10 @@
-import { useRef, useCallback, useEffect, useState } from 'react'
+import { useRef, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import dynamic from 'next/dynamic'
 import cn from 'classnames'
 
 import Socket from '@/libs/ws.lib'
-import Amplitude from '@/libs/amplitude.lib'
 
 import $alert from '@/store/alert'
 import $orders from '@/store/orders'
@@ -43,10 +42,6 @@ const Exchange = () => {
   const mobileRef = useRef(null)
 
   useEffect(() => {
-    Amplitude.event('Page Visited', {
-      'Page Name': Amplitude.page(),
-    })
-
     Socket.init(handleAction, handleCloseConnection).then(() => {
       dispatch($app.set.socketConnected(true))
     })
