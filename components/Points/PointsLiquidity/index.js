@@ -90,8 +90,8 @@ const PointsLiquidity = () => {
             </App.Flex>
 
             <App.Flex row gap={24} wrap={isMobile}>
-              <App.Flex column center width={[220, 'calc(50% - 12px)']} height={[80, 62]} gap={8} className={styles.box}>
-                <App.Text size={[14, 12]} weight={400}>{t('Total Open Orders')}</App.Text>
+              <App.Flex column center width={[200, 'calc(50% - 12px)']} height={[80, 62]} gap={8} className={styles.box}>
+                <App.Text size={[14, 12]} weight={400}>{t('Active Orders')}</App.Text>
                 {loading ? (
                   <App.Loader size={[32, 24]} />
                 ) : (
@@ -99,8 +99,17 @@ const PointsLiquidity = () => {
                 )}
               </App.Flex>
 
-              <App.Flex column center width={[220, 'calc(50% - 12px)']} height={[80, 62]} gap={8} className={styles.box}>
-                <App.Text size={[14, 12]} weight={400}>{t('Total Liquidity Provided')}</App.Text>
+              <App.Flex column center width={[200, 'calc(50% - 12px)']} height={[80, 62]} gap={8} className={styles.box}>
+                <App.Text size={[14, 12]} weight={400}>{t('Active Liquidity')}</App.Text>
+                {loading ? (
+                  <App.Loader size={[32, 24]} />
+                ) : (
+                  <App.Text size={[32, 24]} weight={600} height={1}>{liquidity.total_open_orders}</App.Text>
+                )}
+              </App.Flex>
+
+              <App.Flex column center width={[200, 'calc(50% - 12px)']} height={[80, 62]} gap={8} className={styles.box}>
+                <App.Text size={[14, 12]} weight={400}>{t('Total Liquidity')}</App.Text>
                 {loading ? (
                   <App.Loader size={[32, 24]} />
                 ) : (
@@ -108,8 +117,8 @@ const PointsLiquidity = () => {
                 )}
               </App.Flex>
 
-              <App.Flex column center width={[220, '100%']} height={[80, 62]} gap={8} className={styles.box}>
-                <App.Text size={[14, 12]} weight={400}>{t('Total Points Earned')}</App.Text>
+              <App.Flex column center width={[200, '100%']} height={[80, 62]} gap={8} className={styles.box}>
+                <App.Text size={[14, 12]} weight={400}>{t('Points Earned')}</App.Text>
                 {loading ? (
                   <App.Loader size={[32, 24]} />
                 ) : (
