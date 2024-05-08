@@ -75,8 +75,11 @@ const PointsLiquidityOrders = ({ loading }) => {
                 </App.Tooltip>
               </App.Flex>
 
-              <App.Flex flex={1} center>
+              <App.Flex flex={1} row gap={4} center>
                 <App.Text center weight={600} height={1} color="#A6DC37">{t('Point Per Minute')}</App.Text>
+                <App.Tooltip placement="bottom" text="Orders closest to the mid-price accumulate the highest points, while those with a deviation greater than 10% do not accumulate any points">
+                  <App.Icon icon="warning-circle" />
+                </App.Tooltip>
               </App.Flex>
 
               <App.Flex flex={1} center>
