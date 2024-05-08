@@ -24,6 +24,7 @@ const HeaderWallet2 = () => {
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
+  const updatePortfolio = useSelector(({ $portfolio }) => $portfolio.update)
   const portfolioUsd = useSelector(({ $portfolio }) => $portfolio.usd)
   const portfolioList = useSelector(({ $portfolio }) => $portfolio.list)
 
@@ -36,6 +37,13 @@ const HeaderWallet2 = () => {
       getPortfolio()
     }
   }, [wallet, blockchain?.id])
+
+  useEffect(() => {
+    if (updatePortfolio) {
+      getPortfolio()
+      dispatch($portfolio.set.update(false))
+    }
+  }, [updatePortfolio])
 
   
   const shorterAddress = (size = 6) => {
