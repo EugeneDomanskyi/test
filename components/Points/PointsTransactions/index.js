@@ -40,8 +40,8 @@ const PointsTransactions = () => {
       <App.Container maxWidth={1230}>
         <App.Flex column fullWidth gap={32}>
           <App.Flex fullWidth column gap={16}>
-            <App.Text size={[24, 20]} weight={600} height={1}>{t('Transaction History')}</App.Text>
-            <App.Text size={12} color="#9b99ae">{t('Hereʼs the record of all points youʼve amassed on your Tegro voyage. Every action, every trade, and every referral adds up to your growing treasure.')}</App.Text>
+            <App.Text size={[24, 20]} weight={600} height={1}>{t('Track your points journey')}</App.Text>
+            <App.Text size={12} color="#9b99ae">{t('Review all your accumulated points from actions, trades, and referrals on the Tegro — every step adds up!')}</App.Text>
           </App.Flex>
 
           <App.Flex column className={styles.table}>
@@ -51,11 +51,11 @@ const PointsTransactions = () => {
               </App.Flex>
 
               <App.Flex flex={1} align="center">
-                <App.Text weight={600} height={1} color="#A6DC37">{t(`Reason`)}</App.Text>
+                <App.Text weight={600} height={1} color="#A6DC37">{t(`Points source`)}</App.Text>
               </App.Flex>
 
               <App.Flex flex={1} align="center" justify="flex-end">
-                <App.Text right weight={600} height={1} color="#A6DC37">{t(`Points`)}</App.Text>
+                <App.Text right weight={600} height={1} color="#A6DC37">{t(`Points earned`)}</App.Text>
               </App.Flex>
             </App.Flex>
 

@@ -66,8 +66,8 @@ const PointsQuests = () => {
       <App.Container maxWidth={1230}>
         <App.Flex column fullWidth gap={32}>
           <App.Flex fullWidth column gap={16}>
-            <App.Text size={[24, 20]} weight={600} height={1}>{t('Venture Through Partner Portals')}</App.Text>
-            <App.Text size={[16, 14]} weight={400} height={1.4} color="#9B99AE">{t('Engage with Tegro quests on platforms like Galxe, TaskOn, and more. Complete tasks, show your prowess, and rack up points across the Tegrosphere.')}</App.Text>
+            <App.Text size={[24, 20]} weight={600} height={1}>{t('Bonus side quests await!')}</App.Text>
+            <App.Text size={[16, 14]} weight={400} height={1.4} color="#9B99AE">{t('Embark on exciting side quests across platforms like Galxe, TaskOn, and QuestN to discover special campaigns and unlock additional points.')}</App.Text>
           </App.Flex>
 
           <App.Flex row wrap gap={24}>

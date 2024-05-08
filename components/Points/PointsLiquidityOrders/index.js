@@ -24,8 +24,8 @@ const PointsLiquidityOrders = ({ loading }) => {
   const quoteCurrency = process.env.NEXT_PUBLIC_APP_ENV == 'production' ? 'USDC' : 'USDT'
 
   const tabs = [
-    { title: t('Open Orders'), key: 'open' },
-    { title: t('Completed Orders'), key: 'completed' },
+    { title: t('Open orders'), key: 'open' },
+    { title: t('Completed orders'), key: 'completed' },
   ]
 
   const handleTab = (value) => {
@@ -42,7 +42,7 @@ const PointsLiquidityOrders = ({ loading }) => {
 
   return (
     <App.Flex column gap={16} className={styles.container}>
-      <App.Text size={20} weight={600} height={1}>{t('Your Stats')}</App.Text>
+      <App.Text size={20} weight={600} height={1}>{t('Your activity')}</App.Text>
 
       <App.Flex column>
         <App.Tabs active={tab} options={tabs} variant="points" onChange={handleTab} />
@@ -53,7 +53,7 @@ const PointsLiquidityOrders = ({ loading }) => {
           {!isMobile ? (
             <>
               <App.Flex width={220} center>
-                <App.Text center weight={600} height={1} color="#A6DC37">{t('Date')}</App.Text>
+                <App.Text center weight={600} height={1} color="#A6DC37">{t('Timestamp')}</App.Text>
               </App.Flex>
 
               <App.Flex width={180} center>
@@ -61,35 +61,39 @@ const PointsLiquidityOrders = ({ loading }) => {
               </App.Flex>
 
               <App.Flex flex={1} center>
-                <App.Text center weight={600} height={1} color="#A6DC37">{t('Order Size')}</App.Text>
+                <App.Text center weight={600} height={1} color="#A6DC37">{t('Order size')}</App.Text>
               </App.Flex>
 
               <App.Flex flex={1} center>
                 <App.Text center weight={600} height={1} color="#A6DC37">{t('Price')}</App.Text>
               </App.Flex>
 
-              <App.Flex flex={1} row gap={4} center>
-                <App.Text center weight={600} height={1} color="#A6DC37">{t('Price Deviation')}</App.Text>
-                <App.Tooltip placement="bottom" text="This denotes the difference between your order price and the mid price of the market">
-                  <App.Icon icon="warning-circle" />
-                </App.Tooltip>
-              </App.Flex>
+              {tab != 'completed' ? (
+                <>
+                  <App.Flex flex={1} row gap={4} center>
+                    <App.Text center weight={600} height={1} color="#A6DC37">{t('Deviation')}</App.Text>
+                    <App.Tooltip placement="bottom" text="It indicates the difference between your order price and the mid-price of the market">
+                      <App.Icon icon="warning-circle" />
+                    </App.Tooltip>
+                  </App.Flex>
 
-              <App.Flex flex={1} row gap={4} center>
-                <App.Text center weight={600} height={1} color="#A6DC37">{t('Point Per Minute')}</App.Text>
-                <App.Tooltip placement="bottom" text="Orders closest to the mid-price accumulate the highest points, while those with a deviation greater than 10% do not accumulate any points">
-                  <App.Icon icon="warning-circle" />
-                </App.Tooltip>
-              </App.Flex>
+                  <App.Flex flex={1} row gap={4} center>
+                    <App.Text center weight={600} height={1} color="#A6DC37">{t('Points per minute')}</App.Text>
+                    <App.Tooltip placement="bottom" text="Orders closest to the mid-price accumulate the highest points, while those with a deviation greater than 10% do not accumulate any points">
+                      <App.Icon icon="warning-circle" />
+                    </App.Tooltip>
+                  </App.Flex>
+                </>
+              ) : null}
 
               <App.Flex flex={1} center>
-                <App.Text center weight={600} height={1} color="#A6DC37">{t('Total Points Earned')}</App.Text>
+                <App.Text center weight={600} height={1} color="#A6DC37">{t('Total points earned')}</App.Text>
               </App.Flex>
             </>
           ) : (
             <>
               <App.Flex width={80} center>
-                <App.Text center weight={600} height={1} color="#A6DC37">{t('Date')}</App.Text>
+                <App.Text center weight={600} height={1} color="#A6DC37">{t('Timestamp')}</App.Text>
               </App.Flex>
 
               <App.Flex width={128} center>
@@ -147,13 +151,17 @@ const PointsLiquidityOrders = ({ loading }) => {
                         <App.Text center size={16} weight={600} height={1}>{item.price} {quoteCurrency}</App.Text>
                       </App.Flex>
 
-                      <App.Flex flex={1} center>
-                        <App.Text center size={16} weight={600} height={1}>{Math.abs(item.price_deviation)}%</App.Text>
-                      </App.Flex>
+                      {tab != 'completed' ? (
+                        <>
+                          <App.Flex flex={1} center>
+                            <App.Text center size={16} weight={600} height={1}>{Math.abs(item.price_deviation)}%</App.Text>
+                          </App.Flex>
 
-                      <App.Flex flex={1} center>
-                        <App.Text center size={16} weight={600} height={1}>{item.points_per_minute}</App.Text>
-                      </App.Flex>
+                          <App.Flex flex={1} center>
+                            <App.Text center size={16} weight={600} height={1}>{item.points_per_minute}</App.Text>
+                          </App.Flex>
+                        </>
+                      ) : null}
 
                       <App.Flex flex={1} center>
                         <App.Text center size={16} weight={600} height={1}>{item.points}</App.Text>
@@ -208,12 +216,12 @@ const PointsLiquidityOrders = ({ loading }) => {
         {currentOrder ? (
           <App.Flex column sx={{ padding: 16 }} gap={8}>
             <App.Flex row align="center" justify="space-between">
-              <App.Text size={14} weight={400} height={1}>{t('Date')}</App.Text>
+              <App.Text size={14} weight={400} height={1}>{t('Timestamp')}</App.Text>
               <App.Text size={14} weight={600} height={1}>{moment(currentOrder.date).format('DD-MM-YYYY hh:mm:ss A Z')}</App.Text>
             </App.Flex>
 
             <App.Flex row align="center" justify="space-between">
-              <App.Text size={14} weight={400} height={1}>{t('Order Size')}</App.Text>
+              <App.Text size={14} weight={400} height={1}>{t('Order size')}</App.Text>
               <App.Text size={14} weight={600} height={1}>{currentOrder.order_size} {quoteCurrency}</App.Text>
             </App.Flex>
 
@@ -222,18 +230,22 @@ const PointsLiquidityOrders = ({ loading }) => {
               <App.Text size={14} weight={600} height={1}>{currentOrder.price} {quoteCurrency}</App.Text>
             </App.Flex>
 
-            <App.Flex row align="center" justify="space-between">
-              <App.Text size={14} weight={400} height={1}>{t('Price Deviation')}</App.Text>
-              <App.Text size={14} weight={600} height={1}>{Math.abs(currentOrder.price_deviation)}%</App.Text>
-            </App.Flex>
+            {tab != 'completed' ? (
+              <>
+                <App.Flex row align="center" justify="space-between">
+                  <App.Text size={14} weight={400} height={1}>{t('Deviation')}</App.Text>
+                  <App.Text size={14} weight={600} height={1}>{Math.abs(currentOrder.price_deviation)}%</App.Text>
+                </App.Flex>
+
+                <App.Flex row align="center" justify="space-between">
+                  <App.Text size={14} weight={400} height={1}>{t('Point per minute')}</App.Text>
+                  <App.Text size={14} weight={600} height={1}>{currentOrder.points_per_minute}</App.Text>
+                </App.Flex>
+              </>
+            ) : null}
 
             <App.Flex row align="center" justify="space-between">
-              <App.Text size={14} weight={400} height={1}>{t('Point Per Minute')}</App.Text>
-              <App.Text size={14} weight={600} height={1}>{currentOrder.points_per_minute}</App.Text>
-            </App.Flex>
-
-            <App.Flex row align="center" justify="space-between">
-              <App.Text size={14} weight={400} height={1}>{t('Total Points Earned')}</App.Text>
+              <App.Text size={14} weight={400} height={1}>{t('Total points earned')}</App.Text>
               <App.Text size={14} weight={600} height={1}>{currentOrder.points}</App.Text>
             </App.Flex>
           </App.Flex>

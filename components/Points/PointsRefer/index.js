@@ -101,7 +101,7 @@ Don't fade on this gem💎
             <App.Container maxWidth={1230}>
               <App.Flex direction={['row', 'column']} gap={24}>
                 <App.Flex column gap={[12, 20]} flex={[65, null]} className={styles.topBox}>
-                  <App.Text size={[24, 20]} weight={600}>{t('Refer & Earn Stats')}</App.Text>
+                  <App.Text size={[24, 20]} weight={600}>{t('Referral points tracker')}</App.Text>
 
                   <App.Flex row wrap={isMobile} gap={[24, 20]}>
                     <App.Flex width={['auto', '100%']} flex={[1, null]} center column gap={8} className={styles.insideBox}>
@@ -126,8 +126,7 @@ Don't fade on this gem💎
 
                 <App.Flex column justify="space-between" gap={[0, 24]} flex={[35, null]} className={styles.topBox}>
                   <App.Flex column gap={8}>
-                    <App.Text size={[24, 16]} weight={600} height={1}>{t('Unleash the power of community!')}</App.Text>
-                    <App.Text size={[24, 16]} weight={600} height={1}>{t('Earn')} <App.Text inline size={[24, 16]} weight={600} height={1} color="#A6DC37">{t('25% Points')}</App.Text> {t('of')} <App.Text inline size={[24, 16]} weight={600} height={1} color="#A6DC37">{t('Every referral!')}</App.Text></App.Text>
+                    <App.Text size={[24, 16]} weight={600} height={1.2}><s>{t('Apes')}</s> {t('Tigers together strong! Refer your friends to earn')} <App.Text inline size={[24, 16]} weight={600} height={1} color="#A6DC37">{t('25% of their points')}</App.Text></App.Text>
                   </App.Flex>
 
                   <App.Flex direction={['row', 'column']} align={['center', 'stretch']} justify="center" gap={24}>
@@ -155,8 +154,7 @@ Don't fade on this gem💎
                   <App.Text size={[32, 20]} weight={600} height={1}>{t('Refer & Earn')}</App.Text>
 
                   <App.Flex column>
-                    <App.Text size={[24, 16]} weight={600}>{t('Unleash the power of community!')}</App.Text>
-                    <App.Text size={[24, 16]} weight={600}>{t('Earn')} <App.Text inline size={[24, 16]} weight={600} color="#A6DC37">{t('25% Points')}</App.Text> {t('of')} <App.Text inline size={[24, 16]} weight={600} color="#A6DC37">{t('Every referral!')}</App.Text></App.Text>
+                    <App.Text size={[24, 16]} weight={600} height={1.2}><s>{t('Apes')}</s> {t('Tigers together strong! Refer your friends to earn')} <App.Text inline size={[24, 16]} weight={600} height={1} color="#A6DC37">{t('25% of their points')}</App.Text></App.Text>
                   </App.Flex>
 
                   <App.Flex column gap={12}>

@@ -30,21 +30,25 @@ const PointsDashboard = () => {
 
   const tabs = [
     { title: t('Dashboard'), key: 'home' },
-    { title: t('Liquidity Mining'), key: 'liquidity' },
-    { title: t('Refer & Earn'), key: 'refer' },
-    // { title: t('Contributor Tasks'), key: 'contributor' },
-    { title: t('Third Party Quests'), key: 'quests' },
-    // { title: t('Transaction History'), key: 'transactions' },
+    { title: t('Liquidity mining'), key: 'liquidity' },
+    { title: t('Refer & earn'), key: 'refer' },
+    // { title: t('Contributor tasks'), key: 'contributor' },
+    { title: t('Side quests'), key: 'quests' },
+    // { title: t('Points history'), key: 'transactions' },
   ]
 
   useEffect(() => {
     const currentTab = localStorage.getItem('pointsTab')
     if (!currentTab || currentTab == tab) {
-      Amplitude.event(`Page Visited`, {
-        'Page': 'Points Dashboard: ' + tabs.find(t => t.key == tab)?.title,
-        'Chain ID': blockchain?.id,
-        'Source': isApp ? 'App' : 'Web',
-      })
+      try {
+        Amplitude.event(`Page Visited`, {
+          'Page': 'Points Dashboard: ' + tabs.find(t => t.key == tab)?.title,
+          'Chain ID': blockchain?.id,
+          'Source': isApp ? 'App' : 'Web',
+        })
+      } catch (error) {
+        console.log(error)
+      }
     }
   }, [tab])
 
@@ -52,6 +56,10 @@ const PointsDashboard = () => {
     const currentTab = localStorage.getItem('pointsTab')
     if (currentTab && wallet) {
       setTab(currentTab)
+    }
+
+    if (!wallet) {
+      setTab('home')
     }
   }, [wallet])
 

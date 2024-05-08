@@ -10,6 +10,7 @@ import Socket from '@/libs/ws.lib'
 import $app from '@/store/app'
 import $orders from '@/store/orders'
 import $alert from '@/store/alert'
+import $portfolio from '@/store/portfolio'
 
 import WagmiHelper from '@/libs/WagmiHelper'
 import Amplitude from '@/libs/amplitude.lib'
@@ -110,6 +111,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
         }), {})
         dispatch($orders.set.updateOrderStatus(updatedOrders))
         dispatch($alert.set.success({ title: 'Orders cancelled', text: `You have cancelled ${orders.open.length} order(s) successfully.` }))
+
+        dispatch($portfolio.set.update(true))
       }
     } else {
       dispatch($alert.set.error({ title: 'Orders not cancelled', text: `Please try again to cancel your ${orders.open.length} open order(s).` }))
@@ -158,6 +161,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
       if (result) {
         dispatch($orders.set.updateOrderStatus({[order.orderId]: 'cancelled'}))
         dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency} has been cancelled successfully.` }))
+
+        dispatch($portfolio.set.update(true))
       } else {
         dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.` }))
       }
