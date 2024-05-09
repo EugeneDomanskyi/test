@@ -99,7 +99,6 @@ const HeaderWallet2 = () => {
     setIsPortfolioVisible(value)
 
     if (value) {
-      console.log('Wallet Panel Open');
       Amplitude.event('Wallet Panel Open', {
         'Page': Amplitude.page(),
         'Chain ID': blockchain?.id,
