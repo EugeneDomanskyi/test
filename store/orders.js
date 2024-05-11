@@ -8,7 +8,7 @@ import Decimal from 'decimal.js'
 export const template = (item) => {
   let status = 'unknown'
   switch (item.status) {
-    case 'Active': 
+    case 'Active':
       status = 'open'
       break
     case 'Matched':
@@ -63,6 +63,11 @@ export const ordersSlice = createSlice({
     },
 
     add: (state, { payload }) => {
+      const exist = state.list.find(o => o.id === payload.orderId)
+      if (exist) {
+        state.list = state.list.map(o => o.id === payload.orderId ? template(payload) : o)
+        return
+      }
       state.list = [template(payload), ...state.list]
     },
 
@@ -81,7 +86,7 @@ export const ordersSlice = createSlice({
     chart: (state, { payload }) => {
       state.chart = payload.sort((a, b) => a.time - b.time).map(item => ({...item, time: item.time*1000}))
     },
-    
+
     orderbook: (state, { payload }) => {
       const sides = {Asks: 'sell', Bids: 'buy'}
       const list = Object.entries(payload.data).reduce((acc, [side, values]) => ({
