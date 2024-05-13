@@ -40,7 +40,7 @@ const Header = () => {
     <App.Flex column className={cn(styles.container)}>
       <App.Container fluid className={styles.containerHeader}>
         <App.Flex row full align="center" justify="space-between" gap={[0, 16]}>
-          <App.Flex row full gap={24} align="center" justify={['flex-start', 'space-between']}>
+          <App.Flex row fullHeight gap={24} align="center" justify={['flex-start', 'space-between']}>
             <App.Flex row fullHeight gap={[24, 8]} align="center">
               {isMobile ? (
                 <App.Flex row gap={8} center>
@@ -60,6 +60,7 @@ const Header = () => {
                 </div>
               </Link>
             </App.Flex>
+            
             {!isMobile ? (
               <App.Flex row fullHeight align="center">
                 <Link href="/exchange" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/exchange')})}>
@@ -109,7 +110,7 @@ const Header = () => {
             ) : null}
 
             {isExchange ? <SwitchBlockchain /> : null}
-            {isExchange || isPD ? <HeaderWallet2 /> : <App.Button primary rounded href="/exchange">Launch app</App.Button>}
+            {isExchange || isPD ? <HeaderWallet2 /> : <App.Button primary rounded target="_self" href="/exchange">Launch app</App.Button>}
          </App.Flex>
 
           <div className={cn(styles.mobileMenu, {[styles.show]: mobileMenuShow})}>
