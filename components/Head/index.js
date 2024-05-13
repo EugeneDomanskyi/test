@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 
 import HeadDefault from './HeadDefault'
 import HeadExchange from './HeadExchange'
-import HeadTournament from "./HeadTournament";
+import HeadPD from "./HeadPD"
 
 const Head = ({ route }) => {
   const router = useRouter()
@@ -14,8 +14,8 @@ const Head = ({ route }) => {
       return <HeadExchange />
     }
 
-    if (currentRoute.includes('tournament')) {
-      return <HeadTournament />
+    if (currentRoute.includes('points-dashboard')) {
+      return <HeadPD />
     }
 
     return <HeadDefault />
