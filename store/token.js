@@ -4,7 +4,7 @@ import { parseCookies } from 'nookies'
 import { request } from './index'
 
 export const template = (item) => {
-  const blockchainCode = parseCookies(null)?.blockchain
+  const blockchainCode = parseCookies(null)?.currentChainCode
   if (item?.base_contract_address) {
     return {
       id: item.base_contract_address,
