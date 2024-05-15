@@ -8,9 +8,9 @@ import styles from './styles.module.scss'
 
 const HomeTop = () => {
   return (
-    <App.Container maxWidth={1230} sx={[{ padding: '200px 0 96px', zIndex: -1 }, { padding: '138px 0 78px', zIndex: -1 }]}>
-      <App.Flex align="center" className={styles.heroWrapper}>
-        <App.Flex column gap={[48, 28]} className={styles.textWrapper}>
+    <App.Container sx={[{ padding: '200px 32px 96px', zIndex: -1 }, { padding: '138px 16px 78px', zIndex: -1 }]}>
+      <App.Flex gap={128} align="center" className={styles.heroWrapper}>
+        <App.Flex column gap={[48, 28]} width={[540, '100%']} className={styles.textWrapper}>
           <App.Flex column>
             <App.Text size={[82, 36]} weight={600}>The Gen2 DEX</App.Text>
             <App.Text size={[41, 24]} weight={600} height={1}>
@@ -26,12 +26,12 @@ const HomeTop = () => {
           </App.Button>
         </App.Flex>
 
-        <App.Flex justify="flex-end" className={styles.heroImg}>
+        <App.Flex flex={1} justify="flex-end" className={styles.heroImg}>
           {/* <Image src={`/images/landing/hero-image.png`} width={709} height={560} alt="" /> */}
           {/* <Image src={`/images/landing/hero-image.png`} width={2946} height={1758} alt="" /> */}
           {/* <Image src={`/images/landing/hero-image.png`} width={1473} height={878} alt="" /> */}
           {/* <Image src={`/images/landing/hero-image.png`} width={736} height={439} alt="" /> */}
-          <Image src={`/images/landing/hero-image.png`} width={1104} height={659} alt="" priority={true} quality={100} />
+          <img src={`/images/landing/hero-image.png`} alt="" />
         </App.Flex>
       </App.Flex>
     </App.Container>
