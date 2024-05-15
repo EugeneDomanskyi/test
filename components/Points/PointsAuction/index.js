@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
+import moment from 'moment'
 
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
@@ -9,8 +10,6 @@ import $point from '@/store/point'
 import App from '@/components/App'
 import AuctionItem from '@/components/Auction/AuctionItem'
 
-import styles from './styles.module.scss'
-
 const PointsAuction = () => {
   const { t } = useTranslation()
   const { wallet } = useWagmiHelper()
@@ -18,9 +17,114 @@ const PointsAuction = () => {
   const dispatch = useDispatch()
   const stats = useSelector(({ $point }) => $point.stats)
 
-  const item = {
-    id: 1,
-  }
+  const items = [
+    {
+      id: 1,
+      image: '/images/bid-image.png',
+      logo: '/images/bid-collection.png',
+      status: 'ongoing',
+      current: null,
+      wallet: null,
+      marketPrice: 7000,
+      currentPrice: 56.70,
+      currency: 'USDT',
+      name: 'Elemental #9045',
+      time: 5 * 60 * 1000,
+      startsIn: moment().add(5, 'days').valueOf(),
+    }, {
+      id: 2,
+      image: '/images/bid-image.png',
+      logo: '/images/bid-collection.png',
+      status: 'closed',
+      current: true,
+      wallet: wallet,
+      marketPrice: 7000,
+      currentPrice: 56.70,
+      currency: 'USDT',
+      name: 'Elemental #9045',
+      time: 5 * 60 * 1000,
+      startsIn: moment().add(5, 'days').valueOf(),
+    }, {
+      id: 3,
+      image: '/images/bid-image.png',
+      logo: '/images/bid-collection.png',
+      status: 'ongoing',
+      current: false,
+      wallet: wallet,
+      marketPrice: 7000,
+      currentPrice: 56.70,
+      currency: 'USDT',
+      name: 'Elemental #9045',
+      time: 5 * 60 * 1000,
+      startsIn: moment().add(5, 'days').valueOf(),
+      updated: true,
+    }, {
+      id: 4,
+      image: '/images/bid-image.png',
+      logo: '/images/bid-collection.png',
+      status: 'ongoing',
+      current: false,
+      wallet: wallet,
+      marketPrice: 7000,
+      currentPrice: 56.70,
+      currency: 'USDT',
+      name: 'Elemental #9045',
+      time: 1 * 14 * 1000,
+      startsIn: moment().add(5, 'days').valueOf(),
+    }, {
+      id: 5,
+      image: '/images/bid-image.png',
+      logo: '/images/bid-collection.png',
+      status: 'ongoing',
+      current: true,
+      wallet: wallet,
+      marketPrice: 7000,
+      currentPrice: 56.70,
+      currency: 'USDT',
+      name: 'Elemental #9045',
+      time: 1 * 4 * 1000,
+      startsIn: moment().add(5, 'days').valueOf(),
+    }, {
+      id: 6,
+      image: '/images/bid-image.png',
+      logo: '/images/bid-collection.png',
+      status: 'ongoing',
+      current: true,
+      wallet: wallet,
+      marketPrice: 7000,
+      currentPrice: 56.70,
+      currency: 'USDT',
+      name: 'Elemental #9045',
+      time: 1 * 14 * 1000,
+      startsIn: moment().add(5, 'days').valueOf(),
+    }, {
+      id: 7,
+      image: '/images/bid-image.png',
+      logo: '/images/bid-collection.png',
+      status: 'upcoming',
+      current: true,
+      wallet: wallet,
+      marketPrice: 7000,
+      currentPrice: 56.70,
+      currency: 'USDT',
+      name: 'Elemental #9045',
+      time: 5 * 60 * 1000,
+      startsIn: moment().add(4, 'days').valueOf(),
+    }, {
+      id: 8,
+      image: '/images/bid-image.png',
+      logo: '/images/bid-collection.png',
+      status: 'closed',
+      current: false,
+      wallet: wallet,
+      marketPrice: 7000,
+      currentPrice: 56.70,
+      currency: 'USDT',
+      name: 'Elemental #9045',
+      time: 5 * 60 * 1000,
+      startsIn: moment().add(4, 'days').valueOf(),
+    }
+  ]
 
   useEffect(() => {
     if (wallet) {
@@ -36,8 +140,8 @@ const PointsAuction = () => {
   }
 
   return (
-    <App.Container maxWidth={1230}>
-      <App.Flex column fullWidth flex={1}>
+    <App.Container maxWidth={1230} sx={{ paddingBottom: 32 }}>
+      <App.Flex column fullWidth flex={1} gap={32}>
         <App.Flex row align="center" justify="space-between">
           <App.Flex row align="center">
             <App.Flex row center width={280} height={56} gap={16}>
@@ -54,7 +158,9 @@ const PointsAuction = () => {
         </App.Flex>
 
         <App.Flex row wrap gap={24}>
-          <AuctionItem item={item} />
+          {items.length ? (
+            items.map(item => <AuctionItem key={item.id} item={item} />)
+          ) : null}
         </App.Flex>
       </App.Flex>
     </App.Container>

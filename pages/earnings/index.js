@@ -41,23 +41,12 @@ const Earnings = () => {
         <App.Flex column fullWidth gap={32}>
           <App.Container maxWidth={1230}>
             <App.Flex direction={['row', 'column']} gap={16} justify="space-between">
-              <App.Flex column gap={16} align={['flex-start', 'stretch']}>
+              <App.Flex column gap={8} align={['flex-start', 'stretch']}>
                 <App.Text size={[24, 20]} weight={600} height={1}>{t('My Earnings')}</App.Text>
                 <App.Text weight={400} height={1.4} color="#FFFFFF99">{t('Earn points every minute that order lives on the orderbook based on the order size.')}</App.Text>
-                <App.Button primary2>{t('Share Your Progress')} <App.Icon icon="arrow-45" /></App.Button>
               </App.Flex>
 
-              <App.Flex row gap={24}>
-                <App.Flex column width={[200, 'auto']} flex={[null, 1]} justify="center" align={['flex-start', 'center']} gap={[12, 8]} className={styles.box}>
-                  <App.Text size={[14, 12]} weight={400} height={1}>{t('Total Earnings')}</App.Text>
-                  <App.Text size={[48, 24]} weight={600} height={1}>500 <App.Text inline weight={600} height={1}>USDT</App.Text></App.Text>
-                </App.Flex>
-
-                <App.Flex column width={[200, 'auto']} flex={[null, 1]} justify="center" align={['flex-start', 'center']} gap={[12, 8]} className={styles.box}>
-                  <App.Text size={[14, 12]} weight={400} height={1}>{t('Points earned')}</App.Text>
-                  <App.Text size={[48, 24]} weight={600} height={1}>46,915</App.Text>
-                </App.Flex>
-              </App.Flex>
+              <App.Button primary2 outlined>{t('Transaction History')}</App.Button>
             </App.Flex>
           </App.Container>
 
@@ -65,34 +54,29 @@ const Earnings = () => {
 
           <App.Container maxWidth={1230}>
             <App.Flex column className={styles.table}>
-              <App.Flex row className={styles.row}>
-                {!isMobile ? (
-                  <App.Flex flex={1} center>
-                    <App.Text center weight={600} height={1} color="#A6DC37">{t('Date')}</App.Text>
-                  </App.Flex>
-                ) : null}
+              <App.Flex row gap={24} className={styles.row}>
+                <App.Flex width={50} center>
+                </App.Flex>
 
-                <App.Flex flex={1} center>
-                  <App.Text center weight={600} height={1} color="#A6DC37">{t('Points Earned')}</App.Text>
+                <App.Flex width={60}>
+                  <App.Text weight={600} height={1} color="#A6DC37">{t('Auction')}</App.Text>
                 </App.Flex>
 
                 <App.Flex flex={1} center>
-                  <App.Text center weight={600} height={1} color="#A6DC37">{t('Share %')}</App.Text>
+                  <App.Text weight={600} height={1} color="#A6DC37">{t('Date')}</App.Text>
                 </App.Flex>
 
                 <App.Flex flex={1} center>
-                  <App.Text center weight={600} height={1} color="#A6DC37">{t('Reward')}</App.Text>
+                  <App.Text center weight={600} height={1} color="#A6DC37">{t('Winning Price')}</App.Text>
                 </App.Flex>
 
-                <App.Flex width={[200, 'auto']} flex={[null, 1]} center>
-                  <App.Text center weight={600} height={1} color="#A6DC37">{t(isMobile ? 'Trans. Details' : 'Transaction Details')}</App.Text>
+                <App.Flex flex={1} center>
+                  <App.Text center weight={600} height={1} color="#A6DC37">{t('Expiry Time')}</App.Text>
                 </App.Flex>
 
-                {!isMobile ? (
-                  <App.Flex width={200} center>
-                    <App.Text center weight={600} height={1} color="#A6DC37">{t('Claim')}</App.Text>
-                  </App.Flex>
-                ) : null}
+                <App.Flex width={174} center>
+                  <App.Text center weight={600} height={1} color="#A6DC37">{t('Claim')}</App.Text>
+                </App.Flex>
               </App.Flex>
 
               <App.Flex column>

@@ -20,11 +20,13 @@
   }
 
   .table {
-    border: solid rgba(255, 255, 255, 0.10) 1px;
     border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: rgba(23, 23, 23, 0.30);
+    backdrop-filter: blur(27px);
 
     .row {
-      padding: 16px 0;
+      padding: 8px 24px;
 
       &:not(:last-of-type) {
         border-bottom: solid rgba(255, 255, 255, 0.10) 1px;
