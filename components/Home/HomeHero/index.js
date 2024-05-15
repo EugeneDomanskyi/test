@@ -9,7 +9,7 @@ import styles from './styles.module.scss'
 const HomeTop = () => {
   return (
     <App.Container sx={[{ padding: '200px 0 96px', zIndex: -1 }, { padding: '138px 0 78px', zIndex: -1 }]}>
-      <App.Flex gap={32} align="center" className={styles.heroWrapper}>
+      <App.Flex gap={128} align="center" className={styles.heroWrapper}>
         <App.Flex column gap={[48, 28]} width={[540, '100%']} className={styles.textWrapper}>
           <App.Flex column>
             <App.Text size={[82, 36]} weight={600}>The Gen2 DEX</App.Text>
