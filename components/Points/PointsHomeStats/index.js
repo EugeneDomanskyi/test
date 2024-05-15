@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next'
 
 import $point from '@/store/point'
 
+import PointsSteps from '@/components/Points/PointsSteps'
+
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
@@ -79,6 +81,8 @@ const PointsHomeStats = () => {
           </App.Flex>
         </App.Flex>
       )}
+
+      <PointsSteps full />
     </App.Flex>
   )
 }

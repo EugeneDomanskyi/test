@@ -1,0 +1,81 @@
+.container {
+  .item {
+    width: 100%;
+    max-width: 315px;
+    height: 96px;
+    border-radius: 12px;
+    border: 1px solid #FFFFFF1A;
+    background: radial-gradient(113.88% 113.88% at 67.99% -35.17%, #352668 0%, #140E28 100%);
+    padding: 12px 20px;
+    position: relative;
+    overflow: hidden;
+
+    &.full {
+      max-width: unset;
+    }
+
+    .title {
+      font-size: 20px;
+    }
+
+    .textBlock {
+      width: 60%;
+    }
+
+    .image {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+
+      &.short {
+        right: -70px;
+      }
+    }
+  }
+}
+
+@media (max-width: 1100px) {
+  .container {
+    .item {
+      .image {
+        &.first {
+          right: -70px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .container {
+    .item {
+      padding: 12px 8px;
+      
+      .textBlock {
+        width: 50%;
+      }
+
+      .title {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    
+    .item {
+      padding: 12px 8px;
+
+      .textBlock {
+        width: 50%;
+      }
+
+      .title {
+        font-size: 14px;
+      }
+    }
+  }
+}
