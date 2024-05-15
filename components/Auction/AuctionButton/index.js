@@ -11,6 +11,7 @@ import useInterval from '@/myhooks/useInterval'
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
+import AuctionItemSimple from '../AuctionItemSimple'
 
 const AuctionButton = ({ item, small }) => {
   const router = useRouter()
@@ -119,12 +120,7 @@ const AuctionButton = ({ item, small }) => {
           </App.Flex>
 
           <App.Flex column gap={12} className={styles.warningBox}>
-            <App.Flex column justify="flex-end" className={styles.blurImage} sx={{ backgroundImage: `url("${item.image}")` }}>
-              <Image src={item.logo} width={40} height={40} alt="" />
-            </App.Flex>
-
-            <App.Text center nowrap size={9} weight={600} height={1}>{item.name}</App.Text>
-            <App.Text center nowrap size={16} weight={600} height={1}>{item.currentPrice} {item.currency}</App.Text>
+            <AuctionItemSimple item={item} />
 
             <App.Flex className={styles.blur} />
 

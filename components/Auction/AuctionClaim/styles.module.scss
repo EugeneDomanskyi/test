@@ -1,0 +1,86 @@
+.header {
+  position: relative;
+  z-index: 0;
+
+  .close {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    z-index: 1;
+    top: 13px;
+    right: 13px;
+    cursor: pointer;
+    opacity: .7;
+    transition: all .2s;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .half {
+    position: relative;
+    z-index: 0;
+
+    .circle {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: #9a9a9a;
+      position: relative;
+      z-index: 1;
+
+      svg {
+        display: none;
+      }
+
+      &.active {
+        svg {
+          display: inline-block;
+        }
+      }
+
+      &:not(.active):before {
+        content: '';
+        display: block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #fff;
+      }
+    }
+
+    .line {
+      height: 2px;
+      position: absolute;
+      z-index: 0;
+      left: 0;
+      right: 0;
+      top: 7px;
+      background-color: #9a9a9a;
+    }
+
+    .text {
+      position: absolute;
+      z-index: 0;
+      // left: -50%;
+      margin-left: -42px;
+      top: 130%;
+
+      &.second {
+        margin-left: 0;
+        margin-right: -42px;
+      }
+    }
+  }
+}
+
+.content {
+  padding: 32px;
+
+  .badge {
+    padding: 12px;
+    border-radius: 4px;
+    background: #06382F;
+  }
+}

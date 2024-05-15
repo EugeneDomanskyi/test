@@ -1,6 +1,7 @@
 .container {
   padding: 104px 0 32px;
   background: url('/images/points/points-background.png') left top no-repeat;
+  min-height: 100vh;
 
   .box {
     border-radius: 12px;

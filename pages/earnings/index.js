@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
+import moment from 'moment'
 
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import App from '@/components/App'
+import AuctionClaim from '@/components/Auction/AuctionClaim'
 
 import styles from './styles.module.scss'
+import Image from 'next/image'
 
 const Earnings = () => {
   const { t } = useTranslation()
@@ -17,6 +20,8 @@ const Earnings = () => {
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
   const [loading, setLoading] = useState(true)
+  const [claimDialog, setClaimDialog] = useState(false)
+  const [selectedItem, setSelectedItem] = useState()
 
   useEffect(() => {
     if (!connection.loading) {
@@ -28,9 +33,27 @@ const Earnings = () => {
     }
   }, [connection])
 
-  const getShort = (address) => {
-    const n = isMobile ? 4 : 8
-    return `${address.substring(0, n)}...${address.substring(address.length - n)}`
+  const handleClaim = () => {
+    setSelectedItem({
+      id: 3,
+      image: '/images/bid-image.png',
+      logo: '/images/bid-collection.png',
+      status: 'ongoing',
+      current: false,
+      wallet: wallet,
+      marketPrice: 7000,
+      currentPrice: 56.70,
+      currency: 'USDT',
+      name: 'Elemental #9045',
+      time: 5 * 60 * 1000,
+      startsIn: moment().add(5, 'days').valueOf(),
+      updated: true,
+    })
+    setClaimDialog(true)
+  }
+
+  const handleClose = () => {
+    setClaimDialog(false)
   }
 
   return (
@@ -58,7 +81,7 @@ const Earnings = () => {
                 <App.Flex width={50} center>
                 </App.Flex>
 
-                <App.Flex width={60}>
+                <App.Flex width={60} align="center">
                   <App.Text weight={600} height={1} color="#A6DC37">{t('Auction')}</App.Text>
                 </App.Flex>
 
@@ -80,67 +103,37 @@ const Earnings = () => {
               </App.Flex>
 
               <App.Flex column>
-                <App.Flex row className={styles.row}>
-                  {!isMobile ? (
-                    <App.Flex flex={1} center>
-                      <App.Text center weight={600} height={1}>01-04-2024</App.Text>
-                    </App.Flex>
-                  ) : null}
+                <App.Flex row gap={24} className={styles.row}>
+                  <App.Flex width={50} center>
+                    <Image src="/images/bid-image-small.png" width={50} height={50} alt="" />
+                  </App.Flex>
 
-                  <App.Flex flex={1} center>
-                    <App.Text center weight={600} height={1}>512</App.Text>
+                  <App.Flex width={60} align="center">
+                    <App.Text weight={600} height={1}>#7745</App.Text>
                   </App.Flex>
 
                   <App.Flex flex={1} center>
-                    <App.Text center weight={600} height={1}>5%</App.Text>
+                    <App.Text center weight={600} height={1}>01-04-2024</App.Text>
                   </App.Flex>
 
                   <App.Flex flex={1} center>
-                    <App.Text center weight={600} height={1}>4 USDT</App.Text>
-                  </App.Flex>
-
-                  <App.Flex width={[200, 'auto']} flex={[null, 1]} center>
-                    <App.Text center weight={600} height={1}>{getShort('0xa9aFbdAc88f12a704EE328B5D40ac44a47Bb3074')}</App.Text>
-                  </App.Flex>
-                  
-                  {!isMobile ? (
-                    <App.Flex width={200} center>
-                      <App.Button secondary2 outlined sx={{ width: 160 }}>{t('Claim')} <App.Icon icon="arrow-45" /></App.Button>
-                    </App.Flex>
-                  ) : null}
-                </App.Flex>
-
-                <App.Flex row className={styles.row}>
-                  {!isMobile ? (
-                    <App.Flex flex={1} center>
-                      <App.Text center weight={600} height={1}>01-04-2024</App.Text>
-                    </App.Flex>
-                  ) : null}
-
-                  <App.Flex flex={1} center>
-                    <App.Text center weight={600} height={1}>512</App.Text>
+                    <App.Text center weight={600} height={1}>56.70 USDT</App.Text>
                   </App.Flex>
 
                   <App.Flex flex={1} center>
-                    <App.Text center weight={600} height={1}>5%</App.Text>
+                    <App.Text center weight={600} height={1}>1:00:18</App.Text>
                   </App.Flex>
 
-                  <App.Flex flex={1} center>
-                    <App.Text center weight={600} height={1}>4 USDT</App.Text>
+                  <App.Flex width={174} center>
+                    <App.Button primary2 fullWidth onClick={handleClaim}>{t('Claim')}</App.Button>
                   </App.Flex>
-
-                  <App.Flex width={[200, 'auto']} flex={[null, 1]} center>
-                    <App.Text center weight={600} height={1}>{getShort('0xa9aFbdAc88f12a704EE328B5D40ac44a47Bb3074')}</App.Text>
-                  </App.Flex>
-                  
-                  {!isMobile ? (
-                    <App.Flex width={200} center>
-                      <App.Button secondary2 outlined sx={{ width: 160 }}>{t('Claim')} <App.Icon icon="arrow-45" /></App.Button>
-                    </App.Flex>
-                  ) : null}
                 </App.Flex>
               </App.Flex>
             </App.Flex>
+
+            <App.Dialog hideHeader open={claimDialog} onClose={handleClose}>
+              <AuctionClaim item={selectedItem} onClose={handleClose} />
+            </App.Dialog>
           </App.Container>
         </App.Flex>
       )}
