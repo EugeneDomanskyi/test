@@ -204,8 +204,14 @@ const PointsLiquidityOrders = ({ loading }) => {
                 )})
               )
             ) : (
-              <App.Flex center height={200}>
-                <App.Text>{t('There is no data yet')}</App.Text>
+              <App.Flex column center height={200} gap={32}>
+                <App.Flex column center gap={4}>
+                  <App.Text>🚀</App.Text>
+                  <App.Text>{t('Create your first order to start collecting points')}</App.Text>
+                </App.Flex>
+                <App.Button secondary2>
+                  {t('Create order')}
+                </App.Button>
               </App.Flex>
             )
           )}

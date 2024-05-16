@@ -24,8 +24,8 @@ const steps = [
     subtitle: 'Step 3',
     title: 'Climb the leaderboard',
     image: '/images/points/points-step-3.png',
-    width: 133,
-    height: 80,
+    width: 272,
+    height: 94,
   },
 ]
 
@@ -41,7 +41,7 @@ const PointsSteps = ({ full = null }) => {
                 <App.Text className={styles.title} weight={600}>{step.title}</App.Text>
               </App.Flex>
   
-              <App.Flex className={cn(styles.image, {[styles.first]: index === 0, [styles.short]: index === 0 && ! full})}>
+              <App.Flex className={cn(styles.image, {[styles.first]: index === 0, [styles.last]: index === 2, [styles.short]: index === 0 && ! full})}>
                 <Image src={step.image} width={step.width} height={step.height} />
               </App.Flex>
             </App.Flex>
