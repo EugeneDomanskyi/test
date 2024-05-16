@@ -1,6 +1,6 @@
 .container {
   width: 100%;
-  position: absolute;
+  // position: absolute;
   z-index: 5;
   top: 0;
   left: 0;
@@ -80,7 +80,7 @@
 
   .supportButton {
     position: relative;
-    z-index: 10;
+    z-index: 1;
 
     .dropdownMenu {
       position: absolute;

@@ -1,25 +1,25 @@
 .heroWrapper {
-  width: 560px;
+  // width: 560px;
   height: 563px;
 }
 
 .heroImg {
-  position: absolute;
-  right: -120px;
+  // position: absolute;
+  // right: -120px;
   z-index: -1;
-  width: 1104px;
-  transition: .6s;
+  width: 100%;
+  // transition: .6s;
 
-  &:hover {
-    right: 0;
-  }
+  // &:hover {
+  //   right: 0;
+  // }
 }
 
-@media (max-width: 1560px) {
-  .heroImg {
-    right: -280px;
-  }
-}
+// @media (max-width: 1560px) {
+//   .heroImg {
+//     right: -280px;
+//   }
+// }
 
 @media (max-width: 991px) {
   .textWrapper,
