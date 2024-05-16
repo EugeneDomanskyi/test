@@ -149,7 +149,9 @@ const Wrapper = ({ children }) => {
               }
               <StickyBanner onClose={handleCloseBanner} onOpen={handleOpenBanner} show={showStickyBanner} />
               {!isCampaign && !isApp ? <Header /> : null}
-              {children}
+              <div style={{marginTop: page !== '' ? -72 : 0}}>
+                {children}
+              </div>
               {!isCampaign && !isApp && !isExchange && !isPD ? <Footer /> : null}
             </div>
           : <Footer />
