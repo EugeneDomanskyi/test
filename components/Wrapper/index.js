@@ -32,6 +32,8 @@ const Wrapper = ({ children }) => {
   const dispatch = useDispatch()
   const isApp = useSelector(({ $app }) => $app.isApp)
   const platform = useSelector(({ $app }) => $app.platform)
+  const stats = useSelector(({ $point }) => $point.stats)
+  const liquidity = useSelector(({ $point }) => $point.liquidity)
   const blockchain = useSelector($app.get.blockchain)
 
   const [isInIframe, setIsInIframe] = useState(false)
@@ -42,9 +44,7 @@ const Wrapper = ({ children }) => {
 
   useEffect(() => {
     window.addEventListener('resize', handleWindowResize)
-    window.addEventListener('beforeunload', () => {
-      handleUserSession()
-    });
+    window.addEventListener('beforeunload', handleUserSession);
 
     if (window.self !== window.top) {
       setIsInIframe(true)
@@ -52,25 +52,9 @@ const Wrapper = ({ children }) => {
 
     return () => {
       window.removeEventListener('resize', handleWindowResize)
+      window.removeEventListener('beforeunload', handleUserSession)
     }
   }, [])
-
-  const handleUserSession = () => {
-    const currentTime = new Date().getTime();
-    const bannerTS = localStorage.getItem('stickyShownTS');
-    const popupTS = localStorage.getItem('pointsPopupShownTS');
-
-    // remove sticky banner and points popup after 6 hours
-    if (currentTime - bannerTS > 6 * 60 * 60 * 1000) {
-      localStorage.removeItem('stickyShown');
-      localStorage.removeItem('stickyShownTS');
-    }
-
-    if (currentTime - popupTS > 6 * 60 * 60 * 1000) {
-      localStorage.removeItem('pointsPopupShown');
-      localStorage.removeItem('pointsPopupShownTS');
-    }
-  }
 
   useEffect(() => {
     if (page != 'points-dashboard') {
@@ -95,6 +79,15 @@ const Wrapper = ({ children }) => {
   }, [referral])
 
   useEffect(() => {
+    if (wallet && (liquidity?.completed.length || stats?.total_points)) {
+      localStorage.removeItem('stickyShown');
+      localStorage.removeItem('stickyShownTS');
+      localStorage.removeItem('pointsPopupShown');
+      localStorage.removeItem('pointsPopupShownTS');
+    }
+  }, [wallet, stats, liquidity])
+
+  useEffect(() => {
     if ((page === 'exchange' || page === '') && ! isApp) {
       const bannerShown = localStorage.getItem('stickyShown')
       const popupShown = localStorage.getItem('pointsPopupShown')
@@ -105,6 +98,23 @@ const Wrapper = ({ children }) => {
       setShowPointsPopup(false)
     }
   }, [page])
+
+  const handleUserSession = () => {
+    const currentTime = new Date().getTime();
+    const bannerTS = localStorage.getItem('stickyShownTS');
+    const popupTS = localStorage.getItem('pointsPopupShownTS');
+
+    // remove sticky banner and points popup after 24 hours
+    if (bannerTS && (currentTime - bannerTS) > 24 * 60 * 60 * 1000) {
+      localStorage.removeItem('stickyShown');
+      localStorage.removeItem('stickyShownTS');
+    }
+
+    if (popupTS && (currentTime - popupTS) > 24 * 60 * 60 * 1000) {
+      localStorage.removeItem('pointsPopupShown');
+      localStorage.removeItem('pointsPopupShownTS');
+    }
+  }
 
   const registerUser = async () => {
     await $point.api.register({ wallet_address: wallet, referral_code: localStorage.getItem('referral') ?? '' })
