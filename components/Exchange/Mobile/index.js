@@ -178,7 +178,7 @@ const Mobile = forwardRef((_, ref) => {
     <App.Flex column full gap={16}>
       <App.Flex row align="center" justify="space-between" sx={{ padding: '8px 8px 0' }}>
         <App.Flex row align="center" gap={8}>
-          <App.Flex row align="center" className={styles.back} onClick={handleBack} fullWidth>
+          <App.Flex row align="center" className={styles.back} onClick={handleBack}>
             <App.Icon icon="chevron-left" width={24} height={24} color="#fff" />
           </App.Flex>
 
@@ -191,7 +191,6 @@ const Mobile = forwardRef((_, ref) => {
 
             <App.Flex column sx={{ maxWidth: 170 }}>
               <App.Text nowrap uppercase size={16} weight={600}>{item.symbol ?? item?.slug}<App.Text inline color="#B9B8C5" size={10} weight={600} >/{item?.name ? item.name.split('/')[1] : 'USDT'}</App.Text></App.Text>
-              <App.Text nowrap size={12} color="#5E5C6B">{item.name}</App.Text>
             </App.Flex>
           </App.Flex>
         </App.Flex>
