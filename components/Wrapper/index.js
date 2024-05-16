@@ -77,17 +77,11 @@ const Wrapper = ({ children }) => {
   useEffect(() => {
     if ((page === 'exchange' || page === '') && ! isApp) {
       const bannerShown = localStorage.getItem('stickyShown')
-      setShowStickyBanner(!bannerShown)
-    } else {
-      setShowStickyBanner(false)
-    }
-  }, [page])
-
-  useEffect(() => {
-    if ((page === 'exchange' || page === '') && ! isApp) {
       const popupShown = localStorage.getItem('pointsPopupShown')
+      setShowStickyBanner(!bannerShown)
       setShowPointsPopup(!popupShown)
     } else {
+      setShowStickyBanner(false)
       setShowPointsPopup(false)
     }
   }, [page])
