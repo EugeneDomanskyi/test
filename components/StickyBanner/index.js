@@ -16,8 +16,8 @@ const StickyBanner = ({ onClose, onOpen, show }) => {
 
   return (
     <App.Flex center className={cn(styles.container, {[styles.open]: show})} onClick={handleOpen}>
-      <App.Flex gap={24}>
-        <App.Text size={16} weight={600}>
+      <App.Flex className={styles.textWrapper}>
+        <App.Text center size={16} weight={600}>
           Collect POINTS on every trade 🚀 Join the Tegro Points Program!
         </App.Text>
         
