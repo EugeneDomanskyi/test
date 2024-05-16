@@ -1,16 +1,20 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
+import { useRouter } from 'next/router'
 import Image from 'next/image'
 import moment from 'moment'
 
 import $app from '@/store/app'
+
+import Amplitude from '@/libs/amplitude.lib'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const PointsLiquidityOrders = ({ loading }) => {
+  const router = useRouter()
   const { t } = useTranslation()
 
   const blockchain = useSelector($app.get.blockchain)
@@ -38,6 +42,11 @@ const PointsLiquidityOrders = ({ loading }) => {
 
   const handleDialogClose = () => {
     setCurrentOrder(null)
+  }
+
+  const handleClickCreateOrder = () => {
+    router.push('/exchange')
+    Amplitude.event('Click Create Order', {'Page': Amplitude.page()})
   }
 
   return (
@@ -209,7 +218,7 @@ const PointsLiquidityOrders = ({ loading }) => {
                   <App.Text>🚀</App.Text>
                   <App.Text>{t('Create your first order to start collecting points')}</App.Text>
                 </App.Flex>
-                <App.Button secondary2>
+                <App.Button secondary2 onClick={handleClickCreateOrder}>
                   {t('Create order')}
                 </App.Button>
               </App.Flex>
