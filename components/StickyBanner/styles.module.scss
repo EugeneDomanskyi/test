@@ -13,6 +13,10 @@
     height: 28px;
   }
 
+  .textWrapper {
+    gap: 24px;
+  }
+
   &:hover .getStarted .getStartedIcon {
     right: -24px;
   }
@@ -38,6 +42,7 @@
     right: 20%;
     top: -30px;
     transition: .3s;
+    z-index: -1;
 
     .line {
       width: 10px;
@@ -66,8 +71,27 @@
   }
 }
 
-@media (max-width: 991px) {
+@media (max-width: 768px) {
   .container {
-    
+    &.open {
+      height: auto;
+    }
+
+    .textWrapper {
+      flex-direction: column;
+      gap: 4px;
+      text-align: center;
+    }
+
+    .lines {
+      display: none;
+    }
+
+    .getStarted {
+      .getStartedIcon {
+        position: relative;
+        right: unset;
+      }
+    }
   }
 }
