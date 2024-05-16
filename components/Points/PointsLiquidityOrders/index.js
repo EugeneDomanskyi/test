@@ -220,6 +220,7 @@ const PointsLiquidityOrders = ({ loading }) => {
                 </App.Flex>
                 <App.Button secondary2 onClick={handleClickCreateOrder}>
                   {t('Create order')}
+                  <App.Icon icon="arrow-45" color="#1C2C07" />
                 </App.Button>
               </App.Flex>
             )
