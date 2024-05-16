@@ -90,7 +90,7 @@ const PointsHomeStats = () => {
 
       <PointsSteps full />
 
-      <App.Button primary2 onClick={handleExchange} sx={{width: 155}}>{t('Create orders')} <App.Icon icon="arrow-45" /></App.Button>
+      <App.Button primary2 onClick={handleExchange} sx={{width: 155}}>{t('Get Started')} <App.Icon icon="arrow-45" /></App.Button>
     </App.Flex>
   )
 }
