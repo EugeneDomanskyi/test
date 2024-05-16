@@ -1,6 +1,7 @@
 import { use, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
+import { useRouter } from 'next/router'
 
 import $point from '@/store/point'
 
@@ -11,11 +12,16 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const PointsHomeStats = () => {
+  const router = useRouter()
   const { t } = useTranslation()
 
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const statsLoading = useSelector(({ $point }) => $point.statsLoading)
   const stats = useSelector(({ $point }) => $point.stats)
+
+  const handleExchange = () => {
+    router.push('/exchange')
+  }
 
   return (
     <App.Flex column gap={16} className={styles.container}>
@@ -83,6 +89,8 @@ const PointsHomeStats = () => {
       )}
 
       <PointsSteps full />
+
+      <App.Button primary2 onClick={handleExchange} sx={{width: 155}}>{t('Create orders')} <App.Icon icon="arrow-45" /></App.Button>
     </App.Flex>
   )
 }
