@@ -80,7 +80,6 @@ const Wrapper = ({ children }) => {
 
   useEffect(() => {
     if (wallet && (liquidity?.completed.length || stats?.total_points)) {
-      console.log('(liquidity?.completed.length || stats?.total_points)', (liquidity?.completed.length || stats?.total_points));
       localStorage.removeItem('stickyShown');
       localStorage.removeItem('stickyShownTS');
       localStorage.removeItem('pointsPopupShown');
