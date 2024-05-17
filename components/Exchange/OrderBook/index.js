@@ -43,6 +43,8 @@ const OrderBook = ({ version, onClickOrder }) => {
   const fetchOrderbook = async () => {
     const result = await $orders.api.orderbook({ market_id: current.marketId, chain_id: blockchain.id })
     if (result) {
+      result.Asks = result.asks
+      result.Bids = result.bids
       dispatch($orders.set.orderbook({data: result, token: current}))
     } else {
       dispatch($orders.set.orderbook({data: {Asks: [], Bids: []}, token: current}))
@@ -63,14 +65,14 @@ const OrderBook = ({ version, onClickOrder }) => {
           <App.Text size={12} color="rgba(255,255,255,0.8)" weight={600} height={1}>ORDER BOOK</App.Text>
         </App.Flex>
       ) : null}
-      
+
       <App.Flex gap={2} height={version != 'mobile' ? 'calc(100% - 32px)' : '100%'}>
         <App.Flex column flex={1}>
           <App.Flex justify="space-between" align="center" className={styles.rowHeader}>
             <App.Text size={[10, 12]} color="#B9B8C5" weight={[600, 500]} height={1}>Volume</App.Text>
             <App.Text size={[10, 12]} color="#B9B8C5" weight={[600, 500]} height={1}>Buy Price</App.Text>
           </App.Flex>
-          
+
           <App.Flex flex={1} column sx={{overflow: 'auto'}}>
             {orderBook.buy.map((order, i) => {
               const width = order.volume * 100 / maxBuyVolume

@@ -180,7 +180,7 @@ const api = {
   },
 
   orderbook: (params) => {
-    return request('market/orderbook/depth', 'GET', params)
+    return request('depth', 'GET', {api: 'orderbook', ...params})
   },
 
   trades: (params) => {

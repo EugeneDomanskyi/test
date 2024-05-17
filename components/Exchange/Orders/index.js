@@ -46,10 +46,10 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
 
     if (version != 'mobile') {
-      Socket.on('order_placed', 'my_orders', (data) => {
-        dispatch($orders.set.add(data))
-      })
-      
+      // Socket.on('order_placed', 'my_orders', (data) => {
+      //   dispatch($orders.set.add(data))
+      // })
+
       Socket.on('order_submitted', 'my_orders', (data) => {
         dispatch($orders.set.update(data))
       })
@@ -335,7 +335,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                               {(order.status === 'completed' || order.status === 'cancelled' || order.status === 'partial') ? order.status : 'Cancel order'}
                             </App.Text>
                           ) : null}
-                          
+
                           <App.Flex className={styles.actionButton} align="center" justify="center" onClick={handlePressCopy(order)}>
                             <App.Icon icon="copy" width={12} height={12} color="#B9B8C5" />
                           </App.Flex>
@@ -367,7 +367,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
             ) : (
               <App.Flex column flex={1} fullWidth sx={{position: 'relative' }}>
                 <App.Flex column sx={{position: 'absolute', inset: 0, overflow: 'auto'}}>
-                  {orders[ordersType].filter(order => filterByAddress(order)).length ? 
+                  {orders[ordersType].filter(order => filterByAddress(order)).length ?
                     orders[ordersType].filter(order => filterByAddress(order)).map((order) => {
                       const percent = Math.round(order.quantityFilled * 100 / order.quantity)
                       const perimeter =  2 * Math.PI * 19.5
