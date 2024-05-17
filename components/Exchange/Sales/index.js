@@ -131,6 +131,8 @@ const Sales = ({ version, onClickSale }) => {
                             return <App.Icon width={14} height={11} color="#fff" icon={"cross"} />
                           case 'matched':
                             return <App.Icon width={20} height={20} color="#fff" icon={"hourglass"} />
+                          case 'in_progress':
+                            return <App.Icon width={20} height={20} color="#fff" icon={"hourglass"} />
                           default:
                             return null
                         }
