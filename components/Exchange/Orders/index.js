@@ -100,23 +100,60 @@ const Orders = ({global, type, version, onClickOrder}) => {
     handleDialogClose('cancelAll')()
     handleDialogOpen('approve')()
 
-    const signature = await WagmiHelper.signMessage()
-    if (signature) {
-      const result = await $orders.api.cancelAll({ wallet_address: wallet, chain_id: blockchain.id, signature })
-      if (result?.data) {
-        Amplitude.event('Bulk Cancel Order')
-        const updatedOrders = orders.open.reduce((acc, o) => ({
-          ...acc,
-          [o.orderId]: 'cancelled',
-        }), {})
-        dispatch($orders.set.updateOrderStatus(updatedOrders))
-        dispatch($alert.set.success({ title: 'Orders cancelled', text: `You have cancelled ${orders.open.length} order(s) successfully.` }))
+    const typedData = await $orders.api.cancelTypedData({
+      order_ids: orders.open.map(item => item.orderId),
+      user_address: wallet,
+    })
 
-        dispatch($portfolio.set.update(true))
-      }
-    } else {
-      dispatch($alert.set.error({ title: 'Orders not cancelled', text: `Please try again to cancel your ${orders.open.length} open order(s).` }))
+    if (typedData?.error || ! typedData) {
+      dispatch($alert.set.error({title: 'Orders not cancelled', text: `Please try again to cancel your ${orders.open.length} open order(s).`}))
+      return
     }
+
+    const signature = await WagmiHelper.signTypedData(typedData.data.sign_data).catch(error => {
+      dispatch($alert.set.error({title: 'Orders not cancelled', text: `Please try again to cancel your ${orders.open.length} open order(s).`}))
+      return
+    })
+
+    if (!signature) {
+      dispatch($alert.set.error({title: 'Orders not cancelled', text: `Please try again to cancel your ${orders.open.length} open order(s).`}))
+      return
+    }
+
+    const result = await $orders.api.cancel({
+      ...typedData.data.cancel_order,
+      signature,
+    })
+
+    if (result?.data) {
+      Amplitude.event('Bulk Cancel Order')
+      const updatedOrders = orders.open.reduce((acc, o) => ({
+        ...acc,
+        [o.orderId]: 'cancelled',
+      }), {})
+      dispatch($orders.set.updateOrderStatus(updatedOrders))
+      dispatch($alert.set.success({ title: 'Orders cancelled', text: `You have cancelled ${orders.open.length} order(s) successfully.` }))
+
+      dispatch($portfolio.set.update(true))
+    }
+
+    // const signature = await WagmiHelper.signMessage()
+    // if (signature) {
+    //   const result = await $orders.api.cancelAll({ wallet_address: wallet, chain_id: blockchain.id, signature })
+    //   if (result?.data) {
+    //     Amplitude.event('Bulk Cancel Order')
+    //     const updatedOrders = orders.open.reduce((acc, o) => ({
+    //       ...acc,
+    //       [o.orderId]: 'cancelled',
+    //     }), {})
+    //     dispatch($orders.set.updateOrderStatus(updatedOrders))
+    //     dispatch($alert.set.success({ title: 'Orders cancelled', text: `You have cancelled ${orders.open.length} order(s) successfully.` }))
+
+    //     dispatch($portfolio.set.update(true))
+    //   }
+    // } else {
+    //   dispatch($alert.set.error({ title: 'Orders not cancelled', text: `Please try again to cancel your ${orders.open.length} open order(s).` }))
+    // }
 
     handleDialogClose('approve')()
   }
@@ -155,20 +192,54 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
     Amplitude.event('Cancel Order Submit', eventPost)
 
-    const signature = await WagmiHelper.signMessage()
-    if (signature) {
-      const result = await $orders.api.cancel({ id: order.orderId, chain_id: blockchain.id, signature })
-      if (result) {
-        dispatch($orders.set.updateOrderStatus({[order.orderId]: 'cancelled'}))
-        dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency} has been cancelled successfully.` }))
+    const typedData = await $orders.api.cancelTypedData({
+      order_ids: [order.orderId],
+      user_address: wallet,
+    })
 
-        dispatch($portfolio.set.update(true))
-      } else {
-        dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.` }))
-      }
+    if (typedData?.error || ! typedData) {
+      dispatch($alert.set.error({title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.`}))
+      return
+    }
+
+    const signature = await WagmiHelper.signTypedData(typedData.data.sign_data).catch(error => {
+      dispatch($alert.set.error({title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.`}))
+      return
+    })
+
+    if (!signature) {
+      dispatch($alert.set.error({title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.`}))
+      return
+    }
+
+    const result = await $orders.api.cancel({
+      ...typedData.data.cancel_order,
+      signature,
+    })
+
+    if (result) {
+      dispatch($orders.set.updateOrderStatus({[order.orderId]: 'cancelled'}))
+      dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency} has been cancelled successfully.` }))
+
+      dispatch($portfolio.set.update(true))
     } else {
       dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.` }))
     }
+
+    // const signature = await WagmiHelper.signMessage()
+    // if (signature) {
+    //   const result = await $orders.api.cancel({ id: order.orderId, chain_id: blockchain.id, signature })
+    //   if (result) {
+    //     dispatch($orders.set.updateOrderStatus({[order.orderId]: 'cancelled'}))
+    //     dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency} has been cancelled successfully.` }))
+
+    //     dispatch($portfolio.set.update(true))
+    //   } else {
+    //     dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.` }))
+    //   }
+    // } else {
+    //   dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.` }))
+    // }
     handleDialogClose('approve')()
   }
 
