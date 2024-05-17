@@ -88,6 +88,10 @@ class Amplitude {
       return 'Campaign Landing'
     }
   
+    if (window.location.pathname.includes('points-dashboard')) {
+      return 'Points Dashboard'
+    }
+  
     return window.location.pathname
   }
 

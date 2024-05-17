@@ -12,6 +12,8 @@ import $point from '@/store/point'
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import StickyBanner from '@/components/StickyBanner'
+import PointsPopup from '@/components/Points/PointsPopup'
 
 const Analytics = dynamic(import('@/components/Analytics'), {ssr: false})
 
@@ -30,14 +32,19 @@ const Wrapper = ({ children }) => {
   const dispatch = useDispatch()
   const isApp = useSelector(({ $app }) => $app.isApp)
   const platform = useSelector(({ $app }) => $app.platform)
+  const stats = useSelector(({ $point }) => $point.stats)
+  const liquidity = useSelector(({ $point }) => $point.liquidity)
   const blockchain = useSelector($app.get.blockchain)
 
   const [isInIframe, setIsInIframe] = useState(false)
+  const [showStickyBanner, setShowStickyBanner] = useState(false)
+  const [showPointsPopup, setShowPointsPopup] = useState(false)
 
   Amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY, !isApp, platform ?? 'Web')
 
   useEffect(() => {
     window.addEventListener('resize', handleWindowResize)
+    window.addEventListener('beforeunload', handleUserSession);
 
     if (window.self !== window.top) {
       setIsInIframe(true)
@@ -45,6 +52,7 @@ const Wrapper = ({ children }) => {
 
     return () => {
       window.removeEventListener('resize', handleWindowResize)
+      window.removeEventListener('beforeunload', handleUserSession)
     }
   }, [])
 
@@ -70,6 +78,44 @@ const Wrapper = ({ children }) => {
     }
   }, [referral])
 
+  useEffect(() => {
+    if (wallet && (liquidity?.completed.length || stats?.total_points)) {
+      localStorage.removeItem('stickyShown');
+      localStorage.removeItem('stickyShownTS');
+      localStorage.removeItem('pointsPopupShown');
+      localStorage.removeItem('pointsPopupShownTS');
+    }
+  }, [wallet, stats, liquidity])
+
+  useEffect(() => {
+    if ((page === 'exchange' || page === '') && ! isApp) {
+      const bannerShown = localStorage.getItem('stickyShown')
+      const popupShown = localStorage.getItem('pointsPopupShown')
+      setShowStickyBanner(!bannerShown)
+      setShowPointsPopup(!popupShown)
+    } else {
+      setShowStickyBanner(false)
+      setShowPointsPopup(false)
+    }
+  }, [page])
+
+  const handleUserSession = () => {
+    const currentTime = new Date().getTime();
+    const bannerTS = localStorage.getItem('stickyShownTS');
+    const popupTS = localStorage.getItem('pointsPopupShownTS');
+
+    // remove sticky banner and points popup after 24 hours
+    if (bannerTS && (currentTime - bannerTS) > 24 * 60 * 60 * 1000) {
+      localStorage.removeItem('stickyShown');
+      localStorage.removeItem('stickyShownTS');
+    }
+
+    if (popupTS && (currentTime - popupTS) > 24 * 60 * 60 * 1000) {
+      localStorage.removeItem('pointsPopupShown');
+      localStorage.removeItem('pointsPopupShownTS');
+    }
+  }
+
   const registerUser = async () => {
     await $point.api.register({ wallet_address: wallet, referral_code: localStorage.getItem('referral') ?? '' })
     const result = await $point.api.referral(wallet)
@@ -91,15 +137,69 @@ const Wrapper = ({ children }) => {
     dispatch($app.set.size(getWindowSize()))
   }
 
+  const handleInteraction = (type) => {
+    const timestamp = new Date().getTime();
+    localStorage.setItem(`${type}TS`, timestamp);
+  }
+
+  const handleOpenBanner = () => {
+    router.push('/points-dashboard')
+    localStorage.setItem('stickyShown', true)
+    const timestamp = localStorage.getItem('stickyShownTS');
+    if (timestamp) {
+      handleInteraction('stickyShown')
+    }
+    Amplitude.event('Points Banner V1', {'Page': Amplitude.page(), 'Activity': 'Redirected'})
+  }
+
+  const handleCloseBanner = () => {
+    setShowStickyBanner(false)
+    localStorage.setItem('stickyShown', true)
+    const timestamp = localStorage.getItem('stickyShownTS');
+    if (!timestamp) {
+      handleInteraction('stickyShown')
+    }
+    Amplitude.event('Points Banner V1', {'Page': Amplitude.page(), 'Activity': 'Closed'})
+  }
+
+  const handleClickStart = () => {
+    router.push('/points-dashboard')
+    localStorage.setItem('pointsPopupShown', 'true')
+    setShowPointsPopup(false)
+    const timestamp = localStorage.getItem('pointsPopupShownTS');
+    if (!timestamp) {
+      handleInteraction('pointsPopupShown')
+    }
+    Amplitude.event('Points Popup V1', {'Page': Amplitude.page(), 'Activity': 'Redirected'})
+  }
+
+  const handleClosePopup = () => {
+    setShowPointsPopup(false)
+    localStorage.setItem('pointsPopupShown', 'true')
+    const timestamp = localStorage.getItem('pointsPopupShownTS');
+    if (!timestamp) {
+      handleInteraction('pointsPopupShown')
+    }
+    Amplitude.event('Points Popup V1', {'Page': Amplitude.page(), 'Activity': 'Closed'})
+  }
+  
   return (
     <div style={{ height: '100%' }}>
       {
-        ! isInIframe
-          ? <div style={{height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden'}}>
+        !isInIframe
+          ? <div style={{ height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden' }}>
               <Analytics />
+              {
+                showPointsPopup
+                  ? <PointsPopup onClose={handleClosePopup} onStart={handleClickStart} />
+                  : null
+              }
+              <StickyBanner onClose={handleCloseBanner} onOpen={handleOpenBanner} show={showStickyBanner} />
               {!isCampaign && !isApp ? <Header /> : null}
-              {children}
-              {!isCampaign && !isApp && !isExchange && !isPD ? <Footer /> : null}
+              <div style={{marginTop: page !== '' ? -72 : 0, height: '100%'}}>
+                {children}
+                {!isCampaign && !isApp && !isExchange && !isPD ? <Footer /> : null}
+              </div>
             </div>
           : <Footer />
       }
