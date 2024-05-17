@@ -1,6 +1,33 @@
 .container {
   width: 190px;
   position: relative;
+  background: #0A0A0A;
+  border-radius: 8px;
+  padding-bottom: 8px;
+
+  &.small {
+    width: 110px;
+    border-radius: 4px;
+    padding-bottom: 4px;
+
+    .image {
+      height: 110px;
+      border-radius: 4px;
+      padding: 4px;
+    }
+  }
+
+  &.large {
+    width: 282px;
+    border-radius: 12px;
+    padding-bottom: 12px;
+
+    .image {
+      height: 258px;
+      border-radius: 12px;
+      padding: 12px;
+    }
+  }
 
   .image {
     width: 100%;  

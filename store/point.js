@@ -3,6 +3,38 @@ import moment from 'moment'
 
 import { request } from './index'
 
+const auctionTemplate = (item, wallet) => {
+  const now = moment()
+  const startsAt = moment(item.StartsAt * 1000)
+
+  let time = 0
+  let status = now.isAfter(startsAt) ? 'ongoing' : 'upcoming'
+  if (status == 'ongoing') {
+    if (item.LastBidTimestamp > 0) {
+      const lastBid = moment(item.LastBidTimestamp * 1000)
+      status = now.isAfter(lastBid.add(item.ResetTimer, 'seconds')) ? 'closed' : 'ongoing'
+
+      time = lastBid.add(item.ResetTimer, 'seconds').diff(now)
+    }
+  }
+
+  return {
+    id: item.Id,
+    productId: item.ProductId,
+    image: item.Product.S3Url,
+    logo: '/images/bid-collection.png',
+    status: status,
+    current: wallet == item.Holder.toLowerCase(),
+    wallet: item.Holder.toLowerCase(),
+    marketPrice: item.StartPrice,
+    currentPrice: item.LastBidPrice > 0 ? item.LastBidPrice : item.StartPrice,
+    currency: 'USDC',
+    name: item.Product.Title,
+    time: time * 1000,
+    startsIn: moment(item.StartsAt * 1000).valueOf(),
+  }
+}
+
 export const pointSlice = createSlice({
   name: '$point',
 
@@ -31,7 +63,9 @@ export const pointSlice = createSlice({
       total_open_amount: 0,
       total_liquidity: 0,
       points_earned_today: 0,
-    }
+    },
+
+    auctions: [],
   },
 
   reducers: {
@@ -88,6 +122,10 @@ export const pointSlice = createSlice({
         points_earned_today,
       }
     },
+
+    auctions: (state, { payload }) => {
+      state.auctions = payload.data.map(item => auctionTemplate(item, payload.wallet))
+    },
   },
 })
 
@@ -134,6 +172,10 @@ export const api = {
 
   liquidity: (wallet, params) => {
     return request(`user/${wallet}/order-liquidity`, 'GET', {api: 'accounts', ...params})
+  },
+
+  auctions: () => {
+    return request(`auctions`, 'GET', {api: 'bid'})
   },
 }
 

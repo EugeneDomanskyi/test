@@ -6,6 +6,10 @@
   width: calc(25% - 24px * 3 / 4);
   cursor: pointer;
   position: relative;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
   
   .ripple {
     position: absolute;

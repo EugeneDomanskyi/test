@@ -17,8 +17,8 @@ const AuctionBadge = ({ status, win }) => {
         <path d="M8.52281 15.7574L0 0H135L126.477 15.7574C124.73 18.9874 121.353 21 117.681 21H17.3186C13.6465 21 10.2698 18.9874 8.52281 15.7574Z" fill={`url(#paint0_linear_5775_8_${status}_${win})`} />
         <defs>
           <linearGradient id={`paint0_linear_5775_8_${status}_${win}`} x1="87.5" y1="0" x2="87.5" y2="21" gradientUnits="userSpaceOnUse">
-            <stop stop-color={colors()[0]} />
-            <stop offset="1" stop-color={colors()[1]} />
+            <stop stopColor={colors()[0]} />
+            <stop offset="1" stopColor={colors()[1]} />
           </linearGradient>
         </defs>
       </svg>

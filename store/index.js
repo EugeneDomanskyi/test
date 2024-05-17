@@ -127,6 +127,8 @@ const getBaseUrl = (api) => {
       return ''
     case 'local':
       return '/'
+    case 'bid':
+      return process.env.NEXT_PUBLIC_BID_URL
     case 'accounts':
       return process.env.NEXT_PUBLIC_ACCOUNTS_URL
     case 'exchange':

@@ -29,6 +29,10 @@
     .row {
       padding: 8px 24px;
 
+      @media (max-width: 768px) {
+        padding: 8px;
+      }
+
       &:not(:last-of-type) {
         border-bottom: solid rgba(255, 255, 255, 0.10) 1px;
       }
@@ -36,6 +40,24 @@
       .claimed {
         border-radius: 50px;
         background: #171717;
+      }
+
+      &.data {
+        position: relative;
+
+        @media (max-width: 768px) {
+          padding: 8px 8px 64px;
+        }
+      }
+
+      .claimCell {
+        @media (max-width: 768px) {
+          position: absolute;
+          z-index: 0;
+          left: 50%;
+          bottom: 8px;
+          margin-left: -87px;
+        }
       }
     }
   }

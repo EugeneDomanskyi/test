@@ -32,7 +32,7 @@ const AuctionItem = ({ item }) => {
 
   const getShort = (address) => {
     const n = 8
-    return `${address.substring(0, n)}...${address.substring(address.length - n)}`
+    return address ? `${address.substring(0, n)}...${address.substring(address.length - n)}` : ''
   }
 
   const handleClick = () => {

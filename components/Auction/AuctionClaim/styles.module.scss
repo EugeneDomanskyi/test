@@ -30,6 +30,10 @@
       position: relative;
       z-index: 1;
 
+      &.active {
+        background-color: #6B41EB;
+      }
+
       svg {
         display: none;
       }
@@ -58,12 +62,15 @@
       right: 0;
       top: 7px;
       background-color: #9a9a9a;
+
+      &.active {
+        background-color: #6B41EB;
+      }
     }
 
     .text {
       position: absolute;
       z-index: 0;
-      // left: -50%;
       margin-left: -42px;
       top: 130%;
 
