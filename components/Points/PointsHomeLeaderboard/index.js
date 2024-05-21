@@ -5,8 +5,10 @@ import { useTranslation } from 'react-i18next'
 import $point from '@/store/point'
 
 import App from '@/components/App'
+import PointsCountdownBrett from '@/components/Points/PointsCountdownBrett'
 
 import styles from './styles.module.scss'
+import Image from 'next/image'
 
 const PointsHomeLeaderboard = () => {
   const { t } = useTranslation()
@@ -75,6 +77,20 @@ const PointsHomeLeaderboard = () => {
       <App.Flex column>
         <App.Tabs active={tab} options={tabs} variant="points" onChange={handleTab} />
 
+        {tab == 'brett' ? (
+          <App.Flex direction={['row', 'column']} align="center" justify="space-between" gap={8} className={styles.brettRow}>
+            <App.Flex row center gap={8}>
+              <Image src={'/images/brett-logo.png'} width={40} height={40} alt="" />
+              <App.Text uppercase size={20} weight={900} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">{t('BRETT Brawl')}</App.Text>
+            </App.Flex>
+
+            <App.Flex row center gap={8}>
+              <App.Text uppercase size={14} weight={700} height={1}>{t('Time Left')}</App.Text>
+              <PointsCountdownBrett endTime={tournament.end_time} />
+            </App.Flex>
+          </App.Flex>
+        ) : null}
+
         <App.Flex row>
           <App.Flex className={styles.gradient} />
 
@@ -107,7 +123,7 @@ const PointsHomeLeaderboard = () => {
           {statsLoading || brettLoading ? (
             <App.LoaderBlock height={200} />
           ) : (
-            getLeaderboard() ? (
+            getLeaderboard() && getLeaderboard().length ? (
               getLeaderboard().map((item, index) => (
                 <App.Flex key={index} row className={styles.row}>
                   <App.Flex width={[92, 44]} center>

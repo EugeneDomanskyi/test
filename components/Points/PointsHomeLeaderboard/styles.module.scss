@@ -7,6 +7,12 @@
     background: linear-gradient(180deg, #A6DC37 0%, rgba(255, 255, 255, 0.10) 100%);
   }
 
+  .brettRow {
+    padding: 8px 24px;
+    border-left: solid #A6DC37 1px;
+    border-right: solid #A6DC37 1px;
+  }
+
   .table {
     border: solid rgba(255, 255, 255, 0.10) 1px;
     border-radius: 0 0 12px 12px;

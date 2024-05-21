@@ -34,6 +34,7 @@ export const pointSlice = createSlice({
     },
 
     tournament: {},
+    showBrett: false,
   },
 
   reducers: {
@@ -93,6 +94,10 @@ export const pointSlice = createSlice({
 
     tournament: (state, { payload }) => {
       state.tournament = payload
+    },
+
+    showBrett: (state, { payload }) => {
+      state.showBrett = payload
     },
   },
 })
