@@ -20,7 +20,7 @@ const PointsHomeLeaderboard = () => {
 
   const tabs = [
     { title: t(`Weekly${isMobile ? '' : ' leaderboard'}`), key: 'weekly' },
-    // { title: t(`Cumulative${isMobile ? '' : ' leaderboard'}`), key: 'cumulative' },
+    { title: t(`Cumulative${isMobile ? '' : ' leaderboard'}`), key: 'cumulative' },
   ]
 
   const handleTab = (value) => {
@@ -81,8 +81,8 @@ const PointsHomeLeaderboard = () => {
           {statsLoading ? (
             <App.LoaderBlock height={200} />
           ) : (
-            stats?.weekly_leaderboard ? (
-              stats.weekly_leaderboard.map((item, index) => (
+            stats?.[tab == 'weekly' ? 'weekly_leaderboard' : 'leaderboard'] ? (
+              stats[tab == 'weekly' ? 'weekly_leaderboard' : 'leaderboard'].map((item, index) => (
                 <App.Flex key={index} row className={styles.row}>
                   <App.Flex width={[92, 44]} center>
                     <svg width={isMobile ? 24 : 44} height={isMobile ? 24 : 44} viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
