@@ -18,6 +18,7 @@ const PointsHomeLeaderboard = () => {
   const tournament = useSelector(({ $point }) => $point.tournament)
   
   const [tab, setTab] = useState('weekly')
+  const [brettLoading, setBrettLoading] = useState(false)
 
   const tabs = [
     { title: t(`Weekly${isMobile ? '' : ' leaderboard'}`), key: 'weekly' },
@@ -34,11 +35,12 @@ const PointsHomeLeaderboard = () => {
   }
 
   const fetchTournament = async () => {
+    setBrettLoading(true)
     const result = await $point.api.tournament('brett-tournament')
-    console.log(result)
     if (result && result?.data) {
       dispatch($point.set.tournament(result.data))
     }
+    setBrettLoading(false)
   }
 
   const getColor = (position, reward) => {
@@ -102,7 +104,7 @@ const PointsHomeLeaderboard = () => {
         </App.Flex>
 
         <App.Flex column className={styles.table}>
-          {statsLoading ? (
+          {statsLoading || brettLoading ? (
             <App.LoaderBlock height={200} />
           ) : (
             getLeaderboard() ? (
