@@ -31,7 +31,9 @@ export const pointSlice = createSlice({
       total_open_amount: 0,
       total_liquidity: 0,
       points_earned_today: 0,
-    }
+    },
+
+    tournament: {},
   },
 
   reducers: {
@@ -88,6 +90,10 @@ export const pointSlice = createSlice({
         points_earned_today,
       }
     },
+
+    tournament: (state, { payload }) => {
+      state.tournament = payload
+    },
   },
 })
 
@@ -134,6 +140,10 @@ export const api = {
 
   liquidity: (wallet, params) => {
     return request(`user/${wallet}/order-liquidity`, 'GET', {api: 'accounts', ...params})
+  },
+
+  tournament: (alias) => {
+    return request(`tournament/${alias}`, 'GET', {api: 'exchange'})
   },
 }
 
