@@ -32,10 +32,10 @@ class WagmiHelper {
         chainsCodes = ['base']
         break
       case 'testnet.tegro.com':
-        chainsCodes = ['amoy', 'optimism']
+        chainsCodes = ['base', 'amoy', 'optimism']
         break
       case 'beta.tegro.com':
-        chainsCodes = ['amoy', 'optimism']
+        chainsCodes = ['base', 'amoy', 'optimism']
         break
       default: 
         chainsCodes = ['amoy', 'optimism', 'base', 'arbitrum']
