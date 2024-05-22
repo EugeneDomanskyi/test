@@ -202,6 +202,10 @@ const api = {
     return request('market/orders/place', 'POST', params)
   },
 
+  cancelTypedData: (params) => {
+    return request(`market/orders/typedData/generateCancelOrder`, 'POST', params)
+  },
+
   cancel: (params) => {
     return request(`market/orders/cancel`, 'POST', params)
   },

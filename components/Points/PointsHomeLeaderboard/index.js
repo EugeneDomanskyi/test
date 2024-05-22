@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 
-import $tournament from '@/store/tournament'
+import $point from '@/store/point'
 
 import App from '@/components/App'
+import PointsCountdownBrett from '@/components/Points/PointsCountdownBrett'
 
 import styles from './styles.module.scss'
+import Image from 'next/image'
 
 const PointsHomeLeaderboard = () => {
   const { t } = useTranslation()
@@ -15,16 +17,32 @@ const PointsHomeLeaderboard = () => {
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const statsLoading = useSelector(({ $point }) => $point.statsLoading)
   const stats = useSelector(({ $point }) => $point.stats)
+  const tournament = useSelector(({ $point }) => $point.tournament)
   
   const [tab, setTab] = useState('weekly')
+  const [brettLoading, setBrettLoading] = useState(false)
 
   const tabs = [
     { title: t(`Weekly${isMobile ? '' : ' leaderboard'}`), key: 'weekly' },
-    // { title: t(`Cumulative${isMobile ? '' : ' leaderboard'}`), key: 'cumulative' },
+    { title: t(`Cumulative${isMobile ? '' : ' leaderboard'}`), key: 'cumulative' },
+    { title: t(`BRETT${isMobile ? '' : ' leaderboard'}`), key: 'brett' },
   ]
 
   const handleTab = (value) => {
     setTab(value)
+
+    if (value == 'brett') {
+      fetchTournament()
+    }
+  }
+
+  const fetchTournament = async () => {
+    setBrettLoading(true)
+    const result = await $point.api.tournament('brett-tournament')
+    if (result && result?.data) {
+      dispatch($point.set.tournament(result.data))
+    }
+    setBrettLoading(false)
   }
 
   const getColor = (position, reward) => {
@@ -41,6 +59,14 @@ const PointsHomeLeaderboard = () => {
     return `${address.substring(0, n)}...${address.substring(address.length - n)}`
   }
 
+  const getLeaderboard = () => {
+    if (tab == 'brett') {
+      return tournament?.leaderboard ?? []
+    }
+
+    return stats?.[tab == 'weekly' ? 'weekly_leaderboard' : 'leaderboard'] ?? []
+  }
+
   return (
     <App.Flex column gap={16} className={styles.container}>
       <App.Flex column>
@@ -50,6 +76,20 @@ const PointsHomeLeaderboard = () => {
 
       <App.Flex column>
         <App.Tabs active={tab} options={tabs} variant="points" onChange={handleTab} />
+
+        {tab == 'brett' ? (
+          <App.Flex direction={['row', 'column']} align="center" justify="space-between" gap={8} className={styles.brettRow}>
+            <App.Flex row center gap={8}>
+              <Image src={'/images/brett-logo.png'} width={40} height={40} alt="" />
+              <App.Text uppercase size={20} weight={900} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">{t('BRETT Brawl')}</App.Text>
+            </App.Flex>
+
+            <App.Flex row center gap={8}>
+              <App.Text uppercase size={14} weight={700} height={1}>{t('Time Left')}</App.Text>
+              <PointsCountdownBrett endTime={tournament.end_time} />
+            </App.Flex>
+          </App.Flex>
+        ) : null}
 
         <App.Flex row>
           <App.Flex className={styles.gradient} />
@@ -68,21 +108,23 @@ const PointsHomeLeaderboard = () => {
 
           {/* <App.Flex width={['auto', 64]} flex={[1, null]} center>
             <App.Text center weight={600} height={1} color="#A6DC37">{t('Share %')}</App.Text>
-          </App.Flex>
-
-          <App.Flex flex={1} center>
-            <App.Text center weight={600} height={1} color="#A6DC37">{t('Reward')}</App.Text>
           </App.Flex> */}
+
+          {tab == 'brett' ? (
+            <App.Flex flex={1} center>
+              <App.Text center weight={600} height={1} color="#A6DC37">{t('Reward')}</App.Text>
+            </App.Flex>
+          ) : null}
 
           <App.Flex className={styles.gradient} />
         </App.Flex>
 
         <App.Flex column className={styles.table}>
-          {statsLoading ? (
+          {statsLoading || brettLoading ? (
             <App.LoaderBlock height={200} />
           ) : (
-            stats?.weekly_leaderboard ? (
-              stats.weekly_leaderboard.map((item, index) => (
+            getLeaderboard() && getLeaderboard().length ? (
+              getLeaderboard().map((item, index) => (
                 <App.Flex key={index} row className={styles.row}>
                   <App.Flex width={[92, 44]} center>
                     <svg width={isMobile ? 24 : 44} height={isMobile ? 24 : 44} viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -101,11 +143,13 @@ const PointsHomeLeaderboard = () => {
 
                   {/* <App.Flex width={['auto', 64]} flex={[1, null]} center>
                     <App.Text center size={[16, 14]} weight={[600, 400]} height={1}>{item.points_percentage}%</App.Text>
-                  </App.Flex>
-
-                  <App.Flex flex={1} center>
-                    <App.Text center size={[16, 14]} weight={[600, 400]} height={1}>{item.reward} {item.reward_currency}</App.Text>
                   </App.Flex> */}
+
+                  {tab == 'brett' ? (
+                    <App.Flex flex={1} center>
+                      <App.Text center size={[16, 14]} weight={[600, 400]} height={1}>{item.reward} {item.reward_currency}</App.Text>
+                    </App.Flex>
+                  ) : null}
                 </App.Flex>
               ))
             ) : (
