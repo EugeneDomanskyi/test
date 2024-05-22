@@ -87,7 +87,8 @@ class WagmiHelper {
     nookies.set(ctx, 'backendChains', JSON.stringify(this.backendChains), {path: '/'})
     const fullInfoChains = this.getFullInfoChains(this.backendChains)
 
-    return this.filteredChains(ctx.req.headers.host, fullInfoChains)
+    // return this.filteredChains(ctx.req.headers.host, fullInfoChains)
+    return fullInfoChains
   }
 
   getCurrentChainCode = (ctx: any, chains: Array<any> = []) => {
