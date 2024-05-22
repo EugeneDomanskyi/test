@@ -88,7 +88,7 @@ export const ordersSlice = createSlice({
     },
 
     orderbook: (state, { payload }) => {
-      const sides = {Asks: 'sell', Bids: 'buy'}
+      const sides = {asks: 'sell', bids: 'buy'}
       const list = Object.entries(payload.data).reduce((acc, [side, values]) => ({
         ...acc,
         [sides[side]]: values ?? []

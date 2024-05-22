@@ -43,8 +43,6 @@ const OrderBook = ({ version, onClickOrder }) => {
   const fetchOrderbook = async () => {
     const result = await $orders.api.orderbook({ market_id: current.marketId, chain_id: blockchain.id })
     if (result) {
-      result.Asks = result.asks
-      result.Bids = result.bids
       dispatch($orders.set.orderbook({data: result, token: current}))
     } else {
       dispatch($orders.set.orderbook({data: {Asks: [], Bids: []}, token: current}))
