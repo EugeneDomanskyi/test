@@ -33,7 +33,6 @@ const Wrapper = ({ children }) => {
   const isApp = useSelector(({ $app }) => $app.isApp)
   const platform = useSelector(({ $app }) => $app.platform)
   const stats = useSelector(({ $point }) => $point.stats)
-  const liquidity = useSelector(({ $point }) => $point.liquidity)
   const blockchain = useSelector($app.get.blockchain)
 
   const [isInIframe, setIsInIframe] = useState(false)
@@ -79,16 +78,14 @@ const Wrapper = ({ children }) => {
   }, [referral])
 
   useEffect(() => {
-    if (wallet && (liquidity?.completed.length || stats?.total_points)) {
-      localStorage.removeItem('stickyShown');
-      localStorage.removeItem('stickyShownTS');
-      localStorage.removeItem('pointsPopupShown');
-      localStorage.removeItem('pointsPopupShownTS');
+    if (wallet && stats?.liquidity_mining) {
+      localStorage.setItem('pointsExistingUser', true);
     }
-  }, [wallet, stats, liquidity])
+  }, [wallet, stats])
 
   useEffect(() => {
-    if ((page === 'exchange' || page === '') && ! isApp) {
+    const existingUser = localStorage.getItem('pointsExistingUser');
+    if ((page === 'exchange' || page === '') && ! isApp && ! existingUser) {
       const bannerShown = localStorage.getItem('stickyShown')
       const popupShown = localStorage.getItem('pointsPopupShown')
       setShowStickyBanner(!bannerShown)
@@ -146,7 +143,7 @@ const Wrapper = ({ children }) => {
     router.push('/points-dashboard')
     localStorage.setItem('stickyShown', true)
     const timestamp = localStorage.getItem('stickyShownTS');
-    if (timestamp) {
+    if (!timestamp) {
       handleInteraction('stickyShown')
     }
     Amplitude.event('Points Banner V1', {'Page': Amplitude.page(), 'Activity': 'Redirected'})
@@ -196,7 +193,7 @@ const Wrapper = ({ children }) => {
               }
               <StickyBanner onClose={handleCloseBanner} onOpen={handleOpenBanner} show={showStickyBanner} />
               {!isCampaign && !isApp ? <Header /> : null}
-              <div style={{marginTop: page !== '' ? -72 : 0, height: '100%'}}>
+              <div style={{marginTop: page !== '' ? -72 : 0, height: showStickyBanner ? 'calc(100% - 28px)' : '100%'}}>
                 {children}
                 {!isCampaign && !isApp && !isExchange && !isPD ? <Footer /> : null}
               </div>

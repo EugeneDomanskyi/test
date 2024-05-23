@@ -32,7 +32,9 @@
 
 .row {
   position: relative;
-  padding: 10px 8px;
+  padding: 0 8px;
+  height: 10%;
+  min-height: 26px;
   cursor: pointer;
 
   &:after {
