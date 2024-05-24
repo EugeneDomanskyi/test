@@ -1,0 +1,134 @@
+.button {
+  display: flex;
+  height: 60px;
+  padding: 0 28px;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 12px;
+  border-bottom: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+  min-width: 200px;
+  gap: 16px;
+
+  &.small {
+    height: 48px;
+    border-radius: 10px;
+  }
+
+  &:before {
+    content: '';
+    display: block;
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    opacity: 0;
+    background-color: #fff;
+    transition: all .2s;
+  }
+
+  &:hover:before {
+    opacity: .1;
+  }
+
+  &:active:before {
+    display: none;
+  }
+
+  &.upcoming {
+    justify-content: center;
+    border-color: #FBBF24;
+    background: linear-gradient(180deg, #F59E0B -6.02%, #B45309 85.68%);
+
+    &:active {
+      background: linear-gradient(180deg, #B45309 -6.02%, #F59E0B 85.68%);
+    }
+  }
+
+  &.ongoing {
+    border-color: #6B41EB;
+    background: linear-gradient(180deg, #6B41EB -6.02%, #241164 85.68%);
+
+    &.empty {
+      justify-content: center;
+    }
+
+    &:active {
+      background: linear-gradient(180deg, #241164 -6.02%, #6B41EB 85.68%);
+    }
+
+    &:not(.empty).highlight {
+      border-color: #FF6992;
+      background: linear-gradient(180deg, #FF1D61 -6.02%, #8F0C45 85.68%);
+
+      &:active {
+        background: linear-gradient(180deg, #8F0C45 -6.02%, #FF1D61 85.68%);
+      }
+    }
+  }
+
+  &.closed {
+    justify-content: center;
+    border-color: #fff;
+    background: linear-gradient(180deg, #fff -6.02%, #8B8B8B 85.68%);
+
+    &:active {
+      background: linear-gradient(180deg, #8B8B8B -6.02%, #fff 85.68%);
+    }
+
+    &.current {
+      border-color: #53F19C;
+      background: linear-gradient(180deg, #06B357 -6.02%, #0D6E3B 85.68%);
+
+      &:active {
+        background: linear-gradient(180deg, #0D6E3B -6.02%, #06B357 85.68%);
+      }
+    }
+  }
+}
+
+.badge {
+  display: flex;
+  height: 60px;
+  padding: 0 28px;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 12px;
+  background: #262626;
+  min-width: 200px;
+  gap: 16px;
+
+  &.small {
+    height: 48px;
+    border-radius: 10px;
+  }
+}
+
+.warningBox {
+  width: 190px;
+  position: relative;
+
+  .blurImage {
+    width: 100%;  
+    height: 174px;
+    border-radius: 8px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    padding: 8px;
+  }
+
+  .blur {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    backdrop-filter: blur(3px);
+    background-color: rgba(0, 0, 0, .3);
+  }
+
+  .icon {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+  }
+}

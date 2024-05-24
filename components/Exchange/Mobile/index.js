@@ -184,7 +184,7 @@ const Mobile = forwardRef((_, ref) => {
 
           <App.Flex row align="center" gap={8}>
             {item.image ? (
-              <Image src={item.image} priority width={50} height={50} className={styles.image} alt="" />
+              <Image src={item.image} width={50} height={50} className={styles.image} alt="" />
             ) : (
               <div className={styles.emptyImage} />
             )}
