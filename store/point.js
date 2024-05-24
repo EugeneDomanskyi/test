@@ -68,6 +68,8 @@ export const pointSlice = createSlice({
     },
 
     auctions: [],
+    tournament: {},
+    showBrett: false,
   },
 
   reducers: {
@@ -128,6 +130,14 @@ export const pointSlice = createSlice({
     auctions: (state, { payload }) => {
       state.auctions = payload.data.map(item => auctionTemplate(item, payload.wallet))
     },
+    
+    tournament: (state, { payload }) => {
+      state.tournament = payload
+    },
+
+    showBrett: (state, { payload }) => {
+      state.showBrett = payload
+    },
   },
 })
 
@@ -178,6 +188,10 @@ export const api = {
 
   auctions: () => {
     return request(`auctions`, 'GET', {api: 'bid'})
+  },
+  
+  tournament: (alias) => {
+    return request(`tournament/${alias}`, 'GET', {api: 'exchange'})
   },
 }
 

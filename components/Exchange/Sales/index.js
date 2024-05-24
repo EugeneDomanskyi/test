@@ -112,7 +112,7 @@ const Sales = ({ version, onClickSale }) => {
 
               previousPrice = sale.price * 1
               return (
-                <App.Flex key={sale.id || sale.signature} column>
+                <App.Flex key={sale.id || sale.signature} column className={styles.salesParent}>
                   <App.Flex  justify="space-between" align="center" className={styles.sale} sx={{backgroundColor: color.row}} onClick={handleClick({...sale, side: color.side})}>
                     <App.Flex flex={1}>
                       <App.Text size={12} color={color.price} height={1}>{ sale.price }</App.Text>
@@ -130,6 +130,8 @@ const Sales = ({ version, onClickSale }) => {
                           case 'failed':
                             return <App.Icon width={14} height={11} color="#fff" icon={"cross"} />
                           case 'matched':
+                            return <App.Icon width={20} height={20} color="#fff" icon={"hourglass"} />
+                          case 'in_progress':
                             return <App.Icon width={20} height={20} color="#fff" icon={"hourglass"} />
                           default:
                             return null

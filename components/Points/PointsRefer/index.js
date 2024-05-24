@@ -134,7 +134,10 @@ Don't fade on this gem💎
                       <App.Text color="#FFFFFF99">{referral.referral_code}</App.Text>
                       <App.Icon icon="copy" color="#FFFFFF99" />
                     </App.Flex>
-                    <App.Button primary2 onClick={handleShare}>{t('Share on X')}</App.Button>
+                    <App.Button primary2 onClick={handleShare}>
+                      {t('Share on X')}
+                      <App.Icon icon="arrow-45" />
+                    </App.Button>
                   </App.Flex>
                 </App.Flex>
               </App.Flex>
@@ -162,7 +165,10 @@ Don't fade on this gem💎
                       <App.Text color="#FFFFFF99">{referral.referral_code}</App.Text>
                       <App.Icon icon="copy" color="#FFFFFF99" />
                     </App.Flex>
-                    <App.Button primary2 onClick={handleShare}>{t('Share on X')}</App.Button>
+                    <App.Button primary2 onClick={handleShare}>
+                      {t('Share on X')}
+                      <App.Icon icon="arrow-45" />  
+                    </App.Button>
                   </App.Flex>
                 </App.Flex>
 

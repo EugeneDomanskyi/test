@@ -9,6 +9,7 @@ import $point from '@/store/point'
 
 import App from '@/components/App'
 import PointsLiquidityOrders from '@/components/Points/PointsLiquidityOrders'
+import PointsSteps from '@/components/Points/PointsSteps'
 
 import styles from './styles.module.scss'
 
@@ -48,6 +49,7 @@ const PointsLiquidity = () => {
     <App.Flex column fullWidth gap={32} className={styles.container}>
       <App.Container maxWidth={1230}>
         <App.Flex column fullWidth gap={32}>
+          <PointsSteps full />
           {/* <App.Flex row className={styles.banner} align="center" justify="space-between">
             <App.Text weight={600}>{t('Launch your 24x7 mining bot in 3 clicks')}</App.Text>
             {!isMobile ? (

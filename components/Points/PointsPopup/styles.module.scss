@@ -1,0 +1,44 @@
+.container {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, .4);
+  z-index: 20;
+  padding: 0 16px;
+
+  .content {
+    position: relative;
+
+    .close {
+      position: absolute;
+      right: 0;
+      top: 0;
+      cursor: pointer;
+      transition: .3s;
+      transform: scale(.9);
+      padding: 16px;
+
+      &:hover {
+        transform: scale(1);
+      }
+    }
+
+    .wrapper {
+      position: absolute;
+      bottom: 32px;
+      padding: 0 16px;
+      left: 0;
+      right: 0;
+      gap: 32px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    .content {
+      .wrapper {
+        gap: 16px;
+      }
+    }
+  }
+}
