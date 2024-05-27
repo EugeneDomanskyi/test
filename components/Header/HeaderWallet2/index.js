@@ -18,6 +18,7 @@ import styles from './styles.module.scss'
 
 const HeaderWallet2 = () => {
   const router = useRouter()
+  const isEarnings = router.asPath?.includes('/earnings')
 
   const { wallet, connect } = useWagmiHelper()
 
@@ -91,6 +92,10 @@ const HeaderWallet2 = () => {
     dispatch($orders.set.myOrdersDialogOpen(true))
   }
 
+  const handleEarnings = () => {
+    router.push('/earnings')
+  }
+
   const handleShortPortfolioVisible = (value) => () => {
     setIsShortPortfolioVisible(value)
   }
@@ -121,9 +126,9 @@ const HeaderWallet2 = () => {
         </App.Flex>
       ) : (
         <App.Flex gap={24}>
-          {/* <App.Button default2 outlined onClick={handleEarnings}>
+          <App.Button default2 outlined={!isEarnings} onClick={handleEarnings}>
             My Earnings
-          </App.Button> */}
+          </App.Button>
 
           <App.Flex className={styles.relative}>
             <App.Button primary2 onClick={handlePortfolioToggle} onMouseEnter={handleShortPortfolioVisible(true)} onMouseLeave={handleShortPortfolioVisible(false)}>

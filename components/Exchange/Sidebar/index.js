@@ -9,6 +9,7 @@ import $token from '@/store/token'
 
 import App from '@/components/App'
 import SidebarItem from '@/components/Exchange/Sidebar/SidebarItem'
+import SidebarBrettBanner from '@/components/Exchange/Sidebar/SidebarBrettBanner'
 
 const SidebarSearch = dynamic(() => import('@/components/Exchange/Sidebar/SidebarSearch'), {ssr: false})
 const SidebarSort = dynamic(() => import('@/components/Exchange/Sidebar/SidebarSort'), {ssr: false})
@@ -86,36 +87,40 @@ const Sidebar = ({ version, isApp }) => {
         <SidebarSort />
       </App.Flex>
 
-      <div className={styles.cardBox}>
-        <div className={styles.cardBoxContent} ref={mobileContainerRef} onScroll={handleScroll}>
-          {loading ? (
-            [...new Array(20)].map((_, i) => {
-              const isOdd = i%2
-              return (
-                <div key={i} className={styles['card-loader']} style={{'--delay': `${i/(isOdd ? 20 : 5)}s`}} />
-              )
-            })
-          ) : (
-            <>
-              {searching && !list.length ? (
-                <App.Text center>No results were found for your search</App.Text>
-              ) : (
-                <>
-                  {list.map((item, i) => <SidebarItem key={item.id} item={item} version={version} />)}
+      <App.Flex column flex={1} gap={16}>
+        <div className={styles.cardBox}>
+          <div className={styles.cardBoxContent} ref={mobileContainerRef} onScroll={handleScroll}>
+            {loading ? (
+              [...new Array(20)].map((_, i) => {
+                const isOdd = i%2
+                return (
+                  <div key={i} className={styles['card-loader']} style={{'--delay': `${i/(isOdd ? 20 : 5)}s`}} />
+                )
+              })
+            ) : (
+              <>
+                {searching && !list.length ? (
+                  <App.Text center>No results were found for your search</App.Text>
+                ) : (
+                  <>
+                    {list.map((item, i) => <SidebarItem key={item.id} item={item} version={version} />)}
 
-                  {pages.next && ! searching && all.length > 0 && (all.length % 20 == 0) ? (
-                    <div ref={mobileNextRef}>
-                      <App.Flex center full>
-                        <App.Loader size={40} />
-                      </App.Flex>
-                    </div>
-                  ) : null}
-                </>
-              )}
-            </>
-          )}
+                    {pages.next && ! searching && all.length > 0 && (all.length % 20 == 0) ? (
+                      <div ref={mobileNextRef}>
+                        <App.Flex center full>
+                          <App.Loader size={40} />
+                        </App.Flex>
+                      </div>
+                    ) : null}
+                  </>
+                )}
+              </>
+            )}
+          </div>
         </div>
-      </div>
+
+        <SidebarBrettBanner />
+      </App.Flex>
     </App.Flex>
   )
 }

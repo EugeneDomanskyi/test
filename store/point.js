@@ -3,6 +3,40 @@ import moment from 'moment'
 
 import { request } from './index'
 
+const auctionTemplate = (item, wallet) => {
+  const now = moment()
+  const startsAt = moment(item.starts_at * 1000)
+
+  let time = 0
+  let status = now.isAfter(startsAt) ? 'ongoing' : 'upcoming'
+  if (status == 'ongoing') {
+    if (item.last_bid_timestamp > 0) {
+      const lastBid = moment(item.last_bid_timestamp * 1000)
+      status = now.isAfter(lastBid.add(item.reset_timer, 'seconds')) ? 'closed' : 'ongoing'
+
+      time = lastBid.add(item.reset_timer, 'seconds').diff(now)
+    }
+  }
+
+  const lastBidderWallet = item.last_bidder.wallet_address.toLowerCase()
+
+  return {
+    id: item.id,
+    productId: item.product.id,
+    image: item.product.s3_url,
+    logo: null,
+    status: status,
+    current: wallet == lastBidderWallet,
+    wallet: lastBidderWallet,
+    marketPrice: item.start_price,
+    currentPrice: item.last_bid_price > 0 ? item.last_bid_price : item.start_price,
+    currency: 'USDC',
+    name: item.product.title,
+    time: time * 1000,
+    startsIn: moment(item.starts_at * 1000).valueOf(),
+  }
+}
+
 export const pointSlice = createSlice({
   name: '$point',
 
@@ -31,7 +65,11 @@ export const pointSlice = createSlice({
       total_open_amount: 0,
       total_liquidity: 0,
       points_earned_today: 0,
-    }
+    },
+
+    auctions: [],
+    tournament: {},
+    showBrett: false,
   },
 
   reducers: {
@@ -88,6 +126,18 @@ export const pointSlice = createSlice({
         points_earned_today,
       }
     },
+
+    auctions: (state, { payload }) => {
+      state.auctions = payload.data.map(item => auctionTemplate(item, payload.wallet))
+    },
+    
+    tournament: (state, { payload }) => {
+      state.tournament = payload
+    },
+
+    showBrett: (state, { payload }) => {
+      state.showBrett = payload
+    },
   },
 })
 
@@ -134,6 +184,14 @@ export const api = {
 
   liquidity: (wallet, params) => {
     return request(`user/${wallet}/order-liquidity`, 'GET', {api: 'accounts', ...params})
+  },
+
+  auctions: () => {
+    return request(`auctions`, 'GET', {api: 'bid'})
+  },
+  
+  tournament: (alias) => {
+    return request(`tournament/${alias}`, 'GET', {api: 'exchange'})
   },
 }
 
