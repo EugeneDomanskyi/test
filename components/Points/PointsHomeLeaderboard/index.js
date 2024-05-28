@@ -63,7 +63,7 @@ const PointsHomeLeaderboard = () => {
             <App.Text weight={600} height={1} color="#A6DC37">{t(`Wallet${isMobile ? '' : ' address'}`)}</App.Text>
           </App.Flex>
 
-          <App.Flex width={['auto', 56]} flex={[1, null]} center>
+          <App.Flex width={['auto', 120]} flex={[1, null]} center>
             <App.Text center weight={600} height={1} color="#A6DC37">{t(`Points${isMobile ? '' : ' earned'}`)}</App.Text>
           </App.Flex>
 
@@ -92,7 +92,7 @@ const PointsHomeLeaderboard = () => {
                     <App.Text size={[16, 14]} weight={[600, 400]} height={1}>{getShort(item.wallet_address)}</App.Text>
                   </App.Flex>
 
-                  <App.Flex width={['auto', 56]} flex={[1, null]} center>
+                  <App.Flex width={['auto', 120]} flex={[1, null]} center>
                     <App.Text center size={[16, 14]} weight={[600, 400]} height={1}>{item.points}</App.Text>
                   </App.Flex>
 
