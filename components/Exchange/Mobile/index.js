@@ -176,7 +176,7 @@ const Mobile = forwardRef((_, ref) => {
 
   return (
     <App.Flex column full gap={16}>
-      <App.Flex row align="center" justify="space-between" sx={{ padding: '8px 8px 0' }}>
+      <App.Flex row align="center" justify="space-between" sx={{ padding: '8px 24px 0 8px' }}>
         <App.Flex row align="center" gap={8}>
           <App.Flex row align="center" className={styles.back} onClick={handleBack}>
             <App.Icon icon="chevron-left" width={24} height={24} color="#fff" />
@@ -184,7 +184,7 @@ const Mobile = forwardRef((_, ref) => {
 
           <App.Flex row align="center" gap={8}>
             {item.image ? (
-              <Image src={item.image} priority width={50} height={50} className={styles.image} alt="" />
+              <Image src={item.image} priority width={32} height={32} className={styles.image} alt="" />
             ) : (
               <div className={styles.emptyImage} />
             )}

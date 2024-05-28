@@ -73,25 +73,26 @@
 
 @media (max-width: 768px) {
   .container {
-    &.open {
-      height: auto;
-    }
+    display:  none;
+    // &.open {
+    //   height: auto;
+    // }
 
-    .textWrapper {
-      flex-direction: column;
-      gap: 4px;
-      text-align: center;
-    }
+    // .textWrapper {
+    //   flex-direction: column;
+    //   gap: 4px;
+    //   text-align: center;
+    // }
 
-    .lines {
-      display: none;
-    }
+    // .lines {
+    //   display: none;
+    // }
 
-    .getStarted {
-      .getStartedIcon {
-        position: relative;
-        right: unset;
-      }
-    }
+    // .getStarted {
+    //   .getStartedIcon {
+    //     position: relative;
+    //     right: unset;
+    //   }
+    // }
   }
 }
