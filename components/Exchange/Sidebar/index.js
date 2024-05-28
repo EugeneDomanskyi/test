@@ -70,6 +70,8 @@ const Sidebar = ({ version, isApp }) => {
       verified: true,
     })
 
+    console.log('fetchTokensList', res.data);
+
     if (res.success) {
       dispatch($token.set.all(res.data))
       dispatch($token.set.pages({ next: (pages.current * 1 + 1) }))

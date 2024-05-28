@@ -85,7 +85,7 @@ const Wrapper = ({ children }) => {
 
   useEffect(() => {
     const existingUser = localStorage.getItem('pointsExistingUser');
-    if ((page === 'exchange' || page === '') && ! isApp && ! existingUser) {
+    if (page === '' && ! isApp && ! existingUser) {
       const bannerShown = localStorage.getItem('stickyShown')
       const popupShown = localStorage.getItem('pointsPopupShown')
       setShowStickyBanner(!bannerShown)
