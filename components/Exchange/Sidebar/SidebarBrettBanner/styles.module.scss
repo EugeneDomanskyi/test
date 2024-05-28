@@ -29,11 +29,11 @@
   @media (max-width: 768px), (max-height: 768px) {
     padding-top: 30px;
     background: none;
-    // box-shadow: 0px 4px 16px rgba(255, 255, 255, 0.8);
-    border-radius: 32px 32px 0px 0px;
     border: 1px solid rgba(255, 255, 255, 0.10);
     background: #0E0B22;
+  }
 
+  @media (max-width: 768px) {
     .closeButton {
       right: 30px;
       top: 30px;
