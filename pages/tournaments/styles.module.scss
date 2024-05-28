@@ -1,0 +1,22 @@
+.container {
+  padding: 72px 0 32px;
+  min-height: 100vh;
+
+  @media (max-width: 768px) {
+    padding: 60px 0 32px;
+  }
+
+  .table {
+    border-radius: 12px;
+    border: 1px solid #FFFFFF1A;
+
+    .header {
+      padding: 20px 16px;
+    }
+
+    .row {
+      padding: 12px 8px;
+      border-top: solid #FFFFFF1A 1px;
+    }
+  }
+}
