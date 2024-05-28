@@ -29,7 +29,7 @@ const SidebarBrettBanner = () => {
   }, [utmSource])
 
   const handleBrett = () => {
-    router.push('/points-dashboard')
+    router.push('/tournaments')
   }
 
   return showBrett ? (
