@@ -98,6 +98,18 @@ const Footer = () => {
                     <App.Text size={14} weight={400}>
                       <a href="https://tegro.com/exchange/base/0x532f27101965dd16442e59d40670faf5ebb142e4?utm_source=homepage&utm_medium=footer&utm_campaign=exchange" className={styles.link}>BRETT USDC</a>
                     </App.Text>
+                    
+                    <App.Text size={14} weight={400}>
+                      <a href="https://tegro.com/exchange/base/0x4ed4e862860bed51a9570b96d89af5e1b0efefed?utm_source=homepage&utm_medium=footer&utm_campaign=exchange" className={styles.link}>DEGEN USDC</a>
+                    </App.Text>
+                    
+                    <App.Text size={14} weight={400}>
+                      <a href="https://tegro.com/exchange/base/0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4?utm_source=homepage&utm_medium=footer&utm_campaign=exchange" className={styles.link}>TOSHI USDC</a>
+                    </App.Text>
+                    
+                    <App.Text size={14} weight={400}>
+                      <a href="https://tegro.com/exchange/base/0x7ed613ab8b2b4c6a781ddc97ea98a666c6437511?utm_source=homepage&utm_medium=footer&utm_campaign=exchange" className={styles.link}>AYB USDC</a>
+                    </App.Text>
                   </App.Flex>
                 </App.Flex>
               </App.Flex>
@@ -129,9 +141,9 @@ const Footer = () => {
                       <a href="https://press.tegro.com/press-kit/logo?utm_source=homepage&utm_medium=footer&utm_campaign=testnet" target="_blank" rel="noreferrer" className={styles.link}>Press Kit</a>
                     </App.Text>
 
-                    {/* <App.Text size={14} weight={400}>
-                      <a href="https://tegro.readme.io/" target="_blank" rel="noreferrer" className={styles.link}>Docs</a>
-                    </App.Text> */}
+                    <App.Text size={14} weight={400}>
+                      <a href="https://tegro.readme.io/reference/introduction-1" target="_blank" rel="noreferrer" className={styles.link}>Documentation</a>
+                    </App.Text>
                   </App.Flex>
                 </App.Flex>
 
