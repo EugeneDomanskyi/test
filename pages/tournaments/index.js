@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import Image from 'next/image'
 
 import $point from '@/store/point'
+import $token from '@/store/token'
 
 import App from '@/components/App'
 import PointsCountdownBrett from '@/components/Points/PointsCountdownBrett'
@@ -32,6 +33,7 @@ const Tournaments = () => {
   }
 
   const handleBrett = () => {
+    dispatch($token.set.current({}))
     router.push('/exchange/base/0x532f27101965dd16442e59d40670faf5ebb142e4')
   }
 
@@ -120,7 +122,7 @@ const Tournaments = () => {
                 ))
               ) : (
                 <App.Flex center height={200}>
-                  <App.Text>{t('There are no participants yet')}</App.Text>
+                  <App.Text>There are no participants yet</App.Text>
                 </App.Flex>
               )
             )}
