@@ -51,7 +51,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         requiredAmount = Math.ceil(amount * 1 + placed * 1)
       }
       console.log('--- Required amount for Approval with placed amount', requiredAmount)
-      
+
       if (allowanceAmount * 1 < requiredAmount * 1) {
         if (spendToken === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
           const reset = await WagmiHelper.approveAmount(spendToken, parseUnits('0', spendDecimals))
@@ -100,7 +100,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         signature,
       })
 
-      
+
       if (result?.error) {
         onClose()
         return handleError('Order not created', result.error)
@@ -118,6 +118,8 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         'Chain ID': blockchain?.id,
         'Market ID': current?.address,
       })
+
+      dispatch($orders.set.add(result.data))
 
       if (current.symbol == 'BRETT') {
         localStorage.setItem('hideBrettBrawl', 1)

@@ -15,7 +15,7 @@ const getDuration = (startTime, endTime) => {
     hours: hours > 9 ? hours : `0${hours}`,
     minutes: minutes > 9 ? minutes : `0${minutes}`,
     seconds: seconds > 9 ? seconds : `0${seconds}`,
-    isEnd: diff < 0,
+    isEnd: diff <= 0,
   }
 }
 

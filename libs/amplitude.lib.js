@@ -93,7 +93,7 @@ class Amplitude {
     }
   
     if (window.location.pathname.includes('tournaments')) {
-      return 'Tournaments'
+      return 'Tournament'
     }
   
     return window.location.pathname

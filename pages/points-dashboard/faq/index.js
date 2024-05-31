@@ -58,7 +58,7 @@ const Faq = () => {
     <App.Flex column fullWidth className={styles.container}>
       <App.Container maxWidth={1230}>
         <App.Flex column fullWidth gap={32}>
-          <App.Flex fullWidth row align="center" justify="space-between" sx={{ padding: '16px 0 0' }}>
+          <App.Flex fullWidth row align="center" justify="space-between">
             <App.Flex row sx={{ cursor: 'pointer' }} onClick={handleDashboard}>
               <App.Text weight={600}>&lt; Back</App.Text>
             </App.Flex>
@@ -68,7 +68,7 @@ const Faq = () => {
                 <App.Icon icon="question-circle" />
               </Link>
 
-              <SwitchLanguage />
+              {/* <SwitchLanguage /> */}
             </App.Flex>
           </App.Flex>
 

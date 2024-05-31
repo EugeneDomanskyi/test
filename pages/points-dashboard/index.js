@@ -15,6 +15,7 @@ import PointsRefer from '@/components/Points/PointsRefer'
 import PointsContributor from '@/components/Points/PointsContributor'
 import PointsTransactions from '@/components/Points/PointsTransactions'
 import PointsQuests from '@/components/Points/PointsQuests'
+import PointsAuction from '@/components/Points/PointsAuction'
 
 import styles from './styles.module.scss'
 
@@ -30,6 +31,7 @@ const PointsDashboard = () => {
 
   const tabs = [
     { title: t('Dashboard'), key: 'home' },
+    // { title: t('Auction'), key: 'auction' },
     { title: t('Liquidity mining'), key: 'liquidity' },
     { title: t('Refer & earn'), key: 'refer' },
     // { title: t('Contributor tasks'), key: 'contributor' },
@@ -71,6 +73,7 @@ const PointsDashboard = () => {
   const getPointsComponent = () => {
     switch (tab) {
       case 'home': return <PointsHome />
+      // case 'auction': return <PointsAuction />
       case 'liquidity': return <PointsLiquidity />
       case 'refer': return <PointsRefer />
       // case 'contributor': return <PointsContributor />
