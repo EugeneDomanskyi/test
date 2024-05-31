@@ -92,6 +92,10 @@ class Amplitude {
       return 'Points Dashboard'
     }
   
+    if (window.location.pathname.includes('tournaments')) {
+      return 'Tournaments'
+    }
+  
     return window.location.pathname
   }
 
