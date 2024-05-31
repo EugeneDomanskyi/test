@@ -4,6 +4,8 @@
   width: 100%;
   // min-height: 870px;
   max-height: 900px;
+  position: relative;
+  overflow: hidden;
 
   &.appContainer {
     background-color: #05050b;

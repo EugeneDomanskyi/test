@@ -19,6 +19,7 @@ import Sales from '@/components/Exchange/Sales'
 import TradeForm from '@/components/Exchange/TradeForm'
 import Info from '@/components/Exchange/Info'
 import Orders from '@/components/Exchange/Orders'
+import SidebarToshiBanner from '@/components/Exchange/Sidebar/SidebarToshiBanner'
 
 import styles from './styles.module.scss'
 
@@ -157,6 +158,8 @@ const Exchange = () => {
           </App.Dialog>
         </>
       )}
+
+      <SidebarToshiBanner />
     </App.Flex>
   )
 }
