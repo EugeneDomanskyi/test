@@ -67,10 +67,10 @@ const AppFlex = ({ children, row, column, direction, center, align, justify, gap
     if (order) {
       result.order = propValue(order, true)
     }
-
+    
     return result
   }
-
+  
   return (
     <div className={classes()} style={styleObject()} {...props}>{children}</div>
   )
