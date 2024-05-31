@@ -46,9 +46,9 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
 
     if (version != 'mobile') {
-      // Socket.on('order_placed', 'my_orders', (data) => {
-      //   dispatch($orders.set.add(data))
-      // })
+      Socket.on('order_placed', 'my_orders', (data) => {
+        dispatch($orders.set.add(data))
+      })
 
       Socket.on('order_submitted', 'my_orders', (data) => {
         dispatch($orders.set.update(data))

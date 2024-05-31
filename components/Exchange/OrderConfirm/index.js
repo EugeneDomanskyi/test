@@ -119,7 +119,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         'Market ID': current?.address,
       })
 
-      dispatch($orders.set.add(result.data))
+      //dispatch($orders.set.add(result.data))
 
       if (current.symbol == 'BRETT') {
         localStorage.setItem('hideBrettBrawl', 1)
