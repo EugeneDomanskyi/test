@@ -4,6 +4,7 @@
   border: 1px solid #FFFFFF33;
   background: #1C172B;
   position: absolute;
+  left: 8px;
   max-width: 393px;
   z-index: 0;
   bottom: -500px;
@@ -15,7 +16,7 @@
   }
 
   &.show {
-    bottom: 0;
+    bottom: 8px;
   }
 
   .closeButton {
