@@ -63,65 +63,79 @@ const Tournaments = () => {
     dispatch($point.set.tournamentStatus({key, status}))
   }
 
+  const getSortedKeys = () => {
+    return Object.keys(tournaments).sort((a, b) => {
+      if (tournaments[a].status == 'on-going') return -1
+      if (tournaments[b].status == 'on-going') return 1
+      if (tournaments[a].status == 'upcoming') return -1
+      if (tournaments[b].status == 'upcoming') return 1
+      if (tournaments[a].status == 'closed') return -1
+      if (tournaments[b].status == 'closed') return 1
+      return 0
+    })
+  }
+
   return (
     <App.Flex className={styles.container}>
       <App.Container maxWidth={1230}>
         <App.Flex column gap={48} sx={{ paddingTop: 32 }}>
           <App.Text size={24} weight={700} height={1}>Tournaments</App.Text>
 
-          <App.Flex direction={['row', 'column']} gap={24} className={styles.banner} align={['center', 'flex-start']} justify="space-between">
-            <App.Flex column gap={8}>
-              <App.Text uppercase size={32} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">2,000,000 $TOSHI</App.Text>
-              <App.Text uppercase size={16} weight={600} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">in rewards!</App.Text>
-            </App.Flex>
+          {!loading && tournaments.toshi && tournaments.toshi.status == 'on-going' ? (
+            <App.Flex direction={['row', 'column']} gap={24} className={styles.banner} align={['center', 'flex-start']} justify="space-between">
+              <App.Flex column gap={8}>
+                <App.Text uppercase size={32} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">2,000,000 $TOSHI</App.Text>
+                <App.Text uppercase size={16} weight={600} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">in rewards!</App.Text>
+              </App.Flex>
 
-            <App.Flex column gap={8}>
-              <App.Text uppercase size={[16, 14]} weight={900} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">$1 = 0.1 Points</App.Text>
+              <App.Flex column gap={8}>
+                <App.Text uppercase size={[16, 14]} weight={900} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">$1 = 1 Point</App.Text>
 
-              <App.Flex row gap={[16, 8]}>
-                <App.Flex row center gap={[12, 8]}>
-                  <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">1</App.Text>
+                <App.Flex row gap={[16, 8]}>
+                  <App.Flex row center gap={[12, 8]}>
+                    <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">1</App.Text>
 
-                  <App.Flex column gap={2}>
-                    <App.Text uppercase size={[16, 12]} weight={900} height={1}>Connect</App.Text>
-                    <App.Text size={[12, 9]} weight={500} height={1}>Wallet</App.Text>
+                    <App.Flex column gap={2}>
+                      <App.Text uppercase size={[16, 12]} weight={900} height={1}>Connect</App.Text>
+                      <App.Text size={[12, 9]} weight={500} height={1}>Wallet</App.Text>
+                    </App.Flex>
                   </App.Flex>
-                </App.Flex>
 
-                <App.Flex row center gap={[12, 8]}>
-                  <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">2</App.Text>
+                  <App.Flex row center gap={[12, 8]}>
+                    <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">2</App.Text>
 
-                  <App.Flex column gap={2}>
-                    <App.Text uppercase size={[16, 12]} weight={900} height={1}>Trade</App.Text>
-                    <App.Text size={[12, 9]} weight={500} height={1}>$TOSHI</App.Text>
+                    <App.Flex column gap={2}>
+                      <App.Text uppercase size={[16, 12]} weight={900} height={1}>Trade</App.Text>
+                      <App.Text size={[12, 9]} weight={500} height={1}>$TOSHI</App.Text>
+                    </App.Flex>
                   </App.Flex>
-                </App.Flex>
 
-                <App.Flex row center gap={[12, 8]}>
-                  <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">3</App.Text>
+                  <App.Flex row center gap={[12, 8]}>
+                    <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">3</App.Text>
 
-                  <App.Flex column gap={2}>
-                    <App.Text uppercase size={[16, 12]} weight={900} height={1}>Climb</App.Text>
-                    <App.Text size={[12, 9]} weight={500} height={1}>Leaderboard</App.Text>
+                    <App.Flex column gap={2}>
+                      <App.Text uppercase size={[16, 12]} weight={900} height={1}>Climb</App.Text>
+                      <App.Text size={[12, 9]} weight={500} height={1}>Leaderboard</App.Text>
+                    </App.Flex>
                   </App.Flex>
-                </App.Flex>
 
-                <App.Flex row center gap={[12, 8]}>
-                  <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">4</App.Text>
+                  <App.Flex row center gap={[12, 8]}>
+                    <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">4</App.Text>
 
-                  <App.Flex column gap={2}>
-                    <App.Text uppercase size={[16, 12]} weight={900} height={1}>Profit</App.Text>
+                    <App.Flex column gap={2}>
+                      <App.Text uppercase size={[16, 12]} weight={900} height={1}>Profit</App.Text>
+                    </App.Flex>
                   </App.Flex>
                 </App.Flex>
               </App.Flex>
             </App.Flex>
-          </App.Flex>
+          ) : null}
           
           {loading ? (
             <App.LoaderBlock height={200} />
           ) : (
-            Object.keys(tournaments).length ? (
-              Object.keys(tournaments).map((key, index) => {
+            getSortedKeys().length ? (
+              getSortedKeys().map((key, index) => {
                 const tournament = tournaments[key]
                 return (
                   <App.Flex column key={index} gap={16}>
