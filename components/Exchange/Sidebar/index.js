@@ -9,7 +9,7 @@ import $token from '@/store/token'
 
 import App from '@/components/App'
 import SidebarItem from '@/components/Exchange/Sidebar/SidebarItem'
-import SidebarBrettBanner from '@/components/Exchange/Sidebar/SidebarBrettBanner'
+// import SidebarBrettBanner from '@/components/Exchange/Sidebar/SidebarBrettBanner'
 
 const SidebarSearch = dynamic(() => import('@/components/Exchange/Sidebar/SidebarSearch'), {ssr: false})
 const SidebarSort = dynamic(() => import('@/components/Exchange/Sidebar/SidebarSort'), {ssr: false})
@@ -119,7 +119,7 @@ const Sidebar = ({ version, isApp }) => {
           </div>
         </div>
 
-        <SidebarBrettBanner />
+        {/* <SidebarBrettBanner /> */}
       </App.Flex>
     </App.Flex>
   )

@@ -3,6 +3,40 @@ import moment from 'moment'
 
 import { request } from './index'
 
+const auctionTemplate = (item, wallet) => {
+  const now = moment()
+  const startsAt = moment(item.starts_at * 1000)
+
+  let time = 0
+  let status = now.isAfter(startsAt) ? 'ongoing' : 'upcoming'
+  if (status == 'ongoing') {
+    if (item.last_bid_timestamp > 0) {
+      const lastBid = moment(item.last_bid_timestamp * 1000)
+      status = now.isAfter(lastBid.add(item.reset_timer, 'seconds')) ? 'closed' : 'ongoing'
+
+      time = lastBid.add(item.reset_timer, 'seconds').diff(now)
+    }
+  }
+
+  const lastBidderWallet = item.last_bidder.wallet_address.toLowerCase()
+
+  return {
+    id: item.id,
+    productId: item.product.id,
+    image: item.product.s3_url,
+    logo: null,
+    status: status,
+    current: wallet == lastBidderWallet,
+    wallet: lastBidderWallet,
+    marketPrice: item.start_price,
+    currentPrice: item.last_bid_price > 0 ? item.last_bid_price : item.start_price,
+    currency: 'USDC',
+    name: item.product.title,
+    time: time * 1000,
+    startsIn: moment(item.starts_at * 1000).valueOf(),
+  }
+}
+
 export const pointSlice = createSlice({
   name: '$point',
 
@@ -33,7 +67,8 @@ export const pointSlice = createSlice({
       points_earned_today: 0,
     },
 
-    tournament: {},
+    tournaments: {},
+    auctions: [],
     showBrett: false,
   },
 
@@ -92,8 +127,67 @@ export const pointSlice = createSlice({
       }
     },
 
-    tournament: (state, { payload }) => {
-      state.tournament = payload
+    tournaments: (state, { payload }) => {
+      state.tournaments = payload.reduce((acc, value) => {
+        const key = value.title.toLowerCase().replace(/ /g, '_')
+        const now = moment()
+        const startTime = moment(value.start_time)
+        const endTime = moment(value.end_time)
+
+        value.status = 'on-going'
+        if (now.isBefore(startTime)) {
+          value.status = 'upcoming'
+        }
+
+        if (now.isAfter(endTime)) {
+          value.status = 'closed'
+        }
+
+        const limit = Math.min(5, value.rewards.length)
+        if (value.leaderboard.length <= limit) {
+          for (let i = 0; i < limit; i++) {
+            if (!value.leaderboard[i]) {
+              value.leaderboard.push({
+                points: '-',
+                points_percentage: 0,
+                position: i + 1,
+                reward: value.rewards[i].reward,
+                reward_currency: value.rewards[i].reward_currency,
+                wallet_address: '-',
+              })
+            }
+          }
+        }
+
+        if (value.rewards.length) {
+          value.currency = value.rewards[0].reward_currency
+        }
+
+        switch (key) {
+          case 'brett':
+            value.name = 'BRETT Brawl'
+            break
+          case 'toshi':
+            value.name = 'Toshi Mania'
+            break
+          default:
+            value.name = value.alias
+            break
+        }
+
+        return {
+          ...acc,
+          [key]: value,
+        }
+      }, {})
+    },
+
+    tournamentStatus: (state, { payload }) => {
+      state.tournaments[payload.key].status = payload.status
+    },
+
+    auctions: (state, { payload }) => {
+      state.auctions = payload.data.map(item => auctionTemplate(item, payload.wallet))
     },
 
     showBrett: (state, { payload }) => {
@@ -147,8 +241,16 @@ export const api = {
     return request(`user/${wallet}/order-liquidity`, 'GET', {api: 'accounts', ...params})
   },
 
+  auctions: () => {
+    return request(`auctions`, 'GET', {api: 'bid'})
+  },
+  
   tournament: (alias) => {
     return request(`tournament/${alias}`, 'GET', {api: 'exchange'})
+  },
+
+  tournaments: () => {
+    return request(`tournament/list`, 'GET', {api: 'exchange'})
   },
 }
 
