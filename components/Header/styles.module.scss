@@ -254,9 +254,11 @@
       flex-direction: column;
   
       .link {
-        padding: 16px 16px;
+        // padding: 16px 16px;
+        padding: 24px;
         width: 100%;
         height: 34px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.10);
 
         &.disabled {
           opacity: .6;

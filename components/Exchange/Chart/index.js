@@ -157,7 +157,16 @@ const TradeChart = ({ version, showSwitch, top = [] }) => {
 
     if (variant == 'candlesticks') {
       candlestickSeriesRef.current.setData(chartData)
-      candlestickSeriesRef.current.applyOptions({visible: true})
+      const decimals = chartData?.[0]?.open?.toString()?.split('.')?.[1]?.length || 2
+      const array = [...new Array(decimals - 1)].map((_, i) => 0)
+      candlestickSeriesRef.current.applyOptions({
+        visible: true,
+        priceFormat: {
+          type: 'price',
+          precision: decimals,
+          minMove: `0.${array.join('')}1`,
+        }
+      })
       areaSeriesRef.current.applyOptions({visible: false})
     }
 

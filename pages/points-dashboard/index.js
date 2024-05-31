@@ -31,7 +31,7 @@ const PointsDashboard = () => {
 
   const tabs = [
     { title: t('Dashboard'), key: 'home' },
-    { title: t('Auction'), key: 'auction' },
+    // { title: t('Auction'), key: 'auction' },
     { title: t('Liquidity mining'), key: 'liquidity' },
     { title: t('Refer & earn'), key: 'refer' },
     // { title: t('Contributor tasks'), key: 'contributor' },
@@ -73,7 +73,7 @@ const PointsDashboard = () => {
   const getPointsComponent = () => {
     switch (tab) {
       case 'home': return <PointsHome />
-      case 'auction': return <PointsAuction />
+      // case 'auction': return <PointsAuction />
       case 'liquidity': return <PointsLiquidity />
       case 'refer': return <PointsRefer />
       // case 'contributor': return <PointsContributor />
