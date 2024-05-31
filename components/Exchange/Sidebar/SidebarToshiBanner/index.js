@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 import cn from 'classnames'
 
-import $point from '@/store/point'
+import Amplitude from '@/libs/amplitude.lib'
 
 import App from '@/components/App'
 
@@ -12,10 +12,8 @@ import styles from './styles.module.scss'
 
 const SidebartoshiPopup = () => {
   const router = useRouter()
-  const utmSource = router.query.utm_source
 
-  const dispatch = useDispatch()
-  const showBrett = useSelector(({ $point }) => $point.showBrett)
+  const isApp = useSelector(({ $app }) => $app.isApp)
 
   const [showBanner, setShowBanner] = useState(false)
 
@@ -29,7 +27,6 @@ const SidebartoshiPopup = () => {
   useEffect(() => {
     setTimeout(() => {
       const bannerShown = localStorage.getItem('toshiPopup');
-
       
       if (! bannerShown) {
         setShowBanner(true)
@@ -47,12 +44,22 @@ const SidebartoshiPopup = () => {
   }
 
   const handleClickButton = () => {
+    Amplitude.event(`Exchange Pop-up`, {
+      'Page': Amplitude.page(),
+      'Source': isApp ? 'App' : 'Web',
+      'Activity': 'Redirected'
+    })
     const timestamp = new Date().getTime();
     localStorage.setItem('toshiPopup', timestamp);
     router.push('/tournaments')
   }
 
   const handleClose = () => {
+    Amplitude.event(`Exchange Pop-up`, {
+      'Page': Amplitude.page(),
+      'Source': isApp ? 'App' : 'Web',
+      'Activity': 'Closed'
+    })
     const timestamp = new Date().getTime();
     localStorage.setItem('toshiPopup', timestamp);
     setShowBanner(!showBanner)
