@@ -137,14 +137,13 @@ const Header = () => {
                 </App.Flex>
               </Link>
               
-              <div className={styles.line} />
+              {/* <div className={styles.line} />
 
               <Link href="/earnings" className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
-                  {/* <App.Icon icon="menuExchange" /> */}
                   <App.Text size={14} weight={700} color={router.pathname.includes('/earnings') ? '#A6DC37' : '#fff'}>My Earnings</App.Text>
                 </App.Flex>
-              </Link>
+              </Link> */}
 
               <div className={styles.line} />
 
