@@ -185,7 +185,7 @@ const Wrapper = ({ children }) => {
     <div style={{ height: '100%' }}>
       {
         !isInIframe
-          ? <div style={{ height: '100%', position: 'relative', transition: '.4s', overflow: 'hidden' }}>
+          ? <div style={{ height: '100%', position: 'relative', transition: '.4s' }}>
               <Analytics />
               {
                 showPointsPopup
