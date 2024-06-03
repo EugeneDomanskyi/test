@@ -2,6 +2,10 @@
   padding: 10px;
   flex: 1;
 
+  @media (max-width: 950px) {
+    min-height: 300px;
+  }
+
   .balance {
     margin-top: -1px;
     border: 1px solid #19162D;
