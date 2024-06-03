@@ -1,23 +1,36 @@
 .container {
-  padding: 16px;
+  padding: 0;
   border-radius: 24px;
-  border: 1px solid #FFFFFF33;
+  border: none;
   background: #1C172B;
   position: absolute;
   left: 8px;
   max-width: 393px;
   z-index: 0;
-  bottom: -500px;
-  transition: .3s;
+  // bottom: -500px;
+  bottom: 0;
+  transition: height .3s;
+  height: 0;
+  overflow: hidden;
 
-  @media (max-width: 640px) {
+  @media (max-width: 430px) {
     max-width: 100%;
     width: 100%;
     left: 0;
   }
 
   &.show {
-    bottom: 8px;
+    padding: 16px;
+    height: 467px;
+    border: 1px solid #FFFFFF33;
+
+    @media (max-width: 768px) {
+      height: 408px;
+    }
+
+    @media (max-width: 430px) {
+      height: auto;
+    }
   }
 
   .closeButton {
