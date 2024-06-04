@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import moment from 'moment'
+import { formatUnits } from 'viem'
 
 import { request } from './index'
 
@@ -18,22 +19,26 @@ const auctionTemplate = (item, wallet) => {
     }
   }
 
-  const lastBidderWallet = item.last_bidder.wallet_address.toLowerCase()
+  const lastBidderWallet = item.last_bidder.wallet_address.toLowerCase() || null
+
+  const marketPrice = formatUnits(item.start_price.toString(), 6)
+  const currentPrice = formatUnits((item.last_bid_price > 0 ? item.last_bid_price : item.start_price).toString(), 6)
 
   return {
     id: item.id,
     productId: item.product.id,
-    image: item.product.s3_url,
-    logo: null,
+    image: item.s3_url || null,
+    logo: item.product.collection_url || null,
     status: status,
     current: wallet == lastBidderWallet,
     wallet: lastBidderWallet,
-    marketPrice: item.start_price,
-    currentPrice: item.last_bid_price > 0 ? item.last_bid_price : item.start_price,
+    marketPrice,
+    currentPrice,
     currency: 'USDC',
     name: item.product.title,
     time: time * 1000,
     startsIn: moment(item.starts_at * 1000).valueOf(),
+    pointsPrice: item.points_to_deduct,
   }
 }
 
@@ -188,6 +193,10 @@ export const api = {
 
   auctions: () => {
     return request(`auctions`, 'GET', {api: 'bid'})
+  },
+
+  bid: (params) => {
+    return request(`place`, 'GET', {api: 'POST', ...params})
   },
   
   tournament: (alias) => {

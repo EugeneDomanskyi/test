@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
-import Image from 'next/image'
 import cn from 'classnames'
 import moment from 'moment'
 
 import useInterval from '@/myhooks/useInterval'
+
+import $point from '@/store/point'
 
 import App from '@/components/App'
 
@@ -70,8 +71,11 @@ const AuctionButton = ({ item, small }) => {
     }
 
     if (item.status == 'ongoing') {
-      if (stats.total_points > 0) {
-        console.log('Going')
+      if (stats.total_points * 1 >= item.pointsPrice * 1) {
+        $point.api.bid({
+          auction_id: item.id,
+          jwt_token: null,
+        })
       } else {
         setIsWarningDialog(true)
       }
@@ -79,7 +83,7 @@ const AuctionButton = ({ item, small }) => {
 
     if (item.status == 'closed') {
       if (item.current) {
-        console.log('Closed')
+        router.push(`/earnings`)
       } else {
         router.push(`/points-dashboard/${item.id}`)
       }
