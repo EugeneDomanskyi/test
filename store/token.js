@@ -44,7 +44,7 @@ export const tokenSlice = createSlice({
     searched: [],
     current: {},
     loading: true,
-    sort: 'price:desc',
+    sort: 'volume:desc',
     search: '',
     searching: false,
     searchEmpty: false,
