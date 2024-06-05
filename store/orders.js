@@ -88,7 +88,7 @@ export const ordersSlice = createSlice({
     },
 
     orderbook: (state, { payload }) => {
-      const sides = {Asks: 'sell', Bids: 'buy'}
+      const sides = {asks: 'sell', bids: 'buy'}
       const list = Object.entries(payload.data).reduce((acc, [side, values]) => ({
         ...acc,
         [sides[side]]: values ?? []
@@ -180,7 +180,7 @@ const api = {
   },
 
   orderbook: (params) => {
-    return request('market/orderbook/depth', 'GET', {...params})
+    return request('depth', 'GET', {api: 'orderbook', ...params})
   },
 
   trades: (params) => {
