@@ -14,6 +14,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
 import PointsPopup from '@/components/Points/PointsPopup'
+import SidebarToshiBanner from '@/components/Exchange/Sidebar/SidebarToshiBanner'
 
 const Analytics = dynamic(import('@/components/Analytics'), {ssr: false})
 
@@ -85,7 +86,7 @@ const Wrapper = ({ children }) => {
 
   useEffect(() => {
     const existingUser = localStorage.getItem('pointsExistingUser');
-    if ((page === 'exchange' || page === '') && ! isApp && ! existingUser) {
+    if (page === '' && ! isApp && ! existingUser) {
       const bannerShown = localStorage.getItem('stickyShown')
       const popupShown = localStorage.getItem('pointsPopupShown')
       setShowStickyBanner(!bannerShown)
@@ -184,7 +185,7 @@ const Wrapper = ({ children }) => {
     <div style={{ height: '100%' }}>
       {
         !isInIframe
-          ? <div style={{ height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden' }}>
+          ? <div style={{ height: '100%', position: 'relative', transition: '.4s' }}>
               <Analytics />
               {
                 showPointsPopup
@@ -197,6 +198,12 @@ const Wrapper = ({ children }) => {
                 {children}
                 {!isCampaign && !isApp && !isExchange && !isPD ? <Footer /> : null}
               </div>
+
+              {
+                page === 'exchange' && !isApp
+                  ? <SidebarToshiBanner />
+                  : null
+              }
             </div>
           : <Footer />
       }

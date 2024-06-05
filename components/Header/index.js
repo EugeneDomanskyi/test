@@ -14,6 +14,7 @@ import styles from './styles.module.scss'
 
 const Header = () => {
   const router = useRouter()
+  const isHome = router.asPath == '/'
   const isExchange = router.asPath?.includes('/exchange')
   const isPD = router.asPath?.includes('/points-dashboard')
   
@@ -69,15 +70,15 @@ const Header = () => {
                   </App.Flex>
                 </Link>
 
-                <a href="https://tegro.readme.io/reference/market-maker" target="_blank" rel="noreferrer" className={cn(styles.navItem)}>
-                  <App.Flex center fullHeight>
-                    <App.Text size={14} weight={600}>Auto-Trader</App.Text>
-                  </App.Flex>
-                </a>
-
                 <Link href="/points-dashboard" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/points-dashboard')})}>
                   <App.Flex center fullHeight>
                     <App.Text size={14} weight={600}>Points Dashboard</App.Text>
+                  </App.Flex>
+                </Link>
+
+                <Link href="/tournaments" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/tournaments')})}>
+                  <App.Flex center fullHeight>
+                    <App.Text size={14} weight={600}>Tournaments</App.Text>
                   </App.Flex>
                 </Link>
               </App.Flex>
@@ -110,7 +111,7 @@ const Header = () => {
             ) : null}
 
             {isExchange ? <SwitchBlockchain /> : null}
-            {isExchange || isPD ? <HeaderWallet2 /> : <App.Button primary rounded target="_self" href="/exchange">Launch app</App.Button>}
+            {!isHome ? <HeaderWallet2 /> : <App.Button primary rounded target="_self" href="/exchange">Launch app</App.Button>}
          </App.Flex>
 
           <div className={cn(styles.mobileMenu, {[styles.show]: mobileMenuShow})}>
@@ -122,20 +123,28 @@ const Header = () => {
                 </App.Flex>
               </Link>
 
-              <a href="https://tegro.readme.io/reference/market-maker" target="_blank" rel="noreferrer" className={cn(styles.link)}>
-                <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
-                  {/* <App.Icon icon="menuExchange" /> */}
-                  <App.Text size={14} weight={700}>Auto-Trader</App.Text>
-                </App.Flex>
-              </a>
-
               <Link href="/points-dashboard" className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   {/* <App.Icon icon="menuExchange" /> */}
                   <App.Text size={14} weight={700} color={router.pathname.includes('/points-dashboard') ? '#A6DC37' : '#fff'}>Points Dashboard</App.Text>
                 </App.Flex>
               </Link>
+
+              <Link href="/tournaments" className={cn(styles.link)}>
+                <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
+                  {/* <App.Icon icon="menuExchange" /> */}
+                  <App.Text size={14} weight={700} color={router.pathname.includes('/tournaments') ? '#A6DC37' : '#fff'}>Tournaments</App.Text>
+                </App.Flex>
+              </Link>
               
+              {/* <div className={styles.line} />
+
+              <Link href="/earnings" className={cn(styles.link)}>
+                <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
+                  <App.Text size={14} weight={700} color={router.pathname.includes('/earnings') ? '#A6DC37' : '#fff'}>My Earnings</App.Text>
+                </App.Flex>
+              </Link> */}
+
               <div className={styles.line} />
 
               <App.Flex sx={{padding: 16}} justify="space-between">
