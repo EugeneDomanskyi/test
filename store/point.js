@@ -8,16 +8,24 @@ const auctionTemplate = (item, wallet) => {
   const now = moment()
   const startsAt = moment(item.starts_at * 1000)
 
+  const status = item.status == 1 ? 'upcoming' : item.status == 2 ? 'ongoing' : 'closed'
   let time = 0
-  let status = now.isAfter(startsAt) ? 'ongoing' : 'upcoming'
   if (status == 'ongoing') {
     if (item.last_bid_timestamp > 0) {
       const lastBid = moment(item.last_bid_timestamp * 1000)
-      status = now.isAfter(lastBid.add(item.reset_timer, 'seconds')) ? 'closed' : 'ongoing'
-
       time = lastBid.add(item.reset_timer, 'seconds').diff(now)
     }
   }
+
+  // let status = now.isAfter(startsAt) ? 'ongoing' : 'upcoming'
+  // if (status == 'ongoing') {
+  //   if (item.last_bid_timestamp > 0) {
+  //     const lastBid = moment(item.last_bid_timestamp * 1000)
+  //     status = now.isAfter(lastBid.add(item.reset_timer, 'seconds')) ? 'closed' : 'ongoing'
+
+  //     time = lastBid.add(item.reset_timer, 'seconds').diff(now)
+  //   }
+  // }
 
   const lastBidderWallet = item.last_bidder.wallet_address.toLowerCase() || null
 
@@ -196,7 +204,7 @@ export const api = {
   },
 
   bid: (params) => {
-    return request(`place`, 'GET', {api: 'POST', ...params})
+    return request(`place`, 'POST', {api: 'bid', ...params})
   },
   
   tournament: (alias) => {

@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
-import moment from 'moment'
 
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
+import Socket from '@/libs/ws.lib'
 
 import $point from '@/store/point'
 
@@ -22,114 +22,12 @@ const PointsAuction = () => {
 
   const [loading, setLoading] = useState(true)
 
-  // const items = [
-  //   {
-  //     id: 1,
-  //     image: '/images/bid-image.png',
-  //     logo: '/images/bid-collection.png',
-  //     status: 'ongoing',
-  //     current: null,
-  //     wallet: null,
-  //     marketPrice: 7000,
-  //     currentPrice: 56.70,
-  //     currency: 'USDT',
-  //     name: 'Elemental #9045',
-  //     time: 5 * 60 * 1000,
-  //     startsIn: moment().add(5, 'days').valueOf(),
-  //   }, {
-  //     id: 2,
-  //     image: '/images/bid-image.png',
-  //     logo: '/images/bid-collection.png',
-  //     status: 'closed',
-  //     current: true,
-  //     wallet: wallet,
-  //     marketPrice: 7000,
-  //     currentPrice: 56.70,
-  //     currency: 'USDT',
-  //     name: 'Elemental #9045',
-  //     time: 5 * 60 * 1000,
-  //     startsIn: moment().add(5, 'days').valueOf(),
-  //   }, {
-  //     id: 3,
-  //     image: '/images/bid-image.png',
-  //     logo: '/images/bid-collection.png',
-  //     status: 'ongoing',
-  //     current: false,
-  //     wallet: wallet,
-  //     marketPrice: 7000,
-  //     currentPrice: 56.70,
-  //     currency: 'USDT',
-  //     name: 'Elemental #9045',
-  //     time: 5 * 60 * 1000,
-  //     startsIn: moment().add(5, 'days').valueOf(),
-  //     updated: true,
-  //   }, {
-  //     id: 4,
-  //     image: '/images/bid-image.png',
-  //     logo: '/images/bid-collection.png',
-  //     status: 'ongoing',
-  //     current: false,
-  //     wallet: wallet,
-  //     marketPrice: 7000,
-  //     currentPrice: 56.70,
-  //     currency: 'USDT',
-  //     name: 'Elemental #9045',
-  //     time: 1 * 14 * 1000,
-  //     startsIn: moment().add(5, 'days').valueOf(),
-  //   }, {
-  //     id: 5,
-  //     image: '/images/bid-image.png',
-  //     logo: '/images/bid-collection.png',
-  //     status: 'ongoing',
-  //     current: true,
-  //     wallet: wallet,
-  //     marketPrice: 7000,
-  //     currentPrice: 56.70,
-  //     currency: 'USDT',
-  //     name: 'Elemental #9045',
-  //     time: 1 * 4 * 1000,
-  //     startsIn: moment().add(5, 'days').valueOf(),
-  //   }, {
-  //     id: 6,
-  //     image: '/images/bid-image.png',
-  //     logo: '/images/bid-collection.png',
-  //     status: 'ongoing',
-  //     current: true,
-  //     wallet: wallet,
-  //     marketPrice: 7000,
-  //     currentPrice: 56.70,
-  //     currency: 'USDT',
-  //     name: 'Elemental #9045',
-  //     time: 1 * 14 * 1000,
-  //     startsIn: moment().add(5, 'days').valueOf(),
-  //   }, {
-  //     id: 7,
-  //     image: '/images/bid-image.png',
-  //     logo: '/images/bid-collection.png',
-  //     status: 'upcoming',
-  //     current: true,
-  //     wallet: wallet,
-  //     marketPrice: 7000,
-  //     currentPrice: 56.70,
-  //     currency: 'USDT',
-  //     name: 'Elemental #9045',
-  //     time: 5 * 60 * 1000,
-  //     startsIn: moment().add(4, 'days').valueOf(),
-  //   }, {
-  //     id: 8,
-  //     image: '/images/bid-image.png',
-  //     logo: '/images/bid-collection.png',
-  //     status: 'closed',
-  //     current: false,
-  //     wallet: wallet,
-  //     marketPrice: 7000,
-  //     currentPrice: 56.70,
-  //     currency: 'USDT',
-  //     name: 'Elemental #9045',
-  //     time: 5 * 60 * 1000,
-  //     startsIn: moment().add(4, 'days').valueOf(),
-  //   }
-  // ]
+  useEffect(() => {
+    Socket.subscribe('auctions')
+    return () => {
+      Socket.unsubscribe('auctions')
+    }
+  }, [])
 
   useEffect(() => {
     if (wallet) {
