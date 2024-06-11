@@ -31,6 +31,7 @@ const Wrapper = ({ children }) => {
 
   const dispatch = useDispatch()
   const isApp = useSelector(({ $app }) => $app.isApp)
+  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const platform = useSelector(({ $app }) => $app.platform)
   const stats = useSelector(({ $point }) => $point.stats)
   const blockchain = useSelector($app.get.blockchain)
@@ -164,7 +165,7 @@ const Wrapper = ({ children }) => {
               <Analytics />
               <StickyBanner onClose={handleCloseBanner} onOpen={handleOpenBanner} show={showStickyBanner} />
               {!isCampaign && !isApp ? <Header /> : null}
-              <div style={{marginTop: page !== '' ? -72 : 0, height: showStickyBanner ? 'calc(100% - 28px)' : '100%'}}>
+              <div style={{marginTop: page !== '' ? (isMobile ? -60 : -72) : 0, height: showStickyBanner ? 'calc(100% - 28px)' : '100%'}}>
                 {children}
                 {!isCampaign && !isApp && !isExchange && !isPD ? <Footer /> : null}
               </div>

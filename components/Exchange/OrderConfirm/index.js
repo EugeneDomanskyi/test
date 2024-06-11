@@ -76,8 +76,8 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
         wallet_address: wallet,
         market_symbol: `${current.symbol}_${current.quoteSymbol}`,
         side,
-        price: price * 1,
-        amount: amount * 1,
+        price: parseFloat(price),
+        amount: parseFloat(amount),
       })
 
       if (typedData?.error || ! typedData) {

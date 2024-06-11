@@ -115,6 +115,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon == 'chevron-left2') {
+      return (
+        <svg width={width ?? 32} height={height ?? 32} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 8L11 16L19 24" />
+        </svg>
+      )
+    }
+
     if (icon == 'chevron-right') {
       return (
         <svg width={width ?? 24} height={height ?? 25} viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -127,6 +135,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       return (
         <svg width={width ?? 7} height={width ?? 12} viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <path stroke={color ?? '#5E5C6B'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M1 1l5 5-5 5" />
+        </svg>
+      )
+    }
+
+    if (icon == 'chevron-right3') {
+      return (
+        <svg width={width ?? 24} height={width ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10 16L14 12L10 8" />
         </svg>
       )
     }

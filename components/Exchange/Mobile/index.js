@@ -17,6 +17,7 @@ import TradeFormWrapper from '@/components/Exchange/Mobile/TradeFormWrapper'
 import OrderBook from '@/components/Exchange/OrderBook'
 import Sales from '@/components/Exchange/Sales'
 import Orders from '@/components/Exchange/Orders'
+import Markets from '@/components/Exchange/Markets'
 
 import styles from './styles.module.scss'
 
@@ -48,15 +49,17 @@ const Mobile = forwardRef((_, ref) => {
   const updatePortfolio = useSelector(({ $portfolio }) => $portfolio.update)
   const isApp = useSelector(({ $app }) => $app.isApp)
   const list = useSelector(({ $token }) => $token.all)
-  const item = useSelector(({ $token }) => $token.current)
   const sort = useSelector(({ $token }) => $token.sort)
+  const pages = useSelector($token.get.pages)
+  const item = useSelector(({ $token }) => $token.current)
 
   const [sortBy, sortDirection] = sort.split(':')
 
   const [tab, setTab] = useState('charts')
   const [isTradeDialogOpen, setIsTradeDialogOpen] = useState(false)
+  const [isMarketsDialogOpen, setIsMarketsDialogOpen] = useState(false)
   const [tradeSide, setTradeSide] = useState()
-  const [chartTop, setChartTop] = useState([])
+  const [logo, setLogo] = useState()
   
   const tradeForm = useRef()
 
@@ -94,13 +97,13 @@ const Mobile = forwardRef((_, ref) => {
   }, [wallet, socketConnected])
 
   useEffect(() => {
-    if (isApp, wallet && blockchain?.id) {
+    if (isApp && wallet && blockchain?.id) {
       getPortfolio()
     }
   }, [isApp, wallet, blockchain?.id])
 
   useEffect(() => {
-    if (isApp, updatePortfolio) {
+    if (isApp && updatePortfolio) {
       getPortfolio()
       dispatch($portfolio.set.update(false))
     }
@@ -108,15 +111,39 @@ const Mobile = forwardRef((_, ref) => {
 
   useEffect(() => {
     if (item?.id) {
-      setChartTop([
-        {value: formatNumber(item.volume ?? 0), text: 'Vol'},
-        {value: formatNumber(item.high ?? 0), text: 'High'},
-        {value: formatNumber(item.low ?? 0), text: 'Low'},
-      ])
+      setLogo(item.image)
     } else {
-      fetchToken(address)
+      if (address != '0x') {
+        fetchToken(address)
+      }
     }
-  }, [item?.id])
+  }, [item?.id, address])
+
+  useEffect(() => {
+    fetchTokensList()
+  }, [blockchain?.code, sort, pages.current, queryBlockchainCode])
+
+  const fetchTokensList = async () => {
+    const res = await $token.api.all({
+      page: pages.current,
+      page_size: pages.perPage,
+      chain_id: blockchain.id,
+      sort_by: sortBy,
+      sort_order: sortDirection,
+      verified: true,
+    })
+
+    if (res.success) {
+      dispatch($token.set.all(res.data))
+      dispatch($token.set.pages({ next: (pages.current * 1 + 1) }))
+
+      if (address == '0x') {
+        router.replace(`/exchange/${queryBlockchainCode}/${res.data[0].base_contract_address.toLowerCase()}`)
+      }
+    }
+
+    dispatch($token.set.loading(false))
+  }
 
   const fetchToken = async (currentAddress) => {
     const existInList = list.find(item => item.id === currentAddress)
@@ -167,6 +194,10 @@ const Mobile = forwardRef((_, ref) => {
     setIsTradeDialogOpen(false)
   }
 
+  const handleMarketsDialogClose = () => {
+    setIsMarketsDialogOpen(false)
+  }
+
   const handleClickOrder = useCallback(async order => {
     setIsTradeDialogOpen(true)
     setTimeout(() => {
@@ -174,45 +205,70 @@ const Mobile = forwardRef((_, ref) => {
     }, 300)
   }, [])
 
-  return (
-    <App.Flex column full gap={16}>
-      <App.Flex row align="center" justify="space-between" sx={{ padding: '8px 24px 0 8px' }}>
-        <App.Flex row align="center" gap={8}>
-          <App.Flex row align="center" className={styles.back} onClick={handleBack}>
-            <App.Icon icon="chevron-left" width={24} height={24} color="#fff" />
-          </App.Flex>
+  const handleMarketsDialogOpen = () => {
+    setIsMarketsDialogOpen(true)
+  }
 
-          <App.Flex row align="center" gap={8}>
-            {item.image ? (
-              <Image src={item.image} width={50} height={50} className={styles.image} alt="" />
+  const handleMarketSelect = (item) => {
+    dispatch($token.set.current(item))
+    router.push(`/exchange/${blockchain.code}/${item.address}`, undefined, { scroll: false })
+    setIsMarketsDialogOpen(false)
+  }
+
+  return (
+    <App.Flex column full>
+      <App.Flex column gap={16} className={styles.info}>
+        <App.Flex row align="center" justify="space-between" className={styles.dropdown} onClick={handleMarketsDialogOpen}>
+          <App.Flex row aling="center" gap={8}>
+            {logo ? (
+              <Image src={logo} width={24} height={24} className={styles.image} alt="" onError={() => setLogo(null)} />
             ) : (
               <div className={styles.emptyImage} />
             )}
 
-            <App.Flex column sx={{ maxWidth: 170 }}>
-              <App.Text nowrap uppercase size={16} weight={600}>{item.symbol ?? item?.slug}<App.Text inline color="#B9B8C5" size={10} weight={600} >/{item?.name ? item.name.split('/')[1] : 'USDT'}</App.Text></App.Text>
-            </App.Flex>
+            <App.Text nowrap uppercase size={16} weight={600}>{item.symbol}<App.Text inline size={12} weight={600}>/{item.quoteSymbol}</App.Text></App.Text>
           </App.Flex>
+
+          <App.Icon icon="chevron-right3" />
         </App.Flex>
 
-        <App.Flex column>
-          <App.Text right size={16} weight={600}>${ item.price }</App.Text>
-          <App.Flex row align="center" justify="flex-end" gap={2}>
-            <App.Icon icon="caret-down" width={10} height={10} color={item.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C'} style={{transform: `rotate(${item.ticker?.type == 'plus' ? '180deg' : '0deg'})`}} />
-            <App.Text size={12} color={item.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C'}>{ item.ticker?.value }%</App.Text>
+        <App.Flex row center align="flex-start" justify="space-between">
+          <App.Flex column gap={8}>
+            <App.Text size={20} weight={700} height={1}>${ item.price }</App.Text>
+            <App.Flex row align="center" justify="flex-start" gap={2}>
+              <App.Text size={14} weight={600} height={1} color={item.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C'}>{ item.ticker?.value }%</App.Text>
+              <App.Icon icon="caret-down" width={12} height={12} color={item.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C'} style={{transform: `rotate(${item.ticker?.type == 'plus' ? '180deg' : '0deg'})`}} />
+            </App.Flex>
+          </App.Flex>
+
+          <App.Flex column gap={4}>
+            <App.Flex row align="center" justify="space-between" gap={16}>
+              <App.Text size={14} weight={400} height={1} color="#5E5C6B">High</App.Text>
+              <App.Text size={14} weight={400} height={1}>{item.high ?? 0} {item.quoteSymbol}</App.Text>
+            </App.Flex>
+
+            <App.Flex row align="center" justify="space-between" gap={16}>
+              <App.Text size={14} weight={400} height={1} color="#5E5C6B">Low</App.Text>
+              <App.Text size={14} weight={400} height={1}>{item.low ?? 0} {item.quoteSymbol}</App.Text>
+            </App.Flex>
+
+            <App.Flex row align="center" justify="space-between" gap={16}>
+              <App.Text size={14} weight={400} height={1} color="#5E5C6B">Volume</App.Text>
+              <App.Text size={14} weight={400} height={1}>{item.volume ?? 0} {item.quoteSymbol}</App.Text>
+            </App.Flex>
           </App.Flex>
         </App.Flex>
       </App.Flex>
 
-      <App.Flex column gap={16} sx={{ padding: '0 8px' }} flex={1}>
-        <App.Tabs options={tabs} active={tab} onChange={handleTabChange} height={22} variant={`mobile${isApp ? '-app' : ''}`} />
+      <App.Flex column gap={8} sx={{ padding: '8px 16px 0' }} flex={1}>
+        <App.Tabs options={tabs} active={tab} onChange={handleTabChange} height={36} variant={`mobile${isApp ? '-app' : ''}`} />
 
         <App.Flex column flex={1} sx={{ position: 'relative' }}>
           {(currentTab => {
             switch (currentTab) {
               case 'charts':
                 return (
-                  <App.Flex className={styles.absolute}><Chart version="mobile" showSwitch top={chartTop} /></App.Flex>
+                  <App.Flex className={styles.absolute}><Chart version="mobile" showSwitch /></App.Flex>
                 )
               case 'orderbook':
                 return (
@@ -232,16 +288,14 @@ const Mobile = forwardRef((_, ref) => {
         </App.Flex>
       </App.Flex>
 
-      <App.Flex column height={91} justify="flex-end">
-        <App.Hr color="#1F1C30" />
-
-        <App.Flex row gap={16} sx={{ padding: '16px' }}>
+      <App.Flex column height={73} justify="flex-end">
+        <App.Flex row gap={16} className={styles.buttonBox}>
           <App.Flex flex={1}>
-            <App.Button xl fullWidth variant="success" onClick={handleTradeFormOpen('buy')}>BUY</App.Button>
+            <App.Button large fullWidth variant="success" onClick={handleTradeFormOpen('buy')}>BUY</App.Button>
           </App.Flex>
 
           <App.Flex flex={1}>
-            <App.Button xl fullWidth variant="danger" onClick={handleTradeFormOpen('sell')}>SELL</App.Button>
+            <App.Button large fullWidth variant="danger" onClick={handleTradeFormOpen('sell')}>SELL</App.Button>
           </App.Flex>
         </App.Flex>
 
@@ -252,6 +306,10 @@ const Mobile = forwardRef((_, ref) => {
             side={tradeSide}
             onClose={handleTradeDialogClose}
           />
+        </App.Dialog>
+
+        <App.Dialog open={isMarketsDialogOpen} hideHeader fullBody fromRight onClose={handleMarketsDialogClose}>
+          <Markets markets={list} onClose={handleMarketsDialogClose} onSelect={handleMarketSelect} />
         </App.Dialog>
       </App.Flex>
     </App.Flex>

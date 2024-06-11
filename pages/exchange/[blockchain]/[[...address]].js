@@ -134,11 +134,7 @@ const Exchange = () => {
         </>
       ) : (
         <>
-          {!queryTokenId || queryTokenId == '0x' ? (
-            <Sidebar version="mobile" isApp={isApp} />
-          ) : (
-            <Mobile ref={mobileRef} />
-          )}
+          <Mobile ref={mobileRef} />
 
           <App.Dialog open={myOrdersDialogOpen} onClose={handleCloseOrdersDialog} hideHeader hideClose full>
             <App.Flex column full>
