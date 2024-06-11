@@ -13,6 +13,7 @@ import $point from '@/store/point'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
+import SidebarToshiBanner from '@/components/Exchange/Sidebar/SidebarToshiBanner'
 
 const Analytics = dynamic(import('@/components/Analytics'), {ssr: false})
 
@@ -167,6 +168,12 @@ const Wrapper = ({ children }) => {
                 {children}
                 {!isCampaign && !isApp && !isExchange && !isPD ? <Footer /> : null}
               </div>
+
+              {
+                page === 'exchange' && !isApp
+                  ? <SidebarToshiBanner />
+                  : null
+              }
             </div>
           : <Footer />
       }
