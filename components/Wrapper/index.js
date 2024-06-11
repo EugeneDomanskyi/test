@@ -13,8 +13,6 @@ import $point from '@/store/point'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
-import PointsPopup from '@/components/Points/PointsPopup'
-import SidebarToshiBanner from '@/components/Exchange/Sidebar/SidebarToshiBanner'
 
 const Analytics = dynamic(import('@/components/Analytics'), {ssr: false})
 
@@ -38,7 +36,6 @@ const Wrapper = ({ children }) => {
 
   const [isInIframe, setIsInIframe] = useState(false)
   const [showStickyBanner, setShowStickyBanner] = useState(false)
-  const [showPointsPopup, setShowPointsPopup] = useState(false)
 
   Amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY, !isApp, platform ?? 'Web')
 
@@ -90,10 +87,8 @@ const Wrapper = ({ children }) => {
       const bannerShown = localStorage.getItem('stickyShown')
       const popupShown = localStorage.getItem('pointsPopupShown')
       setShowStickyBanner(!bannerShown)
-      setShowPointsPopup(!popupShown)
     } else {
       setShowStickyBanner(false)
-      setShowPointsPopup(false)
     }
   }, [page])
 
@@ -159,51 +154,19 @@ const Wrapper = ({ children }) => {
     }
     Amplitude.event('Points Banner V1', {'Page': Amplitude.page(), 'Activity': 'Closed'})
   }
-
-  const handleClickStart = () => {
-    router.push('/points-dashboard')
-    localStorage.setItem('pointsPopupShown', 'true')
-    setShowPointsPopup(false)
-    const timestamp = localStorage.getItem('pointsPopupShownTS');
-    if (!timestamp) {
-      handleInteraction('pointsPopupShown')
-    }
-    Amplitude.event('Points Popup V1', {'Page': Amplitude.page(), 'Activity': 'Redirected'})
-  }
-
-  const handleClosePopup = () => {
-    setShowPointsPopup(false)
-    localStorage.setItem('pointsPopupShown', 'true')
-    const timestamp = localStorage.getItem('pointsPopupShownTS');
-    if (!timestamp) {
-      handleInteraction('pointsPopupShown')
-    }
-    Amplitude.event('Points Popup V1', {'Page': Amplitude.page(), 'Activity': 'Closed'})
-  }
   
   return (
     <div style={{ height: '100%' }}>
       {
         !isInIframe
-          ? <div style={{ height: '100%', position: 'relative', transition: '.4s' }}>
+          ? <div style={{ height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden' }}>
               <Analytics />
-              {
-                showPointsPopup
-                  ? <PointsPopup onClose={handleClosePopup} onStart={handleClickStart} />
-                  : null
-              }
               <StickyBanner onClose={handleCloseBanner} onOpen={handleOpenBanner} show={showStickyBanner} />
               {!isCampaign && !isApp ? <Header /> : null}
               <div style={{marginTop: page !== '' ? -72 : 0, height: showStickyBanner ? 'calc(100% - 28px)' : '100%'}}>
                 {children}
                 {!isCampaign && !isApp && !isExchange && !isPD ? <Footer /> : null}
               </div>
-
-              {
-                page === 'exchange' && !isApp
-                  ? <SidebarToshiBanner />
-                  : null
-              }
             </div>
           : <Footer />
       }
