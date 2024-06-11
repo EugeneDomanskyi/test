@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
-import Image from 'next/image'
 import cn from 'classnames'
 
 import Amplitude from '@/libs/amplitude.lib'
+
+import $point from '@/store/point'
 
 import App from '@/components/App'
 
@@ -25,14 +26,23 @@ const SidebarToshiPopup = () => {
   }, [])
 
   useEffect(() => {
-    setTimeout(() => {
-      const bannerShown = localStorage.getItem('brettPopup');
-      
-      if (! bannerShown) {
-        setShowBanner(true)
-      }
-    }, 1000)
+    fetchTournament()
   }, [])
+
+  const fetchTournament = async () => {
+    const result = await $point.api.tournament('brett-brawl-s2')
+    if (result && result?.data) {
+      if (result.data.status === 'active') {
+        setTimeout(() => {
+          const bannerShown = localStorage.getItem('brettPopup');
+          
+          if (! bannerShown) {
+            setShowBanner(true)
+          }
+        }, 1000)
+      }
+    }
+  }
 
   const handleUserSession = () => {
     const currentTime = new Date().getTime();
