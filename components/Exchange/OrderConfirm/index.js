@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import { formatUnits, parseUnits } from 'viem'
@@ -25,118 +25,119 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
   const isApp = useSelector(({ $app }) => $app.isApp)
   const portfolio = useSelector(({ $portfolio }) => $portfolio.list)
 
-  const [step, setStep] = useState('preview')
+  const [step, setStep] = useState('sign')
+
+  useEffect(() => {
+    handleNextStep()
+  }, [])
 
   const handleNextStep = async () => {
-    if (step == 'preview') {
-      setStep('sign')
-      const spendToken = side === 'buy' ? current.quote : current.address
-      const allowanceAmountBigInt = await WagmiHelper.getAllowance(spendToken)
-      if (allowanceAmountBigInt == null) {
-        onClose()
-        return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
-      }
-      console.log('--- Result from Allowance check', allowanceAmountBigInt)
+    const spendToken = side === 'buy' ? current.quote : current.address
+    const allowanceAmountBigInt = await WagmiHelper.getAllowance(spendToken)
+    if (allowanceAmountBigInt == null) {
+      onClose()
+      return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
+    }
+    console.log('--- Result from Allowance check', allowanceAmountBigInt)
 
-      const spendDecimals = side === 'buy' ? current.quoteDecimals : current.decimals
-      const allowanceAmount = formatUnits(allowanceAmountBigInt, spendDecimals)
-      console.log(`--- Result from Allowance using decimals ${spendDecimals}`, allowanceAmount)
+    const spendDecimals = side === 'buy' ? current.quoteDecimals : current.decimals
+    const allowanceAmount = formatUnits(allowanceAmountBigInt, spendDecimals)
+    console.log(`--- Result from Allowance using decimals ${spendDecimals}`, allowanceAmount)
 
-      let requiredAmount = 0
-      if (side === 'buy') {
-        const placed = portfolio.find(item => item.address == current.quote)?.placed ?? 0
-        requiredAmount = Math.ceil(total * 1 + placed * 1)
-      } else {
-        const placed = portfolio.find(item => item.address == current.address)?.placed ?? 0
-        requiredAmount = Math.ceil(amount * 1 + placed * 1)
-      }
-      console.log('--- Required amount for Approval with placed amount', requiredAmount)
+    let requiredAmount = 0
+    if (side === 'buy') {
+      const placed = portfolio.find(item => item.address == current.quote)?.placed ?? 0
+      requiredAmount = Math.ceil(total * 1 + placed * 1)
+    } else {
+      const placed = portfolio.find(item => item.address == current.address)?.placed ?? 0
+      requiredAmount = Math.ceil(amount * 1 + placed * 1)
+    }
+    console.log('--- Required amount for Approval with placed amount', requiredAmount)
 
-      if (allowanceAmount * 1 < requiredAmount * 1) {
-        if (spendToken === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
-          const reset = await WagmiHelper.approveAmount(spendToken, parseUnits('0', spendDecimals))
-          if (reset == null) {
-            onClose()
-            return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
-          }
-        }
-
-        const approveTxId = await WagmiHelper.approveAmount(spendToken, parseUnits(Number.MAX_SAFE_INTEGER.toString(), spendDecimals))
-        if (approveTxId == null) {
+    if (allowanceAmount * 1 < requiredAmount * 1) {
+      if (spendToken === '0xdac17f958d2ee523a2206206994597c13d831ec7') {
+        const reset = await WagmiHelper.approveAmount(spendToken, parseUnits('0', spendDecimals))
+        if (reset == null) {
           onClose()
           return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
         }
-        console.log('--- Result from Approve TxID', approveTxId)
       }
 
-      setStep('place')
+      const approveTxId = await WagmiHelper.approveAmount(spendToken, parseUnits(Number.MAX_SAFE_INTEGER.toString(), spendDecimals))
+      if (approveTxId == null) {
+        onClose()
+        return handleError('Trade not approved', `Your trade for ${numeral(amount).format('0.[00000]')} ${current.symbol} was not successful. Please check the spending cap in your wallet.`)
+      }
+      console.log('--- Result from Approve TxID', approveTxId)
+    }
 
-      const typedData = await $orders.api.typedData({
-        chain_id: blockchain.id,
+    setStep('place')
+
+    const typedData = await $orders.api.typedData({
+      chain_id: blockchain.id,
+      wallet_address: wallet,
+      market_symbol: `${current.symbol}_${current.quoteSymbol}`,
+      side,
+      price: parseFloat(price),
+      amount: parseFloat(amount),
+    })
+
+    if (typedData?.error || ! typedData) {
+      onClose()
+      return handleError('Order not created', 'Please try again to place your order.')
+    }
+
+    const signature = await WagmiHelper.signTypedData(typedData.data.sign_data).catch(error => {
+      onClose()
+      return handleError('Order not created', 'Please check your wallet and try again to place your order.')
+    })
+
+    if (!signature) {
+      onClose()
+      return handleError('Order not created', 'Please check your wallet and try again to place your order.')
+    }
+
+    const result = await $orders.api.place({
+      ...typedData.data.limit_order,
+      signature,
+    })
+
+
+    if (result?.error) {
+      onClose()
+      return handleError('Order not created', result.error)
+    }
+
+    Amplitude.event('Create Order Submit', {
+      'Base Currency': side === 'buy' ? current.symbol : current.quoteSymbol,
+      'Quote Currency': side === 'buy' ? current.quoteSymbol : current.symbol,
+      'Side': side.toUpperCase(),
+      'Quantity': numeral(amount).format('0.[00000]'),
+      'Price': numeral(price).format('0.[00000]'),
+      'Total': numeral(total).format('0.[00000]'),
+      'Order Id': result.data.orderId,
+      'Source': isApp ? 'App' : 'Web',
+      'Chain ID': blockchain?.id,
+      'Market ID': current?.address,
+    })
+
+    dispatch($orders.set.add(result.data))
+
+    if (current.symbol == 'BRETT') {
+      localStorage.setItem('hideBrettBrawl', 1)
+      dispatch($point.set.showBrett(false))
+    }
+
+    const vid = localStorage.getItem('ms_vid')
+    if (vid) {
+      $app.api.volume({
         wallet_address: wallet,
-        market_symbol: `${current.symbol}_${current.quoteSymbol}`,
-        side,
-        price: parseFloat(price),
-        amount: parseFloat(amount),
+        vid,
       })
+    }
 
-      if (typedData?.error || ! typedData) {
-        onClose()
-        return handleError('Order not created', 'Please try again to place your order.')
-      }
-
-      const signature = await WagmiHelper.signTypedData(typedData.data.sign_data).catch(error => {
-        onClose()
-        return handleError('Order not created', 'Please check your wallet and try again to place your order.')
-      })
-
-      if (!signature) {
-        onClose()
-        return handleError('Order not created', 'Please check your wallet and try again to place your order.')
-      }
-
-      const result = await $orders.api.place({
-        ...typedData.data.limit_order,
-        signature,
-      })
-
-
-      if (result?.error) {
-        onClose()
-        return handleError('Order not created', result.error)
-      }
-
-      Amplitude.event('Create Order Submit', {
-        'Base Currency': side === 'buy' ? current.symbol : current.quoteSymbol,
-        'Quote Currency': side === 'buy' ? current.quoteSymbol : current.symbol,
-        'Side': side.toUpperCase(),
-        'Quantity': numeral(amount).format('0.[00000]'),
-        'Price': numeral(price).format('0.[00000]'),
-        'Total': numeral(total).format('0.[00000]'),
-        'Order Id': result.data.orderId,
-        'Source': isApp ? 'App' : 'Web',
-        'Chain ID': blockchain?.id,
-        'Market ID': current?.address,
-      })
-
-      dispatch($orders.set.add(result.data))
-
-      if (current.symbol == 'BRETT') {
-        localStorage.setItem('hideBrettBrawl', 1)
-        dispatch($point.set.showBrett(false))
-      }
-
-      const vid = localStorage.getItem('ms_vid')
-      if (vid) {
-        $app.api.volume({
-          wallet_address: wallet,
-          vid,
-        })
-      }
-
-      if (onClose) {
-        onClose()
-      }
+    if (onClose) {
+      onClose()
     }
   }
 
@@ -190,15 +191,15 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
                 {side} {side === 'buy' ? current.symbol : current.quoteSymbol} with {side === 'sell' ? current.symbol : current.quoteSymbol}
               </App.Text>
 
-              {step == 'preview' ? (
+              {/* {step == 'preview' ? (
                   <App.Flex align="center" justify="center" onClick={onBack} className={styles.backButton}>
                     <App.Icon icon="arrow-right" color="#fff" width={24} height={24} />
                   </App.Flex>
-              ) : null}
+              ) : null} */}
             </App.Flex>
         ) : null}
 
-        {step == 'preview' ? (
+        {/* {step == 'preview' ? (
             <App.Flex column fullWidth gap={24}>
               <App.Flex column gap={16} fullWidth sx={{ padding: '16px 24px 0' }}>
                 <App.Flex column fullWidth gap={12}>
@@ -247,7 +248,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
                 </App.Button>
               </App.Flex>
             </App.Flex>
-        ) : null}
+        ) : null} */}
 
         {step == 'sign' || step == 'place' ? (
             isApp ? (
