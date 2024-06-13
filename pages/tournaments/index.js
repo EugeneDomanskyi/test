@@ -13,7 +13,6 @@ import App from '@/components/App'
 import PointsCountdownBrett from '@/components/Points/PointsCountdownBrett'
 
 import styles from './styles.module.scss'
-import moment from 'moment'
 
 const Tournaments = () => {
   const router = useRouter()
@@ -137,6 +136,7 @@ const Tournaments = () => {
             getSortedKeys().length ? (
               getSortedKeys().map((key, index) => {
                 const tournament = tournaments[key]
+                console.log(key)
                 return (
                   <App.Flex column key={index} gap={16}>
                     <App.Flex direction={['row', 'column']} gap={16} fullWidth className={styles.header} align="center" justify="space-between">

@@ -161,7 +161,7 @@ const Wrapper = ({ children }) => {
     <div style={{ height: '100%' }}>
       {
         !isInIframe
-          ? <div style={{ height: '100%', position: 'relative', transition: '.4s' }}>
+          ? <div style={{ height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden' }}>
               <Analytics />
               <StickyBanner onClose={handleCloseBanner} onOpen={handleOpenBanner} show={showStickyBanner} />
               {!isCampaign && !isApp ? <Header /> : null}

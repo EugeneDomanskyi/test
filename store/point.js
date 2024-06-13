@@ -170,6 +170,9 @@ export const pointSlice = createSlice({
           case 'toshi':
             value.name = 'Toshi Mania'
             break
+          case 'brett_brawl_s2':
+            value.name = 'Brett Brawl S2'
+            break
           default:
             value.name = value.alias
             break
