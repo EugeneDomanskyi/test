@@ -124,33 +124,33 @@
   }
 
   &.primary2 {
-    height: 48px;
+    height: 40px;
     background-color: #6B41EB;
-    border-color: #6B41EB;
+    border-color: #003199;
     border-radius: 100px;
     padding: 0 16px;
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: 700;
+    font-size: 14px;
     line-height: 25px;
+    border-radius: 12px;
 
     &.quest {
-      border-radius: 12px;
       background: linear-gradient(180deg, #6B41EB -6.02%, #241164 85.68%);
       border-bottom: 2px solid #6B41EB;
     }
 
     &.active:not(:disabled),
     &:hover:not(:disabled) {
-      background: linear-gradient(180deg, #3d008c -6.02%, #241164 85.68%);
+      background: #4d29bb;
     }
 
     &.outlined {
       background-color: transparent;
-      border-color: #6B41EB;
+      border-color: #003199;
 
       &.active:not(:disabled),
       &:hover:not(:disabled) {
-        border-color: #3d008c;
+        border-color: #002472;
         background-color: transparent;
       }
     }

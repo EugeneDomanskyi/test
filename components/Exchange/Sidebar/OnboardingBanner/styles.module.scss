@@ -4,6 +4,24 @@
   bottom: 0;
   width: 394px;
 
+  .buttonBox {
+    height: 0;
+    overflow: hidden;
+
+    &.show {
+      height: 36px;
+    }
+
+    .expandButton {
+      border-radius: 99px;
+      border: 1px solid #B2A0EC;
+      background: #6B41EB;
+      height: 36px;
+      padding: 0 8px;
+      cursor: pointer;
+    }
+  }
+
   .bannerBox {
     position: relative;
     height: 0;
@@ -11,8 +29,10 @@
     transition: all 0.3s;
     width: 100%;
 
-    &.show {
-      height: 244px;
+    &.show { 
+      &.bannerBox1 {
+        height: 238px;
+      }
     }
 
     .banner {
