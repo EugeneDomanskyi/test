@@ -109,15 +109,15 @@ export const ordersSlice = createSlice({
     },
 
     orderbookUpdate: (state, { payload }) => {
-      const updatedBuy = payload.bids.reduce((acc, item) => ({...acc, [item.price_float]: item.quantity_float}), {})
-      const updatedSell = payload.asks.reduce((acc, item) => ({...acc, [item.price_float]: item.quantity_float}), {})
-      const buyObj = state.orderbook.buy.reduce((acc, item) => ({...acc, [item.price_float]: item.quantity_float}), {})
-      const sellObj = state.orderbook.sell.reduce((acc, item) => ({...acc, [item.price_float]: item.quantity_float}), {})
+      const updatedBuy = payload.bids.reduce((acc, item) => ({...acc, [item.price]: item.quantity}), {})
+      const updatedSell = payload.asks.reduce((acc, item) => ({...acc, [item.price]: item.quantity}), {})
+      const buyObj = state.orderbook.buy.reduce((acc, item) => ({...acc, [item.price]: item.quantity}), {})
+      const sellObj = state.orderbook.sell.reduce((acc, item) => ({...acc, [item.price]: item.quantity}), {})
       const buy = {...buyObj, ...updatedBuy}
       const sell = {...sellObj, ...updatedSell}
       state.orderbook = {
-        buy: Object.entries(buy).reduce((acc, [price_float, quantity_float]) => [...acc, {price_float, quantity_float}], []),
-        sell: Object.entries(sell).reduce((acc, [price_float, quantity_float]) => [...acc, {price_float, quantity_float}], []),
+        buy: Object.entries(buy).reduce((acc, [price, quantity]) => [...acc, {price, quantity}], []),
+        sell: Object.entries(sell).reduce((acc, [price, quantity]) => [...acc, {price, quantity}], []),
       }
     },
 
@@ -158,20 +158,20 @@ const get = {
     }
 
     if (sorted?.buy && sorted?.sell) {
-      sorted.buy.sort((a, b) => b.price_float * 1 - a.price_float * 1)
-      sorted.sell.sort((a, b) => a.price_float * 1 - b.price_float * 1)
+      sorted.buy.sort((a, b) => b.price * 1 - a.price * 1)
+      sorted.sell.sort((a, b) => a.price * 1 - b.price * 1)
 
       return Object.entries(sorted).reduce((acc, [side, values]) => {
         let prevVolume = 0
         return {
           ...acc,
-          [side]: values.filter(item => item.quantity_float * 1).slice(0, 10).map((row) => {
-            prevVolume += row.quantity_float * 1
+          [side]: values.filter(item => item.quantity * 1).slice(0, 10).map((row) => {
+            prevVolume += row.quantity * 1
             return {
-              priceFormatted: row.price_float,
-              price: row.price_float,
+              priceFormatted: row.price,
+              price: row.price,
               volume: new Decimal(prevVolume).toFixed(),
-              quantity: row.quantity_float,
+              quantity: row.quantity,
             }
           })
         }
