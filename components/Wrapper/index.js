@@ -14,6 +14,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
 import SidebarToshiBanner from '@/components/Exchange/Sidebar/SidebarToshiBanner'
+import OnboardingBanner from '@/components/Exchange/Sidebar/OnboardingBanner'
 
 const Analytics = dynamic(import('@/components/Analytics'), {ssr: false})
 
@@ -175,6 +176,8 @@ const Wrapper = ({ children }) => {
                   ? <SidebarToshiBanner />
                   : null
               }
+
+              {page === 'exchange' && !isApp ? <OnboardingBanner /> : null}
             </div>
           : <Footer />
       }
