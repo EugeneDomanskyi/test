@@ -6,32 +6,40 @@ import { request } from './index'
 import Decimal from 'decimal.js'
 
 export const template = (item) => {
-  let status = 'unknown'
-  switch (item.status) {
-    case 'Active':
-      status = 'open'
-      break
-    case 'Matched':
-    case 'Completed':
-    case 'Filled':
-      status = 'completed'
-      break
-    case 'Partial':
-      status = 'partial'
-      break
-    case 'Cancelled':
-      status = 'cancelled'
-      break
-  }
+  // let status = 'unknown'
+  // switch (item.status) {
+  //   case 'active':
+  //   case 'active_under_settlement':
+  //     status = 'open'
+  //     break
+    // 'completed'
+    // 'partially_completed'
+    // 'partially_completed_cancelled'
+    // 'cancelled'
+    // 'cancelled_by_system'
+    // case 'Active':
+    //   status = 'open'
+    //   break
+    // case 'Matched':
+    // case 'Completed':
+    // case 'Filled':
+    //   status = 'completed'
+    //   break
+    // case 'Partial':
+    //   status = 'partial'
+    //   break
+    // case 'Cancelled':
+    //   status = 'cancelled'
+    //   break
+  // }
 
-  if (status == 'cancelled' && item.quantityFilled > 0) {
-    status = 'partial'
-  }
+  // if (status == 'cancelled' && item.quantityFilled > 0) {
+  //   status = 'partial'
+  // }
 
   return {
     ...item,
     id: item.orderId,
-    status,
     time: moment(item.time).format('DD MMM, HH:mm'),
     timeMoment: moment(item.time),
   }
@@ -136,8 +144,8 @@ const get = {
     state => state.$orders.list,
   ], (orders) => {
     return {
-      open: orders.filter(order => order.status === 'open'),
-      closed: orders.filter(order => order.status === 'completed' || order.status === 'cancelled' || order.status === 'partial')
+      open: orders.filter(order => order.status === 'open' || order.status_data.is_pending),
+      closed: orders.filter(order => order.status !== 'open' && !order.status_data.is_pending),
     }
   }),
   orderbook: createSelector([
