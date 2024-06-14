@@ -172,6 +172,15 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon == 'check-circle') {
+      return (
+        <svg width={width ?? 16} height={height ?? 17} viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#A6DC37'} d="M7.99996 15.1664C11.6665 15.1664 14.6664 12.1665 14.6664 8.49996C14.6664 4.8334 11.6665 1.8335 7.99996 1.8335C4.3334 1.8335 1.3335 4.8334 1.3335 8.49996C1.3335 12.1665 4.3334 15.1664 7.99996 15.1664Z" stroke-width="0.999969" stroke-linecap="round" stroke-linejoin="round"/>
+          <path stroke={color ?? '#A6DC37'} d="M5.16699 8.50013L7.0536 10.3867L10.8335 6.61353" stroke-width="0.999969" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      )
+    }
+
     if (icon == 'check-circle-fill') {
       return (
         <svg width={width ?? 48} height={height ?? 49} viewBox="0 0 48 49" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>

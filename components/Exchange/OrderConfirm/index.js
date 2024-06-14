@@ -24,6 +24,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
   const dispatch = useDispatch()
   const isApp = useSelector(({ $app }) => $app.isApp)
   const portfolio = useSelector(({ $portfolio }) => $portfolio.list)
+  const orders = useSelector($orders.get.list)
 
   const [step, setStep] = useState('sign')
 
@@ -106,6 +107,10 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
     if (result?.error) {
       onClose()
       return handleError('Order not created', result.error)
+    }
+
+    if (orders.length == 0) {
+      dispatch($alert.set.success({title: '500 Gems Credited'}))
     }
 
     Amplitude.event('Create Order Submit', {

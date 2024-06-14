@@ -9,6 +9,7 @@ import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $app from '@/store/app'
 import $point from '@/store/point'
+import $alert from '@/store/alert'
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -113,10 +114,19 @@ const Wrapper = ({ children }) => {
   }
 
   const registerUser = async () => {
-    await $point.api.register({ wallet_address: wallet, referral_code: localStorage.getItem('referral') ?? '' })
+    const create = await $point.api.register({ wallet_address: wallet, referral_code: localStorage.getItem('referral') ?? '' })
+    if (!create?.error) {
+      dispatch($alert.set.success({title: '100 Gems Credited'}))
+    }
+
     const result = await $point.api.referral(wallet)
     if (result && result?.data) {
       dispatch($point.set.referral(result?.data))
+    }
+
+    const onboardingStep = localStorage.getItem('onboardingStep')
+    if (!onboardingStep) {
+      localStorage.setItem('onboardingStep', 0)
     }
   }
 
