@@ -5,7 +5,7 @@ import cn from 'classnames'
 
 import Amplitude from '@/libs/amplitude.lib'
 
-import $point from '@/store/point'
+import $gem from '@/store/gem'
 
 import App from '@/components/App'
 
@@ -30,7 +30,7 @@ const SidebarToshiPopup = () => {
   }, [])
 
   const fetchTournament = async () => {
-    const result = await $point.api.tournament('brett-brawl-s2')
+    const result = await $gem.api.tournament('brett-brawl-s2')
     if (result && result?.data) {
       if (result.data.status === 'active') {
         setTimeout(() => {

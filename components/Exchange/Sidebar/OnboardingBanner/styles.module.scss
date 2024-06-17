@@ -1,0 +1,90 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: rgba(11, 8, 32, 0.20);
+  backdrop-filter: blur(15.050000190734863px);
+}
+
+.container {
+  position: fixed;
+  z-index: 11;
+  left: 8px;
+  bottom: 0;
+  width: 394px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    left: 0;
+  }
+
+  .buttonBox {
+    height: 0;
+    overflow: hidden;
+
+    &.show {
+      height: 36px;
+    }
+
+    .expandButton {
+      border-radius: 99px;
+      border: 1px solid #B2A0EC;
+      background: #6B41EB;
+      height: 36px;
+      padding: 0 8px;
+      cursor: pointer;
+    }
+  }
+
+  .bannerBox {
+    position: relative;
+    height: 0;
+    overflow: hidden;
+    transition: all 0.3s;
+    width: 100%;
+
+    &.show { 
+      &.bannerBox0 {
+        height: 238px;
+      }
+
+      &.bannerBox1 {
+        height: 182px;
+
+        @media (max-width: 768px) {
+          width: calc(100% - 32px);
+          margin-left: 16px;
+          height: 286px;
+        }
+      }
+
+      &.bannerBox2 {
+        height: 312px;
+      }
+    }
+
+    .banner {
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 24px 16px 16px 16px;
+      border-radius: 12px;
+      border: 1px solid #8E70EA;
+      background: linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.03) 100%), #0B0915;
+      box-shadow: 0px 10px 72px 0px rgba(0, 0, 0, 0.11), 0px 2px 11.7px 0px rgba(0, 0, 0, 0.05);
+
+      @media (max-width: 768px) {
+        border-radius: 24px 24px 0px 0px;
+        border-color: #1C172B;
+      }
+    }
+
+    .content {
+      padding: 16px;
+      border-radius: 12px;
+      background: radial-gradient(134.18% 120.73% at 67.99% -35.17%, #231F38 0%, #100D21 100%);
+    }
+  }
+}

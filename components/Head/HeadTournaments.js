@@ -6,7 +6,7 @@ const HeadTournaments = () => {
   }
 
   const getDescription = () => {
-    return 'Trade on Tegro order book DEX to collect points and win top Base layer 2 tokens like BRETT, TOSHI, USDC, WETH, and more!'
+    return 'Trade on Tegro order book DEX to collect gems and win top Base layer 2 tokens like BRETT, TOSHI, USDC, WETH, and more!'
   }
 
   const getUrl = () => {

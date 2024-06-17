@@ -8,12 +8,14 @@ import useAppHelper from '@/myhooks/useAppHelper'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $app from '@/store/app'
-import $point from '@/store/point'
+import $gem from '@/store/gem'
+import $alert from '@/store/alert'
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
 import SidebarToshiBanner from '@/components/Exchange/Sidebar/SidebarToshiBanner'
+import OnboardingBanner from '@/components/Exchange/Sidebar/OnboardingBanner'
 
 const Analytics = dynamic(import('@/components/Analytics'), {ssr: false})
 
@@ -26,13 +28,14 @@ const Wrapper = ({ children }) => {
   const isCampaign = router.asPath?.includes('/campaign')
   const isExchange = router.asPath?.includes('/exchange')
   const [_, page] = router.asPath.split('/')
-  const isPD = router.asPath?.includes('/points-dashboard')
+  const isGD = router.asPath?.includes('/gems-dashboard')
   const { referral } = router.query
 
   const dispatch = useDispatch()
   const isApp = useSelector(({ $app }) => $app.isApp)
+  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const platform = useSelector(({ $app }) => $app.platform)
-  const stats = useSelector(({ $point }) => $point.stats)
+  const stats = useSelector(({ $gem }) => $gem.stats)
   const blockchain = useSelector($app.get.blockchain)
 
   const [isInIframe, setIsInIframe] = useState(false)
@@ -55,7 +58,7 @@ const Wrapper = ({ children }) => {
   }, [])
 
   useEffect(() => {
-    if (page != 'points-dashboard') {
+    if (page != 'gems-dashboard') {
       Amplitude.event(`Page Visited`, {
         'Page': Amplitude.page(),
         'Chain ID': blockchain?.id,
@@ -78,15 +81,15 @@ const Wrapper = ({ children }) => {
 
   useEffect(() => {
     if (wallet && stats?.liquidity_mining) {
-      localStorage.setItem('pointsExistingUser', true);
+      localStorage.setItem('gemsExistingUser', true);
     }
   }, [wallet, stats])
 
   useEffect(() => {
-    const existingUser = localStorage.getItem('pointsExistingUser');
+    const existingUser = localStorage.getItem('gemsExistingUser');
     if (page === '' && ! isApp && ! existingUser) {
       const bannerShown = localStorage.getItem('stickyShown')
-      const popupShown = localStorage.getItem('pointsPopupShown')
+      const popupShown = localStorage.getItem('gemsPopupShown')
       setShowStickyBanner(!bannerShown)
     } else {
       setShowStickyBanner(false)
@@ -96,25 +99,34 @@ const Wrapper = ({ children }) => {
   const handleUserSession = () => {
     const currentTime = new Date().getTime();
     const bannerTS = localStorage.getItem('stickyShownTS');
-    const popupTS = localStorage.getItem('pointsPopupShownTS');
+    const popupTS = localStorage.getItem('gemsPopupShownTS');
 
-    // remove sticky banner and points popup after 24 hours
+    // remove sticky banner and gems popup after 24 hours
     if (bannerTS && (currentTime - bannerTS) > 24 * 60 * 60 * 1000) {
       localStorage.removeItem('stickyShown');
       localStorage.removeItem('stickyShownTS');
     }
 
     if (popupTS && (currentTime - popupTS) > 24 * 60 * 60 * 1000) {
-      localStorage.removeItem('pointsPopupShown');
-      localStorage.removeItem('pointsPopupShownTS');
+      localStorage.removeItem('gemsPopupShown');
+      localStorage.removeItem('gemsPopupShownTS');
     }
   }
 
   const registerUser = async () => {
-    await $point.api.register({ wallet_address: wallet, referral_code: localStorage.getItem('referral') ?? '' })
-    const result = await $point.api.referral(wallet)
+    const create = await $gem.api.register({ wallet_address: wallet, referral_code: localStorage.getItem('referral') ?? '' })
+    if (!create?.error) {
+      dispatch($alert.set.success({title: '100 Gems Credited'}))
+    }
+
+    const result = await $gem.api.referral(wallet)
     if (result && result?.data) {
-      dispatch($point.set.referral(result?.data))
+      dispatch($gem.set.referral(result?.data))
+    }
+
+    const onboardingStep = localStorage.getItem('onboardingStep')
+    if (!onboardingStep) {
+      localStorage.setItem('onboardingStep', 0)
     }
   }
 
@@ -137,13 +149,13 @@ const Wrapper = ({ children }) => {
   }
 
   const handleOpenBanner = () => {
-    router.push('/points-dashboard')
+    router.push('/gems-dashboard')
     localStorage.setItem('stickyShown', true)
     const timestamp = localStorage.getItem('stickyShownTS');
     if (!timestamp) {
       handleInteraction('stickyShown')
     }
-    Amplitude.event('Points Banner V1', {'Page': Amplitude.page(), 'Activity': 'Redirected'})
+    Amplitude.event('Gems Banner V1', {'Page': Amplitude.page(), 'Activity': 'Redirected'})
   }
 
   const handleCloseBanner = () => {
@@ -153,7 +165,7 @@ const Wrapper = ({ children }) => {
     if (!timestamp) {
       handleInteraction('stickyShown')
     }
-    Amplitude.event('Points Banner V1', {'Page': Amplitude.page(), 'Activity': 'Closed'})
+    Amplitude.event('Gems Banner V1', {'Page': Amplitude.page(), 'Activity': 'Closed'})
   }
   
   return (
@@ -164,9 +176,9 @@ const Wrapper = ({ children }) => {
               <Analytics />
               <StickyBanner onClose={handleCloseBanner} onOpen={handleOpenBanner} show={showStickyBanner} />
               {!isCampaign && !isApp ? <Header /> : null}
-              <div style={{marginTop: page !== '' ? -72 : 0, height: showStickyBanner ? 'calc(100% - 28px)' : '100%'}}>
+              <div style={{marginTop: page !== '' ? (isMobile ? -60 : -72) : 0, height: showStickyBanner ? 'calc(100% - 28px)' : '100%'}}>
                 {children}
-                {!isCampaign && !isApp && !isExchange && !isPD ? <Footer /> : null}
+                {!isCampaign && !isApp && !isExchange && !isGD ? <Footer /> : null}
               </div>
 
               {
@@ -174,6 +186,8 @@ const Wrapper = ({ children }) => {
                   ? <SidebarToshiBanner />
                   : null
               }
+
+              {page === 'exchange' && !isApp ? <OnboardingBanner /> : null}
             </div>
           : <Footer />
       }

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
 
-import $point from '@/store/point'
+import $gem from '@/store/gem'
 
 import App from '@/components/App'
 
@@ -14,7 +14,7 @@ const SidebarBrettBanner = () => {
   const utmSource = router.query.utm_source
 
   const dispatch = useDispatch()
-  const showBrett = useSelector(({ $point }) => $point.showBrett)
+  const showBrett = useSelector(({ $gem }) => $gem.showBrett)
 
   const [showBanner, setShowBanner] = useState(true)
 
@@ -26,7 +26,7 @@ const SidebarBrettBanner = () => {
       }
     } else {
       if (!hideBanner) {
-        dispatch($point.set.showBrett(true))
+        dispatch($gem.set.showBrett(true))
       }
     }
   }, [utmSource])

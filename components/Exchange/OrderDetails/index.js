@@ -95,12 +95,16 @@ const OrderDetails = ({order}) => {
                 <App.Text size={14} weight={600} height={1} color="#B9B8C5">Trade Details</App.Text>
 
                 <App.Flex row fullWidth gap={16}>
-                  <App.Flex row width={100} align="center" sx={{ padding: '4px 0' }}>
+                  <App.Flex row width={90} align="center" sx={{ padding: '4px 0' }}>
                     <App.Text size={12} height={1} color="#5E5C6B">Date / Time</App.Text>
                   </App.Flex>
 
                   <App.Flex row width={100} align="center" sx={{ padding: '4px 0' }} flex={1}>
                     <App.Text size={12} height={1} color="#5E5C6B">Filled</App.Text>
+                  </App.Flex>
+
+                  <App.Flex row fullWidth align="center" sx={{ padding: '4px 0' }} flex={1}>
+                    <App.Text size={12} height={1} color="#5E5C6B">Status</App.Text>
                   </App.Flex>
 
                   <App.Flex row width={100} align="center" justify="flex-end" sx={{ padding: '4px 0' }} flex={1}>
@@ -112,12 +116,16 @@ const OrderDetails = ({order}) => {
               <App.Flex column fullWidth className={styles.scrollBox}>
                 {trades.map((item) => (
                   <App.Flex key={item.id} row fullWidth gap={16} className={styles.row}>
-                    <App.Flex row width={100} align="center">
+                    <App.Flex row width={90} align="center">
                       <App.Text size={12} weight={600} height={1} color="#B9B8C5">{moment(item.time).format('DD MMM, HH:mm:ss')}</App.Text>
                     </App.Flex>
 
-                    <App.Flex row width={100} align="center" flex={1}>
+                    <App.Flex row width={90} align="center" flex={1}>
                       <App.Text size={12} weight={600} height={1} color="#B9B8C5">{item.amount} {order.baseCurrency}</App.Text>
+                    </App.Flex>
+
+                    <App.Flex fullWidth align="center" flex={1} className={cn(styles.status, {[styles.success]: item.state === 'success'})}>
+                      <App.Text capitalize size={12} weight={500} height={1} color={item.state === 'success' ? '#53F19C' : '#FF1D61'}>{ item.state }</App.Text>
                     </App.Flex>
 
                     <App.Flex row width={100} align="center" gap={10} justify="flex-end" flex={1}>

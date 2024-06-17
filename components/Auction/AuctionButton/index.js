@@ -17,7 +17,7 @@ const AuctionButton = ({ item, small }) => {
   const router = useRouter()
   const { t } = useTranslation()
 
-  const stats = useSelector(({ $point }) => $point.stats)
+  const stats = useSelector(({ $gem }) => $gem.stats)
 
   const [isWarningDialog, setIsWarningDialog] = useState(false)
   const [time, setTime] = useState(item.time)
@@ -81,7 +81,7 @@ const AuctionButton = ({ item, small }) => {
       if (item.current) {
         console.log('Closed')
       } else {
-        router.push(`/points-dashboard/${item.id}`)
+        router.push(`/gems-dashboard/${item.id}`)
       }
     }
   }
@@ -115,8 +115,8 @@ const AuctionButton = ({ item, small }) => {
       <App.Dialog open={isWarningDialog} onClose={handleClose} title={t('Warning')}>
         <App.Flex column align="center" gap={32} sx={{ padding: 32 }}>
           <App.Flex column center gap={8}>
-            <App.Text center size={24} weight={600} height={1}>{t('You do not have enough points to bid')}</App.Text>
-            <App.Text center size={14} weight={400} color="#FFFFFF99">{t('You will need to earn points through the various task and bid for the rewards')}</App.Text>
+            <App.Text center size={24} weight={600} height={1}>{t('You do not have enough gems to bid')}</App.Text>
+            <App.Text center size={14} weight={400} color="#FFFFFF99">{t('You will need to earn gems through the various task and bid for the rewards')}</App.Text>
           </App.Flex>
 
           <App.Flex column gap={12} className={styles.warningBox}>
@@ -133,7 +133,7 @@ const AuctionButton = ({ item, small }) => {
           </App.Flex>
 
           <App.Flex column center fullWidth gap={16}>
-            <App.Text center size={20} weight={600} height={1}>{t('Increase liquidity now to earn points')}</App.Text>
+            <App.Text center size={20} weight={600} height={1}>{t('Increase liquidity now to earn gems')}</App.Text>
             <App.Flex row center fullWidth gap={16}>
               <App.Flex flex={1}>
                 <App.Button primary2 outlined fullWidth onClick={handleClose}>{t('Continue')}</App.Button>
