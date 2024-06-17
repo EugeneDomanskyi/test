@@ -11,7 +11,7 @@ import useWagmiHelper from '@/myhooks/useWagmiHelper'
 import $app from '@/store/app'
 import $orders from '@/store/orders'
 import $alert from '@/store/alert'
-import $point from '@/store/point'
+import $gem from '@/store/gem'
 
 import App from '@/components/App'
 
@@ -130,7 +130,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
 
     if (current.symbol == 'BRETT') {
       localStorage.setItem('hideBrettBrawl', 1)
-      dispatch($point.set.showBrett(false))
+      dispatch($gem.set.showBrett(false))
     }
 
     const vid = localStorage.getItem('ms_vid')

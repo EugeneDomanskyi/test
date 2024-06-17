@@ -80,8 +80,8 @@ const OnboardingBanner = () => {
 
   const handlePD = () => {
     handleClose()
-    localStorage.setItem('pointsTab', 'liquidity')
-    router.push('/points-dashboard')
+    localStorage.setItem('gemsTab', 'liquidity')
+    router.push('/gems-dashboard')
   }
 
   return stepBanner <= 2 ? (

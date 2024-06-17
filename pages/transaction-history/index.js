@@ -7,7 +7,7 @@ import cn from 'classnames'
 
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
-import $point from '@/store/point'
+import $gem from '@/store/gem'
 
 import App from '@/components/App'
 
@@ -21,15 +21,15 @@ const TransactionHistory = () => {
   const { wallet } = useWagmiHelper()
 
   const dispatch = useDispatch()
-  const transactions = useSelector(({ $point }) => $point.transactions)
+  const transactions = useSelector(({ $gem }) => $gem.transactions)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState('received')
 
   const tabs = [
-    { title: t(`Points Received`), key: 'received' },
-    { title: t(`Points Spent`), key: 'spent' },
+    { title: t(`Gems Received`), key: 'received' },
+    { title: t(`Gems Spent`), key: 'spent' },
   ]
 
   useEffect(() => {
@@ -39,9 +39,9 @@ const TransactionHistory = () => {
   }, [wallet])
 
   const fetchTransactions = async () => {
-    const result = await $point.api.transactions(wallet, {})
+    const result = await $gem.api.transactions(wallet, {})
     if (result?.data) {
-      dispatch($point.set.transactions(result.data))
+      dispatch($gem.set.transactions(result.data))
     }
     setLoading(false)
   }
@@ -51,7 +51,7 @@ const TransactionHistory = () => {
   }
 
   const handleBack = () => {
-    router.push(`/points-dashboard`)
+    router.push(`/gems-dashboard`)
   }
 
   return (
@@ -65,7 +65,7 @@ const TransactionHistory = () => {
           </App.Flex>
 
           <App.Flex column>
-            <App.Tabs active={tab} options={tabs} variant="points" onChange={handleTab} />
+            <App.Tabs active={tab} options={tabs} variant="gems" onChange={handleTab} />
 
             <App.Flex column>
               <App.Flex row>
@@ -100,7 +100,7 @@ const TransactionHistory = () => {
                 ) : null}
 
                 <App.Flex width={[200, 90]} align="center" justify="flex-end">
-                  <App.Text right weight={600} height={1} color="#A6DC37">{t(`Points`)}</App.Text>
+                  <App.Text right weight={600} height={1} color="#A6DC37">{t(`Gems`)}</App.Text>
                 </App.Flex>
 
                 <App.Flex className={styles.gradient} sx={[{ marginLeft: 24 }, { marginLeft: 8 }]} />
@@ -162,9 +162,9 @@ const TransactionHistory = () => {
 
                           <App.Flex width={[200, 90]} align="center" justify="flex-end">
                             {tab == 'received' ? (
-                              <App.Text right size={[16, 14]} weight={[600, 400]} height={1} color="#53F19C">+ {item.points} {t('Points')}</App.Text>
+                              <App.Text right size={[16, 14]} weight={[600, 400]} height={1} color="#53F19C">+ {item.points} {t('Gems')}</App.Text>
                             ) : (
-                              <App.Text right size={[16, 14]} weight={[600, 400]} height={1} color="#FF1D61">- {item.points} {t('Points')}</App.Text>
+                              <App.Text right size={[16, 14]} weight={[600, 400]} height={1} color="#FF1D61">- {item.points} {t('Gems')}</App.Text>
                             )}
                           </App.Flex>
                         </App.Flex>
