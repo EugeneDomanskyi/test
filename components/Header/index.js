@@ -16,7 +16,7 @@ const Header = () => {
   const router = useRouter()
   const isHome = router.asPath == '/'
   const isExchange = router.asPath?.includes('/exchange')
-  const isPD = router.asPath?.includes('/points-dashboard')
+  const isGD = router.asPath?.includes('/gems-dashboard')
   
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
@@ -70,9 +70,9 @@ const Header = () => {
                   </App.Flex>
                 </Link>
 
-                <Link href="/points-dashboard" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/points-dashboard')})}>
+                <Link href="/gems-dashboard" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/gems-dashboard')})}>
                   <App.Flex center fullHeight>
-                    <App.Text size={14} weight={600}>Points Dashboard</App.Text>
+                    <App.Text size={14} weight={600}>Gems Dashboard</App.Text>
                   </App.Flex>
                 </Link>
 
@@ -123,10 +123,10 @@ const Header = () => {
                 </App.Flex>
               </Link>
 
-              <Link href="/points-dashboard" className={cn(styles.link)}>
+              <Link href="/gems-dashboard" className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   {/* <App.Icon icon="menuExchange" /> */}
-                  <App.Text size={14} weight={700} color={router.pathname.includes('/points-dashboard') ? '#A6DC37' : '#fff'}>Points Dashboard</App.Text>
+                  <App.Text size={14} weight={700} color={router.pathname.includes('/gems-dashboard') ? '#A6DC37' : '#fff'}>Gems Dashboard</App.Text>
                 </App.Flex>
               </Link>
 
