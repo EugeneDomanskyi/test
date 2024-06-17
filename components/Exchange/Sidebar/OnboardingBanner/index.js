@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
+import Draggable from 'react-draggable'
 
 import $orders from '@/store/orders'
 
@@ -19,6 +20,7 @@ const OnboardingBanner = () => {
 
   const [showBanner, setShowBanner] = useState(false)
   const [stepBanner, setStepBanner] = useState()
+  const [dragging, setDragging] = useState(false)
 
   useEffect(() => {
     if (!connection.loading) {
@@ -68,20 +70,33 @@ const OnboardingBanner = () => {
     localStorage.setItem('onboardingExpand', value)
   }
 
-  const handleClose = () => {
+  const handleClose = (now = false) => {
     setShowBanner(false)
     localStorage.setItem('onboardingExpand', false)
 
     setTimeout(() => {
       setStepBanner(3)
       localStorage.setItem('onboardingStep', 3)
-    }, 500)
+    }, (now ? 1 : 500))
   }
 
   const handlePD = () => {
     handleClose()
     localStorage.setItem('gemsTab', 'liquidity')
     router.push('/gems-dashboard')
+  }
+  
+  const handleDrag = () => {
+    if (!dragging) {
+      setDragging(true)
+    }
+  }
+
+  const handleStop = () => {
+    if (!dragging) {
+      handleToggle()
+    }
+    setDragging(false)
   }
 
   return stepBanner <= 2 ? (
@@ -108,7 +123,22 @@ const OnboardingBanner = () => {
               </App.Flex>
             ) : null}
           </App.Flex>
-        ) : null}
+        ) : (
+          stepBanner == 1 ? (
+            <App.Flex className={cn(styles.mobileButtonBox, {[styles.show]: !showBanner})}>
+              <Draggable 
+                onDrag={handleDrag}
+                onStop={handleStop}
+                bounds="body"
+              >
+                <App.Flex row center gap={8} className={styles.expandButton}>
+                  <App.Text uppercase size={14} weight={700} height={1}>GET 500 GEMS</App.Text>
+                  <App.Icon icon="chevron-down" width={24} height={24} style={{ transform: 'rotate(180deg)' }}/>
+                </App.Flex>
+              </Draggable>
+            </App.Flex>
+          ) : null
+        )}
 
         <App.Flex className={cn(styles.bannerBox, {[styles.show]: showBanner}, styles[`bannerBox${stepBanner}`])}>
           {stepBanner == 0 ? (
@@ -157,7 +187,7 @@ const OnboardingBanner = () => {
                 <App.Flex column gap={8}>
                   <App.Button primary2 onClick={handleToggle}>Trade Now</App.Button>
 
-                  <App.Flex center height={40} onClick={handleClose}>
+                  <App.Flex center height={40} onClick={() => handleClose(true)}>
                     <App.Text size={14} weight={700} height={1} color="#FFFFFF99">Skip Onboarding</App.Text>
                   </App.Flex>
                 </App.Flex>
