@@ -281,10 +281,6 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
               {currentTab === 'buy' ? `${userBalances.quote} ${current.quoteSymbol}` : `${userBalances.base} ${current.symbol}`}
             </App.Text>
           </App.Flex>
-
-          <App.Flex sx={{ paddingRight: 14 }}>
-            <App.Text size={10} color="#b9b8c5">Fee: {blockchain?.info?.fee ?? 0}%</App.Text>
-          </App.Flex>
         </App.Flex>
 
         <App.Flex className={styles.multipler} align="center" gap={8}>
@@ -312,6 +308,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
                   warning={isWrongPrice}
                   onBlur={handleBlurPrice}
                   onChange={handleChangeForm('price', true)}
+                  style={{ width: 144, flex: 0 }}
                 />
                 
                 {version == 'mobile' ? (

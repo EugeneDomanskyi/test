@@ -307,7 +307,10 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
 
                     {Summary()}
 
-                    <App.Text center size={10} height={1} color="#5E5C6B">Please proceed in your wallet</App.Text>
+                    <App.Flex row fullWidth align="center" justify="space-between">
+                      <App.Text size={10} color="#5E5C6B">Fees: {blockchain?.info?.fee ?? 0}%</App.Text>
+                      <App.Text center size={10} height={1} color="#5E5C6B">Please proceed in your wallet</App.Text>
+                    </App.Flex>
                   </App.Flex>
                 </App.Flex>
             )
