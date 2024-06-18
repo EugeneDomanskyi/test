@@ -370,21 +370,27 @@ const Orders = ({global, type, version, onClickOrder}) => {
                   return (
                     <App.Flex column key={order.id}>
                       <App.Flex column className={styles.orderContainer}>
-                        <App.Flex align="center" className={cn(styles.order, {[styles.disabled]: order.status === 'completed' || order.status === 'cancelled' || order.status === 'partial'})}>
+                        <App.Flex align="center" className={cn(styles.order, {[styles.disabled]: order.status === 'closed' || order.status === 'cancelled'})}>
                           <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
-                          <App.Flex column align="center" justify="center" sx={{width: 90, padding: 8}}>
-                            {order.image && type === 'nfts' ? (
-                              <Image alt="" src={order.image} width={35} height={35} />
-                            ) : (
-                              order.quoteCurrency ? (
-                                <App.Flex column gap={4}>
-                                  <App.Text size={12} weight={600} center height={1}>{ order.baseCurrency }</App.Text>
-                                  <div style={{width: '100%', minWidth: 20, height: 1, background: '#B9B8C5'}} />
-                                  <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ order.quoteCurrency }</App.Text>
-                                </App.Flex>
-                              ) : null
-                            )}
+                          <App.Flex sx={{width: 90, paddingRight: 8}}>
+                            <App.Flex justify={'center'} align={'center'} sx={{width: 30}} className={cn(styles.iconGlass, {[styles.active]: order.status_data.is_pending})}>
+                              <App.Icon width={20} height={20} color="#fff" icon={"hourglass"} />
+                            </App.Flex>
+                            <App.Flex column align="center" justify="center" >
+                              {order.image && type === 'nfts' ? (
+                                <Image alt="" src={order.image} width={35} height={35} />
+                              ) : (
+                                order.quoteCurrency ? (
+                                  <App.Flex column gap={4}>
+                                    <App.Text size={12} weight={600} center height={1}>{ order.baseCurrency }</App.Text>
+                                    <div style={{width: '100%', minWidth: 20, height: 1, background: '#B9B8C5'}} />
+                                    <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ order.quoteCurrency }</App.Text>
+                                  </App.Flex>
+                                ) : null
+                              )}
+                            </App.Flex>
                           </App.Flex>
+
 
                           <App.Flex column sx={{width: 60, padding: 8}} align="center" justify="center">
                             <App.Flex column gap={4}>
@@ -407,7 +413,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                           <App.Text color="rgba(185, 184, 197, 1)" size={10} weight={500} sx={{marginRight: 12}} height={1}>{ order.time }</App.Text>
                           {order.status !== 'open' ? (
                             <App.Text color="#B9B8C5" size={10} weight={600} uppercase height={1}>
-                              {(order.status === 'completed' || order.status === 'cancelled' || order.status === 'partial') ? order.status : 'Cancel order'}
+                              {order.status}
                             </App.Text>
                           ) : null}
 
@@ -415,19 +421,19 @@ const Orders = ({global, type, version, onClickOrder}) => {
                             <App.Icon icon="copy" width={12} height={12} color="#B9B8C5" />
                           </App.Flex>
 
-                          {order.status !== 'open' ? (
+                          {order.status !== 'open' && !order.status_data.is_pending ? (
                             <App.Flex className={styles.actionButton} align="center" justify="center" onClick={handleClickDetails(order)}>
                               <App.Icon icon="order-details" />
                             </App.Flex>
                           ) : null}
 
-                          {order.status === 'open' ? (
+                          {order.status === 'open' && !order.status_data.is_pending ? (
                             <App.Flex className={styles.actionButton} align="center" justify="center" onClick={handlePressCancelConfirm(order)}>
                               <App.Icon icon="cross-circle" />
                             </App.Flex>
                           ) : null}
                         </App.Flex>
-
+                        {/* <App.Flex row className={cn(styles.filled, styles.pending)} width={`${Math.round(order.quantityFilled * 100 / order.quantity)}%`} /> */}
                         <App.Flex row className={cn(styles.filled, styles[Math.round(order.quantityFilled * 100 / order.quantity) < 100 ? 'notComplete' : 'complete'])} width={`${Math.round(order.quantityFilled * 100 / order.quantity)}%`} />
                       </App.Flex>
                     </App.Flex>
