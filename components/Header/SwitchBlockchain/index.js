@@ -35,41 +35,6 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
     }
   }, [])
 
-  // useEffect(() => {
-  //   (async () => {
-  //     if (queryBlockchain) {
-  //       if (queryBlockchain != blockchain.code) {
-  //         const newBlockchainCode = pageBlockchains.some(item => item.code == queryBlockchain) ? queryBlockchain : pageBlockchains?.[0]?.code
-  //         if (newBlockchainCode != blockchain.code) {
-  //           const newBlockchain = pageBlockchains.find(item => item.code == newBlockchainCode)
-  //           if (wagmiChainId) {
-  //             if (wagmiChainId != newBlockchain.id) {
-  //               const result = await WagmiHelper.changeChain(newBlockchainCode)
-  //               if (result) {
-  //                 dispatch($app.set.code(newBlockchain.code))
-  //                 return
-  //               }
-  //             }
-  //           }
-
-  //           dispatch($app.set.code(newBlockchain.code))
-  //         }
-  //       } else {
-  //         const newBlockchain = pageBlockchains.find(item => item.code == queryBlockchain)
-  //         if (wagmiChainId) {
-  //           if (wagmiChainId != newBlockchain.id) {
-  //             const result = await WagmiHelper.changeChain(queryBlockchain)
-  //             if (result) {
-  //               dispatch($app.set.code(queryBlockchain))
-  //               return
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //   })()
-  // }, [queryBlockchain, page])
-
   const handleBlockchainChange = async (val) => {
     if (val != blockchain.code) {
       const newBlockchain = pageBlockchains.find(item => item.code == val)
