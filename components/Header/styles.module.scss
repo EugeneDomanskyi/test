@@ -11,7 +11,7 @@
     background: #0B091566;
 
     @media (max-width: 768px) {
-      height: 60px;
+      height: 48px;
     }
 
     .logo {
@@ -229,7 +229,7 @@
 
   .mobileMenu {
     position: fixed;
-    top: 60px;
+    top: 48px;
     right: 100vw;
     left: 0;
     bottom: 0;
@@ -254,10 +254,10 @@
       flex-direction: column;
   
       .link {
-        // padding: 16px 16px;
-        padding: 24px;
+        padding: 0 16px;
+        height: 64px;
         width: 100%;
-        height: 34px;
+        white-space: nowrap;
         border-bottom: 1px solid rgba(255, 255, 255, 0.10);
 
         &.disabled {
