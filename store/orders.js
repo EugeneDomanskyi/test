@@ -42,6 +42,7 @@ export const ordersSlice = createSlice({
 
   initialState: {
     list: [],
+    loading: true,
     interval: {
       key: '4h',
       count: 4,
@@ -60,6 +61,10 @@ export const ordersSlice = createSlice({
   reducers: {
     list: (state, { payload }) => {
       state.list = payload.map(item => template(item))
+    },
+
+    loading: (state, { payload }) => {
+      state.loading = payload
     },
 
     add: (state, { payload }) => {

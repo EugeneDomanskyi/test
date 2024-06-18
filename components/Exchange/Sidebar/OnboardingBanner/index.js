@@ -15,7 +15,8 @@ const OnboardingBanner = () => {
   const router = useRouter()
   const { wallet, connection, connect } = useWagmiHelper()
 
-  const orders = useSelector($orders.get.list)
+  const orders = useSelector(({ $orders }) => $orders.list)
+  const ordersLoading = useSelector(({ $orders }) => $orders.loading)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
   const [showBanner, setShowBanner] = useState(false)
@@ -26,7 +27,7 @@ const OnboardingBanner = () => {
     if (!connection.loading) {
       getBannerVisibility()
     }
-  }, [connection.loading, connection.connected, wallet, orders])
+  }, [connection.loading, connection.connected, wallet, orders, ordersLoading])
 
   const getBannerVisibility = async () => {
     const onboardingStep = localStorage.getItem('onboardingStep')
@@ -40,20 +41,22 @@ const OnboardingBanner = () => {
         setStepBanner(null)
       }
     } else {
-      if (orders.length == 0) {
-        setStepBanner(1)
-        setShowBanner(onboardingExpand == 'false' ? false : true)
-        localStorage.setItem('onboardingStep', 1)
-      } else {
-        if (onboardingStep == 1) {
-          setStepBanner(2)
-          localStorage.setItem('onboardingStep', 2)
-
-          setShowBanner(true)
-          localStorage.setItem('onboardingExpand', true)
+      if (!ordersLoading) {
+        if (orders.length == 0) {
+          setStepBanner(1)
+          setShowBanner(onboardingExpand == 'false' ? false : true)
+          localStorage.setItem('onboardingStep', 1)
         } else {
-          if (onboardingStep != 3) {
-            handleClose()
+          if (onboardingStep == 1) {
+            setStepBanner(2)
+            localStorage.setItem('onboardingStep', 2)
+
+            setShowBanner(true)
+            localStorage.setItem('onboardingExpand', true)
+          } else {
+            if (onboardingStep != 3) {
+              handleClose()
+            }
           }
         }
       }

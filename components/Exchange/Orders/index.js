@@ -30,8 +30,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
   const current = useSelector(({ $token }) => $token.current)
   const orders = useSelector($orders.get.list)
+  const loading = useSelector(({ $orders }) => $orders.loading)
 
-  const [loading, setLoading] = useState(true)
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
   const [ordersType, setOrderTypes] = useState('open')
   const [orderForCancel, setOrderForCancel] = useState()
@@ -77,7 +77,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
       dispatch($orders.set.list(result ?? []))
     }
 
-    setLoading(false)
+    dispatch($orders.set.loading(false))
   }
 
   const handlePressCancelConfirm = (order) => (e) => {
