@@ -386,7 +386,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                               )}
                             </App.Flex>
                           </App.Flex>
-                          
+
 
                           <App.Flex column sx={{width: 60, padding: 8}} align="center" justify="center">
                             <App.Flex column gap={4}>
@@ -409,7 +409,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                           <App.Text color="rgba(185, 184, 197, 1)" size={10} weight={500} sx={{marginRight: 12}} height={1}>{ order.time }</App.Text>
                           {order.status !== 'open' ? (
                             <App.Text color="#B9B8C5" size={10} weight={600} uppercase height={1}>
-                              {order.status === 'cancelled' && order.quantityFilled ? 'Partially completed' : order.status}
+                              {order.status}
                             </App.Text>
                           ) : null}
 
