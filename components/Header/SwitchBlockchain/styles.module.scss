@@ -9,6 +9,11 @@
   &.active {
     border: 1px solid #7204FF;
     background: rgba(114, 4, 255, 0.32);
+
+    @media (max-width: 768px) {
+      border-color: transparent;
+      background-color: transparent;
+    }
   }
 
   .badgeTitle {
@@ -19,6 +24,8 @@
 
   @media (max-width: 768px) {
     padding: 4px;
+    border-color: transparent;
+    background-color: transparent;
   }
 }
 

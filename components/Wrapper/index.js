@@ -40,6 +40,7 @@ const Wrapper = ({ children }) => {
 
   const [isInIframe, setIsInIframe] = useState(false)
   const [showStickyBanner, setShowStickyBanner] = useState(false)
+  const [showTournamentBanner, setShowTournamentBanner] = useState(false)
 
   Amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY, !isApp, platform ?? 'Web')
 
@@ -58,6 +59,11 @@ const Wrapper = ({ children }) => {
   }, [])
 
   useEffect(() => {
+    const onboardingStep = localStorage.getItem('onboardingStep')
+    if (onboardingStep == 3) {
+      setShowTournamentBanner(true)
+    }
+
     if (page != 'gems-dashboard') {
       Amplitude.event(`Page Visited`, {
         'Page': Amplitude.page(),
@@ -176,17 +182,12 @@ const Wrapper = ({ children }) => {
               <Analytics />
               <StickyBanner onClose={handleCloseBanner} onOpen={handleOpenBanner} show={showStickyBanner} />
               {!isCampaign && !isApp ? <Header /> : null}
-              <div style={{marginTop: page !== '' ? (isMobile ? -60 : -72) : 0, height: showStickyBanner ? 'calc(100% - 28px)' : '100%'}}>
+              <div style={{marginTop: page !== '' ? (isMobile ? -48 : -72) : 0, height: showStickyBanner ? 'calc(100% - 28px)' : '100%'}}>
                 {children}
                 {!isCampaign && !isApp && !isExchange && !isGD ? <Footer /> : null}
               </div>
 
-              {
-                page === 'exchange' && !isApp
-                  ? <SidebarToshiBanner />
-                  : null
-              }
-
+              {page === 'exchange' && !isApp && showTournamentBanner  ? <SidebarToshiBanner /> : null}
               {page === 'exchange' && !isApp ? <OnboardingBanner /> : null}
             </div>
           : <Footer />

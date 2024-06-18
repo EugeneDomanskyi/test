@@ -66,11 +66,13 @@
   }
 
   &.small {
-    padding: 4px 12px;
-    font-size: 12px;
+    padding: 0 12px;
+    height: 32px;
+    font-size: 14px;
+    font-weight: 600;
     line-height: normal;
     min-width: 72px;
-    border-radius: 4px;
+    border-radius: 12px;
 
     &.rounded {
       border-radius: 22px;
@@ -126,13 +128,23 @@
   &.primary2 {
     height: 40px;
     background-color: #6B41EB;
-    border-color: #003199;
+    border-color: #6B41EB;
     border-radius: 100px;
     padding: 0 16px;
     font-weight: 700;
     font-size: 14px;
     line-height: 25px;
     border-radius: 12px;
+
+    &.small {
+      padding: 0 12px;
+      height: 32px;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: normal;
+      min-width: 72px;
+      border-radius: 12px;
+    }
 
     &.quest {
       background: linear-gradient(180deg, #6B41EB -6.02%, #241164 85.68%);
@@ -146,11 +158,11 @@
 
     &.outlined {
       background-color: transparent;
-      border-color: #003199;
+      border-color: #6B41EB;
 
       &.active:not(:disabled),
       &:hover:not(:disabled) {
-        border-color: #002472;
+        border-color: #4d29bb;
         background-color: transparent;
       }
     }
