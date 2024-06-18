@@ -121,7 +121,7 @@ const Wrapper = ({ children }) => {
 
   const registerUser = async () => {
     const create = await $gem.api.register({ wallet_address: wallet, referral_code: localStorage.getItem('referral') ?? '' })
-    if (!create?.error) {
+    if (create?.data && create.data?.is_points_added) {
       dispatch($alert.set.success({title: '100 Gems Credited'}))
     }
 

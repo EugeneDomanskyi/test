@@ -15,8 +15,7 @@ const OnboardingBanner = () => {
   const router = useRouter()
   const { wallet, connection, connect } = useWagmiHelper()
 
-  const orders = useSelector(({ $orders }) => $orders.list)
-  const ordersLoading = useSelector(({ $orders }) => $orders.loading)
+  const referral = useSelector(({ $gem }) => $gem.referral)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
   const [showBanner, setShowBanner] = useState(false)
@@ -27,7 +26,7 @@ const OnboardingBanner = () => {
     if (!connection.loading) {
       getBannerVisibility()
     }
-  }, [connection.loading, connection.connected, wallet, orders, ordersLoading])
+  }, [connection.loading, connection.connected, wallet, referral])
 
   const getBannerVisibility = async () => {
     const onboardingStep = localStorage.getItem('onboardingStep')
@@ -41,8 +40,8 @@ const OnboardingBanner = () => {
         setStepBanner(null)
       }
     } else {
-      if (!ordersLoading) {
-        if (orders.length == 0) {
+      if (referral?.id) {
+        if (!referral.rewarded_for_trade) {
           setStepBanner(1)
           setShowBanner(onboardingExpand == 'false' ? false : true)
           localStorage.setItem('onboardingStep', 1)
