@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import Image from 'next/image'
 
 import $app from '@/store/app'
+import $alert from '@/store/alert'
 import $token from '@/store/token'
 import $orders from '@/store/orders'
 import $portfolio from '@/store/portfolio'
@@ -77,12 +78,16 @@ const Mobile = forwardRef((_, ref) => {
   }))
 
   useEffect(() => {
-    Socket.on('order_placed', 'my_orders', (data) => {
-      dispatch($orders.set.add(data))
-    })
+    // Socket.on('order_placed', 'my_orders', (data) => {
+    //   dispatch($orders.set.add(data))
+    // })
     
     Socket.on('order_submitted', 'my_orders', (data) => {
       dispatch($orders.set.update(data))
+    })
+
+    Socket.on('trade_points_rewarded', 'trade_points_rewarded', (data) => {
+      dispatch($alert.set.success({title: '500 Gems Credited'}))
     })
   }, [wallet, item?.id])
 

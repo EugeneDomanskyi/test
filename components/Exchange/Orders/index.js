@@ -53,6 +53,10 @@ const Orders = ({global, type, version, onClickOrder}) => {
       Socket.on('order_submitted', 'my_orders', (data) => {
         dispatch($orders.set.update(data))
       })
+
+      Socket.on('trade_points_rewarded', 'trade_points_rewarded', (data) => {
+        dispatch($alert.set.success({title: '500 Gems Credited'}))
+      })
     }
   }, [wallet, current?.id])
 
