@@ -9,6 +9,7 @@ import $alert from '@/store/alert'
 import $token from '@/store/token'
 import $orders from '@/store/orders'
 import $portfolio from '@/store/portfolio'
+import $gem from '@/store/gem'
 
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 import Socket from '@/libs/ws.lib'
@@ -86,8 +87,13 @@ const Mobile = forwardRef((_, ref) => {
       dispatch($orders.set.update(data))
     })
 
-    Socket.on('trade_points_rewarded', 'trade_points_rewarded', (data) => {
+    Socket.on('trade_points_rewarded', 'trade_points_rewarded', async (data) => {
       dispatch($alert.set.success({title: '500 Gems Credited'}))
+
+      const result = await $gem.api.referral(wallet)
+      if (result && result?.data) {
+        dispatch($gem.set.referral(result?.data))
+      }
     })
   }, [wallet, item?.id])
 

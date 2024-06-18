@@ -11,6 +11,7 @@ import $app from '@/store/app'
 import $orders from '@/store/orders'
 import $alert from '@/store/alert'
 import $portfolio from '@/store/portfolio'
+import $gem from '@/store/gem'
 
 import WagmiHelper from '@/libs/WagmiHelper'
 import Amplitude from '@/libs/amplitude.lib'
@@ -54,8 +55,13 @@ const Orders = ({global, type, version, onClickOrder}) => {
         dispatch($orders.set.update(data))
       })
 
-      Socket.on('trade_points_rewarded', 'trade_points_rewarded', (data) => {
+      Socket.on('trade_points_rewarded', 'trade_points_rewarded', async (data) => {
         dispatch($alert.set.success({title: '500 Gems Credited'}))
+
+        const result = await $gem.api.referral(wallet)
+        if (result && result?.data) {
+          dispatch($gem.set.referral(result?.data))
+        }
       })
     }
   }, [wallet, current?.id])
