@@ -182,7 +182,7 @@ const OnboardingBanner = () => {
               <App.Flex column gap={8} className={styles.content}>
                 <App.Text size={12} weight={400} height={1} color="#FFFFFF99">Step 2/2</App.Text>
                 <App.Text size={16} weight={600} height={1}>Get <App.Text inline size={16} weight={600} height={1} color="#A6DC37">500</App.Text> gems</App.Text>
-                <App.Text size={14} weight={400} height={1}>Place your first order on Tegro to get 500 gems</App.Text>
+                <App.Text size={14} weight={400} height={1}>Complete your first trade on Tegro to get 500 gems</App.Text>
               </App.Flex>
 
               {isMobile ? (
@@ -220,7 +220,7 @@ const OnboardingBanner = () => {
               <App.Flex row gap={16} align="center" justify="space-between" className={styles.content}>
                 <App.Flex row align="center" gap={16}>
                   <App.Text size={12} weight={400} height={1} color="#FFFFFF99">Step 2</App.Text>
-                  <App.Text size={16} weight={600} height={1} color="#FFFFFF99">Create your first order</App.Text>
+                  <App.Text size={16} weight={600} height={1} color="#FFFFFF99">Complete your first trade</App.Text>
                 </App.Flex>
 
                 <App.Icon icon="check-circle" />
