@@ -88,7 +88,7 @@ const Tournaments = () => {
               </App.Flex>
 
               <App.Flex column gap={8}>
-                <App.Text uppercase size={[16, 14]} weight={900} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">$1 = 1 Gem</App.Text>
+                <App.Text uppercase size={[16, 14]} weight={900} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">$1 = 1 Point</App.Text>
 
                 <App.Flex row gap={[16, 8]}>
                   <App.Flex row center gap={[12, 8]}>
@@ -189,7 +189,7 @@ const Tournaments = () => {
                         </App.Flex>
 
                         <App.Flex width={['auto', 56]} flex={[1, null]} center>
-                          <App.Text center weight={400} height={1} color="#A6DC37">Gems{isMobile ? '' : ' Earned'}</App.Text>
+                          <App.Text center weight={400} height={1} color="#A6DC37">Points{isMobile ? '' : ' Earned'}</App.Text>
                         </App.Flex>
 
                         <App.Flex flex={1} align="center" justify="flex-end">
@@ -231,7 +231,7 @@ const Tournaments = () => {
 
                     {tournament.status == 'on-going' && tournament.leaderboard.length <= 5 ? (
                       <App.Flex direction={['row', 'column']} center gap={24}>
-                        <App.Text center size={20} weight={400} height={1}>{`Trade ${tournament.currency} to start collecting gems 🚀`}</App.Text>
+                        <App.Text center size={20} weight={400} height={1}>{`Trade ${tournament.currency} to start collecting points 🚀`}</App.Text>
                         <App.Button secondary2 outlined onClick={handleExchange(tournament.bonus_contract, key)}>{`Trade ${tournament.currency}`}</App.Button>
                       </App.Flex>
                     ) : null}
