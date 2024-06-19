@@ -55,6 +55,10 @@ const Orders = ({global, type, version, onClickOrder}) => {
         dispatch($orders.set.update(data))
       })
 
+      Socket.on('order_trade_processed', 'my_orders', (data) => {
+        dispatch($orders.set.update(data))
+      })
+
       Socket.on('trade_points_rewarded', 'trade_points_rewarded', async (data) => {
         dispatch($alert.set.success({title: '500 Gems Credited'}))
 
@@ -419,7 +423,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                           <App.Text color="rgba(185, 184, 197, 1)" size={10} weight={500} sx={{marginRight: 12}} height={1}>{ order.time }</App.Text>
                           {order.status !== 'open' ? (
                             <App.Text color="#B9B8C5" size={10} weight={600} uppercase height={1}>
-                              {order.status}
+                              {order.status === 'cancelled' && order.quantityFilled !== '0'  ? 'Partially filled' : order.status}
                             </App.Text>
                           ) : null}
 
