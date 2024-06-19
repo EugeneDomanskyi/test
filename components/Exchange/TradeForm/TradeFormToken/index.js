@@ -137,7 +137,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
         setForm(state => {
           return {
             ...state,
-            price: isNaN(String(value).slice(-1)) ? value : new Decimal(value).toDecimalPlaces(current.quotePrecision).toFixed(),
+            price: value,
             total: new Decimal(value * state.amount).toDecimalPlaces(current.quotePrecision).toFixed(),
           }
         })
@@ -146,7 +146,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
         setForm(state => {
           return {
             ...state,
-            amount: isNaN(String(value).slice(-1)) ? value : new Decimal(value).toDecimalPlaces(current.basePrecision).toFixed(),
+            amount: value,
             total: new Decimal(value * state.price).toDecimalPlaces(current.quotePrecision).toFixed(),
           }
         })
@@ -156,7 +156,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
           const amount = new Decimal(value / state.price).toDecimalPlaces(current.basePrecision).toFixed()
           return {
             ...state,
-            total: isNaN(String(value).slice(-1)) ? value : new Decimal(value).toDecimalPlaces(current.quotePrecision).toFixed(),
+            total: value,
             amount: isNaN(amount) || !isFinite(amount) ? state.amount : amount,
           }
         })
@@ -224,6 +224,13 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   }
 
   const handleTotalBlur = () => {
+    setForm(state => {
+      return {
+        ...state,
+        total: new Decimal(state.total).toDecimalPlaces(current.quotePrecision).toFixed(),
+      }
+    })
+
     handleChangeForm('amount', true)(new Decimal(form.total / form.price).toDecimalPlaces(current.basePrecision).toFixed())
     Amplitude.event('Add Total', {
       'Base Currency': current.symbol,
@@ -236,6 +243,13 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   }
 
   const handleBlurPrice = () => {
+    setForm(state => {
+      return {
+        ...state,
+        price: new Decimal(state.price).toDecimalPlaces(current.quotePrecision).toFixed(),
+      }
+    })
+
     Amplitude.event('Add Price', {
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
@@ -247,6 +261,13 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   }
 
   const handleBlurAmount = () => {
+    setForm(state => {
+      return {
+        ...state,
+        amount: new Decimal(state.amount).toDecimalPlaces(current.basePrecision).toFixed(),
+      }
+    })
+
     Amplitude.event('Add Quantity', {
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
