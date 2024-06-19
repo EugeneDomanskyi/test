@@ -440,7 +440,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                           ) : null}
                         </App.Flex>
                         {/* <App.Flex row className={cn(styles.filled, styles.pending)} width={`${Math.round(order.quantityFilled * 100 / order.quantity)}%`} /> */}
-                        <App.Flex row className={cn(styles.filled, styles[Math.round(order.quantityFilled * 100 / order.quantity) < 100 ? 'notComplete' : 'complete'])} width={`${Math.round(order.quantityFilled * 100 / order.quantity)}%`} />
+                        <App.Flex row className={cn(styles.filled, styles[order.side == 'sell' ? 'notComplete' : 'complete'])} width={`${Math.round(order.quantityFilled * 100 / order.quantity)}%`} />
                       </App.Flex>
                     </App.Flex>
                   )
