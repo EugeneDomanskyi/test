@@ -167,10 +167,10 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
         setForm(state => {
           let amount = checkNumberPrecision(value, current.basePrecision)
           let total = new Decimal(value * state.price).toDecimalPlaces(current.quotePrecision).toFixed()
-          if (wasTotalInput) {
-            total = form.total
-            amount = value == 0 ? 0 : new Decimal(total / form.price).toDecimalPlaces(current.basePrecision).toFixed()
-          }
+          // if (wasTotalInput) {
+          //   total = form.total
+          //   amount = value == 0 ? 0 : new Decimal(total / form.price).toDecimalPlaces(current.basePrecision).toFixed()
+          // }
 
           return {
             ...state,
