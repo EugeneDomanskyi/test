@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
+import { CustomEase } from 'gsap/dist/CustomEase'
 import cn from 'classnames'
 
 import AppFlex from '@/components/App/AppFlex'
@@ -8,11 +9,15 @@ import AppIcon from '@/components/App/AppIcon'
 
 import styles from './styles.module.scss'
 
+gsap.registerPlugin(CustomEase)
+
 const AppDialog = ({ children, open, size, hideHeader, hideClose, title, subtitle, toTop, full, fullBody, fromRight, width, onClose }) => {
   const [opened, setOpened] = useState(false)
 
   const layout = useRef(null)
   const content = useRef(null)
+
+  CustomEase.create('customEaseOpen', 'M0,0 C0.9,0 0.9,1 1,1')
 
   useEffect(() => {
     if (open) {
@@ -20,7 +25,7 @@ const AppDialog = ({ children, open, size, hideHeader, hideClose, title, subtitl
         document.body.classList.add('modal-open')
         const animation = fromRight ? [
           gsap.to(layout.current, {opacity: 1, duration: 0.2}),
-          gsap.fromTo(content.current, {x: '100%'}, {x: 0, duration: 0.2}),
+          gsap.fromTo(content.current, {x: '100%'}, {x: 0, duration: 0.2, ease: 'customEaseOpen'}),
         ] : [
           gsap.to(layout.current, {opacity: 1, duration: 0.2}),
           gsap.fromTo(content.current, {y: 200}, {y: 0, duration: 0.2}),
@@ -34,7 +39,7 @@ const AppDialog = ({ children, open, size, hideHeader, hideClose, title, subtitl
       if (opened) {
         const animation = fromRight ? [
           gsap.to(layout.current, {opacity: 0, duration: 0.2}),
-          gsap.fromTo(content.current, {x: 0}, {x: '100%', duration: 0.2}),
+          gsap.fromTo(content.current, {x: 0}, {x: '100%', duration: 0.2, ease: 'customEaseOpen'}),
         ] : [
           gsap.to(layout.current, {opacity: 0, duration: 0.2}),
           gsap.fromTo(content.current, {y: 0}, {y: 200, duration: 0.2}),

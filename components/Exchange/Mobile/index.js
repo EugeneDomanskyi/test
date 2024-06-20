@@ -123,10 +123,10 @@ const Mobile = forwardRef((_, ref) => {
   useEffect(() => {
     if (item?.id) {
       setLogo(item.image)
-    } else {
-      if (address != '0x') {
-        fetchToken(address)
-      }
+    }
+
+    if (address != '0x') {
+      fetchToken(address)
     }
   }, [item?.id, address])
 
@@ -228,44 +228,48 @@ const Mobile = forwardRef((_, ref) => {
 
   return (
     <App.Flex column full>
-      <App.Flex column gap={16} className={styles.info}>
-        <App.Flex row align="center" justify="space-between" className={styles.dropdown} onClick={handleMarketsDialogOpen}>
-          <App.Flex row aling="center" gap={8}>
-            {logo ? (
-              <Image src={logo} width={24} height={24} className={styles.image} alt="" onError={() => setLogo(null)} />
-            ) : (
-              <div className={styles.emptyImage} />
-            )}
+      <App.Flex column className={styles.info}>
+        <App.Flex fullWidth className={styles.dropdownBox}>
+          <App.Flex row fullWidth align="center" justify="space-between" className={styles.dropdown} onClick={handleMarketsDialogOpen}>
+            <App.Flex row aling="center" gap={8}>
+              {logo ? (
+                <Image src={logo} width={24} height={24} className={styles.image} alt="" onError={() => setLogo(null)} />
+              ) : (
+                <div className={styles.emptyImage} />
+              )}
 
-            <App.Text nowrap uppercase size={16} weight={600}>{item.symbol}<App.Text inline size={12} weight={600}>/{item.quoteSymbol}</App.Text></App.Text>
+              <App.Text nowrap uppercase size={16} weight={600}>{item.symbol}/{item.quoteSymbol}</App.Text>
+            </App.Flex>
+
+            <App.Icon icon="chevron-right3" />
           </App.Flex>
-
-          <App.Icon icon="chevron-right3" />
         </App.Flex>
-
-        <App.Flex row center align="flex-start" justify="space-between">
-          <App.Flex column gap={8}>
-            <App.Text size={20} weight={700} height={1}>${ item.price }</App.Text>
-            <App.Flex row align="center" justify="flex-start" gap={2}>
-              <App.Text size={14} weight={600} height={1} color={item.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C'}>{ item.ticker?.value }%</App.Text>
-              <App.Icon icon="caret-down" width={12} height={12} color={item.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C'} style={{transform: `rotate(${item.ticker?.type == 'plus' ? '180deg' : '0deg'})`}} />
-            </App.Flex>
-          </App.Flex>
-
-          <App.Flex column gap={4}>
-            <App.Flex row align="center" justify="space-between" gap={16}>
-              <App.Text size={14} weight={400} height={1} color="#5E5C6B">High</App.Text>
-              <App.Text size={14} weight={400} height={1}>{item.high ?? 0} {item.quoteSymbol}</App.Text>
+        
+        <App.Flex fullWidth className={styles.numbersBox}>
+          <App.Flex row center fullWidth align="flex-start" justify="space-between">
+            <App.Flex column gap={8}>
+              <App.Text size={20} weight={700} height={1}>${ item.price }</App.Text>
+              <App.Flex row align="center" justify="flex-start" gap={2}>
+                <App.Text size={14} weight={600} height={1} color={item.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C'}>{ item.ticker?.value }%</App.Text>
+                <App.Icon icon="caret-down" width={12} height={12} color={item.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C'} style={{transform: `rotate(${item.ticker?.type == 'plus' ? '180deg' : '0deg'})`}} />
+              </App.Flex>
             </App.Flex>
 
-            <App.Flex row align="center" justify="space-between" gap={16}>
-              <App.Text size={14} weight={400} height={1} color="#5E5C6B">Low</App.Text>
-              <App.Text size={14} weight={400} height={1}>{item.low ?? 0} {item.quoteSymbol}</App.Text>
-            </App.Flex>
+            <App.Flex column gap={4}>
+              <App.Flex row align="center" justify="space-between" gap={16}>
+                <App.Text size={14} weight={400} height={1} color="#5E5C6B">High</App.Text>
+                <App.Text size={14} weight={400} height={1}>{item.high ?? 0} {item.quoteSymbol}</App.Text>
+              </App.Flex>
 
-            <App.Flex row align="center" justify="space-between" gap={16}>
-              <App.Text size={14} weight={400} height={1} color="#5E5C6B">Volume</App.Text>
-              <App.Text size={14} weight={400} height={1}>{item.volume ?? 0} {item.quoteSymbol}</App.Text>
+              <App.Flex row align="center" justify="space-between" gap={16}>
+                <App.Text size={14} weight={400} height={1} color="#5E5C6B">Low</App.Text>
+                <App.Text size={14} weight={400} height={1}>{item.low ?? 0} {item.quoteSymbol}</App.Text>
+              </App.Flex>
+
+              <App.Flex row align="center" justify="space-between" gap={16}>
+                <App.Text size={14} weight={400} height={1} color="#5E5C6B">Volume</App.Text>
+                <App.Text size={14} weight={400} height={1}>{item.volume ?? 0} {item.quoteSymbol}</App.Text>
+              </App.Flex>
             </App.Flex>
           </App.Flex>
         </App.Flex>
