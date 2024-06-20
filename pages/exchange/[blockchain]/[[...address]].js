@@ -71,6 +71,9 @@ const Exchange = () => {
         case 'order_submitted':
           dispatch($alert.set.success({ title: 'Matched & pending settlement' }))
           break
+        case 'order_trade_processed':
+          dispatch($alert.set.success({ title: 'Settlement Complete' }))
+          break
         case 'chain_event_OrderFilled':
           dispatch($alert.set.success({ title: 'Order filled on-chain', text: `Your ${data.side} order for ${data.quantity} ${data.baseCurrency} has been executed ${data.quantity == data.quantityFilled ? 'fully' : 'partially'}.` }))
           break
@@ -134,11 +137,7 @@ const Exchange = () => {
         </>
       ) : (
         <>
-          {!queryTokenId || queryTokenId == '0x' ? (
-            <Sidebar version="mobile" isApp={isApp} />
-          ) : (
-            <Mobile ref={mobileRef} />
-          )}
+          <Mobile ref={mobileRef} />
 
           <App.Dialog open={myOrdersDialogOpen} onClose={handleCloseOrdersDialog} hideHeader hideClose full>
             <App.Flex column full>

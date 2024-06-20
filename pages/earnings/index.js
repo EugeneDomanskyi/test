@@ -29,7 +29,7 @@ const Earnings = () => {
       if (connection.connected) {
         setLoading(false)
       } else {
-        router.replace('/points-dashboard')
+        router.replace('/gems-dashboard')
       }
     }
   }, [connection])
@@ -71,7 +71,7 @@ const Earnings = () => {
             <App.Flex direction={['row', 'column']} gap={16} justify="space-between">
               <App.Flex column gap={8} align={['flex-start', 'stretch']}>
                 <App.Text size={[24, 20]} weight={600} height={1}>{t('My Earnings')}</App.Text>
-                <App.Text weight={400} height={1.4} color="#FFFFFF99">{t('Earn points every minute that order lives on the orderbook based on the order size.')}</App.Text>
+                <App.Text weight={400} height={1.4} color="#FFFFFF99">{t('Earn gems every minute that order lives on the orderbook based on the order size.')}</App.Text>
               </App.Flex>
 
               <App.Button primary2 outlined onClick={handleHistory}>{t('Transaction History')}</App.Button>

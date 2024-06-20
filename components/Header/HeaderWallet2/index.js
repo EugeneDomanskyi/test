@@ -115,14 +115,18 @@ const HeaderWallet2 = () => {
   return wallet ? (
     <>
       {isMobile ? (
-        <App.Flex row center gap={16}>
-          <App.Flex center className={styles.ordersButton} onClick={handlePortfolioToggle}>
-            <App.Icon icon="wallet2" />
-          </App.Flex>
+        // <App.Flex row center gap={16}>
+        //   <App.Flex center className={styles.ordersButton} onClick={handlePortfolioToggle}>
+        //     <App.Icon icon="wallet2" />
+        //   </App.Flex>
 
-          <App.Flex center className={styles.ordersButton} onClick={handleOrdersDialogOpen}>
-            <App.Icon icon="orders-mobile" />
-          </App.Flex>
+        //   <App.Flex center className={styles.ordersButton} onClick={handleOrdersDialogOpen}>
+        //     <App.Icon icon="orders-mobile" />
+        //   </App.Flex>
+        // </App.Flex>
+
+        <App.Flex center className={styles.address} onClick={handlePortfolioToggle}>
+          <App.Text size={16} weight={600} height={1}>{shorterAddress(4)}</App.Text>
         </App.Flex>
       ) : (
         <App.Flex gap={24}>
@@ -173,7 +177,7 @@ const HeaderWallet2 = () => {
       </App.Dialog>
     </>
   ) : (
-    <App.Button primary2 onClick={handleConnectWallet}>
+    <App.Button primary2 small={isMobile} onClick={handleConnectWallet}>
       Connect{!isMobile ? ' Wallet' : ''}
     </App.Button>
   )

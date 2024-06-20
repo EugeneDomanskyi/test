@@ -115,6 +115,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon == 'chevron-left2') {
+      return (
+        <svg width={width ?? 32} height={height ?? 32} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 8L11 16L19 24" />
+        </svg>
+      )
+    }
+
     if (icon == 'chevron-right') {
       return (
         <svg width={width ?? 24} height={height ?? 25} viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -127,6 +135,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       return (
         <svg width={width ?? 7} height={width ?? 12} viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <path stroke={color ?? '#5E5C6B'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M1 1l5 5-5 5" />
+        </svg>
+      )
+    }
+
+    if (icon == 'chevron-right3') {
+      return (
+        <svg width={width ?? 24} height={width ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10 16L14 12L10 8" />
         </svg>
       )
     }
@@ -152,6 +168,15 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
         <svg width={width ?? 12} height={height ?? 12} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <circle fill="#fff" cx="6" cy="6" r="4"></circle>
           <path fill={color ?? '#4C69FF'} d="M12 6.281c0 .42-.1.809-.302 1.165a2.157 2.157 0 01-.811.83c.01.063.014.162.014.295a2.27 2.27 0 01-.635 1.62c-.425.447-.936.67-1.533.67-.267 0-.523-.05-.764-.148a2.324 2.324 0 01-.811.93C6.806 11.884 6.42 12 6 12c-.429 0-.818-.115-1.165-.35a2.273 2.273 0 01-.804-.937 1.999 1.999 0 01-.764.148c-.597 0-1.11-.223-1.54-.67a2.25 2.25 0 01-.616-1.915 2.173 2.173 0 01-.811-.83A2.35 2.35 0 010 6.281c0-.445.113-.855.335-1.226.223-.37.523-.644.898-.822a2.318 2.318 0 01-.148-.804c0-.633.213-1.174.642-1.62.43-.445.943-.67 1.54-.67.267 0 .523.05.764.148.188-.385.457-.694.811-.93A2.033 2.033 0 016 0c.42 0 .806.12 1.158.354.351.237.623.546.81.93.242-.098.495-.147.765-.147.597 0 1.108.222 1.533.67.424.448.635.987.635 1.62 0 .295-.045.562-.134.803.375.179.675.453.898.823.223.373.335.783.335 1.228zM5.745 8.088l2.477-3.71a.43.43 0 00.06-.321.393.393 0 00-.18-.267.457.457 0 00-.32-.068.411.411 0 00-.282.173L5.318 7.177 4.313 6.173a.399.399 0 00-.308-.126.474.474 0 00-.307.126.41.41 0 00-.12.303c0 .12.04.22.12.302l1.38 1.38.069.055a.43.43 0 00.241.08.393.393 0 00.357-.205z" />
+        </svg>
+      )
+    }
+
+    if (icon == 'check-circle') {
+      return (
+        <svg width={width ?? 16} height={height ?? 17} viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#A6DC37'} d="M7.99996 15.1664C11.6665 15.1664 14.6664 12.1665 14.6664 8.49996C14.6664 4.8334 11.6665 1.8335 7.99996 1.8335C4.3334 1.8335 1.3335 4.8334 1.3335 8.49996C1.3335 12.1665 4.3334 15.1664 7.99996 15.1664Z" stroke-width="0.999969" stroke-linecap="round" stroke-linejoin="round"/>
+          <path stroke={color ?? '#A6DC37'} d="M5.16699 8.50013L7.0536 10.3867L10.8335 6.61353" stroke-width="0.999969" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       )
     }
