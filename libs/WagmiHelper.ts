@@ -4,6 +4,7 @@ import { privateKeyToAccount } from 'viem/accounts'
 import { http } from 'wagmi'
 import { disconnect, getAccount, getChainId, readContract, signMessage, signTypedData, simulateContract, switchChain, watchAccount, writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
+import { metaMaskWallet, rainbowWallet, walletConnectWallet, coinbaseWallet } from '@rainbow-me/rainbowkit/wallets'
 import * as wagmiChains from 'wagmi/chains'
 
 import $app from '@/store/app'
@@ -134,6 +135,8 @@ class WagmiHelper {
 
       const sortedWagmiChains = [...inChains, ...notInChains]
 
+      coinbaseWallet.preference = 'eoaOnly'
+
       this.wagmiConfig = getDefaultConfig({
         appName: process.env.NEXT_PUBLIC_APP_NAME,
         projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
@@ -145,6 +148,12 @@ class WagmiHelper {
             [chain.id]: http(),
           }
         }, {}),
+        wallets: [
+          {
+            groupName: "Popular",
+            wallets: [metaMaskWallet, rainbowWallet, coinbaseWallet, walletConnectWallet],
+          },
+        ],
       })
     }
 
