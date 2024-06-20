@@ -261,7 +261,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       }
     })
 
-    handleChangeForm('amount', true)(new Decimal(form.total / form.price).toDecimalPlaces(current.basePrecision).toFixed())
+    // handleChangeForm('amount', true)(new Decimal(form.total / form.price).toDecimalPlaces(current.basePrecision).toFixed())
     Amplitude.event('Add Total', {
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
