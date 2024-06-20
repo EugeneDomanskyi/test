@@ -96,19 +96,20 @@ $borderRadius: 12px;
   &.search {
     .input {
       border-radius: 12px;
-      background-color: #2E2745;
+      background: linear-gradient(0deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.07) 100%), #0B0915;;
       padding-left: 16px;
       border: solid transparent 1px;
 
       &.input_focused {
         border-color: #6B41EB;
+        background: #2E2745;
       }
 
       .input_input {
         font-size: 16px;
         font-weight: 500;
         line-height: 24px;
-        padding: 10px 16px 10px 0;
+        padding: 10px 16px 9px 0;
         color: #FFFFFF99;
 
         &::placeholder {

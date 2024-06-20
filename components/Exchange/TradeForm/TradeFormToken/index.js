@@ -50,6 +50,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const [wasUserInput, setWasUserInput] = useState(false)
   const [isErrorBalance, setIsErrorBalance] = useState(false)
   const [isOrderConfirmOpen, setIsOrderConfirmOpen] = useState(false)
+  const [wasTotalInput, setWasTotalInput] = useState(false)
 
   const isWrongPrice = checkPrice(form.price, currentTab, current.price)
   const isDisabled = !(form.amount*1) || !(form.price*1) || !(form.total*1)
@@ -121,6 +122,18 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     handleChangeForm('price', true)(new Decimal(newPrice).toDecimalPlaces(current.quotePrecision).toFixed())
   }
 
+  const checkNumberPrecision = (value, precision) => {
+    const temp = value.toString().split('.')
+    if (temp[1] && temp[1].length) {
+      if (temp[1].length > precision) {
+        const end = temp[1].slice(0, precision)
+        return temp[0] + '.' + end
+      }
+    }
+
+    return value
+  }
+
   const handleChangeForm = (field, inputByUser = false) => value => {
     if (inputByUser) {
       setWasUserInput(true)
@@ -135,28 +148,44 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     switch (field) {
       case 'price':
         setForm(state => {
+          let amount = form.amount
+          let total = new Decimal(value * state.amount).toDecimalPlaces(current.quotePrecision).toFixed()
+          if (wasTotalInput) {
+            total = form.total
+            amount = value == 0 ? 0 : new Decimal(total / value).toDecimalPlaces(current.basePrecision).toFixed()
+          }
+
           return {
             ...state,
-            price: value,
-            total: new Decimal(value * state.amount).toDecimalPlaces(current.quotePrecision).toFixed(),
+            price: checkNumberPrecision(value, current.quotePrecision),
+            amount,
+            total,
           }
         })
         return
       case 'amount':
         setForm(state => {
+          let amount = checkNumberPrecision(value, current.basePrecision)
+          let total = new Decimal(value * state.price).toDecimalPlaces(current.quotePrecision).toFixed()
+          if (wasTotalInput) {
+            total = form.total
+            amount = value == 0 ? 0 : new Decimal(total / form.price).toDecimalPlaces(current.basePrecision).toFixed()
+          }
+
           return {
             ...state,
-            amount: value,
-            total: new Decimal(value * state.price).toDecimalPlaces(current.quotePrecision).toFixed(),
+            amount,
+            total,
           }
         })
         return
       case 'total':
+        setWasTotalInput(true)
         setForm(state => {
           const amount = new Decimal(value / state.price).toDecimalPlaces(current.basePrecision).toFixed()
           return {
             ...state,
-            total: value,
+            total: checkNumberPrecision(value, current.quotePrecision),
             amount: isNaN(amount) || !isFinite(amount) ? state.amount : amount,
           }
         })
@@ -214,6 +243,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       total: form.total,
     }
 
+    setWasTotalInput(false)
     if (version == 'mobile') {
       if (onSubmit) {
         onSubmit(props)

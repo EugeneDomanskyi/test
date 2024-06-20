@@ -41,12 +41,12 @@ const SwitchBlockchain = ({ justify = 'center', onMobileMenuClose }) => {
       if (wagmiChainId && wagmiChainId != newBlockchain.id) {
         const result = await WagmiHelper.changeChain(newBlockchain.code)
         if (result) {
-          router.replace(`/${page}/${newBlockchain.code}` + (isMobile ? '' : '/0x'))
+          router.replace(`/${page}/${newBlockchain.code}/0x`)
           dispatch($app.set.code(newBlockchain.code))
         }
       } else {
         if (queryBlockchain && queryBlockchain != newBlockchain.code) {
-          router.replace(`/${page}/${newBlockchain.code}` + (isMobile ? '' : '/0x'))
+          router.replace(`/${page}/${newBlockchain.code}/0x`)
         }
         dispatch($app.set.code(newBlockchain.code))
       }

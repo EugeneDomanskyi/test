@@ -143,7 +143,7 @@ export const gemSlice = createSlice({
           value.status = 'closed'
         }
 
-        const limit = Math.min(5, value.rewards.length)
+        const limit = Math.min(10, value.rewards.length)
         if (value.leaderboard.length <= limit) {
           for (let i = 0; i < limit; i++) {
             if (!value.leaderboard[i]) {
@@ -173,10 +173,15 @@ export const gemSlice = createSlice({
           case 'brett_brawl_s2':
             value.name = 'Brett Brawl S2'
             break
+          case 'poncho_rush_s1':
+            value.name = 'Poncho Rush S1'
+            break
           default:
             value.name = value.alias
             break
         }
+
+        value.expand = false
 
         return {
           ...acc,
@@ -187,6 +192,10 @@ export const gemSlice = createSlice({
 
     tournamentStatus: (state, { payload }) => {
       state.tournaments[payload.key].status = payload.status
+    },
+
+    tournamentExpand: (state, { payload }) => {
+      state.tournaments[payload].expand = !state.tournaments[payload].expand
     },
 
     auctions: (state, { payload }) => {
