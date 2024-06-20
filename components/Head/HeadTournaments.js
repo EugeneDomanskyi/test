@@ -6,7 +6,7 @@ const HeadTournaments = () => {
   }
 
   const getDescription = () => {
-    return 'Trade on Tegro order book DEX to collect points and win top Base layer 2 tokens like BRETT, TOSHI, USDC, WETH, and more!'
+    return 'Trade on Tegro order book DEX to collect gems and win top Base layer 2 tokens like BRETT, TOSHI, USDC, WETH, and more!'
   }
 
   const getUrl = () => {
@@ -23,14 +23,14 @@ const HeadTournaments = () => {
         <meta property="og:type" content="website" />
         <meta property="og:title" content={getTitle()} />
         <meta property="og:description" content={getDescription()} />
-        <meta property="og:image" content="/images/tegro-tournaments.jpg" />
+        <meta property="og:image" content="/images/og-tournament-poncho.jpg" />
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="twitter:domain" content="tegro.com" />
         <meta property="twitter:url" content={getUrl()} />
         <meta name="twitter:title" content={getTitle()} />
         <meta name="twitter:description" content={getDescription()} />
-        <meta name="twitter:image" content="/images/tegro-tournaments.jpg" />
+        <meta name="twitter:image" content="/images/og-tournament-poncho.jpg" />
       </Head>
   )
 }

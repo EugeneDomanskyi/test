@@ -9,7 +9,7 @@ import $raffle from './raffle'
 import $markets from './markets'
 import $portfolio from './portfolio'
 import $tournament from './tournament'
-import $point from './point'
+import $gem from './gem'
 
 const createStore = (initialData) => {
   let preloadedState = {}
@@ -41,7 +41,7 @@ const createStore = (initialData) => {
       $markets: $markets.reducer,
       $portfolio: $portfolio.reducer,
       $tournament: $tournament.reducer,
-      $point: $point.reducer,
+      $gem: $gem.reducer,
     },
 
     preloadedState,

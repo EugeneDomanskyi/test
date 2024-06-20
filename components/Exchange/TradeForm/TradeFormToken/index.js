@@ -50,6 +50,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const [wasUserInput, setWasUserInput] = useState(false)
   const [isErrorBalance, setIsErrorBalance] = useState(false)
   const [isOrderConfirmOpen, setIsOrderConfirmOpen] = useState(false)
+  const [wasTotalInput, setWasTotalInput] = useState(false)
 
   const isWrongPrice = checkPrice(form.price, currentTab, current.price)
   const isDisabled = !(form.amount*1) || !(form.price*1) || !(form.total*1)
@@ -118,7 +119,19 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   const handleChangePrice = (type) => () => {
     const step = 0.1
     const newPrice = type == 'plus' ? (form.price * 1 + step) : (form.price * 1 - step)
-    handleChangeForm('price', true)(new Decimal(newPrice).toDecimalPlaces(current.quoteDecimals).toFixed())
+    handleChangeForm('price', true)(new Decimal(newPrice).toDecimalPlaces(current.quotePrecision, Decimal.ROUND_DOWN).toFixed())
+  }
+
+  const checkNumberPrecision = (value, precision) => {
+    const temp = value.toString().split('.')
+    if (temp[1] && temp[1].length) {
+      if (temp[1].length > precision) {
+        const end = temp[1].slice(0, precision)
+        return temp[0] + '.' + end
+      }
+    }
+
+    return value
   }
 
   const handleChangeForm = (field, inputByUser = false) => value => {
@@ -131,31 +144,48 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     if (!decimalRegExp.test(value) && value) {
       return
     }
+
     switch (field) {
       case 'price':
         setForm(state => {
+          let amount = form.amount
+          let total = new Decimal(value * state.amount).toDecimalPlaces(current.quotePrecision, Decimal.ROUND_DOWN).toFixed()
+          if (wasTotalInput) {
+            total = form.total
+            amount = value == 0 ? 0 : new Decimal(total / value).toDecimalPlaces(current.basePrecision, Decimal.ROUND_DOWN).toFixed()
+          }
+
           return {
             ...state,
-            price: value,
-            total: new Decimal(value * state.amount).toDecimalPlaces(current.quoteDecimals).toFixed(),
+            price: checkNumberPrecision(value, current.quotePrecision),
+            amount,
+            total,
           }
         })
         return
       case 'amount':
         setForm(state => {
+          let amount = checkNumberPrecision(value, current.basePrecision)
+          let total = new Decimal(value * state.price).toDecimalPlaces(current.quotePrecision, Decimal.ROUND_DOWN).toFixed()
+          // if (wasTotalInput) {
+          //   total = form.total
+          //   amount = value == 0 ? 0 : new Decimal(total / form.price).toDecimalPlaces(current.basePrecision, Decimal.ROUND_DOWN).toFixed()
+          // }
+
           return {
             ...state,
-            amount: value,
-            total: new Decimal(value * state.price).toDecimalPlaces(current.quoteDecimals).toFixed(),
+            amount,
+            total,
           }
         })
         return
       case 'total':
+        setWasTotalInput(true)
         setForm(state => {
-          const amount = new Decimal(value / state.price).toDecimalPlaces(current.decimals).toFixed()
+          const amount = new Decimal(value / state.price).toDecimalPlaces(current.basePrecision, Decimal.ROUND_DOWN).toFixed()
           return {
             ...state,
-            total: value,
+            total: checkNumberPrecision(value, current.quotePrecision),
             amount: isNaN(amount) || !isFinite(amount) ? state.amount : amount,
           }
         })
@@ -213,6 +243,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
       total: form.total,
     }
 
+    setWasTotalInput(false)
     if (version == 'mobile') {
       if (onSubmit) {
         onSubmit(props)
@@ -223,7 +254,14 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   }
 
   const handleTotalBlur = () => {
-    handleChangeForm('amount', true)(new Decimal(form.total / form.price).toFixed())
+    setForm(state => {
+      return {
+        ...state,
+        total: new Decimal(state.total).toDecimalPlaces(current.quotePrecision, Decimal.ROUND_DOWN).toFixed(),
+      }
+    })
+
+    // handleChangeForm('amount', true)(new Decimal(form.total / form.price).toDecimalPlaces(current.basePrecision, Decimal.ROUND_DOWN).toFixed())
     Amplitude.event('Add Total', {
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
@@ -235,6 +273,13 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   }
 
   const handleBlurPrice = () => {
+    setForm(state => {
+      return {
+        ...state,
+        price: new Decimal(state.price).toDecimalPlaces(current.quotePrecision, Decimal.ROUND_DOWN).toFixed(),
+      }
+    })
+
     Amplitude.event('Add Price', {
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
@@ -246,6 +291,13 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
   }
 
   const handleBlurAmount = () => {
+    setForm(state => {
+      return {
+        ...state,
+        amount: new Decimal(state.amount).toDecimalPlaces(current.basePrecision, Decimal.ROUND_DOWN).toFixed(),
+      }
+    })
+
     Amplitude.event('Add Quantity', {
       'Base Currency': current.symbol,
       'Quote Currency': current.quoteSymbol,
@@ -258,11 +310,11 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
 
   const handleClickMultipler = (percentage) => () => {
     if (currentTab === 'buy') {
-      const number = new Decimal(userBalances.quote * percentage)
-      handleChangeForm('total', true)(number.toFixed())
+      const number = new Decimal(userBalances.quote * percentage).toDecimalPlaces(current.quotePrecision, Decimal.ROUND_DOWN).toFixed()
+      handleChangeForm('total', true)(number)
     } else {
-      const number = new Decimal(userBalances.base * percentage)
-      handleChangeForm('amount', true)(number.toFixed())
+      const number = new Decimal(userBalances.base * percentage).toDecimalPlaces(current.basePrecision, Decimal.ROUND_DOWN).toFixed()
+      handleChangeForm('amount', true)(number)
     }
   }
 
@@ -279,10 +331,6 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
             <App.Text size={10} color={isErrorBalance && wasUserInput ? '#FF1D61' : '#B9B8C5'} height={1}>
               {currentTab === 'buy' ? `${userBalances.quote} ${current.quoteSymbol}` : `${userBalances.base} ${current.symbol}`}
             </App.Text>
-          </App.Flex>
-
-          <App.Flex sx={{ paddingRight: 14 }}>
-            <App.Text size={10} color="#b9b8c5">Fee: {blockchain?.info?.fee ?? 0}%</App.Text>
           </App.Flex>
         </App.Flex>
 
@@ -311,6 +359,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
                   warning={isWrongPrice}
                   onBlur={handleBlurPrice}
                   onChange={handleChangeForm('price', true)}
+                  style={{ width: 144, flex: 0 }}
                 />
                 
                 {version == 'mobile' ? (

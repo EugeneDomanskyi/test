@@ -95,26 +95,34 @@ $borderRadius: 12px;
   /* variant: search */
   &.search {
     .input {
-      background-color: #1c192e;
+      border-radius: 12px;
+      background: linear-gradient(0deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.07) 100%), #0B0915;;
       padding-left: 16px;
+      border: solid transparent 1px;
+
+      &.input_focused {
+        border-color: #6B41EB;
+        background: #2E2745;
+      }
 
       .input_input {
-        font-size: 12px;
+        font-size: 16px;
+        font-weight: 500;
         line-height: 24px;
-        padding: 10px 16px 10px 0;
+        padding: 10px 16px 9px 0;
+        color: #FFFFFF99;
 
         &::placeholder {
-          color: #5E5C6B;
-          font-size: 12px;
+          color: #FFFFFF99;
+          font-size: 16px;
+          font-weight: 500;
           line-height: 24px;
-          font-feature-settings: 'clig' off, 'liga' off;
-          text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
           opacity: 1;
         }
       }
 
       .input_fieldset {
-        border-radius: 4px;
+        border-radius: 12px;
         border-color: transparent;
       }
     }

@@ -16,7 +16,7 @@ const Header = () => {
   const router = useRouter()
   const isHome = router.asPath == '/'
   const isExchange = router.asPath?.includes('/exchange')
-  const isPD = router.asPath?.includes('/points-dashboard')
+  const isGD = router.asPath?.includes('/gems-dashboard')
   
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
@@ -43,21 +43,9 @@ const Header = () => {
         <App.Flex row full align="center" justify="space-between" gap={[0, 16]}>
           <App.Flex row fullHeight gap={24} align="center" justify={['flex-start', 'space-between']}>
             <App.Flex row fullHeight gap={[24, 8]} align="center">
-              {isMobile ? (
-                <App.Flex row gap={8} center>
-                  <div className={cn(styles.mobileMenuButton, {[styles.show]: mobileMenuShow})} onClick={handleMobileMenuClick}>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
-
-                  <div className={styles.line} />
-                </App.Flex>
-              ) : null}
-
               <Link href="/" style={{ lineHeight: 0 }}>
                 <div className={styles.logo}>
-                  <App.Icon icon="tegro" width={117} height={25} />
+                  <App.Icon icon="tegro" width={isMobile ? 75 : 117} height={isMobile ? 16 : 25} />
                 </div>
               </Link>
             </App.Flex>
@@ -70,9 +58,9 @@ const Header = () => {
                   </App.Flex>
                 </Link>
 
-                <Link href="/points-dashboard" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/points-dashboard')})}>
+                <Link href="/gems-dashboard" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/gems-dashboard')})}>
                   <App.Flex center fullHeight>
-                    <App.Text size={14} weight={600}>Points Dashboard</App.Text>
+                    <App.Text size={14} weight={600}>Gems Dashboard</App.Text>
                   </App.Flex>
                 </Link>
 
@@ -85,7 +73,7 @@ const Header = () => {
             ) : null}
           </App.Flex>
 
-          <App.Flex row fullHeight gap={16} align="center">
+          <App.Flex row fullHeight gap={8} align="center">
             { ! isMobile ? (
               <App.Flex id="support-dropdown" className={cn(styles.supportButton, {[styles.active]: supportIsOpen})} onClick={() => setSupportIsOpen(!supportIsOpen)}>
                 <App.Flex className={styles.linkWrapper}>
@@ -111,87 +99,45 @@ const Header = () => {
             ) : null}
 
             {isExchange ? <SwitchBlockchain /> : null}
-            {!isHome ? <HeaderWallet2 /> : <App.Button primary rounded target="_self" href="/exchange">Launch app</App.Button>}
+            {!isHome ? <HeaderWallet2 /> : <App.Button primary small={isMobile} target="_self" href="/exchange">Launch app</App.Button>}
+
+            {isMobile ? (
+              <App.Flex row gap={10} center>
+                <div className={styles.line} />
+                
+                <div className={cn(styles.mobileMenuButton, {[styles.show]: mobileMenuShow})} onClick={handleMobileMenuClick}>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </App.Flex>
+            ) : null}
          </App.Flex>
 
           <div className={cn(styles.mobileMenu, {[styles.show]: mobileMenuShow})}>
             <div className={styles.content}>
               <Link href="/exchange" className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
-                  {/* <App.Icon icon="menuExchange" /> */}
-                  <App.Text size={14} weight={700} color={router.pathname.includes('/exchange') ? '#A6DC37' : '#fff'}>Exchange</App.Text>
+                  <App.Text size={16} weight={600} color={router.pathname.includes('/exchange') ? '#A6DC37' : '#fff'}>Exchange</App.Text>
                 </App.Flex>
               </Link>
 
-              <Link href="/points-dashboard" className={cn(styles.link)}>
+              <Link href="/gems-dashboard" className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
-                  {/* <App.Icon icon="menuExchange" /> */}
-                  <App.Text size={14} weight={700} color={router.pathname.includes('/points-dashboard') ? '#A6DC37' : '#fff'}>Points Dashboard</App.Text>
+                  <App.Text size={16} weight={600} color={router.pathname.includes('/gems-dashboard') ? '#A6DC37' : '#fff'}>Gems Dashboard</App.Text>
                 </App.Flex>
               </Link>
 
               <Link href="/tournaments" className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
-                  {/* <App.Icon icon="menuExchange" /> */}
-                  <App.Text size={14} weight={700} color={router.pathname.includes('/tournaments') ? '#A6DC37' : '#fff'}>Tournaments</App.Text>
+                  <App.Text size={16} weight={600} color={router.pathname.includes('/tournaments') ? '#A6DC37' : '#fff'}>Tournaments</App.Text>
                 </App.Flex>
               </Link>
-              
-              {/* <div className={styles.line} />
 
-              <Link href="/earnings" className={cn(styles.link)}>
-                <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
-                  <App.Text size={14} weight={700} color={router.pathname.includes('/earnings') ? '#A6DC37' : '#fff'}>My Earnings</App.Text>
-                </App.Flex>
-              </Link> */}
-
-              <div className={styles.line} />
-
-              <App.Flex sx={{padding: 16}} justify="space-between">
-                <App.Flex column gap={12} sx={{width: 140}}>
-                  <a href="https://twitter.com/tegrofi?utm_source=website" target="_blank" rel="noreferrer">
-                    <App.Flex gap={4}>
-                      <App.Icon icon="twitter-filled" />
-                      <App.Text size={10} weight={500}>Twitter</App.Text>
-                    </App.Flex>
-                  </a>
-                  
-                  <a href="https://discord.gg/tegro?utm_source=website" target="_blank" rel="noreferrer">
-                    <App.Flex gap={4}>
-                      <App.Icon icon="discord-filled" />
-                      <App.Text size={10} weight={500}>Discord</App.Text>
-                    </App.Flex>
-                  </a>
-                  
-                  <a href="https://t.me/tegrochat?utm_source=website" target="_blank" rel="noreferrer">
-                    <App.Flex gap={4}>
-                      <App.Icon icon="telegram-filled" />
-                      <App.Text size={10} weight={500}>Telegram</App.Text>
-                    </App.Flex>
-                  </a>
-                </App.Flex>
-                
-                <App.Flex column gap={12} sx={{width: 140}}>
-                  <a href="https://www.linkedin.com/company/tegrofi?utm_source=website" target="_blank" rel="noreferrer">
-                    <App.Flex gap={4}>
-                      <App.Icon icon="linkedin-filled" />
-                      <App.Text size={10} weight={500}>LinkedIn</App.Text>
-                    </App.Flex>
-                  </a>
-                  
-                  <a href="https://tegro.substack.com/?utm_source=website" target="_blank" rel="noreferrer">
-                    <App.Flex gap={4}>
-                      <App.Icon icon="substack-filled" />
-                      <App.Text size={10} weight={500}>Substack</App.Text>
-                    </App.Flex>
-                  </a>
-                  
-                  <a href="https://www.youtube.com/@tegrofi?utm_source=website" target="_blank" rel="noreferrer">
-                    <App.Flex gap={4}>
-                      <App.Icon icon="youtube-filled" />
-                      <App.Text size={10} weight={500}>Youtube</App.Text>
-                    </App.Flex>
-                  </a>
+              <App.Flex className={cn(styles.link)} onClick={handleClickDiscord}>
+                <App.Flex align="center" height="100%" gap={8}>
+                  <App.Icon icon="question" />
+                  <App.Text size={16} weight={600}>Discord Support</App.Text>
                 </App.Flex>
               </App.Flex>
             </div>

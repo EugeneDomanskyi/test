@@ -6,11 +6,11 @@ import cn from 'classnames'
 
 import Amplitude from '@/libs/amplitude.lib'
 
-import $point from '@/store/point'
+import $gem from '@/store/gem'
 import $token from '@/store/token'
 
 import App from '@/components/App'
-import PointsCountdownBrett from '@/components/Points/PointsCountdownBrett'
+import GemsCountdownBrett from '@/components/Gems/GemsCountdownBrett'
 
 import styles from './styles.module.scss'
 
@@ -18,7 +18,7 @@ const Tournaments = () => {
   const router = useRouter()
 
   const dispatch = useDispatch()
-  const tournaments = useSelector(({ $point }) => $point.tournaments)
+  const tournaments = useSelector(({ $gem }) => $gem.tournaments)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
   const [loading, setLoading] = useState(true)
@@ -28,9 +28,9 @@ const Tournaments = () => {
   }, [])
 
   const fetchTournaments = async () => {
-    const result = await $point.api.tournaments()
+    const result = await $gem.api.tournaments()
     if (result && result?.data) {
-      dispatch($point.set.tournaments(result.data))
+      dispatch($gem.set.tournaments(result.data))
     }
     setLoading(false)
   }
@@ -59,7 +59,7 @@ const Tournaments = () => {
   }
 
   const handleFinish = (key, status) => () => {
-    dispatch($point.set.tournamentStatus({key, status}))
+    dispatch($gem.set.tournamentStatus({key, status}))
   }
 
   const getSortedKeys = () => {
@@ -68,10 +68,22 @@ const Tournaments = () => {
       if (tournaments[b].status == 'on-going') return 1
       if (tournaments[a].status == 'upcoming') return -1
       if (tournaments[b].status == 'upcoming') return 1
+      if (tournaments[a].status == 'closed' && tournaments[b].status == 'closed') {
+        return new Date(tournaments[b].end_time) - new Date(tournaments[a].end_time)
+      }
       if (tournaments[a].status == 'closed') return -1
       if (tournaments[b].status == 'closed') return 1
       return 0
     })
+  }
+
+  const handleShowToggle = (key) => () => {
+    dispatch($gem.set.tournamentExpand(key))
+  }
+
+  const handlePoncho = () => {
+    dispatch($token.set.current({}))
+    router.push(`/exchange/base/0xc2fe011c3885277c7f0e7ffd45ff90cadc8ecd12`)
   }
 
   return (
@@ -80,54 +92,68 @@ const Tournaments = () => {
         <App.Flex column gap={48} sx={{ paddingTop: 32 }}>
           <App.Text size={24} weight={700} height={1}>Tournaments</App.Text>
 
-          {!loading && tournaments.toshi && tournaments.toshi.status == 'on-going' ? (
-            <App.Flex direction={['row', 'column']} gap={24} className={styles.banner} align={['center', 'flex-start']} justify="space-between">
-              <App.Flex column gap={8}>
-                <App.Text uppercase size={32} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">2,000,000 $TOSHI</App.Text>
-                <App.Text uppercase size={16} weight={600} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">in rewards!</App.Text>
+          {!loading && tournaments.poncho_rush_s1 && tournaments.poncho_rush_s1.status == 'on-going' ? (
+            isMobile ? (
+              <App.Flex column gap={16} align="flex-start" className={styles.bannerMobile} onClick={handlePoncho}>
+                <App.Flex column gap={4}>
+                  <App.Text uppercase size={24} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">2,000 $PONCHO</App.Text>
+                  <App.Text size={16} weight={700} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">In Rewards!</App.Text>
+                </App.Flex>
+
+                <App.Text size={14} weight={900} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">$1 = 1 Points</App.Text>
+
+                <App.Button primary2 small>Trade Now</App.Button>
               </App.Flex>
+            ) : (
+              <App.Flex direction={['row', 'column']} gap={24} className={styles.banner} align={['center', 'flex-start']} justify="space-between" onClick={handlePoncho}>
+                <App.Flex column gap={8}>
+                  <App.Text uppercase size={36} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">2,000 $PONCHO</App.Text>
+                  <App.Text uppercase size={16} weight={600} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">in rewards!</App.Text>
+                </App.Flex>
 
-              <App.Flex column gap={8}>
-                <App.Text uppercase size={[16, 14]} weight={900} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">$1 = 1 Point</App.Text>
+                <App.Flex column gap={8}>
+                  <App.Flex row gap={[16, 8]}>
+                    <App.Flex row center gap={[12, 8]}>
+                      <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">1</App.Text>
 
-                <App.Flex row gap={[16, 8]}>
-                  <App.Flex row center gap={[12, 8]}>
-                    <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">1</App.Text>
+                      <App.Flex column gap={2}>
+                        <App.Text uppercase size={[16, 12]} weight={900} height={1}>Trade</App.Text>
+                        <App.Text size={[12, 9]} weight={500} height={1}>$PONCHO</App.Text>
+                      </App.Flex>
+                    </App.Flex>
 
-                    <App.Flex column gap={2}>
-                      <App.Text uppercase size={[16, 12]} weight={900} height={1}>Connect</App.Text>
-                      <App.Text size={[12, 9]} weight={500} height={1}>Wallet</App.Text>
+                    <App.Flex row center gap={[12, 8]}>
+                      <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">2</App.Text>
+
+                      <App.Flex column gap={2}>
+                        <App.Text uppercase size={[16, 12]} weight={900} height={1}>Collect</App.Text>
+                        <App.Text size={[12, 9]} weight={500} height={1}>POINTS</App.Text>
+                      </App.Flex>
+                    </App.Flex>
+
+                    <App.Flex row center gap={[12, 8]}>
+                      <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">3</App.Text>
+
+                      <App.Flex column gap={2}>
+                        <App.Text uppercase size={[16, 12]} weight={900} height={1}>Climb</App.Text>
+                        <App.Text size={[12, 9]} weight={500} height={1}>Leaderboard</App.Text>
+                      </App.Flex>
+                    </App.Flex>
+
+                    <App.Flex row center gap={[12, 8]}>
+                      <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">4</App.Text>
+
+                      <App.Flex column gap={2}>
+                        <App.Text uppercase size={[16, 12]} weight={900} height={1}>Win</App.Text>
+                        <App.Text size={[12, 9]} weight={500} height={1}>$PONCHO</App.Text>
+                      </App.Flex>
                     </App.Flex>
                   </App.Flex>
 
-                  <App.Flex row center gap={[12, 8]}>
-                    <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">2</App.Text>
-
-                    <App.Flex column gap={2}>
-                      <App.Text uppercase size={[16, 12]} weight={900} height={1}>Trade</App.Text>
-                      <App.Text size={[12, 9]} weight={500} height={1}>$TOSHI</App.Text>
-                    </App.Flex>
-                  </App.Flex>
-
-                  <App.Flex row center gap={[12, 8]}>
-                    <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">3</App.Text>
-
-                    <App.Flex column gap={2}>
-                      <App.Text uppercase size={[16, 12]} weight={900} height={1}>Climb</App.Text>
-                      <App.Text size={[12, 9]} weight={500} height={1}>Leaderboard</App.Text>
-                    </App.Flex>
-                  </App.Flex>
-
-                  <App.Flex row center gap={[12, 8]}>
-                    <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">4</App.Text>
-
-                    <App.Flex column gap={2}>
-                      <App.Text uppercase size={[16, 12]} weight={900} height={1}>Profit</App.Text>
-                    </App.Flex>
-                  </App.Flex>
+                  <App.Text uppercase size={[16, 14]} weight={900} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">Collect 1 POINT for every $1 traded!</App.Text>
                 </App.Flex>
               </App.Flex>
-            </App.Flex>
+            )
           ) : null}
           
           {loading ? (
@@ -136,7 +162,6 @@ const Tournaments = () => {
             getSortedKeys().length ? (
               getSortedKeys().map((key, index) => {
                 const tournament = tournaments[key]
-                console.log(key)
                 return (
                   <App.Flex column key={index} gap={16}>
                     <App.Flex direction={['row', 'column']} gap={16} fullWidth className={styles.header} align="center" justify="space-between">
@@ -157,7 +182,7 @@ const Tournaments = () => {
                             {!isMobile ? (
                               <App.Text size={14} weight={400} height={1} color="#FFFFFF99">Starts in</App.Text>
                             ) : null}
-                            <PointsCountdownBrett endTime={tournament.start_time} onFinish={handleFinish(key, 'on-going')} />
+                            <GemsCountdownBrett endTime={tournament.start_time} onFinish={handleFinish(key, 'on-going')} />
                           </App.Flex>
                         ) : (
                           tournament.status == 'on-going' ? (
@@ -165,7 +190,7 @@ const Tournaments = () => {
                               {!isMobile ? (
                                 <App.Text size={14} weight={400} height={1} color="#FFFFFF99">Ends in</App.Text>
                               ) : null}
-                              <PointsCountdownBrett endTime={tournament.end_time} onFinish={handleFinish(key, 'closed')} />
+                              <GemsCountdownBrett endTime={tournament.end_time} onFinish={handleFinish(key, 'closed')} />
                             </App.Flex>
                           ) : null
                         )}
@@ -198,30 +223,44 @@ const Tournaments = () => {
                       </App.Flex>
 
                       {tournament?.leaderboard && tournament.leaderboard.length ? (
-                        tournament.leaderboard.map((item, i) => (
-                          <App.Flex key={i} row gap={16} className={styles.row}>
-                            <App.Flex width={[50, 30]} center>
-                              <svg width={isMobile ? 24 : 48} height={isMobile ? 24 : 48} viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke={getColor(item.position, item.reward ?? 0)} d="M20.3335 1.32781C21.1453 0.147992 22.8876 0.147992 23.6995 1.32781C24.6494 2.70814 26.5364 3.06089 27.9207 2.11689C29.104 1.31002 30.7286 1.93942 31.0595 3.33285C31.4465 4.9631 33.0787 5.97369 34.7106 5.59352C36.1054 5.26858 37.393 6.44237 37.1981 7.86121C36.9701 9.52121 38.127 11.0532 39.786 11.2882C41.204 11.489 41.9807 13.0487 41.2864 14.3013C40.4742 15.7669 40.9995 17.6133 42.4616 18.4317C43.7113 19.1313 43.8721 20.8662 42.7722 21.7834C41.4854 22.8566 41.3083 24.7681 42.376 26.0594C43.2886 27.1632 42.8118 28.839 41.4548 29.297C39.8672 29.8328 39.0115 31.5513 39.5406 33.1411C39.9929 34.5 38.9429 35.8904 37.5121 35.8273C35.8382 35.7534 34.4195 37.0467 34.3386 38.7203C34.2694 40.1508 32.7881 41.0681 31.4767 40.4923C29.9425 39.8188 28.1524 40.5123 27.4724 42.0436C26.8911 43.3525 25.1785 43.6727 24.1636 42.6621C22.9763 41.4799 21.0566 41.4799 19.8693 42.6621C18.8545 43.6727 17.1418 43.3525 16.5606 42.0436C15.8805 40.5123 14.0905 39.8188 12.5562 40.4923C11.2449 41.0681 9.76353 40.1508 9.69436 38.7203C9.61343 37.0467 8.19476 35.7534 6.52081 35.8273C5.09004 35.8904 4.04006 34.5 4.49231 33.1411C5.02143 31.5513 4.16575 29.8328 2.57816 29.297C1.22121 28.839 0.744403 27.1632 1.657 26.0594C2.72471 24.7681 2.54758 22.8566 1.26077 21.7834C0.160898 20.8662 0.321658 19.1313 1.57135 18.4317C3.03344 17.6133 3.55879 15.7669 2.74655 14.3013C2.0523 13.0487 2.82892 11.489 4.24693 11.2882C5.90594 11.0532 7.06282 9.5212 6.83484 7.86121C6.63998 6.44237 7.92757 5.26858 9.32238 5.59352C10.9543 5.97369 12.5864 4.9631 12.9735 3.33285C13.3043 1.93942 14.929 1.31002 16.1122 2.11689C17.4966 3.06089 19.3836 2.70814 20.3335 1.32781Z" />
-                              </svg>
-                              <App.Text color={getColor(item.position, item.reward ?? 0)} size={[16, 8]} weight={400} sx={{position: 'absolute'}}>{item.position}</App.Text>
-                            </App.Flex>
+                        <>
+                          {tournament.leaderboard.map((item, i) => {
+                            if (tournament.status == 'closed' && tournament.expand == false && i >= 5) {
+                              return null
+                            }
 
-                            <App.Flex width={[200, 80]} align="center">
-                              <App.Text weight={400} height={1}>{getShort(item.wallet_address)}</App.Text>
-                            </App.Flex>
+                            return (
+                              <App.Flex key={i} row gap={16} className={styles.row}>
+                                <App.Flex width={[50, 30]} center>
+                                  <svg width={isMobile ? 24 : 48} height={isMobile ? 24 : 48} viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke={getColor(item.position, item.reward ?? 0)} d="M20.3335 1.32781C21.1453 0.147992 22.8876 0.147992 23.6995 1.32781C24.6494 2.70814 26.5364 3.06089 27.9207 2.11689C29.104 1.31002 30.7286 1.93942 31.0595 3.33285C31.4465 4.9631 33.0787 5.97369 34.7106 5.59352C36.1054 5.26858 37.393 6.44237 37.1981 7.86121C36.9701 9.52121 38.127 11.0532 39.786 11.2882C41.204 11.489 41.9807 13.0487 41.2864 14.3013C40.4742 15.7669 40.9995 17.6133 42.4616 18.4317C43.7113 19.1313 43.8721 20.8662 42.7722 21.7834C41.4854 22.8566 41.3083 24.7681 42.376 26.0594C43.2886 27.1632 42.8118 28.839 41.4548 29.297C39.8672 29.8328 39.0115 31.5513 39.5406 33.1411C39.9929 34.5 38.9429 35.8904 37.5121 35.8273C35.8382 35.7534 34.4195 37.0467 34.3386 38.7203C34.2694 40.1508 32.7881 41.0681 31.4767 40.4923C29.9425 39.8188 28.1524 40.5123 27.4724 42.0436C26.8911 43.3525 25.1785 43.6727 24.1636 42.6621C22.9763 41.4799 21.0566 41.4799 19.8693 42.6621C18.8545 43.6727 17.1418 43.3525 16.5606 42.0436C15.8805 40.5123 14.0905 39.8188 12.5562 40.4923C11.2449 41.0681 9.76353 40.1508 9.69436 38.7203C9.61343 37.0467 8.19476 35.7534 6.52081 35.8273C5.09004 35.8904 4.04006 34.5 4.49231 33.1411C5.02143 31.5513 4.16575 29.8328 2.57816 29.297C1.22121 28.839 0.744403 27.1632 1.657 26.0594C2.72471 24.7681 2.54758 22.8566 1.26077 21.7834C0.160898 20.8662 0.321658 19.1313 1.57135 18.4317C3.03344 17.6133 3.55879 15.7669 2.74655 14.3013C2.0523 13.0487 2.82892 11.489 4.24693 11.2882C5.90594 11.0532 7.06282 9.5212 6.83484 7.86121C6.63998 6.44237 7.92757 5.26858 9.32238 5.59352C10.9543 5.97369 12.5864 4.9631 12.9735 3.33285C13.3043 1.93942 14.929 1.31002 16.1122 2.11689C17.4966 3.06089 19.3836 2.70814 20.3335 1.32781Z" />
+                                  </svg>
+                                  <App.Text color={getColor(item.position, item.reward ?? 0)} size={[16, 8]} weight={400} sx={{position: 'absolute'}}>{item.position}</App.Text>
+                                </App.Flex>
 
-                            <App.Flex width={['auto', 56]} flex={[1, null]} center>
-                              <App.Text center weight={400} height={1}>{item.points}</App.Text>
-                            </App.Flex>
+                                <App.Flex width={[200, 80]} align="center">
+                                  <App.Text weight={400} height={1}>{getShort(item.wallet_address)}</App.Text>
+                                </App.Flex>
 
-                            <App.Flex flex={1} align="center" justify="flex-end">
-                              {item.reward > 0 ? (
-                                <App.Text right weight={400} height={1}>{item.reward} {item.reward_currency}</App.Text>
-                              ) : null}
+                                <App.Flex width={['auto', 56]} flex={[1, null]} center>
+                                  <App.Text center weight={400} height={1}>{item.points}</App.Text>
+                                </App.Flex>
+
+                                <App.Flex flex={1} align="center" justify="flex-end">
+                                  {item.reward > 0 ? (
+                                    <App.Text right weight={400} height={1}>{item.reward} {item.reward_currency}</App.Text>
+                                  ) : null}
+                                </App.Flex>
+                              </App.Flex>
+                            )}
+                          )}
+
+                          {tournament.status == 'closed' ? (
+                            <App.Flex center sx={{ padding: 16, cursor: 'pointer' }} onClick={handleShowToggle(key)}>
+                              <App.Text size={14} weight={600} height={1} color="#6B41EB">{tournament.expand ? 'Show less' : 'Show all'}</App.Text>
                             </App.Flex>
-                          </App.Flex>
-                        ))
+                          ) : null}
+                        </>
                       ) : (
                         <App.Flex center height={200}>
                           <App.Text>There are no participants yet</App.Text>
