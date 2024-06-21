@@ -135,7 +135,7 @@ class WagmiHelper {
 
       const sortedWagmiChains = [...inChains, ...notInChains]
 
-      coinbaseWallet.preference = 'all'
+      coinbaseWallet.preference = 'smartWalletOnly'
 
       this.wagmiConfig = getDefaultConfig({
         appName: process.env.NEXT_PUBLIC_APP_NAME,
