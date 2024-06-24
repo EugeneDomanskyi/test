@@ -13,6 +13,7 @@
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.10);
     padding: 0 30px;
+    cursor: pointer;
 
     @media (max-width: 768px) {
       height: auto;
@@ -26,6 +27,10 @@
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.10);
     background: #121019 url('/images/poncho-banner-mobile.png') center / cover no-repeat;
+  }
+
+  .prize {
+    
   }
 
   .header {

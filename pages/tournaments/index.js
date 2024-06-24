@@ -35,13 +35,13 @@ const Tournaments = () => {
     setLoading(false)
   }
 
-  const handleExchange = (contract, key) => () => {
-    Amplitude.event(`Tournament Trade ${key.charAt(0).toUpperCase() + key.slice(1)}`, {
+  const handleExchange = (tournament) => () => {
+    Amplitude.event(`Tournament Trade ${tournament.name}`, {
       'Page': Amplitude.page(),
     })
 
     dispatch($token.set.current({}))
-    router.push(`/exchange/base/${contract}`)
+    router.push(`/exchange/base/${tournament.bonus_contract}`)
   }
 
   const getColor = (position, reward) => {
@@ -81,10 +81,24 @@ const Tournaments = () => {
     dispatch($gem.set.tournamentExpand(key))
   }
 
-  const handlePoncho = () => {
-    dispatch($token.set.current({}))
-    router.push(`/exchange/base/0xc2fe011c3885277c7f0e7ffd45ff90cadc8ecd12`)
+  const getOngoingTournament = () => {
+    const key = Object.keys(tournaments).find(key => tournaments[key].status == 'on-going')
+    if (key) {
+      return tournaments[key]
+    }
+
+    return null
   }
+
+  const getPool = (rewards) => {
+    let pool = 0
+    rewards.forEach(reward => {
+      pool += reward.reward
+    })
+    return pool.toLocaleString('en-US')
+  
+  }
+
 
   return (
     <App.Flex className={styles.container}>
@@ -92,11 +106,11 @@ const Tournaments = () => {
         <App.Flex column gap={48} sx={{ paddingTop: 32 }}>
           <App.Text size={24} weight={700} height={1}>Tournaments</App.Text>
 
-          {!loading && tournaments.poncho_rush_s1 && tournaments.poncho_rush_s1.status == 'on-going' ? (
+          {!loading && getOngoingTournament() ? (
             isMobile ? (
-              <App.Flex column gap={16} align="flex-start" className={styles.bannerMobile} onClick={handlePoncho}>
+              <App.Flex column gap={16} align="flex-start" className={styles.bannerMobile} onClick={handleExchange(getOngoingTournament())}>
                 <App.Flex column gap={4}>
-                  <App.Text uppercase size={24} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">2,000 $PONCHO</App.Text>
+                  <App.Text uppercase size={24} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">{getPool(getOngoingTournament().rewards)} ${getOngoingTournament().currency}</App.Text>
                   <App.Text size={16} weight={700} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">In Rewards!</App.Text>
                 </App.Flex>
 
@@ -105,9 +119,9 @@ const Tournaments = () => {
                 <App.Button primary2 small>Trade Now</App.Button>
               </App.Flex>
             ) : (
-              <App.Flex direction={['row', 'column']} gap={24} className={styles.banner} align={['center', 'flex-start']} justify="space-between" onClick={handlePoncho}>
+              <App.Flex direction={['row', 'column']} gap={24} className={styles.banner} align={['center', 'flex-start']} justify="space-between" onClick={handleExchange(getOngoingTournament())}>
                 <App.Flex column gap={8}>
-                  <App.Text uppercase size={36} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">2,000 $PONCHO</App.Text>
+                  <App.Text uppercase size={36} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">{getPool(getOngoingTournament().rewards)} ${getOngoingTournament().currency}</App.Text>
                   <App.Text uppercase size={16} weight={600} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">in rewards!</App.Text>
                 </App.Flex>
 
@@ -118,7 +132,7 @@ const Tournaments = () => {
 
                       <App.Flex column gap={2}>
                         <App.Text uppercase size={[16, 12]} weight={900} height={1}>Trade</App.Text>
-                        <App.Text size={[12, 9]} weight={500} height={1}>$PONCHO</App.Text>
+                        <App.Text size={[12, 9]} weight={500} height={1}>${getOngoingTournament().currency}</App.Text>
                       </App.Flex>
                     </App.Flex>
 
@@ -145,7 +159,7 @@ const Tournaments = () => {
 
                       <App.Flex column gap={2}>
                         <App.Text uppercase size={[16, 12]} weight={900} height={1}>Win</App.Text>
-                        <App.Text size={[12, 9]} weight={500} height={1}>$PONCHO</App.Text>
+                        <App.Text size={[12, 9]} weight={500} height={1}>${getOngoingTournament().currency}</App.Text>
                       </App.Flex>
                     </App.Flex>
                   </App.Flex>
@@ -174,6 +188,13 @@ const Tournaments = () => {
                         <App.Flex center className={cn(styles.badge, styles[tournament.status])}>
                           <App.Text uppercase center size={12} weight={700} height={1} color={tournament.status == 'on-going' ? '#06382F' : '#fff'}>{tournament.status}</App.Text>
                         </App.Flex>
+
+                        {tournament.status == 'closed' ? (
+                          <App.Flex center className={cn(styles.prize)}>
+                            <App.Icon icon="prize" />
+                            <App.Text uppercase center size={12} weight={700} height={1} color="#FFCB45">{getPool(tournament.rewards)} ${tournament.currency}</App.Text>
+                          </App.Flex>
+                        ) : null}
                       </App.Flex>
                       
                       <App.Flex row fullWidth gap={24} align="center" justify={['flex-end', 'space-between']}>
@@ -196,7 +217,7 @@ const Tournaments = () => {
                         )}
 
                         {tournament.status == 'on-going' ? (
-                          <App.Button primary2 onClick={handleExchange(tournament.bonus_contract, key)}>Trade now</App.Button>
+                          <App.Button primary2 onClick={handleExchange(tournament)}>Trade now</App.Button>
                         ) : (
                           <App.Button primary2 outlined href="https://discord.com/invite/tegro">Join Discord {tournament.status == 'closed' ? 'To Claim Rewards' : ''}<App.Icon icon="arrow-45" /></App.Button>
                         )}

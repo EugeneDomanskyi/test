@@ -1839,6 +1839,55 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
         </svg>
       )
     }
+    
+    if (icon == 'prize') {
+      return (
+        <svg width={width ?? 20} height={height ?? 20} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path d="M16.6667 10V18.3333H3.33337V10" fill="black"/>
+          <path d="M16.6667 10V18.3333H3.33337V10" fill="url(#paint0_radial_6310_1803)"/>
+          <path d="M18.3333 5.83334H1.66663V10H18.3333V5.83334Z" fill="black"/>
+          <path d="M18.3333 5.83334H1.66663V10H18.3333V5.83334Z" fill="url(#paint1_radial_6310_1803)"/>
+          <path d="M10 17L10 6" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 17L10 6" stroke="url(#paint2_radial_6310_1803)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9.99996 5.83333H6.24996C5.69743 5.83333 5.16752 5.61384 4.77682 5.22314C4.38612 4.83244 4.16663 4.30253 4.16663 3.75C4.16663 3.19746 4.38612 2.66756 4.77682 2.27686C5.16752 1.88616 5.69743 1.66666 6.24996 1.66666C9.16663 1.66666 9.99996 5.83333 9.99996 5.83333Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9.99996 5.83333H6.24996C5.69743 5.83333 5.16752 5.61384 4.77682 5.22314C4.38612 4.83244 4.16663 4.30253 4.16663 3.75C4.16663 3.19746 4.38612 2.66756 4.77682 2.27686C5.16752 1.88616 5.69743 1.66666 6.24996 1.66666C9.16663 1.66666 9.99996 5.83333 9.99996 5.83333Z" stroke="url(#paint3_radial_6310_1803)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 5.83333H13.75C14.3025 5.83333 14.8324 5.61384 15.2231 5.22314C15.6138 4.83244 15.8333 4.30253 15.8333 3.75C15.8333 3.19746 15.6138 2.66756 15.2231 2.27686C14.8324 1.88616 14.3025 1.66666 13.75 1.66666C10.8333 1.66666 10 5.83333 10 5.83333Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 5.83333H13.75C14.3025 5.83333 14.8324 5.61384 15.2231 5.22314C15.6138 4.83244 15.8333 4.30253 15.8333 3.75C15.8333 3.19746 15.6138 2.66756 15.2231 2.27686C14.8324 1.88616 14.3025 1.66666 13.75 1.66666C10.8333 1.66666 10 5.83333 10 5.83333Z" stroke="url(#paint4_radial_6310_1803)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs>
+            <radialGradient id="paint0_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(16.1719 10.3744) rotate(160.932) scale(14.0247 17.3864)">
+              <stop stop-color="#FFF6A3"/>
+              <stop offset="0.34606" stop-color="#FFF066"/>
+              <stop offset="0.688349" stop-color="#FFCB45"/>
+              <stop offset="1" stop-color="#FFBD13"/>
+            </radialGradient>
+            <radialGradient id="paint1_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(17.7148 6.02051) rotate(172.128) scale(16.7266 9.1112)">
+              <stop stop-color="#FFF6A3"/>
+              <stop offset="0.34606" stop-color="#FFF066"/>
+              <stop offset="0.688349" stop-color="#FFCB45"/>
+              <stop offset="1" stop-color="#FFBD13"/>
+            </radialGradient>
+            <radialGradient id="paint2_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(10.9629 6.49414) rotate(99.3348) scale(6.12901 3.93866)">
+              <stop stop-color="#FFF6A3"/>
+              <stop offset="0.34606" stop-color="#FFF066"/>
+              <stop offset="0.688349" stop-color="#FFCB45"/>
+              <stop offset="1" stop-color="#FFBD13"/>
+            </radialGradient>
+            <radialGradient id="paint3_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(9.78349 1.85384) rotate(158.444) scale(6.23524 8.55458)">
+              <stop stop-color="#FFF6A3"/>
+              <stop offset="0.34606" stop-color="#FFF066"/>
+              <stop offset="0.688349" stop-color="#FFCB45"/>
+              <stop offset="1" stop-color="#FFBD13"/>
+            </radialGradient>
+            <radialGradient id="paint4_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(15.6169 1.85384) rotate(158.444) scale(6.23524 8.55458)">
+              <stop stop-color="#FFF6A3"/>
+              <stop offset="0.34606" stop-color="#FFF066"/>
+              <stop offset="0.688349" stop-color="#FFCB45"/>
+              <stop offset="1" stop-color="#FFBD13"/>
+            </radialGradient>
+          </defs>
+        </svg>
+      )
+    }
   }
 
   return getIcon()
