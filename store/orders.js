@@ -175,7 +175,7 @@ const get = {
             return {
               priceFormatted: row.price,
               price: row.price,
-              volume: new Decimal(prevVolume).toFixed(),
+              volume: new Decimal(prevVolume).toDecimalPlaces(current.basePrecision).toFixed(),
               quantity: row.quantity,
             }
           })
