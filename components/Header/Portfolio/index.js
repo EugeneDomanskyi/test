@@ -115,7 +115,12 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
                 </a>
               </App.Flex>
 
-              <App.Icon icon="logout2" onClick={handleDisconnect} style={{ cursor: 'pointer' }}/>
+              <App.Flex row center gap={16}>
+                <App.Icon icon="logout2" onClick={handleDisconnect} style={{ cursor: 'pointer' }} />
+                <App.Flex center className={styles.close}>
+                  <App.Icon icon="cross" onClick={handleClose} color="#fff" />
+                </App.Flex>
+              </App.Flex>
             </App.Flex>
 
             <App.Flex column gap={6}>
