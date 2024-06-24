@@ -15,7 +15,7 @@ const Head = ({ route }) => {
       return <HeadExchange />
     }
 
-    if (currentRoute.includes('points-dashboard')) {
+    if (currentRoute.includes('gems-dashboard')) {
       return <HeadPD />
     }
 

@@ -7,7 +7,7 @@ const LandingPage = () => {
   return (
     <App.Flex column className={styles.container}>
       <div className={styles.background} />
-      {process.env.NEXT_PUBLIC_APP_ENV == 'production' ? <Home.Hero /> : <Home.Top />}
+      <Home.Hero />
       {/* <Home.Stats /> */}
       <Home.Features />
       <Home.Press />

@@ -67,6 +67,23 @@
       }
     }
 
+    .close {
+      width: 34px;
+      height: 34px;
+      border-radius: 40px;
+      border: 1px solid #2E2C4F;
+      cursor: pointer;
+      transition: all .2s;
+
+      &:hover {
+        border-color: #514f7a;
+      }
+
+      @media (max-width: 768px) {
+        display: none;
+      }
+    }
+
     .scroll {
       position: absolute;
       z-index: 0;

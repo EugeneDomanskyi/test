@@ -2,11 +2,11 @@ import Head from 'next/head'
 
 const HeadPD = () => {
   const getTitle = () => {
-    return 'Tegro Points Program'
+    return 'Tegro Gems Program'
   }
 
   const getDescription = () => {
-    return 'The Tegro Points Program is here! Collect points for every trade, referral, and action you make on the Tegro Gen2 DEX. Points can later be swapped for [REDACTED]! Donʼt miss out.'
+    return 'The Tegro Gems Program is here! Collect gems for every trade, referral, and action you make on the Tegro Gen2 DEX. Gems can later be swapped for [REDACTED]! Donʼt miss out.'
   }
 
   const getUrl = () => {
@@ -23,14 +23,14 @@ const HeadPD = () => {
         <meta property="og:type" content="website" />
         <meta property="og:title" content={getTitle()} />
         <meta property="og:description" content={getDescription()} />
-        <meta property="og:image" content="/images/points-program-landing-page.png" />
+        <meta property="og:image" content="/images/gems-program-landing-page.png" />
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="twitter:domain" content="tegro.com" />
         <meta property="twitter:url" content={getUrl()} />
         <meta name="twitter:title" content={getTitle()} />
         <meta name="twitter:description" content={getDescription()} />
-        <meta name="twitter:image" content="/images/points-program-landing-page.png" />
+        <meta name="twitter:image" content="/images/gems-program-landing-page.png" />
       </Head>
   )
 }

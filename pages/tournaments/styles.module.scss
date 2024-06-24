@@ -7,9 +7,9 @@
   }
 
   .banner {
-    background: #121019 url('/images/toshi-banner-bg.png') center / cover no-repeat;
+    background: #121019 url('/images/poncho-banner-long.png') center / cover no-repeat;
     width: 100%;
-    height: 93px;
+    height: 120px;
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.10);
     padding: 0 30px;
@@ -19,6 +19,13 @@
       background-position: -500px 0;
       padding: 8px 16px;
     }
+  }
+
+  .bannerMobile {
+    padding: 20px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: #121019 url('/images/poncho-banner-mobile.png') center / cover no-repeat;
   }
 
   .header {
