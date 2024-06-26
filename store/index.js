@@ -9,7 +9,7 @@ import $raffle from './raffle'
 import $markets from './markets'
 import $portfolio from './portfolio'
 import $tournament from './tournament'
-import $point from './point'
+import $gem from './gem'
 
 const createStore = (initialData) => {
   let preloadedState = {}
@@ -41,7 +41,7 @@ const createStore = (initialData) => {
       $markets: $markets.reducer,
       $portfolio: $portfolio.reducer,
       $tournament: $tournament.reducer,
-      $point: $point.reducer,
+      $gem: $gem.reducer,
     },
 
     preloadedState,
@@ -81,7 +81,7 @@ export const request = async (uri, method = 'GET', {api, ...data} = {}) => {
   // if (response?.ok) {
   //   return responseHandler(response)
   // }
-  
+
   // return errorHandler(response)
 }
 
@@ -117,7 +117,7 @@ const queryBuilder = (data) => {
       return `?${params}`
     }
   }
-  
+
   return ''
 }
 
@@ -133,6 +133,8 @@ const getBaseUrl = (api) => {
       return process.env.NEXT_PUBLIC_ACCOUNTS_URL
     case 'exchange':
       return process.env.NEXT_PUBLIC_EXCHANGE_URL
+    case 'orderbook':
+      return process.env.NEXT_PUBLIC_ORDERBOOK_URL
     default:
       return process.env.NEXT_PUBLIC_BACKEND_URL
   }

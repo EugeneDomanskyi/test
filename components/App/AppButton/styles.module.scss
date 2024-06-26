@@ -1,7 +1,7 @@
 .button {
   background-color: transparent;
   border: solid #fff 1px;
-  border-radius: 4px;
+  border-radius: 12px;
   padding: 10px 12px;
   min-width: 110px;
   color: #fff;
@@ -55,7 +55,8 @@
   &.large {
     padding: 10px 16px;
     font-size: 16px;
-    line-height: 22px;
+    line-height: 18px;
+    font-size: 16px;
 
     &.rounded {
       border-radius: 22px;
@@ -65,11 +66,13 @@
   }
 
   &.small {
-    padding: 4px 12px;
-    font-size: 12px;
+    padding: 0 12px;
+    height: 32px;
+    font-size: 14px;
+    font-weight: 600;
     line-height: normal;
     min-width: 72px;
-    border-radius: 4px;
+    border-radius: 12px;
 
     &.rounded {
       border-radius: 22px;
@@ -123,24 +126,34 @@
   }
 
   &.primary2 {
-    height: 48px;
+    height: 40px;
     background-color: #6B41EB;
     border-color: #6B41EB;
     border-radius: 100px;
     padding: 0 16px;
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: 700;
+    font-size: 14px;
     line-height: 25px;
+    border-radius: 12px;
+
+    &.small {
+      padding: 0 12px;
+      height: 32px;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: normal;
+      min-width: 72px;
+      border-radius: 12px;
+    }
 
     &.quest {
-      border-radius: 12px;
       background: linear-gradient(180deg, #6B41EB -6.02%, #241164 85.68%);
       border-bottom: 2px solid #6B41EB;
     }
 
     &.active:not(:disabled),
     &:hover:not(:disabled) {
-      background: linear-gradient(180deg, #3d008c -6.02%, #241164 85.68%);
+      background: #4d29bb;
     }
 
     &.outlined {
@@ -149,7 +162,7 @@
 
       &.active:not(:disabled),
       &:hover:not(:disabled) {
-        border-color: #3d008c;
+        border-color: #4d29bb;
         background-color: transparent;
       }
     }
@@ -174,7 +187,7 @@
     &.outlined {
       background-color: transparent;
       border-color: #A6DC37;
-      color: #fff;
+      color: #A6DC37;
 
       &.active:not(:disabled),
       &:hover:not(:disabled) {

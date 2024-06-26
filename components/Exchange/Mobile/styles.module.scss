@@ -1,18 +1,32 @@
-.back {
-  cursor: pointer;
+.info {
+  border-bottom: solid #1C172B 1px;
 }
 
-.image {
-  border-radius: 8px;
-  box-shadow: 0px 4px 12px 0px rgba(21, 255, 114, 0.17);
+.dropdownBox {
+  padding: 8px 16px;
+
+  .dropdown {
+    padding: 8px;
+    border-radius: 12px;
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.07) 100%), #0B0915;
+    height: 44px;
+
+    .image {
+      border-radius: 50%;
+    }
+
+    .emptyImage {
+      width: 24px;
+      min-width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(0deg, #6956bc, #311B92);
+    }
+  }
 }
 
-.emptyImage {
-  width: 50px;
-  height: 50px;
-  border-radius: 8px;
-  background: linear-gradient(0deg, #311B9200, #311B92);
-  box-shadow: 0px 4px 12px 0px rgba(21, 255, 114, 0.17);
+.numbersBox {
+  padding: 16px;
 }
 
 .balanceBox {
@@ -26,4 +40,10 @@
   position: absolute;
   z-index: 0;
   inset: 0;
+}
+
+.buttonBox {
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+  background: #1C163C;
+  padding: 16px;
 }

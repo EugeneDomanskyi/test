@@ -88,8 +88,12 @@ class Amplitude {
       return 'Campaign Landing'
     }
   
-    if (window.location.pathname.includes('points-dashboard')) {
-      return 'Points Dashboard'
+    if (window.location.pathname.includes('gems-dashboard')) {
+      return 'Gems Dashboard'
+    }
+  
+    if (window.location.pathname.includes('tournaments')) {
+      return 'Tournament'
     }
   
     return window.location.pathname

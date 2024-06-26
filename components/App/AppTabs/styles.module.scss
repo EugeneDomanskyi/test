@@ -26,7 +26,7 @@
       }
     }
 
-    &.points {
+    &.gems {
       border-bottom: solid #A6DC37 1px;
     }
 
@@ -70,27 +70,24 @@
         position: relative;
         z-index: 0;
 
-        &:not(:last-of-type):after {
-          content: '';
-          display: block;
-          width: 1px;
-          position: absolute;
-          z-index: 0;
-          bottom: 25%;
-          top: 25%;
-          right: 0;
-          background: #1D1937;
-        }
-        
         &.disabled {
           opacity: .5;
         }
 
+        &.active {
+          background: #381C8C;
+          border-radius: 12px;
+        }
+
         .optionInner {
-          padding: 4px 0;
+          padding: 0 8px;
+          height: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
           .optionText {
-            color: #5E5C6B;
+            color: #9B99AE;
 
             &.active {
               color: #fff;
@@ -255,7 +252,7 @@
         }
       }
 
-      &.points {
+      &.gems {
         background: #0F0F0F;
         border: solid rgba(255, 255, 255, 0.10) 1px;
         border-bottom-width: 0;
