@@ -82,8 +82,8 @@ const HeaderWallet2 = () => {
 
   const getPortfolio = async () => {
     const result = await $portfolio.api.details({ wallet, blockchain })
-    if (result?.success) {
-      dispatch($portfolio.set.details({...result, blockchain}))
+    if (result && result.length) {
+      dispatch($portfolio.set.details({data: result, blockchain}))
     }
   }
 

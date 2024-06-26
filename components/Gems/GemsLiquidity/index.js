@@ -34,8 +34,8 @@ const GemsLiquidity = () => {
 
   const fetchLiquidity = async () => {
     const result = await $gem.api.liquidity(wallet, {})
-    if (result && result?.data) {
-      dispatch($gem.set.liquidity(result.data))
+    if (result) {
+      dispatch($gem.set.liquidity(result))
     }
     
     setLoading(false)

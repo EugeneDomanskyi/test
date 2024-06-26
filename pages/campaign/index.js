@@ -47,8 +47,8 @@ const LandingPage = () => {
 
   useEffect(() => {
     dispatch($app.api.walletCount).then(res => {
-      if (res.data) {
-        setWalletsCount(res.data.count)
+      if (res) {
+        setWalletsCount(res.count)
       }
     })
 
@@ -71,8 +71,8 @@ const LandingPage = () => {
         query: $raffle.query.campaigns,
       })
 
-      if (result && result.hasOwnProperty('data') && result.data.hasOwnProperty('campaigns')) {
-        const campaigns = result.data.campaigns
+      if (result && result.hasOwnProperty('campaigns')) {
+        const campaigns = result.campaigns
         
         dispatch($raffle.set.all(campaigns.map(item => {
           return {

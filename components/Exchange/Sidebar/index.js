@@ -61,7 +61,7 @@ const Sidebar = ({ version, isApp }) => {
   }
 
   const fetchTokensList = async () => {
-    const res = await $token.api.all({
+    const result = await $token.api.all({
       page: pages.current,
       page_size: pages.perPage,
       chain_id: blockchain.id,
@@ -70,8 +70,8 @@ const Sidebar = ({ version, isApp }) => {
       verified: true,
     })
 
-    if (res.success) {
-      dispatch($token.set.all(res.data))
+    if (result && result.length) {
+      dispatch($token.set.all(result))
       dispatch($token.set.pages({ next: (pages.current * 1 + 1) }))
     }
 

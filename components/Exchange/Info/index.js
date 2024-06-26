@@ -69,7 +69,7 @@ const Info = () => {
     const existInList = list.find(item => item.id === currentAddress)
     if (!existInList) {
       const id = `${blockchain.id}_${currentAddress}_${blockchain.token?.address}`
-      const res = await $token.api.all({
+      const result = await $token.api.all({
         page: 1,
         page_size: 1,
         chain_id: blockchain.id,
@@ -79,8 +79,8 @@ const Info = () => {
         verified: true,
       })
 
-      if (res.success && res.data.length) {
-        dispatch($token.set.current(res.data[0]))
+      if (result && result.length) {
+        dispatch($token.set.current(result[0]))
       } else {
         setEmptyCurrent(true)
       }

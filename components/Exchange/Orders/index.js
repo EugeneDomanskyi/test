@@ -63,8 +63,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
         dispatch($alert.set.success({title: '500 Gems Credited'}))
 
         const result = await $gem.api.referral(wallet)
-        if (result && result?.data) {
-          dispatch($gem.set.referral(result?.data))
+        if (result) {
+          dispatch($gem.set.referral(result))
         }
       })
     }
@@ -124,7 +124,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
       return
     }
 
-    const signature = await WagmiHelper.signTypedData(typedData.data.sign_data).catch(error => {
+    const signature = await WagmiHelper.signTypedData(typedData.sign_data).catch(error => {
       dispatch($alert.set.error({title: 'Orders not cancelled', text: `Please try again to cancel your ${orders.open.length} open order(s).`}))
       return
     })
@@ -135,11 +135,11 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
 
     const result = await $orders.api.cancel({
-      ...typedData.data.cancel_order,
+      ...typedData.cancel_order,
       signature,
     })
 
-    if (result?.data) {
+    if (result) {
       Amplitude.event('Bulk Cancel Order')
       const updatedOrders = orders.open.reduce((acc, o) => ({
         ...acc,
@@ -154,7 +154,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
     // const signature = await WagmiHelper.signMessage()
     // if (signature) {
     //   const result = await $orders.api.cancelAll({ wallet_address: wallet, chain_id: blockchain.id, signature })
-    //   if (result?.data) {
+    //   if (result) {
     //     Amplitude.event('Bulk Cancel Order')
     //     const updatedOrders = orders.open.reduce((acc, o) => ({
     //       ...acc,
@@ -216,7 +216,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
       return
     }
 
-    const signature = await WagmiHelper.signTypedData(typedData.data.sign_data).catch(error => {
+    const signature = await WagmiHelper.signTypedData(typedData.sign_data).catch(error => {
       dispatch($alert.set.error({title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.`}))
       return
     })
@@ -227,7 +227,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
 
     const result = await $orders.api.cancel({
-      ...typedData.data.cancel_order,
+      ...typedData.cancel_order,
       signature,
     })
 

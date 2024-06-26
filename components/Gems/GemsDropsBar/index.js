@@ -39,12 +39,12 @@ const GemsDropsBar = () => {
 
   const fetchCurrentTournament = async () => {
     const result = await $tournament.api.current()
-    if (result && result?.data) {
-      dispatch($tournament.set.current(result.data))
+    if (result) {
+      dispatch($tournament.set.current(result))
 
-      const temp = await $tournament.api.leaderboard(result.data.alias)
-      if (temp && temp?.data) {
-        dispatch($tournament.set.leaderboard(temp.data))
+      const temp = await $tournament.api.leaderboard(result.alias)
+      if (temp) {
+        dispatch($tournament.set.leaderboard(temp))
       }
     }
 
@@ -53,8 +53,8 @@ const GemsDropsBar = () => {
 
   const fetchAllTournaments = async () => {
     const result = await $tournament.api.all()
-    if (result && result?.data) {
-      dispatch($tournament.set.all(result.data.filter(item => item.status !== 'upcoming')))
+    if (result) {
+      dispatch($tournament.set.all(result.filter(item => item.status !== 'upcoming')))
     }
 
     setUpcomingLoading(false)
