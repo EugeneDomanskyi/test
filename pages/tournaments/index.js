@@ -11,6 +11,7 @@ import $token from '@/store/token'
 
 import App from '@/components/App'
 import GemsCountdownBrett from '@/components/Gems/GemsCountdownBrett'
+import TournamentBanner from '@/components/Tournament/TournamentBanner'
 
 import styles from './styles.module.scss'
 
@@ -96,9 +97,16 @@ const Tournaments = () => {
       pool += reward.reward
     })
     return pool.toLocaleString('en-US')
-  
   }
 
+  const getBannersList = () => {
+    const result = []
+    if (getOngoingTournament()) {
+      result.push(<TournamentBanner tournament={getOngoingTournament()} />)
+    }
+
+    return result
+  }
 
   return (
     <App.Flex className={styles.container}>
@@ -106,68 +114,12 @@ const Tournaments = () => {
         <App.Flex column gap={48} sx={{ paddingTop: 32 }}>
           <App.Text size={24} weight={700} height={1}>Tournaments</App.Text>
 
-          {!loading && getOngoingTournament() ? (
-            isMobile ? (
-              <App.Flex column gap={16} align="flex-start" className={styles.bannerMobile} onClick={handleExchange(getOngoingTournament())}>
-                <App.Flex column gap={4}>
-                  <App.Text uppercase size={24} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">{getPool(getOngoingTournament().rewards)} ${getOngoingTournament().currency}</App.Text>
-                  <App.Text size={16} weight={700} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">In Rewards!</App.Text>
-                </App.Flex>
-
-                <App.Text size={14} weight={900} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">$1 = 1 Points</App.Text>
-
-                <App.Button primary2 small>Trade Now</App.Button>
+          {!loading ? (
+            getBannersList().map((item, index) => (
+              <App.Flex key={index}>
+                {item}
               </App.Flex>
-            ) : (
-              <App.Flex direction={['row', 'column']} gap={24} className={styles.banner} align={['center', 'flex-start']} justify="space-between" onClick={handleExchange(getOngoingTournament())}>
-                <App.Flex column gap={8}>
-                  <App.Text uppercase size={36} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">{getPool(getOngoingTournament().rewards)} ${getOngoingTournament().currency}</App.Text>
-                  <App.Text uppercase size={16} weight={600} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">in rewards!</App.Text>
-                </App.Flex>
-
-                <App.Flex column gap={8}>
-                  <App.Flex row gap={[16, 8]}>
-                    <App.Flex row center gap={[12, 8]}>
-                      <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">1</App.Text>
-
-                      <App.Flex column gap={2}>
-                        <App.Text uppercase size={[16, 12]} weight={900} height={1}>Trade</App.Text>
-                        <App.Text size={[12, 9]} weight={500} height={1}>${getOngoingTournament().currency}</App.Text>
-                      </App.Flex>
-                    </App.Flex>
-
-                    <App.Flex row center gap={[12, 8]}>
-                      <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">2</App.Text>
-
-                      <App.Flex column gap={2}>
-                        <App.Text uppercase size={[16, 12]} weight={900} height={1}>Collect</App.Text>
-                        <App.Text size={[12, 9]} weight={500} height={1}>POINTS</App.Text>
-                      </App.Flex>
-                    </App.Flex>
-
-                    <App.Flex row center gap={[12, 8]}>
-                      <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">3</App.Text>
-
-                      <App.Flex column gap={2}>
-                        <App.Text uppercase size={[16, 12]} weight={900} height={1}>Climb</App.Text>
-                        <App.Text size={[12, 9]} weight={500} height={1}>Leaderboard</App.Text>
-                      </App.Flex>
-                    </App.Flex>
-
-                    <App.Flex row center gap={[12, 8]}>
-                      <App.Text size={[34, 22]} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">4</App.Text>
-
-                      <App.Flex column gap={2}>
-                        <App.Text uppercase size={[16, 12]} weight={900} height={1}>Win</App.Text>
-                        <App.Text size={[12, 9]} weight={500} height={1}>${getOngoingTournament().currency}</App.Text>
-                      </App.Flex>
-                    </App.Flex>
-                  </App.Flex>
-
-                  <App.Text uppercase size={[16, 14]} weight={900} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">Collect 1 POINT for every $1 traded!</App.Text>
-                </App.Flex>
-              </App.Flex>
-            )
+            ))
           ) : null}
           
           {loading ? (
@@ -179,29 +131,55 @@ const Tournaments = () => {
                 return (
                   <App.Flex column key={index} gap={16}>
                     <App.Flex direction={['row', 'column']} gap={16} fullWidth className={styles.header} align="center" justify="space-between">
-                      <App.Flex row fullWidth gap={24} align="center" justify={['flex-start', 'space-between']}>
+                      <App.Flex direction={['row', 'column']} fullWidth gap={[24, 8]} align={['center', 'flex-start']} justify={['flex-start', 'space-between']}>
                         <App.Flex row align="center" gap={8}>
                           <Image src={`/images/${key}-logo.png`} width={24} height={24} alt="" />
-                          <App.Text uppercase size={16} weight={700} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">{tournament.name}</App.Text>
+                          <App.Text nowrap uppercase size={16} weight={700} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">{tournament.name}</App.Text>
                         </App.Flex>
 
-                        <App.Flex center className={cn(styles.badge, styles[tournament.status])}>
-                          <App.Text uppercase center size={12} weight={700} height={1} color={tournament.status == 'on-going' ? '#06382F' : '#fff'}>{tournament.status}</App.Text>
-                        </App.Flex>
-
-                        {tournament.status == 'closed' ? (
-                          <App.Flex center className={cn(styles.prize)}>
-                            <App.Icon icon="prize" />
-                            <App.Text uppercase center size={12} weight={700} height={1} color="#FFCB45">{getPool(tournament.rewards)} ${tournament.currency}</App.Text>
+                        <App.Flex row gap={16} align="center">
+                          <App.Flex center className={cn(styles.badge, styles[tournament.status])}>
+                            <App.Text uppercase center size={12} weight={700} height={1} color={tournament.status == 'on-going' ? '#06382F' : '#fff'}>{tournament.status}</App.Text>
                           </App.Flex>
-                        ) : null}
+
+                          {tournament.status == 'closed' ? (
+                            <App.Flex center gap={8} className={cn(styles.prize)}>
+                              <App.Icon icon="prize" />
+                              <App.Text uppercase center size={12} weight={700} height={1} color="#FFCB45">{getPool(tournament.rewards)} ${tournament.currency}</App.Text>
+                            </App.Flex>
+                          ) : (
+                            // tournament.status == 'on-going' ? (
+                            //   <App.Flex row center gap={16} className={styles.x}>
+                            //     <App.Flex column center gap={4}>
+                            //       <App.Text size={20} weight={700} height={1} color="#FFBD13">2X</App.Text>
+                            //       <App.Text nowrap size={12} weight={700} height={1} color="#FFBD13">Prize pool</App.Text>
+                            //     </App.Flex>
+
+                            //     <App.Flex column gap={8}>
+                            //       <App.Text size={12} weight={400} height={1}>56 participants <App.Text inline size={12} weight={400} height={1} color="#FFFFFF66">left</App.Text></App.Text>
+
+                            //       <App.Flex className={styles.bar}>
+                            //         <App.Flex className={styles.innerBar} width="12%">
+                            //         </App.Flex>
+                            //       </App.Flex>
+
+                            //       <App.Flex align="center" justify="space-between">
+                            //         <App.Text size={10} weight={600} height={1}>2500 BRETT</App.Text>
+                            //         <App.Text size={10} weight={600} height={1}>5000 BRETT</App.Text>
+                            //       </App.Flex>
+                            //     </App.Flex>
+                            //   </App.Flex>
+                            // ) : null
+                            null
+                          )}
+                        </App.Flex>
                       </App.Flex>
                       
-                      <App.Flex row fullWidth gap={24} align="center" justify={['flex-end', 'space-between']}>
+                      <App.Flex row gap={24} fullWidth align="center" justify={['flex-end', 'space-between']}>
                         {tournament.status == 'upcoming' ? (
                           <App.Flex row center gap={8}>
                             {!isMobile ? (
-                              <App.Text size={14} weight={400} height={1} color="#FFFFFF99">Starts in</App.Text>
+                              <App.Text nowrap size={14} weight={400} height={1} color="#FFFFFF99">Starts in</App.Text>
                             ) : null}
                             <GemsCountdownBrett endTime={tournament.start_time} onFinish={handleFinish(key, 'on-going')} />
                           </App.Flex>
@@ -209,7 +187,7 @@ const Tournaments = () => {
                           tournament.status == 'on-going' ? (
                             <App.Flex row center gap={8}>
                               {!isMobile ? (
-                                <App.Text size={14} weight={400} height={1} color="#FFFFFF99">Ends in</App.Text>
+                                <App.Text nowrap size={14} weight={400} height={1} color="#FFFFFF99">Ends in</App.Text>
                               ) : null}
                               <GemsCountdownBrett endTime={tournament.end_time} onFinish={handleFinish(key, 'closed')} />
                             </App.Flex>
@@ -219,7 +197,7 @@ const Tournaments = () => {
                         {tournament.status == 'on-going' ? (
                           <App.Button primary2 onClick={handleExchange(tournament)}>Trade now</App.Button>
                         ) : (
-                          <App.Button primary2 outlined href="https://discord.com/invite/tegro">Join Discord {tournament.status == 'closed' ? 'To Claim Rewards' : ''}<App.Icon icon="arrow-45" /></App.Button>
+                          <App.Button primary2 outlined fullWidth={isMobile} href="https://discord.com/invite/tegro">Join Discord {tournament.status == 'closed' ? 'To Claim Rewards' : ''}<App.Icon icon="arrow-45" /></App.Button>
                         )}
                       </App.Flex>
                     </App.Flex>
