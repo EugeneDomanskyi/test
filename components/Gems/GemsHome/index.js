@@ -7,7 +7,6 @@ import useWagmiHelper from '@/myhooks/useWagmiHelper'
 import $gem from '@/store/gem'
 
 import App from '@/components/App'
-import GemsDropsBar from '@/components/Gems/GemsDropsBar'
 import GemsHomeStats from '@/components/Gems/GemsHomeStats'
 import GemsHomeLeaderboard from '@/components/Gems/GemsHomeLeaderboard'
 import GemsSteps from '@/components/Gems/GemsSteps'
