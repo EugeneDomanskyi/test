@@ -2,17 +2,17 @@ import { memo, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
+import Decimal from 'decimal.js'
 
 import Amplitude from '@/libs/amplitude.lib'
+import WagmiHelper from '@/libs/WagmiHelper'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
-import { formatNumberWithDecimals } from '@/store/portfolio'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
-import WagmiHelper from '@/libs/WagmiHelper'
 
 const Info = () => {
   const router = useRouter()
@@ -155,7 +155,7 @@ const Info = () => {
 
             <App.Flex column gap={6}>
               <App.Text nowrap size={12} height={1} color="#B9B8C5">24h Volume ({current.quoteSymbol})</App.Text>
-              <App.Number size={12} weight={600} height={1} color="#fff">{ formatNumberWithDecimals(current.volume ?? 0, 2) }</App.Number>
+              <App.Number size={12} weight={600} height={1} color="#fff">{ new Decimal(current.volume).toDecimalPlaces(2).toFixed() }</App.Number>
             </App.Flex>
           </App.Flex>
         </>

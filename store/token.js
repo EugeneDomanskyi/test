@@ -5,30 +5,32 @@ import { request } from './index'
 
 export const template = (item) => {
   const blockchainCode = parseCookies(null)?.currentChainCode
-  if (item?.baseContractAddress) {
+  if (item?.base_contract_address) {
     return {
-      id: item.baseContractAddress,
-      address: item.baseContractAddress,
-      quote: item.quoteContractAddress,
+      id: item.base_contract_address,
+      address: item.base_contract_address,
+      quote: item.quote_contract_address,
       marketId: item.id,
-      name: `${item.baseSymbol}/${item.quoteSymbol}`,
-      symbol: item.baseSymbol,
-      quoteSymbol: item.quoteSymbol,
-      basePrecision: item.basePrecision,
-      quotePrecision: item.quotePrecision,
+      name: `${item.base_symbol}/${item.quote_symbol}`,
+      symbol: item.base_symbol,
+      quoteSymbol: item.quote_symbol,
+      baseDecimals: item.base_decimal,
+      quoteDecimals: item.quote_decimal,
+      basePrecision: item.base_precision,
+      quotePrecision: item.quote_precision,
       blockchain: blockchainCode,
-      image: item.baseSymbol == 'WETH' ? 'https://tegro.com/images/0x4200000000000000000000000000000000000006.png' : `https://storage.googleapis.com/token-assets/assets/${blockchainCode}/${item.baseContractAddress}.png`,
-      volume: item.ticker.quoteVolume,
+      image: item.base_symbol == 'WETH' ? 'https://tegro.com/images/0x4200000000000000000000000000000000000006.png' : `https://storage.googleapis.com/token-assets/assets/${blockchainCode}/${item.base_contract_address}.png`,
+      volume: item.ticker.quote_volume,
       price: item.ticker.price,
-      high: item.ticker.priceHigh24h,
-      low: item.ticker.priceLow24h,
+      high: item.ticker.price_high_24h,
+      low: item.ticker.price_low_24h,
       trade: {
-        buy: item.ticker.askLow,
-        sell: item.ticker.bidHigh,
+        buy: item.ticker.ask_low,
+        sell: item.ticker.bid_high,
       },
       ticker: {
-        value: item.ticker.priceChange24h,
-        type: item.ticker.priceChange24h < 0 ? 'minus' : 'plus',
+        value: item.ticker.price_change_24h,
+        type: item.ticker.price_change_24h < 0 ? 'minus' : 'plus',
       },
     }
   } else {

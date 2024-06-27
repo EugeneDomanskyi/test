@@ -40,9 +40,10 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
     }
     console.log('--- Result from Allowance check', allowanceAmountBigInt)
 
-    const spendPrecision = side === 'buy' ? current.quotePrecision : current.precision
-    const allowanceAmount = formatUnits(allowanceAmountBigInt, spendPrecision)
-    console.log(`--- Result from Allowance using precision ${spendPrecision}`, allowanceAmount)
+    const spendDecimals = side === 'buy' ? current.quoteDecimals : current.baseDecimals
+    console.log(spendDecimals)
+    const allowanceAmount = formatUnits(allowanceAmountBigInt, spendDecimals)
+    console.log(`--- Result from Allowance using precision ${spendDecimals}`, allowanceAmount)
 
     let requiredAmount = 0
     if (side === 'buy') {
