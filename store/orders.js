@@ -40,8 +40,8 @@ export const template = (item) => {
   return {
     ...item,
     id: item.order_id,
-    time: moment(item.time).format('DD MMM, HH:mm'),
-    timeMoment: moment(item.time),
+    time: moment(item.timestamp * 1000).format('DD MMM, HH:mm'),
+    timeMoment: moment(item.timestamp * 1000),
   }
 }
 
@@ -97,7 +97,7 @@ export const ordersSlice = createSlice({
     },
 
     chart: (state, { payload }) => {
-      state.chart = payload.sort((a, b) => a.time - b.time).map(item => ({...item, time: item.time*1000}))
+      state.chart = payload.sort((a, b) => a.timestamp - b.timestamp).map(item => ({...item, time: item.timestamp * 1000}))
     },
 
     orderbook: (state, { payload }) => {

@@ -117,7 +117,7 @@ const OrderDetails = ({order}) => {
                 {trades.map((item) => (
                   <App.Flex key={item.id} row fullWidth gap={16} className={styles.row}>
                     <App.Flex row width={90} align="center">
-                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{moment(item.time).format('DD MMM, HH:mm:ss')}</App.Text>
+                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{moment(item.timestamp * 1000).format('DD MMM, HH:mm:ss')}</App.Text>
                     </App.Flex>
 
                     <App.Flex row width={90} align="center" flex={1}>

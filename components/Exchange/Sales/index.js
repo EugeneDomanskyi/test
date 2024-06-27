@@ -140,7 +140,7 @@ const Sales = ({ version, onClickSale }) => {
                     </App.Flex>
 
                     <App.Flex width={80}>
-                      <App.Text flex={1} size={12} right height={1}>{ moment(sale.time).format('hh:mm:ss A') }</App.Text>
+                      <App.Text flex={1} size={12} right height={1}>{ moment((sale.time ?? sale.timestamp) * 1000).format('hh:mm:ss A') }</App.Text>
                     </App.Flex>
                   </App.Flex>
                 </App.Flex>
