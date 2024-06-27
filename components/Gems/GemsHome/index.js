@@ -43,8 +43,6 @@ const GemsHome = () => {
 
   return (
     <App.Flex column fullWidth flex={1}>
-      {/* <GemsDropsBar /> */}
-
       <App.Flex flex={!connection.loading && !connection.connected ? 1 : null}>
         {connection.loading ? (
           <App.LoaderBlock height={300} />

@@ -122,6 +122,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
     })
 
     dispatch($orders.set.add(result))
+    dispatch($alert.set.success({ title: 'Order placed successfully', text: `Your ${side} order for ${amount} ${current.symbol} has been placed successfully.` }))
 
     if (current.symbol == 'BRETT') {
       localStorage.setItem('hideBrettBrawl', 1)

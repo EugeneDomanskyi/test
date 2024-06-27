@@ -155,7 +155,7 @@ const Info = () => {
 
             <App.Flex column gap={6}>
               <App.Text nowrap size={12} height={1} color="#B9B8C5">24h Volume ({current.quoteSymbol})</App.Text>
-              <App.Number size={12} weight={600} height={1} color="#fff">{ new Decimal(current.volume).toDecimalPlaces(2).toFixed() }</App.Number>
+              <App.Number size={12} weight={600} height={1} color="#fff">{ new Decimal(current.volume ?? 0).toDecimalPlaces(2).toFixed() }</App.Number>
             </App.Flex>
           </App.Flex>
         </>
