@@ -34,7 +34,7 @@ const GemsHomeStats = () => {
           <App.Flex direction={['row', 'column']} flex={1} className={styles.gems}>
             <App.Flex width={[200, 'auto']} column gap={10} align="center" className={styles.box}>
               <App.Text center size={[16, 12]} weight={[600, 400]} height={1}>{t('Total gems')}</App.Text>
-              <App.Text center size={[36, 20]} weight={600} height={1}>{stats.total_points ?? 0}</App.Text>
+              <App.Text center size={[24, 20]} weight={600} height={1}>{stats.total_points ?? 0}</App.Text>
             </App.Flex>
 
             <App.Flex row wrap={isMobile} flex={[1, null]}>
@@ -43,7 +43,7 @@ const GemsHomeStats = () => {
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Text center size={[14, 12]} weight={400} height={1} color="#A6DC37">{t('Liquidity mining')}</App.Text>
-                <App.Text center size={[32, 24]} weight={600} height={1}>{stats.liquidity_mining ?? 0}</App.Text>
+                <App.Text center size={[24, 24]} weight={600} height={1}>{stats.liquidity_mining ?? 0}</App.Text>
               </App.Flex>
 
               <App.Flex column align={['center', 'flex-start']} justify="center" gap={8} flex={[1, null]} className={styles.statsBox}>
@@ -51,7 +51,7 @@ const GemsHomeStats = () => {
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Text center size={[14, 12]} weight={400} height={1} color="#A6DC37">{t('Refer & earn')}</App.Text>
-                <App.Text center size={[32, 24]} weight={600} height={1}>{stats.refer ?? 0}</App.Text>
+                <App.Text center size={[24, 24]} weight={600} height={1}>{stats.refer ?? 0}</App.Text>
               </App.Flex>
 
               {/* <App.Flex column align={['center', 'flex-start']} justify="center" gap={8} flex={[1, null]} className={styles.statsBox}>
@@ -59,7 +59,7 @@ const GemsHomeStats = () => {
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Text center size={[14, 12]} weight={400} height={1} color="#A6DC37">{t('Contributor tasks')}</App.Text>
-                <App.Text center size={[32, 24]} weight={600} height={1}>{stats.contributor ?? 0}</App.Text>
+                <App.Text center size={[24, 24]} weight={600} height={1}>{stats.contributor ?? 0}</App.Text>
               </App.Flex> */}
 
               <App.Flex column align={['center', 'flex-start']} justify="center" gap={8} flex={[1, null]} className={styles.statsBox}>
@@ -67,12 +67,12 @@ const GemsHomeStats = () => {
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Icon icon={`arrow-long${isMobile ? '-rotate' : ''}`} />
                 <App.Text center size={[14, 12]} weight={400} height={1} color="#A6DC37">{t('Side quests')}</App.Text>
-                <App.Text center size={[32, 24]} weight={600} height={1}>{stats.quest ?? 0}</App.Text>
+                <App.Text center size={[24, 24]} weight={600} height={1}>{stats.quest ?? 0}</App.Text>
               </App.Flex>
             </App.Flex>
           </App.Flex>
 
-          <App.Flex width={384} row gap={24}>
+          <App.Flex width={280} row gap={24}>
             {/* <App.Flex width={[180, 'auto']} flex={[null, 1]} column gap={8} align="center" className={styles.box}>
               <App.Text center size={[14, 12]} weight={600} height={1}>{t('Your Gems Share')}</App.Text>
               <App.Text center size={[32, 24]} weight={600} height={1}>{stats.points_percentage}%</App.Text>

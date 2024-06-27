@@ -93,10 +93,6 @@ export const gemSlice = createSlice({
       state.quests = payload
     },
 
-    tasks: (state, { payload }) => {
-      state.tasks = payload
-    },
-
     stats: (state, { payload }) => {
       state.stats = payload
     },
@@ -235,14 +231,6 @@ export const api = {
 
   questClaim: (wallet, params) => {
     return request(`user/${wallet}/quests/claim`, 'POST', {api: 'accounts', ...params})
-  },
-
-  tasks: (wallet, params) => {
-    return request(`user/${wallet}/contributor/tasks`, 'GET', {api: 'accounts', ...params})
-  },
-
-  taskClaim: (wallet, params) => {
-    return request(`user/${wallet}/contributor/tasks/claim`, 'POST', {api: 'accounts', ...params})
   },
 
   stats: (wallet, params) => {

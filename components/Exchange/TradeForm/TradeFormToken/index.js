@@ -210,7 +210,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     }
 
     if (blockchain?.info?.min_order_value) {
-      const minTotal = formatUnits(blockchain.info.min_order_value, current.quoteDecimals)
+      const minTotal = formatUnits(blockchain.info.min_order_value, current.quotePrecision)
       if (minTotal * 1 > form.total * 1) {
         dispatch($alert.set.error({
           title: 'Order Error',

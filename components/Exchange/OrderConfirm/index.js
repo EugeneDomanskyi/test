@@ -40,9 +40,10 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
     }
     console.log('--- Result from Allowance check', allowanceAmountBigInt)
 
-    const spendDecimals = side === 'buy' ? current.quoteDecimals : current.decimals
+    const spendDecimals = side === 'buy' ? current.quoteDecimals : current.baseDecimals
+    console.log(spendDecimals)
     const allowanceAmount = formatUnits(allowanceAmountBigInt, spendDecimals)
-    console.log(`--- Result from Allowance using decimals ${spendDecimals}`, allowanceAmount)
+    console.log(`--- Result from Allowance using precision ${spendDecimals}`, allowanceAmount)
 
     let requiredAmount = 0
     if (side === 'buy') {
@@ -82,12 +83,12 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       amount: parseFloat(amount),
     })
 
-    if (typedData?.error || ! typedData) {
+    if (typedData?.error || !typedData) {
       onClose()
       return handleError('Order not created', 'Please try again to place your order.')
     }
 
-    const signature = await WagmiHelper.signTypedData(typedData.data.sign_data).catch(error => {
+    const signature = await WagmiHelper.signTypedData(typedData.sign_data).catch(error => {
       onClose()
       return handleError('Order not created', 'Please check your wallet and try again to place your order.')
     })
@@ -98,7 +99,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
     }
 
     const result = await $orders.api.place({
-      ...typedData.data.limit_order,
+      ...typedData.limit_order,
       signature,
     })
 
@@ -114,13 +115,14 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       'Quantity': numeral(amount).format('0.[00000]'),
       'Price': numeral(price).format('0.[00000]'),
       'Total': numeral(total).format('0.[00000]'),
-      'Order Id': result.data.orderId,
+      'Order Id': result.orderId,
       'Source': isApp ? 'App' : 'Web',
       'Chain ID': blockchain?.id,
       'Market ID': current?.address,
     })
 
-    dispatch($orders.set.add(result.data))
+    dispatch($orders.set.add(result))
+    dispatch($alert.set.success({ title: 'Order placed successfully', text: `Your ${side} order for ${amount} ${current.symbol} has been placed successfully.` }))
 
     if (current.symbol == 'BRETT') {
       localStorage.setItem('hideBrettBrawl', 1)

@@ -47,8 +47,8 @@ const Sales = ({ version, onClickSale }) => {
       limit: 10,
     })
 
-    if (result?.success && Array.isArray(result.data)) {
-      dispatch($orders.set.trades({data: result.data, token: current}))
+    if (result && Array.isArray(result)) {
+      dispatch($orders.set.trades({data: result, token: current}))
     } else {
       dispatch($orders.set.trades({data: [], token: current}))
     }

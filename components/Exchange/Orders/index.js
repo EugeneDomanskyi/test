@@ -63,8 +63,8 @@ const Orders = ({global, type, version, onClickOrder}) => {
         dispatch($alert.set.success({title: '500 Gems Credited'}))
 
         const result = await $gem.api.referral(wallet)
-        if (result && result?.data) {
-          dispatch($gem.set.referral(result?.data))
+        if (result) {
+          dispatch($gem.set.referral(result))
         }
       })
     }
@@ -115,7 +115,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
     handleDialogOpen('approve')()
 
     const typedData = await $orders.api.cancelTypedData({
-      order_ids: orders.open.map(item => item.orderId),
+      order_ids: orders.open.map(item => item.order_id),
       user_address: wallet,
     })
 
@@ -124,7 +124,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
       return
     }
 
-    const signature = await WagmiHelper.signTypedData(typedData.data.sign_data).catch(error => {
+    const signature = await WagmiHelper.signTypedData(typedData.sign_data).catch(error => {
       dispatch($alert.set.error({title: 'Orders not cancelled', text: `Please try again to cancel your ${orders.open.length} open order(s).`}))
       return
     })
@@ -135,15 +135,15 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
 
     const result = await $orders.api.cancel({
-      ...typedData.data.cancel_order,
+      ...typedData.cancel_order,
       signature,
     })
 
-    if (result?.data) {
+    if (result) {
       Amplitude.event('Bulk Cancel Order')
       const updatedOrders = orders.open.reduce((acc, o) => ({
         ...acc,
-        [o.orderId]: 'cancelled',
+        [o.order_id]: 'cancelled',
       }), {})
       dispatch($orders.set.updateOrderStatus(updatedOrders))
       dispatch($alert.set.success({ title: 'Orders cancelled', text: `You have cancelled ${orders.open.length} order(s) successfully.` }))
@@ -154,7 +154,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
     // const signature = await WagmiHelper.signMessage()
     // if (signature) {
     //   const result = await $orders.api.cancelAll({ wallet_address: wallet, chain_id: blockchain.id, signature })
-    //   if (result?.data) {
+    //   if (result) {
     //     Amplitude.event('Bulk Cancel Order')
     //     const updatedOrders = orders.open.reduce((acc, o) => ({
     //       ...acc,
@@ -194,50 +194,50 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
 
     const eventPost = {
-      'Base Currency': order.baseCurrency,
-      'Quote Currency': order.quoteCurrency,
+      'Base Currency': order.base_currency,
+      'Quote Currency': order.quote_currency,
       'Side': order.side.toUpperCase(),
-      'Quantity': order.quantity - order.quantityFilled,
+      'Quantity': order.quantity - order.quantity_filled,
       'Price': order.price,
       'Total': order.price * order.quantity,
-      'Filled Percent': `${Math.round(order.quantityFilled * 100 / order.quantity)}%`,
+      'Filled Percent': `${Math.round(order.quantity_filled * 100 / order.quantity)}%`,
       'Chain ID': blockchain?.id,
       'Market ID': current?.address,
     }
     Amplitude.event('Cancel Order Submit', eventPost)
 
     const typedData = await $orders.api.cancelTypedData({
-      order_ids: [order.orderId],
+      order_ids: [order.order_id],
       user_address: wallet,
     })
 
     if (typedData?.error || ! typedData) {
-      dispatch($alert.set.error({title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.`}))
+      dispatch($alert.set.error({title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantity_filled} ${order.base_currency}.`}))
       return
     }
 
-    const signature = await WagmiHelper.signTypedData(typedData.data.sign_data).catch(error => {
-      dispatch($alert.set.error({title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.`}))
+    const signature = await WagmiHelper.signTypedData(typedData.sign_data).catch(error => {
+      dispatch($alert.set.error({title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantity_filled} ${order.base_currency}.`}))
       return
     })
 
     if (!signature) {
-      dispatch($alert.set.error({title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.`}))
+      dispatch($alert.set.error({title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantity_filled} ${order.base_currency}.`}))
       return
     }
 
     const result = await $orders.api.cancel({
-      ...typedData.data.cancel_order,
+      ...typedData.cancel_order,
       signature,
     })
 
     if (result) {
-      dispatch($orders.set.updateOrderStatus({[order.orderId]: 'cancelled'}))
-      dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency} has been cancelled successfully.` }))
+      dispatch($orders.set.updateOrderStatus({[order.order_id]: 'cancelled'}))
+      dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity - order.quantity_filled} ${order.base_currency} has been cancelled successfully.` }))
 
       dispatch($portfolio.set.update(true))
     } else {
-      dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.` }))
+      dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantity_filled} ${order.base_currency}.` }))
     }
 
     // const signature = await WagmiHelper.signMessage()
@@ -260,10 +260,10 @@ const Orders = ({global, type, version, onClickOrder}) => {
   const handlePressCopy = order => (e) => {
     e.stopPropagation()
     const [_, _seg1, seg2] = router.asPath.split('/')
-    router.push(`/${[_seg1, seg2, order.contractAddress].join('/')}`, undefined, {scroll: false})
+    router.push(`/${[_seg1, seg2, order.contract_address].join('/')}`, undefined, {scroll: false})
     onClickOrder({
       quantity: order.quantity,
-      price: order.itemPrice,
+      price: order.price,
       side: order.side,
     })
   }
@@ -271,7 +271,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
   const handleClickDetails = order => e => {
     e.stopPropagation()
     const { cancel, ...rest } = order
-    setDetailsOrder({...rest, itemPrice: order.itemPrice})
+    setDetailsOrder({...rest, itemPrice: order.price})
     handleDialogOpen('details')()
   }
 
@@ -296,7 +296,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
   }
 
   const filterByAddress = (order) => {
-    return !showCollectionOrders || (!global && order.contractAddress === current?.address)
+    return !showCollectionOrders || (!global && order.contract_address === current?.address)
   }
 
   return (
@@ -390,11 +390,11 @@ const Orders = ({global, type, version, onClickOrder}) => {
                               {order.image && type === 'nfts' ? (
                                 <Image alt="" src={order.image} width={35} height={35} />
                               ) : (
-                                order.quoteCurrency ? (
+                                order.quote_currency ? (
                                   <App.Flex column gap={4}>
-                                    <App.Text size={12} weight={600} center height={1}>{ order.baseCurrency }</App.Text>
+                                    <App.Text size={12} weight={600} center height={1}>{ order.base_currency }</App.Text>
                                     <div style={{width: '100%', minWidth: 20, height: 1, background: '#B9B8C5'}} />
-                                    <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ order.quoteCurrency }</App.Text>
+                                    <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ order.quote_currency }</App.Text>
                                   </App.Flex>
                                 ) : null
                               )}
@@ -404,7 +404,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
                           <App.Flex column sx={{width: 60, padding: 8}} align="center" justify="center">
                             <App.Flex column gap={4}>
-                              <App.Text size={12} weight={600} center height={1}>{ order.quantityFilled }</App.Text>
+                              <App.Text size={12} weight={600} center height={1}>{ order.quantity_filled }</App.Text>
                               <div style={{width: '100%', minWidth: 20, height: 1, background: '#B9B8C5'}} />
                               <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ order.quantity }</App.Text>
                             </App.Flex>
@@ -423,7 +423,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                           <App.Text color="rgba(185, 184, 197, 1)" size={10} weight={500} sx={{marginRight: 12}} height={1}>{ order.time }</App.Text>
                           {order.status !== 'open' ? (
                             <App.Text color="#B9B8C5" size={10} weight={600} uppercase height={1}>
-                              {order.status === 'cancelled' && order.quantityFilled !== '0'  ? 'Partially filled' : order.status}
+                              {order.status === 'cancelled' && order.quantity_filled !== '0'  ? 'Partially filled' : order.status}
                             </App.Text>
                           ) : null}
 
@@ -444,7 +444,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                           ) : null}
                         </App.Flex>
                         {/* <App.Flex row className={cn(styles.filled, styles.pending)} width={`${Math.round(order.quantityFilled * 100 / order.quantity)}%`} /> */}
-                        <App.Flex row className={cn(styles.filled, styles[order.side == 'sell' ? 'notComplete' : 'complete'])} width={`${Math.round(order.quantityFilled * 100 / order.quantity)}%`} />
+                        <App.Flex row className={cn(styles.filled, styles[order.side == 'sell' ? 'notComplete' : 'complete'])} width={`${Math.round(order.quantity_filled * 100 / order.quantity)}%`} />
                       </App.Flex>
                     </App.Flex>
                   )
@@ -460,7 +460,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                 <App.Flex column sx={{position: 'absolute', inset: 0, overflow: 'auto'}}>
                   {orders[ordersType].filter(order => filterByAddress(order)).length ?
                     orders[ordersType].filter(order => filterByAddress(order)).map((order) => {
-                      const percent = Math.round(order.quantityFilled * 100 / order.quantity)
+                      const percent = Math.round(order.quantity_filled * 100 / order.quantity)
                       const perimeter =  2 * Math.PI * 19.5
                       const length = (1 + Math.max(0, Math.min(percent / 100, 1))) * perimeter
 
@@ -491,7 +491,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                           <App.Flex row justify="space-between" flex={1}>
                             <App.Flex column gap={8}>
                               <App.Flex row center gap={10} height={25} className={styles.currency} onClick={handleClickDetails(order)}>
-                                <App.Text size={12} weight={700} height={1}>{order.baseCurrency} <App.Text inline size={10} weight={700} color="#5E5C6B" height={1}>/ {order.quoteCurrency}</App.Text></App.Text>
+                                <App.Text size={12} weight={700} height={1}>{order.base_currency} <App.Text inline size={10} weight={700} color="#5E5C6B" height={1}>/ {order.quote_currency}</App.Text></App.Text>
                                 <App.Icon icon="chevron-right2" />
                               </App.Flex>
 
@@ -499,7 +499,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                                 <App.Flex width={60}>
                                   <App.Text size={12} uppercase height={1} color="#5E5C6B">Amount:</App.Text>
                                 </App.Flex>
-                                <App.Text size={14} weight={600} height={1}>{ order.quantityFilled } <App.Text inline size={12} weight={600} height={1} color="#5E5C6B">/ { order.quantity }</App.Text></App.Text>
+                                <App.Text size={14} weight={600} height={1}>{ order.quantity_filled } <App.Text inline size={12} weight={600} height={1} color="#5E5C6B">/ { order.quantity }</App.Text></App.Text>
                               </App.Flex>
 
                               <App.Flex row align="center">

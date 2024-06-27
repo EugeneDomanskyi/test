@@ -34,8 +34,8 @@ const GemsLiquidity = () => {
 
   const fetchLiquidity = async () => {
     const result = await $gem.api.liquidity(wallet, {})
-    if (result && result?.data) {
-      dispatch($gem.set.liquidity(result.data))
+    if (result) {
+      dispatch($gem.set.liquidity(result))
     }
     
     setLoading(false)
@@ -97,36 +97,36 @@ const GemsLiquidity = () => {
               <App.Flex column center width={[180, 'calc(50% - 12px)']} height={[80, 62]} gap={8} className={styles.box}>
                 <App.Text size={[14, 12]} weight={400}>{t('Active orders')}</App.Text>
                 {loading ? (
-                  <App.Loader size={[32, 24]} />
+                  <App.Loader size={[24, 24]} />
                 ) : (
-                  <App.Text size={[32, 24]} weight={600} height={1}>{liquidity.total_open_orders}</App.Text>
+                  <App.Text size={[24, 24]} weight={600} height={1}>{liquidity.total_open_orders}</App.Text>
                 )}
               </App.Flex>
 
               <App.Flex column center width={[180, 'calc(50% - 12px)']} height={[80, 62]} gap={8} className={styles.box}>
                 <App.Text size={[14, 12]} weight={400}>{t('Active liquidity')}</App.Text>
                 {loading ? (
-                  <App.Loader size={[32, 24]} />
+                  <App.Loader size={[24, 24]} />
                 ) : (
-                  <App.Text size={[32, 24]} weight={600} height={1}>{liquidity.total_open_amount} <App.Text inline size={14} weight={600} height={1}>{quoteCurrency}</App.Text></App.Text>
+                  <App.Text nowrap center size={[24, 24]} weight={600} height={1}>{liquidity.total_open_amount} <App.Text inline size={14} weight={600} height={1}>{quoteCurrency}</App.Text></App.Text>
                 )}
               </App.Flex>
 
               <App.Flex column center width={[180, 'calc(50% - 12px)']} height={[80, 62]} gap={8} className={styles.box}>
                 <App.Text size={[14, 12]} weight={400}>{t('Liquidity provided')}</App.Text>
                 {loading ? (
-                  <App.Loader size={[32, 24]} />
+                  <App.Loader size={[24, 24]} />
                 ) : (
-                  <App.Text size={[32, 24]} weight={600} height={1}>{liquidity.total_liquidity} <App.Text inline size={14} weight={600} height={1}>{quoteCurrency}</App.Text></App.Text>
+                  <App.Text nowrap center size={[24, 24]} weight={600} height={1}>{liquidity.total_liquidity} <App.Text inline size={14} weight={600} height={1}>{quoteCurrency}</App.Text></App.Text>
                 )}
               </App.Flex>
 
               <App.Flex column center width={[180, '100%']} height={[80, 62]} gap={8} className={styles.box}>
                 <App.Text size={[14, 12]} weight={400}>{t('Gems earned')}</App.Text>
                 {loading ? (
-                  <App.Loader size={[32, 24]} />
+                  <App.Loader size={[24, 24]} />
                 ) : (
-                  <App.Text size={[32, 24]} weight={600} height={1}>{liquidity.gems_earned_today}</App.Text>
+                  <App.Text nowrap center size={[24, 24]} weight={600} height={1}>{liquidity.gems_earned_today}</App.Text>
                 )}
               </App.Flex>
             </App.Flex>
