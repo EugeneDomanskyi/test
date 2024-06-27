@@ -41,7 +41,6 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
     console.log('--- Result from Allowance check', allowanceAmountBigInt)
 
     const spendDecimals = side === 'buy' ? current.quoteDecimals : current.baseDecimals
-    console.log(spendDecimals)
     const allowanceAmount = formatUnits(allowanceAmountBigInt, spendDecimals)
     console.log(`--- Result from Allowance using precision ${spendDecimals}`, allowanceAmount)
 
@@ -115,7 +114,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       'Quantity': numeral(amount).format('0.[00000]'),
       'Price': numeral(price).format('0.[00000]'),
       'Total': numeral(total).format('0.[00000]'),
-      'Order Id': result.orderId,
+      'Order Id': result.order_id,
       'Source': isApp ? 'App' : 'Web',
       'Chain ID': blockchain?.id,
       'Market ID': current?.address,

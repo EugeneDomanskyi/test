@@ -39,7 +39,7 @@ export const template = (item) => {
 
   return {
     ...item,
-    id: item.orderId,
+    id: item.order_id,
     time: moment(item.time).format('DD MMM, HH:mm'),
     timeMoment: moment(item.time),
   }
@@ -76,16 +76,16 @@ export const ordersSlice = createSlice({
     },
 
     add: (state, { payload }) => {
-      const exist = state.list.find(o => o.id === payload.orderId)
+      const exist = state.list.find(o => o.id === payload.order_id)
       if (exist) {
-        state.list = state.list.map(o => o.id === payload.orderId ? template(payload) : o)
+        state.list = state.list.map(o => o.id === payload.order_id ? template(payload) : o)
         return
       }
       state.list = [template(payload), ...state.list]
     },
 
     update: (state, { payload }) => {
-      state.list = state.list.map(o => o.id === payload.orderId ? template(payload) : o)
+      state.list = state.list.map(o => o.id === payload.order_id ? template(payload) : o)
     },
 
     updateOrderStatus: (state, { payload }) => {
