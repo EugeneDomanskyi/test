@@ -383,7 +383,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                         <App.Flex align="center" className={cn(styles.order, {[styles.disabled]: order.status === 'closed' || order.status === 'cancelled'})}>
                           <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
                           <App.Flex sx={{width: 90, paddingRight: 8}}>
-                            <App.Flex justify={'center'} align={'center'} sx={{width: 30}} className={cn(styles.iconGlass, {[styles.active]: order.status_data.is_pending})}>
+                            <App.Flex justify={'center'} align={'center'} sx={{width: 30}} className={cn(styles.iconGlass, {[styles.active]: order.quantity_pending * 1 > 0})}>
                               <App.Icon width={20} height={20} color="#fff" icon={"hourglass"} />
                             </App.Flex>
                             <App.Flex column align="center" justify="center" >
@@ -431,13 +431,13 @@ const Orders = ({global, type, version, onClickOrder}) => {
                             <App.Icon icon="copy" width={12} height={12} color="#B9B8C5" />
                           </App.Flex>
 
-                          {order.status !== 'open' && !order.status_data.is_pending ? (
+                          {order.status !== 'open' && order.quantity_pending == 0 ? (
                             <App.Flex className={styles.actionButton} align="center" justify="center" onClick={handleClickDetails(order)}>
                               <App.Icon icon="order-details" />
                             </App.Flex>
                           ) : null}
 
-                          {order.status === 'open' && !order.status_data.is_pending ? (
+                          {order.status === 'open' && order.quantity_pending == 0 ? (
                             <App.Flex className={styles.actionButton} align="center" justify="center" onClick={handlePressCancelConfirm(order)}>
                               <App.Icon icon="cross-circle" />
                             </App.Flex>
