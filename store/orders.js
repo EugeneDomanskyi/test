@@ -149,8 +149,8 @@ const get = {
     state => state.$orders.list,
   ], (orders) => {
     return {
-      open: orders.filter(order => order.status === 'open' || order.status_data.is_pending),
-      closed: orders.filter(order => order.status !== 'open' && !order.status_data.is_pending),
+      open: orders.filter(order => order.status === 'open' || order.quantity_pending > 0),
+      closed: orders.filter(order => order.status !== 'open' && order.quantity_pending == 0),
     }
   }),
   orderbook: createSelector([
