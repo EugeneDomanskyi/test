@@ -7,7 +7,7 @@ import moment from 'moment'
 
 import useInterval from '@/myhooks/useInterval'
 
-import $point from '@/store/point'
+import $gem from '@/store/gem'
 
 import App from '@/components/App'
 
@@ -72,7 +72,7 @@ const AuctionButton = ({ item, small }) => {
 
     if (item.status == 'ongoing') {
       if (stats.total_points * 1 >= item.pointsPrice * 1) {
-        $point.api.bid({
+        $gem.api.bid({
           auction_id: item.id,
           jwt_token: null,
         })
