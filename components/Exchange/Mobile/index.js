@@ -22,6 +22,7 @@ import Orders from '@/components/Exchange/Orders'
 import Markets from '@/components/Exchange/Markets'
 
 import styles from './styles.module.scss'
+import Decimal from 'decimal.js'
 
 const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 
@@ -268,7 +269,7 @@ const Mobile = forwardRef((_, ref) => {
 
               <App.Flex row align="center" justify="space-between" gap={16}>
                 <App.Text size={14} weight={400} height={1} color="#5E5C6B">Volume</App.Text>
-                <App.Text size={14} weight={400} height={1}>{item.volume ?? 0} {item.quoteSymbol}</App.Text>
+                <App.Text size={14} weight={400} height={1}>{new Decimal(item.volume ?? 0).toDecimalPlaces(2).toFixed()} {item.quoteSymbol}</App.Text>
               </App.Flex>
             </App.Flex>
           </App.Flex>
