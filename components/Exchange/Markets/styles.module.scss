@@ -6,3 +6,8 @@
   padding: 8px 16px;
   border-top: 1px solid #1C172B;
 }
+
+.scroll {
+  overflow-y: auto;
+  height: calc(100vh - 142px);
+}

@@ -86,7 +86,9 @@ const Markets = ({ markets, onSelect, onClose }) => {
             </App.Flex>
           </App.Flex>
 
-          {getMarkets().map((market, index) => <MarketItem key={index} item={market} onSelect={onSelect} />)}
+          <App.Flex column className={styles.scroll}>
+            {getMarkets().map((market, index) => <MarketItem key={market.id} item={market} onSelect={onSelect} />)}
+          </App.Flex>
         </App.Flex>
       ) : (
         <App.Flex center height={100}>
