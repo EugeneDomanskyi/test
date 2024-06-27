@@ -158,7 +158,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
     //     Amplitude.event('Bulk Cancel Order')
     //     const updatedOrders = orders.open.reduce((acc, o) => ({
     //       ...acc,
-    //       [o.orderId]: 'cancelled',
+    //       [o.order_id]: 'cancelled',
     //     }), {})
     //     dispatch($orders.set.updateOrderStatus(updatedOrders))
     //     dispatch($alert.set.success({ title: 'Orders cancelled', text: `You have cancelled ${orders.open.length} order(s) successfully.` }))
@@ -242,9 +242,9 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
     // const signature = await WagmiHelper.signMessage()
     // if (signature) {
-    //   const result = await $orders.api.cancel({ id: order.orderId, chain_id: blockchain.id, signature })
+    //   const result = await $orders.api.cancel({ id: order.order_id, chain_id: blockchain.id, signature })
     //   if (result) {
-    //     dispatch($orders.set.updateOrderStatus({[order.orderId]: 'cancelled'}))
+    //     dispatch($orders.set.updateOrderStatus({[order.order_id]: 'cancelled'}))
     //     dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency} has been cancelled successfully.` }))
 
     //     dispatch($portfolio.set.update(true))
