@@ -5,10 +5,7 @@ import $app, { appSlice } from './app'
 import $alert from './alert'
 import $token from './token'
 import $orders from './orders'
-import $raffle from './raffle'
-import $markets from './markets'
 import $portfolio from './portfolio'
-import $tournament from './tournament'
 import $gem from './gem'
 
 const createStore = (initialData) => {
@@ -37,10 +34,7 @@ const createStore = (initialData) => {
       $alert: $alert.reducer,
       $token: $token.reducer,
       $orders: $orders.reducer,
-      $raffle: $raffle.reducer,
-      $markets: $markets.reducer,
       $portfolio: $portfolio.reducer,
-      $tournament: $tournament.reducer,
       $gem: $gem.reducer,
     },
 
