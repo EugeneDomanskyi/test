@@ -160,4 +160,18 @@ const Exchange = () => {
   )
 }
 
+export async function getServerSideProps(ctx) {
+  let current = {}
+  if (ctx?.req) {
+    console.log('123123', ctx.req.url)
+  }
+  console.log('--------', ctx.params)
+
+  return {
+    props: {
+      current,
+    },
+  }
+}
+
 export default Exchange
