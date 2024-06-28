@@ -41,8 +41,8 @@ const GemsAuctionInfo = () => {
 
   const fetchStats = async () => {
     const result = await $gem.api.stats(wallet, {})
-    if (result && result?.data) {
-      dispatch($gem.set.stats(result.data))
+    if (result) {
+      dispatch($gem.set.stats(result))
     }
   }
 

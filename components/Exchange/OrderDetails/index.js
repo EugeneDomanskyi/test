@@ -25,7 +25,7 @@ const OrderDetails = ({order}) => {
   }, [])
 
   const fetchTrades = async () => {
-    const result = await $orders.api.details({ id: order.id })
+    const result = await $orders.api.details({ id: order.order_id })
     if (result && result.length) {
       setTrades(result)
     }
@@ -36,7 +36,7 @@ const OrderDetails = ({order}) => {
   return (
     <App.Flex column fullWidth gap={16} sx={{ paddingBottom: 16 }}>
       <App.Flex row align="center" justify="space-between" className={cn(styles.topRow, styles[order.side])}>
-        <App.Text size={14} weight={700} height={1}>{ order.baseCurrency } / { order.quoteCurrency }</App.Text>
+        <App.Text size={14} weight={700} height={1}>{ order.base_currency } / { order.quote_currency }</App.Text>
         <App.Text size={14} weight={600} height={1} color={order.side === 'buy' ? '#53F19C' : '#FF1D61'}>{ order.side.charAt(0).toUpperCase() + order.side.slice(1) }</App.Text>
       </App.Flex>
 
@@ -64,21 +64,21 @@ const OrderDetails = ({order}) => {
 
           <App.Flex row align="center" justify="space-between">
             <App.Text color="#5E5C6B" size={12} height={1}>Filled / Amount</App.Text>
-            <App.Text color="#B9B8C5" size={12} height={1}>{order.quantityFilled} {order.baseCurrency} / {order.quantity} {order.baseCurrency}</App.Text>
+            <App.Text color="#B9B8C5" size={12} height={1}>{order.quantity_filled} {order.base_currency} / {order.quantity} {order.base_currency}</App.Text>
           </App.Flex>
 
           <App.Flex row align="center" justify="space-between">
             <App.Text color="#5E5C6B" size={12} height={1}>Average / Price</App.Text>
-            <App.Text color="#B9B8C5" size={12} height={1}>{order.price} {order.quoteCurrency} / {order.price} {order.quoteCurrency}</App.Text>
+            <App.Text color="#B9B8C5" size={12} height={1}>{order.price} {order.quote_currency} / {order.price} {order.quote_currency}</App.Text>
           </App.Flex>
 
           <App.Flex row align="center" justify="space-between">
             <App.Text color="#5E5C6B" size={12} height={1}>Total</App.Text>
-            <App.Text color="#B9B8C5" size={12} height={1}>{order.total} {order.quoteCurrency}</App.Text>
+            <App.Text color="#B9B8C5" size={12} height={1}>{order.total} {order.quote_currency}</App.Text>
           </App.Flex>
 
           <App.Flex row align="center" justify="space-between">
-            <App.Text color="#5E5C6B" italic size={12} height={1}>Fee: {order.fee} {order.baseCurrency} | Gas: 0 </App.Text>
+            <App.Text color="#5E5C6B" italic size={12} height={1}>Fee: {order.fee} {order.base_currency} | Gas: 0 </App.Text>
           </App.Flex>
         </App.Flex>
       </App.Flex>
@@ -99,15 +99,15 @@ const OrderDetails = ({order}) => {
                     <App.Text size={12} height={1} color="#5E5C6B">Date / Time</App.Text>
                   </App.Flex>
 
-                  <App.Flex row width={100} align="center" sx={{ padding: '4px 0' }} flex={1}>
+                  <App.Flex row width={90} align="center" sx={{ padding: '4px 0' }} flex={1}>
                     <App.Text size={12} height={1} color="#5E5C6B">Filled</App.Text>
                   </App.Flex>
 
-                  <App.Flex row fullWidth align="center" sx={{ padding: '4px 0' }} flex={1}>
+                  <App.Flex row align="center" sx={{ padding: '4px 0' }} flex={1}>
                     <App.Text size={12} height={1} color="#5E5C6B">Status</App.Text>
                   </App.Flex>
 
-                  <App.Flex row width={100} align="center" justify="flex-end" sx={{ padding: '4px 0' }} flex={1}>
+                  <App.Flex row align="center" justify="flex-end" sx={{ padding: '4px 0' }} flex={1}>
                     <App.Text right size={12} height={1} color="#5E5C6B">Price</App.Text>
                   </App.Flex>
                 </App.Flex>
@@ -117,21 +117,21 @@ const OrderDetails = ({order}) => {
                 {trades.map((item) => (
                   <App.Flex key={item.id} row fullWidth gap={16} className={styles.row}>
                     <App.Flex row width={90} align="center">
-                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{moment(item.time).format('DD MMM, HH:mm:ss')}</App.Text>
+                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{moment(item.timestamp * 1000).format('DD MMM, HH:mm:ss')}</App.Text>
                     </App.Flex>
 
                     <App.Flex row width={90} align="center" flex={1}>
-                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{item.amount} {order.baseCurrency}</App.Text>
+                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{item.amount} {order.base_currency}</App.Text>
                     </App.Flex>
 
-                    <App.Flex fullWidth align="center" flex={1} className={cn(styles.status, {[styles.success]: item.state === 'success'})}>
+                    <App.Flex center flex={1} className={cn(styles.status, {[styles.success]: item.state === 'success'})}>
                       <App.Text capitalize size={12} weight={500} height={1} color={item.state === 'success' ? '#53F19C' : '#FF1D61'}>{ item.state }</App.Text>
                     </App.Flex>
 
-                    <App.Flex row width={100} align="center" gap={10} justify="flex-end" flex={1}>
-                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{item.price} {order.quoteCurrency}</App.Text>
-                      {item.txHash && !isApp ? (
-                        <a href={WagmiHelper.generateScanUrl(item.txHash)} target="_blank" rel="noreferrer" style={{ lineHeight: 0 }}>
+                    <App.Flex row align="center" gap={10} justify="flex-end" flex={1}>
+                      <App.Text size={12} weight={600} height={1} color="#B9B8C5">{item.price} {order.quote_currency}</App.Text>
+                      {item.tx_hash && !isApp ? (
+                        <a href={WagmiHelper.generateScanUrl(item.tx_hash)} target="_blank" rel="noreferrer" style={{ lineHeight: 0 }}>
                           <App.Icon icon="external-link" />
                         </a>
                       ) : null}

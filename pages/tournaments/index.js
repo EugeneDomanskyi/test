@@ -30,8 +30,8 @@ const Tournaments = () => {
 
   const fetchTournaments = async () => {
     const result = await $gem.api.tournaments()
-    if (result && result?.data) {
-      dispatch($gem.set.tournaments(result.data))
+    if (result) {
+      dispatch($gem.set.tournaments(result))
     }
     setLoading(false)
   }

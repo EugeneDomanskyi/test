@@ -39,9 +39,9 @@ export const template = (item) => {
 
   return {
     ...item,
-    id: item.orderId,
-    time: moment(item.time).format('DD MMM, HH:mm'),
-    timeMoment: moment(item.time),
+    id: item.order_id,
+    time: moment(item.timestamp * 1000).format('DD MMM, HH:mm'),
+    timeMoment: moment(item.timestamp * 1000),
   }
 }
 
@@ -76,16 +76,16 @@ export const ordersSlice = createSlice({
     },
 
     add: (state, { payload }) => {
-      const exist = state.list.find(o => o.id === payload.orderId)
+      const exist = state.list.find(o => o.id === payload.order_id)
       if (exist) {
-        state.list = state.list.map(o => o.id === payload.orderId ? template(payload) : o)
+        state.list = state.list.map(o => o.id === payload.order_id ? template(payload) : o)
         return
       }
       state.list = [template(payload), ...state.list]
     },
 
     update: (state, { payload }) => {
-      state.list = state.list.map(o => o.id === payload.orderId ? template(payload) : o)
+      state.list = state.list.map(o => o.id === payload.order_id ? template(payload) : o)
     },
 
     updateOrderStatus: (state, { payload }) => {
@@ -97,7 +97,7 @@ export const ordersSlice = createSlice({
     },
 
     chart: (state, { payload }) => {
-      state.chart = payload.sort((a, b) => a.time - b.time).map(item => ({...item, time: item.time*1000}))
+      state.chart = payload.sort((a, b) => a.timestamp - b.timestamp).map(item => ({...item, time: item.timestamp * 1000}))
     },
 
     orderbook: (state, { payload }) => {
@@ -149,8 +149,8 @@ const get = {
     state => state.$orders.list,
   ], (orders) => {
     return {
-      open: orders.filter(order => order.status === 'open' || order.status_data.is_pending),
-      closed: orders.filter(order => order.status !== 'open' && !order.status_data.is_pending),
+      open: orders.filter(order => order.status === 'open' || order.quantity_pending > 0),
+      closed: orders.filter(order => order.status !== 'open' && order.quantity_pending == 0),
     }
   }),
   orderbook: createSelector([
