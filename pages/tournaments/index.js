@@ -241,8 +241,15 @@ const Tournaments = () => {
                                   <App.Text weight={400} height={1}>{getShort(item.wallet_address)}</App.Text>
                                 </App.Flex>
 
-                                <App.Flex width={['auto', 56]} flex={[1, null]} center>
+                                <App.Flex gap={4} width={['auto', 56]} flex={[1, null]} center>
                                   <App.Text center weight={400} height={1}>{item.points}</App.Text>
+                                  {item.points_per_minute > 0 ? (
+                                    <App.Flex center gap={4}>
+                                      <App.Text weight={400} height={1}>+</App.Text>
+                                      <App.Text weight={400} height={1} color="#68C9F9">{item.points_per_minute}/min</App.Text>
+                                      <Image src="/images/gem-animate.gif" width={32} height={32} />
+                                    </App.Flex>
+                                  ) : null}
                                 </App.Flex>
 
                                 <App.Flex flex={1} align="center" justify="flex-end">
