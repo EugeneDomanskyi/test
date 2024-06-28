@@ -26,7 +26,7 @@ const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 
 const GRID_GAP = 8
 
-const Exchange = () => {
+const Exchange = ({  }) => {
   const router = useRouter()
   const [queryTokenId] = router.query.address || []
 
@@ -158,20 +158,6 @@ const Exchange = () => {
       )}
     </App.Flex>
   )
-}
-
-export async function getServerSideProps(ctx) {
-  let current = {}
-  if (ctx?.req) {
-    console.log('123123', ctx.req.url)
-  }
-  console.log('--------', ctx.params)
-
-  return {
-    props: {
-      current,
-    },
-  }
 }
 
 export default Exchange

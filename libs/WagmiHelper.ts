@@ -50,7 +50,6 @@ class WagmiHelper {
     if (!this.backendChains.length) {
       const result = await $app.api.chains()
       if (result && result.length) {
-        console.log(result)
         this.backendChains = result.filter((item: any) => item.Active).map((item: any) => {
           const image = item.logo
             || (item.default_quote_token_symbol == 'USDT' ? '/images/icon-usdt.png' : '')
