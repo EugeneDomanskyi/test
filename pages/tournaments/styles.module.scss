@@ -48,17 +48,18 @@
       border-radius: 8px;
       width: 80px;
       height: 24px;
+      border: solid transparent 1px;
 
       &.on-going {
-        background: #A6DC37;
+        border-color: #A6DC37;
       }
 
       &.closed {
-        background: #6F6C88;
+        border-color: #6F6C88;
       }
 
       &.upcoming {
-        background: #DC7225;
+        border-color: #DC7225;
       }
     }
 
