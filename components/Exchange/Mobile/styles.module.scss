@@ -1,5 +1,9 @@
 .info {
   border-bottom: solid #1C172B 1px;
+  
+  &.webview {
+    padding-top: 44px;
+  }
 }
 
 .dropdownBox {
