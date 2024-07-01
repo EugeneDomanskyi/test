@@ -15,6 +15,8 @@ import WagmiHelper from '@/libs/WagmiHelper'
 import store from '@/store'
 import i18nInit from '@/libs/i18n'
 
+import $token, { template } from '@/store/token'
+
 import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
 import Head from '@/components/Head'
@@ -43,7 +45,7 @@ const RainbowTheme = merge(darkTheme({ overlayBlur: 'small' }), {
   },
 })
 
-function MyApp({ Component, pageProps, initialData, ssRoute }) {
+function MyApp({ Component, pageProps, initialData, ssRoute, ssCurrent }) {
   const router = useRouter()
   const storeRef = useRef(store(initialData)).current
 
@@ -63,7 +65,7 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
           <RainbowKitProvider theme={RainbowTheme} initialChain={currentChain}>
             <BanditContextProvider cluster={"mainnet"} apiKey={process.env.NEXT_PUBLIC_BANDIT_API_KEY}>
               <Provider store={storeRef}>
-                <Head route={ssRoute} />
+                <Head route={ssRoute} current={ssCurrent} />
                 <Wrapper>
                   <Component {...pageProps} />
                 </Wrapper>
@@ -79,6 +81,7 @@ function MyApp({ Component, pageProps, initialData, ssRoute }) {
 
 MyApp.getInitialProps = async ({ ctx }) => {
   let ssRoute = ''
+  let ssCurrent = null
   let isMobile = null
 
   let isApp = null
@@ -94,11 +97,33 @@ MyApp.getInitialProps = async ({ ctx }) => {
     isMobile = device.type === 'mobile'
 
     isApp = ctx.req.headers['x-tegro-app'] == 'native'
-    // isApp = true
     platform = ctx.req.headers['x-tegro-platform']
 
     chains = await WagmiHelper.fetchChains(ctx)
     blockchain = WagmiHelper.getCurrentChainCode(ctx, chains)
+
+    if (ssRoute.includes('/exchange') && ctx?.query && ctx?.query?.address) {
+      if (ctx.query.address.length && ctx.query.address.length > 0) {
+        const blockchainCode = ctx.query.blockchain
+        const address = ctx.query.address[0]
+        const chain = WagmiHelper.getChainByCode(blockchainCode, chains)
+  
+        const result = await $token.api.all({
+          page: 1,
+          page_size: 50,
+          chain_id: chain.id,
+          sort_by: 'volume',
+          sort_order: 'desc',
+          verified: true,
+        })
+
+        const currentMarket = result.find(item => item.base_contract_address.toLowerCase() === address.toLowerCase())
+        if (currentMarket) {
+          currentMarket.blockchainCode = blockchainCode
+          ssCurrent = template(currentMarket)
+        }
+      }
+    }
   }
   
   return {
@@ -111,6 +136,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
       chains,
     },
     ssRoute,
+    ssCurrent,
   }
 }
 

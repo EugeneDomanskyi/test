@@ -5,14 +5,14 @@ import HeadExchange from './HeadExchange'
 import HeadPD from './HeadPD'
 import HeadTournaments from './HeadTournaments'
 
-const Head = ({ route }) => {
+const Head = ({ route, current }) => {
   const router = useRouter()
 
   const getHead = () => {
     const currentRoute = route || router.asPath
 
     if (currentRoute.includes('exchange')) {
-      return <HeadExchange />
+      return <HeadExchange ssCurrent={current} />
     }
 
     if (currentRoute.includes('gems-dashboard')) {

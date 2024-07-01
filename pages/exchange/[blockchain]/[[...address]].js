@@ -26,7 +26,7 @@ const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 
 const GRID_GAP = 8
 
-const Exchange = () => {
+const Exchange = ({  }) => {
   const router = useRouter()
   const [queryTokenId] = router.query.address || []
 

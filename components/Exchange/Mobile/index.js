@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
+import Decimal from 'decimal.js'
 
 import $app from '@/store/app'
 import $alert from '@/store/alert'
@@ -92,8 +93,8 @@ const Mobile = forwardRef((_, ref) => {
       dispatch($alert.set.success({title: '500 Gems Credited'}))
 
       const result = await $gem.api.referral(wallet)
-      if (result && result?.data) {
-        dispatch($gem.set.referral(result?.data))
+      if (result) {
+        dispatch($gem.set.referral(result))
       }
     })
   }, [wallet, item?.id])
@@ -136,7 +137,7 @@ const Mobile = forwardRef((_, ref) => {
   }, [blockchain?.code, sort, pages.current, queryBlockchainCode])
 
   const fetchTokensList = async () => {
-    const res = await $token.api.all({
+    const result = await $token.api.all({
       page: pages.current,
       page_size: pages.perPage,
       chain_id: blockchain.id,
@@ -145,12 +146,12 @@ const Mobile = forwardRef((_, ref) => {
       verified: true,
     })
 
-    if (res.success) {
-      dispatch($token.set.all(res.data))
+    if (result && result.length) {
+      dispatch($token.set.all(result))
       dispatch($token.set.pages({ next: (pages.current * 1 + 1) }))
 
       if (address == '0x') {
-        router.replace(`/exchange/${queryBlockchainCode}/${res.data[0].base_contract_address.toLowerCase()}`)
+        router.replace(`/exchange/${queryBlockchainCode}/${result[0].base_contract_address.toLowerCase()}`)
       }
     }
 
@@ -161,7 +162,7 @@ const Mobile = forwardRef((_, ref) => {
     const existInList = list.find(item => item.id === currentAddress)
     if (!existInList) {
       const id = `${blockchain.id}_${currentAddress}_${blockchain.token?.address}`
-      const res = await $token.api.all({
+      const result = await $token.api.all({
         page: 1,
         page_size: 1,
         chain_id: blockchain.id,
@@ -171,8 +172,8 @@ const Mobile = forwardRef((_, ref) => {
         verified: true,
       })
 
-      if (res.success && res.data.length) {
-        dispatch($token.set.current(res.data[0]))
+      if (result && result.length) {
+        dispatch($token.set.current(result[0]))
       }
     } else {
       dispatch($token.set.current(existInList))
@@ -181,8 +182,8 @@ const Mobile = forwardRef((_, ref) => {
 
   const getPortfolio = async () => {
     const result = await $portfolio.api.details({ wallet, blockchain })
-    if (result?.success) {
-      dispatch($portfolio.set.details({...result, blockchain}))
+    if (result && result.length) {
+      dispatch($portfolio.set.details({data: result, blockchain}))
     } else {
       dispatch($portfolio.set.details({data: [], blockchain}))
     }

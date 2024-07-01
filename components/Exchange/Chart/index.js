@@ -129,8 +129,8 @@ const TradeChart = ({ version, showSwitch, top = [] }) => {
     }
 
     const result = await $orders.api.chart(post)
-    if (result && result.success && Array.isArray(result.data)) {
-      dispatch($orders.set.chart(result.data))
+    if (result &&  Array.isArray(result)) {
+      dispatch($orders.set.chart(result))
     } else {
       dispatch($orders.set.chart([]))
     }
