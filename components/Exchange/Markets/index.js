@@ -45,7 +45,7 @@ const Markets = ({ markets, onSelect, onClose }) => {
   }
 
   return (
-    <App.Flex column fullWidth>
+    <App.Flex column fullWidth className={styles.container}>
       <App.Flex row gap={16} align="center" className={styles.search}>
         <App.Flex width={32} height={32} center onClick={handleClose}>
           <App.Icon icon="chevron-left2" />
@@ -69,7 +69,7 @@ const Markets = ({ markets, onSelect, onClose }) => {
       </App.Flex>
 
       {getMarkets().length ? (
-        <App.Flex column>
+        <App.Flex column className={styles.list}>
           <App.Flex row align="center" gap={16} className={styles.sort}>
             <App.Flex row width={100} align="center">
               <App.Text size={14} weight={600} height={1} color="#908F99">Name</App.Text>
