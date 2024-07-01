@@ -47,8 +47,8 @@ const Sales = ({ version, onClickSale }) => {
       limit: 10,
     })
 
-    if (result?.success && Array.isArray(result.data)) {
-      dispatch($orders.set.trades({data: result.data, token: current}))
+    if (result && Array.isArray(result)) {
+      dispatch($orders.set.trades({data: result, token: current}))
     } else {
       dispatch($orders.set.trades({data: [], token: current}))
     }
@@ -140,7 +140,7 @@ const Sales = ({ version, onClickSale }) => {
                     </App.Flex>
 
                     <App.Flex width={80}>
-                      <App.Text flex={1} size={12} right height={1}>{ moment(sale.time).format('hh:mm:ss A') }</App.Text>
+                      <App.Text flex={1} size={12} right height={1}>{ moment((sale.time ?? sale.timestamp) * 1000).format('hh:mm:ss A') }</App.Text>
                     </App.Flex>
                   </App.Flex>
                 </App.Flex>
