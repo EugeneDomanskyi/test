@@ -2,17 +2,17 @@ import { memo, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
+import Decimal from 'decimal.js'
 
+import WagmiHelper from '@/libs/WagmiHelper'
 import Amplitude from '@/libs/amplitude.lib'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
-import { formatNumberWithDecimals } from '@/store/portfolio'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
-import WagmiHelper from '@/libs/WagmiHelper'
 
 const Info = () => {
   const router = useRouter()
@@ -69,7 +69,7 @@ const Info = () => {
     const existInList = list.find(item => item.id === currentAddress)
     if (!existInList) {
       const id = `${blockchain.id}_${currentAddress}_${blockchain.token?.address}`
-      const res = await $token.api.all({
+      const result = await $token.api.all({
         page: 1,
         page_size: 1,
         chain_id: blockchain.id,
@@ -79,8 +79,8 @@ const Info = () => {
         verified: true,
       })
 
-      if (res.success && res.data.length) {
-        dispatch($token.set.current(res.data[0]))
+      if (result && result.length) {
+        dispatch($token.set.current(result[0]))
       } else {
         setEmptyCurrent(true)
       }
@@ -155,7 +155,7 @@ const Info = () => {
 
             <App.Flex column gap={6}>
               <App.Text nowrap size={12} height={1} color="#B9B8C5">24h Volume ({current.quoteSymbol})</App.Text>
-              <App.Number size={12} weight={600} height={1} color="#fff">{ formatNumberWithDecimals(current.volume ?? 0, 2) }</App.Number>
+              <App.Number size={12} weight={600} height={1} color="#fff">{ new Decimal(current.volume ?? 0).toDecimalPlaces(2).toFixed() }</App.Number>
             </App.Flex>
           </App.Flex>
         </>

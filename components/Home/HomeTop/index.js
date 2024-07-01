@@ -6,9 +6,6 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const HomeTop = () => {
-  const loading = useSelector(({ $tournament }) => $tournament.loading)
-  const tournament = useSelector(({ $tournament }) => $tournament.current)
-
   return (
     <App.Container fluid sx={[{ padding: '200px 0 96px' }, { padding: '138px 0 78px' }]}>
       <App.Flex column gap={[64, 40]} center fullWidth>
