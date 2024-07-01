@@ -31,7 +31,7 @@ const GemsDashboard = () => {
 
   const tabs = [
     { title: t('Dashboard'), key: 'home' },
-    // { title: t('Auction'), key: 'auction' },
+    { title: t('Auction'), key: 'auction' },
     { title: t('Liquidity mining'), key: 'liquidity' },
     { title: t('Refer & earn'), key: 'refer' },
     // { title: t('Contributor tasks'), key: 'contributor' },
@@ -73,7 +73,7 @@ const GemsDashboard = () => {
   const getGemsComponent = () => {
     switch (tab) {
       case 'home': return <GemsHome />
-      // case 'auction': return <GemsAuction />
+      case 'auction': return <GemsAuction />
       case 'liquidity': return <GemsLiquidity />
       case 'refer': return <GemsRefer />
       // case 'contributor': return <GemsContributor />
