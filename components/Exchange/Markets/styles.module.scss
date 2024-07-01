@@ -1,13 +1,21 @@
-.search {
-  padding: 8px 16px;
-}
+.container {
+  height: 100%;
 
-.sort {
-  padding: 8px 16px;
-  border-top: 1px solid #1C172B;
-}
+  .search {
+    padding: 8px 16px;
+  }
 
-.scroll {
-  overflow-y: auto;
-  height: calc(100vh - 142px);
+  .list {
+    height: calc(100% - 60px);
+
+    .sort {
+      padding: 8px 16px;
+      border-top: 1px solid #1C172B;
+    }
+
+    .scroll {
+      overflow-y: auto;
+      height: calc(100% - 31px);
+    }
+  }
 }
