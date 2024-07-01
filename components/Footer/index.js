@@ -10,8 +10,6 @@ import styles from './styles.module.scss'
 const Footer = () => {
   const footerRef = useRef(null)
 
-  const tournament = useSelector(({ $tournament }) => $tournament.current)
-
   // this is for embed Footer in other websites, like press.tegro.com
   useEffect(() => {
     if (footerRef.current) {

@@ -29,8 +29,8 @@ const GemsTransactions = () => {
 
   const fetchTransactions = async () => {
     const result = await $gem.api.transactions(wallet, {})
-    if (result?.data) {
-      dispatch($gem.set.transactions(result.data))
+    if (result) {
+      dispatch($gem.set.transactions(result))
     }
     setLoading(false)
   }

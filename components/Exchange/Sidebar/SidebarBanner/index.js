@@ -31,8 +31,8 @@ const SidebarBanner = () => {
 
   const fetchTournament = async () => {
     const result = await $gem.api.tournament('poncho-rush-s1')
-    if (result && result?.data) {
-      if (result.data.status === 'active') {
+    if (result) {
+      if (result.status === 'active') {
         setTimeout(() => {
           const bannerShown = localStorage.getItem('ponchoPopup');
           
