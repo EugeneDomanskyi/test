@@ -23,7 +23,6 @@ import Orders from '@/components/Exchange/Orders'
 import Markets from '@/components/Exchange/Markets'
 
 import styles from './styles.module.scss'
-import Decimal from 'decimal.js'
 
 const Chart = dynamic(() => import('@/components/Exchange/Chart'), {ssr: false})
 
