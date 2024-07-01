@@ -34,8 +34,8 @@ const GemsQuests = () => {
 
   const fetchQuests = async () => {
     const result = await $gem.api.quests(wallet, {})
-    if (result?.data) {
-      dispatch($gem.set.quests(result.data))
+    if (result) {
+      dispatch($gem.set.quests(result))
     }
     setLoading(false)
   }
@@ -55,7 +55,7 @@ const GemsQuests = () => {
   const handleClaim = (id, gems) => async (e) => {
     e.stopPropagation()
     const result = await $gem.api.questClaim(wallet, { quest_id: id })
-    if (result && result?.data) {
+    if (result) {
       dispatch($alert.set.success({ title: 'Congratulations!', text: `${gems} gems credited` }))
       fetchQuests()
     }

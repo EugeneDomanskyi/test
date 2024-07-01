@@ -7,8 +7,6 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const HomeFaq = () => {
-  const tournament = useSelector(({ $tournament }) => $tournament.current)
-
   const [openIndex, setOpenIndex] = useState()
 
   const questions = [

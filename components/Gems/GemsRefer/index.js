@@ -54,15 +54,15 @@ const GemsRefer = () => {
 
   const fetchReferral = async () => {
     const result = await $gem.api.referral(wallet)
-    if (result && result?.data) {
-      dispatch($gem.set.referral(result?.data))
+    if (result) {
+      dispatch($gem.set.referral(result))
     }
   }
 
   const fetchReferrals = async () => {
     const result = await $gem.api.referrals(wallet, {})
-    if (result && result?.data) {
-      dispatch($gem.set.referrals(result.data))
+    if (result) {
+      dispatch($gem.set.referrals(result))
     }
   }
 

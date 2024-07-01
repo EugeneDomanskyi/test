@@ -7,7 +7,6 @@ import useWagmiHelper from '@/myhooks/useWagmiHelper'
 import $gem from '@/store/gem'
 
 import App from '@/components/App'
-import GemsDropsBar from '@/components/Gems/GemsDropsBar'
 import GemsHomeStats from '@/components/Gems/GemsHomeStats'
 import GemsHomeLeaderboard from '@/components/Gems/GemsHomeLeaderboard'
 import GemsSteps from '@/components/Gems/GemsSteps'
@@ -30,8 +29,8 @@ const GemsHome = () => {
   const fetchStats = async () => {
     const r = await $gem.api.transactions(wallet, {})
     const result = await $gem.api.stats(wallet, {})
-    if (result && result?.data) {
-      dispatch($gem.set.stats(result.data))
+    if (result) {
+      dispatch($gem.set.stats(result))
     }
 
     dispatch($gem.set.statsLoading(false))
@@ -43,8 +42,6 @@ const GemsHome = () => {
 
   return (
     <App.Flex column fullWidth flex={1}>
-      {/* <GemsDropsBar /> */}
-
       <App.Flex flex={!connection.loading && !connection.connected ? 1 : null}>
         {connection.loading ? (
           <App.LoaderBlock height={300} />

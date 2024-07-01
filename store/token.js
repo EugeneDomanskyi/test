@@ -4,7 +4,7 @@ import { parseCookies } from 'nookies'
 import { request } from './index'
 
 export const template = (item) => {
-  const blockchainCode = parseCookies(null)?.currentChainCode
+  const blockchainCode = item.blockchainCode ?? parseCookies(null)?.currentChainCode
   if (item?.base_contract_address) {
     return {
       id: item.base_contract_address,
@@ -14,9 +14,9 @@ export const template = (item) => {
       name: `${item.base_symbol}/${item.quote_symbol}`,
       symbol: item.base_symbol,
       quoteSymbol: item.quote_symbol,
-      decimals: item.base_decimal,
-      basePrecision: item.base_precision,
+      baseDecimals: item.base_decimal,
       quoteDecimals: item.quote_decimal,
+      basePrecision: item.base_precision,
       quotePrecision: item.quote_precision,
       blockchain: blockchainCode,
       image: item.base_symbol == 'WETH' ? 'https://tegro.com/images/0x4200000000000000000000000000000000000006.png' : `https://storage.googleapis.com/token-assets/assets/${blockchainCode}/${item.base_contract_address}.png`,
