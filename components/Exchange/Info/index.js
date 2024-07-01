@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import Decimal from 'decimal.js'
 
-import Amplitude from '@/libs/amplitude.lib'
 import WagmiHelper from '@/libs/WagmiHelper'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $app from '@/store/app'
 import $token from '@/store/token'
