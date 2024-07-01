@@ -23,14 +23,14 @@ const HeadTournaments = () => {
         <meta property="og:type" content="website" />
         <meta property="og:title" content={getTitle()} />
         <meta property="og:description" content={getDescription()} />
-        <meta property="og:image" content="/images/og-tournament-poncho.jpg" />
+        <meta property="og:image" content="https://tegro.com/images/mochi-og.jpg" />
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="twitter:domain" content="tegro.com" />
         <meta property="twitter:url" content={getUrl()} />
         <meta name="twitter:title" content={getTitle()} />
         <meta name="twitter:description" content={getDescription()} />
-        <meta name="twitter:image" content="/images/og-tournament-poncho.jpg" />
+        <meta name="twitter:image" content="https://tegro.com/images/mochi-og.jpg" />
       </Head>
   )
 }
