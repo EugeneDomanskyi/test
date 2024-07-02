@@ -5,27 +5,42 @@
   @media (max-width: 768px) {
     padding: 60px 0 32px;
   }
-
-  .banner {
-    background: #121019 url('/images/poncho-banner-long.png') center / cover no-repeat;
-    width: 100%;
-    height: 120px;
+  
+  .x {
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.10);
-    padding: 0 30px;
+    padding: 8px;
 
-    @media (max-width: 768px) {
-      height: auto;
-      background-position: -500px 0;
-      padding: 8px 16px;
+    .bar {
+      height: 6px;
+      width: 254px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.2);
+      position: relative;
+      z-index: 0;
+
+      .innerBar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, #46311E 0%, #DC9325 100%);
+        border-radius: 3px;
+        border: solid rgba(255, 255, 255, 0.2) 1px;
+
+        &:after {
+          content: '';
+          display: block;
+          width: 1px;
+          height: 120%;
+          position: absolute;
+          z-index: 0;
+          top: 0;
+          right: 0;
+          background: #fff;
+        }
+      }
     }
-  }
-
-  .bannerMobile {
-    padding: 20px 16px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    background: #121019 url('/images/poncho-banner-mobile.png') center / cover no-repeat;
   }
 
   .header {
@@ -33,18 +48,26 @@
       border-radius: 8px;
       width: 80px;
       height: 24px;
+      border: solid transparent 1px;
 
       &.on-going {
-        background: #A6DC37;
+        border-color: #A6DC37;
       }
 
       &.closed {
-        background: #6F6C88;
+        border-color: #6F6C88;
       }
 
       &.upcoming {
-        background: #DC7225;
+        border-color: #DC7225;
       }
+    }
+
+    .prize {
+      border-radius: 8px;
+      padding: 0 12px;
+      height: 24px;
+      border: solid #FFF6A3 1px;
     }
   }
 

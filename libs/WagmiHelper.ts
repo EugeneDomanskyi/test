@@ -173,6 +173,13 @@ class WagmiHelper {
     return chains.find((item: any) => item.code == chainCode)
   }
 
+  getChainCodeById = (id: number) => {
+    const backendChains = this.getBackendChains()
+    const chains = this.getFullInfoChains(backendChains)
+
+    return chains.find((item: any) => item.id == id)?.code
+  }
+
   getFullInfoChains = (backendChains: Array<any>) => {
     return backendChains.map((backendChain: any) => {
       const correctChainKey = Object.keys(wagmiChains).find((key: string) => wagmiChains[key].id == backendChain.id)
