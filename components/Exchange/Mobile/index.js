@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import Decimal from 'decimal.js'
+import cn from 'classnames'
 
 import $app from '@/store/app'
 import $alert from '@/store/alert'
@@ -229,7 +230,7 @@ const Mobile = forwardRef((_, ref) => {
 
   return (
     <App.Flex column full>
-      <App.Flex column className={styles.info}>
+      <App.Flex column className={cn(styles.info, {[styles.webview]: isApp})}>
         <App.Flex fullWidth className={styles.dropdownBox}>
           <App.Flex row fullWidth align="center" justify="space-between" className={styles.dropdown} onClick={handleMarketsDialogOpen}>
             <App.Flex row aling="center" gap={8}>

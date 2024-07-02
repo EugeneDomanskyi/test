@@ -29,7 +29,7 @@ const GemsLiquidityOrders = ({ loading }) => {
 
   const tabs = [
     { title: t('Open orders'), key: 'open' },
-    { title: t('Completed orders'), key: 'completed' },
+    { title: t('Order history'), key: 'completed' },
   ]
 
   const handleTab = (value) => {
