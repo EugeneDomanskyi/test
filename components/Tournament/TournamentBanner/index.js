@@ -17,8 +17,16 @@ const TournamentBanner = ({ tournament }) => {
       'Page': Amplitude.page(),
     })
 
-    dispatch($token.set.current({}))
-    router.push(`/exchange/base/${tournament.bonus_contract}`)
+    if (tournament.contracts && tournament.contracts.length) {
+      const contract = tournament.contracts[0]
+      dispatch($token.set.current({}))
+      router.push(`/exchange/${WagmiHelper.getChainCodeById(contract.chain_id)}/${contract.address.toLowerCase()}`)
+    } else {
+      if (tournament?.bonus_contract) {
+        dispatch($token.set.current({}))
+        router.push(`/exchange/base/${tournament.bonus_contract.toLowerCase()}`)
+      }
+    }
   }
 
   const getPool = (rewards) => {
