@@ -266,11 +266,11 @@ const Tournaments = () => {
 
                                 <App.Flex gap={4} flex={1} center>
                                   <App.Text center weight={400} height={1}>{item.points}</App.Text>
-                                  {item.points_per_minute > 0 ? (
+                                  {item.points_per_hour > 0 ? (
                                     <App.Tooltip variant="v2" text={getTooltip()} placement={isMobile ? 'bottom' : 'right'}>
                                       <App.Flex center gap={4}>
                                         <App.Text weight={400} height={1}>+</App.Text>
-                                        <App.Text weight={400} height={1} color="#68C9F9">{item.points_per_minute}/min</App.Text>
+                                        <App.Text weight={400} height={1} color="#68C9F9">{item.points_per_hour}/hr</App.Text>
                                         {!isMobile ? (
                                           <App.Flex sx={{ marginTop: -10 }}>
                                             <Image src="/images/gem-animate.gif" width={32} height={32} />
