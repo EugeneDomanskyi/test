@@ -19,6 +19,7 @@ const AuctionButton = ({ item, small }) => {
   const { t } = useTranslation()
 
   const stats = useSelector(({ $gem }) => $gem.stats)
+  const jwt = useSelector(({ $gem }) => $gem.jwt)
 
   const [isWarningDialog, setIsWarningDialog] = useState(false)
   const [time, setTime] = useState(item.time)
@@ -71,10 +72,14 @@ const AuctionButton = ({ item, small }) => {
     }
 
     if (item.status == 'ongoing') {
+      if (!jwt) {
+        return
+      }
+
       if (stats.total_points * 1 >= item.pointsPrice * 1) {
         $gem.api.bid({
           auction_id: item.id,
-          jwt_token: null,
+          jwt_token: jwt,
         })
       } else {
         setIsWarningDialog(true)

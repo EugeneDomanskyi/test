@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 
 import Amplitude from '@/libs/amplitude.lib'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
+import Socket from '@/libs/ws.lib'
 
 import $app from '@/store/app'
 
@@ -23,6 +24,7 @@ const GemsDashboard = () => {
   const { t } = useTranslation()
   const { wallet } = useWagmiHelper()
 
+  const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const isApp = useSelector(({ $app }) => $app.isApp)
   const blockchain = useSelector($app.get.blockchain)
@@ -38,6 +40,16 @@ const GemsDashboard = () => {
     { title: t('Side quests'), key: 'quests' },
     // { title: t('Gems history'), key: 'transactions' },
   ]
+
+  useEffect(() => {
+    Socket.init(() => {}, handleCloseConnection).then(() => {
+      dispatch($app.set.socketConnected(true))
+    })
+
+    return () => {
+      dispatch($app.set.socketConnected(false))
+    }
+  }, [])
 
   useEffect(() => {
     const currentTab = localStorage.getItem('gemsTab')
@@ -68,6 +80,10 @@ const GemsDashboard = () => {
   const handleTab = (value) => {
     localStorage.setItem('gemsTab', value)
     setTab(value)
+  }
+
+  const handleCloseConnection = (e) => {
+    Socket.init(() => {}, handleCloseConnection)
   }
 
   const getGemsComponent = () => {

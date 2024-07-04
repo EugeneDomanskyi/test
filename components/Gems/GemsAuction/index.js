@@ -10,6 +10,7 @@ import $gem from '@/store/gem'
 
 import App from '@/components/App'
 import AuctionItem from '@/components/Auction/AuctionItem'
+import WagmiHelper from '@/libs/WagmiHelper'
 
 const GemsAuction = () => {
   const router = useRouter()
@@ -19,22 +20,50 @@ const GemsAuction = () => {
   const dispatch = useDispatch()
   const auctions = useSelector(({ $gem }) => $gem.auctions)
   const stats = useSelector(({ $gem }) => $gem.stats)
+  const socketConnected = useSelector(({ $app }) => $app.socketConnected)
 
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    Socket.subscribe('auctions')
-    return () => {
-      Socket.unsubscribe('auctions')
+    if (socketConnected) {
+      Socket.subscribe('auctions')
+      return () => {
+        Socket.unsubscribe('auctions')
+      }
     }
-  }, [])
+  }, [socketConnected])
 
   useEffect(() => {
     if (wallet) {
+      setTimeout(fetchJWT, 500)
       fetchAuctions()
       fetchStats()
     }
   }, [wallet])
+
+  const fetchJWT = async () => {
+    let jwt = getJWT()
+    if (!jwt) {
+      const signature = await WagmiHelper.signMessage(wallet)
+      jwt = await $gem.api.login({ wallet_address: wallet, signature })
+      if (jwt) {
+        localStorage.setItem('bidding-token', JSON.stringify({ jwtToken: jwt, jwtWallet: wallet }))
+      }
+    }
+
+    dispatch($gem.set.jwt(jwt))
+  }
+
+  const getJWT = () => {
+    const data = localStorage.getItem('bidding-token')
+    if (data) {
+      const { jwtToken, jwtWallet } = JSON.parse(data)
+      if (wallet == jwtWallet) {
+        return jwtToken
+      }
+    }
+    return false
+  }
 
   const fetchStats = async () => {
     const result = await $gem.api.stats(wallet, {})

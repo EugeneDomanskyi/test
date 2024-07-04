@@ -211,6 +211,10 @@ export const gemSlice = createSlice({
       state.auctions = payload.data.map(item => auctionTemplate(item, payload.wallet))
     },
 
+    jwt: (state, { payload }) => {
+      state.jwt = payload
+    },
+
     showBrett: (state, { payload }) => {
       state.showBrett = payload
     },
@@ -256,6 +260,10 @@ export const api = {
 
   auctions: () => {
     return request(`auctions`, 'GET', {api: 'bid'})
+  },
+
+  login: (params) => {
+    return request(`login`, 'POST', {api: 'bid', ...params})
   },
 
   bid: (params) => {
