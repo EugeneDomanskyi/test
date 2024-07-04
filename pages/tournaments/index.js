@@ -96,7 +96,7 @@ const Tournaments = () => {
   }
 
   const getOngoingTournament = () => {
-    const key = Object.keys(tournaments).find(key => tournaments[key].status == 'on-going')
+    const key = getSortedKeys().find(key => tournaments[key].status == 'on-going')
     if (key) {
       return tournaments[key]
     }
