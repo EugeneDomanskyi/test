@@ -1,6 +1,8 @@
 import styles from './styles.module.scss'
 import cn from 'classnames'
 
+import App from '@/components/App'
+
 const GemsStreak = ({streaks}) => {
   console.log(streaks)
   return (
@@ -23,6 +25,7 @@ const GemsStreak = ({streaks}) => {
               <div key={index} className={cn(styles.streakContainer)}>
                 <div className={styles.streakCircle}>
                   <div className={styles.streakInner}>
+                    <App.Text>{streak.level}</App.Text>
                   </div>
                 </div>
               </div>

@@ -146,10 +146,11 @@ const Tournaments = () => {
           ) : (
             getSortedKeys().length ? (
               <App.Flex column>
-                <GemsStreak
-                  streaks={tournaments[getSortedKeys()[0]].tiers} />
-                {
-                  getSortedKeys().map((key, index) => {
+                {getOngoingTournament() ? (
+                  <GemsStreak streaks={getOngoingTournament().tiers} />
+                ) : null}
+
+                {getSortedKeys().map((key, index) => {
                     const tournament = tournaments[key]
                     return (
                       <App.Flex column key={index} gap={16}>
