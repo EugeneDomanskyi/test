@@ -47,13 +47,17 @@ const createStore = (initialData) => {
   })
 }
 
-export const request = async (uri, method = 'GET', {api, ...data} = {}) => {
+export const request = async (uri, method = 'GET', {api, jwt_token, ...data} = {}) => {
   const options = {
     method,
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
     },
+  }
+
+  if (jwt_token) {
+    options.headers['Authorization'] = jwt_token
   }
 
   let query = ''
