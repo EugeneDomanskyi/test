@@ -1,6 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
 
 import Amplitude from '@/libs/amplitude.lib'
+import WagmiHelper from '@/libs/WagmiHelper'
 
 import $token from '@/store/token'
 
@@ -9,6 +11,8 @@ import App from 'components/App'
 import styles from './styles.module.scss'
 
 const TournamentBanner = ({ tournament }) => {
+  const router = useRouter()
+
   const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
