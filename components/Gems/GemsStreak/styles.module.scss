@@ -17,11 +17,14 @@
       .squareContainer {
         display: flex;
         flex-direction: row;
-        justify-content: space-around;
+        justify-content: space-between;
+
         .square {
           width: 16px;
           height: 16px;
           background-color: rgba(217, 217, 217, 1);
+          transform: rotate(45deg);
+          margin-top: -5px;
         }
       }
     }

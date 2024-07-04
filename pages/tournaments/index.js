@@ -5,6 +5,7 @@ import Image from 'next/image'
 import cn from 'classnames'
 
 import Amplitude from '@/libs/amplitude.lib'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $gem from '@/store/gem'
 import $token from '@/store/token'
@@ -19,6 +20,8 @@ import WagmiHelper from '@/libs/WagmiHelper'
 
 const Tournaments = () => {
   const router = useRouter()
+
+  const { wallet } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const tournaments = useSelector(({ $gem }) => $gem.tournaments)
@@ -127,6 +130,19 @@ const Tournaments = () => {
     )
   }
 
+  const getStreakPosition = () => {
+    let position = 0
+    if (getOngoingTournament()) {
+      const leaderboard = getOngoingTournament().leaderboard
+      const me = leaderboard.find(item => item.wallet_address.toLowerCase() == wallet)
+      if (me) {
+        position = me.streak
+      }
+    }
+
+    return position
+  }
+
   return (
     <App.Flex className={styles.container}>
       <App.Container maxWidth={1230}>
@@ -146,8 +162,8 @@ const Tournaments = () => {
           ) : (
             getSortedKeys().length ? (
               <App.Flex column>
-                {getOngoingTournament() ? (
-                  <GemsStreak streaks={getOngoingTournament().tiers} />
+                {getOngoingTournament() && wallet ? (
+                  <GemsStreak streaks={getOngoingTournament().tiers} position={getStreakPosition()} />
                 ) : null}
 
                 {getSortedKeys().map((key, index) => {
