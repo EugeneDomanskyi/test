@@ -60,7 +60,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
       })
 
       Socket.on('trade_points_rewarded', 'trade_points_rewarded', async (data) => {
-        dispatch($alert.set.success({title: '500 Gems Credited'}))
+        dispatch($alert.set.success({title: '100 Gems Credited'}))
 
         const result = await $gem.api.referral(wallet)
         if (result) {
