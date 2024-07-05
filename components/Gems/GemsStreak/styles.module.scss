@@ -94,6 +94,89 @@
     width: 103px;
     height: 77px;
     padding-top: 20px;
-    background: url('/images/streak-badge.png') center no-repeat
+    background: url('/images/streak-badge.png') center no-repeat;
+  }
+}
+
+.mobileContainer {
+  display: none;
+
+  .badge {
+    width: 70px;
+    height: 50px;
+    padding-top: 12px;
+    background: url('/images/streak-badge.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+
+  .streakList {
+    position: relative;
+
+    .line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 12px;
+      height: 2px;
+      background-color: rgba(45, 42, 61, 1);
+      z-index: 0;
+    }
+
+    .streakContainer {
+      position: relative;
+      z-index: 1;
+      width: 24px;
+  
+      .streakCircle {
+        width: 100%;
+        height: 24px;
+        border-radius: 50%;
+        background-color: rgba(45, 42, 61, 1);
+        padding: 2px;
+  
+        .streakInner {
+          background-color: rgba(11, 9, 21, 1);
+          border-radius: 50%;
+          width: 100%;
+          height: 100%;
+          position: relative;
+          z-index: 0;
+  
+          &.active {
+            background: linear-gradient(90deg, #FE9901 2.77%, #F35820 96.6%);
+  
+            &:after {
+              content: '';
+              display: block;
+              border-radius: 50%;
+              border: solid 2px rgba(255, 255, 255, 0.2);
+              position: absolute;
+              z-index: 1;
+              inset: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  
+
+  
+}
+
+@media (max-width: 768px) {
+  .container {
+    display: none;
+  }
+
+  .mobileContainer {
+    display: flex;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: #0B0915;
+    padding: 16px;
+    margin-bottom: 32px;
   }
 }
