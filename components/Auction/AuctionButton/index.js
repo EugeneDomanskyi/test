@@ -1,23 +1,27 @@
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import cn from 'classnames'
 import moment from 'moment'
 
 import useInterval from '@/myhooks/useInterval'
+import WagmiHelper from '@/libs/WagmiHelper'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $gem from '@/store/gem'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
-import AuctionItemSimple from '../AuctionItemSimple'
+import AuctionItemSimple from '@/components/Auction/AuctionItemSimple'
 
 const AuctionButton = ({ item, small }) => {
   const router = useRouter()
   const { t } = useTranslation()
+  const { wallet } = useWagmiHelper()
 
+  const dispatch = useDispatch()
   const stats = useSelector(({ $gem }) => $gem.stats)
   const jwt = useSelector(({ $gem }) => $gem.jwt)
 
@@ -64,7 +68,7 @@ const AuctionButton = ({ item, small }) => {
 
   useInterval(tick, duration.isEnd ? null : 1000)
 
-  const handeClick = (e) => {
+  const handeClick = async (e) => {
     e.stopPropagation()
 
     if (item.status == 'upcoming') {
@@ -72,17 +76,26 @@ const AuctionButton = ({ item, small }) => {
     }
 
     if (item.status == 'ongoing') {
-      if (!jwt) {
-        return
+      let currentJwt = jwt
+      if (!currentJwt) {
+        const signature = await WagmiHelper.signMessage(wallet)
+        if (signature) {
+          currentJwt = await $gem.api.login({ wallet_address: wallet, signature })
+          if (currentJwt && !currentJwt?.error) {
+            localStorage.setItem('bidding-token', JSON.stringify({ jwtToken: currentJwt, jwtWallet: wallet }))
+          }
+        }
       }
 
-      if (stats.total_points * 1 >= item.pointsPrice * 1) {
-        $gem.api.bid({
-          auction_id: item.id,
-          jwt_token: jwt,
-        })
-      } else {
-        setIsWarningDialog(true)
+      if (currentJwt) {
+        if (stats.total_points * 1 >= item.pointsPrice * 1) {
+          $gem.api.bid({
+            auction_id: item.id,
+            jwt_token: currentJwt,
+          })
+        } else {
+          setIsWarningDialog(true)
+        }
       }
     }
 

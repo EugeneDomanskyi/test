@@ -45,9 +45,11 @@ const GemsAuction = () => {
     let jwt = getJWT()
     if (!jwt) {
       const signature = await WagmiHelper.signMessage(wallet)
-      jwt = await $gem.api.login({ wallet_address: wallet, signature })
-      if (jwt) {
-        localStorage.setItem('bidding-token', JSON.stringify({ jwtToken: jwt, jwtWallet: wallet }))
+      if (signature) {
+        jwt = await $gem.api.login({ wallet_address: wallet, signature })
+        if (jwt && !jwt?.error) {
+          localStorage.setItem('bidding-token', JSON.stringify({ jwtToken: jwt, jwtWallet: wallet }))
+        }
       }
     }
 
