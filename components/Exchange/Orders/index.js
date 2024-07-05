@@ -60,7 +60,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
       })
 
       Socket.on('trade_points_rewarded', 'trade_points_rewarded', async (data) => {
-        dispatch($alert.set.success({title: '500 Gems Credited'}))
+        dispatch($alert.set.success({title: '100 Gems Credited'}))
 
         const result = await $gem.api.referral(wallet)
         if (result) {
@@ -114,6 +114,11 @@ const Orders = ({global, type, version, onClickOrder}) => {
     handleDialogClose('cancelAll')()
     handleDialogOpen('approve')()
 
+    const network = await WagmiHelper.changeChain(blockchain.code)
+    if (!network) {
+      return
+    }
+
     const typedData = await $orders.api.cancelTypedData({
       order_ids: orders.open.map(item => item.order_id),
       user_address: wallet,
@@ -151,24 +156,6 @@ const Orders = ({global, type, version, onClickOrder}) => {
       dispatch($portfolio.set.update(true))
     }
 
-    // const signature = await WagmiHelper.signMessage()
-    // if (signature) {
-    //   const result = await $orders.api.cancelAll({ wallet_address: wallet, chain_id: blockchain.id, signature })
-    //   if (result) {
-    //     Amplitude.event('Bulk Cancel Order')
-    //     const updatedOrders = orders.open.reduce((acc, o) => ({
-    //       ...acc,
-    //       [o.order_id]: 'cancelled',
-    //     }), {})
-    //     dispatch($orders.set.updateOrderStatus(updatedOrders))
-    //     dispatch($alert.set.success({ title: 'Orders cancelled', text: `You have cancelled ${orders.open.length} order(s) successfully.` }))
-
-    //     dispatch($portfolio.set.update(true))
-    //   }
-    // } else {
-    //   dispatch($alert.set.error({ title: 'Orders not cancelled', text: `Please try again to cancel your ${orders.open.length} open order(s).` }))
-    // }
-
     handleDialogClose('approve')()
   }
 
@@ -190,6 +177,11 @@ const Orders = ({global, type, version, onClickOrder}) => {
     e.stopPropagation()
     handleDialogOpen('approve')()
     if (order.status === 'completed' || order.status === 'cancelled' || order.status === 'partial') {
+      return
+    }
+
+    const network = await WagmiHelper.changeChain(blockchain.code)
+    if (!network) {
       return
     }
 
