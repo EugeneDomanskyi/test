@@ -87,6 +87,13 @@ const GemsAuction = () => {
     router.push('/transaction-history')
   }
 
+  const handleClear = async (id) => {
+    const result = await $gem.api.clear(id)
+    if (result) {
+      fetchAuctions()
+    }
+  } 
+
   return (
     <App.Container maxWidth={1230} sx={{ paddingBottom: 32 }}>
       <App.Flex column fullWidth flex={1} gap={32}>
@@ -107,7 +114,7 @@ const GemsAuction = () => {
 
         <App.Flex row wrap gap={24}>
           {auctions.length ? (
-            auctions.map(item => <AuctionItem key={item.id} item={item} />)
+            auctions.map(item => <AuctionItem key={item.id} item={item} onClear={handleClear} />)
           ) : null}
         </App.Flex>
       </App.Flex>

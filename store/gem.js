@@ -13,7 +13,8 @@ const auctionTemplate = (item, wallet) => {
   if (status == 'ongoing') {
     if (item.last_bid_timestamp > 0) {
       const lastBid = moment(item.last_bid_timestamp * 1000)
-      time = lastBid.add(item.reset_timer, 'seconds').diff(now)
+      time = lastBid.add(item.reset_timer, 'seconds').diff(now, 'seconds')
+      time = time < 0 ? 0 : time
     }
   }
 
@@ -268,6 +269,10 @@ export const api = {
 
   bid: (params) => {
     return request(`place`, 'POST', {api: 'bid', ...params})
+  },
+
+  clear: (id) => {
+    return request(`auction/clear/${id}`, 'POST', {api: 'bid'})
   },
   
   tournament: (alias) => {

@@ -51,6 +51,7 @@ const AuctionButton = ({ item, small }) => {
 
   const getDuration = () => {
     const duration = moment.duration(time)
+    console.log(duration)
     const minutes = duration.minutes()
     const seconds = duration.seconds()
     return {

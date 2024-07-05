@@ -3,6 +3,8 @@ import cn from 'classnames'
 
 import { useTranslation } from 'react-i18next'
 
+import $gem from '@/store/gem'
+
 import App from '@/components/App'
 import AuctionImage from '@/components/Auction/AuctionImage'
 import AuctionCountdown from '@/components/Auction/AuctionCountdown'
@@ -10,7 +12,7 @@ import AuctionButton from '@/components/Auction/AuctionButton'
 
 import styles from './styles.module.scss'
 
-const AuctionItem = ({ item }) => {
+const AuctionItem = ({ item, onClear }) => {
   const router = useRouter()
   const { t } = useTranslation()
 
@@ -41,6 +43,13 @@ const AuctionItem = ({ item }) => {
     }
   }
 
+  const handleClear = async (e) => {
+    e.stopPropagation()
+    if (onClear) {
+      onClear(item.id)
+    }
+  }
+
   return (
     <App.Flex column gap={10} className={styles.item} onClick={handleClick}>
       {item.updated ? (
@@ -67,6 +76,10 @@ const AuctionItem = ({ item }) => {
         </App.Flex>
 
         <AuctionButton item={item} />
+
+        {item.status == 'closed' ? (
+          <App.Button small onClick={handleClear}>Clear</App.Button>
+        ) : null}
       </App.Flex>
     </App.Flex>
   )
