@@ -89,7 +89,7 @@ const GemsLiquidity = () => {
           <App.Flex direction={['row', 'column']} align="center" row gap={24}>
             <App.Flex column align="flex-start" flex={1} gap={12}>
               <App.Text size={20} weight={600} height={1}>{t('Liquidity mining')}</App.Text>
-              <App.Text size={14} weight={400} color="#FFFFFF99">{t('Collect gems every minute your order stays active. The math is easy — open large orders and stay close to the market’s mid-price to maximize your gems.')}</App.Text>
+              <App.Text size={14} weight={400} color="#FFFFFF99">{t('Collect gems every hour your order stays active. The math is easy — open large orders and stay close to the market’s mid-price to maximize your gems.')}</App.Text>
               <App.Button primary2 onClick={handleExchange}>{t('Create orders')} <App.Icon icon="arrow-45" /></App.Button>
             </App.Flex>
 

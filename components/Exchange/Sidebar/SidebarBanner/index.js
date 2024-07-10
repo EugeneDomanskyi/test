@@ -30,11 +30,11 @@ const SidebarBanner = () => {
   }, [])
 
   const fetchTournament = async () => {
-    const result = await $gem.api.tournament('mochi-rush-s1')
+    const result = await $gem.api.tournament('ayb-frenzy-s1')
     if (result) {
       if (result.status === 'active') {
         setTimeout(() => {
-          const bannerShown = localStorage.getItem('mochiPopup');
+          const bannerShown = localStorage.getItem('aybPopup');
           
           if (! bannerShown) {
             setShowBanner(true)
@@ -46,10 +46,10 @@ const SidebarBanner = () => {
 
   const handleUserSession = () => {
     const currentTime = new Date().getTime();
-    const popupTS = localStorage.getItem('mochiPopup');
+    const popupTS = localStorage.getItem('aybPopup');
 
     if (popupTS && (currentTime - popupTS) > 24 * 60 * 60 * 1000) {
-      localStorage.removeItem('mochiPopup');
+      localStorage.removeItem('aybPopup');
     }
   }
 
@@ -60,7 +60,7 @@ const SidebarBanner = () => {
       'Activity': 'Redirected'
     })
     const timestamp = new Date().getTime();
-    localStorage.setItem('mochiPopup', timestamp);
+    localStorage.setItem('aybPopup', timestamp);
     router.push('/tournaments')
   }
 
@@ -71,7 +71,7 @@ const SidebarBanner = () => {
       'Activity': 'Closed'
     })
     const timestamp = new Date().getTime();
-    localStorage.setItem('mochiPopup', timestamp);
+    localStorage.setItem('aybPopup', timestamp);
     setShowBanner(!showBanner)
   }
 
@@ -83,11 +83,11 @@ const SidebarBanner = () => {
             <App.Icon icon='cross' color="#fff" />
           </App.Flex>
           
-          <img src="/images/mochi-banner-short.png" style={{ width: '100%' }} alt="" />
+          <img src="/images/ayb-banner-short.png" style={{ width: '100%' }} alt="" />
           
           <App.Flex center column gap={16} sx={{position: 'absolute'}}>
-            <App.Text center size={24} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">20,000,000 $MOCHI<br /> in rewards!</App.Text>
-            <App.Text center size={16} weight={700} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">MOCHI DASH</App.Text>
+            <App.Text center size={24} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">250,000,000 $AYB<br /> in rewards!</App.Text>
+            <App.Text center size={16} weight={700} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">AYB FRENZY</App.Text>
           </App.Flex>
         </App.Flex>
 
@@ -100,7 +100,7 @@ const SidebarBanner = () => {
 
               <App.Flex direction={['column', 'row']} align={['flex-start', 'center']} gap={[4, 8]}>
                 {/* <App.Text uppercase size={16} weight={900} height={1}>Connect</App.Text> */}
-                <App.Text size={20} weight={600} height={1}>Trade $MOCHI</App.Text>
+                <App.Text size={20} weight={600} height={1}>Trade $AYB</App.Text>
               </App.Flex>
             </App.Flex>
 
@@ -132,7 +132,7 @@ const SidebarBanner = () => {
               </App.Flex>
 
               <App.Flex direction={['column', 'row']} align={['flex-start', 'center']} gap={[4, 8]}>
-                <App.Text uppercase size={20} weight={600} height={1}>WIN $MOCHI TOKENS!</App.Text>
+                <App.Text uppercase size={20} weight={600} height={1}>WIN $AYB TOKENS!</App.Text>
               </App.Flex>
             </App.Flex>
           </App.Flex>

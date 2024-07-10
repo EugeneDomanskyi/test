@@ -125,7 +125,7 @@ const Tournaments = () => {
     return (
       <App.Flex column gap={8}>
         {currency ? <App.Text size={14} weight={400}>Earn gems by trading {currency} tokens</App.Text> : null}
-        <App.Text size={14} weight={400}>Get a per minute gem boost <App.Text inline size={14} weight={400} color="#8DC8FF">(e.g. +10/hr)</App.Text> on your open orders.</App.Text>
+        <App.Text size={14} weight={400}>Get a per hour gem boost <App.Text inline size={14} weight={400} color="#8DC8FF">(e.g. +10/hr)</App.Text> on your open orders.</App.Text>
       </App.Flex>
     )
   }
@@ -256,7 +256,7 @@ const Tournaments = () => {
     
                             <App.Flex gap={4} flex={1} center>
                               <App.Text center weight={400} height={1} color="#A6DC37">Gems{isMobile ? '' : ' Earned'}</App.Text>
-                              <App.Tooltip variant="v2" text={getTooltip(tournament.currency)} placement={isMobile ? 'bottom' : 'right'}>
+                              <App.Tooltip variant="v2" click={isMobile} text={getTooltip(tournament.currency)} placement={isMobile ? 'bottom' : 'right'}>
                                 <App.Icon icon="info2" />
                               </App.Tooltip>
                             </App.Flex>
