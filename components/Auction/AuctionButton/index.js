@@ -24,6 +24,7 @@ const AuctionButton = ({ item, small }) => {
   const dispatch = useDispatch()
   const stats = useSelector(({ $gem }) => $gem.stats)
   const jwt = useSelector(({ $gem }) => $gem.jwt)
+  const referral = useSelector(({ $gem }) => $gem.referral)
 
   const [isWarningDialog, setIsWarningDialog] = useState(false)
   const [time, setTime] = useState(item.time)
@@ -51,7 +52,6 @@ const AuctionButton = ({ item, small }) => {
 
   const getDuration = () => {
     const duration = moment.duration(time)
-    console.log(duration)
     const minutes = duration.minutes()
     const seconds = duration.seconds()
     return {
@@ -69,25 +69,30 @@ const AuctionButton = ({ item, small }) => {
 
   useInterval(tick, duration.isEnd ? null : 1000)
 
+  const getJwt = async () => {
+    let currentJwt = jwt
+    if (!currentJwt) {
+      const signature = await WagmiHelper.signMessage(wallet)
+      if (signature) {
+        currentJwt = await $gem.api.login({ wallet_address: wallet, signature })
+        if (currentJwt && !currentJwt?.error) {
+          localStorage.setItem('bidding-token', JSON.stringify({ jwtToken: currentJwt, jwtWallet: wallet }))
+        }
+      }
+    }
+
+    return currentJwt
+  }
+
   const handeClick = async (e) => {
     e.stopPropagation()
 
     if (item.status == 'upcoming') {
-      window.open(`https://t.me/my_notify_tegro_bot?start=${wallet}_${item.id}`)
+      window.open(`${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}?start=${wallet}_${referral.id}`)
     }
 
     if (item.status == 'ongoing') {
-      let currentJwt = jwt
-      if (!currentJwt) {
-        const signature = await WagmiHelper.signMessage(wallet)
-        if (signature) {
-          currentJwt = await $gem.api.login({ wallet_address: wallet, signature })
-          if (currentJwt && !currentJwt?.error) {
-            localStorage.setItem('bidding-token', JSON.stringify({ jwtToken: currentJwt, jwtWallet: wallet }))
-          }
-        }
-      }
-
+      const currentJwt = await getJwt()
       if (currentJwt) {
         if (stats.total_points * 1 >= item.pointsPrice * 1) {
           $gem.api.bid({
