@@ -4,7 +4,7 @@ import { privateKeyToAccount } from 'viem/accounts'
 import { http } from 'wagmi'
 import { disconnect, getAccount, getChainId, readContract, signMessage, signTypedData, simulateContract, switchChain, watchAccount, writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
-import { metaMaskWallet, rainbowWallet, walletConnectWallet, coinbaseWallet } from '@rainbow-me/rainbowkit/wallets'
+import { metaMaskWallet, rainbowWallet, walletConnectWallet, coinbaseWallet, okxWallet } from '@rainbow-me/rainbowkit/wallets'
 import * as wagmiChains from 'wagmi/chains'
 
 import $app from '@/store/app'
@@ -151,7 +151,7 @@ class WagmiHelper {
         wallets: [
           {
             groupName: "Popular",
-            wallets: [metaMaskWallet, rainbowWallet, coinbaseWallet, walletConnectWallet],
+            wallets: [okxWallet, metaMaskWallet, rainbowWallet, coinbaseWallet, walletConnectWallet],
           },
         ],
       })
