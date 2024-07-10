@@ -73,7 +73,7 @@ const AuctionButton = ({ item, small }) => {
     e.stopPropagation()
 
     if (item.status == 'upcoming') {
-      console.log('Upcoming')
+      window.open(`https://t.me/my_notify_tegro_bot?start=${wallet}_${item.id}`)
     }
 
     if (item.status == 'ongoing') {
