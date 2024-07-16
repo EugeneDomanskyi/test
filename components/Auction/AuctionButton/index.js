@@ -16,12 +16,13 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 import AuctionItemSimple from '@/components/Auction/AuctionItemSimple'
 
-const AuctionButton = ({ item, small }) => {
+const AuctionButton = ({ item, small, share }) => {
   const router = useRouter()
   const { t } = useTranslation()
   const { wallet } = useWagmiHelper()
 
   const dispatch = useDispatch()
+  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const stats = useSelector(({ $gem }) => $gem.stats)
   const jwt = useSelector(({ $gem }) => $gem.jwt)
   const referral = useSelector(({ $gem }) => $gem.referral)
@@ -43,6 +44,10 @@ const AuctionButton = ({ item, small }) => {
   }, [item?.id, time])
 
   const text = () => {
+    if (share) {
+      return `Tweet Now ${isMobile ? '' : '(Get 50 Gems)'}`
+    }
+
     switch (item.status) {
       case 'upcoming': return 'Notify Me'
       case 'ongoing': return item.wallet ? 'Place Bid' : 'Bid Now'
@@ -86,6 +91,11 @@ const AuctionButton = ({ item, small }) => {
 
   const handeClick = async (e) => {
     e.stopPropagation()
+
+    if (share) {
+      console.log('Share')
+      return
+    }
 
     if (item.status == 'upcoming') {
       window.open(`${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}?start=${wallet}_${referral.id}`)
@@ -132,7 +142,11 @@ const AuctionButton = ({ item, small }) => {
           ) : null}
         </div>
       ) : (
-        <button className={cn(styles.button, {[styles.small]: small}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
+        <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
+          {share ? (
+            <App.Icon icon="twitter-filled" width={28} height={28} />
+          ) : null}
+
           {item.status == 'ongoing' && item.wallet ? (
             <App.Text size={small ? 16 : 20} weight={600} height={1}>{duration.minutes}:{duration.seconds}</App.Text>
           ) : null}

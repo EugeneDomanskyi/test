@@ -1,0 +1,34 @@
+.frame {
+  border-radius: 12px;
+  border: 1px solid var(--main-strokes-opacity-wihite, rgba(255, 255, 255, 0.10));
+  padding: 16px 32px;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+}
+
+.videoBox {
+  padding: 16px;
+  border-radius: 12px;
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.07) 100%), #0B0915;
+
+  @media (max-width: 768px) {
+    padding: 8px 16px;
+    border-radius: 6px;
+  }
+
+  .question {
+    width: 64px;
+    height: 64px;
+    min-width: 64px;
+    border-radius: 12px;
+    background: #6B41EB;
+
+    @media (max-width: 768px) {
+      width: 32px;
+      min-width: 32px;
+      height: 32px;
+    }
+  }
+}
