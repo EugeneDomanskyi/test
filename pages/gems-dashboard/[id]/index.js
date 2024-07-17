@@ -32,7 +32,7 @@ const GemsAuctionInfo = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    Socket.init(() => {}, handleCloseConnection).then(() => {
+    Socket.init(() => {}, handleCloseConnection, true).then(() => {
       dispatch($app.set.socketConnected(true))
     })
 

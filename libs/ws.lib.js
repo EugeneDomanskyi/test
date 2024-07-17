@@ -6,9 +6,9 @@ class Socket {
     this.handleAction = null
   }
 
-  init = async (callback, onClose) => {
+  init = async (callback, onClose, isBid = false) => {
     return new Promise(resolve => {
-      this.socket = new WebSocket(process.env.NEXT_PUBLIC_WS_URL)
+      this.socket = new WebSocket(isBid ? process.env.NEXT_PUBLIC_BID_WS_URL : process.env.NEXT_PUBLIC_WS_URL)
       this.socket.onmessage = this.handleMessage
       this.socket.onopen = () => {
         this.channels.forEach((channelId) => {

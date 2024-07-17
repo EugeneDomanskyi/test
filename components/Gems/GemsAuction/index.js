@@ -178,13 +178,13 @@ const GemsAuction = () => {
           ) : null}
         </App.Flex>
 
-        {/* <App.Flex row wrap gap={24}>
+        <App.Flex row wrap gap={24}>
           {auctions.length ? (
             getSortedAuctions().map(item => <AuctionItem key={item.id} item={item} onClear={handleClear} />)
           ) : null}
-        </App.Flex> */}
+        </App.Flex>
 
-        <AuctionItemNotify item={tempItem} onClear={handleClear} />
+        {/* <AuctionItemNotify item={tempItem} onClear={handleClear} /> */}
       </App.Flex>
     </App.Container>
   )
