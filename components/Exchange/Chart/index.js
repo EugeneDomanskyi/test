@@ -43,7 +43,7 @@ const CHART_CONFIG = {
   lineStyle: 0,
   grid: {
     vertLines: { color: 'rgba(161, 159, 255, 0)' },
-    horzLines: { color: 'rgba(161, 159, 255, 0.3)', style: 3 },
+    horzLines: { color: 'rgba(161, 159, 255, 0.1)', style: 0 },
   },
   timeScale: {
     borderColor: 'transparent',
