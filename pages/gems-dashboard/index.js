@@ -42,7 +42,7 @@ const GemsDashboard = () => {
   ]
 
   useEffect(() => {
-    Socket.init(() => {}, handleCloseConnection, true).then(() => {
+    Socket.init(() => {}, handleCloseConnection).then(() => {
       dispatch($app.set.socketConnected(true))
     })
 
