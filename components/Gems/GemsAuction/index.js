@@ -180,7 +180,7 @@ const GemsAuction = () => {
 
         {/* <App.Flex row wrap gap={24}>
           {auctions.length ? (
-            auctions.map(item => <AuctionItem key={item.id} item={item} onClear={handleClear} />)
+            getSortedAuctions().map(item => <AuctionItem key={item.id} item={item} onClear={handleClear} />)
           ) : null}
         </App.Flex> */}
 

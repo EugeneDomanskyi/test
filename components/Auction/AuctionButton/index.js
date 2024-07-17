@@ -93,7 +93,8 @@ const AuctionButton = ({ item, small, share }) => {
     e.stopPropagation()
 
     if (share) {
-      console.log('Share')
+      handleShare()
+      $gem.api.addGems(wallet, { reason: 'twitter_share' })
       return
     }
 
@@ -124,6 +125,19 @@ const AuctionButton = ({ item, small, share }) => {
     }
   }
 
+  const handleShare = () => {
+    const link = `${window.location.origin}/gems-dashboard#auction`
+    const tweetText = encodeURIComponent(`
+👀 1 ETH for just $100? Absolutely! ✨
+Grab it on Tegro auctions! 🐯
+Bid with Gems & bag cryptos at insane prices! ⚡️
+Time to stop buying the dip and start placing bids! ✅
+Don't fade, join the fun today: ${link}
+`)
+    const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}`
+    window.open(tweetUrl, '_blank')
+  }
+
   const handleClose = () => {
     setIsWarningDialog(false)
   }
@@ -144,7 +158,7 @@ const AuctionButton = ({ item, small, share }) => {
       ) : (
         <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
           {share ? (
-            <App.Icon icon="twitter-filled" width={28} height={28} />
+            <App.Icon icon="x2" />
           ) : null}
 
           {item.status == 'ongoing' && item.wallet ? (

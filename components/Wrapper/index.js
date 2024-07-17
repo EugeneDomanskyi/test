@@ -79,6 +79,12 @@ const Wrapper = ({ children }) => {
     }
   }, [connection, wallet])
 
+  // useEffect(() => {
+  //   if (wallet) {
+  //     fetchUserInfo()
+  //   }
+  // }, [wallet])
+
   useEffect(() => {
     if (referral) {
       localStorage.setItem('referral', referral)
@@ -125,14 +131,18 @@ const Wrapper = ({ children }) => {
       dispatch($alert.set.success({title: '100 Gems Credited'}))
     }
 
-    const result = await $gem.api.referral(wallet)
-    if (result) {
-      dispatch($gem.set.referral(result))
-    }
+    fetchUserInfo()
 
     const onboardingStep = localStorage.getItem('onboardingStep')
     if (!onboardingStep) {
       localStorage.setItem('onboardingStep', 0)
+    }
+  }
+
+  const fetchUserInfo = async () => {
+    const result = await $gem.api.referral(wallet)
+    if (result) {
+      dispatch($gem.set.referral(result))
     }
   }
 

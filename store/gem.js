@@ -83,6 +83,7 @@ export const gemSlice = createSlice({
 
     tournaments: {},
     auctions: [],
+    current: null,
     showBrett: false,
   },
 
@@ -212,6 +213,10 @@ export const gemSlice = createSlice({
       state.auctions = payload.data.map(item => auctionTemplate(item, payload.wallet))
     },
 
+    current: (state, { payload }) => {
+      state.current = auctionTemplate(payload.data, payload.wallet)
+    },
+
     jwt: (state, { payload }) => {
       state.jwt = payload
     },
@@ -259,8 +264,16 @@ export const api = {
     return request(`user/${wallet}/order-liquidity`, 'GET', {api: 'accounts', ...params})
   },
 
+  addGems: (wallet, params) => {
+    return request(`user/${wallet}/add-points`, 'POST', {api: 'accounts', ...params})
+  },
+  
   auctions: () => {
     return request(`auctions`, 'GET', {api: 'bid'})
+  },
+
+  auction: (id) => {
+    return request(`auction/${id}`, 'GET', {api: 'bid'})
   },
 
   login: (params) => {

@@ -46,6 +46,8 @@ const GemsDashboard = () => {
       dispatch($app.set.socketConnected(true))
     })
 
+    checkHash()
+
     return () => {
       dispatch($app.set.socketConnected(false))
     }
@@ -76,6 +78,17 @@ const GemsDashboard = () => {
       setTab('home')
     }
   }, [wallet])
+
+  const checkHash = () => {
+    const hash = window.location.hash
+    if (hash != '') {
+      const tab = tabs.find(t => hash.includes(t.key))
+      if (tab) {
+        handleTab(tab.key)
+        window.location.hash = ''
+      }
+    }
+  }
 
   const handleTab = (value) => {
     localStorage.setItem('gemsTab', value)
