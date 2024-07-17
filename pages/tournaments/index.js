@@ -162,7 +162,7 @@ const Tournaments = () => {
           ) : (
             getSortedKeys().length ? (
               <App.Flex column>
-                {getOngoingTournament() && wallet ? (
+                {getOngoingTournament() ? (
                   <GemsStreak streaks={getOngoingTournament().tiers} position={getStreakPosition()} />
                 ) : null}
 
