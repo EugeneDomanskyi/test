@@ -6,6 +6,8 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const GemsStreak = ({ streaks, position }) => {
+  position = position > streaks.length ? streaks.length : position
+
   const getCurrentMultiplier = () => {
     const streak = streaks.find((streak) => streak.level == position)
     if (streak) {
@@ -47,19 +49,31 @@ const GemsStreak = ({ streaks, position }) => {
 
               {streaks.map((streak, index) => {
                 const active = streak.level <= position
+                const maxStreak = position === streaks.length && streak.level === position
                 return (
                   <div key={index} className={cn(styles.streakContainer)}>
-                    <App.Flex column align="center" gap={12}>
-                      <div className={styles.streakCircle}>
-                        <App.Flex center className={cn(styles.streakInner, {[styles.active]: active})}>
-                          <App.Text size={14} weight={700} color={active ? '#fff' : '#FFFFFF99'}>{streak.level}</App.Text>
-                        </App.Flex>
-                      </div>
-
-                      <App.Flex center width={40}>
-                        <App.Text center size={12} weight={400} height={1}>{streak.multiplier}x</App.Text>
-                      </App.Flex>
-                    </App.Flex>
+                    {
+                      maxStreak
+                        ? <App.Flex column align="center" gap={12}>
+                            <App.Flex className={styles.streakCircle} sx={{width: 40, height: 40}} align="center" justify="center" column>
+                              <Image src="/images/tiger.png" width={28} height={28} alt="" />
+                            </App.Flex>
+                            <App.Flex center width={40}>
+                              <App.Text center size={12} weight={400} height={1}>{streak.multiplier}x</App.Text>
+                            </App.Flex>
+                          </App.Flex>
+                        : <App.Flex column align="center" gap={12}>
+                            <div className={styles.streakCircle}>
+                              <App.Flex center className={cn(styles.streakInner, {[styles.active]: active})}>
+                                <App.Text size={14} weight={700} color={active ? '#fff' : '#FFFFFF99'}>{streak.level}</App.Text>
+                              </App.Flex>
+                            </div>
+      
+                            <App.Flex center width={40}>
+                              <App.Text center size={12} weight={400} height={1}>{streak.multiplier}x</App.Text>
+                            </App.Flex>
+                          </App.Flex>
+                    }
                   </div>
                 )
               })}
