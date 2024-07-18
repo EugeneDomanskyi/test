@@ -91,7 +91,7 @@ const AuctionButton = ({ item, small, share }) => {
 
   const getUserInfo = async () => {
     if (wallet && referral?.id) {
-      return { wallet, id: referral.id }
+      return { wallet, id: referral.id, isTelegram: referral.is_telegram_present }
     }
 
     let connectedWallet = wallet
@@ -99,15 +99,17 @@ const AuctionButton = ({ item, small, share }) => {
       connectedWallet = await connect()
     }
 
+    let isTelegram = referral?.is_telegram_present
     let userId = referral?.id
     if (connectedWallet && !userId) {
       const result = await $gem.api.referral(connectedWallet)
       if (result) {
         userId = result.id
+        isTelegram = result.is_telegram_present
       }
     }
 
-    return { wallet: connectedWallet, id: userId }
+    return { wallet: connectedWallet, id: userId, isTelegram }
   }
 
   const handeClick = async (e) => {
@@ -125,7 +127,9 @@ const AuctionButton = ({ item, small, share }) => {
     }
 
     if (item.status == 'upcoming') {
-      window.open(`${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}?start=${user.wallet}_${user.id}`)
+      if ( ! user.isTelegram) {
+        window.open(`${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}?start=${user.wallet}_${user.id}`)
+      }
     }
 
     if (item.status == 'ongoing') {
