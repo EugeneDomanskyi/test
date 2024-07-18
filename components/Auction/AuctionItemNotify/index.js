@@ -25,14 +25,14 @@ const AuctionItemNotify = ({ item, onClear }) => {
           <App.Text size={[18, 14]} weight={400}>Bid on the price of ETH using Gems. Every bid increases the price by 10 cents and resets the countdown. Last person to bid wins.</App.Text>
         </App.Flex>
 
-        <App.Flex column align={['flex-start', 'center']} gap={8}>
+        {/* <App.Flex column align={['flex-start', 'center']} gap={8}>
           <App.Flex row gap={8} align="center">
             <App.Icon icon="timer" width={isMobile ? 20 : null} height={isMobile ? 20 : null} />
             <App.Text size={[24, 16]} weight={700} height={1}>Auction Starts In</App.Text>
           </App.Flex>
 
           <AuctionCountdown v2 time={moment().add(15, 'days').valueOf()} />
-        </App.Flex>
+        </App.Flex> */}
 
         {!referral.is_telegram_present ? (
           <AuctionButton item={item} />
