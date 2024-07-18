@@ -224,6 +224,31 @@ export const gemSlice = createSlice({
     showBrett: (state, { payload }) => {
       state.showBrett = payload
     },
+
+    clear: (state, { payload }) => {
+      state.jwt = null
+      state.referral = {
+        id: 0,
+        gems: 0,
+        referral_code: '',
+        referrals_count: 0,
+      }
+  
+      state.stats = {}
+  
+      state.history = []
+      state.referrals = []
+      state.transactions = []
+  
+      state.liquidity = {
+        open: [],
+        completed: [],
+        total_open_orders: 0,
+        total_open_amount: 0,
+        total_liquidity: 0,
+        gems_earned_today: 0,
+      }
+    },
   },
 })
 

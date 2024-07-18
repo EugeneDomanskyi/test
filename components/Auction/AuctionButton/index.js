@@ -19,7 +19,7 @@ import AuctionItemSimple from '@/components/Auction/AuctionItemSimple'
 const AuctionButton = ({ item, small, share }) => {
   const router = useRouter()
   const { t } = useTranslation()
-  const { wallet } = useWagmiHelper()
+  const { wallet, connect } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
@@ -89,8 +89,34 @@ const AuctionButton = ({ item, small, share }) => {
     return currentJwt
   }
 
+  const getUserInfo = async () => {
+    if (wallet && referral?.id) {
+      return { wallet, id: referral.id }
+    }
+
+    let connectedWallet = wallet
+    if ( ! connectedWallet) {
+      connectedWallet = await connect()
+    }
+
+    let userId = referral?.id
+    if (connectedWallet && !userId) {
+      const result = await $gem.api.referral(connectedWallet)
+      if (result) {
+        userId = result.id
+      }
+    }
+
+    return { wallet: connectedWallet, id: userId }
+  }
+
   const handeClick = async (e) => {
     e.stopPropagation()
+
+    const user = await getUserInfo()
+    if (!user?.wallet || !user?.id) {
+      return
+    }
 
     if (share) {
       handleShare()
@@ -99,7 +125,7 @@ const AuctionButton = ({ item, small, share }) => {
     }
 
     if (item.status == 'upcoming') {
-      window.open(`${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}?start=${wallet}_${referral.id}`)
+      window.open(`${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}?start=${user.wallet}_${user.id}`)
     }
 
     if (item.status == 'ongoing') {

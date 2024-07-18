@@ -53,7 +53,7 @@ const GemsAuction = () => {
 
   useEffect(() => {
     if (wallet) {
-      setTimeout(fetchJWT, 500)
+      // setTimeout(fetchJWT, 500)
       fetchAuctions()
       fetchStats()
     }

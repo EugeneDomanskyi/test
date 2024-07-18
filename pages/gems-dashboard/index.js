@@ -70,14 +70,8 @@ const GemsDashboard = () => {
 
   useEffect(() => {
     const currentTab = localStorage.getItem('gemsTab')
-    if (currentTab && wallet) {
-      setTab(currentTab)
-    }
-
-    if (!wallet) {
-      setTab('home')
-    }
-  }, [wallet])
+    setTab(currentTab ?? 'home')
+  }, [])
 
   const checkHash = () => {
     const hash = window.location.hash
