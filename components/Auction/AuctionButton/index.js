@@ -159,9 +159,13 @@ const AuctionButton = ({ item, small, share }) => {
     const link = `${window.location.origin}/gems-dashboard#auction`
     const tweetText = encodeURIComponent(`
 👀 1 ETH for just $100? Absolutely! ✨
+
 Grab it on Tegro auctions! 🐯
+
 Bid with Gems & bag cryptos at insane prices! ⚡️
+
 Time to stop buying the dip and start placing bids! ✅
+
 Don't fade, join the fun today: ${link}
 `)
     const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}`
