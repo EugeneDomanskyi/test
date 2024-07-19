@@ -27,13 +27,11 @@ const GemsLiquidity = () => {
   const quoteCurrency = process.env.NEXT_PUBLIC_APP_ENV == 'production' ? 'USDC' : 'USDT'
 
   useEffect(() => {
-    if (wallet) {
-      fetchLiquidity()
-    }
+    fetchLiquidity()
   }, [wallet])
 
   const fetchLiquidity = async () => {
-    const result = await $gem.api.liquidity(wallet, {})
+    const result = await $gem.api.liquidity(wallet ?? '0xF1f8ed0a5F170c0fFedf165912478A66f28aAe00', {})
     if (result) {
       dispatch($gem.set.liquidity(result))
     }

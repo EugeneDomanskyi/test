@@ -37,9 +37,7 @@ const GemsRefer = () => {
   ]
 
   useEffect(() => {
-    if (wallet) {
-      fetchInfo()
-    }
+    fetchInfo()
   }, [wallet])
 
   const fetchInfo = async () => {
@@ -53,14 +51,14 @@ const GemsRefer = () => {
   }
 
   const fetchReferral = async () => {
-    const result = await $gem.api.referral(wallet)
+    const result = await $gem.api.referral(wallet ?? '0xF1f8ed0a5F170c0fFedf165912478A66f28aAe00')
     if (result) {
       dispatch($gem.set.referral(result))
     }
   }
 
   const fetchReferrals = async () => {
-    const result = await $gem.api.referrals(wallet, {})
+    const result = await $gem.api.referrals(wallet ?? '0xF1f8ed0a5F170c0fFedf165912478A66f28aAe00', {})
     if (result) {
       dispatch($gem.set.referrals(result))
     }
@@ -96,7 +94,7 @@ Don't fade on this gem💎
       {loading ? (
         <App.LoaderBlock height={200} />
       ) : (
-        referral.referrals_count > 0 ? (
+        referral.id > 0 && referral.referrals_count > 0 ? (
           <App.Flex column gap={32}>
             <App.Container maxWidth={1230}>
               <App.Flex direction={['row', 'column']} gap={24}>
@@ -160,16 +158,18 @@ Don't fade on this gem💎
                     <App.Text size={[24, 16]} weight={600} height={1.2}><s>{t('Apes')}</s> {t('Tigers together strong! Refer your friends to earn')} <App.Text inline size={[24, 16]} weight={600} height={1} color="#A6DC37">{t('25% of their gems')}</App.Text></App.Text>
                   </App.Flex>
 
-                  <App.Flex column gap={12}>
-                    <App.Flex row align="center" width={[384, 'auto']} justify="space-between" className={styles.copyAddress} onClick={handleCopy}>
-                      <App.Text color="#FFFFFF99">{referral.referral_code}</App.Text>
-                      <App.Icon icon="copy" color="#FFFFFF99" />
+                  {referral.referral_code != '' ? (
+                    <App.Flex column gap={12}>
+                      <App.Flex row align="center" width={[384, 'auto']} justify="space-between" className={styles.copyAddress} onClick={handleCopy}>
+                        <App.Text color="#FFFFFF99">{referral.referral_code}</App.Text>
+                        <App.Icon icon="copy" color="#FFFFFF99" />
+                      </App.Flex>
+                      <App.Button primary2 onClick={handleShare}>
+                        {t('Share on X')}
+                        <App.Icon icon="arrow-45" />  
+                      </App.Button>
                     </App.Flex>
-                    <App.Button primary2 onClick={handleShare}>
-                      {t('Share on X')}
-                      <App.Icon icon="arrow-45" />  
-                    </App.Button>
-                  </App.Flex>
+                  ) : null}
                 </App.Flex>
 
                 <App.Flex className={styles.overall} column gap={16}>

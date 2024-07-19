@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 
 import Amplitude from '@/libs/amplitude.lib'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
+import Socket from '@/libs/ws.lib'
 
 import $app from '@/store/app'
 
@@ -23,6 +24,7 @@ const GemsDashboard = () => {
   const { t } = useTranslation()
   const { wallet } = useWagmiHelper()
 
+  const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const isApp = useSelector(({ $app }) => $app.isApp)
   const blockchain = useSelector($app.get.blockchain)
@@ -31,13 +33,25 @@ const GemsDashboard = () => {
 
   const tabs = [
     { title: t('Dashboard'), key: 'home' },
-    // { title: t('Auction'), key: 'auction' },
+    { title: t('Auction'), key: 'auction' },
     { title: t('Liquidity mining'), key: 'liquidity' },
     { title: t('Refer & earn'), key: 'refer' },
     // { title: t('Contributor tasks'), key: 'contributor' },
     // { title: t('Side quests'), key: 'quests' },
     // { title: t('Gems history'), key: 'transactions' },
   ]
+
+  useEffect(() => {
+    Socket.init(() => {}, handleCloseConnection).then(() => {
+      dispatch($app.set.socketConnected(true))
+    })
+
+    checkHash()
+
+    return () => {
+      dispatch($app.set.socketConnected(false))
+    }
+  }, [])
 
   useEffect(() => {
     const currentTab = localStorage.getItem('gemsTab')
@@ -56,24 +70,33 @@ const GemsDashboard = () => {
 
   useEffect(() => {
     const currentTab = localStorage.getItem('gemsTab')
-    if (currentTab && wallet) {
-      setTab(currentTab)
-    }
+    setTab(currentTab ?? 'home')
+  }, [])
 
-    if (!wallet) {
-      setTab('home')
+  const checkHash = () => {
+    const hash = window.location.hash
+    if (hash != '') {
+      const tab = tabs.find(t => hash.includes(t.key))
+      if (tab) {
+        handleTab(tab.key)
+        window.location.hash = ''
+      }
     }
-  }, [wallet])
+  }
 
   const handleTab = (value) => {
     localStorage.setItem('gemsTab', value)
     setTab(value)
   }
 
+  const handleCloseConnection = (e) => {
+    Socket.init(() => {}, handleCloseConnection)
+  }
+
   const getGemsComponent = () => {
     switch (tab) {
       case 'home': return <GemsHome />
-      // case 'auction': return <GemsAuction />
+      case 'auction': return <GemsAuction />
       case 'liquidity': return <GemsLiquidity />
       case 'refer': return <GemsRefer />
       // case 'contributor': return <GemsContributor />
