@@ -35,7 +35,17 @@
     display: none;
   }
 
-  &.upcoming {
+  &.share {
+    justify-content: center;
+    border-color: #68B9EB;
+    background: linear-gradient(180deg, #1DA1F2 -6.02%, #068ADB 85.68%);
+
+    &:active {
+      background: linear-gradient(180deg, #068ADB -6.02%, #1DA1F2 85.68%);
+    }
+  }
+
+  &:not(.share).upcoming {
     justify-content: center;
     border-color: #FBBF24;
     background: linear-gradient(180deg, #F59E0B -6.02%, #B45309 85.68%);
@@ -45,7 +55,7 @@
     }
   }
 
-  &.ongoing {
+  &:not(.share).ongoing {
     border-color: #6B41EB;
     background: linear-gradient(180deg, #6B41EB -6.02%, #241164 85.68%);
 
@@ -67,7 +77,7 @@
     }
   }
 
-  &.closed {
+  &:not(.share).closed {
     justify-content: center;
     border-color: #fff;
     background: linear-gradient(180deg, #fff -6.02%, #8B8B8B 85.68%);
