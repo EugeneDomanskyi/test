@@ -451,6 +451,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon == 'discord2') {
+      return (
+        <svg width={width ?? 25} height={height ?? 24} viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill={color ?? '#fff'} d="M19.2378 6.41309C18.0905 5.87593 16.8602 5.48018 15.5739 5.25351C15.5505 5.24914 15.5271 5.26007 15.515 5.28194C15.3568 5.56909 15.1815 5.94371 15.0588 6.23816C13.6753 6.0268 12.2989 6.0268 10.9437 6.23816C10.821 5.93716 10.6394 5.56909 10.4804 5.28194C10.4684 5.2608 10.445 5.24987 10.4215 5.25351C9.13593 5.47945 7.90567 5.87521 6.7577 6.41309C6.74776 6.41746 6.73925 6.42475 6.73359 6.43422C4.40004 9.99165 3.76079 13.4616 4.07439 16.8886C4.0758 16.9054 4.08503 16.9214 4.0978 16.9316C5.63741 18.0853 7.12878 18.7858 8.59246 19.25C8.61588 19.2573 8.6407 19.2486 8.65561 19.2289C9.00184 18.7464 9.31048 18.2377 9.57511 17.7027C9.59072 17.6714 9.57582 17.6342 9.5439 17.6218C9.05435 17.4323 8.5882 17.2013 8.1398 16.9389C8.10433 16.9178 8.10149 16.866 8.13412 16.8412C8.22848 16.7691 8.32287 16.694 8.41297 16.6182C8.42927 16.6044 8.45198 16.6014 8.47115 16.6102C11.417 17.9826 14.6062 17.9826 17.5172 16.6102C17.5364 16.6007 17.5591 16.6036 17.5761 16.6175C17.6662 16.6933 17.7606 16.7691 17.8557 16.8412C17.8883 16.866 17.8862 16.9178 17.8507 16.9389C17.4023 17.2064 16.9361 17.4323 16.4459 17.6211C16.414 17.6335 16.3998 17.6714 16.4154 17.7027C16.6857 18.2369 16.9943 18.7457 17.3342 19.2282C17.3484 19.2486 17.3739 19.2573 17.3973 19.25C18.8681 18.7858 20.3595 18.0853 21.8991 16.9316C21.9126 16.9214 21.9211 16.9061 21.9225 16.8893C22.2978 12.9274 21.2939 9.48585 19.2612 6.43495C19.2562 6.42475 19.2477 6.41746 19.2378 6.41309ZM10.015 14.8019C9.12812 14.8019 8.39735 13.9711 8.39735 12.9507C8.39735 11.9303 9.11395 11.0995 10.015 11.0995C10.9232 11.0995 11.6469 11.9376 11.6327 12.9507C11.6327 13.9711 10.9161 14.8019 10.015 14.8019ZM15.9961 14.8019C15.1092 14.8019 14.3784 13.9711 14.3784 12.9507C14.3784 11.9303 15.095 11.0995 15.9961 11.0995C16.9042 11.0995 17.6279 11.9376 17.6137 12.9507C17.6137 13.9711 16.9042 14.8019 15.9961 14.8019Z" />
+        </svg>
+      )
+    }
+
     if (icon === 'facebook') {
       return (
         <svg width={width ?? 18} height={height ?? 31} viewBox="0 0 18 31" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -598,6 +606,16 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       return (
         <svg width={width ?? 5} height={height ?? 9} viewBox="0 0 5 9" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <path fill={color ?? '#53F19C'} d="M3.833 0c-.31 0-.606.089-.825.247-.22.158-.342.373-.342.597 0 .223.123.438.342.596.219.158.515.247.825.247.31 0 .606-.089.825-.247.219-.158.342-.373.342-.596C5 .62 4.877.405 4.658.247A1.425 1.425 0 003.833 0zm-.28 2.682C2.627 2.74.099 4.195.099 4.195c-.156.084-.11.079.015.236.125.152.109.163.257.09.155-.073.412-.19.84-.382 1.65-.765.265 1-.443 3.976-.28 1.473 1.556.714 2.03.489.467-.22 1.72-.844 1.844-.905.171-.085.047-.152-.085-.293-.094-.095-.187-.028-.187-.028-.506.242-1.432.748-1.556.427-.148-.32.801-2.519 1.322-4.032.086-.36.32-1.147-.583-1.09z" />
+        </svg>
+      )
+    }
+
+    if (icon === 'info2') {
+      return (
+        <svg width={width ?? 25} height={height ?? 24} viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12.6666 16.25L12.6666 11" stroke={color ?? '#fff'} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12.6666 7.79999L12.6666 7.69999" stroke={color ?? '#fff'} stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="12.6666" cy="12" r="9.25" stroke={color ?? '#fff'} stroke-width="1.5"/>
         </svg>
       )
     }
@@ -1864,6 +1882,55 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
           <path stroke={color ?? '#fff'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M20.75 13.25C20.75 18.08 16.83 22 12 22C7.17 22 3.25 18.08 3.25 13.25C3.25 8.42 7.17 4.5 12 4.5C16.83 4.5 20.75 8.42 20.75 13.25Z" />
           <path d="M12 8V13" stroke={color ?? '#fff'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M9 2H15" stroke={color ?? '#fff'} strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      )
+    }
+    
+    if (icon == 'prize') {
+      return (
+        <svg width={width ?? 20} height={height ?? 20} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path d="M16.6667 10V18.3333H3.33337V10" fill="black"/>
+          <path d="M16.6667 10V18.3333H3.33337V10" fill="url(#paint0_radial_6310_1803)"/>
+          <path d="M18.3333 5.83334H1.66663V10H18.3333V5.83334Z" fill="black"/>
+          <path d="M18.3333 5.83334H1.66663V10H18.3333V5.83334Z" fill="url(#paint1_radial_6310_1803)"/>
+          <path d="M10 17L10 6" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 17L10 6" stroke="url(#paint2_radial_6310_1803)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9.99996 5.83333H6.24996C5.69743 5.83333 5.16752 5.61384 4.77682 5.22314C4.38612 4.83244 4.16663 4.30253 4.16663 3.75C4.16663 3.19746 4.38612 2.66756 4.77682 2.27686C5.16752 1.88616 5.69743 1.66666 6.24996 1.66666C9.16663 1.66666 9.99996 5.83333 9.99996 5.83333Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9.99996 5.83333H6.24996C5.69743 5.83333 5.16752 5.61384 4.77682 5.22314C4.38612 4.83244 4.16663 4.30253 4.16663 3.75C4.16663 3.19746 4.38612 2.66756 4.77682 2.27686C5.16752 1.88616 5.69743 1.66666 6.24996 1.66666C9.16663 1.66666 9.99996 5.83333 9.99996 5.83333Z" stroke="url(#paint3_radial_6310_1803)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 5.83333H13.75C14.3025 5.83333 14.8324 5.61384 15.2231 5.22314C15.6138 4.83244 15.8333 4.30253 15.8333 3.75C15.8333 3.19746 15.6138 2.66756 15.2231 2.27686C14.8324 1.88616 14.3025 1.66666 13.75 1.66666C10.8333 1.66666 10 5.83333 10 5.83333Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 5.83333H13.75C14.3025 5.83333 14.8324 5.61384 15.2231 5.22314C15.6138 4.83244 15.8333 4.30253 15.8333 3.75C15.8333 3.19746 15.6138 2.66756 15.2231 2.27686C14.8324 1.88616 14.3025 1.66666 13.75 1.66666C10.8333 1.66666 10 5.83333 10 5.83333Z" stroke="url(#paint4_radial_6310_1803)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs>
+            <radialGradient id="paint0_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(16.1719 10.3744) rotate(160.932) scale(14.0247 17.3864)">
+              <stop stop-color="#FFF6A3"/>
+              <stop offset="0.34606" stop-color="#FFF066"/>
+              <stop offset="0.688349" stop-color="#FFCB45"/>
+              <stop offset="1" stop-color="#FFBD13"/>
+            </radialGradient>
+            <radialGradient id="paint1_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(17.7148 6.02051) rotate(172.128) scale(16.7266 9.1112)">
+              <stop stop-color="#FFF6A3"/>
+              <stop offset="0.34606" stop-color="#FFF066"/>
+              <stop offset="0.688349" stop-color="#FFCB45"/>
+              <stop offset="1" stop-color="#FFBD13"/>
+            </radialGradient>
+            <radialGradient id="paint2_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(10.9629 6.49414) rotate(99.3348) scale(6.12901 3.93866)">
+              <stop stop-color="#FFF6A3"/>
+              <stop offset="0.34606" stop-color="#FFF066"/>
+              <stop offset="0.688349" stop-color="#FFCB45"/>
+              <stop offset="1" stop-color="#FFBD13"/>
+            </radialGradient>
+            <radialGradient id="paint3_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(9.78349 1.85384) rotate(158.444) scale(6.23524 8.55458)">
+              <stop stop-color="#FFF6A3"/>
+              <stop offset="0.34606" stop-color="#FFF066"/>
+              <stop offset="0.688349" stop-color="#FFCB45"/>
+              <stop offset="1" stop-color="#FFBD13"/>
+            </radialGradient>
+            <radialGradient id="paint4_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(15.6169 1.85384) rotate(158.444) scale(6.23524 8.55458)">
+              <stop stop-color="#FFF6A3"/>
+              <stop offset="0.34606" stop-color="#FFF066"/>
+              <stop offset="0.688349" stop-color="#FFCB45"/>
+              <stop offset="1" stop-color="#FFBD13"/>
+            </radialGradient>
+          </defs>
         </svg>
       )
     }

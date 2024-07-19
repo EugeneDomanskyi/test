@@ -113,14 +113,14 @@ const OnboardingBanner = () => {
           <App.Flex className={cn(styles.buttonBox, {[styles.show]: !showBanner})}>
             {stepBanner == 0 ? (
               <App.Flex row center gap={8} className={styles.expandButton} onClick={handleToggle}>
-                <App.Text uppercase size={14} weight={700} height={1}>GET 600 GEMS</App.Text>
+                <App.Text uppercase size={14} weight={700} height={1}>GET 150 GEMS</App.Text>
                 <App.Icon icon="chevron-down" width={24} height={24} style={{ transform: 'rotate(180deg)' }}/>
               </App.Flex>
             ) : null}
 
             {stepBanner == 1 ? (
               <App.Flex row center gap={8} className={styles.expandButton} onClick={handleToggle}>
-                <App.Text uppercase size={14} weight={700} height={1}>GET 500 GEMS</App.Text>
+                <App.Text uppercase size={14} weight={700} height={1}>GET 100 GEMS</App.Text>
                 <App.Icon icon="chevron-down" width={24} height={24} style={{ transform: 'rotate(180deg)' }}/>
               </App.Flex>
             ) : null}
@@ -134,7 +134,7 @@ const OnboardingBanner = () => {
                 bounds="body"
               >
                 <App.Flex row center gap={8} className={styles.expandButton}>
-                  <App.Text uppercase size={14} weight={700} height={1}>GET 500 GEMS</App.Text>
+                  <App.Text uppercase size={14} weight={700} height={1}>GET 100 GEMS</App.Text>
                   <App.Icon icon="chevron-down" width={24} height={24} style={{ transform: 'rotate(180deg)' }}/>
                 </App.Flex>
               </Draggable>
@@ -147,7 +147,7 @@ const OnboardingBanner = () => {
             <App.Flex column gap={16} className={styles.banner}>
               <App.Flex row justify="space-between" sx={{ cursor: 'pointer' }} onClick={handleToggle}>
                 <App.Flex column gap={4}>
-                  <App.Text size={16} weight={700} height={1}>Hey, want to get 600 gems?</App.Text>
+                  <App.Text size={16} weight={700} height={1}>Hey, want to get 150 gems?</App.Text>
                   <App.Text size={14} weight={400} height={1} color="#FFFFFF99">Start your earnings journey now!</App.Text>
                 </App.Flex>
 
@@ -160,8 +160,8 @@ const OnboardingBanner = () => {
 
               <App.Flex column gap={8} className={styles.content}>
                 <App.Text size={12} weight={400} height={1} color="#FFFFFF99">Step 1/2</App.Text>
-                <App.Text size={16} weight={600} height={1}>Get <App.Text inline size={16} weight={600} height={1} color="#A6DC37">100</App.Text> gems</App.Text>
-                <App.Text size={14} weight={400} height={1}>Connect your wallet to get 100 gems</App.Text>
+                <App.Text size={16} weight={600} height={1}>Get <App.Text inline size={16} weight={600} height={1} color="#A6DC37">50</App.Text> gems</App.Text>
+                <App.Text size={14} weight={400} height={1}>Connect your wallet to get 50 gems</App.Text>
               </App.Flex>
 
               <App.Button primary2 onClick={handleConnect}>Connect Wallet</App.Button>
@@ -172,8 +172,8 @@ const OnboardingBanner = () => {
             <App.Flex column gap={16} className={styles.banner}>
               <App.Flex row justify="space-between" sx={{ cursor: 'pointer' }} onClick={handleToggle}>
                 <App.Flex column gap={4}>
-                  <App.Text size={16} weight={700} height={1}>{isMobile ? 'Hey, Your Earnings Journey Has Started!' : 'Place an order to get 500 gems.'}</App.Text>
-                  <App.Text size={14} weight={400} height={1} color="#FFFFFF99">{isMobile ? 'Complete the remaining steps to get 500 gems.' : 'Your earnings journey has started!'}</App.Text>
+                  <App.Text size={16} weight={700} height={1}>{isMobile ? 'Hey, Your Earnings Journey Has Started!' : 'Place an order to get 100 gems.'}</App.Text>
+                  <App.Text size={14} weight={400} height={1} color="#FFFFFF99">{isMobile ? 'Complete the remaining steps to get 100 gems.' : 'Your earnings journey has started!'}</App.Text>
                 </App.Flex>
 
                 <App.Icon icon="chevron-down" width={24} height={24} />
@@ -181,8 +181,8 @@ const OnboardingBanner = () => {
 
               <App.Flex column gap={8} className={styles.content}>
                 <App.Text size={12} weight={400} height={1} color="#FFFFFF99">Step 2/2</App.Text>
-                <App.Text size={16} weight={600} height={1}>Get <App.Text inline size={16} weight={600} height={1} color="#A6DC37">500</App.Text> gems</App.Text>
-                <App.Text size={14} weight={400} height={1}>Complete your first trade on Tegro to get 500 gems</App.Text>
+                <App.Text size={16} weight={600} height={1}>Get <App.Text inline size={16} weight={600} height={1} color="#A6DC37">100</App.Text> gems</App.Text>
+                <App.Text size={14} weight={400} height={1}>Complete your first trade on Tegro to get 100 gems</App.Text>
               </App.Flex>
 
               {isMobile ? (
@@ -202,7 +202,7 @@ const OnboardingBanner = () => {
               <App.Flex row gap={16} justify="space-between">
                 <App.Flex column gap={4}>
                   <App.Text size={16} weight={700} height={1}>Congratulations!</App.Text>
-                  <App.Text size={14} weight={400} height={1.4} color="#FFFFFF99">You’ve won 600 gems for completing the onboarding. Trade more to win more.</App.Text>
+                  <App.Text size={14} weight={400} height={1.4} color="#FFFFFF99">You’ve won 150 gems for completing the onboarding. Trade more to win more.</App.Text>
                 </App.Flex>
 
                 <App.Icon icon="cross" width={20} height={20} color="#fff" sx={{ cursor: 'pointer' }} onClick={handleClose} />

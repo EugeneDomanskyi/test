@@ -109,6 +109,10 @@ body {
   height: 100%;
 }
 
+div, p {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
 body > div:first-child,
 div#__next,
 div#__next > div,

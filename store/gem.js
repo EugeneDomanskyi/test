@@ -171,7 +171,7 @@ export const gemSlice = createSlice({
         }
 
         if (value.rewards.length) {
-          value.currency = value.rewards[0].reward_currency
+          value.currency = value.rewards[0].reward_currency ?? ''
         }
 
         switch (key) {
@@ -188,7 +188,7 @@ export const gemSlice = createSlice({
             value.name = 'Poncho Rush S1'
             break
           default:
-            value.name = value.alias
+            value.name = value.title
             break
         }
 

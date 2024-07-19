@@ -37,7 +37,7 @@ const GemsDashboard = () => {
     { title: t('Liquidity mining'), key: 'liquidity' },
     { title: t('Refer & earn'), key: 'refer' },
     // { title: t('Contributor tasks'), key: 'contributor' },
-    { title: t('Side quests'), key: 'quests' },
+    // { title: t('Side quests'), key: 'quests' },
     // { title: t('Gems history'), key: 'transactions' },
   ]
 

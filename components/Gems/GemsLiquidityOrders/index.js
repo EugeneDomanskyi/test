@@ -29,7 +29,7 @@ const GemsLiquidityOrders = ({ loading }) => {
 
   const tabs = [
     { title: t('Open orders'), key: 'open' },
-    { title: t('Completed orders'), key: 'completed' },
+    { title: t('Order history'), key: 'completed' },
   ]
 
   const handleTab = (value) => {
@@ -87,7 +87,7 @@ const GemsLiquidityOrders = ({ loading }) => {
                   </App.Flex>
 
                   <App.Flex flex={1} row gap={4} center>
-                    <App.Text center weight={600} height={1} color="#A6DC37">{t('Gems per minute')}</App.Text>
+                    <App.Text center weight={600} height={1} color="#A6DC37">{t('Gems per hour')}</App.Text>
                     <App.Tooltip placement="bottom" text="Orders closest to the mid-price accumulate the highest gems, while those with a deviation greater than 10% do not accumulate any gems">
                       <App.Icon icon="warning-circle" />
                     </App.Tooltip>
@@ -167,7 +167,7 @@ const GemsLiquidityOrders = ({ loading }) => {
                           </App.Flex>
 
                           <App.Flex flex={1} center>
-                            <App.Text center size={16} weight={600} height={1}>{item.points_per_minute}</App.Text>
+                            <App.Text center size={16} weight={600} height={1}>{item.points_per_hour}</App.Text>
                           </App.Flex>
                         </>
                       ) : null}
