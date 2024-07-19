@@ -33,6 +33,7 @@ const GemsStreak = ({ streaks, position }) => {
                 <div className={styles.squareContainer} style={{ padding: `0 calc(${100 / (streaks.length - 1) / 2}% + 8px)` }}>
                   {streaks.slice(0, streaks.length - 1).map((streak) => {
                     const active = streak.level == position
+                    const past = streak.level < position
                     return active ? (
                       <App.Flex className={styles.squareFake}>
                         <App.Flex column align="center" gap={6} className={styles.you}>
@@ -41,7 +42,7 @@ const GemsStreak = ({ streaks, position }) => {
                         </App.Flex>
                       </App.Flex>
                     ) : (
-                      <div key={streak.id} className={styles.square} />
+                      <div key={streak.id} className={cn(styles.square, {[styles.active]: past})} />
                     )
                   })}
                 </div>
