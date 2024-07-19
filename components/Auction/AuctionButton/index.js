@@ -23,7 +23,6 @@ const AuctionButton = ({ item, small, share }) => {
 
   const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
-  const stats = useSelector(({ $gem }) => $gem.stats)
   const jwt = useSelector(({ $gem }) => $gem.jwt)
   const referral = useSelector(({ $gem }) => $gem.referral)
 
@@ -139,14 +138,14 @@ const AuctionButton = ({ item, small, share }) => {
     if (item.status == 'ongoing') {
       const currentJwt = await getJwt()
       if (currentJwt) {
-        if (stats.total_points * 1 >= item.gemsPrice * 1) {
+        if (referral.points * 1 >= item.gemsPrice * 1) {
           const result = await $gem.api.bid({
             auction_id: item.id,
             jwt_token: currentJwt,
           })
 
           if (result) {
-            dispatch($gem.set.totalGems(stats.total_points - item.gemsPrice))
+            dispatch($gem.set.totalGems(referral.points - item.gemsPrice))
           }
         } else {
           setIsWarningDialog(true)

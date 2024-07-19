@@ -115,9 +115,9 @@ export const gemSlice = createSlice({
     },
 
     totalGems: (state, { payload }) => {
-      state.stats = {
-        ...state.stats,
-        total_points: payload,
+      state.referral = {
+        ...state.referral,
+        points: payload,
       }
     },
 

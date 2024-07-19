@@ -23,7 +23,7 @@ const GemsAuction = () => {
   const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const auctions = useSelector(({ $gem }) => $gem.auctions)
-  const stats = useSelector(({ $gem }) => $gem.stats)
+  const referral = useSelector(({ $gem }) => $gem.referral)
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
 
   const tempItem = {
@@ -153,7 +153,7 @@ const GemsAuction = () => {
         <App.Flex direction={['row', 'column']} align={['center', 'stretch']} justify="space-between" gap={[0, 16]}>
           <App.Flex row align="center" order={[0, 1]} gap={24}>
             <App.Flex row center gap={16} className={styles.frame} flex={[null, 1]}>
-              <App.Text size={[28, 16]} weight={600} height={1}>{t('Gems')} {stats.total_points}</App.Text>
+              <App.Text size={[28, 16]} weight={600} height={1}>{t('Gems')} {referral.points}</App.Text>
             </App.Flex>
 
             <App.Flex row center gap={16} className={styles.frame} flex={[null, 1]}>

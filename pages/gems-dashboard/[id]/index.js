@@ -24,7 +24,7 @@ const GemsAuctionInfo = () => {
   const { wallet } = useWagmiHelper()
 
   const dispatch = useDispatch()
-  const stats = useSelector(({ $gem }) => $gem.stats)
+  const referral = useSelector(({ $gem }) => $gem.referral)
   const item = useSelector(({ $gem }) => $gem.current)
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
 
@@ -142,7 +142,7 @@ const GemsAuctionInfo = () => {
                 ) : (
                   <App.Flex center height={56} gap={16} className={styles.gems}>
                     <App.Text size={16} weight={600} height={1}>{t('Gems Balance')}</App.Text>
-                    <App.Text size={28} weight={600} height={1}>{stats.total_points}</App.Text>
+                    <App.Text size={28} weight={600} height={1}>{referral.points}</App.Text>
                   </App.Flex>
                 )}
 
