@@ -18,16 +18,6 @@ const auctionTemplate = (item, wallet) => {
     }
   }
 
-  // let status = now.isAfter(startsAt) ? 'ongoing' : 'upcoming'
-  // if (status == 'ongoing') {
-  //   if (item.last_bid_timestamp > 0) {
-  //     const lastBid = moment(item.last_bid_timestamp * 1000)
-  //     status = now.isAfter(lastBid.add(item.reset_timer, 'seconds')) ? 'closed' : 'ongoing'
-
-  //     time = lastBid.add(item.reset_timer, 'seconds').diff(now)
-  //   }
-  // }
-
   const lastBidderWallet = item.last_bidder.wallet_address.toLowerCase() || null
 
   const marketPrice = formatUnits(item.start_price.toString(), 6)
@@ -48,6 +38,7 @@ const auctionTemplate = (item, wallet) => {
     time: time * 1000,
     startsIn: moment(item.starts_at * 1000).valueOf(),
     pointsPrice: item.points_to_deduct,
+    updated: false,
   }
 }
 
@@ -211,6 +202,32 @@ export const gemSlice = createSlice({
 
     auctions: (state, { payload }) => {
       state.auctions = payload.data.map(item => auctionTemplate(item, payload.wallet))
+    },
+
+    auctionUpdated: (state, { payload }) => {
+      state.auctions = state.auctions.map(item => {
+        if (item.id == payload.data.id) {
+          return {
+            ...auctionTemplate(payload.data, payload.wallet),
+            updated: true,
+          }
+        }
+
+        return item
+      })
+    },
+
+    auctionNotUpdated: (state, { payload }) => {
+      state.auctions = state.auctions.map(item => {
+        if (item.id == payload.id) {
+          return {
+            ...payload,
+            updated: false,
+          }
+        }
+
+        return item
+      })
     },
 
     current: (state, { payload }) => {

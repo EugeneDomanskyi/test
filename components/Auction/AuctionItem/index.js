@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
 
@@ -15,6 +17,16 @@ import styles from './styles.module.scss'
 const AuctionItem = ({ item, onClear }) => {
   const router = useRouter()
   const { t } = useTranslation()
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (item?.updated) {
+      setTimeout(() => {
+        dispatch($gem.set.auctionNotUpdated(item))
+      }, 3000)
+    }
+  }, [item?.updated])
 
   const firstText = () => {
     switch (item.status) {
