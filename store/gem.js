@@ -23,6 +23,15 @@ const auctionTemplate = (item, wallet) => {
   const marketPrice = formatUnits(item.start_price.toString(), 6)
   const currentPrice = formatUnits((item.last_bid_price > 0 ? item.last_bid_price : item.start_price).toString(), 6)
 
+  const history = item.bid_histories.map(bid => {
+    return {
+      bid: `${formatUnits(bid.price.toString(), 6)} USDC`,
+      wallet: bid.wallet.wallet_address,
+      time: moment(bid.created_at).format('HH:mm DD-MM-YYYY'),
+    }
+  })
+
+
   return {
     id: item.id,
     productId: item.product.id,
@@ -37,7 +46,9 @@ const auctionTemplate = (item, wallet) => {
     name: item.product.title,
     time: time * 1000,
     startsIn: moment(item.starts_at * 1000).valueOf(),
-    pointsPrice: item.points_to_deduct,
+    gemsPrice: item.points_to_deduct,
+    lastBidTimestamp: item.last_bid_timestamp,
+    history,
     updated: false,
   }
 }
@@ -101,6 +112,13 @@ export const gemSlice = createSlice({
 
     stats: (state, { payload }) => {
       state.stats = payload
+    },
+
+    totalGems: (state, { payload }) => {
+      state.stats = {
+        ...state.stats,
+        total_points: payload,
+      }
     },
 
     statsLoading: (state, { payload }) => {

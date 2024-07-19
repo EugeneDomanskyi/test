@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
-import moment from 'moment'
-import cn from 'classnames'
 
 import Socket from '@/libs/ws.lib'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
@@ -16,6 +14,7 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 import AuctionImage from '@/components/Auction/AuctionImage'
 import AuctionButton from '@/components/Auction/AuctionButton'
+import WagmiHelper from '@/libs/WagmiHelper'
 
 const GemsAuctionInfo = () => {
   const { t } = useTranslation()
@@ -44,6 +43,9 @@ const GemsAuctionInfo = () => {
   useEffect(() => {
     if (socketConnected) {
       Socket.subscribe('auctions')
+
+      Socket.on('auctions', 'auction', handleUpdatedAuction)
+
       return () => {
         Socket.unsubscribe('auctions')
       }
@@ -52,6 +54,7 @@ const GemsAuctionInfo = () => {
 
   useEffect(() => {
     if (id && wallet) {
+      setTimeout(fetchJWT, 500)
       fetchInfo()
     }
   }, [id, wallet])
@@ -61,6 +64,11 @@ const GemsAuctionInfo = () => {
       fetchStats()
     }
   }, [wallet])
+
+  const handleUpdatedAuction = (data) => {
+    dispatch($gem.set.auctionUpdated({data, wallet}))
+    dispatch($gem.set.current({data, wallet}))
+  }
 
   const handleCloseConnection = (e) => {
     Socket.init(() => {}, handleCloseConnection)
@@ -80,6 +88,32 @@ const GemsAuctionInfo = () => {
     }
 
     setLoading(false)
+  }
+
+  const fetchJWT = async () => {
+    let jwt = getJWT()
+    if (!jwt) {
+      const signature = await WagmiHelper.signMessage(wallet)
+      if (signature) {
+        jwt = await $gem.api.login({ wallet_address: wallet, signature })
+        if (jwt && !jwt?.error) {
+          localStorage.setItem('bidding-token', JSON.stringify({ jwtToken: jwt, jwtWallet: wallet }))
+        }
+      }
+    }
+
+    dispatch($gem.set.jwt(jwt))
+  }
+
+  const getJWT = () => {
+    const data = localStorage.getItem('bidding-token')
+    if (data) {
+      const { jwtToken, jwtWallet } = JSON.parse(data)
+      if (wallet == jwtWallet) {
+        return jwtToken
+      }
+    }
+    return false
   }
 
   const handleBack = () => {
@@ -178,24 +212,32 @@ const GemsAuctionInfo = () => {
                           <App.Text size={14} weight={600} height={1} color="#A6DC37">{t('User')}</App.Text>
                         </App.Flex>
 
-                        <App.Flex width={100} align="center" justify="flex-end">
+                        <App.Flex width={200} align="center" justify="flex-end">
                           <App.Text right size={14} weight={600} height={1} color="#A6DC37">{t('Time')}</App.Text>
                         </App.Flex>
                       </App.Flex>
+                      
+                      {item.history.length ? (
+                        item.history.map((bid, index) => (
+                          <App.Flex key={index} row gap={24} className={styles.row}>
+                            <App.Flex width={100} align="center">
+                              <App.Text size={14} weight={600} height={1}>{bid.bid}</App.Text>
+                            </App.Flex>
 
-                      <App.Flex row gap={24} className={styles.row}>
-                        <App.Flex width={100} align="center">
-                          <App.Text size={14} weight={600} height={1}>34 USDT</App.Text>
-                        </App.Flex>
+                            <App.Flex flex={1} align="center">
+                              <App.Text size={14} weight={600} height={1}>{bid.wallet}</App.Text>
+                            </App.Flex>
 
-                        <App.Flex flex={1} align="center">
-                          <App.Text size={14} weight={600} height={1}>213sfdseae32ef923213sfdseae32ef923</App.Text>
+                            <App.Flex width={200} align="center" justify="flex-end">
+                              <App.Text right size={14} weight={600} height={1}>{bid.time}</App.Text>
+                            </App.Flex>
+                          </App.Flex>
+                        ))
+                      ) : (
+                        <App.Flex center height={300}>
+                          <App.Text size={24} weight={600}>No bids yet</App.Text>
                         </App.Flex>
-
-                        <App.Flex width={100} align="center" justify="flex-end">
-                          <App.Text right size={14} weight={600} height={1}>01-04-2024</App.Text>
-                        </App.Flex>
-                      </App.Flex>
+                      )}
                     </App.Flex>
                   </App.Flex>
                 </App.Flex>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
@@ -36,6 +36,10 @@ const AuctionButton = ({ item, small, share }) => {
     secondsNumber: 0,
     isEnd: false,
   })
+
+  useEffect(() => {
+    setTime(item.time)
+  }, [item?.lastBidTimestamp])
 
   useEffect(() => {
     if (item?.id) {
@@ -135,11 +139,15 @@ const AuctionButton = ({ item, small, share }) => {
     if (item.status == 'ongoing') {
       const currentJwt = await getJwt()
       if (currentJwt) {
-        if (stats.total_points * 1 >= item.pointsPrice * 1) {
-          $gem.api.bid({
+        if (stats.total_points * 1 >= item.gemsPrice * 1) {
+          const result = await $gem.api.bid({
             auction_id: item.id,
             jwt_token: currentJwt,
           })
+
+          if (result) {
+            dispatch($gem.set.totalGems(stats.total_points - item.gemsPrice))
+          }
         } else {
           setIsWarningDialog(true)
         }
@@ -185,7 +193,7 @@ Don't fade, join the fun today: ${link}
       {item.status == 'ongoing' && item.current ? (
         <div className={cn(styles.badge, {[styles.small]: small}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 5 })}>
           <App.Text size={small ? 16 : 20} weight={600} height={1} color={duration.minutesNumber == 0 && duration.secondsNumber <= 5 ? '#098C47' : '#FFFFFF99'}>{t('Winning In')}</App.Text>
-          {item.status == 'ongoing' && item.wallet ? (
+          {item.wallet ? (
             <App.Text size={small ? 16 : 20} weight={600} height={1} color={duration.minutesNumber == 0 && duration.secondsNumber <= 5 ? '#098C47' : '#FFFFFF99'}>{duration.minutes}:{duration.seconds}</App.Text>
           ) : null}
         </div>
