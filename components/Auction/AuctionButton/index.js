@@ -128,7 +128,16 @@ const AuctionButton = ({ item, small, share }) => {
 
     if (item.status == 'upcoming') {
       if ( ! user.isTelegram) {
-        window.open(`${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}?start=${user.wallet}_${user.id}`)
+        let host = 'd'
+        if (window.location.hostname == 'testnet.tegro.com') {
+          host = 't'
+        }
+
+        if (window.location.hostname == 'tegro.com') {
+          host = 'p'
+        }
+
+        window.open(`${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}?start=${user.wallet}_${user.id}_${host}`, '_blank')
       }
     }
 
