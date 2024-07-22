@@ -23,9 +23,7 @@ const GemsQuests = () => {
   useEffect(() => {
     document.addEventListener('visibilitychange', handleVisible)
 
-    if (wallet) {
-      fetchQuests()
-    }
+    fetchQuests()
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisible)
@@ -33,7 +31,7 @@ const GemsQuests = () => {
   }, [wallet])
 
   const fetchQuests = async () => {
-    const result = await $gem.api.quests(wallet, {})
+    const result = await $gem.api.quests(wallet ?? '0xF1f8ed0a5F170c0fFedf165912478A66f28aAe00', {})
     if (result) {
       dispatch($gem.set.quests(result))
     }

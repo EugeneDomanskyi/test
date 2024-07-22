@@ -15,7 +15,11 @@ const AuctionImage = ({ item, large }) => {
       <AuctionBadge status={item.status} win={item.current} />
 
       <App.Flex fullWidth row align="flex-end" justify="space-between" sx={{ padding: 8 }}>
-        <Image src={item.logo} width={64} height={64} alt="" />
+        {item.logo ? (
+          <Image src={item.logo} width={64} height={64} alt="" />
+        ) : (
+          <App.Flex />
+        )}
 
         <App.Flex center className={styles.marketPrice}>
           <App.Text size={12} height={1}>{t('Market Price: {{price}} {{currency}}', { price: item.marketPrice, currency: item.currency })}</App.Text>

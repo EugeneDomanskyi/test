@@ -1,23 +1,31 @@
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
-import Image from 'next/image'
 import cn from 'classnames'
 import moment from 'moment'
 
 import useInterval from '@/myhooks/useInterval'
+import WagmiHelper from '@/libs/WagmiHelper'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
+
+import $gem from '@/store/gem'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
-import AuctionItemSimple from '../AuctionItemSimple'
+import AuctionItemSimple from '@/components/Auction/AuctionItemSimple'
 
-const AuctionButton = ({ item, small }) => {
+const AuctionButton = ({ item, small, share }) => {
   const router = useRouter()
   const { t } = useTranslation()
+  const { wallet, connect } = useWagmiHelper()
 
+  const dispatch = useDispatch()
+  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const stats = useSelector(({ $gem }) => $gem.stats)
+  const jwt = useSelector(({ $gem }) => $gem.jwt)
+  const referral = useSelector(({ $gem }) => $gem.referral)
 
   const [isWarningDialog, setIsWarningDialog] = useState(false)
   const [time, setTime] = useState(item.time)
@@ -36,6 +44,10 @@ const AuctionButton = ({ item, small }) => {
   }, [item?.id, time])
 
   const text = () => {
+    if (share) {
+      return `Tweet Now ${isMobile ? '' : '(Get 50 Gems)'}`
+    }
+
     switch (item.status) {
       case 'upcoming': return 'Notify Me'
       case 'ongoing': return item.wallet ? 'Place Bid' : 'Bid Now'
@@ -62,28 +74,111 @@ const AuctionButton = ({ item, small }) => {
 
   useInterval(tick, duration.isEnd ? null : 1000)
 
-  const handeClick = (e) => {
+  const getJwt = async () => {
+    let currentJwt = jwt
+    if (!currentJwt) {
+      const signature = await WagmiHelper.signMessage(wallet)
+      if (signature) {
+        currentJwt = await $gem.api.login({ wallet_address: wallet, signature })
+        if (currentJwt && !currentJwt?.error) {
+          localStorage.setItem('bidding-token', JSON.stringify({ jwtToken: currentJwt, jwtWallet: wallet }))
+        }
+      }
+    }
+
+    return currentJwt
+  }
+
+  const getUserInfo = async () => {
+    if (wallet && referral?.id) {
+      return { wallet, id: referral.id, isTelegram: referral.is_telegram_present }
+    }
+
+    let connectedWallet = wallet
+    if ( ! connectedWallet) {
+      connectedWallet = await connect()
+    }
+
+    let isTelegram = referral?.is_telegram_present
+    let userId = referral?.id
+    if (connectedWallet && !userId) {
+      const result = await $gem.api.referral(connectedWallet)
+      if (result) {
+        userId = result.id
+        isTelegram = result.is_telegram_present
+      }
+    }
+
+    return { wallet: connectedWallet, id: userId, isTelegram }
+  }
+
+  const handeClick = async (e) => {
     e.stopPropagation()
 
+    const user = await getUserInfo()
+    if (!user?.wallet || !user?.id) {
+      return
+    }
+
+    if (share) {
+      handleShare()
+      $gem.api.addGems(wallet, { reason: 'twitter_share' })
+      return
+    }
+
     if (item.status == 'upcoming') {
-      console.log('Upcoming')
+      if ( ! user.isTelegram) {
+        let host = 'd'
+        if (window.location.hostname == 'testnet.tegro.com') {
+          host = 't'
+        }
+
+        if (window.location.hostname == 'tegro.com') {
+          host = 'p'
+        }
+
+        window.open(`${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}?start=${user.wallet}_${user.id}_${host}`, '_blank')
+      }
     }
 
     if (item.status == 'ongoing') {
-      if (stats.total_points > 0) {
-        console.log('Going')
-      } else {
-        setIsWarningDialog(true)
+      const currentJwt = await getJwt()
+      if (currentJwt) {
+        if (stats.total_points * 1 >= item.pointsPrice * 1) {
+          $gem.api.bid({
+            auction_id: item.id,
+            jwt_token: currentJwt,
+          })
+        } else {
+          setIsWarningDialog(true)
+        }
       }
     }
 
     if (item.status == 'closed') {
       if (item.current) {
-        console.log('Closed')
+        router.push(`/earnings`)
       } else {
         router.push(`/gems-dashboard/${item.id}`)
       }
     }
+  }
+
+  const handleShare = () => {
+    const link = `${window.location.origin}/gems-dashboard#auction`
+    const tweetText = encodeURIComponent(`
+👀 1 ETH for just $100? Absolutely! ✨
+
+Grab it on Tegro auctions! 🐯
+
+Bid with Gems & bag cryptos at insane prices! ⚡️
+
+Time to stop buying the dip and start placing bids! ✅
+
+Don't fade, join the fun today: ${link}
+`)
+    const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}`
+    window.open(tweetUrl, '_blank')
   }
 
   const handleClose = () => {
@@ -104,7 +199,11 @@ const AuctionButton = ({ item, small }) => {
           ) : null}
         </div>
       ) : (
-        <button className={cn(styles.button, {[styles.small]: small}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
+        <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
+          {share ? (
+            <App.Icon icon="x2" />
+          ) : null}
+
           {item.status == 'ongoing' && item.wallet ? (
             <App.Text size={small ? 16 : 20} weight={600} height={1}>{duration.minutes}:{duration.seconds}</App.Text>
           ) : null}

@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import moment from 'moment'
+import { formatUnits } from 'viem'
 
 import { request } from './index'
 
@@ -7,33 +8,46 @@ const auctionTemplate = (item, wallet) => {
   const now = moment()
   const startsAt = moment(item.starts_at * 1000)
 
+  const status = item.status == 1 ? 'upcoming' : item.status == 2 ? 'ongoing' : 'closed'
   let time = 0
-  let status = now.isAfter(startsAt) ? 'ongoing' : 'upcoming'
   if (status == 'ongoing') {
     if (item.last_bid_timestamp > 0) {
       const lastBid = moment(item.last_bid_timestamp * 1000)
-      status = now.isAfter(lastBid.add(item.reset_timer, 'seconds')) ? 'closed' : 'ongoing'
-
-      time = lastBid.add(item.reset_timer, 'seconds').diff(now)
+      time = lastBid.add(item.reset_timer, 'seconds').diff(now, 'seconds')
+      time = time < 0 ? 0 : time
     }
   }
 
-  const lastBidderWallet = item.last_bidder.wallet_address.toLowerCase()
+  // let status = now.isAfter(startsAt) ? 'ongoing' : 'upcoming'
+  // if (status == 'ongoing') {
+  //   if (item.last_bid_timestamp > 0) {
+  //     const lastBid = moment(item.last_bid_timestamp * 1000)
+  //     status = now.isAfter(lastBid.add(item.reset_timer, 'seconds')) ? 'closed' : 'ongoing'
+
+  //     time = lastBid.add(item.reset_timer, 'seconds').diff(now)
+  //   }
+  // }
+
+  const lastBidderWallet = item.last_bidder.wallet_address.toLowerCase() || null
+
+  const marketPrice = formatUnits(item.start_price.toString(), 6)
+  const currentPrice = formatUnits((item.last_bid_price > 0 ? item.last_bid_price : item.start_price).toString(), 6)
 
   return {
     id: item.id,
     productId: item.product.id,
-    image: item.product.s3_url,
-    logo: null,
+    image: item.s3_url || null,
+    logo: item.product.collection_url || null,
     status: status,
     current: wallet == lastBidderWallet,
     wallet: lastBidderWallet,
-    marketPrice: item.start_price,
-    currentPrice: item.last_bid_price > 0 ? item.last_bid_price : item.start_price,
+    marketPrice,
+    currentPrice,
     currency: 'USDC',
     name: item.product.title,
     time: time * 1000,
     startsIn: moment(item.starts_at * 1000).valueOf(),
+    pointsPrice: item.points_to_deduct,
   }
 }
 
@@ -69,6 +83,7 @@ export const gemSlice = createSlice({
 
     tournaments: {},
     auctions: [],
+    current: null,
     showBrett: false,
   },
 
@@ -198,8 +213,41 @@ export const gemSlice = createSlice({
       state.auctions = payload.data.map(item => auctionTemplate(item, payload.wallet))
     },
 
+    current: (state, { payload }) => {
+      state.current = auctionTemplate(payload.data, payload.wallet)
+    },
+
+    jwt: (state, { payload }) => {
+      state.jwt = payload
+    },
+
     showBrett: (state, { payload }) => {
       state.showBrett = payload
+    },
+
+    clear: (state, { payload }) => {
+      state.jwt = null
+      state.referral = {
+        id: 0,
+        gems: 0,
+        referral_code: '',
+        referrals_count: 0,
+      }
+  
+      state.stats = {}
+  
+      state.history = []
+      state.referrals = []
+      state.transactions = []
+  
+      state.liquidity = {
+        open: [],
+        completed: [],
+        total_open_orders: 0,
+        total_open_amount: 0,
+        total_liquidity: 0,
+        gems_earned_today: 0,
+      }
     },
   },
 })
@@ -241,8 +289,28 @@ export const api = {
     return request(`user/${wallet}/order-liquidity`, 'GET', {api: 'accounts', ...params})
   },
 
+  addGems: (wallet, params) => {
+    return request(`user/${wallet}/add-points`, 'POST', {api: 'accounts', ...params})
+  },
+  
   auctions: () => {
     return request(`auctions`, 'GET', {api: 'bid'})
+  },
+
+  auction: (id) => {
+    return request(`auction/${id}`, 'GET', {api: 'bid'})
+  },
+
+  login: (params) => {
+    return request(`login`, 'POST', {api: 'bid', ...params})
+  },
+
+  bid: (params) => {
+    return request(`place`, 'POST', {api: 'bid', ...params})
+  },
+
+  clear: (id) => {
+    return request(`auction/clear/${id}`, 'POST', {api: 'bid'})
   },
   
   tournament: (alias) => {
