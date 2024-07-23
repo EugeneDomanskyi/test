@@ -75,7 +75,7 @@ const AuctionItem = ({ item, onClear }) => {
 
       <App.Flex column gap={12} className={styles.itemContent}>
         <App.Text center nowrap weight={600} height={1}>{item.name}</App.Text>
-        <App.Text center nowrap size={24} weight={600} height={1}>{item.currentPrice} {item.currency}</App.Text>
+        <App.Text center nowrap size={24} weight={600} height={1}>{item.currentPrice} {item.token.currency}</App.Text>
 
         <App.Flex center gap={8} className={cn(styles.info, {[styles.win]: item.status == 'closed' && item.current})}>
           <App.Text weight={400} height={1} color={item.status == 'closed' && item.current ? '#53F19C' : "#FFFFFF99"}>{t(firstText())}</App.Text>

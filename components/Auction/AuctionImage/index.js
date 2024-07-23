@@ -22,7 +22,7 @@ const AuctionImage = ({ item, large }) => {
         )}
 
         <App.Flex center className={styles.marketPrice}>
-          <App.Text size={12} height={1}>{t('Market Price: {{price}} {{currency}}', { price: item.marketPrice, currency: item.currency })}</App.Text>
+          <App.Text size={12} height={1}>{t('Market Price: {{price}} {{currency}}', { price: item.marketPrice, currency: item.token.currency })}</App.Text>
         </App.Flex>
       </App.Flex>
     </App.Flex>

@@ -32,7 +32,6 @@ const auctionTemplate = (item, wallet) => {
     }
   })
 
-
   return {
     id: item.id,
     productId: item.product.id,
@@ -43,7 +42,12 @@ const auctionTemplate = (item, wallet) => {
     wallet: lastBidderWallet,
     marketPrice,
     currentPrice,
-    currency: 'USDC',
+    token: {
+      currency: item.auction_token.symbol.toUpperCase(),
+      decimals: item.auction_token.decimals,
+      address: item.auction_token.string.toLowerCase(),
+      name: item.auction_token.name,
+    },
     name: item.product.title,
     time: time * 1000,
     startsIn: moment(item.starts_at * 1000).valueOf(),
@@ -367,6 +371,10 @@ export const api = {
 
   clear: (id) => {
     return request(`auction/clear/${id}`, 'POST', {api: 'bid'})
+  },
+
+  claim: (params) => {
+    return request(`auction/claim`, 'POST', {api: 'bid', ...params})
   },
   
   tournament: (alias) => {

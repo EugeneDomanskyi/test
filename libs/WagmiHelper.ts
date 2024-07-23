@@ -533,15 +533,28 @@ class WagmiHelper {
       let result = null
       if (this.appWallet) {
         result = await this.walletClient.writeContract(config.request)
-        await this.publicClient.waitForTransactionReceipt({ hash: result })
       } else {
         result = await writeContract(this.wagmiConfig, config.request)
-        await waitForTransactionReceipt(this.wagmiConfig, { hash: result })
       }
 
       return result
     } catch (error) {
       this.error('Approve amount failed', error)
+      return null
+    }
+  }
+
+  waitForTransaction = async (hash: `0x${string}`) => {
+    try {
+      if (this.appWallet) {
+        await this.publicClient.waitForTransactionReceipt({ hash })
+      } else {
+        await waitForTransactionReceipt(this.wagmiConfig, { hash })
+      }
+
+      return hash
+    } catch (error) {
+      this.error('Wait for transaction failed', error)
       return null
     }
   }

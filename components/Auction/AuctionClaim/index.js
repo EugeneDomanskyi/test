@@ -1,17 +1,25 @@
 import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { parseUnits } from 'viem'
 import cn from 'classnames'
+
+import WagmiHelper from '@/libs/WagmiHelper'
+
+import $gem from 'store/gem'
+import $alert from 'store/alert'
 
 import App from 'components/App'
 import AuctionItemSimple from 'components/Auction/AuctionItemSimple'
 import AuctionLoader from 'components/Auction/AuctionLoader'
 
 import styles from './styles.module.scss'
-import WagmiHelper from '@/libs/WagmiHelper'
 
 const AuctionClaim = ({ item, onClose }) => {
   const { t } = useTranslation()
+
+  const dispatch = useDispatch()
+  const jwt = useSelector(({ $gem }) => $gem.jwt)
 
   const [step, setStep] = useState(0)
 
@@ -22,16 +30,36 @@ const AuctionClaim = ({ item, onClose }) => {
   }, [step])
 
   const transaction = async () => {
-    const USDC_CONTRACT = '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
-    const price = parseUnits(item.currentPrice, 6)
+    const price = parseUnits(item.currentPrice, item.token.decimals)
 
-    const network = await WagmiHelper.changeChain('base')
+    const network = await WagmiHelper.changeChain('amoy')
     if (!network) {
       return
     }
 
-    const result = await WagmiHelper.transfer(USDC_CONTRACT, item.claimContract, price)
-    console.log(result)
+    const txid = await WagmiHelper.transfer(item.token.address, item.claimContract, price)
+    if (txid) {
+      setStep(2)
+
+      const temp = await WagmiHelper.waitForTransaction(txid)
+      if (temp) {
+        setStep(3)
+        const result = await $gem.api.claim({
+          auction_id: item.id,
+          tx_hash: txid,
+          jwt_token: jwt,
+        })
+
+        if (result && !result?.error) {
+          setStep(4)
+          return
+        } else {
+          dispatch($alert.set.error({title: result?.error}))
+        }
+      }
+    }
+
+    setStep(0)
   }
 
   const handleClose = () => {
@@ -42,18 +70,6 @@ const AuctionClaim = ({ item, onClose }) => {
 
   const handleProceed = () => {
     setStep(1)
-
-    // setTimeout(() => {
-    //   setStep(2)
-    // }, 3000)
-
-    // setTimeout(() => {
-    //   setStep(3)
-    // }, 6000)
-
-    // setTimeout(() => {
-    //   setStep(4)
-    // }, 9000)
   }
 
   const handleScan = () => {
