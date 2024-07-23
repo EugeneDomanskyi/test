@@ -150,7 +150,7 @@ const GemsAuction = () => {
             </App.Flex>
 
             <App.Flex row center gap={16} className={styles.frame} flex={[null, 1]}>
-              <App.Text size={[24, 16]} weight={600} height={1}>{t('1 Gem = 1 Bid')}</App.Text>
+              <App.Text size={[24, 16]} weight={600} height={1}>{t('100 Gems = 1 Bid')}</App.Text>
             </App.Flex>
           </App.Flex>
 
