@@ -12,6 +12,7 @@ import $gem from '@/store/gem'
 import App from '@/components/App'
 import AuctionItem from '@/components/Auction/AuctionItem'
 import AuctionItemNotify from '@/components/Auction/AuctionItemNotify'
+import AuctionClaim from '@/components/Auction/AuctionClaim'
 
 import styles from './styles.module.scss'
 
@@ -25,6 +26,8 @@ const GemsAuction = () => {
   const auctions = useSelector(({ $gem }) => $gem.auctions)
   const referral = useSelector(({ $gem }) => $gem.referral)
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
+  const claim = useSelector(({ $gem }) => $gem.claim)
+  const claimItem = useSelector($gem.get.claimItem)
 
   const tempItem = {
     id: 1,
@@ -147,6 +150,10 @@ const GemsAuction = () => {
     })
   }
 
+  const handleClaimClose = () => {
+    dispatch($gem.set.claim(false))
+  }
+
   return (
     <App.Container maxWidth={1230} sx={{ paddingBottom: 32 }}>
       <App.Flex column fullWidth flex={1} gap={16}>
@@ -193,6 +200,10 @@ const GemsAuction = () => {
 
         {/* <AuctionItemNotify item={tempItem} onClear={handleClear} /> */}
       </App.Flex>
+
+      <App.Dialog hideHeader open={claim} onClose={handleClaimClose}>
+        <AuctionClaim item={claimItem} onClose={handleClaimClose} />
+      </App.Dialog>
     </App.Container>
   )
 }

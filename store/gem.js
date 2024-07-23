@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSelector, createSlice } from '@reduxjs/toolkit'
 import moment from 'moment'
 import { formatUnits } from 'viem'
 
@@ -28,6 +28,7 @@ const auctionTemplate = (item, wallet) => {
       bid: `${formatUnits(bid.price.toString(), 6)} USDC`,
       wallet: bid.wallet.wallet_address,
       time: moment(bid.created_at).format('HH:mm DD-MM-YYYY'),
+      created_at: bid.created_at,
     }
   })
 
@@ -49,6 +50,7 @@ const auctionTemplate = (item, wallet) => {
     gemsPrice: item.points_to_deduct,
     lastBidTimestamp: item.last_bid_timestamp,
     history,
+    claimContract: item.auction_amount_receiver,
     updated: false,
   }
 }
@@ -85,6 +87,8 @@ export const gemSlice = createSlice({
 
     tournaments: {},
     auctions: [],
+    claim: true,
+    claimId: 5,
     current: null,
     showBrett: false,
   },
@@ -260,6 +264,14 @@ export const gemSlice = createSlice({
       state.showBrett = payload
     },
 
+    claim: (state, { payload }) => {
+      state.claim = payload
+    },
+
+    claimId: (state, { payload }) => {
+      state.claimId = payload
+    },
+
     clear: (state, { payload }) => {
       state.jwt = null
       state.referral = {
@@ -286,6 +298,15 @@ export const gemSlice = createSlice({
     },
   },
 })
+
+export const get = {
+  claimItem: createSelector([
+    state => state.$gem.auctions,
+    state => state.$gem.claimId,
+  ], (auctions, claimId) => {
+    return claimId ? auctions.find(item => item.id == claimId) : null
+  }),
+}
 
 export const api = {
   register: (params) => {
@@ -361,4 +382,5 @@ export default {
   reducer: gemSlice.reducer,
   set: gemSlice.actions,
   api,
+  get,
 }

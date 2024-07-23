@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { parseUnits } from 'viem'
 import cn from 'classnames'
 
 import App from 'components/App'
@@ -7,11 +8,31 @@ import AuctionItemSimple from 'components/Auction/AuctionItemSimple'
 import AuctionLoader from 'components/Auction/AuctionLoader'
 
 import styles from './styles.module.scss'
+import WagmiHelper from '@/libs/WagmiHelper'
 
 const AuctionClaim = ({ item, onClose }) => {
   const { t } = useTranslation()
 
   const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    if (step == 1) {
+      transaction()
+    }
+  }, [step])
+
+  const transaction = async () => {
+    const USDC_CONTRACT = '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+    const price = parseUnits(item.currentPrice, 6)
+
+    const network = await WagmiHelper.changeChain('base')
+    if (!network) {
+      return
+    }
+
+    const result = await WagmiHelper.transfer(USDC_CONTRACT, item.claimContract, price)
+    console.log(result)
+  }
 
   const handleClose = () => {
     if (onClose) {
@@ -22,17 +43,17 @@ const AuctionClaim = ({ item, onClose }) => {
   const handleProceed = () => {
     setStep(1)
 
-    setTimeout(() => {
-      setStep(2)
-    }, 3000)
+    // setTimeout(() => {
+    //   setStep(2)
+    // }, 3000)
 
-    setTimeout(() => {
-      setStep(3)
-    }, 6000)
+    // setTimeout(() => {
+    //   setStep(3)
+    // }, 6000)
 
-    setTimeout(() => {
-      setStep(4)
-    }, 9000)
+    // setTimeout(() => {
+    //   setStep(4)
+    // }, 9000)
   }
 
   const handleScan = () => {

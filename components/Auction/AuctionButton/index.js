@@ -15,8 +15,9 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 import AuctionItemSimple from '@/components/Auction/AuctionItemSimple'
+import AuctionClaim from '../AuctionClaim'
 
-const AuctionButton = ({ item, small, share }) => {
+const AuctionButton = ({ item, small, share, short }) => {
   const router = useRouter()
   const { t } = useTranslation()
   const { wallet, connect } = useWagmiHelper()
@@ -48,7 +49,7 @@ const AuctionButton = ({ item, small, share }) => {
 
   const text = () => {
     if (share) {
-      return `Tweet Now ${isMobile ? '' : '(Get 50 Gems)'}`
+      return `Tweet Now ${isMobile || short ? '' : '(Get 50 Gems)'}`
     }
 
     switch (item.status) {
@@ -155,7 +156,9 @@ const AuctionButton = ({ item, small, share }) => {
 
     if (item.status == 'closed') {
       if (item.current) {
-        router.push(`/earnings`)
+        if (item.claimContract && item.claimContract != '') {
+          dispatch($gem.set.claimId(item.id))
+        }
       } else {
         router.push(`/gems-dashboard/${item.id}`)
       }
@@ -185,6 +188,10 @@ Don't fade, join the fun today: ${link}
 
   const handleExchange = () => {
     router.push('/exchange')
+  }
+
+  const handleClaimClose = () => {
+    setClaimDialog(false)
   }
 
   return (

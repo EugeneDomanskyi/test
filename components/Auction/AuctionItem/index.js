@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
 
@@ -19,6 +19,7 @@ const AuctionItem = ({ item, onClear }) => {
   const { t } = useTranslation()
 
   const dispatch = useDispatch()
+  const referral = useSelector(({ $gem }) => $gem.referral)
 
   useEffect(() => {
     if (item?.updated) {
@@ -87,7 +88,7 @@ const AuctionItem = ({ item, onClear }) => {
           ) : null}
         </App.Flex>
 
-        <AuctionButton item={item} />
+        <AuctionButton item={item} share={item.status == 'upcoming' && referral.is_telegram_present} short />
 
         {item.status == 'closed' ? (
           <App.Button small onClick={handleClear}>Clear</App.Button>

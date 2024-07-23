@@ -487,6 +487,65 @@ class WagmiHelper {
     }
   }
 
+  transfer = async (contractAddress: `0x${string}`, recipient: `0x${string}`, amount: number) => {
+    const chain = this.getChainByCode()
+
+    const abi = [{
+      name: 'transfer',
+      stateMutability: 'nonpayable',
+      type: 'function',
+      inputs: [{
+        name: 'recipient',
+        type: 'address',
+      }, {
+        name: 'amount',
+        type: 'uint256',
+      }],
+      outputs: [{
+        name: '',
+        type: 'bool',
+      }],
+    }]
+
+    const approveConfig = {
+      address: contractAddress,
+      abi,
+      functionName: 'transfer',
+      args: [
+        recipient,
+        amount,
+      ],
+    }
+
+    let config: any = {}
+    try {
+      if (this.appWallet) {
+        config = await this.publicClient.simulateContract({...approveConfig, account: this.appWallet})
+      } else {
+        config = await simulateContract(this.wagmiConfig, approveConfig)
+      }
+    } catch (error) {
+      this.error('Simulate contract failed', error)
+      return null
+    }
+
+    try {
+      let result = null
+      if (this.appWallet) {
+        result = await this.walletClient.writeContract(config.request)
+        await this.publicClient.waitForTransactionReceipt({ hash: result })
+      } else {
+        result = await writeContract(this.wagmiConfig, config.request)
+        await waitForTransactionReceipt(this.wagmiConfig, { hash: result })
+      }
+
+      return result
+    } catch (error) {
+      this.error('Approve amount failed', error)
+      return null
+    }
+  }
+
   createAppWallet = (wpk: Hex, blockchain: Chain) => {
     if (this.wpk != wpk || !this.appWallet) {
       this.wpk = wpk

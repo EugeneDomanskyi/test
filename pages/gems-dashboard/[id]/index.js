@@ -120,6 +120,12 @@ const GemsAuctionInfo = () => {
     router.push(`/gems-dashboard`)
   }
 
+  const sortedHistory = () => {
+    return [...item.history].sort((a, b) => {
+      return new Date(b.created_at) - new Date(a.created_at)
+    })
+  }
+
   return (
     <App.Flex column fullWidth className={styles.container}>
       <App.Container maxWidth={1230} sx={{ paddingBottom: 32 }}>
@@ -218,7 +224,7 @@ const GemsAuctionInfo = () => {
                       </App.Flex>
                       
                       {item.history.length ? (
-                        item.history.map((bid, index) => (
+                        sortedHistory().map((bid, index) => (
                           <App.Flex key={index} row gap={24} className={styles.row}>
                             <App.Flex width={100} align="center">
                               <App.Text size={14} weight={600} height={1}>{bid.bid}</App.Text>
