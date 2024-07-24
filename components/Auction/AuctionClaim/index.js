@@ -61,6 +61,7 @@ const AuctionClaim = ({ item, onClose }) => {
           setStep(4)
           setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
           dispatch($gem.set.auctionUpdated({data: result.auction, wallet}))
+          
           return
         } else {
           dispatch($alert.set.error({title: result?.error}))
