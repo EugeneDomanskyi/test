@@ -5,7 +5,9 @@ import { parseUnits } from 'viem'
 import cn from 'classnames'
 
 import WagmiHelper from '@/libs/WagmiHelper'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
+import $app from 'store/app'
 import $gem from 'store/gem'
 import $alert from 'store/alert'
 
@@ -18,10 +20,13 @@ import styles from './styles.module.scss'
 const AuctionClaim = ({ item, onClose }) => {
   const { t } = useTranslation()
 
+  const { wallet } = useWagmiHelper()
+
   const dispatch = useDispatch()
   const jwt = useSelector(({ $gem }) => $gem.jwt)
 
   const [step, setStep] = useState(0)
+  const [scanLink, setScanLink] = useState(null)
 
   useEffect(() => {
     if (step == 1) {
@@ -30,12 +35,14 @@ const AuctionClaim = ({ item, onClose }) => {
   }, [step])
 
   const transaction = async () => {
+    setScanLink(null)
     const price = parseUnits(item.currentPrice, item.token.decimals)
 
     const network = await WagmiHelper.changeChain('amoy')
     if (!network) {
       return
     }
+    dispatch($app.set.code('amoy'))
 
     const txid = await WagmiHelper.transfer(item.token.address, item.claimContract, price)
     if (txid) {
@@ -52,6 +59,8 @@ const AuctionClaim = ({ item, onClose }) => {
 
         if (result && !result?.error) {
           setStep(4)
+          setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
+          dispatch($gem.set.auctionUpdated({data: result.auction, wallet}))
           return
         } else {
           dispatch($alert.set.error({title: result?.error}))
@@ -70,10 +79,6 @@ const AuctionClaim = ({ item, onClose }) => {
 
   const handleProceed = () => {
     setStep(1)
-  }
-
-  const handleScan = () => {
-    console.log('Scan')
   }
 
   const handleShare = () => {
@@ -150,7 +155,7 @@ const AuctionClaim = ({ item, onClose }) => {
           <App.Flex column center gap={12}>
             <App.Text center size={24} weight={600} height={1}>{t('Congratulations!')}</App.Text>
             <App.Flex center className={styles.badge}>
-              <App.Text size={20} weight={600} height={1} color="#53F19C">{t('Your winnings have been added to your wallet')}</App.Text>
+              <App.Text center size={[20, 16]} weight={600} height={1} color="#53F19C">{t('Your winnings have been added to your wallet')}</App.Text>
             </App.Flex>
           </App.Flex>
         ) : null}
@@ -163,7 +168,7 @@ const AuctionClaim = ({ item, onClose }) => {
 
         {step == 0 ? (
           <App.Flex column gap={16} fullWidth center>
-            <App.Text size={20} weight={600} height={1}>{t('Pay the auction amount to claim the NFT')}</App.Text>
+            <App.Text center size={[20, 16]} weight={600} height={1}>{t('Pay the auction amount to claim the NFT')}</App.Text>
             <App.Button primary2 onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
           </App.Flex>
         ) : null}
@@ -171,7 +176,7 @@ const AuctionClaim = ({ item, onClose }) => {
         {step == 4 ? (
           <App.Flex row center gap={24} fullWidth>
             <App.Flex center flex={1}>
-              <App.Button primary2 outlined fullWidth onClick={handleScan}>{t('View on Explorer')}</App.Button>
+              <App.Button primary2 outlined fullWidth href={scanLink}>{t('View on Explorer')}</App.Button>
             </App.Flex>
 
             <App.Flex center flex={1}>

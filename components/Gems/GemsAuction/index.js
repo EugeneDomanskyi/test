@@ -171,7 +171,7 @@ const GemsAuction = () => {
           {/* <App.Button primary2 outlined order={[1, 0]} onClick={handleHistory}>{t('Transaction History')}</App.Button> */}
         </App.Flex>
 
-        <App.Flex row align="center" justify="space-between" className={styles.videoBox}>
+        {/* <App.Flex row align="center" justify="space-between" className={styles.videoBox}>
           <App.Flex row align="center" gap={[16, 8]}>
             <App.Flex center className={styles.question}>
               <App.Text size={[40, 14]} weight={700} height={1}>?</App.Text>
@@ -190,7 +190,7 @@ const GemsAuction = () => {
           {!isMobile ? (
             <App.Button primary2 outlined>Watch Now <App.Icon icon="play-circle" /></App.Button>
           ) : null}
-        </App.Flex>
+        </App.Flex> */}
 
         <App.Flex row wrap gap={24}>
           {auctions.length ? (

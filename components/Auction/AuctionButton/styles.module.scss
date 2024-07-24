@@ -112,6 +112,10 @@
     height: 48px;
     border-radius: 10px;
   }
+
+  &.center {
+    justify-content: center;
+  }
 }
 
 .warningBox {

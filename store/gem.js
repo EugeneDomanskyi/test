@@ -27,7 +27,9 @@ const auctionTemplate = (item, wallet) => {
     return {
       bid: `${formatUnits(bid.price.toString(), 6)} USDC`,
       wallet: bid.wallet.wallet_address,
-      time: moment(bid.created_at).format('HH:mm DD-MM-YYYY'),
+      date: moment(bid.created_at).format('HH:mm DD-MM-YYYY'),
+      time: moment(bid.created_at).format('HH:mm'),
+      day: moment(bid.created_at).format('DD-MM-YYYY'),
       created_at: bid.created_at,
     }
   })
@@ -55,6 +57,7 @@ const auctionTemplate = (item, wallet) => {
     lastBidTimestamp: item.last_bid_timestamp,
     history,
     claimContract: item.auction_amount_receiver,
+    claimHash: item.claim_tx_hash,
     updated: false,
   }
 }
@@ -91,8 +94,8 @@ export const gemSlice = createSlice({
 
     tournaments: {},
     auctions: [],
-    claim: true,
-    claimId: 5,
+    claim: false,
+    claimId: null,
     current: null,
     showBrett: false,
   },
@@ -231,16 +234,21 @@ export const gemSlice = createSlice({
     },
 
     auctionUpdated: (state, { payload }) => {
+      const auction = auctionTemplate(payload.data, payload.wallet)
       state.auctions = state.auctions.map(item => {
-        if (item.id == payload.data.id) {
+        if (item.id == auction.id) {
           return {
-            ...auctionTemplate(payload.data, payload.wallet),
+            ...auction,
             updated: true,
           }
         }
 
         return item
       })
+
+      if (state.current?.id == auction.id) {
+        state.current = auction
+      }
     },
 
     auctionNotUpdated: (state, { payload }) => {
@@ -307,8 +315,9 @@ export const get = {
   claimItem: createSelector([
     state => state.$gem.auctions,
     state => state.$gem.claimId,
-  ], (auctions, claimId) => {
-    return claimId ? auctions.find(item => item.id == claimId) : null
+    state => state.$gem.current,
+  ], (auctions, claimId, current) => {
+    return claimId ? (auctions.length ? auctions.find(item => item.id == claimId) : current) : null
   }),
 }
 

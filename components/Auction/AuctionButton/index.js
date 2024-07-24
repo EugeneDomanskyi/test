@@ -55,7 +55,7 @@ const AuctionButton = ({ item, small, share, short }) => {
     switch (item.status) {
       case 'upcoming': return 'Notify Me'
       case 'ongoing': return item.wallet ? 'Place Bid' : 'Bid Now'
-      case 'closed': return item.current ? 'Proceed to checkout' : 'View History'
+      case 'closed': return item.current ? (item.claimHash == '' ? 'Proceed to checkout' : 'Already claimed') : 'View History'
     }
   }
 
@@ -156,7 +156,8 @@ const AuctionButton = ({ item, small, share, short }) => {
 
     if (item.status == 'closed') {
       if (item.current) {
-        if (item.claimContract && item.claimContract != '') {
+        if (item.claimContract && item.claimContract != '' && item.claimHash == '') {
+          dispatch($gem.set.claim(true))
           dispatch($gem.set.claimId(item.id))
         }
       } else {
@@ -204,16 +205,22 @@ Don't fade, join the fun today: ${link}
           ) : null}
         </div>
       ) : (
-        <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
-          {share ? (
-            <App.Icon icon="x2" />
-          ) : null}
+        item.status == 'closed' && item.current && item.claimHash != '' ? (
+          <div className={cn(styles.badge, styles.center)}>
+            <App.Text center size={small ? 16 : 20} weight={600} height={1}>{t(text())}</App.Text>
+          </div>
+        ) : (
+          <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
+            {share ? (
+              <App.Icon icon="x2" />
+            ) : null}
 
-          {item.status == 'ongoing' && item.wallet ? (
-            <App.Text size={small ? 16 : 20} weight={600} height={1}>{duration.minutes}:{duration.seconds}</App.Text>
-          ) : null}
-          <App.Text size={small ? 16 : 20} weight={600} height={1}>{t(text())}</App.Text>
-        </button>
+            {item.status == 'ongoing' && item.wallet ? (
+              <App.Text size={small ? 16 : 20} weight={600} height={1}>{duration.minutes}:{duration.seconds}</App.Text>
+            ) : null}
+            <App.Text size={small ? 16 : 20} weight={600} height={1}>{t(text())}</App.Text>
+          </button>
+        )
       )}
 
       <App.Dialog open={isWarningDialog} onClose={handleClose} title={t('Warning')}>
