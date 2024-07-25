@@ -563,7 +563,7 @@ class WagmiHelper {
         })
       }
 
-      return result ? result.formatted : 0
+      return result ? Number(result.formatted) : 0
     } catch (error) {
       this.error('Balance Of failed', error)
       return null

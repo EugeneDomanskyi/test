@@ -1,10 +1,12 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
 
-import { useTranslation } from 'react-i18next'
+import WagmiHelper from '@/libs/WagmiHelper'
 
+import $app from '@/store/app'
 import $gem from '@/store/gem'
 
 import App from '@/components/App'
