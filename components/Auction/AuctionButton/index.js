@@ -96,6 +96,7 @@ const AuctionButton = ({ item, small, share }) => {
 
     let connectedWallet = wallet
     if ( ! connectedWallet) {
+      console.log(wallet)
       connectedWallet = await connect()
     }
 
@@ -114,8 +115,8 @@ const AuctionButton = ({ item, small, share }) => {
 
   const handeClick = async (e) => {
     e.stopPropagation()
-
     const user = await getUserInfo()
+    console.log(user)
     if (!user?.wallet || !user?.id) {
       return
     }

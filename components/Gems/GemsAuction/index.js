@@ -41,7 +41,7 @@ const GemsAuction = () => {
     return () => {
       document.removeEventListener('visibilitychange', handleVisible)
     }
-  }, [])
+  }, [wallet])
 
   useEffect(() => {
     if (socketConnected) {
