@@ -131,8 +131,8 @@ const GemsAuctionInfo = () => {
   }
 
   const getShort = (address) => {
-    const n = isMobile ? 10 : 24
-    return address ? `${address.substring(0, n)}...${address.substring(address.length - n)}` : ''
+    const n = 10
+    return address ? (isMobile ? `${address.substring(0, n)}...${address.substring(address.length - n)}` : address) : ''
   }
 
   const handleClaimClose = () => {
