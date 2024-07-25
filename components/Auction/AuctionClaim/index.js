@@ -27,6 +27,7 @@ const AuctionClaim = ({ item, onClose }) => {
 
   const [step, setStep] = useState(0)
   const [scanLink, setScanLink] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (step == 1) {
@@ -37,12 +38,6 @@ const AuctionClaim = ({ item, onClose }) => {
   const transaction = async () => {
     setScanLink(null)
     const price = parseUnits(item.currentPrice, item.token.decimals)
-
-    const network = await WagmiHelper.changeChain('amoy')
-    if (!network) {
-      return
-    }
-    dispatch($app.set.code('amoy'))
 
     const txid = await WagmiHelper.transfer(item.token.address, item.claimContract, price)
     if (txid) {
@@ -78,12 +73,44 @@ const AuctionClaim = ({ item, onClose }) => {
     }
   }
 
-  const handleProceed = () => {
-    setStep(1)
+  const handleProceed = async () => {
+    setLoading(true)
+
+    const chainCode = 'amoy' 
+    const network = await WagmiHelper.changeChain(chainCode)
+    if (!network) {
+      return
+    }
+    dispatch($app.set.code(chainCode))
+
+    const balance = await WagmiHelper.balanceOf(item.token.address, chainCode)
+    if (balance >= item.currentPrice) {
+      setStep(1)
+    } else {
+      dispatch($alert.set.error({title: 'Insufficient balance'}))
+    }
+
+    setLoading(false)
   }
 
   const handleShare = () => {
-    console.log('Share')
+    const link = `${window.location.origin}/gems-dashboard#auction`
+    const tweetText = encodeURIComponent(`
+🚀 Unbelievable! I just bagged ${item.name} for just ${item.currentPrice} ${item.token.currency} on Tegro! 👀
+
+That's a whopping ${percent()}% off! 😱
+
+You don't wanna miss these insane deals! ✨
+
+🔗 Connect your wallet & place the BID now at ${link}
+    `)
+
+    const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}`
+    window.open(tweetUrl, '_blank')
+  }
+
+  const percent = () => {
+    return Math.round((item.marketPrice - item.currentPrice) / item.marketPrice * 100)
   }
 
   return (
@@ -170,7 +197,7 @@ const AuctionClaim = ({ item, onClose }) => {
         {step == 0 ? (
           <App.Flex column gap={16} fullWidth center>
             <App.Text center size={[20, 16]} weight={600} height={1}>{t('Pay the auction amount to claim the NFT')}</App.Text>
-            <App.Button primary2 onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
+            <App.Button primary2 loading={loading} onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
           </App.Flex>
         ) : null}
 

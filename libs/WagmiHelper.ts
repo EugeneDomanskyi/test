@@ -2,7 +2,7 @@ import nookies from 'nookies'
 import { Chain, Hex, PrivateKeyAccount, WalletClient, createPublicClient, createWalletClient, publicActions } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { http } from 'wagmi'
-import { disconnect, getAccount, getChainId, readContract, signMessage, signTypedData, simulateContract, switchChain, watchAccount, writeContract, waitForTransactionReceipt } from '@wagmi/core'
+import { disconnect, getAccount, getBalance, getChainId, readContract, signMessage, signTypedData, simulateContract, switchChain, watchAccount, writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
 import { metaMaskWallet, rainbowWallet, walletConnectWallet, coinbaseWallet } from '@rainbow-me/rainbowkit/wallets'
 import * as wagmiChains from 'wagmi/chains'
@@ -540,6 +540,32 @@ class WagmiHelper {
       return result
     } catch (error) {
       this.error('Approve amount failed', error)
+      return null
+    }
+  }
+
+  balanceOf = async (token: `0x${string}`, chainCode: string) => {
+    const wallet = this.getWallet() as `0x${string}`
+    const chain = this.getChainByCode(chainCode)
+
+    try {
+      let result = null
+      if (this.appWallet) {
+        result = await this.publicClient.getL1TokenBalance({
+          account: wallet,
+          token,
+        })
+      } else {
+        result = await getBalance(this.wagmiConfig, {
+          address: wallet,
+          chainId: chain.id,
+          token,
+        })
+      }
+
+      return result ? result.formatted : 0
+    } catch (error) {
+      this.error('Balance Of failed', error)
       return null
     }
   }
