@@ -118,7 +118,7 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
     if (icon == 'chevron-left2') {
       return (
         <svg width={width ?? 32} height={height ?? 32} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-          <path stroke={color ?? '#fff'} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 8L11 16L19 24" />
+          <path stroke={color ?? '#fff'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M19 8L11 16L19 24" />
         </svg>
       )
     }
@@ -142,7 +142,7 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
     if (icon == 'chevron-right3') {
       return (
         <svg width={width ?? 24} height={width ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-          <path stroke={color ?? '#fff'} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10 16L14 12L10 8" />
+          <path stroke={color ?? '#fff'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M10 16L14 12L10 8" />
         </svg>
       )
     }
@@ -175,8 +175,8 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
     if (icon == 'check-circle') {
       return (
         <svg width={width ?? 16} height={height ?? 17} viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-          <path stroke={color ?? '#A6DC37'} d="M7.99996 15.1664C11.6665 15.1664 14.6664 12.1665 14.6664 8.49996C14.6664 4.8334 11.6665 1.8335 7.99996 1.8335C4.3334 1.8335 1.3335 4.8334 1.3335 8.49996C1.3335 12.1665 4.3334 15.1664 7.99996 15.1664Z" stroke-width="0.999969" stroke-linecap="round" stroke-linejoin="round"/>
-          <path stroke={color ?? '#A6DC37'} d="M5.16699 8.50013L7.0536 10.3867L10.8335 6.61353" stroke-width="0.999969" stroke-linecap="round" stroke-linejoin="round"/>
+          <path stroke={color ?? '#A6DC37'} d="M7.99996 15.1664C11.6665 15.1664 14.6664 12.1665 14.6664 8.49996C14.6664 4.8334 11.6665 1.8335 7.99996 1.8335C4.3334 1.8335 1.3335 4.8334 1.3335 8.49996C1.3335 12.1665 4.3334 15.1664 7.99996 15.1664Z" strokeWidth="0.999969" strokeLinecap="round" strokeLinejoin="round"/>
+          <path stroke={color ?? '#A6DC37'} d="M5.16699 8.50013L7.0536 10.3867L10.8335 6.61353" strokeWidth="0.999969" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       )
     }
@@ -621,9 +621,9 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
     if (icon === 'info2') {
       return (
         <svg width={width ?? 25} height={height ?? 24} viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12.6666 16.25L12.6666 11" stroke={color ?? '#fff'} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M12.6666 7.79999L12.6666 7.69999" stroke={color ?? '#fff'} stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="12.6666" cy="12" r="9.25" stroke={color ?? '#fff'} stroke-width="1.5"/>
+          <path d="M12.6666 16.25L12.6666 11" stroke={color ?? '#fff'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M12.6666 7.79999L12.6666 7.69999" stroke={color ?? '#fff'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <circle cx="12.6666" cy="12" r="9.25" stroke={color ?? '#fff'} strokeWidth="1.5"/>
         </svg>
       )
     }
@@ -1901,42 +1901,42 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
           <path d="M16.6667 10V18.3333H3.33337V10" fill="url(#paint0_radial_6310_1803)"/>
           <path d="M18.3333 5.83334H1.66663V10H18.3333V5.83334Z" fill="black"/>
           <path d="M18.3333 5.83334H1.66663V10H18.3333V5.83334Z" fill="url(#paint1_radial_6310_1803)"/>
-          <path d="M10 17L10 6" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M10 17L10 6" stroke="url(#paint2_radial_6310_1803)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M9.99996 5.83333H6.24996C5.69743 5.83333 5.16752 5.61384 4.77682 5.22314C4.38612 4.83244 4.16663 4.30253 4.16663 3.75C4.16663 3.19746 4.38612 2.66756 4.77682 2.27686C5.16752 1.88616 5.69743 1.66666 6.24996 1.66666C9.16663 1.66666 9.99996 5.83333 9.99996 5.83333Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M9.99996 5.83333H6.24996C5.69743 5.83333 5.16752 5.61384 4.77682 5.22314C4.38612 4.83244 4.16663 4.30253 4.16663 3.75C4.16663 3.19746 4.38612 2.66756 4.77682 2.27686C5.16752 1.88616 5.69743 1.66666 6.24996 1.66666C9.16663 1.66666 9.99996 5.83333 9.99996 5.83333Z" stroke="url(#paint3_radial_6310_1803)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M10 5.83333H13.75C14.3025 5.83333 14.8324 5.61384 15.2231 5.22314C15.6138 4.83244 15.8333 4.30253 15.8333 3.75C15.8333 3.19746 15.6138 2.66756 15.2231 2.27686C14.8324 1.88616 14.3025 1.66666 13.75 1.66666C10.8333 1.66666 10 5.83333 10 5.83333Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M10 5.83333H13.75C14.3025 5.83333 14.8324 5.61384 15.2231 5.22314C15.6138 4.83244 15.8333 4.30253 15.8333 3.75C15.8333 3.19746 15.6138 2.66756 15.2231 2.27686C14.8324 1.88616 14.3025 1.66666 13.75 1.66666C10.8333 1.66666 10 5.83333 10 5.83333Z" stroke="url(#paint4_radial_6310_1803)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 17L10 6" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M10 17L10 6" stroke="url(#paint2_radial_6310_1803)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M9.99996 5.83333H6.24996C5.69743 5.83333 5.16752 5.61384 4.77682 5.22314C4.38612 4.83244 4.16663 4.30253 4.16663 3.75C4.16663 3.19746 4.38612 2.66756 4.77682 2.27686C5.16752 1.88616 5.69743 1.66666 6.24996 1.66666C9.16663 1.66666 9.99996 5.83333 9.99996 5.83333Z" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M9.99996 5.83333H6.24996C5.69743 5.83333 5.16752 5.61384 4.77682 5.22314C4.38612 4.83244 4.16663 4.30253 4.16663 3.75C4.16663 3.19746 4.38612 2.66756 4.77682 2.27686C5.16752 1.88616 5.69743 1.66666 6.24996 1.66666C9.16663 1.66666 9.99996 5.83333 9.99996 5.83333Z" stroke="url(#paint3_radial_6310_1803)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M10 5.83333H13.75C14.3025 5.83333 14.8324 5.61384 15.2231 5.22314C15.6138 4.83244 15.8333 4.30253 15.8333 3.75C15.8333 3.19746 15.6138 2.66756 15.2231 2.27686C14.8324 1.88616 14.3025 1.66666 13.75 1.66666C10.8333 1.66666 10 5.83333 10 5.83333Z" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M10 5.83333H13.75C14.3025 5.83333 14.8324 5.61384 15.2231 5.22314C15.6138 4.83244 15.8333 4.30253 15.8333 3.75C15.8333 3.19746 15.6138 2.66756 15.2231 2.27686C14.8324 1.88616 14.3025 1.66666 13.75 1.66666C10.8333 1.66666 10 5.83333 10 5.83333Z" stroke="url(#paint4_radial_6310_1803)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           <defs>
             <radialGradient id="paint0_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(16.1719 10.3744) rotate(160.932) scale(14.0247 17.3864)">
-              <stop stop-color="#FFF6A3"/>
-              <stop offset="0.34606" stop-color="#FFF066"/>
-              <stop offset="0.688349" stop-color="#FFCB45"/>
-              <stop offset="1" stop-color="#FFBD13"/>
+              <stop stopColor="#FFF6A3"/>
+              <stop offset="0.34606" stopColor="#FFF066"/>
+              <stop offset="0.688349" stopColor="#FFCB45"/>
+              <stop offset="1" stopColor="#FFBD13"/>
             </radialGradient>
             <radialGradient id="paint1_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(17.7148 6.02051) rotate(172.128) scale(16.7266 9.1112)">
-              <stop stop-color="#FFF6A3"/>
-              <stop offset="0.34606" stop-color="#FFF066"/>
-              <stop offset="0.688349" stop-color="#FFCB45"/>
-              <stop offset="1" stop-color="#FFBD13"/>
+              <stop stopColor="#FFF6A3"/>
+              <stop offset="0.34606" stopColor="#FFF066"/>
+              <stop offset="0.688349" stopColor="#FFCB45"/>
+              <stop offset="1" stopColor="#FFBD13"/>
             </radialGradient>
             <radialGradient id="paint2_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(10.9629 6.49414) rotate(99.3348) scale(6.12901 3.93866)">
-              <stop stop-color="#FFF6A3"/>
-              <stop offset="0.34606" stop-color="#FFF066"/>
-              <stop offset="0.688349" stop-color="#FFCB45"/>
-              <stop offset="1" stop-color="#FFBD13"/>
+              <stop stopColor="#FFF6A3"/>
+              <stop offset="0.34606" stopColor="#FFF066"/>
+              <stop offset="0.688349" stopColor="#FFCB45"/>
+              <stop offset="1" stopColor="#FFBD13"/>
             </radialGradient>
             <radialGradient id="paint3_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(9.78349 1.85384) rotate(158.444) scale(6.23524 8.55458)">
-              <stop stop-color="#FFF6A3"/>
-              <stop offset="0.34606" stop-color="#FFF066"/>
-              <stop offset="0.688349" stop-color="#FFCB45"/>
-              <stop offset="1" stop-color="#FFBD13"/>
+              <stop stopColor="#FFF6A3"/>
+              <stop offset="0.34606" stopColor="#FFF066"/>
+              <stop offset="0.688349" stopColor="#FFCB45"/>
+              <stop offset="1" stopColor="#FFBD13"/>
             </radialGradient>
             <radialGradient id="paint4_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(15.6169 1.85384) rotate(158.444) scale(6.23524 8.55458)">
-              <stop stop-color="#FFF6A3"/>
-              <stop offset="0.34606" stop-color="#FFF066"/>
-              <stop offset="0.688349" stop-color="#FFCB45"/>
-              <stop offset="1" stop-color="#FFBD13"/>
+              <stop stopColor="#FFF6A3"/>
+              <stop offset="0.34606" stopColor="#FFF066"/>
+              <stop offset="0.688349" stopColor="#FFCB45"/>
+              <stop offset="1" stopColor="#FFBD13"/>
             </radialGradient>
           </defs>
         </svg>

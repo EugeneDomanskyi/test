@@ -173,7 +173,7 @@ const Tournaments = () => {
                         <App.Flex direction={['row', 'column']} gap={16} fullWidth className={styles.header} align="center" justify="space-between">
                           <App.Flex direction={['row', 'column']} fullWidth gap={[24, 8]} align={['center', 'flex-start']} justify={['flex-start', 'space-between']}>
                             <App.Flex row align="center" gap={8}>
-                              <Image src={`/images/${key}-logo.png`} width={24} height={24} alt="" />
+                              <Image src={tournament.image ? tournament.image : `/images/${key}-logo.png`} width={24} height={24} alt="" />
                               <App.Text nowrap uppercase size={16} weight={700} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">{tournament.name}</App.Text>
                             </App.Flex>
     
@@ -295,7 +295,7 @@ const Tournaments = () => {
                                             <App.Text weight={400} height={1} color="#68C9F9">{item.points_per_hour}/hr</App.Text>
                                             {!isMobile ? (
                                               <App.Flex sx={{ marginTop: -10 }}>
-                                                <Image src="/images/gem-animate.gif" width={32} height={32} />
+                                                <Image src="/images/gem-animate.gif" width={32} height={32} alt="" />
                                               </App.Flex>
                                             ) : null}
                                           </App.Flex>

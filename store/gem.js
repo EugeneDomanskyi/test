@@ -82,6 +82,7 @@ export const gemSlice = createSlice({
     },
 
     tournaments: {},
+    currentTournament: null,
     auctions: [],
     current: null,
     showBrett: false,
@@ -209,6 +210,36 @@ export const gemSlice = createSlice({
       state.tournaments[payload].expand = !state.tournaments[payload].expand
     },
 
+    currentTournament: (state, { payload }) => {
+      const now = moment()
+      const startTime = moment(payload.start_time)
+      const endTime = moment(payload.end_time)
+
+      let status = 'on-going'
+      if (now.isBefore(startTime)) {
+        status = 'upcoming'
+      }
+
+      if (now.isAfter(endTime)) {
+        status = 'closed'
+      }
+
+      const temp = payload.alias.toLowerCase().split('-')
+      const currency = payload.rewards[0].reward_currency ?? ''
+      const code = temp[0]
+      const name = payload?.title
+      const slogan = (`${temp[0]} ${temp[1]}`).toUpperCase()
+
+      state.currentTournament = {
+        ...payload,
+        status,
+        currency,
+        code,
+        name,
+        slogan,
+      }
+    },
+
     auctions: (state, { payload }) => {
       state.auctions = payload.data.map(item => auctionTemplate(item, payload.wallet))
     },
@@ -315,6 +346,10 @@ export const api = {
   
   tournament: (alias) => {
     return request(`tournament/${alias}`, 'GET', {api: 'exchange'})
+  },
+
+  currentTournament: () => {
+    return request(`tournament/current`, 'GET', {api: 'exchange'})
   },
 
   tournaments: () => {
