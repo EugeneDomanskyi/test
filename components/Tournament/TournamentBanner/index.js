@@ -16,6 +16,8 @@ const TournamentBanner = ({ tournament }) => {
   const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
+  const code = tournament.alias.split('-')[0]
+
   const handleExchange = (tournament) => () => {
     Amplitude.event(`Tournament Trade ${tournament.name}`, {
       'Page': Amplitude.page(),
@@ -42,7 +44,7 @@ const TournamentBanner = ({ tournament }) => {
   }
 
   return isMobile ? (
-    <App.Flex column fullWidth gap={16} align="flex-start" className={styles.bannerMobile} onClick={handleExchange(tournament)}>
+    <App.Flex column fullWidth gap={16} align="flex-start" className={styles.bannerMobile}sx={{ backgroundImage: `url('/images/${code}-banner-mobile.png')` }} onClick={handleExchange(tournament)}>
       <App.Flex column gap={4}>
         <App.Text uppercase size={24} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">{getPool(tournament.rewards)} ${tournament.currency}</App.Text>
         <App.Text size={16} weight={700} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">In Rewards!</App.Text>
@@ -53,7 +55,7 @@ const TournamentBanner = ({ tournament }) => {
       <App.Button primary2 small>Trade Now</App.Button>
     </App.Flex>
   ) : (
-    <App.Flex direction={['row', 'column']} gap={24} className={styles.banner} align={['center', 'flex-start']} justify="space-between" onClick={handleExchange(tournament)}>
+    <App.Flex direction={['row', 'column']} gap={24} className={styles.banner} sx={{ backgroundImage: `url('/images/${code}-banner-long.png')` }} align={['center', 'flex-start']} justify="space-between" onClick={handleExchange(tournament)}>
       <App.Flex column gap={8}>
         <App.Text uppercase size={36} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">{getPool(tournament.rewards)} ${tournament.currency}</App.Text>
         <App.Text uppercase size={16} weight={600} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">in rewards!</App.Text>

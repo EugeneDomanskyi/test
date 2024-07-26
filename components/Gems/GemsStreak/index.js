@@ -31,11 +31,11 @@ const GemsStreak = ({ streaks, position }) => {
             <App.Flex row fullWidth align="flex-start" justify="space-between" className={styles.streakList}>
               <div className={styles.line}>
                 <div className={styles.squareContainer} style={{ padding: `0 calc(${100 / (streaks.length - 1) / 2}% + 8px)` }}>
-                  {streaks.slice(0, streaks.length - 1).map((streak) => {
+                  {streaks.slice(0, streaks.length - 1).map((streak, index) => {
                     const active = streak.level == position
                     const past = streak.level < position
                     return active ? (
-                      <App.Flex className={styles.squareFake}>
+                      <App.Flex key={index} className={styles.squareFake}>
                         <App.Flex column align="center" gap={6} className={styles.you}>
                           <Image src="/images/tiger.png" width={24} height={24} alt="" />
                           <App.Text size={12} weight={400}>You</App.Text>
@@ -127,8 +127,6 @@ const GemsStreak = ({ streaks, position }) => {
                         </App.Flex>
                       </>
                 }
-                
-                
               </div>
             )
           })}
