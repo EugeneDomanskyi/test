@@ -58,11 +58,9 @@ const GemsAuction = () => {
   }, [socketConnected])
 
   useEffect(() => {
-    if (wallet) {
-      setTimeout(fetchJWT, 500)
-      fetchAuctions()
-      fetchStats()
-    }
+    setTimeout(fetchJWT, 500)
+    fetchAuctions()
+    fetchStats()
   }, [wallet])
 
   const handleUpdatedAuction = (data) => {
@@ -160,7 +158,7 @@ const GemsAuction = () => {
         <App.Flex direction={['row', 'column']} align={['center', 'stretch']} justify="space-between" gap={[0, 16]}>
           <App.Flex row align="center" order={[0, 1]} gap={24}>
             <App.Flex row center gap={16} className={styles.frame} flex={[null, 1]}>
-              <App.Text size={[28, 16]} weight={600} height={1}>{t('Gems')} {referral.points}</App.Text>
+              <App.Text size={[28, 16]} weight={600} height={1}>{t('Gems')} {referral.points ?? 0}</App.Text>
             </App.Flex>
 
             <App.Flex row center gap={16} className={styles.frame} flex={[null, 1]}>

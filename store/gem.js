@@ -40,7 +40,7 @@ const auctionTemplate = (item, wallet) => {
     image: item.s3_url || null,
     logo: item.product.collection_url || null,
     status: status,
-    current: wallet == lastBidderWallet,
+    current: wallet && wallet == lastBidderWallet,
     wallet: lastBidderWallet,
     marketPrice,
     currentPrice,

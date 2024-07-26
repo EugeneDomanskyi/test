@@ -57,7 +57,7 @@ const GemsAuctionInfo = () => {
   }, [socketConnected])
 
   useEffect(() => {
-    if (id && wallet) {
+    if (id) {
       setTimeout(fetchJWT, 500)
       fetchInfo()
     }
