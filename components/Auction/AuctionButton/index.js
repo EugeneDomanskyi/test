@@ -16,7 +16,7 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 import AuctionItemSimple from '@/components/Auction/AuctionItemSimple'
 
-const AuctionButton = ({ item, small, share }) => {
+const AuctionButton = ({ item, small, share, telegram }) => {
   const router = useRouter()
   const { t } = useTranslation()
   const { wallet, connect } = useWagmiHelper()
@@ -46,6 +46,10 @@ const AuctionButton = ({ item, small, share }) => {
   const text = () => {
     if (share) {
       return `Tweet Now ${isMobile ? '' : '(Get 50 Gems)'}`
+    }
+
+    if (telegram) {
+      return `Connect Telegram`
     }
 
     switch (item.status) {
@@ -96,6 +100,7 @@ const AuctionButton = ({ item, small, share }) => {
 
     let connectedWallet = wallet
     if ( ! connectedWallet) {
+      console.log(wallet)
       connectedWallet = await connect()
     }
 
@@ -114,8 +119,8 @@ const AuctionButton = ({ item, small, share }) => {
 
   const handeClick = async (e) => {
     e.stopPropagation()
-
     const user = await getUserInfo()
+    console.log(user)
     if (!user?.wallet || !user?.id) {
       return
     }
@@ -199,9 +204,13 @@ Don't fade, join the fun today: ${link}
           ) : null}
         </div>
       ) : (
-        <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
+        <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
           {share ? (
             <App.Icon icon="x2" />
+          ) : null}
+
+          {telegram ? (
+            <App.Icon icon="telegram2" />
           ) : null}
 
           {item.status == 'ongoing' && item.wallet ? (

@@ -1,6 +1,9 @@
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import moment from 'moment'
 import cn from 'classnames'
+
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import App from '@/components/App'
 import AuctionBadge from '@/components/Auction/AuctionBadge'
@@ -10,19 +13,27 @@ import AuctionCountdown from '../AuctionCountdown'
 import AuctionButton from '../AuctionButton'
 
 const AuctionItemNotify = ({ item, onClear }) => {
+  const { wallet, connection } = useWagmiHelper()
+
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const referral = useSelector(({ $gem }) => $gem.referral)
 
+  const [showSteps, setShowSteps] = useState(false)
+
+  useEffect(() => {
+    if (!connection.loading && !connection.connected)
+      setShowSteps(true)
+  }, [connection])
+
   return (
-    <App.Flex direction={['row', 'column']} gap={[115, 0]} className={cn(styles.item, styles.upcoming)}>
+    <App.Flex direction={['row', 'column']} gap={[64, 0]} className={cn(styles.item, styles.upcoming)}>
       <App.Flex justify="center" className={styles.badgeBox}>
         <AuctionBadge v2 status={'upcoming'} win={false} />
       </App.Flex>
 
       <App.Flex justify="space-between" column gap={16} flex={1} className={styles.leftBox} order={[0, 1]}>
         <App.Flex column gap={8}>
-          <App.Text size={[40, 24]} weight={800} color="#FFBB01" height={1} sx={{ textShadow: '0px 2.849px 17.4px rgba(182, 0, 0, 0.55)' }}>Buy 1 ETH for <s>$3000</s> $100<sup>*</sup></App.Text>
-          <App.Text size={[18, 14]} weight={400}>Bid on the price of ETH using Gems. Every bid increases the price by 10 cents and resets the countdown. Last person to bid wins.</App.Text>
+          <App.Text size={[64, 24]} weight={800} color="#FFBB01" height={1} sx={{ textShadow: '0px 2.849px 17.4px rgba(182, 0, 0, 0.55)' }}>Get 0.2 ETH for <s>$680</s> $100<sup>*</sup></App.Text>
         </App.Flex>
 
         {/* <App.Flex column align={['flex-start', 'center']} gap={8}>
@@ -35,7 +46,25 @@ const AuctionItemNotify = ({ item, onClear }) => {
         </App.Flex> */}
 
         {!referral.is_telegram_present ? (
-          <AuctionButton item={item} />
+          <App.Flex column gap={[32, 16]}>
+            <App.Flex column gap={[16, 8]}>
+              {showSteps ? (
+                <App.Text size={[20, 13]} weight={600} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">Step {!wallet ? '1' : '2'}/2</App.Text>
+              ) : null}
+
+              {showSteps ? (
+                <App.Text size={[20, 13]} weight={400} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">{!wallet ? 'Connect your wallet to get updates on Telegram!' : 'Connect your Telegram to know when the auction is live!'}</App.Text>
+              ) : (
+                <App.Text size={[20, 13]} weight={400} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">Connect your wallet to get updates on Telegram!</App.Text>
+              )}
+              <AuctionButton item={item} telegram={wallet && showSteps} />
+            </App.Flex>
+
+            <App.Flex>
+              <App.Text size={[28, 16]} weight={700} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">Bidding limited to first 100 sign ups!</App.Text>
+              <App.Text size={[28, 16]} weight={700} height={1}>🔥</App.Text>
+            </App.Flex>
+          </App.Flex>
         ) : (
           <App.Flex column gap={16}>
             <App.Flex center className={styles.verified}>
@@ -56,15 +85,15 @@ const AuctionItemNotify = ({ item, onClear }) => {
           <img src="/images/auction-inner.png" alt="" />
 
           <App.Flex center className={styles.off}>
-            <App.Text size={[18, 12]} weight={800} height={1}>95% OFF</App.Text>
+            <App.Text size={[18, 12]} weight={800} height={1}>85% OFF</App.Text>
           </App.Flex>
 
           <App.Flex center className={styles.value}>
-            <App.Text size={[18, 12]} weight={800} height={1}>Value 3000 USDT</App.Text>
+            <App.Text size={[18, 12]} weight={800} height={1}>Value 680 USDT</App.Text>
           </App.Flex>
 
           <App.Flex center className={styles.price}>
-            <App.Text size={[40, 26]} weight={800} height={1} color="#FFBB01" sx={{ textShadow: '0px 2.849px 17.4px rgba(182, 0, 0, 0.55)' }}>1 ETH</App.Text>
+            <App.Text size={[40, 26]} weight={800} height={1} color="#FFBB01" sx={{ textShadow: '0px 2.849px 17.4px rgba(182, 0, 0, 0.55)' }}>0.2 ETH</App.Text>
           </App.Flex>
         </App.Flex>
       </App.Flex>
