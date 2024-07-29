@@ -1,6 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
+import { parseUnits } from 'viem'
 import cn from 'classnames'
+
+import WagmiHelper from '@/libs/WagmiHelper'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
+
+import $app from 'store/app'
+import $gem from 'store/gem'
+import $alert from 'store/alert'
 
 import App from 'components/App'
 import AuctionItemSimple from 'components/Auction/AuctionItemSimple'
@@ -11,7 +20,53 @@ import styles from './styles.module.scss'
 const AuctionClaim = ({ item, onClose }) => {
   const { t } = useTranslation()
 
+  const { wallet } = useWagmiHelper()
+
+  const dispatch = useDispatch()
+  const jwt = useSelector(({ $gem }) => $gem.jwt)
+
   const [step, setStep] = useState(0)
+  const [scanLink, setScanLink] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (step == 1) {
+      transaction()
+    }
+  }, [step])
+
+  const transaction = async () => {
+    setScanLink(null)
+    const price = parseUnits(item.currentPrice, item.token.decimals)
+
+    const txid = await WagmiHelper.transfer(item.token.address, item.claimContract, price)
+    if (txid) {
+      setStep(2)
+
+      const temp = await WagmiHelper.waitForTransaction(txid)
+      if (temp) {
+        setStep(3)
+        const result = await $gem.api.claim({
+          auction_id: item.id,
+          tx_hash: txid,
+          jwt_token: jwt,
+        })
+
+        if (result && !result?.error) {
+          setStep(4)
+          setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
+          dispatch($gem.set.auctionUpdated({data: result, wallet}))
+          
+          return
+        } else {
+          dispatch($alert.set.error({title: result?.error}))
+        }
+      }
+    }
+
+    setLoading(false)
+    setStep(0)
+  }
 
   const handleClose = () => {
     if (onClose) {
@@ -19,28 +74,45 @@ const AuctionClaim = ({ item, onClose }) => {
     }
   }
 
-  const handleProceed = () => {
-    setStep(1)
+  const handleProceed = async () => {
+    setLoading(true)
 
-    setTimeout(() => {
-      setStep(2)
-    }, 3000)
+    const chainCode = 'amoy' 
+    const network = await WagmiHelper.changeChain(chainCode)
+    if (!network) {
+      setLoading(false)
+      return
+    }
+    dispatch($app.set.code(chainCode))
 
-    setTimeout(() => {
-      setStep(3)
-    }, 6000)
+    const balance = await WagmiHelper.balanceOf(item.token.address, chainCode)
+    if (balance >= item.currentPrice) {
+      setStep(1)
+    } else {
+      dispatch($alert.set.error({title: 'Insufficient balance'}))
+    }
 
-    setTimeout(() => {
-      setStep(4)
-    }, 9000)
-  }
-
-  const handleScan = () => {
-    console.log('Scan')
+    setLoading(false)
   }
 
   const handleShare = () => {
-    console.log('Share')
+    const link = `${window.location.origin}/gems-dashboard#auction`
+    const tweetText = encodeURIComponent(`
+🚀 Unbelievable! I just bagged ${item.name} for just ${item.currentPrice} ${item.token.currency} on Tegro! 👀
+
+That's a whopping ${percent()}% off! 😱
+
+You don't wanna miss these insane deals! ✨
+
+🔗 Connect your wallet & place the BID now at ${link}
+    `)
+
+    const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}`
+    window.open(tweetUrl, '_blank')
+  }
+
+  const percent = () => {
+    return Math.round((item.marketPrice - item.currentPrice) / item.marketPrice * 100)
   }
 
   return (
@@ -113,7 +185,7 @@ const AuctionClaim = ({ item, onClose }) => {
           <App.Flex column center gap={12}>
             <App.Text center size={24} weight={600} height={1}>{t('Congratulations!')}</App.Text>
             <App.Flex center className={styles.badge}>
-              <App.Text size={20} weight={600} height={1} color="#53F19C">{t('Your winnings have been added to your wallet')}</App.Text>
+              <App.Text center size={[20, 16]} weight={600} height={1} color="#53F19C">{t('Your winnings have been added to your wallet')}</App.Text>
             </App.Flex>
           </App.Flex>
         ) : null}
@@ -126,15 +198,15 @@ const AuctionClaim = ({ item, onClose }) => {
 
         {step == 0 ? (
           <App.Flex column gap={16} fullWidth center>
-            <App.Text size={20} weight={600} height={1}>{t('Pay the auction amount to claim the NFT')}</App.Text>
-            <App.Button primary2 onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
+            <App.Text center size={[20, 16]} weight={600} height={1}>{t('Pay the auction amount to claim the NFT')}</App.Text>
+            <App.Button primary2 loading={loading} onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
           </App.Flex>
         ) : null}
 
         {step == 4 ? (
           <App.Flex row center gap={24} fullWidth>
             <App.Flex center flex={1}>
-              <App.Button primary2 outlined fullWidth onClick={handleScan}>{t('View on Explorer')}</App.Button>
+              <App.Button primary2 outlined fullWidth href={scanLink}>{t('View on Explorer')}</App.Button>
             </App.Flex>
 
             <App.Flex center flex={1}>

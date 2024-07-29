@@ -10,6 +10,10 @@
 
   &.large {
     height: 384px;
+
+    @media (max-width: 768px) {
+      height: 300px;
+    }
   }
 
   & > * {
