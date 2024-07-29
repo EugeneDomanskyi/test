@@ -45,7 +45,17 @@
     }
   }
 
-  &:not(.share).upcoming {
+  &.telegram {
+    justify-content: center;
+    border-color: #68B9EB;
+    background: linear-gradient(180deg, #30A9DD -6.02%, #208BD4 85.68%);
+
+    &:active {
+      background: linear-gradient(180deg, #208BD4 -6.02%, #30A9DD 85.68%);
+    }
+  }
+
+  &:not(.share):not(.telegram).upcoming {
     justify-content: center;
     border-color: #FBBF24;
     background: linear-gradient(180deg, #F59E0B -6.02%, #B45309 85.68%);
@@ -55,7 +65,7 @@
     }
   }
 
-  &:not(.share).ongoing {
+  &:not(.share):not(.telegram).ongoing {
     border-color: #6B41EB;
     background: linear-gradient(180deg, #6B41EB -6.02%, #241164 85.68%);
 
@@ -77,7 +87,7 @@
     }
   }
 
-  &:not(.share).closed {
+  &:not(.share):not(.telegram).closed {
     justify-content: center;
     border-color: #fff;
     background: linear-gradient(180deg, #fff -6.02%, #8B8B8B 85.68%);

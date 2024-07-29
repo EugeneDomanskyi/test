@@ -94,6 +94,7 @@ export const gemSlice = createSlice({
     },
 
     tournaments: {},
+    currentTournament: null,
     auctions: [],
     claim: false,
     claimId: null,
@@ -192,7 +193,7 @@ export const gemSlice = createSlice({
         }
 
         if (value.rewards.length) {
-          value.currency = value.rewards[0].reward_currency
+          value.currency = value.rewards[0].reward_currency ?? ''
         }
 
         switch (key) {
@@ -209,7 +210,7 @@ export const gemSlice = createSlice({
             value.name = 'Poncho Rush S1'
             break
           default:
-            value.name = value.alias
+            value.name = value.title
             break
         }
 
@@ -228,6 +229,36 @@ export const gemSlice = createSlice({
 
     tournamentExpand: (state, { payload }) => {
       state.tournaments[payload].expand = !state.tournaments[payload].expand
+    },
+
+    currentTournament: (state, { payload }) => {
+      const now = moment()
+      const startTime = moment(payload.start_time)
+      const endTime = moment(payload.end_time)
+
+      let status = 'on-going'
+      if (now.isBefore(startTime)) {
+        status = 'upcoming'
+      }
+
+      if (now.isAfter(endTime)) {
+        status = 'closed'
+      }
+
+      const temp = payload.alias.toLowerCase().split('-')
+      const currency = payload.rewards[0].reward_currency ?? ''
+      const code = temp[0]
+      const name = payload?.title
+      const slogan = (`${temp[0]} ${temp[1]}`).toUpperCase()
+
+      state.currentTournament = {
+        ...payload,
+        status,
+        currency,
+        code,
+        name,
+        slogan,
+      }
     },
 
     auctions: (state, { payload }) => {
@@ -390,6 +421,10 @@ export const api = {
   
   tournament: (alias) => {
     return request(`tournament/${alias}`, 'GET', {api: 'exchange'})
+  },
+
+  currentTournament: () => {
+    return request(`tournament/current`, 'GET', {api: 'exchange'})
   },
 
   tournaments: () => {

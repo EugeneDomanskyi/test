@@ -4,7 +4,7 @@ import { privateKeyToAccount } from 'viem/accounts'
 import { http } from 'wagmi'
 import { disconnect, getAccount, getBalance, getChainId, readContract, signMessage, signTypedData, simulateContract, switchChain, watchAccount, writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
-import { metaMaskWallet, rainbowWallet, walletConnectWallet, coinbaseWallet } from '@rainbow-me/rainbowkit/wallets'
+import { metaMaskWallet, rainbowWallet, walletConnectWallet, coinbaseWallet, okxWallet } from '@rainbow-me/rainbowkit/wallets'
 import * as wagmiChains from 'wagmi/chains'
 
 import $app from '@/store/app'
@@ -135,7 +135,7 @@ class WagmiHelper {
 
       const sortedWagmiChains = [...inChains, ...notInChains]
 
-      coinbaseWallet.preference = 'eoaOnly'
+      coinbaseWallet.preference = 'all'
 
       this.wagmiConfig = getDefaultConfig({
         appName: process.env.NEXT_PUBLIC_APP_NAME,
@@ -151,7 +151,7 @@ class WagmiHelper {
         wallets: [
           {
             groupName: "Popular",
-            wallets: [metaMaskWallet, rainbowWallet, coinbaseWallet, walletConnectWallet],
+            wallets: [okxWallet, metaMaskWallet, rainbowWallet, coinbaseWallet, walletConnectWallet],
           },
         ],
       })
@@ -171,6 +171,13 @@ class WagmiHelper {
     }
 
     return chains.find((item: any) => item.code == chainCode)
+  }
+
+  getChainCodeById = (id: number) => {
+    const backendChains = this.getBackendChains()
+    const chains = this.getFullInfoChains(backendChains)
+
+    return chains.find((item: any) => item.id == id)?.code
   }
 
   getFullInfoChains = (backendChains: Array<any>) => {

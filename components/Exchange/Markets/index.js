@@ -31,9 +31,8 @@ const Markets = ({ markets, onSelect, onClose }) => {
     })
 
     filteredMarkets.sort((a, b) => {
-      const aValue = sort.by == 'change' ? (a.ticker.value * (a.ticker.type == 'plus' ? 1 : -1)) : a[sort.by]
-      const bValue = sort.by == 'change' ? (b.ticker.value * (b.ticker.type == 'plus' ? 1 : -1)) : b[sort.by]
-
+      const aValue = sort.by == 'change' ? a.ticker.value * 1 : a[sort.by]
+      const bValue = sort.by == 'change' ? b.ticker.value * 1 : b[sort.by]
       if (sort.direction == 'asc') {
         return aValue - bValue
       } else {

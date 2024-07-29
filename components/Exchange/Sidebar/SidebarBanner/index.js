@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
 
@@ -14,7 +14,9 @@ import styles from './styles.module.scss'
 const SidebarBanner = () => {
   const router = useRouter()
 
+  const dispatch = useDispatch()
   const isApp = useSelector(({ $app }) => $app.isApp)
+  const current = useSelector(({ $gem }) => $gem.currentTournament)
 
   const [showBanner, setShowBanner] = useState(false)
 
@@ -29,27 +31,31 @@ const SidebarBanner = () => {
     fetchTournament()
   }, [])
 
+  useEffect(() => {
+    if (current?.id) {
+      setTimeout(() => {
+        const bannerShown = localStorage.getItem(`${current.code}Popup`);
+        
+        if (! bannerShown) {
+          setShowBanner(true)
+        }
+      }, 1000)
+    }
+  }, [current])
+
   const fetchTournament = async () => {
-    const result = await $gem.api.tournament('poncho-rush-s1')
-    if (result) {
-      if (result.status === 'active') {
-        setTimeout(() => {
-          const bannerShown = localStorage.getItem('ponchoPopup');
-          
-          if (! bannerShown) {
-            setShowBanner(true)
-          }
-        }, 1000)
-      }
+    const result = await $gem.api.currentTournament()
+    if (result && result?.id) {
+      dispatch($gem.set.currentTournament(result))
     }
   }
 
   const handleUserSession = () => {
     const currentTime = new Date().getTime();
-    const popupTS = localStorage.getItem('ponchoPopup');
+    const popupTS = localStorage.getItem(`${current.code}Popup`)
 
     if (popupTS && (currentTime - popupTS) > 24 * 60 * 60 * 1000) {
-      localStorage.removeItem('ponchoPopup');
+      localStorage.removeItem(`${current.code}Popup`);
     }
   }
 
@@ -60,7 +66,7 @@ const SidebarBanner = () => {
       'Activity': 'Redirected'
     })
     const timestamp = new Date().getTime();
-    localStorage.setItem('ponchoPopup', timestamp);
+    localStorage.setItem(`${current.code}Popup`, timestamp);
     router.push('/tournaments')
   }
 
@@ -71,11 +77,19 @@ const SidebarBanner = () => {
       'Activity': 'Closed'
     })
     const timestamp = new Date().getTime();
-    localStorage.setItem('ponchoPopup', timestamp);
+    localStorage.setItem(`${current.code}Popup`, timestamp);
     setShowBanner(!showBanner)
   }
 
-  return (
+  const getPool = (rewards) => {
+    let pool = 0
+    rewards.forEach(reward => {
+      pool += reward.reward
+    })
+    return pool.toLocaleString('en-US')
+  }
+
+  return current ? (
     <App.Flex fullWidth column className={cn(styles.container, {[styles.show]: showBanner})}>
       <App.Flex fullWidth column align="center" gap={20}>
         <App.Flex center fullWidth column gap={8} sx={{position: 'relative'}}>
@@ -83,11 +97,13 @@ const SidebarBanner = () => {
             <App.Icon icon='cross' color="#fff" />
           </App.Flex>
           
-          <img src="/images/poncho-banner-short.png" style={{ width: '100%' }} alt="" />
+          <App.Flex fullWidth center sx={{ minHeight: 120 }}>
+            <img src={`/images/${current.code}-banner-short.png`} style={{ width: '100%' }} alt="" />
+          </App.Flex>
           
           <App.Flex center column gap={16} sx={{position: 'absolute'}}>
-            <App.Text center size={24} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">2000 $PONCHO<br /> in rewards!</App.Text>
-            <App.Text center size={16} weight={700} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">PONCHO RUSH</App.Text>
+            <App.Text center size={24} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">{getPool(current.rewards)} ${current.currency}<br /> in rewards!</App.Text>
+            <App.Text center size={16} weight={700} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">{current.slogan}</App.Text>
           </App.Flex>
         </App.Flex>
 
@@ -100,7 +116,7 @@ const SidebarBanner = () => {
 
               <App.Flex direction={['column', 'row']} align={['flex-start', 'center']} gap={[4, 8]}>
                 {/* <App.Text uppercase size={16} weight={900} height={1}>Connect</App.Text> */}
-                <App.Text size={20} weight={600} height={1}>Trade $PONCHO</App.Text>
+                <App.Text size={20} weight={600} height={1}>Trade ${current.currency}</App.Text>
               </App.Flex>
             </App.Flex>
 
@@ -111,7 +127,7 @@ const SidebarBanner = () => {
 
               <App.Flex direction={['column', 'row']} align={['flex-start', 'center']} gap={[4, 8]}>
                 {/* <App.Text uppercase size={16} weight={900} height={1}>Trade</App.Text> */}
-                <App.Text size={20} weight={600} height={1}>Collect Points</App.Text>
+                <App.Text size={20} weight={600} height={1}>Collect Gems</App.Text>
               </App.Flex>
             </App.Flex>
 
@@ -132,7 +148,7 @@ const SidebarBanner = () => {
               </App.Flex>
 
               <App.Flex direction={['column', 'row']} align={['flex-start', 'center']} gap={[4, 8]}>
-                <App.Text uppercase size={20} weight={600} height={1}>WIN $PONCHO TOKENS!</App.Text>
+                <App.Text uppercase size={20} weight={600} height={1}>WIN ${current.currency} TOKENS!</App.Text>
               </App.Flex>
             </App.Flex>
           </App.Flex>
@@ -141,7 +157,7 @@ const SidebarBanner = () => {
         </App.Flex>
       </App.Flex>
     </App.Flex>
-  )
+  ) : null
 }
 
 export default SidebarBanner

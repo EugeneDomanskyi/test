@@ -17,7 +17,7 @@ import styles from './styles.module.scss'
 import AuctionItemSimple from '@/components/Auction/AuctionItemSimple'
 import AuctionClaim from '../AuctionClaim'
 
-const AuctionButton = ({ item, small, share, short }) => {
+const AuctionButton = ({ item, small, share, short, telegram }) => {
   const router = useRouter()
   const { t } = useTranslation()
   const { wallet, connect } = useWagmiHelper()
@@ -50,6 +50,10 @@ const AuctionButton = ({ item, small, share, short }) => {
   const text = () => {
     if (share) {
       return `Tweet Now ${isMobile || short ? '' : '(Get 50 Gems)'}`
+    }
+
+    if (telegram) {
+      return `Connect Telegram`
     }
 
     switch (item.status) {
@@ -100,6 +104,7 @@ const AuctionButton = ({ item, small, share, short }) => {
 
     let connectedWallet = wallet
     if ( ! connectedWallet) {
+      console.log(wallet)
       connectedWallet = await connect()
     }
 
@@ -118,8 +123,8 @@ const AuctionButton = ({ item, small, share, short }) => {
 
   const handeClick = async (e) => {
     e.stopPropagation()
-
     const user = await getUserInfo()
+    console.log(user)
     if (!user?.wallet || !user?.id) {
       return
     }
@@ -132,7 +137,16 @@ const AuctionButton = ({ item, small, share, short }) => {
 
     if (item.status == 'upcoming') {
       if ( ! user.isTelegram) {
-        window.open(`${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}?start=${user.wallet}_${user.id}`)
+        let host = 'd'
+        if (window.location.hostname == 'testnet.tegro.com') {
+          host = 't'
+        }
+
+        if (window.location.hostname == 'tegro.com') {
+          host = 'p'
+        }
+
+        window.open(`${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}?start=${user.wallet}_${user.id}_${host}`, '_blank')
       }
     }
 
@@ -210,9 +224,13 @@ Don't fade, join the fun today: ${link}
             <App.Text center size={small ? 16 : 20} weight={600} height={1}>{t(text())}</App.Text>
           </div>
         ) : (
-          <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
+          <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
             {share ? (
               <App.Icon icon="x2" />
+            ) : null}
+
+            {telegram ? (
+              <App.Icon icon="telegram2" />
             ) : null}
 
             {item.status == 'ongoing' && item.wallet ? (
