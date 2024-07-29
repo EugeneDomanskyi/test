@@ -58,13 +58,15 @@ const GemsAuction = () => {
   }, [socketConnected])
 
   useEffect(() => {
-    setTimeout(fetchJWT, 500)
+    if (wallet) {
+      setTimeout(fetchJWT, 500)
+    }
     fetchAuctions()
     fetchStats()
   }, [wallet])
 
   const handleUpdatedAuction = (data) => {
-    dispatch($gem.set.auctionUpdated({data, wallet}))
+    dispatch($gem.set.auctionUpdated({data: {auction: data}, wallet}))
   }
 
   const handleVisible = () => {

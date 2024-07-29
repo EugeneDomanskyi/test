@@ -55,7 +55,7 @@ const AuctionClaim = ({ item, onClose }) => {
         if (result && !result?.error) {
           setStep(4)
           setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
-          dispatch($gem.set.auctionUpdated({data: result.auction, wallet}))
+          dispatch($gem.set.auctionUpdated({data: result, wallet}))
           
           return
         } else {
@@ -64,6 +64,7 @@ const AuctionClaim = ({ item, onClose }) => {
       }
     }
 
+    setLoading(false)
     setStep(0)
   }
 
@@ -79,6 +80,7 @@ const AuctionClaim = ({ item, onClose }) => {
     const chainCode = 'amoy' 
     const network = await WagmiHelper.changeChain(chainCode)
     if (!network) {
+      setLoading(false)
       return
     }
     dispatch($app.set.code(chainCode))

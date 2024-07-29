@@ -58,7 +58,9 @@ const GemsAuctionInfo = () => {
 
   useEffect(() => {
     if (id) {
-      setTimeout(fetchJWT, 500)
+      if (wallet) {
+        setTimeout(fetchJWT, 500)
+      }
       fetchInfo()
     }
   }, [id, wallet])
@@ -70,8 +72,8 @@ const GemsAuctionInfo = () => {
   }, [wallet])
 
   const handleUpdatedAuction = (data) => {
-    dispatch($gem.set.auctionUpdated({data, wallet}))
-    dispatch($gem.set.current({data, wallet}))
+    dispatch($gem.set.auctionUpdated({data: { auction: data }, wallet}))
+    dispatch($gem.set.current({data: { auction: data }, wallet}))
   }
 
   const handleCloseConnection = (e) => {

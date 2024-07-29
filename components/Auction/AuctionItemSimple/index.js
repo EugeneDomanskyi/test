@@ -23,7 +23,7 @@ const AuctionItemSimple = ({ item, small, large }) => {
 
       <App.Text center nowrap size={small ? 4 : large ? 14 : 9} weight={600} height={1}>{item.name}</App.Text>
       {large ? (
-        <App.Text center nowrap size={16} weight={400} height={1} color="#FFFFFF99" sx={{textDecoration: 'line-through'}}>{item.marketPrice} {item.token.currency}</App.Text>
+        <App.Text center nowrap size={16} weight={400} height={1} color="#FFFFFF99" sx={{textDecoration: 'line-through'}}>${item.marketPrice}</App.Text>
       ) : null}
       <App.Text center nowrap size={small ? 9 : large ? 24 : 16} weight={600} height={1}>{item.currentPrice} {item.token.currency}</App.Text>
       {large ? (
