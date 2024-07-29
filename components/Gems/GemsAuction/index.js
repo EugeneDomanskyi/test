@@ -12,6 +12,7 @@ import $gem from '@/store/gem'
 import App from '@/components/App'
 import AuctionItem from '@/components/Auction/AuctionItem'
 import AuctionItemNotify from '@/components/Auction/AuctionItemNotify'
+import AuctionClaim from '@/components/Auction/AuctionClaim'
 
 import styles from './styles.module.scss'
 
@@ -22,10 +23,11 @@ const GemsAuction = () => {
 
   const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
-  const referral = useSelector(({ $gem }) => $gem.referral)
   const auctions = useSelector(({ $gem }) => $gem.auctions)
-  const stats = useSelector(({ $gem }) => $gem.stats)
+  const referral = useSelector(({ $gem }) => $gem.referral)
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
+  const claim = useSelector(({ $gem }) => $gem.claim)
+  const claimItem = useSelector($gem.get.claimItem)
 
   const tempItem = {
     id: 1,
@@ -46,6 +48,9 @@ const GemsAuction = () => {
   useEffect(() => {
     if (socketConnected) {
       Socket.subscribe('auctions')
+
+      Socket.on('auctions', 'auction', handleUpdatedAuction)
+
       return () => {
         Socket.unsubscribe('auctions')
       }
@@ -54,11 +59,15 @@ const GemsAuction = () => {
 
   useEffect(() => {
     if (wallet) {
-      // setTimeout(fetchJWT, 500)
-      fetchAuctions()
-      fetchStats()
+      setTimeout(fetchJWT, 500)
     }
+    fetchAuctions()
+    fetchStats()
   }, [wallet])
+
+  const handleUpdatedAuction = (data) => {
+    dispatch($gem.set.auctionUpdated({data: {auction: data}, wallet}))
+  }
 
   const handleVisible = () => {
     if (!document.hidden && wallet) {
@@ -141,17 +150,21 @@ const GemsAuction = () => {
     })
   }
 
+  const handleClaimClose = () => {
+    dispatch($gem.set.claim(false))
+  }
+
   return (
     <App.Container maxWidth={1230} sx={{ paddingBottom: 32 }}>
       <App.Flex column fullWidth flex={1} gap={16}>
         <App.Flex direction={['row', 'column']} align={['center', 'stretch']} justify="space-between" gap={[0, 16]}>
           <App.Flex row align="center" order={[0, 1]} gap={24}>
             <App.Flex row center gap={16} className={styles.frame} flex={[null, 1]}>
-              <App.Text size={[28, 14]} weight={600} height={1}>{t('Gems')} {referral.points}</App.Text>
+              <App.Text size={[28, 16]} weight={600} height={1}>{t('Gems')} {referral.points ?? 0}</App.Text>
             </App.Flex>
 
             <App.Flex row center gap={16} className={styles.frame} flex={[null, 1]}>
-              <App.Text size={[24, 14]} weight={600} height={1}>{t('100 Gems = 1 Bid')}</App.Text>
+              <App.Text size={[24, 16]} weight={600} height={1}>{t('100 Gems = 1 Bid')}</App.Text>
             </App.Flex>
           </App.Flex>
 
@@ -179,14 +192,18 @@ const GemsAuction = () => {
           ) : null}
         </App.Flex> */}
 
-        {/* <App.Flex row wrap gap={24}>
+        <App.Flex row wrap gap={24}>
           {auctions.length ? (
             getSortedAuctions().map(item => <AuctionItem key={item.id} item={item} onClear={handleClear} />)
           ) : null}
-        </App.Flex> */}
+        </App.Flex>
 
-        <AuctionItemNotify item={tempItem} onClear={handleClear} />
+        {/* <AuctionItemNotify item={tempItem} onClear={handleClear} /> */}
       </App.Flex>
+
+      <App.Dialog hideHeader open={claim} onClose={handleClaimClose}>
+        <AuctionClaim item={claimItem} onClose={handleClaimClose} />
+      </App.Dialog>
     </App.Container>
   )
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
@@ -15,15 +15,15 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 import AuctionItemSimple from '@/components/Auction/AuctionItemSimple'
+import AuctionClaim from '../AuctionClaim'
 
-const AuctionButton = ({ item, small, share, telegram }) => {
+const AuctionButton = ({ item, small, share, short, telegram }) => {
   const router = useRouter()
   const { t } = useTranslation()
   const { wallet, connect } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
-  const stats = useSelector(({ $gem }) => $gem.stats)
   const jwt = useSelector(({ $gem }) => $gem.jwt)
   const referral = useSelector(({ $gem }) => $gem.referral)
 
@@ -38,6 +38,10 @@ const AuctionButton = ({ item, small, share, telegram }) => {
   })
 
   useEffect(() => {
+    setTime(item.time)
+  }, [item?.lastBidTimestamp])
+
+  useEffect(() => {
     if (item?.id) {
       setDuration(getDuration())
     }
@@ -45,7 +49,7 @@ const AuctionButton = ({ item, small, share, telegram }) => {
 
   const text = () => {
     if (share) {
-      return `Tweet Now ${isMobile ? '' : '(Get 50 Gems)'}`
+      return `Tweet Now ${isMobile || short ? '' : '(Get 50 Gems)'}`
     }
 
     if (telegram) {
@@ -55,7 +59,7 @@ const AuctionButton = ({ item, small, share, telegram }) => {
     switch (item.status) {
       case 'upcoming': return 'Notify Me'
       case 'ongoing': return item.wallet ? 'Place Bid' : 'Bid Now'
-      case 'closed': return item.current ? 'Proceed to checkout' : 'View History'
+      case 'closed': return item.current ? (item.claimHash == '' ? 'Proceed to checkout' : 'Already claimed') : 'View History'
     }
   }
 
@@ -149,11 +153,15 @@ const AuctionButton = ({ item, small, share, telegram }) => {
     if (item.status == 'ongoing') {
       const currentJwt = await getJwt()
       if (currentJwt) {
-        if (stats.total_points * 1 >= item.pointsPrice * 1) {
-          $gem.api.bid({
+        if (referral.points * 1 >= item.gemsPrice * 1) {
+          const result = await $gem.api.bid({
             auction_id: item.id,
             jwt_token: currentJwt,
           })
+
+          if (result) {
+            dispatch($gem.set.totalGems(referral.points - item.gemsPrice))
+          }
         } else {
           setIsWarningDialog(true)
         }
@@ -162,7 +170,10 @@ const AuctionButton = ({ item, small, share, telegram }) => {
 
     if (item.status == 'closed') {
       if (item.current) {
-        router.push(`/earnings`)
+        if (item.claimContract && item.claimContract != '' && item.claimHash == '') {
+          dispatch($gem.set.claim(true))
+          dispatch($gem.set.claimId(item.id))
+        }
       } else {
         router.push(`/gems-dashboard/${item.id}`)
       }
@@ -194,30 +205,40 @@ Don't fade, join the fun today: ${link}
     router.push('/exchange')
   }
 
+  const handleClaimClose = () => {
+    setClaimDialog(false)
+  }
+
   return (
     <>
       {item.status == 'ongoing' && item.current ? (
         <div className={cn(styles.badge, {[styles.small]: small}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 5 })}>
           <App.Text size={small ? 16 : 20} weight={600} height={1} color={duration.minutesNumber == 0 && duration.secondsNumber <= 5 ? '#098C47' : '#FFFFFF99'}>{t('Winning In')}</App.Text>
-          {item.status == 'ongoing' && item.wallet ? (
+          {item.wallet ? (
             <App.Text size={small ? 16 : 20} weight={600} height={1} color={duration.minutesNumber == 0 && duration.secondsNumber <= 5 ? '#098C47' : '#FFFFFF99'}>{duration.minutes}:{duration.seconds}</App.Text>
           ) : null}
         </div>
       ) : (
-        <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
-          {share ? (
-            <App.Icon icon="x2" />
-          ) : null}
+        item.status == 'closed' && item.current && item.claimHash != '' ? (
+          <div className={cn(styles.badge, styles.center)}>
+            <App.Text center size={small ? 16 : 20} weight={600} height={1}>{t(text())}</App.Text>
+          </div>
+        ) : (
+          <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
+            {share ? (
+              <App.Icon icon="x2" />
+            ) : null}
 
-          {telegram ? (
-            <App.Icon icon="telegram2" />
-          ) : null}
+            {telegram ? (
+              <App.Icon icon="telegram2" />
+            ) : null}
 
-          {item.status == 'ongoing' && item.wallet ? (
-            <App.Text size={small ? 16 : 20} weight={600} height={1}>{duration.minutes}:{duration.seconds}</App.Text>
-          ) : null}
-          <App.Text size={small ? 16 : 20} weight={600} height={1}>{t(text())}</App.Text>
-        </button>
+            {item.status == 'ongoing' && item.wallet ? (
+              <App.Text size={small ? 16 : 20} weight={600} height={1}>{duration.minutes}:{duration.seconds}</App.Text>
+            ) : null}
+            <App.Text size={small ? 16 : 20} weight={600} height={1}>{t(text())}</App.Text>
+          </button>
+        )
       )}
 
       <App.Dialog open={isWarningDialog} onClose={handleClose} title={t('Warning')}>

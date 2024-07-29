@@ -1,8 +1,12 @@
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
 
-import { useTranslation } from 'react-i18next'
+import WagmiHelper from '@/libs/WagmiHelper'
 
+import $app from '@/store/app'
 import $gem from '@/store/gem'
 
 import App from '@/components/App'
@@ -15,6 +19,17 @@ import styles from './styles.module.scss'
 const AuctionItem = ({ item, onClear }) => {
   const router = useRouter()
   const { t } = useTranslation()
+
+  const dispatch = useDispatch()
+  const referral = useSelector(({ $gem }) => $gem.referral)
+
+  useEffect(() => {
+    if (item?.updated) {
+      setTimeout(() => {
+        dispatch($gem.set.auctionNotUpdated(item))
+      }, 3000)
+    }
+  }, [item?.updated])
 
   const firstText = () => {
     switch (item.status) {
@@ -62,7 +77,7 @@ const AuctionItem = ({ item, onClear }) => {
 
       <App.Flex column gap={12} className={styles.itemContent}>
         <App.Text center nowrap weight={600} height={1}>{item.name}</App.Text>
-        <App.Text center nowrap size={24} weight={600} height={1}>{item.currentPrice} {item.currency}</App.Text>
+        <App.Text center nowrap size={24} weight={600} height={1}>{item.currentPrice} {item.token.currency}</App.Text>
 
         <App.Flex center gap={8} className={cn(styles.info, {[styles.win]: item.status == 'closed' && item.current})}>
           <App.Text weight={400} height={1} color={item.status == 'closed' && item.current ? '#53F19C' : "#FFFFFF99"}>{t(firstText())}</App.Text>
@@ -75,7 +90,7 @@ const AuctionItem = ({ item, onClear }) => {
           ) : null}
         </App.Flex>
 
-        <AuctionButton item={item} />
+        <AuctionButton item={item} share={item.status == 'upcoming' && referral.is_telegram_present} short />
 
         {item.status == 'closed' ? (
           <App.Button small onClick={handleClear}>Clear</App.Button>

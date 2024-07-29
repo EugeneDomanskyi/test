@@ -25,7 +25,7 @@
       margin: -180px 0 0 -180px;
       border-radius: 50%;
       background-color: #7A5EF4;
-      animation: ripple 2s infinite;
+      animation: ripple 2s forwards;
   
       &::before {
         content: '';

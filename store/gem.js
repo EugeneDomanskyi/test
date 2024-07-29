@@ -1,53 +1,65 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSelector, createSlice } from '@reduxjs/toolkit'
 import moment from 'moment'
 import { formatUnits } from 'viem'
 
 import { request } from './index'
 
 const auctionTemplate = (item, wallet) => {
-  const now = moment()
-  const startsAt = moment(item.starts_at * 1000)
+  const auction = item?.auction ? item.auction : item.auction_id
 
-  const status = item.status == 1 ? 'upcoming' : item.status == 2 ? 'ongoing' : 'closed'
+  const now = moment()
+
+  const status = auction.status == 1 ? 'upcoming' : auction.status == 2 ? 'ongoing' : 'closed'
   let time = 0
   if (status == 'ongoing') {
-    if (item.last_bid_timestamp > 0) {
-      const lastBid = moment(item.last_bid_timestamp * 1000)
-      time = lastBid.add(item.reset_timer, 'seconds').diff(now, 'seconds')
+    if (auction.last_bid_timestamp > 0) {
+      const lastBid = moment(auction.last_bid_timestamp * 1000)
+      time = lastBid.add(auction.reset_timer, 'seconds').diff(now, 'seconds')
       time = time < 0 ? 0 : time
     }
   }
 
-  // let status = now.isAfter(startsAt) ? 'ongoing' : 'upcoming'
-  // if (status == 'ongoing') {
-  //   if (item.last_bid_timestamp > 0) {
-  //     const lastBid = moment(item.last_bid_timestamp * 1000)
-  //     status = now.isAfter(lastBid.add(item.reset_timer, 'seconds')) ? 'closed' : 'ongoing'
+  const lastBidderWallet = auction.last_bidder.wallet_address.toLowerCase() || null
 
-  //     time = lastBid.add(item.reset_timer, 'seconds').diff(now)
-  //   }
-  // }
+  const marketPrice = Number(item.auction_value)
+  const currentPrice = formatUnits((auction.last_bid_price > 0 ? auction.last_bid_price : auction.start_price).toString(), 6)
 
-  const lastBidderWallet = item.last_bidder.wallet_address.toLowerCase() || null
-
-  const marketPrice = formatUnits(item.start_price.toString(), 6)
-  const currentPrice = formatUnits((item.last_bid_price > 0 ? item.last_bid_price : item.start_price).toString(), 6)
+  const history = auction.bid_histories.map(bid => {
+    return {
+      bid: `${formatUnits(bid.price.toString(), 6)} USDC`,
+      wallet: bid.wallet.wallet_address,
+      date: moment(bid.created_at).format('HH:mm DD-MM-YYYY'),
+      time: moment(bid.created_at).format('HH:mm'),
+      day: moment(bid.created_at).format('DD-MM-YYYY'),
+      created_at: bid.created_at,
+    }
+  })
 
   return {
-    id: item.id,
-    productId: item.product.id,
-    image: item.s3_url || null,
-    logo: item.product.collection_url || null,
+    id: auction.id,
+    productId: auction.product.id,
+    image: auction.s3_url || null,
+    logo: auction.product.collection_url || null,
     status: status,
-    current: wallet == lastBidderWallet,
+    current: wallet && wallet == lastBidderWallet,
     wallet: lastBidderWallet,
     marketPrice,
     currentPrice,
-    currency: 'USDC',
-    name: item.product.title,
+    token: {
+      currency: auction.auction_token.symbol.toUpperCase(),
+      decimals: auction.auction_token.decimals,
+      address: auction.auction_token.string.toLowerCase(),
+      name: auction.auction_token.name,
+    },
+    name: auction.product.title,
     time: time * 1000,
-    startsIn: moment(item.starts_at * 1000).valueOf(),
-    pointsPrice: item.points_to_deduct,
+    startsIn: moment(auction.starts_at * 1000).valueOf(),
+    gemsPrice: auction.points_to_deduct,
+    lastBidTimestamp: auction.last_bid_timestamp,
+    history,
+    claimContract: auction.auction_amount_receiver,
+    claimHash: auction.claim_tx_hash,
+    updated: false,
   }
 }
 
@@ -84,6 +96,8 @@ export const gemSlice = createSlice({
     tournaments: {},
     currentTournament: null,
     auctions: [],
+    claim: false,
+    claimId: null,
     current: null,
     showBrett: false,
   },
@@ -111,6 +125,13 @@ export const gemSlice = createSlice({
 
     stats: (state, { payload }) => {
       state.stats = payload
+    },
+
+    totalGems: (state, { payload }) => {
+      state.referral = {
+        ...state.referral,
+        points: payload,
+      }
     },
 
     statsLoading: (state, { payload }) => {
@@ -244,6 +265,38 @@ export const gemSlice = createSlice({
       state.auctions = payload.data.map(item => auctionTemplate(item, payload.wallet))
     },
 
+    auctionUpdated: (state, { payload }) => {
+      const auction = auctionTemplate(payload.data, payload.wallet)
+      state.auctions = state.auctions.map(item => {
+        if (item.id == auction.id) {
+          return {
+            ...auction,
+            marketPrice: item.marketPrice,
+            updated: true,
+          }
+        }
+
+        return item
+      })
+
+      if (state.current?.id == auction.id) {
+        state.current = auction
+      }
+    },
+
+    auctionNotUpdated: (state, { payload }) => {
+      state.auctions = state.auctions.map(item => {
+        if (item.id == payload.id) {
+          return {
+            ...payload,
+            updated: false,
+          }
+        }
+
+        return item
+      })
+    },
+
     current: (state, { payload }) => {
       state.current = auctionTemplate(payload.data, payload.wallet)
     },
@@ -254,6 +307,14 @@ export const gemSlice = createSlice({
 
     showBrett: (state, { payload }) => {
       state.showBrett = payload
+    },
+
+    claim: (state, { payload }) => {
+      state.claim = payload
+    },
+
+    claimId: (state, { payload }) => {
+      state.claimId = payload
     },
 
     clear: (state, { payload }) => {
@@ -282,6 +343,16 @@ export const gemSlice = createSlice({
     },
   },
 })
+
+export const get = {
+  claimItem: createSelector([
+    state => state.$gem.auctions,
+    state => state.$gem.claimId,
+    state => state.$gem.current,
+  ], (auctions, claimId, current) => {
+    return claimId ? (auctions.length ? auctions.find(item => item.id == claimId) : current) : null
+  }),
+}
 
 export const api = {
   register: (params) => {
@@ -329,7 +400,7 @@ export const api = {
   },
 
   auction: (id) => {
-    return request(`auction/${id}`, 'GET', {api: 'bid'})
+    return request(`token/price?auction_id=${id}`, 'GET', {api: 'bid'})
   },
 
   login: (params) => {
@@ -342,6 +413,10 @@ export const api = {
 
   clear: (id) => {
     return request(`auction/clear/${id}`, 'POST', {api: 'bid'})
+  },
+
+  claim: (params) => {
+    return request(`auction/claim`, 'POST', {api: 'bid', ...params})
   },
   
   tournament: (alias) => {
@@ -361,4 +436,5 @@ export default {
   reducer: gemSlice.reducer,
   set: gemSlice.actions,
   api,
+  get,
 }
