@@ -53,7 +53,7 @@ export const tokenSlice = createSlice({
     pages: {
       history: [1],
       current: 1,
-      perPage: 20,
+      perPage: 40,
       append: false,
     },
   },
