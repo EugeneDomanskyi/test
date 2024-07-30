@@ -214,6 +214,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon == 'alert-info') {
+      return (
+        <svg width={width ?? 20} height={height ?? 20} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill={color ?? '#6B41EB'} d="M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm1 15H9v-2h2v2zm0-4H9V5h2v6z" />
+        </svg>
+      )
+    }
+
     if (icon == 'exchange') {
       return (
         <svg width={width ?? 29} height={height ?? 24} viewBox="0 0 29 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>

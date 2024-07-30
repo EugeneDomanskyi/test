@@ -100,7 +100,7 @@ const AuctionClaim = ({ item, onClose }) => {
     const tweetText = encodeURIComponent(`
 🚀 Unbelievable! I just bagged ${item.name} for just ${item.currentPrice} ${item.token.currency} on Tegro! 👀
 
-That's a whopping ${percent()}% off! 😱
+That's a whopping ${item.discount}% off! 😱
 
 You don't wanna miss these insane deals! ✨
 
@@ -109,10 +109,6 @@ You don't wanna miss these insane deals! ✨
 
     const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}`
     window.open(tweetUrl, '_blank')
-  }
-
-  const percent = () => {
-    return Math.round((item.marketPrice - item.currentPrice) / item.marketPrice * 100)
   }
 
   return (

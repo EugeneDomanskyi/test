@@ -25,6 +25,10 @@ export const alertSlice = createSlice({
       state.messages = [...state.messages, {delay: state.delay, ...payload, type: 'warning'}]
     },
 
+    info: (state, { payload }) => {
+      state.messages = [...state.messages, {delay: state.delay, ...payload, type: 'info'}]
+    },
+
     clear: (state) => {
       state.messages = []
     },

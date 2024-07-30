@@ -8,6 +8,7 @@ import useWagmiHelper from '@/myhooks/useWagmiHelper'
 import WagmiHelper from '@/libs/WagmiHelper'
 
 import $app from '@/store/app'
+import $alert from '@/store/alert'
 import $gem from '@/store/gem'
 
 import App from '@/components/App'
@@ -16,6 +17,7 @@ import AuctionButton from '@/components/Auction/AuctionButton'
 import AuctionClaim from '@/components/Auction/AuctionClaim'
 
 import styles from './styles.module.scss'
+import { formatUnits } from 'viem'
 
 const GemsAuctionInfo = () => {
   const { t } = useTranslation()
@@ -73,7 +75,14 @@ const GemsAuctionInfo = () => {
 
   const handleUpdatedAuction = (data) => {
     dispatch($gem.set.auctionUpdated({data: { auction: data }, wallet}))
-    dispatch($gem.set.current({data: { auction: data }, wallet}))
+
+    if (data.last_bidder.wallet_address.toLowerCase() != wallet) {
+      const bidWallet = data.last_bidder.wallet_address.toLowerCase()
+      const address = `0x...${bidWallet.substring(bidWallet.length - 4)}`
+      const price = formatUnits(data.last_bid_price, data.auction_token.decimals)
+      const currency = data.auction_token.symbol.toUpperCase()
+      dispatch($alert.set.info({ text: t(`${address} placed a bid for ${price} ${currency}.`) }))
+    }
   }
 
   const handleCloseConnection = (e) => {
@@ -133,8 +142,8 @@ const GemsAuctionInfo = () => {
   }
 
   const getShort = (address) => {
-    const n = 10
-    return address ? (isMobile ? `${address.substring(0, n)}...${address.substring(address.length - n)}` : address) : ''
+    const n = 4
+    return address ? `${address.substring(0, n)}...${address.substring(address.length - n)}` : ''
   }
 
   const handleClaimClose = () => {
