@@ -180,7 +180,7 @@ const GemsAuctionInfo = () => {
                   <App.Flex column gap={16} width={[384, '100%']}>
                     <AuctionImage item={item} large />
 
-                    <App.Text nowrap size={20} weight={600} height={1}>{item.name}</App.Text>
+                    <App.Text nowrap size={20} weight={600} height={1}>{t('Buy {{title}} for', {title: item.name})}</App.Text>
 
                     {item.description ? (
                       <App.Text size={14} weight={400} color="#9B99AE">{item.description}</App.Text>
