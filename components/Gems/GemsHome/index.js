@@ -22,7 +22,7 @@ const GemsHome = () => {
 
   useEffect(() => {
     if (wallet) {
-      etchStats()
+      fetchStats()
     }
   }, [wallet])
 
