@@ -194,7 +194,7 @@ You don't wanna miss these insane deals! ✨
 
         {step == 0 ? (
           <App.Flex column gap={16} fullWidth center>
-            <App.Text center size={[20, 16]} weight={600} height={1}>{t('Pay the auction amount to claim the NFT')}</App.Text>
+            <App.Text center size={[20, 16]} weight={600} height={1}>{t(`Pay {{price}} {{currency}} to claim {{title}}`, {price: item.currentPrice, currency: item.token.currency, title: item.name})}</App.Text>
             <App.Button primary2 loading={loading} onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
           </App.Flex>
         ) : null}

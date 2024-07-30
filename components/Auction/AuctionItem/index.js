@@ -76,7 +76,7 @@ const AuctionItem = ({ item, onClear }) => {
       <AuctionImage item={item} />
 
       <App.Flex column gap={12} className={styles.itemContent}>
-        <App.Text center nowrap weight={600} height={1}>{item.name}</App.Text>
+        <App.Text center nowrap weight={600} height={1}>{t('Buy {{title}} for', {title: item.name})}</App.Text>
         <App.Text center nowrap size={24} weight={600} height={1}>{item.currentPrice} {item.token.currency}</App.Text>
 
         <App.Flex center gap={8} className={cn(styles.info, {[styles.win]: item.status == 'closed' && item.current})}>
@@ -91,6 +91,10 @@ const AuctionItem = ({ item, onClear }) => {
         </App.Flex>
 
         <AuctionButton item={item} share={item.status == 'upcoming' && referral.is_telegram_present} short />
+
+        {item.status == 'ongoing' ? (
+          <App.Button primary2 large outlined onClick={handleClick}>View more</App.Button>
+        ) : null}
 
         {item.status == 'closed' ? (
           <App.Button small onClick={handleClear}>Clear</App.Button>
