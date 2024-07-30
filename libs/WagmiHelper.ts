@@ -56,9 +56,10 @@ class WagmiHelper {
             || (item.default_quote_token_symbol == 'USDC' ? '/images/icon-usdc.png' : '')
             || `https://storage.googleapis.com/token-assets/assets/${item?.name}/${item.default_quote_token_contract_address.toLowerCase()}.png`
 
+          const code = item.name.toLowerCase().includes('arbitrum') ? 'arbitrum' : item.name.toLowerCase()
           return {
             id: item.id,
-            code: item.name,
+            code,
             native: {
               symbol: item.native_token_symbol,
               id: item.native_token_symbol_id,
