@@ -13,6 +13,7 @@ import App from '@/components/App'
 import AuctionItem from '@/components/Auction/AuctionItem'
 import AuctionItemNotify from '@/components/Auction/AuctionItemNotify'
 import AuctionClaim from '@/components/Auction/AuctionClaim'
+import AuctionWarning from '@/components/Auction/AuctionWarning'
 
 import styles from './styles.module.scss'
 
@@ -60,9 +61,9 @@ const GemsAuction = () => {
   useEffect(() => {
     if (wallet) {
       setTimeout(fetchJWT, 500)
+      fetchStats()
     }
     fetchAuctions()
-    fetchStats()
   }, [wallet])
 
   const handleUpdatedAuction = (data) => {
@@ -204,6 +205,8 @@ const GemsAuction = () => {
       <App.Dialog hideHeader open={claim} onClose={handleClaimClose}>
         <AuctionClaim item={claimItem} onClose={handleClaimClose} />
       </App.Dialog>
+
+      <AuctionWarning />
     </App.Container>
   )
 }

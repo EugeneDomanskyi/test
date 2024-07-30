@@ -21,7 +21,9 @@ const GemsHome = () => {
   const statsLoading = useSelector(({ $gem }) => $gem.statsLoading)
 
   useEffect(() => {
-    fetchStats()
+    if (wallet) {
+      etchStats()
+    }
   }, [wallet])
 
   const fetchStats = async () => {

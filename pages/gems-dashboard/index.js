@@ -29,7 +29,7 @@ const GemsDashboard = () => {
   const isApp = useSelector(({ $app }) => $app.isApp)
   const blockchain = useSelector($app.get.blockchain)
 
-  const [tab, setTab] = useState('home')
+  const [tab, setTab] = useState('auction')
 
   const tabs = [
     { title: t('Dashboard'), key: 'home' },
@@ -70,7 +70,7 @@ const GemsDashboard = () => {
 
   useEffect(() => {
     const currentTab = localStorage.getItem('gemsTab')
-    setTab(currentTab ?? 'home')
+    setTab(currentTab ?? 'auction')
   }, [])
 
   const checkHash = () => {
@@ -102,7 +102,7 @@ const GemsDashboard = () => {
       // case 'contributor': return <GemsContributor />
       case 'quests': return <GemsQuests />
       // case 'transactions': return <GemsTransactions />
-      default: return <GemsHome />
+      default: return <GemsAuction />
     }
   }
 
