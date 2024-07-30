@@ -9,10 +9,6 @@ import styles from './styles.module.scss'
 const AuctionItemSimple = ({ item, small, large }) => {
   const { t } = useTranslation()
 
-  const percent = () => {
-    return Math.round((item.marketPrice - item.currentPrice) / item.marketPrice * 100)
-  }
-
   return item ? (
     <App.Flex column gap={small ? 6 : large ? 16 : 12} className={cn(styles.container, {[styles.small]: small}, {[styles.large]: large})}>
       <App.Flex column justify="flex-end" className={styles.image} sx={{ backgroundImage: `url("${item.image}")` }}>
@@ -27,7 +23,7 @@ const AuctionItemSimple = ({ item, small, large }) => {
       ) : null}
       <App.Text center nowrap size={small ? 9 : large ? 24 : 16} weight={600} height={1}>{item.currentPrice} {item.token.currency}</App.Text>
       {large ? (
-        <App.Text center uppercase nowrap size={16} weight={600} height={1} color="#53F19C">{percent()}% {t('off')}</App.Text>
+        <App.Text center uppercase nowrap size={16} weight={600} height={1} color="#53F19C">{item.discount}% {t('off')}</App.Text>
       ) : null}
     </App.Flex>
   ) : null

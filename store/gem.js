@@ -3,6 +3,7 @@ import moment from 'moment'
 import { formatUnits } from 'viem'
 
 import { request } from './index'
+import Decimal from 'decimal.js'
 
 const auctionTemplate = (item, wallet) => {
   const auction = item?.auction ? item.auction : item.auction_id
@@ -23,6 +24,8 @@ const auctionTemplate = (item, wallet) => {
 
   const marketPrice = Number(item.auction_value)
   const currentPrice = formatUnits((auction.last_bid_price > 0 ? auction.last_bid_price : auction.start_price).toString(), 6)
+  const nextPrice = new Decimal(Number(currentPrice) + Number(formatUnits(auction.minimum_bid_price_increment, 6))).toDecimalPlaces(6).toFixed()
+  const discount = Math.round((marketPrice - currentPrice) / marketPrice * 100)
 
   const history = auction.bid_histories.map(bid => {
     return {
@@ -45,6 +48,8 @@ const auctionTemplate = (item, wallet) => {
     wallet: lastBidderWallet,
     marketPrice,
     currentPrice,
+    nextPrice,
+    discount,
     token: {
       currency: auction.auction_token.symbol.toUpperCase(),
       decimals: auction.auction_token.decimals,
@@ -99,6 +104,7 @@ export const gemSlice = createSlice({
     claim: false,
     claimId: null,
     current: null,
+    auctionWarning: false,
     showBrett: false,
   },
 
@@ -266,12 +272,11 @@ export const gemSlice = createSlice({
     },
 
     auctionUpdated: (state, { payload }) => {
-      const auction = auctionTemplate(payload.data, payload.wallet)
       state.auctions = state.auctions.map(item => {
-        if (item.id == auction.id) {
+        if (item.id == payload.data.auction.id) {
+          const auction = auctionTemplate({auction: payload.data.auction, auction_value: item.marketPrice}, payload.wallet)
           return {
             ...auction,
-            marketPrice: item.marketPrice,
             updated: true,
           }
         }
@@ -279,7 +284,8 @@ export const gemSlice = createSlice({
         return item
       })
 
-      if (state.current?.id == auction.id) {
+      if (state.current?.id == payload.data.auction.id) {
+        const auction = auctionTemplate({auction: payload.data.auction, auction_value: state.current.marketPrice}, payload.wallet)
         state.current = auction
       }
     },
@@ -303,6 +309,10 @@ export const gemSlice = createSlice({
 
     jwt: (state, { payload }) => {
       state.jwt = payload
+    },
+
+    auctionWarning: (state, { payload }) => {
+      state.auctionWarning = payload
     },
 
     showBrett: (state, { payload }) => {
