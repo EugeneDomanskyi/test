@@ -18,17 +18,7 @@ const auctionTemplate = (item, wallet) => {
     }
   }
 
-  // let status = now.isAfter(startsAt) ? 'ongoing' : 'upcoming'
-  // if (status == 'ongoing') {
-  //   if (item.last_bid_timestamp > 0) {
-  //     const lastBid = moment(item.last_bid_timestamp * 1000)
-  //     status = now.isAfter(lastBid.add(item.reset_timer, 'seconds')) ? 'closed' : 'ongoing'
-
-  //     time = lastBid.add(item.reset_timer, 'seconds').diff(now)
-  //   }
-  // }
-
-  const lastBidderWallet = item.last_bidder.wallet_address.toLowerCase() || null
+  const lastBidderWallet = item.last_bidder.wallet_address != '' ? item.last_bidder.wallet_address.toLowerCase() : null
 
   const marketPrice = formatUnits(item.start_price.toString(), 6)
   const currentPrice = formatUnits((item.last_bid_price > 0 ? item.last_bid_price : item.start_price).toString(), 6)
