@@ -275,6 +275,10 @@ export const gemSlice = createSlice({
       state.auctions = state.auctions.map(item => {
         if (item.id == payload.data.auction.id) {
           const auction = auctionTemplate({auction: payload.data.auction, auction_value: item.marketPrice}, payload.wallet)
+          if (auction.status == 'ongoing' && auction.currentPrice < item.currentPrice) {
+            return item
+          }
+
           return {
             ...auction,
             updated: true,
@@ -286,7 +290,9 @@ export const gemSlice = createSlice({
 
       if (state.current?.id == payload.data.auction.id) {
         const auction = auctionTemplate({auction: payload.data.auction, auction_value: state.current.marketPrice}, payload.wallet)
-        state.current = auction
+        if ((auction.status == 'ongoing' && auction.currentPrice >= state.current.currentPrice) || auction.status != 'ongoing') {
+          state.current = auction
+        }
       }
     },
 

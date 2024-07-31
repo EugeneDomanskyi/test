@@ -7,7 +7,6 @@ import Socket from '@/libs/ws.lib'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 import WagmiHelper from '@/libs/WagmiHelper'
 
-import $app from '@/store/app'
 import $alert from '@/store/alert'
 import $gem from '@/store/gem'
 
@@ -18,6 +17,7 @@ import AuctionClaim from '@/components/Auction/AuctionClaim'
 
 import styles from './styles.module.scss'
 import { formatUnits } from 'viem'
+import { useCallback } from 'react'
 
 const GemsAuctionInfo = () => {
   const { t } = useTranslation()
@@ -37,22 +37,18 @@ const GemsAuctionInfo = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    Socket.init(() => {}, handleCloseConnection).then(() => {
-      dispatch($app.set.socketConnected(true))
-    })
-
+    document.addEventListener('visibilitychange', handleVisible)
     return () => {
-      dispatch($app.set.socketConnected(false))
+      document.removeEventListener('visibilitychange', handleVisible)
     }
-  }, [])
+  }, [wallet])
 
   useEffect(() => {
     if (socketConnected) {
       Socket.subscribe('auctions')
 
-      Socket.on('auctions', 'auction', handleUpdatedAuction)
-
       return () => {
+        console.log(123)
         Socket.unsubscribe('auctions')
       }
     }
@@ -62,6 +58,8 @@ const GemsAuctionInfo = () => {
     if (id) {
       if (wallet) {
         setTimeout(fetchJWT, 500)
+
+        Socket.on('auctions', 'auction', handleUpdatedAuction)
       }
       fetchInfo()
     }
@@ -73,6 +71,23 @@ const GemsAuctionInfo = () => {
     }
   }, [wallet])
 
+  const handleVisible = () => {
+    if (!document.hidden) {
+      if (wallet) {
+        fetchReferrals()
+      }
+
+      fetchInfo()
+    }
+  }
+
+  const fetchReferrals = async () => {
+    const result = await $gem.api.referral(wallet)
+    if (result) {
+      dispatch($gem.set.referral(result))
+    }
+  }
+
   const handleUpdatedAuction = (data) => {
     dispatch($gem.set.auctionUpdated({data: { auction: data }, wallet}))
 
@@ -83,10 +98,6 @@ const GemsAuctionInfo = () => {
       const currency = data.auction_token.symbol.toUpperCase()
       dispatch($alert.set.info({ text: t(`${address} placed a bid for ${price} ${currency}.`) }))
     }
-  }
-
-  const handleCloseConnection = (e) => {
-    Socket.init(() => {}, handleCloseConnection)
   }
 
   const fetchStats = async () => {

@@ -40,6 +40,10 @@ const GemsAuction = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    fetchAuctions()
+  }, [])
+
+  useEffect(() => {
     document.addEventListener('visibilitychange', handleVisible)
     return () => {
       document.removeEventListener('visibilitychange', handleVisible)
@@ -49,8 +53,6 @@ const GemsAuction = () => {
   useEffect(() => {
     if (socketConnected) {
       Socket.subscribe('auctions')
-
-      Socket.on('auctions', 'auction', handleUpdatedAuction)
 
       return () => {
         Socket.unsubscribe('auctions')
@@ -62,8 +64,9 @@ const GemsAuction = () => {
     if (wallet) {
       setTimeout(fetchJWT, 500)
       fetchStats()
+
+      Socket.on('auctions', 'auction', handleUpdatedAuction)
     }
-    fetchAuctions()
   }, [wallet])
 
   const handleUpdatedAuction = (data) => {
@@ -71,8 +74,12 @@ const GemsAuction = () => {
   }
 
   const handleVisible = () => {
-    if (!document.hidden && wallet) {
-      fetchReferrals()
+    if (!document.hidden) {
+      if (wallet) {
+        fetchReferrals()
+      }
+
+      fetchAuctions()
     }
   }
 

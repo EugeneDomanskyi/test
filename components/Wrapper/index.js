@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 
+import Socket from '@/libs/ws.lib'
 import Amplitude from '@/libs/amplitude.lib'
 import useAppHelper from '@/myhooks/useAppHelper'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
@@ -45,6 +46,10 @@ const Wrapper = ({ children }) => {
   Amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY, !isApp, platform ?? 'Web')
 
   useEffect(() => {
+    Socket.init(() => {}, handleCloseConnection).then(() => {
+      dispatch($app.set.socketConnected(true))
+    })
+
     window.addEventListener('resize', handleWindowResize)
     window.addEventListener('beforeunload', handleUserSession);
 
@@ -55,6 +60,8 @@ const Wrapper = ({ children }) => {
     return () => {
       window.removeEventListener('resize', handleWindowResize)
       window.removeEventListener('beforeunload', handleUserSession)
+
+      dispatch($app.set.socketConnected(false))
     }
   }, [])
 
@@ -107,6 +114,10 @@ const Wrapper = ({ children }) => {
       setShowStickyBanner(false)
     }
   }, [page])
+
+  const handleCloseConnection = (e) => {
+    Socket.init(() => {}, handleCloseConnection)
+  }
 
   const handleUserSession = () => {
     const currentTime = new Date().getTime();
