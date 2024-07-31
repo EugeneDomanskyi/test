@@ -170,7 +170,7 @@ const AuctionButton = ({ item, small, share, telegram }) => {
   }
 
   const handleShare = () => {
-    const link = `${window.location.origin}/gems-dashboard#auction`
+    const link = `${window.location.origin}/gems-dashboard`
     const tweetText = encodeURIComponent(`
 👀 1 ETH for just $100? Absolutely! ✨
 
