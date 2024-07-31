@@ -66,7 +66,7 @@ const AuctionItem = ({ item, onClear }) => {
   }
 
   return (
-    <App.Flex column gap={10} className={styles.item} onClick={handleClick}>
+    <App.Flex column gap={10} className={styles.item}>
       {item.updated ? (
         <App.Flex className={styles.ripple}>
           <App.Flex className={styles.circle} />
