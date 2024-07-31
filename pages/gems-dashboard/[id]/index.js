@@ -194,7 +194,7 @@ const GemsAuctionInfo = () => {
                       </App.Flex>
                     ) : null}
 
-                    {item.status != 'closed' || (item.status == 'closed' && item.current && item.claimContract == '') ? (
+                    {item.status != 'closed' || (item.status == 'closed' && item.current && item.claimHash == '') ? (
                       <AuctionButton item={item} />
                     ) : null}
 
