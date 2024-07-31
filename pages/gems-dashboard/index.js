@@ -42,15 +42,7 @@ const GemsDashboard = () => {
   ]
 
   useEffect(() => {
-    Socket.init(() => {}, handleCloseConnection).then(() => {
-      dispatch($app.set.socketConnected(true))
-    })
-
     checkHash()
-
-    return () => {
-      dispatch($app.set.socketConnected(false))
-    }
   }, [])
 
   useEffect(() => {
@@ -87,10 +79,6 @@ const GemsDashboard = () => {
   const handleTab = (value) => {
     localStorage.setItem('gemsTab', value)
     setTab(value)
-  }
-
-  const handleCloseConnection = (e) => {
-    Socket.init(() => {}, handleCloseConnection)
   }
 
   const getGemsComponent = () => {

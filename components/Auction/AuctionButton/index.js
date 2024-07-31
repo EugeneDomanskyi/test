@@ -158,9 +158,8 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
             jwt_token: currentJwt,
           })
 
-          if (result) {
+          if (result && !result.error) {
             dispatch($gem.set.totalGems(user.points - item.gemsPrice))
-
             dispatch($alert.set.success({ title: t(`Bid Placed!`), text: t(`You placed a bid for ${item.nextPrice} ${item.token.currency}.`) }))
           }
         } else {
