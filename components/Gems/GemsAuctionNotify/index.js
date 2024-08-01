@@ -67,16 +67,16 @@ const GemsAuctionNotify = () => {
     <App.Container maxWidth={1230} sx={{ paddingBottom: 32 }}>
       <App.Flex column fullWidth flex={1} gap={16}>
         <App.Flex direction={['row', 'column']} align={['center', 'stretch']} justify="space-between" gap={[0, 16]}>
-          <App.Flex direction={['row', 'column']} align="center" order={[0, 1]} gap={[24, 8]}>
-            <App.Flex row center gap={16} width={['auto', '100%']} className={styles.frame} flex={[null, 1]}>
+          <App.Flex row align="center" order={[0, 1]} gap={[24, 8]}>
+            <App.Flex row center gap={16} className={styles.frame} flex={[null, 1]}>
               <App.Text size={[28, 14]} weight={600} height={1}>{t('Gems')} {Math.floor(referral.points ?? 0)}</App.Text>
               <App.Tooltip variant="v2" click={isMobile} text={getTooltip()} placement="bottom">
                 <App.Icon icon="info2" />
               </App.Tooltip>
             </App.Flex>
 
-            <App.Flex row center gap={16} width={['auto', '100%']} className={styles.frame} flex={[null, 1]}>
-              <App.Text size={[24, 14]} weight={600} height={1}>{t('100 Gems = 1 Bid')}</App.Text>
+            <App.Flex row center gap={16} className={styles.frame}>
+              <App.Text nowrap size={[24, 14]} weight={600} height={1}>{t('100 Gems = 1 Bid')}</App.Text>
             </App.Flex>
           </App.Flex>
         </App.Flex>
