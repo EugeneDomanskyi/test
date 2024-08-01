@@ -51,11 +51,13 @@ const SidebarBanner = () => {
   }
 
   const handleUserSession = () => {
-    const currentTime = new Date().getTime();
-    const popupTS = localStorage.getItem(`${current.code}Popup`)
+    if (current?.code) {
+      const currentTime = new Date().getTime();
+      const popupTS = localStorage.getItem(`${current.code}Popup`)
 
-    if (popupTS && (currentTime - popupTS) > 24 * 60 * 60 * 1000) {
-      localStorage.removeItem(`${current.code}Popup`);
+      if (popupTS && (currentTime - popupTS) > 24 * 60 * 60 * 1000) {
+        localStorage.removeItem(`${current.code}Popup`);
+      }
     }
   }
 
