@@ -12,38 +12,55 @@ import styles from './styles.module.scss'
 import AuctionCountdown from '../AuctionCountdown'
 import AuctionButton from '../AuctionButton'
 
-const AuctionItemNotify = ({ item, onClear }) => {
+const AuctionItemNotify = () => {
   const { wallet, connection } = useWagmiHelper()
 
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const referral = useSelector(({ $gem }) => $gem.referral)
 
   const [showSteps, setShowSteps] = useState(false)
+  const [startsAt, setStartsAt] = useState(0)
+
+  const item = {
+    id: 1,
+    status: 'upcoming',
+    wallet,
+    current: false,
+  }
 
   useEffect(() => {
-    if (!connection.loading && !connection.connected)
+    setStartsAt(1723069800000)
+  }, [])
+
+  useEffect(() => {
+    if (!connection.loading && !connection.connected) {
       setShowSteps(true)
+    }
   }, [connection])
 
   return (
-    <App.Flex direction={['row', 'column']} gap={[64, 0]} className={cn(styles.item, styles.upcoming)}>
+    <App.Flex direction={['row', 'column']} gap={[16, 0]} className={cn(styles.item, styles.upcoming)}>
       <App.Flex justify="center" className={styles.badgeBox}>
         <AuctionBadge v2 status={'upcoming'} win={false} />
       </App.Flex>
 
       <App.Flex justify="space-between" column gap={16} flex={1} className={styles.leftBox} order={[0, 1]}>
         <App.Flex column gap={8}>
-          <App.Text size={[64, 24]} weight={800} color="#FFBB01" height={1} sx={{ textShadow: '0px 2.849px 17.4px rgba(182, 0, 0, 0.55)' }}>Get 0.2 ETH for <s>$680</s> $100<sup>*</sup></App.Text>
+          <App.Text size={[58, 24]} weight={800} color="#FFBB01" height={1} sx={{ textShadow: '0px 2.849px 17.4px rgba(182, 0, 0, 0.55)' }}>Get 0.2 ETH for <s>$680</s> $99<sup>*</sup></App.Text>
         </App.Flex>
 
-        {/* <App.Flex column align={['flex-start', 'center']} gap={8}>
+        <App.Flex column align="flex-start" gap={8}>
           <App.Flex row gap={8} align="center">
             <App.Icon icon="timer" width={isMobile ? 20 : null} height={isMobile ? 20 : null} />
             <App.Text size={[24, 16]} weight={700} height={1}>Auction Starts In</App.Text>
           </App.Flex>
 
-          <AuctionCountdown v2 time={moment().add(15, 'days').valueOf()} />
-        </App.Flex> */}
+          {startsAt > 0 ? (
+            <AuctionCountdown v2 time={startsAt} />
+          ) : (
+            <App.Flex height={40} />
+          )}
+        </App.Flex>
 
         {!referral.is_telegram_present ? (
           <App.Flex column gap={[32, 16]}>

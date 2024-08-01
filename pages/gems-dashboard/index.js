@@ -16,7 +16,7 @@ import GemsRefer from '@/components/Gems/GemsRefer'
 import GemsContributor from '@/components/Gems/GemsContributor'
 import GemsTransactions from '@/components/Gems/GemsTransactions'
 import GemsQuests from '@/components/Gems/GemsQuests'
-import GemsAuction from '@/components/Gems/GemsAuction'
+import GemsAuctionNotify from '@/components/Gems/GemsAuctionNotify'
 
 import styles from './styles.module.scss'
 
@@ -68,10 +68,10 @@ const GemsDashboard = () => {
     }
   }, [tab])
 
-  useEffect(() => {
-    const currentTab = localStorage.getItem('gemsTab')
-    setTab(currentTab ?? 'auction')
-  }, [])
+  // useEffect(() => {
+  //   const currentTab = localStorage.getItem('gemsTab')
+  //   setTab(currentTab ?? 'auction')
+  // }, [])
 
   const checkHash = () => {
     const hash = window.location.hash
@@ -96,13 +96,13 @@ const GemsDashboard = () => {
   const getGemsComponent = () => {
     switch (tab) {
       case 'home': return <GemsHome />
-      case 'auction': return <GemsAuction />
+      case 'auction': return <GemsAuctionNotify />
       case 'liquidity': return <GemsLiquidity />
       case 'refer': return <GemsRefer />
       // case 'contributor': return <GemsContributor />
       case 'quests': return <GemsQuests />
       // case 'transactions': return <GemsTransactions />
-      default: return <GemsAuction />
+      default: return <GemsAuctionNotify />
     }
   }
 
