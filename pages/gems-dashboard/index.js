@@ -68,10 +68,10 @@ const GemsDashboard = () => {
     }
   }, [tab])
 
-  useEffect(() => {
-    const currentTab = localStorage.getItem('gemsTab')
-    setTab(currentTab ?? 'auction')
-  }, [])
+  // useEffect(() => {
+  //   const currentTab = localStorage.getItem('gemsTab')
+  //   setTab(currentTab ?? 'auction')
+  // }, [])
 
   const checkHash = () => {
     const hash = window.location.hash
