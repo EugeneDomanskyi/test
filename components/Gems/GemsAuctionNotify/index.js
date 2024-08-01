@@ -15,6 +15,7 @@ const GemsAuctionNotify = () => {
   const { t } = useTranslation()
 
   const dispatch = useDispatch()
+  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const referral = useSelector(({ $gem }) => $gem.referral)
   const auctionWarning = useSelector(({ $gem }) => $gem.auctionWarning)
 
@@ -69,7 +70,7 @@ const GemsAuctionNotify = () => {
           <App.Flex direction={['row', 'column']} align="center" order={[0, 1]} gap={[24, 8]}>
             <App.Flex row center gap={16} width={['auto', '100%']} className={styles.frame} flex={[null, 1]}>
               <App.Text size={[28, 14]} weight={600} height={1}>{t('Gems')} {Math.floor(referral.points ?? 0)}</App.Text>
-              <App.Tooltip variant="v2" text={getTooltip()} placement="bottom">
+              <App.Tooltip variant="v2" click={isMobile} text={getTooltip()} placement="bottom">
                 <App.Icon icon="info2" />
               </App.Tooltip>
             </App.Flex>
