@@ -140,7 +140,7 @@ const GemsAuctionNotify = () => {
 
                   <App.Flex className={styles.answer}>
                     <App.Flex className={styles.answerInner}>
-                      <App.Text tag="div" size={14} weight={400} color="#9B99AE">
+                      <App.Text tag="div" size={16} weight={400} color="#9B99AE">
                         <div dangerouslySetInnerHTML={{__html: item.answer}} />
                       </App.Text>
                     </App.Flex>
