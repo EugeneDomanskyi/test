@@ -75,6 +75,7 @@ export const gemSlice = createSlice({
     currentTournament: null,
     auctions: [],
     current: null,
+    auctionWarning: false,
     showBrett: false,
   },
 
@@ -240,6 +241,10 @@ export const gemSlice = createSlice({
 
     jwt: (state, { payload }) => {
       state.jwt = payload
+    },
+
+    auctionWarning: (state, { payload }) => {
+      state.auctionWarning = payload
     },
 
     showBrett: (state, { payload }) => {

@@ -49,7 +49,7 @@ const AuctionItemNotify = () => {
           <App.Text size={[58, 24]} weight={800} color="#FFBB01" height={1} sx={{ textShadow: '0px 2.849px 17.4px rgba(182, 0, 0, 0.55)' }}>Get 0.2 ETH for <s>$680</s> $99<sup>*</sup></App.Text>
         </App.Flex>
 
-        <App.Flex column align={['flex-start', 'center']} gap={8}>
+        <App.Flex column align="flex-start" gap={8}>
           <App.Flex row gap={8} align="center">
             <App.Icon icon="timer" width={isMobile ? 20 : null} height={isMobile ? 20 : null} />
             <App.Text size={[24, 16]} weight={700} height={1}>Auction Starts In</App.Text>
