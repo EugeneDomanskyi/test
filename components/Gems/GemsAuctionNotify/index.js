@@ -68,7 +68,7 @@ const GemsAuctionNotify = () => {
         <App.Flex direction={['row', 'column']} align={['center', 'stretch']} justify="space-between" gap={[0, 16]}>
           <App.Flex direction={['row', 'column']} align="center" order={[0, 1]} gap={[24, 8]}>
             <App.Flex row center gap={16} width={['auto', '100%']} className={styles.frame} flex={[null, 1]}>
-              <App.Text size={[28, 14]} weight={600} height={1}>{t('Gems')} {referral.points ?? 0}</App.Text>
+              <App.Text size={[28, 14]} weight={600} height={1}>{t('Gems')} {Math.floor(referral.points ?? 0)}</App.Text>
               <App.Tooltip variant="v2" text={getTooltip()} placement="bottom">
                 <App.Icon icon="info2" />
               </App.Tooltip>
