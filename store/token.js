@@ -19,7 +19,7 @@ export const template = (item) => {
       basePrecision: item.base_precision,
       quotePrecision: item.quote_precision,
       blockchain: blockchainCode,
-      image: item.base_symbol == 'WETH' ? 'https://tegro.com/images/0x4200000000000000000000000000000000000006.png' : `https://storage.googleapis.com/token-assets/assets/${blockchainCode}/${item.base_contract_address}.png`,
+      image: item.base_symbol == 'WETH' ? 'https://tegro.com/images/0x4200000000000000000000000000000000000006.png' : (blockchainCode == 'base' ? `https://storage.googleapis.com/token-assets/assets/${blockchainCode}/${item.base_contract_address}.png` : null),
       volume: item.ticker.quote_volume,
       price: item.ticker.price,
       high: item.ticker.price_high_24h,

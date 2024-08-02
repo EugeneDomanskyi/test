@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import moment from 'moment'
+import Image from 'next/image'
 import cn from 'classnames'
 
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import App from '@/components/App'
 import AuctionBadge from '@/components/Auction/AuctionBadge'
+import AuctionCountdown from '@/components/Auction/AuctionCountdown'
+import AuctionButton from '@/components/Auction/AuctionButton'
 
 import styles from './styles.module.scss'
-import AuctionCountdown from '../AuctionCountdown'
-import AuctionButton from '../AuctionButton'
 
 const AuctionItemNotify = () => {
   const { wallet, connection } = useWagmiHelper()
@@ -96,10 +96,10 @@ const AuctionItemNotify = () => {
       </App.Flex>
 
       <App.Flex column flex={1} className={styles.rightBox} order={[1, 0]}>
-        <img src="/images/auction-image.png" alt="" />
+        <Image src="/images/auction-image.png" width={550} height={420} alt="" />
 
         <App.Flex center className={styles.rightBoxInner}>
-          <img src="/images/auction-inner.png" alt="" />
+          <Image src="/images/auction-inner.png" width={250} height={268} alt="" />
 
           <App.Flex center className={styles.off}>
             <App.Text size={[18, 12]} weight={800} height={1}>85% OFF</App.Text>
