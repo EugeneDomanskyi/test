@@ -35,18 +35,16 @@ const Wrapper = ({ children }) => {
   const isApp = useSelector(({ $app }) => $app.isApp)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const platform = useSelector(({ $app }) => $app.platform)
-  const stats = useSelector(({ $gem }) => $gem.stats)
+  const stickyBannerVisible = useSelector(({ $app }) => $app.stickyBannerVisible)
   const blockchain = useSelector($app.get.blockchain)
 
   const [isInIframe, setIsInIframe] = useState(false)
-  const [showStickyBanner, setShowStickyBanner] = useState(false)
   const [showTournamentBanner, setShowTournamentBanner] = useState(false)
 
   Amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY, !isApp, platform ?? 'Web')
 
   useEffect(() => {
     window.addEventListener('resize', handleWindowResize)
-    window.addEventListener('beforeunload', handleUserSession);
 
     if (window.self !== window.top) {
       setIsInIframe(true)
@@ -54,7 +52,6 @@ const Wrapper = ({ children }) => {
 
     return () => {
       window.removeEventListener('resize', handleWindowResize)
-      window.removeEventListener('beforeunload', handleUserSession)
     }
   }, [])
 
@@ -79,51 +76,11 @@ const Wrapper = ({ children }) => {
     }
   }, [connection, wallet])
 
-  // useEffect(() => {
-  //   if (wallet) {
-  //     fetchUserInfo()
-  //   }
-  // }, [wallet])
-
   useEffect(() => {
     if (referral) {
       localStorage.setItem('referral', referral)
     }
   }, [referral])
-
-  useEffect(() => {
-    if (wallet && stats?.liquidity_mining) {
-      localStorage.setItem('gemsExistingUser', true);
-    }
-  }, [wallet, stats])
-
-  useEffect(() => {
-    const existingUser = localStorage.getItem('gemsExistingUser');
-    if (page === '' && ! isApp && ! existingUser) {
-      const bannerShown = localStorage.getItem('stickyShown')
-      const popupShown = localStorage.getItem('gemsPopupShown')
-      setShowStickyBanner(!bannerShown)
-    } else {
-      setShowStickyBanner(false)
-    }
-  }, [page])
-
-  const handleUserSession = () => {
-    const currentTime = new Date().getTime();
-    const bannerTS = localStorage.getItem('stickyShownTS');
-    const popupTS = localStorage.getItem('gemsPopupShownTS');
-
-    // remove sticky banner and gems popup after 24 hours
-    if (bannerTS && (currentTime - bannerTS) > 24 * 60 * 60 * 1000) {
-      localStorage.removeItem('stickyShown');
-      localStorage.removeItem('stickyShownTS');
-    }
-
-    if (popupTS && (currentTime - popupTS) > 24 * 60 * 60 * 1000) {
-      localStorage.removeItem('gemsPopupShown');
-      localStorage.removeItem('gemsPopupShownTS');
-    }
-  }
 
   const registerUser = async () => {
     const create = await $gem.api.register({ wallet_address: wallet, referral_code: localStorage.getItem('referral') ?? '' })
@@ -158,31 +115,6 @@ const Wrapper = ({ children }) => {
   const handleWindowResize = () => {
     dispatch($app.set.size(getWindowSize()))
   }
-
-  const handleInteraction = (type) => {
-    const timestamp = new Date().getTime();
-    localStorage.setItem(`${type}TS`, timestamp);
-  }
-
-  const handleOpenBanner = () => {
-    router.push('/gems-dashboard')
-    localStorage.setItem('stickyShown', true)
-    const timestamp = localStorage.getItem('stickyShownTS');
-    if (!timestamp) {
-      handleInteraction('stickyShown')
-    }
-    Amplitude.event('Gems Banner V1', {'Page': Amplitude.page(), 'Activity': 'Redirected'})
-  }
-
-  const handleCloseBanner = () => {
-    setShowStickyBanner(false)
-    localStorage.setItem('stickyShown', true)
-    const timestamp = localStorage.getItem('stickyShownTS');
-    if (!timestamp) {
-      handleInteraction('stickyShown')
-    }
-    Amplitude.event('Gems Banner V1', {'Page': Amplitude.page(), 'Activity': 'Closed'})
-  }
   
   return (
     <div style={{ height: '100%' }}>
@@ -190,9 +122,11 @@ const Wrapper = ({ children }) => {
         !isInIframe
           ? <div style={{ height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden' }}>
               <Analytics />
-              <StickyBanner onClose={handleCloseBanner} onOpen={handleOpenBanner} show={showStickyBanner} />
+              <StickyBanner />
+
               {!isCampaign && !isApp ? <Header /> : null}
-              <div style={{marginTop: page !== '' ? (isMobile ? -48 : -72) : 0, height: showStickyBanner ? 'calc(100% - 28px)' : '100%'}}>
+
+              <div style={{marginTop: page !== '' ? (isMobile ? -48 : -72) : 0, height: stickyBannerVisible ? 'calc(100% - 28px)' : '100%'}}>
                 {children}
                 {!isCampaign && !isApp && !isExchange && !isGD ? <Footer /> : null}
               </div>

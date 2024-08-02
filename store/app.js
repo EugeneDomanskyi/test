@@ -33,6 +33,7 @@ export const appSlice = createSlice({
     connection: { loading: true, connected: false },
     wallet: null,
     appConnected: false,
+    stickyBannerVisible: false,
   },
 
   reducers: {
@@ -75,6 +76,10 @@ export const appSlice = createSlice({
 
     appConnected: (state, { payload }) => {
       state.appConnected = payload
+    },
+
+    stickyBannerVisible: (state, { payload }) => {
+      state.stickyBannerVisible = payload
     },
   },
 })
