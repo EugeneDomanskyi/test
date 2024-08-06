@@ -10,8 +10,8 @@ const AuctionCountdown = ({ v2, time, hideSeconds }) => {
 
   return (
     <App.Flex align="center" gap={2}>
-      <App.Flex width={v2 ? [79, 56] : 30} justify={'flex-end'}>
-        <App.Text size={v2 ? [40, 28] : 14} weight={v2 ? 700 : 400} height={1} color={v2 ? '#FF1D61' : '#fff'}>{duration.days}{t('D')}</App.Text>
+      <App.Flex width={v2 ? [52, 37] : 30} justify={'flex-end'}>
+        <App.Text size={v2 ? [40, 28] : 14} weight={v2 ? 700 : 400} height={1} color={v2 ? '#FF1D61' : '#fff'}>{duration.days * 1}{t('D')}</App.Text>
       </App.Flex>
 
       <App.Text size={v2 ? [40, 28] : 14} weight={v2 ? 700 : 400} height={1} color={v2 ? '#FF1D61' : '#fff'}>:</App.Text>

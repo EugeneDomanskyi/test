@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import cn from 'classnames'
 import moment from 'moment'
 
+import Amplitude from '@/libs/amplitude.lib'
 import useInterval from '@/myhooks/useInterval'
 import WagmiHelper from '@/libs/WagmiHelper'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
@@ -131,11 +132,14 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
     if (share) {
       handleShare()
       $gem.api.addGems(user.wallet, { reason: 'twitter_share' })
+      Amplitude.event(`Notifications Enabled Success`)
       return
     }
 
     if (item.status == 'upcoming') {
       if ( ! user.isTelegram) {
+        Amplitude.event(`Notifications Initiated`)
+
         let host = 'd'
         if (window.location.hostname == 'testnet.tegro.com') {
           host = 't'
@@ -161,9 +165,13 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
           if (result && !result.error) {
             dispatch($gem.set.totalGems(user.points - item.gemsPrice))
             dispatch($alert.set.success({ title: t(`Bid Placed!`), text: t(`You placed a bid for ${item.nextPrice} ${item.token.currency}.`) }))
+
+            Amplitude.event(`Bid Placed`)
           }
         } else {
           dispatch($gem.set.auctionWarning(true))
+
+          Amplitude.event(`Bid Initiated`)
         }
       }
     }
@@ -181,7 +189,7 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
   }
 
   const handleShare = () => {
-    const link = `${window.location.origin}/gems-dashboard#auction`
+    const link = `${window.location.origin}/gems-dashboard`
     const tweetText = encodeURIComponent(`
 👀 1 ETH for just $100? Absolutely! ✨
 
