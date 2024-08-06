@@ -58,7 +58,9 @@ const AuctionClaim = ({ item, onClose }) => {
           setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
           dispatch($gem.set.auctionUpdated({data: result, wallet}))
 
-          Amplitude.event(`Prize Claimed`)
+          Amplitude.event(`Prize Claimed`, {
+            'Page': 'Auction',
+          })
           
           return
         } else {
@@ -80,7 +82,7 @@ const AuctionClaim = ({ item, onClose }) => {
   const handleProceed = async () => {
     setLoading(true)
 
-    const chainCode = window.location.hostname == 'tegro.com' ? 'base' : 'amoy' 
+    const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app' || (window.location.hostname == 'testnet.tegro.com' && item.id >= 3)) ? 'base' : 'amoy' 
     const network = await WagmiHelper.changeChain(chainCode)
     if (!network) {
       setLoading(false)
@@ -114,7 +116,9 @@ You don't wanna miss these insane deals! ✨
     const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}`
     window.open(tweetUrl, '_blank')
 
-    Amplitude.event(`Shared winnings`)
+    Amplitude.event(`Shared winnings`, {
+      'Page': 'Auction',
+    })
   }
 
   return (

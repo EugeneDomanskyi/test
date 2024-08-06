@@ -132,20 +132,24 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
     if (share) {
       handleShare()
       $gem.api.addGems(user.wallet, { reason: 'twitter_share' })
-      Amplitude.event(`Notifications Enabled Success`)
+      Amplitude.event(`Notifications Enabled Success`, {
+        'Page': 'Auction',
+      })
       return
     }
 
     if (item.status == 'upcoming') {
       if ( ! user.isTelegram) {
-        Amplitude.event(`Notifications Initiated`)
+        Amplitude.event(`Notifications Initiated`, {
+          'Page': 'Auction',
+        })
 
         let host = 'd'
         if (window.location.hostname == 'testnet.tegro.com') {
           host = 't'
         }
 
-        if (window.location.hostname == 'tegro.com') {
+        if (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app') {
           host = 'p'
         }
 
@@ -166,12 +170,16 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
             dispatch($gem.set.totalGems(user.points - item.gemsPrice))
             dispatch($alert.set.success({ title: t(`Bid Placed!`), text: t(`You placed a bid for ${item.nextPrice} ${item.token.currency}.`) }))
 
-            Amplitude.event(`Bid Placed`)
+            Amplitude.event(`Bid Placed`, {
+                'Page': 'Auction',
+              })
           }
         } else {
           dispatch($gem.set.auctionWarning(true))
 
-          Amplitude.event(`Bid Initiated`)
+          Amplitude.event(`Bid Initiated`, {
+            'Page': 'Auction',
+          })
         }
       }
     }
