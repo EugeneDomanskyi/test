@@ -11,7 +11,7 @@ import GemsBar from '@/components/Gems/GemsBar'
 import GemsHome from '@/components/Gems/GemsHome'
 import GemsLiquidity from '@/components/Gems/GemsLiquidity'
 import GemsRefer from '@/components/Gems/GemsRefer'
-import GemsAuctionNotify from '@/components/Gems/GemsAuctionNotify'
+import GemsAuction from '@/components/Gems/GemsAuction'
 
 import styles from './styles.module.scss'
 
@@ -52,10 +52,10 @@ const GemsDashboard = () => {
   const getGemsComponent = () => {
     switch (tab) {
       case 'home': return <GemsHome />
-      case 'auction': return <GemsAuctionNotify />
+      case 'auction': return <GemsAuction />
       case 'liquidity': return <GemsLiquidity />
       case 'refer': return <GemsRefer />
-      default: return <GemsAuctionNotify />
+      default: return <GemsAuction />
     }
   }
 

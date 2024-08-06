@@ -309,6 +309,23 @@ export const gemSlice = createSlice({
       })
     },
 
+    auctionsCheckCurrent: (state, { payload }) => {
+      state.auctions = state.auctions.map(item => {
+        if (item.wallet != null && item.wallet == payload) {
+          return {
+            ...item,
+            current: true,
+          }
+        }
+
+        return item
+      })
+
+      if (state.current?.wallet != null && state.current.wallet == payload) {
+        state.current.current = true
+      }
+    },
+
     current: (state, { payload }) => {
       state.current = auctionTemplate(payload.data, payload.wallet)
     },

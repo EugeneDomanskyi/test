@@ -1,18 +1,10 @@
-import Link from 'next/link'
-import { useSelector } from 'react-redux'
-import { useTranslation } from 'react-i18next'
 import cn from 'classnames'
 
 import App from '@/components/App'
-import SwitchLanguage from '@/components/SwitchLanguage'
 
 import styles from './styles.module.scss'
 
 const GemsBar = ({ tabs, tab, onTab }) => {
-  const { t } = useTranslation()
-
-  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
-
   const handletab = (value) => () => {
     if (onTab) {
       onTab(value)

@@ -220,7 +220,6 @@ class WagmiHelper {
       }
 
       try {
-        console.log('Change Chain - wagmi Config Chains length', this.wagmiConfig.chains.length)
         const result = await switchChain(this.wagmiConfig, { chainId: newChain.id })
         return result.hasOwnProperty('id')
       } catch (error) {

@@ -128,7 +128,7 @@ const Footer = () => {
 
                   <App.Flex column gap={8}>
                     <App.Text size={14} weight={400}>
-                      <a href="https://tegro.com/blog?utm_source=homepage&utm_medium=footer&utm_campaign=testnet" target="_blank" rel="noreferrer" className={styles.link}>Blog</a>
+                      <a href="https://medium.com/@TegroFi" target="_blank" rel="noreferrer" className={styles.link}>Blog</a>
                     </App.Text>
 
                     <App.Text size={14} weight={400}>

@@ -62,6 +62,10 @@ const GemsAuctionInfo = () => {
         Socket.on('auctions', 'auction', handleUpdatedAuction)
       }
       fetchInfo()
+
+      if (wallet && id) {
+        dispatch($gem.set.auctionsCheckCurrent(wallet))
+      }
     }
   }, [id, wallet])
 

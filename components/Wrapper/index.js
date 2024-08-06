@@ -87,6 +87,10 @@ const Wrapper = ({ children }) => {
     }
   }, [referral])
 
+  const handleCloseConnection = () => {
+    Socket.init(() => {}, handleCloseConnection)
+  }
+
   const registerUser = async () => {
     const create = await $gem.api.register({ wallet_address: wallet, referral_code: localStorage.getItem('referral') ?? '' })
     if (create && create?.is_points_added) {
