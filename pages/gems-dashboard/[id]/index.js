@@ -48,7 +48,6 @@ const GemsAuctionInfo = () => {
       Socket.subscribe('auctions')
 
       return () => {
-        console.log(123)
         Socket.unsubscribe('auctions')
       }
     }
