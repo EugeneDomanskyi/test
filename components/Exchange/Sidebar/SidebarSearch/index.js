@@ -60,7 +60,7 @@ const SidebarSearch = () => {
     if (isAddress) {
       params.market_id = `${blockchain.id}_${searchText}_${blockchain.token?.address}`
     } else {
-      params.symbol = searchText
+      params.market_symbol = searchText
     }
 
     const result = await $token.api.all(params)

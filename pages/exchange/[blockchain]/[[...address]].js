@@ -55,9 +55,9 @@ const Exchange = ({  }) => {
     dispatch($portfolio.set.update(true))
     if ( !isApp) {
       switch (action) {
-        case 'order_placed':
-          dispatch($alert.set.success({ title: 'Order placed successfully', text: `Your ${data.side} order for ${data.quantity} ${data.baseCurrency} has been placed successfully.` }))
-          break
+        // case 'order_placed':
+        //   dispatch($alert.set.success({ title: 'Order placed successfully', text: `Your ${data.side} order for ${data.quantity} ${data.baseCurrency} has been placed successfully.` }))
+        //   break
         case 'order_submitted':
           dispatch($alert.set.success({ title: 'Matched & pending settlement' }))
           break

@@ -46,7 +46,7 @@ export const portfolioSlice = createSlice({
           || (item.symbol === 'USDT' ? '/images/icon-usdt.png' : null)
           || (item.symbol === 'USDC' ? '/images/icon-usdc.png' : null)
           || (item.symbol === 'WETH' ? 'https://tegro.com/images/0x4200000000000000000000000000000000000006.png' : null)
-          || `https://storage.googleapis.com/token-assets/assets/${payload?.blockchain?.code}/${item.address.toLowerCase()}.png`
+          || (payload?.blockchain?.code == 'base' ? `https://storage.googleapis.com/token-assets/assets/${payload?.blockchain?.code}/${item.address.toLowerCase()}.png` : null)
           
         return {
           address: item.address,

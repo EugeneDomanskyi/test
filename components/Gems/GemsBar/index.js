@@ -33,13 +33,13 @@ const GemsBar = ({ tabs, tab, onTab }) => {
             </App.Flex>
           </App.Flex>
 
-          <App.Flex center gap={[20, 10]} order={[2, 1]} sx={[null, { paddingLeft: 16, paddingRight: 16 }]}>
+          {/* <App.Flex center gap={[20, 10]} order={[2, 1]} sx={[null, { paddingLeft: 16, paddingRight: 16 }]}>
             <Link href="/gems-dashboard/faq">
               <App.Icon icon="question-circle" />
             </Link>
 
-            {/* <SwitchLanguage /> */}
-          </App.Flex>
+            <SwitchLanguage />
+          </App.Flex> */}
         </App.Flex>
       </App.Container>
     </App.Flex>
