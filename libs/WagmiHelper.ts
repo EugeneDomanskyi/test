@@ -54,7 +54,7 @@ class WagmiHelper {
           const image = item.logo
             || (item.default_quote_token_symbol == 'USDT' ? '/images/icon-usdt.png' : '')
             || (item.default_quote_token_symbol == 'USDC' ? '/images/icon-usdc.png' : '')
-            || `https://storage.googleapis.com/token-assets/assets/${item?.name}/${item.default_quote_token_contract_address.toLowerCase()}.png`
+            || (item?.name == 'base' ? `https://storage.googleapis.com/token-assets/assets/${item?.name}/${item.default_quote_token_contract_address.toLowerCase()}.png` : null)
 
           const code = item.name.toLowerCase().includes('arbitrum') ? 'arbitrum' : item.name.toLowerCase()
           return {
@@ -220,7 +220,6 @@ class WagmiHelper {
       }
 
       try {
-        console.log('Change Chain - wagmi Config Chains length', this.wagmiConfig.chains.length)
         const result = await switchChain(this.wagmiConfig, { chainId: newChain.id })
         return result.hasOwnProperty('id')
       } catch (error) {

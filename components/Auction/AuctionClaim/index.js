@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { parseUnits } from 'viem'
 import cn from 'classnames'
 
+import Amplitude from '@/libs/amplitude.lib'
 import WagmiHelper from '@/libs/WagmiHelper'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
@@ -56,6 +57,8 @@ const AuctionClaim = ({ item, onClose }) => {
           setStep(4)
           setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
           dispatch($gem.set.auctionUpdated({data: result, wallet}))
+
+          Amplitude.event(`Prize Claimed`)
           
           return
         } else {
@@ -77,10 +80,11 @@ const AuctionClaim = ({ item, onClose }) => {
   const handleProceed = async () => {
     setLoading(true)
 
-    const chainCode = 'amoy' 
+    const chainCode = window.location.hostname == 'tegro.com' ? 'base' : 'amoy' 
     const network = await WagmiHelper.changeChain(chainCode)
     if (!network) {
       setLoading(false)
+      dispatch($alert.set.error({title: 'Something went wrong'}))
       return
     }
     dispatch($app.set.code(chainCode))
@@ -96,7 +100,7 @@ const AuctionClaim = ({ item, onClose }) => {
   }
 
   const handleShare = () => {
-    const link = `${window.location.origin}/gems-dashboard#auction`
+    const link = `${window.location.origin}/gems-dashboard`
     const tweetText = encodeURIComponent(`
 🚀 Unbelievable! I just bagged ${item.name} for just ${item.currentPrice} ${item.token.currency} on Tegro! 👀
 
@@ -109,6 +113,8 @@ You don't wanna miss these insane deals! ✨
 
     const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}`
     window.open(tweetUrl, '_blank')
+
+    Amplitude.event(`Shared winnings`)
   }
 
   return (

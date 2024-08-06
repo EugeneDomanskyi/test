@@ -42,7 +42,7 @@ const GemsSteps = ({ full = null }) => {
               </App.Flex>
   
               <App.Flex className={cn(styles.image, {[styles.first]: index === 0, [styles.last]: index === 2, [styles.short]: index === 0 && ! full})}>
-                <Image src={step.image} width={step.width} height={step.height} />
+                <Image src={step.image} width={step.width} height={step.height} alt="" />
               </App.Flex>
             </App.Flex>
           )

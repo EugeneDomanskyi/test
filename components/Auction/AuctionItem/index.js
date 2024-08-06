@@ -96,9 +96,9 @@ const AuctionItem = ({ item, onClear }) => {
           <App.Button primary2 large outlined onClick={handleClick}>View more</App.Button>
         ) : null}
 
-        {item.status == 'closed' ? (
+        {/* {item.status == 'closed' ? (
           <App.Button small onClick={handleClear}>Clear</App.Button>
-        ) : null}
+        ) : null} */}
       </App.Flex>
     </App.Flex>
   )

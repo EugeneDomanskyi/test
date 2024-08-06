@@ -1,18 +1,10 @@
-import Link from 'next/link'
-import { useSelector } from 'react-redux'
-import { useTranslation } from 'react-i18next'
 import cn from 'classnames'
 
 import App from '@/components/App'
-import SwitchLanguage from '@/components/SwitchLanguage'
 
 import styles from './styles.module.scss'
 
 const GemsBar = ({ tabs, tab, onTab }) => {
-  const { t } = useTranslation()
-
-  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
-
   const handletab = (value) => () => {
     if (onTab) {
       onTab(value)
@@ -33,13 +25,13 @@ const GemsBar = ({ tabs, tab, onTab }) => {
             </App.Flex>
           </App.Flex>
 
-          <App.Flex center gap={[20, 10]} order={[2, 1]} sx={[null, { paddingLeft: 16, paddingRight: 16 }]}>
+          {/* <App.Flex center gap={[20, 10]} order={[2, 1]} sx={[null, { paddingLeft: 16, paddingRight: 16 }]}>
             <Link href="/gems-dashboard/faq">
               <App.Icon icon="question-circle" />
             </Link>
 
-            {/* <SwitchLanguage /> */}
-          </App.Flex>
+            <SwitchLanguage />
+          </App.Flex> */}
         </App.Flex>
       </App.Container>
     </App.Flex>
