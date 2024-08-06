@@ -125,7 +125,7 @@ const Tournaments = () => {
     return (
       <App.Flex column gap={8}>
         {currency ? <App.Text size={14} weight={400}>Earn gems by trading {currency} tokens</App.Text> : null}
-        <App.Text size={14} weight={400}>Get a per minute gem boost <App.Text inline size={14} weight={400} color="#8DC8FF">(e.g. +10/hr)</App.Text> on your open orders.</App.Text>
+        <App.Text size={14} weight={400}>Get a per hour gem boost <App.Text inline size={14} weight={400} color="#8DC8FF">(e.g. +10/hr)</App.Text> on your open orders.</App.Text>
       </App.Flex>
     )
   }
@@ -162,7 +162,7 @@ const Tournaments = () => {
           ) : (
             getSortedKeys().length ? (
               <App.Flex column>
-                {getOngoingTournament() && wallet ? (
+                {getOngoingTournament() ? (
                   <GemsStreak streaks={getOngoingTournament().tiers} position={getStreakPosition()} />
                 ) : null}
 
@@ -173,7 +173,7 @@ const Tournaments = () => {
                         <App.Flex direction={['row', 'column']} gap={16} fullWidth className={styles.header} align="center" justify="space-between">
                           <App.Flex direction={['row', 'column']} fullWidth gap={[24, 8]} align={['center', 'flex-start']} justify={['flex-start', 'space-between']}>
                             <App.Flex row align="center" gap={8}>
-                              <Image src={`/images/${key}-logo.png`} width={24} height={24} alt="" />
+                              <Image src={tournament.image ? tournament.image : `/images/${key}-logo.png`} width={24} height={24} alt="" />
                               <App.Text nowrap uppercase size={16} weight={700} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">{tournament.name}</App.Text>
                             </App.Flex>
     
@@ -256,7 +256,7 @@ const Tournaments = () => {
     
                             <App.Flex gap={4} flex={1} center>
                               <App.Text center weight={400} height={1} color="#A6DC37">Gems{isMobile ? '' : ' Earned'}</App.Text>
-                              <App.Tooltip variant="v2" text={getTooltip(tournament.currency)} placement={isMobile ? 'bottom' : 'right'}>
+                              <App.Tooltip variant="v2" click={isMobile} text={getTooltip(tournament.currency)} placement={isMobile ? 'bottom' : 'right'}>
                                 <App.Icon icon="info2" />
                               </App.Tooltip>
                             </App.Flex>
@@ -295,7 +295,7 @@ const Tournaments = () => {
                                             <App.Text weight={400} height={1} color="#68C9F9">{item.points_per_hour}/hr</App.Text>
                                             {!isMobile ? (
                                               <App.Flex sx={{ marginTop: -10 }}>
-                                                <Image src="/images/gem-animate.gif" width={32} height={32} />
+                                                <Image src="/images/gem-animate.gif" width={32} height={32} alt="" />
                                               </App.Flex>
                                             ) : null}
                                           </App.Flex>

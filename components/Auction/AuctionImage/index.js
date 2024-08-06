@@ -14,13 +14,25 @@ const AuctionImage = ({ item, large }) => {
     <App.Flex column align="center" justify="space-between" className={cn(styles.itemImage, {[styles.large]: large}, {[styles.gray]: item.status == 'closed' && !item.current})} sx={{ backgroundImage: `url("${item.image}")` }}>
       <AuctionBadge status={item.status} win={item.current} />
 
-      <App.Flex fullWidth row align="flex-end" justify="space-between" sx={{ padding: 8 }}>
-        <Image src={item.logo} width={64} height={64} alt="" />
+      <App.Flex center className={styles.discountPrice}>
+        <App.Text size={12} height={1}>{t('{{discount}}% OFF', { discount: item.discount })}</App.Text>
+      </App.Flex>
+
+      <App.Flex center className={styles.marketPrice}>
+          <App.Text size={12} height={1}>{t('Market Price: ${{price}}', { price: item.marketPrice })}</App.Text>
+        </App.Flex>
+
+      {/* <App.Flex fullWidth row align="flex-end" justify="space-between" sx={{ padding: 8 }}>
+        {item.logo ? (
+          <Image src={item.logo} width={64} height={64} alt="" />
+        ) : (
+          <App.Flex />
+        )}
 
         <App.Flex center className={styles.marketPrice}>
-          <App.Text size={12} height={1}>{t('Market Price: {{price}} {{currency}}', { price: item.marketPrice, currency: item.currency })}</App.Text>
+          <App.Text size={12} height={1}>{t('Market Price: ${{price}}', { price: item.marketPrice })}</App.Text>
         </App.Flex>
-      </App.Flex>
+      </App.Flex> */}
     </App.Flex>
   )
 }

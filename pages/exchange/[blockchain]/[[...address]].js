@@ -42,16 +42,6 @@ const Exchange = ({  }) => {
   const mobileRef = useRef(null)
 
   useEffect(() => {
-    Socket.init(handleAction, handleCloseConnection).then(() => {
-      dispatch($app.set.socketConnected(true))
-    })
-
-    return () => {
-      dispatch($app.set.socketConnected(false))
-    }
-  }, [])
-
-  useEffect(() => {
     if (socketConnected && blockchain?.id && current?.id) {
       Socket.subscribe(`${blockchain.id}/${current.id}`)
 
@@ -65,9 +55,9 @@ const Exchange = ({  }) => {
     dispatch($portfolio.set.update(true))
     if ( !isApp) {
       switch (action) {
-        case 'order_placed':
-          dispatch($alert.set.success({ title: 'Order placed successfully', text: `Your ${data.side} order for ${data.quantity} ${data.baseCurrency} has been placed successfully.` }))
-          break
+        // case 'order_placed':
+        //   dispatch($alert.set.success({ title: 'Order placed successfully', text: `Your ${data.side} order for ${data.quantity} ${data.baseCurrency} has been placed successfully.` }))
+        //   break
         case 'order_submitted':
           dispatch($alert.set.success({ title: 'Matched & pending settlement' }))
           break
@@ -83,10 +73,6 @@ const Exchange = ({  }) => {
       }
     }
   }, [])
-
-  const handleCloseConnection = (e) => {
-    Socket.init(handleAction, handleCloseConnection)
-  }
 
   const handleClickOrder = useCallback(async order => {
     if (tradeForm.current) {

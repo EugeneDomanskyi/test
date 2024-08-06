@@ -130,7 +130,7 @@ const GemsLiquidityOrders = ({ loading }) => {
                 liquidity[tab].map((item, index) => {
                   const chainCode = chains.find(chain => chain.id == item.market.chain_id)?.code ?? blockchain.code
                   const image = item.market.image != '' ? item.market.image : (
-                    item.market.name.includes('WETH') ? 'https://tegro.com/images/0x4200000000000000000000000000000000000006.png' : `https://storage.googleapis.com/token-assets/assets/${chainCode}/${item.market.base_token}.png`
+                    item.market.name.includes('WETH') ? 'https://tegro.com/images/0x4200000000000000000000000000000000000006.png' : (chainCode == 'base' ? `https://storage.googleapis.com/token-assets/assets/${chainCode}/${item.market.base_token}.png` : null)
                   )
                   return (
                     <App.Flex key={index} row className={styles.row}>
@@ -143,7 +143,9 @@ const GemsLiquidityOrders = ({ loading }) => {
                           <App.Flex center sx={{ position: 'relative' }}>
                             <Image src={image} width={24} height={24} alt="" />
                             <App.Flex center sx={{ position: 'absolute', top: 0, left: -6, }}>
-                              <Image src={`/images/icon-${chainCode}.png`} width={12} height={12} alt="" />
+                              {image ? (
+                                <Image src={`/images/icon-${chainCode}.png`} width={12} height={12} alt="" />
+                              ) : null}
                             </App.Flex>
                           </App.Flex>
                           <App.Text center size={16} weight={600} height={1}>{item.market.name}</App.Text>

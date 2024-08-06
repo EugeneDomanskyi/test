@@ -1,8 +1,10 @@
+import cn from 'classnames'
+
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const AuctionBadge = ({ status, win }) => {
+const AuctionBadge = ({ v2, status, win }) => {
   const colors = () => {
     switch (status) {
       case 'ongoing': return ['#5B18EA', '#3C168B']
@@ -12,8 +14,8 @@ const AuctionBadge = ({ status, win }) => {
   }
   
   return (
-    <App.Flex center className={styles.badge}>
-      <svg xmlns="http://www.w3.org/2000/svg" width="135" height="21" viewBox="0 0 135 21" fill="none">
+    <App.Flex center className={cn(styles.badge, {[styles.v2]: v2})}>
+      <svg xmlns="http://www.w3.org/2000/svg" width={v2 ? 180 : 135} height={v2 ? 28 : 21} viewBox="0 0 135 21" fill="none">
         <path d="M8.52281 15.7574L0 0H135L126.477 15.7574C124.73 18.9874 121.353 21 117.681 21H17.3186C13.6465 21 10.2698 18.9874 8.52281 15.7574Z" fill={`url(#paint0_linear_5775_8_${status}_${win})`} />
         <defs>
           <linearGradient id={`paint0_linear_5775_8_${status}_${win}`} x1="87.5" y1="0" x2="87.5" y2="21" gradientUnits="userSpaceOnUse">
@@ -23,7 +25,7 @@ const AuctionBadge = ({ status, win }) => {
         </defs>
       </svg>
 
-      <App.Text uppercase size={10} weight={700} sx={{letterSpacing: 5, position: 'absolute', zIndex: 1}}>{status}</App.Text>
+      <App.Text uppercase size={v2 ? 18 : 10} weight={700} sx={{letterSpacing: v2 ? 1 : 5, position: 'absolute', zIndex: 1}}>{status == 'upcoming' ? 'coming soon' : status}</App.Text>
     </App.Flex>
   )
 }

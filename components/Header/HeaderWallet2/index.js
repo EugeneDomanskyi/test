@@ -8,6 +8,7 @@ import Amplitude from '@/libs/amplitude.lib'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $app from '@/store/app'
+import $gem from '@/store/gem'
 import $orders from '@/store/orders'
 import $portfolio from '@/store/portfolio'
 
@@ -68,6 +69,8 @@ const HeaderWallet2 = () => {
     WagmiHelper.disconnect()
     handleDisconnectDialogToggle(false)()
     handlePortfolioToggle(false)
+
+    dispatch($gem.set.clear())
 
     Amplitude.event('Wallet Disconnect Success', {
       'Page': Amplitude.page(),

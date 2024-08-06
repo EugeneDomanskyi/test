@@ -43,7 +43,7 @@ const CHART_CONFIG = {
   lineStyle: 0,
   grid: {
     vertLines: { color: 'rgba(161, 159, 255, 0)' },
-    horzLines: { color: 'rgba(161, 159, 255, 0.3)', style: 3 },
+    horzLines: { color: 'rgba(161, 159, 255, 0.1)', style: 0 },
   },
   timeScale: {
     borderColor: 'transparent',
@@ -156,7 +156,17 @@ const TradeChart = ({ version, showSwitch, top = [] }) => {
     })
 
     if (variant == 'candlesticks') {
-      candlestickSeriesRef.current.setData(chartData)
+      candlestickSeriesRef.current.setData(chartData.map(item => {
+        return {
+          time: item.time,
+          timestamp: item.timestamp,
+          open: item.open * 1,
+          close: item.close * 1,
+          high: item.high * 1,
+          low: item.low * 1,
+          volume: item.volume * 1,
+        }
+      }))
       const decimals = chartData?.[0]?.open?.toString()?.split('.')?.[1]?.length || 2
       const array = [...new Array(decimals - 1)].map((_, i) => 0)
       candlestickSeriesRef.current.applyOptions({

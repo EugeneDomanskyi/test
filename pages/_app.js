@@ -102,8 +102,8 @@ MyApp.getInitialProps = async ({ ctx }) => {
     chains = await WagmiHelper.fetchChains(ctx)
     blockchain = WagmiHelper.getCurrentChainCode(ctx, chains)
 
-    if (ssRoute.includes('/exchange') && ctx?.query && ctx?.query?.address) {
-      if (ctx.query.address.length && ctx.query.address.length > 0) {
+    if (ssRoute.includes('/exchange')) {
+      if (ctx?.query && ctx?.query?.address && ctx.query.address.length && ctx.query.address.length > 0) {
         const blockchainCode = ctx.query.blockchain
         const address = ctx.query.address[0]
         const chain = WagmiHelper.getChainByCode(blockchainCode, chains)

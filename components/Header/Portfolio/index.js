@@ -156,7 +156,7 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
                           <App.Flex row align="center" justify="space-between">
                             <App.Flex row gap={8} align="center">
                               {image[item.symbol] ? (
-                                <Image src={item.image} width={28} height={28} alt="" onError={() => setImage({ ...image, [item.symbol]: null })} />
+                                <Image src={item.image} width={28} height={28} alt="" style={{ width: 'auto', height: 'auto', }} onError={() => setImage({ ...image, [item.symbol]: null })} />
                               ) : (
                                 <div className={styles.emptyImage} style={{background: `linear-gradient(0deg, ${colors[0]}, ${colors[1]})`}}>
                                   <App.Text center size={10} weight={600}>{ getSymbolForLogo(item) }</App.Text>

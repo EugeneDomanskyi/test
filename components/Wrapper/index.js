@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 
+import Socket from '@/libs/ws.lib'
 import Amplitude from '@/libs/amplitude.lib'
 import useAppHelper from '@/myhooks/useAppHelper'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
@@ -35,18 +36,20 @@ const Wrapper = ({ children }) => {
   const isApp = useSelector(({ $app }) => $app.isApp)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const platform = useSelector(({ $app }) => $app.platform)
-  const stats = useSelector(({ $gem }) => $gem.stats)
+  const stickyBannerVisible = useSelector(({ $app }) => $app.stickyBannerVisible)
   const blockchain = useSelector($app.get.blockchain)
 
   const [isInIframe, setIsInIframe] = useState(false)
-  const [showStickyBanner, setShowStickyBanner] = useState(false)
   const [showTournamentBanner, setShowTournamentBanner] = useState(false)
 
   Amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY, !isApp, platform ?? 'Web')
 
   useEffect(() => {
+    Socket.init(() => {}, handleCloseConnection).then(() => {
+      dispatch($app.set.socketConnected(true))
+    })
+
     window.addEventListener('resize', handleWindowResize)
-    window.addEventListener('beforeunload', handleUserSession);
 
     if (window.self !== window.top) {
       setIsInIframe(true)
@@ -54,7 +57,6 @@ const Wrapper = ({ children }) => {
 
     return () => {
       window.removeEventListener('resize', handleWindowResize)
-      window.removeEventListener('beforeunload', handleUserSession)
     }
   }, [])
 
@@ -85,38 +87,8 @@ const Wrapper = ({ children }) => {
     }
   }, [referral])
 
-  useEffect(() => {
-    if (wallet && stats?.liquidity_mining) {
-      localStorage.setItem('gemsExistingUser', true);
-    }
-  }, [wallet, stats])
-
-  useEffect(() => {
-    const existingUser = localStorage.getItem('gemsExistingUser');
-    if (page === '' && ! isApp && ! existingUser) {
-      const bannerShown = localStorage.getItem('stickyShown')
-      const popupShown = localStorage.getItem('gemsPopupShown')
-      setShowStickyBanner(!bannerShown)
-    } else {
-      setShowStickyBanner(false)
-    }
-  }, [page])
-
-  const handleUserSession = () => {
-    const currentTime = new Date().getTime();
-    const bannerTS = localStorage.getItem('stickyShownTS');
-    const popupTS = localStorage.getItem('gemsPopupShownTS');
-
-    // remove sticky banner and gems popup after 24 hours
-    if (bannerTS && (currentTime - bannerTS) > 24 * 60 * 60 * 1000) {
-      localStorage.removeItem('stickyShown');
-      localStorage.removeItem('stickyShownTS');
-    }
-
-    if (popupTS && (currentTime - popupTS) > 24 * 60 * 60 * 1000) {
-      localStorage.removeItem('gemsPopupShown');
-      localStorage.removeItem('gemsPopupShownTS');
-    }
+  const handleCloseConnection = () => {
+    Socket.init(() => {}, handleCloseConnection)
   }
 
   const registerUser = async () => {
@@ -125,14 +97,18 @@ const Wrapper = ({ children }) => {
       dispatch($alert.set.success({title: '50 Gems Credited'}))
     }
 
-    const result = await $gem.api.referral(wallet)
-    if (result) {
-      dispatch($gem.set.referral(result))
-    }
+    fetchUserInfo()
 
     const onboardingStep = localStorage.getItem('onboardingStep')
     if (!onboardingStep) {
       localStorage.setItem('onboardingStep', 0)
+    }
+  }
+
+  const fetchUserInfo = async () => {
+    const result = await $gem.api.referral(wallet)
+    if (result) {
+      dispatch($gem.set.referral(result))
     }
   }
 
@@ -148,31 +124,6 @@ const Wrapper = ({ children }) => {
   const handleWindowResize = () => {
     dispatch($app.set.size(getWindowSize()))
   }
-
-  const handleInteraction = (type) => {
-    const timestamp = new Date().getTime();
-    localStorage.setItem(`${type}TS`, timestamp);
-  }
-
-  const handleOpenBanner = () => {
-    router.push('/gems-dashboard')
-    localStorage.setItem('stickyShown', true)
-    const timestamp = localStorage.getItem('stickyShownTS');
-    if (!timestamp) {
-      handleInteraction('stickyShown')
-    }
-    Amplitude.event('Gems Banner V1', {'Page': Amplitude.page(), 'Activity': 'Redirected'})
-  }
-
-  const handleCloseBanner = () => {
-    setShowStickyBanner(false)
-    localStorage.setItem('stickyShown', true)
-    const timestamp = localStorage.getItem('stickyShownTS');
-    if (!timestamp) {
-      handleInteraction('stickyShown')
-    }
-    Amplitude.event('Gems Banner V1', {'Page': Amplitude.page(), 'Activity': 'Closed'})
-  }
   
   return (
     <div style={{ height: '100%' }}>
@@ -180,9 +131,11 @@ const Wrapper = ({ children }) => {
         !isInIframe
           ? <div style={{ height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden' }}>
               <Analytics />
-              <StickyBanner onClose={handleCloseBanner} onOpen={handleOpenBanner} show={showStickyBanner} />
+              <StickyBanner />
+
               {!isCampaign && !isApp ? <Header /> : null}
-              <div style={{marginTop: page !== '' ? (isMobile ? -48 : -72) : 0, height: showStickyBanner ? 'calc(100% - 28px)' : '100%'}}>
+
+              <div style={{marginTop: page !== '' ? (isMobile ? -48 : -72) : 0, height: stickyBannerVisible ? 'calc(100% - 28px)' : '100%'}}>
                 {children}
                 {!isCampaign && !isApp && !isExchange && !isGD ? <Footer /> : null}
               </div>
