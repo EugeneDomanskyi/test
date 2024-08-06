@@ -149,7 +149,7 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
           host = 't'
         }
 
-        if (window.location.hostname == 'tegro.com') {
+        if (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app') {
           host = 'p'
         }
 

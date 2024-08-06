@@ -82,7 +82,7 @@ const AuctionClaim = ({ item, onClose }) => {
   const handleProceed = async () => {
     setLoading(true)
 
-    const chainCode = window.location.hostname == 'tegro.com' ? 'base' : 'amoy' 
+    const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app') ? 'base' : 'amoy' 
     const network = await WagmiHelper.changeChain(chainCode)
     if (!network) {
       setLoading(false)
