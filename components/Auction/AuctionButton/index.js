@@ -10,6 +10,7 @@ import useInterval from '@/myhooks/useInterval'
 import WagmiHelper from '@/libs/WagmiHelper'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
+import $app from '@/store/app'
 import $gem from '@/store/gem'
 import $alert from '@/store/alert'
 
@@ -24,10 +25,14 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
   const { wallet, connect } = useWagmiHelper()
 
   const dispatch = useDispatch()
+  const blockchain = useSelector($app.get.blockchain)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const jwt = useSelector(({ $gem }) => $gem.jwt)
   const referral = useSelector(({ $gem }) => $gem.referral)
+  const claim = useSelector(({ $gem }) => $gem.claim)
+  const claimId = useSelector(({ $gem }) => $gem.claimId)
 
+  const [loading, setLoading] = useState(false)
   const [time, setTime] = useState(item.time)
   const [duration, setDuration] = useState({
     minutes: '00',
@@ -36,6 +41,10 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
     secondsNumber: 0,
     isEnd: false,
   })
+
+  useEffect(() => {
+    setLoading(claim && claimId == item.id)
+  }, [claim, claimId])
 
   useEffect(() => {
     setTime(item.time)
@@ -105,6 +114,14 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
     let connectedWallet = wallet
     if ( ! connectedWallet) {
       connectedWallet = await connect()
+
+      if (connectedWallet) {
+        Amplitude.event('Wallet Connect', {
+          'Page': 'Auction',
+          'Chain ID': blockchain?.id,
+          'Market ID': 'Auction',
+        })
+      }
     }
 
     let isTelegram = referral?.is_telegram_present
@@ -124,6 +141,10 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
 
   const handeClick = async (e) => {
     e.stopPropagation()
+    if (loading) {
+      return
+    }
+
     const user = await getUserInfo()
     if (!user?.wallet || !user?.id) {
       return
@@ -223,7 +244,7 @@ Don't fade, join the fun today: ${link}
           ) : null}
         </div>
       ) : (
-        <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
+        <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current && !loading}, {[styles.loading]: loading}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
           {share ? (
             <App.Icon icon="x2" />
           ) : null}
@@ -235,7 +256,12 @@ Don't fade, join the fun today: ${link}
           {item.status == 'ongoing' && item.wallet ? (
             <App.Text size={small ? 16 : 20} weight={600} height={1}>{duration.minutes}:{duration.seconds}</App.Text>
           ) : null}
-          <App.Text size={small ? 16 : 20} weight={600} height={1}>{t(text())}</App.Text>
+
+          {loading ? (
+            <App.Loader size={small ? 16 : 20} />
+          ) : (
+            <App.Text size={small ? 16 : 20} weight={600} height={1}>{t(text())}</App.Text>
+          )}
         </button>
       )}
     </>

@@ -12,6 +12,7 @@ import $gem from '@/store/gem'
 
 import App from '@/components/App'
 import AuctionItem from '@/components/Auction/AuctionItem'
+import AuctionItemNotify from '@/components/Auction/AuctionItemNotify'
 import AuctionClaim from '@/components/Auction/AuctionClaim'
 import AuctionWarning from '@/components/Auction/AuctionWarning'
 
@@ -31,9 +32,13 @@ const GemsAuction = () => {
   const claimItem = useSelector($gem.get.claimItem)
   const auctionWarning = useSelector(({ $gem }) => $gem.auctionWarning)
 
-  const [openIndex, setOpenIndex] = useState()
+  const timer = 1723069800000
 
+  const [openIndex, setOpenIndex] = useState()
   const [loading, setLoading] = useState(true)
+  const [host, setHost] = useState()
+  const [endTime, setEndTime] = useState(timer)
+  const [diffTime, setDiffTime] = useState(timer - new Date().getTime())
 
   useEffect(() => {
     fetchAuctions()
@@ -41,6 +46,10 @@ const GemsAuction = () => {
     return () => {
       dispatch($gem.set.auctions({data: [], wallet}))
     }
+  }, [])
+
+  useEffect(() => {
+    setHost(window.location.hostname)
   }, [])
 
   useEffect(() => {
@@ -210,6 +219,16 @@ const GemsAuction = () => {
     setOpenIndex(state => state == i ? null : i)
   }
 
+  const handleTimer = () => {
+    const newEndTime = new Date().getTime() + 10000
+    setEndTime(newEndTime)
+    setDiffTime(newEndTime - new Date().getTime())
+  }
+
+  const handleZero = () => {
+    setDiffTime(endTime - new Date().getTime())
+  }
+
   return (
     <App.Container maxWidth={1230} sx={{ paddingBottom: 32 }}>
       <App.Flex column fullWidth flex={1} gap={16}>
@@ -226,6 +245,10 @@ const GemsAuction = () => {
               <App.Text size={[24, 16]} weight={600} height={1}>{t('100 Gems = 1 Bid')}</App.Text>
             </App.Flex>
           </App.Flex>
+
+          {host != null && host != 'tegro.com' ? (
+            <App.Button primary2 outlined onClick={handleTimer}>{t('Reduce timer')}</App.Button>
+          ) : null}
 
           {/* <App.Button primary2 outlined order={[1, 0]} onClick={handleHistory}>{t('Transaction History')}</App.Button> */}
         </App.Flex>
@@ -281,11 +304,15 @@ const GemsAuction = () => {
             </App.Flex>
           </App.Flex>
 
-          <App.Flex row wrap align="flex-start" gap={24}>
-            {auctions.length ? (
-              getSortedAuctions().map(item => <AuctionItem key={item.id + item.time} item={item} onClear={handleClear} />)
-            ) : null}
-          </App.Flex>
+          {diffTime <= 0 ? (
+            <App.Flex row wrap align="flex-start" gap={24}>
+              {auctions.length ? (
+                getSortedAuctions().map(item => <AuctionItem key={item.id + item.time} item={item} onClear={handleClear} />)
+              ) : null}
+            </App.Flex>
+          ) : (
+            <AuctionItemNotify endTime={endTime} onZero={handleZero} />
+          )}
         </App.Flex>
       </App.Flex>
 
