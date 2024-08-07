@@ -12,7 +12,7 @@ import AuctionButton from '@/components/Auction/AuctionButton'
 
 import styles from './styles.module.scss'
 
-const AuctionItemNotify = () => {
+const AuctionItemNotify = ({ endTime, onZero }) => {
   const { wallet, connection } = useWagmiHelper()
 
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
@@ -29,14 +29,20 @@ const AuctionItemNotify = () => {
   }
 
   useEffect(() => {
-    setStartsAt(1723069800000)
-  }, [])
+    setStartsAt(endTime)
+  }, [endTime])
 
   useEffect(() => {
     if (!connection.loading && !connection.connected) {
       setShowSteps(true)
     }
   }, [connection])
+
+  const handleZero = () => {
+    if (onZero) {
+      onZero()
+    }
+  }
 
   return (
     <App.Flex direction={['row', 'column']} gap={[16, 0]} className={cn(styles.item, styles.upcoming)}>
@@ -56,7 +62,7 @@ const AuctionItemNotify = () => {
           </App.Flex>
 
           {startsAt > 0 ? (
-            <AuctionCountdown v2 time={startsAt} />
+            <AuctionCountdown v2 time={startsAt} onZero={handleZero} />
           ) : (
             <App.Flex height={40} />
           )}

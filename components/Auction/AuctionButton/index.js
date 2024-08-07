@@ -10,6 +10,7 @@ import useInterval from '@/myhooks/useInterval'
 import WagmiHelper from '@/libs/WagmiHelper'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
+import $app from '@/store/app'
 import $gem from '@/store/gem'
 import $alert from '@/store/alert'
 
@@ -24,10 +25,14 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
   const { wallet, connect } = useWagmiHelper()
 
   const dispatch = useDispatch()
+  const blockchain = useSelector($app.get.blockchain)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const jwt = useSelector(({ $gem }) => $gem.jwt)
   const referral = useSelector(({ $gem }) => $gem.referral)
+  const claim = useSelector(({ $gem }) => $gem.claim)
+  const claimId = useSelector(({ $gem }) => $gem.claimId)
 
+  const [loading, setLoading] = useState(false)
   const [time, setTime] = useState(item.time)
   const [duration, setDuration] = useState({
     minutes: '00',
@@ -36,6 +41,10 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
     secondsNumber: 0,
     isEnd: false,
   })
+
+  useEffect(() => {
+    setLoading(claim && claimId == item.id)
+  }, [claim, claimId])
 
   useEffect(() => {
     setTime(item.time)
@@ -82,21 +91,6 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
 
   useInterval(tick, duration.isEnd ? null : 1000)
 
-  const getJwt = async (currentWallet) => {
-    let currentJwt = jwt
-    if (!currentJwt) {
-      const signature = await WagmiHelper.signMessage(currentWallet)
-      if (signature) {
-        currentJwt = await $gem.api.login({ wallet_address: currentWallet, signature })
-        if (currentJwt && !currentJwt?.error) {
-          localStorage.setItem('bidding-token', JSON.stringify({ jwtToken: currentJwt, jwtWallet: currentWallet }))
-        }
-      }
-    }
-
-    return currentJwt
-  }
-
   const getUserInfo = async () => {
     if (wallet && referral?.id) {
       return { wallet, id: referral.id, points: referral.points, isTelegram: referral.is_telegram_present }
@@ -105,6 +99,14 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
     let connectedWallet = wallet
     if ( ! connectedWallet) {
       connectedWallet = await connect()
+
+      if (connectedWallet) {
+        Amplitude.event('Wallet Connect', {
+          'Page': 'Auction',
+          'Chain ID': blockchain?.id,
+          'Market ID': 'Auction',
+        })
+      }
     }
 
     let isTelegram = referral?.is_telegram_present
@@ -124,6 +126,10 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
 
   const handeClick = async (e) => {
     e.stopPropagation()
+    if (loading) {
+      return
+    }
+
     const user = await getUserInfo()
     if (!user?.wallet || !user?.id) {
       return
@@ -158,7 +164,7 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
     }
 
     if (item.status == 'ongoing') {
-      const currentJwt = await getJwt(user.wallet)
+      const currentJwt = await fetchJWT(user.wallet)
       if (currentJwt) {
         if (user.points * 1 >= item.gemsPrice * 1) {
           const result = await $gem.api.bid({
@@ -187,13 +193,43 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
     if (item.status == 'closed') {
       if (item.current && item.claimHash == '') {
         if (item.claimContract && item.claimContract != '') {
-          dispatch($gem.set.claim(true))
-          dispatch($gem.set.claimId(item.id))
+          const currentJwt = await fetchJWT(user.wallet)
+          if (currentJwt) {
+            dispatch($gem.set.claim(true))
+            dispatch($gem.set.claimId(item.id))
+          }
         }
       } else {
         router.push(`/gems-dashboard/${item.id}`)
       }
     }
+  }
+
+  const fetchJWT = async (currentWallet) => {
+    let jwt = getJWT(currentWallet)
+    if (!jwt) {
+      const signature = await WagmiHelper.signMessage(currentWallet)
+      if (signature) {
+        jwt = await $gem.api.login({ wallet_address: currentWallet, signature })
+        if (jwt && !jwt?.error) {
+          localStorage.setItem('bidding-token', JSON.stringify({ jwtToken: jwt, jwtWallet: currentWallet }))
+        }
+      }
+    }
+
+    dispatch($gem.set.jwt(jwt))
+    return jwt
+  }
+
+  const getJWT = (currentWallet) => {
+    const data = localStorage.getItem('bidding-token')
+    if (data) {
+      const { jwtToken, jwtWallet } = JSON.parse(data)
+      if (currentWallet == jwtWallet) {
+        return jwtToken
+      }
+    }
+    return false
   }
 
   const handleShare = () => {
@@ -223,7 +259,7 @@ Don't fade, join the fun today: ${link}
           ) : null}
         </div>
       ) : (
-        <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
+        <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current && !loading}, {[styles.loading]: loading}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
           {share ? (
             <App.Icon icon="x2" />
           ) : null}
@@ -235,7 +271,12 @@ Don't fade, join the fun today: ${link}
           {item.status == 'ongoing' && item.wallet ? (
             <App.Text size={small ? 16 : 20} weight={600} height={1}>{duration.minutes}:{duration.seconds}</App.Text>
           ) : null}
-          <App.Text size={small ? 16 : 20} weight={600} height={1}>{t(text())}</App.Text>
+
+          {loading ? (
+            <App.Loader size={small ? 16 : 20} />
+          ) : (
+            <App.Text size={small ? 16 : 20} weight={600} height={1}>{t(text())}</App.Text>
+          )}
         </button>
       )}
     </>

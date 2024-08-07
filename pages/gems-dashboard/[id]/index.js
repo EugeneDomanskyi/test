@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
+import { formatUnits } from 'viem'
 import { useTranslation } from 'react-i18next'
 
 import Socket from '@/libs/ws.lib'
@@ -16,8 +17,6 @@ import AuctionButton from '@/components/Auction/AuctionButton'
 import AuctionClaim from '@/components/Auction/AuctionClaim'
 
 import styles from './styles.module.scss'
-import { formatUnits } from 'viem'
-import { useCallback } from 'react'
 
 const GemsAuctionInfo = () => {
   const { t } = useTranslation()
@@ -56,8 +55,6 @@ const GemsAuctionInfo = () => {
   useEffect(() => {
     if (id) {
       if (wallet) {
-        setTimeout(fetchJWT, 500)
-
         Socket.on('auctions', 'auction', handleUpdatedAuction)
       }
       fetchInfo()
@@ -117,32 +114,6 @@ const GemsAuctionInfo = () => {
     }
 
     setLoading(false)
-  }
-
-  const fetchJWT = async () => {
-    let jwt = getJWT()
-    if (!jwt) {
-      const signature = await WagmiHelper.signMessage(wallet)
-      if (signature) {
-        jwt = await $gem.api.login({ wallet_address: wallet, signature })
-        if (jwt && !jwt?.error) {
-          localStorage.setItem('bidding-token', JSON.stringify({ jwtToken: jwt, jwtWallet: wallet }))
-        }
-      }
-    }
-
-    dispatch($gem.set.jwt(jwt))
-  }
-
-  const getJWT = () => {
-    const data = localStorage.getItem('bidding-token')
-    if (data) {
-      const { jwtToken, jwtWallet } = JSON.parse(data)
-      if (wallet == jwtWallet) {
-        return jwtToken
-      }
-    }
-    return false
   }
 
   const handleBack = () => {
