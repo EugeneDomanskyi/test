@@ -4,7 +4,8 @@ import { useRouter } from 'next/router'
 import cn from 'classnames'
 import Draggable from 'react-draggable'
 
-import $orders from '@/store/orders'
+import Amplitude from '@/libs/amplitude.lib'
+import $app from '@/store/app'
 
 import App from '@/components/App'
 
@@ -15,8 +16,10 @@ const OnboardingBanner = () => {
   const router = useRouter()
   const { wallet, connection, connect } = useWagmiHelper()
 
+  const blockchain = useSelector($app.get.blockchain)
   const referral = useSelector(({ $gem }) => $gem.referral)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
+  const current = useSelector(({ $token }) => $token.current)
 
   const [showBanner, setShowBanner] = useState(false)
   const [stepBanner, setStepBanner] = useState()
@@ -62,8 +65,14 @@ const OnboardingBanner = () => {
     }
   }
 
-  const handleConnect = () => {
-    connect()
+  const handleConnect = async () => {
+    Amplitude.event('Wallet Connect Clicked', {
+      'Page': Amplitude.page(),
+      'Chain ID': blockchain?.id,
+      'Market ID': current?.address,
+    })
+
+    await connect()
   }
 
   const handleToggle = () => {
