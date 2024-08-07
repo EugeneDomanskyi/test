@@ -29,7 +29,7 @@ const AuctionItemNotify = () => {
   }
 
   useEffect(() => {
-    setStartsAt(1723069800000)
+    setStartsAt(1723132800000)
   }, [])
 
   useEffect(() => {
