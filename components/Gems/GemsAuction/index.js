@@ -77,7 +77,6 @@ const GemsAuction = () => {
 
   useEffect(() => {
     if (wallet) {
-      setTimeout(fetchJWT, 500)
       fetchStats()
 
       Socket.on('auctions', 'auction', handleUpdatedAuction)
@@ -103,32 +102,6 @@ const GemsAuction = () => {
     if (result) {
       dispatch($gem.set.referral(result))
     }
-  }
-
-  const fetchJWT = async () => {
-    let jwt = getJWT()
-    if (!jwt) {
-      const signature = await WagmiHelper.signMessage(wallet)
-      if (signature) {
-        jwt = await $gem.api.login({ wallet_address: wallet, signature })
-        if (jwt && !jwt?.error) {
-          localStorage.setItem('bidding-token', JSON.stringify({ jwtToken: jwt, jwtWallet: wallet }))
-        }
-      }
-    }
-
-    dispatch($gem.set.jwt(jwt))
-  }
-
-  const getJWT = () => {
-    const data = localStorage.getItem('bidding-token')
-    if (data) {
-      const { jwtToken, jwtWallet } = JSON.parse(data)
-      if (wallet == jwtWallet) {
-        return jwtToken
-      }
-    }
-    return false
   }
 
   const fetchStats = async () => {

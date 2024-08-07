@@ -91,21 +91,6 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
 
   useInterval(tick, duration.isEnd ? null : 1000)
 
-  const getJwt = async (currentWallet) => {
-    let currentJwt = jwt
-    if (!currentJwt) {
-      const signature = await WagmiHelper.signMessage(currentWallet)
-      if (signature) {
-        currentJwt = await $gem.api.login({ wallet_address: currentWallet, signature })
-        if (currentJwt && !currentJwt?.error) {
-          localStorage.setItem('bidding-token', JSON.stringify({ jwtToken: currentJwt, jwtWallet: currentWallet }))
-        }
-      }
-    }
-
-    return currentJwt
-  }
-
   const getUserInfo = async () => {
     if (wallet && referral?.id) {
       return { wallet, id: referral.id, points: referral.points, isTelegram: referral.is_telegram_present }
@@ -179,7 +164,7 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
     }
 
     if (item.status == 'ongoing') {
-      const currentJwt = await getJwt(user.wallet)
+      const currentJwt = await fetchJWT(user.wallet)
       if (currentJwt) {
         if (user.points * 1 >= item.gemsPrice * 1) {
           const result = await $gem.api.bid({
@@ -208,13 +193,43 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
     if (item.status == 'closed') {
       if (item.current && item.claimHash == '') {
         if (item.claimContract && item.claimContract != '') {
-          dispatch($gem.set.claim(true))
-          dispatch($gem.set.claimId(item.id))
+          const currentJwt = await fetchJWT(user.wallet)
+          if (currentJwt) {
+            dispatch($gem.set.claim(true))
+            dispatch($gem.set.claimId(item.id))
+          }
         }
       } else {
         router.push(`/gems-dashboard/${item.id}`)
       }
     }
+  }
+
+  const fetchJWT = async (currentWallet) => {
+    let jwt = getJWT(currentWallet)
+    if (!jwt) {
+      const signature = await WagmiHelper.signMessage(currentWallet)
+      if (signature) {
+        jwt = await $gem.api.login({ wallet_address: currentWallet, signature })
+        if (jwt && !jwt?.error) {
+          localStorage.setItem('bidding-token', JSON.stringify({ jwtToken: jwt, jwtWallet: currentWallet }))
+        }
+      }
+    }
+
+    dispatch($gem.set.jwt(jwt))
+    return jwt
+  }
+
+  const getJWT = (currentWallet) => {
+    const data = localStorage.getItem('bidding-token')
+    if (data) {
+      const { jwtToken, jwtWallet } = JSON.parse(data)
+      if (currentWallet == jwtWallet) {
+        return jwtToken
+      }
+    }
+    return false
   }
 
   const handleShare = () => {
