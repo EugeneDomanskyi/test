@@ -32,7 +32,7 @@ const GemsAuction = () => {
   const claimItem = useSelector($gem.get.claimItem)
   const auctionWarning = useSelector(({ $gem }) => $gem.auctionWarning)
 
-  const timer = new Date().getTime()//1723132800000
+  const timer = 1723132800000
 
   const [openIndex, setOpenIndex] = useState()
   const [loading, setLoading] = useState(true)
