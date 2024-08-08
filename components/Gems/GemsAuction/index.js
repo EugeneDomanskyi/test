@@ -224,9 +224,9 @@ const GemsAuction = () => {
             </App.Flex>
           </App.Flex>
 
-          {host != null && host != 'tegro.com' ? (
+          {/* {host != null && host != 'tegro.com' ? (
             <App.Button primary2 outlined onClick={handleTimer}>{t('Reduce timer')}</App.Button>
-          ) : null}
+          ) : null} */}
 
           {/* <App.Button primary2 outlined order={[1, 0]} onClick={handleHistory}>{t('Transaction History')}</App.Button> */}
         </App.Flex>
