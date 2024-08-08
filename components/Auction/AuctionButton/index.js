@@ -126,6 +126,8 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
 
   const handeClick = async (e) => {
     e.stopPropagation()
+    e.preventDefault()
+
     if (loading) {
       return
     }
@@ -252,14 +254,14 @@ Don't fade, join the fun today: ${link}
   return (
     <>
       {item.status == 'ongoing' && item.current ? (
-        <div className={cn(styles.badge, {[styles.small]: small}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 5 })}>
-          <App.Text size={small ? 16 : 20} weight={600} height={1} color={duration.minutesNumber == 0 && duration.secondsNumber <= 5 ? '#098C47' : '#FFFFFF99'}>{t('Winning In')}</App.Text>
+        <div className={cn(styles.badge, {[styles.small]: small}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 5 && duration.secondsNumber > 0 })}>
+          <App.Text size={small ? 16 : 20} weight={600} height={1} color={duration.minutesNumber == 0 && duration.secondsNumber <= 5 && duration.secondsNumber > 0 ? '#098C47' : '#FFFFFF99'}>{t('Winning In')}</App.Text>
           {item.wallet ? (
-            <App.Text size={small ? 16 : 20} weight={600} height={1} color={duration.minutesNumber == 0 && duration.secondsNumber <= 5 ? '#098C47' : '#FFFFFF99'}>{duration.minutes}:{duration.seconds}</App.Text>
+            <App.Text size={small ? 16 : 20} weight={600} height={1} color={duration.minutesNumber == 0 && duration.secondsNumber <= 5 && duration.secondsNumber > 0 ? '#098C47' : '#FFFFFF99'}>{duration.minutes}:{duration.seconds}</App.Text>
           ) : null}
         </div>
       ) : (
-        <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current && !loading}, {[styles.loading]: loading}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 })} onClick={handeClick}>
+        <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current && !loading}, {[styles.loading]: loading}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 && duration.secondsNumber > 0 })} onMouseUp={handeClick}>
           {share ? (
             <App.Icon icon="x2" />
           ) : null}
