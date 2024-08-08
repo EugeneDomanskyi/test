@@ -90,15 +90,15 @@ const AuctionItem = ({ item, onClear }) => {
           ) : null}
         </App.Flex>
 
-        <AuctionButton item={item} share={item.status == 'upcoming' && referral.is_telegram_present} short />
+        <AuctionButton key={item.currentPrice} item={item} share={item.status == 'upcoming' && referral.is_telegram_present} short />
 
         {item.status == 'ongoing' ? (
           <App.Button primary2 large outlined onClick={handleClick}>View more</App.Button>
         ) : null}
 
-        {/* {item.status == 'closed' ? (
+        {item.status == 'closed' ? (
           <App.Button small onClick={handleClear}>Clear</App.Button>
-        ) : null} */}
+        ) : null}
       </App.Flex>
     </App.Flex>
   )

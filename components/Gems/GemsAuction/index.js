@@ -32,7 +32,7 @@ const GemsAuction = () => {
   const claimItem = useSelector($gem.get.claimItem)
   const auctionWarning = useSelector(({ $gem }) => $gem.auctionWarning)
 
-  const timer = 1723132800000
+  const timer = new Date().getTime()//1723132800000
 
   const [openIndex, setOpenIndex] = useState()
   const [loading, setLoading] = useState(true)
@@ -83,8 +83,13 @@ const GemsAuction = () => {
     }
   }, [wallet])
 
-  const handleUpdatedAuction = (data) => {
-    dispatch($gem.set.auctionUpdated({data: {auction: data}, wallet}))
+  const handleUpdatedAuction = async (data) => {
+    //dispatch($gem.set.auctionUpdated({data: {auction: data}, wallet}))
+
+    const result = await $gem.api.auction(data.id)
+    if (result) {
+      dispatch($gem.set.auctionUpdated({data: {auction: result.auction_id}, wallet}))
+    }
   }
 
   const handleVisible = () => {
