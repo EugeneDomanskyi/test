@@ -92,7 +92,7 @@
     border-color: #fff;
     background: linear-gradient(180deg, #fff -6.02%, #8B8B8B 85.68%);
 
-    &:active {
+    &:not(.loading):active {
       background: linear-gradient(180deg, #8B8B8B -6.02%, #fff 85.68%);
     }
 
@@ -121,6 +121,10 @@
   &.small {
     height: 48px;
     border-radius: 10px;
+  }
+
+  &.center {
+    justify-content: center;
   }
 }
 

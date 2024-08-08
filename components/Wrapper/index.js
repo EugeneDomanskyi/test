@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 
+import Socket from '@/libs/ws.lib'
 import Amplitude from '@/libs/amplitude.lib'
 import useAppHelper from '@/myhooks/useAppHelper'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
@@ -44,6 +45,10 @@ const Wrapper = ({ children }) => {
   Amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY, !isApp, platform ?? 'Web')
 
   useEffect(() => {
+    Socket.init(() => {}, handleCloseConnection).then(() => {
+      dispatch($app.set.socketConnected(true))
+    })
+
     window.addEventListener('resize', handleWindowResize)
 
     if (window.self !== window.top) {
@@ -81,6 +86,10 @@ const Wrapper = ({ children }) => {
       localStorage.setItem('referral', referral)
     }
   }, [referral])
+
+  const handleCloseConnection = () => {
+    Socket.init(() => {}, handleCloseConnection)
+  }
 
   const registerUser = async () => {
     const create = await $gem.api.register({ wallet_address: wallet, referral_code: localStorage.getItem('referral') ?? '' })

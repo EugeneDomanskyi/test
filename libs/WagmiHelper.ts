@@ -2,7 +2,7 @@ import nookies from 'nookies'
 import { Chain, Hex, PrivateKeyAccount, WalletClient, createPublicClient, createWalletClient, publicActions } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { http } from 'wagmi'
-import { disconnect, getAccount, getChainId, readContract, signMessage, signTypedData, simulateContract, switchChain, watchAccount, writeContract, waitForTransactionReceipt } from '@wagmi/core'
+import { disconnect, getAccount, getBalance, getChainId, readContract, signMessage, signTypedData, simulateContract, switchChain, watchAccount, writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
 import { metaMaskWallet, rainbowWallet, walletConnectWallet, coinbaseWallet, okxWallet } from '@rainbow-me/rainbowkit/wallets'
 import * as wagmiChains from 'wagmi/chains'
@@ -56,9 +56,10 @@ class WagmiHelper {
             || (item.default_quote_token_symbol == 'USDC' ? '/images/icon-usdc.png' : '')
             || (item?.name == 'base' ? `https://storage.googleapis.com/token-assets/assets/${item?.name}/${item.default_quote_token_contract_address.toLowerCase()}.png` : null)
 
+          const code = item.name.toLowerCase().includes('arbitrum') ? 'arbitrum' : item.name.toLowerCase()
           return {
             id: item.id,
-            code: item.name,
+            code,
             native: {
               symbol: item.native_token_symbol,
               id: item.native_token_symbol_id,
@@ -219,7 +220,6 @@ class WagmiHelper {
       }
 
       try {
-        console.log('Change Chain - wagmi Config Chains length', this.wagmiConfig.chains.length)
         const result = await switchChain(this.wagmiConfig, { chainId: newChain.id })
         return result.hasOwnProperty('id')
       } catch (error) {
@@ -490,6 +490,104 @@ class WagmiHelper {
       return result
     } catch (error) {
       this.error('Approve amount failed', error)
+      return null
+    }
+  }
+
+  transfer = async (contractAddress: `0x${string}`, recipient: `0x${string}`, amount: number) => {
+    const chain = this.getChainByCode()
+
+    const abi = [{
+      name: 'transfer',
+      stateMutability: 'nonpayable',
+      type: 'function',
+      inputs: [{
+        name: 'recipient',
+        type: 'address',
+      }, {
+        name: 'amount',
+        type: 'uint256',
+      }],
+      outputs: [{
+        name: '',
+        type: 'bool',
+      }],
+    }]
+
+    const approveConfig = {
+      address: contractAddress,
+      abi,
+      functionName: 'transfer',
+      args: [
+        recipient,
+        amount,
+      ],
+    }
+
+    let config: any = {}
+    try {
+      if (this.appWallet) {
+        config = await this.publicClient.simulateContract({...approveConfig, account: this.appWallet})
+      } else {
+        config = await simulateContract(this.wagmiConfig, approveConfig)
+      }
+    } catch (error) {
+      this.error('Simulate contract failed', error)
+      return null
+    }
+
+    try {
+      let result = null
+      if (this.appWallet) {
+        result = await this.walletClient.writeContract(config.request)
+      } else {
+        result = await writeContract(this.wagmiConfig, config.request)
+      }
+
+      return result
+    } catch (error) {
+      this.error('Approve amount failed', error)
+      return null
+    }
+  }
+
+  balanceOf = async (token: `0x${string}`, chainCode: string) => {
+    const wallet = this.getWallet() as `0x${string}`
+    const chain = this.getChainByCode(chainCode)
+
+    try {
+      let result = null
+      if (this.appWallet) {
+        result = await this.publicClient.getL1TokenBalance({
+          account: wallet,
+          token,
+        })
+      } else {
+        result = await getBalance(this.wagmiConfig, {
+          address: wallet,
+          chainId: chain.id,
+          token,
+        })
+      }
+
+      return result ? Number(result.formatted) : 0
+    } catch (error) {
+      this.error('Balance Of failed', error)
+      return null
+    }
+  }
+
+  waitForTransaction = async (hash: `0x${string}`) => {
+    try {
+      if (this.appWallet) {
+        await this.publicClient.waitForTransactionReceipt({ hash })
+      } else {
+        await waitForTransactionReceipt(this.wagmiConfig, { hash })
+      }
+
+      return hash
+    } catch (error) {
+      this.error('Wait for transaction failed', error)
       return null
     }
   }

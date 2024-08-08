@@ -21,7 +21,9 @@ const GemsHome = () => {
   const statsLoading = useSelector(({ $gem }) => $gem.statsLoading)
 
   useEffect(() => {
-    fetchStats()
+    if (wallet) {
+      fetchStats()
+    }
   }, [wallet])
 
   const fetchStats = async () => {
@@ -31,10 +33,6 @@ const GemsHome = () => {
     }
 
     dispatch($gem.set.statsLoading(false))
-  }
-
-  const handleConnect = () => {
-    connect()
   }
 
   return (
@@ -49,20 +47,6 @@ const GemsHome = () => {
               <GemsHomeLeaderboard />
             </App.Container>
           </App.Flex>
-          
-          // <App.Flex column fullWidth className={styles.tiger}>
-          //   <App.Container maxWidth={1230} height="100%" sx={{paddingBottom: 64}}>
-          //     <App.Flex full column justify={['center', 'flex-start']} gap={16}>
-          //       <App.Flex column align="flex-start" width={[486, 'auto']} gap={32} sx={[{ paddingBottom: 32 }, { paddingTop: 32 }]}>
-          //         <App.Text size={[80, 52]} weight={700} height={1}>{t('Kick-start your journey to')} <App.Text inline size={[80, 52]} weight={700} height={1} color="#A6DC37">{t('Pre-rich')}</App.Text>!</App.Text>
-          //         <App.Text size={[16, 14]} weight={400} color="#FFFFFF99">{t('Collect GEMS on every action, order, and referral you make on Tegro. Get in early, start collecting, and keep your eyes peeled — because we’re just getting started.')}</App.Text>
-          //         <App.Button secondary2 onClick={handleConnect}>{t('Connect wallet')}</App.Button>
-          //       </App.Flex>
-                
-          //       <GemsSteps />
-          //     </App.Flex>
-          //   </App.Container>
-          // </App.Flex>
         )}
       </App.Flex>
     </App.Flex>
