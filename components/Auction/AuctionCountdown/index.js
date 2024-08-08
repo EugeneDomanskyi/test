@@ -1,12 +1,19 @@
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import App from '@/components/App'
 import useCountdown from '@/myhooks/useCountdown'
 
-const AuctionCountdown = ({ v2, time, hideSeconds }) => {
+const AuctionCountdown = ({ v2, time, hideSeconds, onZero }) => {
   const { t } = useTranslation()
 
   const duration = useCountdown(time)
+
+  useEffect(() => {
+    if (duration.isEnd && onZero) {
+      onZero()
+    }
+  }, [duration.isEnd])
 
   return (
     <App.Flex align="center" gap={2}>
