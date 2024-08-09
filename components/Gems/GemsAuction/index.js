@@ -43,9 +43,7 @@ const GemsAuction = () => {
   useEffect(() => {
     fetchAuctions()
 
-    return () => {
-      dispatch($gem.set.auctions({data: [], wallet}))
-    }
+    dispatch($gem.set.auctionsUpdateTimer())
   }, [])
 
   useEffect(() => {
@@ -78,9 +76,9 @@ const GemsAuction = () => {
   useEffect(() => {
     if (wallet) {
       fetchStats()
-
-      Socket.on('auctions', 'auction', handleUpdatedAuction)
     }
+
+    Socket.on('auctions', 'auction', handleUpdatedAuction)
   }, [wallet])
 
   const handleUpdatedAuction = async (data) => {
@@ -140,6 +138,9 @@ const GemsAuction = () => {
     return [...auctions].sort((a, b) => {
       if (a.status == 'ongoing') return -1
       if (b.status == 'ongoing') return 1
+      if (a.status == 'upcoming' && b.status == 'upcoming') {
+        return new Date(a.startsIn) - new Date(b.startsIn)
+      }
       if (a.status == 'upcoming') return -1
       if (b.status == 'upcoming') return 1
       if (a.status == 'closed' && b.status == 'closed') {
@@ -213,7 +214,7 @@ const GemsAuction = () => {
         <App.Flex direction={['row', 'column']} align={['center', 'stretch']} justify="space-between" gap={[0, 16]}>
           <App.Flex row align="center" order={[0, 1]} gap={24}>
             <App.Flex row center gap={16} className={styles.frame} flex={[null, 1]}>
-              <App.Text size={[28, 16]} weight={600} height={1}>{t('Gems')} {referral.points ?? 0}</App.Text>
+              <App.Text size={[28, 16]} weight={600} height={1}>{t('Gems')} {Math.floor(referral.points ?? 0)}</App.Text>
               <App.Tooltip variant="v2" click={isMobile} text={getTooltip()} placement="bottom">
                 <App.Icon icon="info2" />
               </App.Tooltip>

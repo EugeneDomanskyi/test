@@ -25,7 +25,7 @@ const AuctionBadge = ({ v2, status, win }) => {
         </defs>
       </svg>
 
-      <App.Text uppercase size={v2 ? 18 : 10} weight={700} sx={{letterSpacing: v2 ? 1 : 5, position: 'absolute', zIndex: 1}}>{status == 'upcoming' ? 'coming soon' : status}</App.Text>
+      <App.Text uppercase size={v2 ? 18 : 10} weight={700} sx={{letterSpacing: v2 ? 1 : 2, position: 'absolute', zIndex: 1}}>{status == 'upcoming' ? 'coming soon' : status}</App.Text>
     </App.Flex>
   )
 }
