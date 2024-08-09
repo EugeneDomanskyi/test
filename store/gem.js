@@ -273,9 +273,9 @@ export const gemSlice = createSlice({
 
     auctionUpdated: (state, { payload }) => {
       state.auctions = state.auctions.map(item => {
-        if (item.id == payload.data.auction.id) {
+        if (Number(item.id) == Number(payload.data.auction.id)) {
           const auction = auctionTemplate({auction: payload.data.auction, auction_value: item.marketPrice}, payload.wallet)
-          if (auction.status == 'ongoing' && auction.currentPrice < item.currentPrice) {
+          if (auction.status == 'ongoing' && auction.currentPrice * 1 < item.currentPrice * 1) {
             return item
           }
 
