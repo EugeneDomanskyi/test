@@ -11,6 +11,10 @@
   min-width: 200px;
   gap: 16px;
 
+  & > * {
+    pointer-events: none;
+  }
+
   &.small {
     height: 48px;
     border-radius: 10px;
