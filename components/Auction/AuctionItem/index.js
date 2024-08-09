@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/router'
@@ -22,6 +22,12 @@ const AuctionItem = ({ item, onClear }) => {
 
   const dispatch = useDispatch()
   const referral = useSelector(({ $gem }) => $gem.referral)
+
+  const [host, setHost] = useState()
+
+  useEffect(() => {
+    setHost(window.location.hostname)
+  }, [])
 
   useEffect(() => {
     if (item?.updated) {
@@ -96,7 +102,7 @@ const AuctionItem = ({ item, onClear }) => {
           <App.Button primary2 large outlined onClick={handleClick}>View more</App.Button>
         ) : null}
 
-        {item.status == 'closed' ? (
+        {item.status == 'closed' && host != null && host != 'tegro.com' ? (
           <App.Button small onClick={handleClear}>Clear</App.Button>
         ) : null}
       </App.Flex>
