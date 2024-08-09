@@ -15,6 +15,7 @@ import App from '@/components/App'
 import AuctionImage from '@/components/Auction/AuctionImage'
 import AuctionButton from '@/components/Auction/AuctionButton'
 import AuctionClaim from '@/components/Auction/AuctionClaim'
+import AuctionWarning from '@/components/Auction/AuctionWarning'
 
 import styles from './styles.module.scss'
 
@@ -54,9 +55,7 @@ const GemsAuctionInfo = () => {
 
   useEffect(() => {
     if (id) {
-      if (wallet) {
-        Socket.on('auctions', 'auction', handleUpdatedAuction)
-      }
+      Socket.on('auctions', 'auction', handleUpdatedAuction)
       fetchInfo()
 
       if (wallet && id) {
@@ -157,7 +156,7 @@ const GemsAuctionInfo = () => {
                 ) : (
                   <App.Flex center height={56} gap={16} className={styles.gems}>
                     <App.Text size={16} weight={600} height={1}>{t('Gems Balance')}</App.Text>
-                    <App.Text size={28} weight={600} height={1}>{referral.points}</App.Text>
+                    <App.Text size={28} weight={600} height={1}>{Math.floor(referral.points ?? 0)}</App.Text>
                   </App.Flex>
                 )}
 
@@ -269,6 +268,8 @@ const GemsAuctionInfo = () => {
       <App.Dialog hideHeader open={claim} onClose={handleClaimClose}>
         <AuctionClaim item={claimItem} onClose={handleClaimClose} />
       </App.Dialog>
+
+      <AuctionWarning />
     </App.Flex>
   )
 }

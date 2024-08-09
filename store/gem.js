@@ -46,7 +46,7 @@ const auctionTemplate = (item, wallet) => {
     status: status,
     current: wallet && wallet == lastBidderWallet,
     wallet: lastBidderWallet,
-    marketPrice,
+    marketPrice: marketPrice.toFixed(2),
     currentPrice,
     nextPrice,
     discount,
@@ -61,6 +61,7 @@ const auctionTemplate = (item, wallet) => {
     startsIn: moment(auction.starts_at * 1000).valueOf(),
     gemsPrice: auction.points_to_deduct,
     lastBidTimestamp: auction.last_bid_timestamp,
+    resetTimer: auction.reset_timer,
     history,
     claimContract: auction.auction_amount_receiver,
     claimHash: auction.claim_tx_hash,
@@ -324,6 +325,25 @@ export const gemSlice = createSlice({
       if (state.current?.wallet != null && state.current.wallet == payload) {
         state.current.current = true
       }
+    },
+
+    auctionsUpdateTimer: (state) => {
+      const now = moment()
+      state.auctions = state.auctions.map(item => {
+        let time = 0
+        if (item.status == 'ongoing') {
+          if (item.lastBidTimestamp > 0) {
+            const lastBid = moment(item.lastBidTimestamp * 1000)
+            time = lastBid.add(item.resetTimer, 'seconds').diff(now, 'seconds')
+            time = time < 0 ? 0 : time
+          }
+        }
+
+        return {
+          ...item,
+          time,
+        }
+      })
     },
 
     current: (state, { payload }) => {
