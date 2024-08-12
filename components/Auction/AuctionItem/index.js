@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
+import moment from 'moment'
 
 import WagmiHelper from '@/libs/WagmiHelper'
 
@@ -54,7 +55,7 @@ const AuctionItem = ({ item, onClear }) => {
   }
 
   const getShort = (address) => {
-    const n = 8
+    const n = 4
     return address ? `${address.substring(0, n)}...${address.substring(address.length - n)}` : ''
   }
 

@@ -147,7 +147,7 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
       onClose()
     }
   }
-
+  
   const Summary = () => {
     return (
         <App.Flex column fullWidth gap={6}>
@@ -158,7 +158,9 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
 
           <App.Flex justify="space-between">
             <App.Flex row align="center" gap={4}>
-              <Image src={side === 'buy' ? blockchain?.token?.image : current.image} width={25} height={25} alt="" />
+              {blockchain?.token?.image && current.image ? (
+                <Image src={side === 'buy' ? blockchain?.token?.image : current.image} width={25} height={25} alt="" />
+              ) : null}
               <App.Flex column gap={4}>
                 <App.Text size={12} weight={600} height={1} color="#B9B8C5">{side === 'buy' ? total : amount } {side === 'buy' ? current.quoteSymbol : current.symbol}</App.Text>
                 {side === 'buy' ? (
@@ -170,7 +172,9 @@ const OrderConfirm = ({ side, blockchain, current, price, amount, total, version
             <App.Icon icon="arrow-right-long" />
 
             <App.Flex align="center" gap={4}>
-              <Image src={side === 'buy' ? current.image : blockchain?.token?.image} width={25} height={25} alt="" />
+              {blockchain?.token?.image && current.image ? (
+                <Image src={side === 'buy' ? current.image : blockchain?.token?.image} width={25} height={25} alt="" />
+              ) : null}
               <App.Flex column gap={4}>
                 <App.Text size={12} weight={600} height={1} color="#B9B8C5">{ side === 'buy' ? amount : total } {side === 'buy' ? current.symbol : current.quoteSymbol}</App.Text>
                 {side === 'sell' ? (

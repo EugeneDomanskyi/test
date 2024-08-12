@@ -125,10 +125,12 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
   }
 
   const handeClick = async (e) => {
-    e.stopPropagation()
-    e.preventDefault()
-
     if (loading) {
+      return
+    }
+
+    if (item.status == 'closed' && !item.current) {
+      router.push(`/gems-dashboard/${item.id}`)
       return
     }
 
@@ -175,6 +177,7 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
           })
 
           if (result && !result.error) {
+            dispatch($gem.set.auctionUpdated({data: {auction: result}, wallet: user.wallet}))
             dispatch($gem.set.totalGems(user.points - item.gemsPrice))
             dispatch($alert.set.success({ title: t(`Bid Placed!`), text: t(`You placed a bid for ${item.nextPrice} ${item.token.currency}.`) }))
 
@@ -208,13 +211,14 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
   }
 
   const fetchJWT = async (currentWallet) => {
+    const message = `Please sign this message to authenticate your wallet to participate in Tegro auctions. Wallet: ${currentWallet}`
     let jwt = getJWT(currentWallet)
     if (!jwt) {
-      const signature = await WagmiHelper.signMessage(currentWallet)
+      const signature = await WagmiHelper.signMessage(message)
       if (signature) {
-        jwt = await $gem.api.login({ wallet_address: currentWallet, signature })
+        jwt = await $gem.api.login({ wallet_address: currentWallet, message, signature })
         if (jwt && !jwt?.error) {
-          localStorage.setItem('bidding-token', JSON.stringify({ jwtToken: jwt, jwtWallet: currentWallet }))
+          localStorage.setItem('bidding-token-v2', JSON.stringify({ jwtToken: jwt, jwtWallet: currentWallet }))
         }
       }
     }
@@ -224,7 +228,7 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
   }
 
   const getJWT = (currentWallet) => {
-    const data = localStorage.getItem('bidding-token')
+    const data = localStorage.getItem('bidding-token-v2')
     if (data) {
       const { jwtToken, jwtWallet } = JSON.parse(data)
       if (currentWallet == jwtWallet) {
@@ -261,7 +265,7 @@ Don't fade, join the fun today: ${link}
           ) : null}
         </div>
       ) : (
-        <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current && !loading}, {[styles.loading]: loading}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 && duration.secondsNumber > 0 })} onMouseUp={handeClick}>
+        <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current && !loading}, {[styles.loading]: loading}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 && duration.secondsNumber > 0 })} onClick={handeClick}>
           {share ? (
             <App.Icon icon="x2" />
           ) : null}

@@ -88,10 +88,16 @@ const AppText = ({ children, tag = 'p', html, inline, family, size, weight, styl
     setIsHovered(false);
   }
 
+  const handleClick = (e) => {
+    if (onClick) {
+      onClick(e)
+    }
+  }
+
   return html ? (
-    <Tag id={id} className={classes()} style={styleObject()} onClick={(e) => onClick ? onClick(e) : null} dangerouslySetInnerHTML={{ __html: html }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} />
+    <Tag id={id} className={classes()} style={styleObject()} onClick={handleClick} dangerouslySetInnerHTML={{ __html: html }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} />
   ) : (
-    <Tag id={id} className={classes()} style={styleObject()} onClick={(e) => onClick ? onClick(e) : null} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>{children}</Tag>
+    <Tag id={id} className={classes()} style={styleObject()} onClick={handleClick} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>{children}</Tag>
   )
 }
 
