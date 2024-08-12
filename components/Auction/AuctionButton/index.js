@@ -129,6 +129,11 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
       return
     }
 
+    if (item.status == 'closed' && !item.current) {
+      router.push(`/gems-dashboard/${item.id}`)
+      return
+    }
+
     const user = await getUserInfo()
     if (!user?.wallet || !user?.id) {
       return
