@@ -84,7 +84,7 @@ export const request = async (uri, method = 'GET', {api, jwt_token, ...data} = {
 }
 
 const responseHandler = async (response) => {
-  if (response.status == 502 || response.status == 404) {
+  if (response.status == 500 || response.status == 502 || response.status == 404) {
     return null
   }
 
