@@ -181,10 +181,6 @@ const GemsAuctionInfo = () => {
                     {item.status != 'closed' || (item.status == 'closed' && item.current && item.claimHash == '') ? (
                       <AuctionButton item={item} />
                     ) : null}
-
-                    <App.Flex fullWidth center={item.status != 'closed' || (item.status == 'closed' && item.current)}>
-                      <App.Text size={14} weight={400} color="#FFFFFF99">ID: {item.id}</App.Text>
-                    </App.Flex>
                   </App.Flex>
 
                   <App.Flex column gap={24} flex={1}>
