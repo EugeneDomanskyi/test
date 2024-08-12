@@ -55,7 +55,7 @@ const AuctionItem = ({ item, onClear }) => {
   }
 
   const getShort = (address) => {
-    const n = 8
+    const n = 4
     return address ? `${address.substring(0, n)}...${address.substring(address.length - n)}` : ''
   }
 
