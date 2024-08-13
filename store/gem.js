@@ -25,7 +25,7 @@ const auctionTemplate = (item, wallet) => {
   const marketPrice = Number(item.auction_value)
   const currentPrice = formatUnits((auction.last_bid_price > 0 ? auction.last_bid_price : auction.start_price).toString(), 6)
   const nextPrice = new Decimal(Number(currentPrice) + Number(formatUnits(auction.minimum_bid_price_increment, 6))).toDecimalPlaces(6).toFixed()
-  const discount = Math.round((marketPrice - currentPrice) / marketPrice * 100)
+  const discount = marketPrice > 0 ? Math.round((marketPrice - currentPrice) / marketPrice * 100) : 0
 
   let history = []
   if (auction?.bid_histories) {
@@ -110,6 +110,8 @@ export const gemSlice = createSlice({
     current: null,
     auctionWarning: false,
     showBrett: false,
+
+    auctionsLoading: true,
   },
 
   reducers: {
@@ -273,6 +275,7 @@ export const gemSlice = createSlice({
 
     auctions: (state, { payload }) => {
       state.auctions = payload.data.map(item => auctionTemplate(item, payload.wallet))
+      state.auctionsLoading = false
     },
 
     auctionUpdated: (state, { payload }) => {
@@ -351,6 +354,7 @@ export const gemSlice = createSlice({
 
     current: (state, { payload }) => {
       state.current = auctionTemplate(payload.data, payload.wallet)
+      state.auctionsLoading = false
     },
 
     jwt: (state, { payload }) => {
@@ -407,6 +411,34 @@ export const get = {
     state => state.$gem.current,
   ], (auctions, claimId, current) => {
     return claimId ? (auctions.length ? auctions.find(item => item.id == claimId) : current) : null
+  }),
+
+  bidPrice: createSelector([
+    state => state.$gem.auctions,
+    state => state.$gem.auctionsLoading,
+    state => state.$gem.current,
+  ], (auctions, loading, current) => {
+    let price = 100
+    if (!loading) {
+      if (current) {
+        price = current.gemsPrice
+      } else {
+        if (auctions.length) {
+          const ongoing = auctions.find(item => item.status == 'ongoing')
+          if (ongoing) {
+            price = ongoing.gemsPrice
+          } else {
+            const upcomings = auctions.filter(item => item.status == 'upcoming')
+            if (upcomings.length) {
+              upcomings.sort((a, b) => a.startsIn - b.startsIn)
+              price = upcomings[0].gemsPrice
+            }
+          }
+        }
+      }
+    }
+
+    return price
   }),
 }
 
