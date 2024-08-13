@@ -27,16 +27,19 @@ const auctionTemplate = (item, wallet) => {
   const nextPrice = new Decimal(Number(currentPrice) + Number(formatUnits(auction.minimum_bid_price_increment, 6))).toDecimalPlaces(6).toFixed()
   const discount = Math.round((marketPrice - currentPrice) / marketPrice * 100)
 
-  const history = auction.bid_histories.map(bid => {
-    return {
-      bid: `${formatUnits(bid.price.toString(), 6)} USDC`,
-      wallet: bid.wallet.wallet_address,
-      date: moment(bid.created_at).format('HH:mm DD-MM-YYYY'),
-      time: moment(bid.created_at).format('HH:mm'),
-      day: moment(bid.created_at).format('DD-MM-YYYY'),
-      created_at: bid.created_at,
-    }
-  })
+  let history = []
+  if (auction?.bid_histories) {
+    history = auction.bid_histories.map(bid => {
+      return {
+        bid: `${formatUnits(bid.price.toString(), 6)} USDC`,
+        wallet: bid.wallet.wallet_address,
+        date: moment(bid.created_at).format('HH:mm DD-MM-YYYY'),
+        time: moment(bid.created_at).format('HH:mm'),
+        day: moment(bid.created_at).format('DD-MM-YYYY'),
+        created_at: bid.created_at,
+      }
+    })
+  }
 
   return {
     id: auction.id,
