@@ -61,7 +61,7 @@ const AuctionItem = ({ item, onClear }) => {
 
   const handleClick = () => {
     if (item.status != 'upcoming') {
-      router.push(`/gems-dashboard/${item.id}`)
+      router.push(`/auctions/${item.id}`)
     }
   }
 

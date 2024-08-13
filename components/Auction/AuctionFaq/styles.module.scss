@@ -1,0 +1,48 @@
+.faqItem {
+  padding-bottom: 32px;
+
+  @media (max-width: 768px) {
+    padding-bottom: 16px;
+  }
+
+  &:not(:last-of-type) {
+    border-bottom: solid #FFFFFF1A 1px;
+  }
+
+  .arrow {
+    transition: all .2s;
+  }
+
+  .answer {
+    overflow: hidden;
+    max-height: 0;
+    transition: all .2s;;
+
+    .answerInner {
+      padding-top: 24px;
+
+      a {
+        color: #A6DC37;
+        transition: ass .2s;
+
+        &:hover {
+          color: #88b926;
+        }
+      }
+    }
+  }
+
+  &.open {
+    .arrow {
+      transform: rotate(180deg);
+    }
+
+    .answer {
+      max-height: 220px;
+
+      @media (max-width: 768px) {
+        max-height: 520px;
+      }
+    }
+  }
+}

@@ -89,7 +89,11 @@ class Amplitude {
     }
   
     if (window.location.pathname.includes('gems-dashboard')) {
-      return 'Gems Dashboard'
+      return 'Gems'
+    }
+
+    if (window.location.pathname.includes('auctions')) {
+      return 'Earn'
     }
   
     if (window.location.pathname.includes('tournaments')) {

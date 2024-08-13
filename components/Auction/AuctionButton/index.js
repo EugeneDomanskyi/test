@@ -130,7 +130,7 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
     }
 
     if (item.status == 'closed' && !item.current) {
-      router.push(`/gems-dashboard/${item.id}`)
+      router.push(`/auctions/${item.id}`)
       return
     }
 
@@ -205,7 +205,7 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
           }
         }
       } else {
-        router.push(`/gems-dashboard/${item.id}`)
+        router.push(`/auctions/${item.id}`)
       }
     }
   }
@@ -239,7 +239,7 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
   }
 
   const handleShare = () => {
-    const link = `${window.location.origin}/gems-dashboard`
+    const link = `${window.location.origin}/auctions`
     const tweetText = encodeURIComponent(`
 👀 1 ETH for just $100? Absolutely! ✨
 

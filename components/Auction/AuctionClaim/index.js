@@ -102,7 +102,7 @@ const AuctionClaim = ({ item, onClose }) => {
   }
 
   const handleShare = () => {
-    const link = `${window.location.origin}/gems-dashboard`
+    const link = `${window.location.origin}/auctions`
     const tweetText = encodeURIComponent(`
 🚀 Unbelievable! I just bagged ${item.name} for just ${item.currentPrice} ${item.token.currency} on Tegro! 👀
 
