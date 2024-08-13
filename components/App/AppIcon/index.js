@@ -1851,6 +1851,30 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
         </svg>
       )
     }
+    
+    if (icon == 'cup2') {
+      return (
+        <svg width={width ?? 17} height={height ?? 16} viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#FFBB01'} d="M8.60022 11.0002V12.4002" strokeLinecap="round" strokeLinejoin="round" />
+          <path stroke={color ?? '#FFBB01'} d="M5.26691 14.6667H11.9336V14.0001C11.9336 13.2667 11.3336 12.6667 10.6002 12.6667H6.60024C5.86691 12.6667 5.26691 13.2667 5.26691 14.0001V14.6667V14.6667Z" strokeMiterlimit="10" />
+          <path stroke={color ?? '#FFBB01'} d="M4.60022 14.6667H12.6002" strokeLinecap="round" strokeLinejoin="round" />
+          <path stroke={color ?? '#FFBB01'} d="M8.49998 10.6668C5.91998 10.6668 3.83331 8.58016 3.83331 6.00016V4.00016C3.83331 2.52683 5.02665 1.3335 6.49998 1.3335H10.5C11.9733 1.3335 13.1666 2.52683 13.1666 4.00016V6.00016C13.1666 8.58016 11.08 10.6668 8.49998 10.6668Z" strokeLinecap="round" strokeLinejoin="round" />
+          <path stroke={color ?? '#FFBB01'} d="M4.14598 7.76681C3.64598 7.60681 3.20598 7.31348 2.85931 6.96681C2.25931 6.30015 1.85931 5.50015 1.85931 4.56681C1.85931 3.63348 2.59265 2.90015 3.52598 2.90015H3.95931C3.82598 3.20681 3.75931 3.54681 3.75931 3.90015V5.90015C3.75931 6.56681 3.89931 7.19348 4.14598 7.76681Z" strokeLinecap="round" strokeLinejoin="round" />
+          <path stroke={color ?? '#FFBB01'} d="M12.8528 7.76681C13.3528 7.60681 13.7928 7.31348 14.1395 6.96681C14.7395 6.30015 15.1395 5.50015 15.1395 4.56681C15.1395 3.63348 14.4062 2.90015 13.4728 2.90015H13.0395C13.1728 3.20681 13.2395 3.54681 13.2395 3.90015V5.90015C13.2395 6.56681 13.0995 7.19348 12.8528 7.76681Z" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )
+    }
+    
+    if (icon == 'users') {
+      return (
+        <svg width={width ?? 17} height={height ?? 16} viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} d="M6.6064 7.24683C6.53973 7.24016 6.45973 7.24016 6.3864 7.24683C4.79973 7.1935 3.53973 5.8935 3.53973 4.2935C3.53973 2.66016 4.85973 1.3335 6.49973 1.3335C8.13307 1.3335 9.45973 2.66016 9.45973 4.2935C9.45307 5.8935 8.19307 7.1935 6.6064 7.24683Z" strokeLinecap="round" strokeLinejoin="round"/>
+          <path stroke={color ?? '#fff'} d="M11.4402 2.66675C12.7335 2.66675 13.7735 3.71341 13.7735 5.00008C13.7735 6.26008 12.7735 7.28675 11.5268 7.33341C11.4735 7.32675 11.4135 7.32675 11.3535 7.33341" strokeLinecap="round" strokeLinejoin="round"/>
+          <path stroke={color ?? '#fff'} d="M3.27317 9.70675C1.65984 10.7867 1.65984 12.5467 3.27317 13.6201C5.1065 14.8467 8.11317 14.8467 9.9465 13.6201C11.5598 12.5401 11.5598 10.7801 9.9465 9.70675C8.11984 8.48675 5.11317 8.48675 3.27317 9.70675Z" strokeLinecap="round" strokeLinejoin="round"/>
+          <path stroke={color ?? '#fff'} d="M12.7267 13.3335C13.2067 13.2335 13.66 13.0402 14.0334 12.7535C15.0734 11.9735 15.0734 10.6868 14.0334 9.90683C13.6667 9.62683 13.22 9.44016 12.7467 9.3335" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      )
+    }
 
     if (icon == 'points-popup-text') {
       return (

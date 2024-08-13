@@ -153,6 +153,13 @@
       font-weight: 600;
     }
 
+    &.medium {
+      height: 48px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
     &.quest {
       background: linear-gradient(180deg, #6B41EB -6.02%, #241164 85.68%);
       border-bottom: 2px solid #6B41EB;
@@ -173,6 +180,43 @@
         border-color: #4d29bb;
         background-color: transparent;
       }
+    }
+  }
+
+  &.twitter {
+    height: 40px;
+    background: linear-gradient(180deg, #1DA1F2 -6.02%, #068ADB 85.68%);
+    border-color: transparent;
+    border-bottom: 2px solid #68B9EB;
+    border-radius: 100px;
+    padding: 0 16px;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 25px;
+    border-radius: 12px;
+
+    &.small {
+      padding: 0 12px;
+      height: 32px;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: normal;
+      min-width: 72px;
+      border-radius: 12px;
+    }
+
+    &.large {
+      height: 60px;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    &.medium {
+      height: 48px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
     }
   }
 

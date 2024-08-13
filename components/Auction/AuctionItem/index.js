@@ -22,6 +22,7 @@ const AuctionItem = ({ item, onClear }) => {
   const { t } = useTranslation()
 
   const dispatch = useDispatch()
+  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const referral = useSelector(({ $gem }) => $gem.referral)
 
   const [host, setHost] = useState()
@@ -54,6 +55,26 @@ const AuctionItem = ({ item, onClear }) => {
     }
   }
 
+  const nextLine = () => {
+    switch (item.status) {
+      case 'upcoming': return <App.Flex row center gap={8} height={20}><App.Text center size={14} weight={600} height={1}>{referral.is_telegram_present ? 'Get +50 gems on Tweeting' : 'Get notified when auction starts'}</App.Text></App.Flex>
+      case 'ongoing': return null
+      case 'closed': return item.current && item.claimHash == '' ? (
+        <App.Flex row center gap={8} height={20}>
+          <App.Text center size={14} weight={600} height={1}>Claim your winnings in 72 hours!</App.Text>
+          <App.Tooltip variant="v2" click={isMobile} text={'You have to claim your winnings within 72 hours. If not, it gets deposited back to the reward pool.'} placement="top-end">
+            <App.Icon icon="info2" width={20} height={20} />
+          </App.Tooltip>
+        </App.Flex>
+      ) : (
+        <App.Flex row center gap={8} height={20}>
+          <App.Icon icon="cup2" />
+          <App.Text size={14} weight={600} color="#FFBB01" height={1}>Winning bid: {getShort(item.wallet)}</App.Text>
+        </App.Flex>
+      )
+    }
+  }
+
   const getShort = (address) => {
     const n = 4
     return address ? `${address.substring(0, n)}...${address.substring(address.length - n)}` : ''
@@ -83,24 +104,43 @@ const AuctionItem = ({ item, onClear }) => {
       <AuctionImage item={item} />
 
       <App.Flex column gap={12} className={styles.itemContent}>
-        <App.Text center nowrap weight={600} height={1}>{t('Buy {{title}} for', {title: item.name})}</App.Text>
-        <App.Text center nowrap size={24} weight={600} height={1}>{item.currentPrice} {item.token.currency}</App.Text>
+        <App.Text center nowrap size={14} weight={600} height={1}>{item.status == 'closed' && (!item.current || (item.current && item.claimHash != '')) ? t('{{title}} auctioned at', {title: item.name}) : t('Buy {{title}} for', {title: item.name})}</App.Text>
+        {item.status == 'closed' && (!item.current || (item.current && item.claimHash != '')) ? (
+          <App.Text center nowrap size={24} weight={600} height={1} color="#A6DC37">{item.discount}% {t('OFF')}</App.Text>
+        ) : (
+          <App.Text center nowrap size={24} weight={600} height={1}>{item.currentPrice} {item.token.currency}</App.Text>
+        )}
 
-        <App.Flex center gap={8} className={cn(styles.info, {[styles.win]: item.status == 'closed' && item.current})}>
-          <App.Text weight={400} height={1} color={item.status == 'closed' && item.current ? '#53F19C' : "#FFFFFF99"}>{t(firstText())}</App.Text>
-          {secondText() != 'hide' ? (
-            item.status == 'upcoming' ? (
-              <AuctionCountdown time={item.startsIn} />
-            ) : (
-              <App.Text weight={400} height={1}>{t(secondText())}</App.Text>
-            )
-          ) : null}
-        </App.Flex>
+        {item.status == 'closed' && (!item.current || (item.current && item.claimHash != '')) ? (
+          item.history.length > 0 ? (
+          <App.Flex row center gap={8} height={22}>
+            <App.Icon icon="users" />
+            <App.Text size={14} weight={600} height={1}>{item.history.length} Bidder{item.history.length > 1 ? 's' : ''}</App.Text>
+          </App.Flex>
+          ) : (
+            <App.Flex height={22} />
+          )
+        ) : (
+          <App.Flex center gap={8} className={cn(styles.info, {[styles.win]: item.status == 'closed' && item.current})}>
+            <App.Text size={14} weight={400} height={1} color={item.status == 'closed' && item.current ? '#53F19C' : "#737373"}>{t(firstText())}</App.Text>
+            {secondText() != 'hide' ? (
+              item.status == 'upcoming' ? (
+                <AuctionCountdown red time={item.startsIn} />
+              ) : (
+                <App.Text weight={400} height={1}>{t(secondText())}</App.Text>
+              )
+            ) : null}
+          </App.Flex>
+        )}
 
-        <AuctionButton key={item.currentPrice} item={item} share={item.status == 'upcoming' && referral.is_telegram_present} short />
+        {nextLine()}
+        
+        {item.status != 'closed' || (item.status == 'closed' && item.current && item.claimHash == '') ? (
+          <AuctionButton key={item.currentPrice} item={item} share={item.status == 'upcoming' && referral.is_telegram_present} short />
+        ) : null}
 
-        {item.status == 'ongoing' ? (
-          <App.Button primary2 large outlined onClick={handleClick}>View more</App.Button>
+        {item.status == 'ongoing' || (item.status == 'closed' && (!item.current || item.current && item.claimHash != '')) ? (
+          <App.Button primary2 large outlined onClick={handleClick}>View {item.status == 'closed' ? 'history' : 'more'}</App.Button>
         ) : null}
 
         {item.status == 'closed' && host != null && host != 'tegro.com' ? (

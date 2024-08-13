@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
@@ -15,7 +15,6 @@ import $gem from '@/store/gem'
 import $alert from '@/store/alert'
 
 import App from '@/components/App'
-import AuctionItemSimple from '@/components/Auction/AuctionItemSimple'
 
 import styles from './styles.module.scss'
 
@@ -27,7 +26,6 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
-  const jwt = useSelector(({ $gem }) => $gem.jwt)
   const referral = useSelector(({ $gem }) => $gem.referral)
   const claim = useSelector(({ $gem }) => $gem.claim)
   const claimId = useSelector(({ $gem }) => $gem.claimId)
@@ -265,7 +263,7 @@ Don't fade, join the fun today: ${link}
           ) : null}
         </div>
       ) : (
-        <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current && !loading}, {[styles.loading]: loading}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 && duration.secondsNumber > 0 })} onClick={handeClick}>
+        <button className={cn(styles.button, {[styles.flat]: !wallet}, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current && !loading}, {[styles.loading]: loading}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 && duration.secondsNumber > 0 })} onClick={handeClick}>
           {share ? (
             <App.Icon icon="x2" />
           ) : null}

@@ -73,6 +73,10 @@
     border-color: #6B41EB;
     background: linear-gradient(180deg, #6B41EB -6.02%, #241164 85.68%);
 
+    &.flat {
+      background: #6B41EB;
+    }
+
     &.empty {
       justify-content: center;
     }
