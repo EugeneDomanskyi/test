@@ -22,6 +22,7 @@ const AuctionItem = ({ item, onClear }) => {
   const { t } = useTranslation()
 
   const dispatch = useDispatch()
+  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const referral = useSelector(({ $gem }) => $gem.referral)
 
   const [host, setHost] = useState()
@@ -96,6 +97,15 @@ const AuctionItem = ({ item, onClear }) => {
             )
           ) : null}
         </App.Flex>
+
+        {item.status == 'closed' && item.current && item.claimHash == '' ? (
+          <App.Flex row center gap={8} height={20}>
+            <App.Text center size={14} weight={600} height={1}>Claim your winnings in 72 hours!</App.Text>
+            <App.Tooltip variant="v2" click={isMobile} text={'You have to claim your winnings within 72 hours. If not, it gets deposited back to the reward pool.'} placement="top-end">
+              <App.Icon icon="info2" width={20} height={20} />
+            </App.Tooltip>
+          </App.Flex>
+        ) : null}
 
         <AuctionButton key={item.currentPrice} item={item} share={item.status == 'upcoming' && referral.is_telegram_present} short />
 
