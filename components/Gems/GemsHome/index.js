@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { useTranslation } from 'react-i18next'
 
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
@@ -9,21 +8,17 @@ import $gem from '@/store/gem'
 import App from '@/components/App'
 import GemsHomeStats from '@/components/Gems/GemsHomeStats'
 import GemsHomeLeaderboard from '@/components/Gems/GemsHomeLeaderboard'
-import GemsSteps from '@/components/Gems/GemsSteps'
 
 import styles from './styles.module.scss'
 
 const GemsHome = () => {
-  const { t } = useTranslation()
-  const { connection, connect, wallet } = useWagmiHelper()
+  const { wallet } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const statsLoading = useSelector(({ $gem }) => $gem.statsLoading)
 
   useEffect(() => {
-    if (wallet) {
-      fetchStats()
-    }
+    fetchStats()
   }, [wallet])
 
   const fetchStats = async () => {

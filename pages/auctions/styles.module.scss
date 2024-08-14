@@ -1,0 +1,10 @@
+.container {
+  padding-top: 88px;
+  padding-bottom: 32px;
+  background: url('/images/gems/gems-background.png') left top no-repeat;
+  min-height: 100vh;
+
+  @media (max-width: 768px) {
+    padding-top: 64px;
+  }
+}

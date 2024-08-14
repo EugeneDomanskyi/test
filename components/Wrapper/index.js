@@ -30,6 +30,7 @@ const Wrapper = ({ children }) => {
   const isExchange = router.asPath?.includes('/exchange')
   const [_, page] = router.asPath.split('/')
   const isGD = router.asPath?.includes('/gems-dashboard')
+  const isAuctions = router.asPath?.includes('/auctions')
   const { referral } = router.query
 
   const dispatch = useDispatch()
@@ -137,7 +138,7 @@ const Wrapper = ({ children }) => {
 
               <div style={{marginTop: page !== '' ? (isMobile ? -48 : -72) : 0, height: stickyBannerVisible ? 'calc(100% - 28px)' : '100%'}}>
                 {children}
-                {!isCampaign && !isApp && !isExchange && !isGD ? <Footer /> : null}
+                {!isCampaign && !isApp && !isExchange && !isGD && !isAuctions ? <Footer /> : null}
               </div>
 
               {page === 'exchange' && !isApp && showTournamentBanner  ? <SidebarBanner /> : null}

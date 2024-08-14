@@ -25,10 +25,12 @@ const AuctionClaim = ({ item, onClose }) => {
 
   const dispatch = useDispatch()
   const jwt = useSelector(({ $gem }) => $gem.jwt)
+  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
   const [step, setStep] = useState(0)
   const [scanLink, setScanLink] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [shared, setShared] = useState(false)
 
   useEffect(() => {
     if (step == 1) {
@@ -102,7 +104,7 @@ const AuctionClaim = ({ item, onClose }) => {
   }
 
   const handleShare = () => {
-    const link = `${window.location.origin}/gems-dashboard`
+    const link = `${window.location.origin}/auctions`
     const tweetText = encodeURIComponent(`
 🚀 Unbelievable! I just bagged ${item.name} for just ${item.currentPrice} ${item.token.currency} on Tegro! 👀
 
@@ -119,6 +121,8 @@ You don't wanna miss these insane deals! ✨
     Amplitude.event(`Shared winnings`, {
       'Page': 'Auction',
     })
+
+    setShared(true)
   }
 
   return (
@@ -159,7 +163,7 @@ You don't wanna miss these insane deals! ✨
         </App.Flex>
       </App.Flex>
 
-      <App.Flex column center gap={32} className={styles.content}>
+      <App.Flex column center gap={16} className={styles.content}>
         {step == 0 ? (
           <App.Flex center className={styles.badge}>
             <App.Text size={20} weight={600} height={1} color="#53F19C">{t('You won the auction!')}</App.Text>
@@ -200,12 +204,44 @@ You don't wanna miss these insane deals! ✨
           <AuctionLoader />
         ) : null}
 
-        <AuctionItemSimple item={item} small={step == 2 || step == 3} large={step == 4} />
+        <AuctionItemSimple item={item} large={step == 4} />
 
         {step == 0 ? (
           <App.Flex column gap={16} fullWidth center>
-            <App.Text center size={[20, 16]} weight={600} height={1}>{t(`Pay {{price}} {{currency}} to claim {{title}}`, {price: item.currentPrice, currency: item.token.currency, title: item.name})}</App.Text>
-            <App.Button primary2 loading={loading} onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
+            <App.Text center size={[20, 16]} weight={600} height={1}>{shared ? t(`Pay {{price}} {{currency}} to claim {{title}}`, {price: item.currentPrice, currency: item.token.currency, title: item.name}) : t('Complete the Steps to Claim Your Rewards')}</App.Text>
+
+            <App.Flex row align="center" justify="space-between" className={styles.steps}>
+              <App.Flex center className={cn(styles.circle, styles.active)}>
+                {shared ? <App.Icon icon="check" /> : <App.Text center size={14} weight={700} height={1}>1</App.Text>}
+              </App.Flex>
+
+              <App.Flex center className={cn(styles.circle, {[styles.active]: shared})}>
+                <App.Text center size={14} weight={700} height={1}>2</App.Text>
+              </App.Flex>
+
+              <App.Flex className={styles.line} />
+
+              <App.Flex center className={cn(styles.words, styles.left)}>
+                <App.Text size={12} weight={400} height={1}>Share on Twitter</App.Text>
+              </App.Flex>
+
+              <App.Flex center className={cn(styles.words, styles.right)}>
+                <App.Text size={12} weight={400} height={1}>Claim Rewards</App.Text>
+              </App.Flex>
+            </App.Flex>
+
+            {shared ? (
+              <App.Button primary2 medium fullWidth loading={loading} onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
+            ) : (
+              <App.Button twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
+            )}
+
+            <App.Flex row center gap={8}>
+              <App.Text size={14} weight={600} color="#FF1D61" height={1}>Claim your winnings within 72 hours!</App.Text>
+              <App.Tooltip variant="v2" click={isMobile} text={'You have to claim your winnings within 72 hours. If not, it gets deposited back to the reward pool.'} placement="top-end">
+                <App.Icon icon="info2" width={20} height={20} />
+              </App.Tooltip>
+            </App.Flex>
           </App.Flex>
         ) : null}
 

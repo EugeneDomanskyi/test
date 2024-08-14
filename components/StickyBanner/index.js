@@ -22,7 +22,7 @@ const StickyBanner = () => {
   const stickyBannerVisible = useSelector(({ $app }) => $app.stickyBannerVisible)
 
   const delayBetweenShow = 24 * 60 * 60 * 1000
-  const targetLink = '/gems-dashboard?utm_source=stickyb'
+  const targetLink = '/auctions?utm_source=stickyb'
 
   useEffect(() => {
     if (!connection.loading) {
