@@ -17,6 +17,7 @@ import AuctionBar from '@/components/Auction/AuctionBar'
 import AuctionFaq from '@/components/Auction/AuctionFaq'
 import AuctionSteps from '@/components/Auction/AuctionSteps'
 import AuctionVideo from '@/components/Auction/AuctionVideo'
+import AuctionSuybscribe from '@/components/Auction/AuctionSubscribe'
 
 const Auctions = () => {
   const { t } = useTranslation()
@@ -97,7 +98,7 @@ const Auctions = () => {
       if (a.status == 'upcoming') return -1
       if (b.status == 'upcoming') return 1
       if (a.status == 'closed' && b.status == 'closed') {
-        return new Date(b.last_bid_timestamp) - new Date(a.last_bid_timestamp)
+        return new Date(b.lastBidTimestamp) - new Date(a.lastBidTimestamp)
       }
       if (a.status == 'closed') return -1
       if (b.status == 'closed') return 1
@@ -135,6 +136,7 @@ const Auctions = () => {
       </App.Dialog>
 
       <AuctionWarning />
+      <AuctionSuybscribe />
     </App.Container>
   )
 }

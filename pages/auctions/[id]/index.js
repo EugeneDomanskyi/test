@@ -16,6 +16,7 @@ import AuctionImage from '@/components/Auction/AuctionImage'
 import AuctionButton from '@/components/Auction/AuctionButton'
 import AuctionClaim from '@/components/Auction/AuctionClaim'
 import AuctionWarning from '@/components/Auction/AuctionWarning'
+import AuctionSuybscribe from '@/components/Auction/AuctionSubscribe'
 
 import styles from './styles.module.scss'
 
@@ -235,6 +236,7 @@ const GemsAuctionInfo = () => {
       </App.Dialog>
 
       <AuctionWarning />
+      <AuctionSuybscribe />
     </App.Flex>
   )
 }

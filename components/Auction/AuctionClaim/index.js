@@ -25,6 +25,7 @@ const AuctionClaim = ({ item, onClose }) => {
 
   const dispatch = useDispatch()
   const jwt = useSelector(({ $gem }) => $gem.jwt)
+  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
   const [step, setStep] = useState(0)
   const [scanLink, setScanLink] = useState(null)
@@ -234,6 +235,13 @@ You don't wanna miss these insane deals! ✨
             ) : (
               <App.Button twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
             )}
+
+            <App.Flex row center gap={8}>
+              <App.Text size={14} weight={600} color="#FF1D61" height={1}>Claim your winnings within 72 hours!</App.Text>
+              <App.Tooltip variant="v2" click={isMobile} text={'You have to claim your winnings within 72 hours. If not, it gets deposited back to the reward pool.'} placement="top-end">
+                <App.Icon icon="info2" width={20} height={20} />
+              </App.Tooltip>
+            </App.Flex>
           </App.Flex>
         ) : null}
 

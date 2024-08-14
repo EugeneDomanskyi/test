@@ -66,6 +66,7 @@ const auctionTemplate = (item, wallet) => {
     lastBidTimestamp: auction.last_bid_timestamp,
     resetTimer: auction.reset_timer,
     history,
+    bidsCount: history.length,
     claimContract: auction.auction_amount_receiver,
     claimHash: auction.claim_tx_hash,
     updated: false,
@@ -110,6 +111,8 @@ export const gemSlice = createSlice({
     current: null,
     auctionWarning: false,
     showBrett: false,
+    showTelegramSubscription: false,
+    claimImage: null,
 
     gemsLoading: true,
     auctionsLoading: true,
@@ -377,6 +380,14 @@ export const gemSlice = createSlice({
 
     claimId: (state, { payload }) => {
       state.claimId = payload
+    },
+
+    showTelegramSubscription: (state, { payload }) => {
+      state.showTelegramSubscription = payload
+    },
+
+    claimImage: (state, { payload }) => {
+      state.claimImage = payload
     },
 
     clear: (state, { payload }) => {

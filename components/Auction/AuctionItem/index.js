@@ -3,11 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
-import moment from 'moment'
 
-import WagmiHelper from '@/libs/WagmiHelper'
-
-import $app from '@/store/app'
 import $gem from '@/store/gem'
 
 import App from '@/components/App'
@@ -112,10 +108,10 @@ const AuctionItem = ({ item, onClear }) => {
         )}
 
         {item.status == 'closed' && (!item.current || (item.current && item.claimHash != '')) ? (
-          item.history.length > 0 ? (
+          item.bidsCount > 0 ? (
           <App.Flex row center gap={8} height={22}>
             <App.Icon icon="users" />
-            <App.Text size={14} weight={600} height={1}>{item.history.length} Bidder{item.history.length > 1 ? 's' : ''}</App.Text>
+            <App.Text size={14} weight={600} height={1}>{item.bidsCount} Bidder{item.bidsCount > 1 ? 's' : ''}</App.Text>
           </App.Flex>
           ) : (
             <App.Flex height={22} />

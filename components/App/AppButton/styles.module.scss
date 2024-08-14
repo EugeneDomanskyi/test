@@ -220,6 +220,42 @@
     }
   }
 
+  &.telegram {
+    height: 40px;
+    background: linear-gradient(180deg, #30A9DD 0%, #208BD4 100%);
+    border-color: transparent;
+    border: 1px solid #68B9EB;
+    border-radius: 12px;
+    padding: 0 16px;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 25px;
+    border-radius: 12px;
+
+    &.small {
+      padding: 0 16px;
+      height: 32px;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: normal;
+      border-radius: 6px;
+    }
+
+    &.large {
+      height: 60px;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    &.medium {
+      height: 48px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+  }
+
   &.secondary2 {
     height: 48px;
     background-color: #A6DC37;

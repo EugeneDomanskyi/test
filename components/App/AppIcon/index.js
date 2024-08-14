@@ -1875,6 +1875,16 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
         </svg>
       )
     }
+    
+    if (icon == 'bell') {
+      return (
+        <svg width={width ?? 25} height={height ?? 25} viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} d="M12.6786 7.26172V10.5917" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" />
+          <path stroke={color ?? '#fff'} d="M12.6995 2.82178C9.01946 2.82178 6.03946 5.80178 6.03946 9.48178V11.5818C6.03946 12.2618 5.75946 13.2818 5.40946 13.8618L4.13946 15.9818C3.35946 17.2918 3.89946 18.7518 5.33946 19.2318C10.1195 20.8218 15.2895 20.8218 20.0695 19.2318C21.4195 18.7818 21.9995 17.2018 21.2695 15.9818L19.9995 13.8618C19.6495 13.2818 19.3695 12.2518 19.3695 11.5818V9.48178C19.3595 5.82178 16.3595 2.82178 12.6995 2.82178Z" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round"/>
+          <path stroke={color ?? '#fff'} d="M16.0086 19.6416C16.0086 21.4716 14.5086 22.9716 12.6786 22.9716C11.7686 22.9716 10.9286 22.5916 10.3286 21.9916C9.72863 21.3916 9.34863 20.5516 9.34863 19.6416" strokeWidth="1.5" strokeMiterlimit="10"/>
+        </svg>
+      )
+    }
 
     if (icon == 'points-popup-text') {
       return (

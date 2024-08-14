@@ -177,6 +177,11 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
           if (result && !result.error) {
             dispatch($gem.set.auctionUpdated({data: {auction: result}, wallet: user.wallet}))
             dispatch($gem.set.totalGems(user.points - item.gemsPrice))
+
+            if ( ! user.isTelegram) {
+              dispatch($gem.set.showTelegramSubscription(true))
+            }
+
             dispatch($alert.set.success({ title: t(`Bid Placed!`), text: t(`You placed a bid for ${item.nextPrice} ${item.token.currency}.`) }))
 
             Amplitude.event(`Bid Placed`, {
