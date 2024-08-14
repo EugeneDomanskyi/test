@@ -28,7 +28,7 @@ const auctionTemplate = (item, wallet) => {
   const discount = marketPrice > 0 ? Math.round((marketPrice - currentPrice) / marketPrice * 100) : 0
 
   let history = []
-  if (auction.bid_histories) {
+  if (auction?.bid_histories) {
     history = auction.bid_histories.map(bid => {
       return {
         bid: `${formatUnits(bid.price.toString(), 6)} USDC`,
