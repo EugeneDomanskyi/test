@@ -64,12 +64,18 @@ const AuctionShareImage = () => {
     ctxRef.current.fillStyle = '#A6DC37'
     ctxRef.current.fillText(`${claimItem.discount}%`, 370, 530)
 
-    const dataURL = canvasRef.current.toDataURL('image/png')
-    saveImage(dataURL)
+    canvasRef.current.toBlob(saveImage)
   }
 
-  const saveImage = async (dataURL) => {
-    // send to BE
+  const saveImage = async (blob) => {
+    const formData = new FormData()
+    formData.append('file', blob, 'p1.png')
+    formData.append('filename', 'p1')
+
+    const result = await $gem.api.upload(formData)
+    if (result) {
+      console.log(result)
+    }
   }
 
   return (

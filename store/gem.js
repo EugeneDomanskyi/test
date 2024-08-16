@@ -106,8 +106,8 @@ export const gemSlice = createSlice({
     tournaments: {},
     currentTournament: null,
     auctions: [],
-    claim: false,
-    claimId: null,
+    claim: true,
+    claimId: 2,
     current: null,
     auctionWarning: false,
     showBrett: false,
@@ -530,6 +530,10 @@ export const api = {
 
   tournaments: () => {
     return request(`tournament/list`, 'GET', {api: 'exchange'})
+  },
+
+  upload: (data) => {
+    return request(`upload/image`, 'POST', {api: 'admin'}, data)
   },
 }
 

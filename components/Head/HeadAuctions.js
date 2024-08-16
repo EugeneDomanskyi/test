@@ -14,7 +14,7 @@ const HeadAuctions = ({ ssShare }) => {
   }
 
   const getImage = () => {
-    return ssShare ? `https://storage.cloud.google.com/auctions_shares/${ssShare}.png` : 'https://tegro.com/images/og-image.jpg'
+    return ssShare ? `https://storage.googleapis.com/auctions_shares/${ssShare}.png` : 'https://tegro.com/images/og-image.jpg'
   }
 
   return (
