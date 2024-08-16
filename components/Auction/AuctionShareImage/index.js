@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import $gem from '@/store/gem'
 
 import bg from '../../../public/images/auction-share-background.png'
 
-const AuctionShareImage = () => {
+const AuctionShareImage = ({ onFinish }) => {
+  const dispatch = useDispatch()
   const claimItem = useSelector($gem.get.claimItem)
   const claimImage = useSelector(({ $gem }) => $gem.claimImage)
 
@@ -68,13 +69,27 @@ const AuctionShareImage = () => {
   }
 
   const saveImage = async (blob) => {
+    let host = 'd'
+    if (window.location.hostname == 'testnet.tegro.com') {
+      host = 't'
+    }
+
+    if (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app') {
+      host = 'p'
+    }
+
+    const image = `${host}${claimItem.id}`
     const formData = new FormData()
-    formData.append('file', blob, 'p1.png')
-    formData.append('filename', 'p1')
+    formData.append('file', blob, `${image}.png`)
+    formData.append('filename', image)
 
     const result = await $gem.api.upload(formData)
     if (result) {
-      console.log(result)
+      dispatch($gem.set.claimImage(image))
+    }
+
+    if (onFinish) {
+      onFinish()
     }
   }
 
