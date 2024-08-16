@@ -8,19 +8,18 @@ import bg from '../../../public/images/auction-share-background.png'
 const AuctionShareImage = ({ onFinish }) => {
   const dispatch = useDispatch()
   const claimItem = useSelector($gem.get.claimItem)
-  const claimImage = useSelector(({ $gem }) => $gem.claimImage)
 
   const imageRef = useRef(null)
   const canvasRef = useRef(null)
   const ctxRef = useRef(null)
 
   useEffect(() => {
-    if (claimItem && !claimImage) {
+    if (claimItem) {
       ctxRef.current = canvasRef.current.getContext('2d')
 
       generateImage()
     }
-  }, [claimItem, claimImage])
+  }, [claimItem])
 
   const generateImage = () => {
     const image = new Image()
@@ -83,13 +82,10 @@ const AuctionShareImage = ({ onFinish }) => {
     formData.append('file', blob, `${image}.png`)
     formData.append('filename', image)
 
-    const result = await $gem.api.upload(formData)
-    if (result) {
-      dispatch($gem.set.claimImage(image))
-    }
+    await $gem.api.upload(formData)
 
     if (onFinish) {
-      onFinish()
+      onFinish(image)
     }
   }
 

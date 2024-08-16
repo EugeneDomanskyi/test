@@ -112,7 +112,6 @@ export const gemSlice = createSlice({
     auctionWarning: false,
     showBrett: false,
     showTelegramSubscription: false,
-    claimImage: null,
 
     gemsLoading: true,
     auctionsLoading: true,
@@ -384,10 +383,6 @@ export const gemSlice = createSlice({
 
     showTelegramSubscription: (state, { payload }) => {
       state.showTelegramSubscription = payload
-    },
-
-    claimImage: (state, { payload }) => {
-      state.claimImage = payload
     },
 
     clear: (state, { payload }) => {
