@@ -66,7 +66,7 @@ const auctionTemplate = (item, wallet) => {
     lastBidTimestamp: auction.last_bid_timestamp,
     resetTimer: auction.reset_timer,
     history,
-    bidsCount: history.length,
+    bidsCount: item?.total_bids ?? 0,
     claimContract: auction.auction_amount_receiver,
     claimHash: auction.claim_tx_hash,
     updated: false,

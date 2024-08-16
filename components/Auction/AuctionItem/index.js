@@ -108,14 +108,10 @@ const AuctionItem = ({ item, onClear }) => {
         )}
 
         {item.status == 'closed' && (!item.current || (item.current && item.claimHash != '')) ? (
-          item.bidsCount > 0 ? (
           <App.Flex row center gap={8} height={22}>
             <App.Icon icon="users" />
-            <App.Text size={14} weight={600} height={1}>{item.bidsCount} Bidder{item.bidsCount > 1 ? 's' : ''}</App.Text>
+            <App.Text size={14} weight={600} height={1}>{item.bidsCount} Bidder{item.bidsCount != 1 ? 's' : ''}</App.Text>
           </App.Flex>
-          ) : (
-            <App.Flex height={22} />
-          )
         ) : (
           <App.Flex center gap={8} className={cn(styles.info, {[styles.win]: item.status == 'closed' && item.current})}>
             <App.Text size={14} weight={400} height={1} color={item.status == 'closed' && item.current ? '#53F19C' : "#737373"}>{t(firstText())}</App.Text>
