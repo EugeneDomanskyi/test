@@ -15,6 +15,7 @@ import $alert from 'store/alert'
 import App from 'components/App'
 import AuctionItemSimple from 'components/Auction/AuctionItemSimple'
 import AuctionLoader from 'components/Auction/AuctionLoader'
+import AuctionShareImage from '../AuctionShareImage'
 
 import styles from './styles.module.scss'
 
@@ -26,11 +27,13 @@ const AuctionClaim = ({ item, onClose }) => {
   const dispatch = useDispatch()
   const jwt = useSelector(({ $gem }) => $gem.jwt)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
+  const claimImage = useSelector(({ $gem }) => $gem.claimImage)
 
   const [step, setStep] = useState(0)
   const [scanLink, setScanLink] = useState(null)
   const [loading, setLoading] = useState(false)
   const [shared, setShared] = useState(false)
+  const [imageLoading, setImageLoading] = useState(true)
 
   useEffect(() => {
     if (step == 1) {
@@ -105,7 +108,7 @@ const AuctionClaim = ({ item, onClose }) => {
 
   const handleShare = () => {
     const link = `${window.location.origin}/auctions`
-    const tweetText = encodeURIComponent(`
+    const tweetText = claimImage ? `${link}?share=${claimImage}` : encodeURIComponent(`
 🚀 Unbelievable! I just bagged ${item.name} for just ${item.currentPrice} ${item.token.currency} on Tegro! 👀
 
 That's a whopping ${item.discount}% off! 😱
@@ -123,6 +126,10 @@ You don't wanna miss these insane deals! ✨
     })
 
     setShared(true)
+  }
+
+  const handleImageGenerate = () => {
+    setImageLoading(false)
   }
 
   return (
@@ -233,7 +240,7 @@ You don't wanna miss these insane deals! ✨
             {shared ? (
               <App.Button primary2 medium fullWidth loading={loading} onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
             ) : (
-              <App.Button twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
+              <App.Button loading={imageLoading} disabled={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
             )}
 
             <App.Flex row center gap={8}>
@@ -257,6 +264,8 @@ You don't wanna miss these insane deals! ✨
           </App.Flex>
         ) : null}
       </App.Flex>
+
+      <AuctionShareImage onFinish={handleImageGenerate} />
     </App.Flex>
   )
 }

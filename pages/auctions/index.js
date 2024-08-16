@@ -18,7 +18,6 @@ import AuctionFaq from '@/components/Auction/AuctionFaq'
 import AuctionSteps from '@/components/Auction/AuctionSteps'
 import AuctionVideo from '@/components/Auction/AuctionVideo'
 import AuctionSuybscribe from '@/components/Auction/AuctionSubscribe'
-import AuctionShareImage from '@/components/Auction/AuctionShareImage'
 
 const Auctions = () => {
   const { t } = useTranslation()
@@ -138,7 +137,6 @@ const Auctions = () => {
 
       <AuctionWarning />
       <AuctionSuybscribe />
-      <AuctionShareImage />
     </App.Container>
   )
 }
