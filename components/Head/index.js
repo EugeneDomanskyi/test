@@ -4,8 +4,9 @@ import HeadDefault from './HeadDefault'
 import HeadExchange from './HeadExchange'
 import HeadPD from './HeadPD'
 import HeadTournaments from './HeadTournaments'
+import HeadAuctions from './HeadAuctions'
 
-const Head = ({ route, current }) => {
+const Head = ({ route, current, share }) => {
   const router = useRouter()
 
   const getHead = () => {
@@ -13,6 +14,10 @@ const Head = ({ route, current }) => {
 
     if (currentRoute.includes('exchange')) {
       return <HeadExchange ssCurrent={current} />
+    }
+
+    if (currentRoute.includes('auctions')) {
+      return <HeadAuctions ssShare={share} />
     }
 
     if (currentRoute.includes('gems-dashboard')) {
