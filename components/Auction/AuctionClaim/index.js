@@ -27,13 +27,13 @@ const AuctionClaim = ({ item, onClose }) => {
   const dispatch = useDispatch()
   const jwt = useSelector(({ $gem }) => $gem.jwt)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
-  const claimImage = useSelector(({ $gem }) => $gem.claimImage)
 
   const [step, setStep] = useState(0)
   const [scanLink, setScanLink] = useState(null)
   const [loading, setLoading] = useState(false)
   const [shared, setShared] = useState(false)
   const [imageLoading, setImageLoading] = useState(true)
+  const [claimImage, setClaimImage] = useState()
 
   useEffect(() => {
     if (step == 1) {
@@ -128,8 +128,9 @@ You don't wanna miss these insane deals! ✨
     setShared(true)
   }
 
-  const handleImageGenerate = () => {
+  const handleImageGenerate = (image) => {
     setImageLoading(false)
+    setClaimImage(image)
   }
 
   return (
