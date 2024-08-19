@@ -45,7 +45,7 @@ const RainbowTheme = merge(darkTheme({ overlayBlur: 'small' }), {
   },
 })
 
-function MyApp({ Component, pageProps, initialData, ssRoute, ssCurrent }) {
+function MyApp({ Component, pageProps, initialData, ssRoute, ssShare, ssCurrent }) {
   const router = useRouter()
   const storeRef = useRef(store(initialData)).current
 
@@ -65,7 +65,7 @@ function MyApp({ Component, pageProps, initialData, ssRoute, ssCurrent }) {
           <RainbowKitProvider theme={RainbowTheme} initialChain={currentChain}>
             <BanditContextProvider cluster={"mainnet"} apiKey={process.env.NEXT_PUBLIC_BANDIT_API_KEY}>
               <Provider store={storeRef}>
-                <Head route={ssRoute} current={ssCurrent} />
+                <Head route={ssRoute} current={ssCurrent} share={ssShare} />
                 <Wrapper>
                   <Component {...pageProps} />
                 </Wrapper>
@@ -81,6 +81,7 @@ function MyApp({ Component, pageProps, initialData, ssRoute, ssCurrent }) {
 
 MyApp.getInitialProps = async ({ ctx }) => {
   let ssRoute = ''
+  let ssShare = null
   let ssCurrent = null
   let isMobile = null
 
@@ -89,6 +90,13 @@ MyApp.getInitialProps = async ({ ctx }) => {
 
   let chains = []
   let blockchain = null
+
+  if (ctx?.query) {
+    const { share } = ctx.query
+    if (share) {
+      ssShare = share
+    }
+  }
 
   if (ctx?.req) {
     ssRoute = ctx.req.url
@@ -136,6 +144,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
       chains,
     },
     ssRoute,
+    ssShare,
     ssCurrent,
   }
 }

@@ -30,7 +30,7 @@ const AuctionWarning = () => {
   const handleShare = () => {
     $gem.api.addGems(wallet, { reason: 'twitter_share' })
 
-    const link = `${window.location.origin}/gems-dashboard#auction`
+    const link = `${window.location.origin}/auctions`
     const tweetText = encodeURIComponent(`
 👀 1 ETH for just $100? Absolutely! ✨
 

@@ -47,12 +47,11 @@ const createStore = (initialData) => {
   })
 }
 
-export const request = async (uri, method = 'GET', {api, jwt_token, ...data} = {}) => {
+export const request = async (uri, method = 'GET', {api, jwt_token, ...data} = {}, formData = null) => {
   const options = {
     method,
     headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/json',
     },
   }
 
@@ -61,11 +60,16 @@ export const request = async (uri, method = 'GET', {api, jwt_token, ...data} = {
   }
 
   let query = ''
-  if (data) {
-    if (method === 'GET') {
-      query = queryBuilder(data)
-    } else {
-      options.body = JSON.stringify(data)
+  if (formData) {
+    options.body = formData
+  } else {
+    options.headers['Content-Type'] = 'application/json'
+    if (data) {
+      if (method === 'GET') {
+        query = queryBuilder(data)
+      } else {
+        options.body = JSON.stringify(data)
+      }
     }
   }
 
@@ -125,6 +129,8 @@ const getBaseUrl = (api) => {
       return ''
     case 'local':
       return '/'
+    case 'admin':
+      return process.env.NEXT_PUBLIC_ADMIN_URL
     case 'bid':
       return process.env.NEXT_PUBLIC_BID_URL
     case 'accounts':

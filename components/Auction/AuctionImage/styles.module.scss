@@ -66,4 +66,14 @@
     right: 24px;
     bottom: 50px;
   }
+
+  .star {
+    width: 138px;
+    height: 138px;
+    position: absolute;
+    z-index: 0;
+    bottom: 0;
+    right: 0;
+    background: url('/images/star-back.png') center / contain no-repeat;
+  }
 }

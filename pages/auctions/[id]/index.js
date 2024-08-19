@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { formatUnits } from 'viem'
@@ -6,16 +6,17 @@ import { useTranslation } from 'react-i18next'
 
 import Socket from '@/libs/ws.lib'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
-import WagmiHelper from '@/libs/WagmiHelper'
 
 import $alert from '@/store/alert'
 import $gem from '@/store/gem'
 
 import App from '@/components/App'
+import AuctionBar from '@/components/Auction/AuctionBar'
 import AuctionImage from '@/components/Auction/AuctionImage'
 import AuctionButton from '@/components/Auction/AuctionButton'
 import AuctionClaim from '@/components/Auction/AuctionClaim'
 import AuctionWarning from '@/components/Auction/AuctionWarning'
+import AuctionSuybscribe from '@/components/Auction/AuctionSubscribe'
 
 import styles from './styles.module.scss'
 
@@ -28,13 +29,11 @@ const GemsAuctionInfo = () => {
 
   const dispatch = useDispatch()
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
-  const referral = useSelector(({ $gem }) => $gem.referral)
   const item = useSelector(({ $gem }) => $gem.current)
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
+  const auctionsLoading = useSelector(({ $gem }) => $gem.auctionsLoading)
   const claim = useSelector(({ $gem }) => $gem.claim)
   const claimItem = useSelector($gem.get.claimItem)
-
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     document.addEventListener('visibilitychange', handleVisible)
@@ -64,26 +63,9 @@ const GemsAuctionInfo = () => {
     }
   }, [id, wallet])
 
-  useEffect(() => {
-    if (wallet) {
-      fetchStats()
-    }
-  }, [wallet])
-
   const handleVisible = () => {
     if (!document.hidden) {
-      if (wallet) {
-        fetchReferrals()
-      }
-
       fetchInfo()
-    }
-  }
-
-  const fetchReferrals = async () => {
-    const result = await $gem.api.referral(wallet)
-    if (result) {
-      dispatch($gem.set.referral(result))
     }
   }
 
@@ -99,24 +81,15 @@ const GemsAuctionInfo = () => {
     }
   }
 
-  const fetchStats = async () => {
-    const result = await $gem.api.stats(wallet, {})
-    if (result) {
-      dispatch($gem.set.stats(result))
-    }
-  }
-
   const fetchInfo = async () => {
     const result = await $gem.api.auction(id)
     if (result) {
       dispatch($gem.set.current({data: result, wallet}))
     }
-
-    setLoading(false)
   }
 
   const handleBack = () => {
-    router.push(`/gems-dashboard`)
+    router.push(`/auctions`)
   }
 
   const sortedHistory = () => {
@@ -144,7 +117,7 @@ const GemsAuctionInfo = () => {
             </App.Flex>
           </App.Flex>
 
-          {loading ? (
+          {auctionsLoading ? (
             <App.LoaderBlock height={300} />
           ) : (
             item?.status && item.status != 'upcoming' ? (
@@ -154,10 +127,7 @@ const GemsAuctionInfo = () => {
                     <App.Text size={24} weight={600} height={1}>{t('History')}</App.Text>
                   </App.Flex>
                 ) : (
-                  <App.Flex center height={56} gap={16} className={styles.gems}>
-                    <App.Text size={16} weight={600} height={1}>{t('Gems Balance')}</App.Text>
-                    <App.Text size={28} weight={600} height={1}>{Math.floor(referral.points ?? 0)}</App.Text>
-                  </App.Flex>
+                  <AuctionBar />
                 )}
 
                 <App.Flex direction={['row', 'column']} gap={24}>
@@ -266,6 +236,7 @@ const GemsAuctionInfo = () => {
       </App.Dialog>
 
       <AuctionWarning />
+      <AuctionSuybscribe />
     </App.Flex>
   )
 }
