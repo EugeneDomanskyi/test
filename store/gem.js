@@ -111,7 +111,7 @@ export const gemSlice = createSlice({
     current: null,
     auctionWarning: false,
     showBrett: false,
-    showTelegramSubscription: false,
+    showTelegramSubscription: null,
 
     gemsLoading: true,
     auctionsLoading: true,
