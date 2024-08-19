@@ -22,8 +22,22 @@ const AuctionSuybscribe = () => {
 
   useEffect(() => {
     if (showTelegramSubscription) {
-      const notShowTelegramSubscription = localStorage.getItem('notShowTelegramSubscription')
-      if (!notShowTelegramSubscription) {
+      let host = 'd'
+      if (window.location.hostname == 'testnet.tegro.com') {
+        host = 't'
+      }
+
+      if (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app') {
+        host = 'p'
+      }
+
+      let subscribedAuctions = []
+      const notShowTelegramSubscriptionIds = localStorage.getItem('notShowTelegramSubscriptionIds')
+      if (notShowTelegramSubscriptionIds) {
+        subscribedAuctions = JSON.parse(notShowTelegramSubscriptionIds)
+      }
+      
+      if (!subscribedAuctions.includes(`${host}${showTelegramSubscription}`)) {
         setIsOpen(true)
       }
     }
@@ -31,8 +45,28 @@ const AuctionSuybscribe = () => {
 
   const handleClose = () => {
     setIsOpen(false)
-    dispatch($gem.set.showTelegramSubscription(false))
-    localStorage.setItem('notShowTelegramSubscription', 1)
+
+    let host = 'd'
+    if (window.location.hostname == 'testnet.tegro.com') {
+      host = 't'
+    }
+
+    if (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app') {
+      host = 'p'
+    }
+
+    let subscribedAuctions = []
+    const notShowTelegramSubscriptionIds = localStorage.getItem('notShowTelegramSubscriptionIds')
+    if (notShowTelegramSubscriptionIds) {
+      subscribedAuctions = JSON.parse(notShowTelegramSubscriptionIds)
+    }
+
+    if (!subscribedAuctions.includes(`${host}${showTelegramSubscription}`)) {
+      subscribedAuctions.push(`${host}${showTelegramSubscription}`)
+    }
+    localStorage.setItem('notShowTelegramSubscriptionIds', JSON.stringify(subscribedAuctions))
+
+    dispatch($gem.set.showTelegramSubscription(null))
   }
 
   const handleSubscribe = () => {

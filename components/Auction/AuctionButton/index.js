@@ -179,7 +179,7 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
             dispatch($gem.set.totalGems(user.points - item.gemsPrice))
 
             if ( ! user.isTelegram) {
-              dispatch($gem.set.showTelegramSubscription(true))
+              dispatch($gem.set.showTelegramSubscription(item.id))
             }
 
             dispatch($alert.set.success({ title: t(`Bid Placed!`), text: t(`You placed a bid for ${item.nextPrice} ${item.token.currency}.`) }))
