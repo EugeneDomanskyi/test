@@ -23,6 +23,7 @@ const auctionTemplate = (item, wallet) => {
   const lastBidderWallet = auction.last_bidder.wallet_address.toLowerCase() || null
 
   const marketPrice = Number(item.auction_value)
+  const startPrice = formatUnits(auction.start_price.toString(), 6)
   const currentPrice = formatUnits((auction.last_bid_price > 0 ? auction.last_bid_price : auction.start_price).toString(), 6)
   const nextPrice = new Decimal(Number(currentPrice) + Number(formatUnits(auction.minimum_bid_price_increment, 6))).toDecimalPlaces(6).toFixed()
   const discount = marketPrice > 0 ? Math.round((marketPrice - currentPrice) / marketPrice * 100) : 0
@@ -49,6 +50,7 @@ const auctionTemplate = (item, wallet) => {
     status: status,
     current: wallet && wallet == lastBidderWallet,
     wallet: lastBidderWallet,
+    startPrice,
     marketPrice: marketPrice.toFixed(2),
     currentPrice,
     nextPrice,
@@ -112,6 +114,7 @@ export const gemSlice = createSlice({
     auctionWarning: false,
     showBrett: false,
     showTelegramSubscription: null,
+    auctionBannerVisible: false,
 
     gemsLoading: true,
     auctionsLoading: true,
@@ -383,6 +386,10 @@ export const gemSlice = createSlice({
 
     showTelegramSubscription: (state, { payload }) => {
       state.showTelegramSubscription = payload
+    },
+
+    auctionBannerVisible: (state, { payload }) => {
+      state.auctionBannerVisible = payload
     },
 
     clear: (state, { payload }) => {
