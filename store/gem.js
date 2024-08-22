@@ -47,8 +47,8 @@ const auctionTemplate = (item, wallet) => {
   let isClaimable = false
   
   if (status == 'closed' && auction.claim_tx_hash == '') {
-    // claimTime = moment().add(10, 'seconds')
-    claimTime = moment(auction.last_bid_timestamp * 1000).add(3 * 24 * 60 * 60, 'seconds')
+    claimTime = moment().add(2, 'minutes')
+    // claimTime = moment(auction.last_bid_timestamp * 1000).add(3 * 24 * 60 * 60, 'seconds')
     const diff = claimTime.diff(now) < 0 ? 0 : claimTime.diff(now)
     isClaimable = diff > 0
   }
