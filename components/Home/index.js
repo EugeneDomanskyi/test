@@ -5,6 +5,7 @@ import HomeTeam from '@/components/Home/HomeTeam'
 import HomeCommunity from '@/components/Home/HomeCommunity'
 import HomeFaq from '@/components/Home/HomeFaq'
 import HomeHero from '@/components/Home/HomeHero'
+import HomeStats from '@/components/Home/HomeStats'
 
 export default {
   Top: HomeTop,
@@ -14,4 +15,5 @@ export default {
   Community: HomeCommunity,
   Faq: HomeFaq,
   Hero: HomeHero,
+  Stats: HomeStats,
 }

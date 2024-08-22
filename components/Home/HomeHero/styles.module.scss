@@ -1,67 +1,16 @@
-// .heroWrapper {
-//   // width: 560px;
-//   height: 563px;
-// }
-
-// .heroImg {
-//   // position: absolute;
-//   // right: -120px;
-//   z-index: -1;
-//   width: 100%;
-//   // transition: .6s;
-
-//   // &:hover {
-//   //   right: 0;
-//   // }
-// }
-
-// // @media (max-width: 1560px) {
-// //   .heroImg {
-// //     right: -280px;
-// //   }
-// // }
-
-// @media (max-width: 991px) {
-//   .textWrapper,
-//   .textWrapper div {
-//     align-items: center;
-//     width: 100%;
-//   }
-
-//   .heroWrapper {
-//     width: 100%;
-    
-//     .heroImg {
-//       display: none;
-//     }
-//   }
-// }
-
-// @media (max-width: 380px) {
-//   .heroWrapper {
-//     width: 100%;
-    
-//     .heroImg {
-//       display: none;
-//     }
-//   }
-// }
-
-// @keyframes circleAnimation {
-//   0% {
-//     background-color: #1cbc7c;
-//   }
-//   50% {
-//     background-color: #053421;
-//   }
-//   100% {
-//     background-color: #1cbc7c;
-//   }
-// }
+.mwebBack {
+  @media (max-width: 768px) {
+    background: url('/images/hero-background.png') center / cover no-repeat;
+  }
+}
 
 .container {
   padding: 72px 0 56px;
   background: url('/images/hero-background.png') center / cover no-repeat;
+
+  @media (max-width: 768px) {
+    background-image: none;
+  }
 
   .border {
     border-radius: 8px;
