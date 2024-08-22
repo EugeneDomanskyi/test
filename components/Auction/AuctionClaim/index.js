@@ -41,6 +41,12 @@ const AuctionClaim = ({ item, onClose }) => {
     }
   }, [step])
 
+  useEffect(() => {
+    if (!item.isClaimable && onClose) {
+      onClose()
+    }
+  }, [item.isClaimable])
+
   const transaction = async () => {
     setScanLink(null)
     const price = parseUnits(item.currentPrice, item.token.decimals)

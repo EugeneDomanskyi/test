@@ -18,7 +18,7 @@ const HomeTop = () => {
           </App.Flex>
 
           <App.Flex className={styles.border}>
-            <Image src="/images/hero-image.png" width={960} height={583} alt="" />
+            <Image src="/images/hero-image.png" width={960} height={583} alt="" style={{borderRadius: 10, background: '#08051C'}} />
           </App.Flex>
         </App.Flex>
       </App.Container>
