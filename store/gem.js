@@ -42,13 +42,22 @@ const auctionTemplate = (item, wallet) => {
     })
   }
 
+  const isCurrent = wallet && wallet == lastBidderWallet
+  let claimTime = 0
+  let isClaimable = false
+  if (status == 'closed' && isCurrent && auction.claim_tx_hash == '') {
+    claimTime = moment(auction.last_bid_timestamp * 1000).add(3 * 24 * 60 * 60, 'seconds').diff(now)
+    claimTime = claimTime < 0 ? 0 : claimTime
+    isClaimable = claimTime > 0
+  }
+
   return {
     id: auction.id,
     productId: auction.product.id,
     image: auction.s3_url || null,
     logo: auction.product.collection_url || null,
     status: status,
-    current: wallet && wallet == lastBidderWallet,
+    current: isCurrent,
     wallet: lastBidderWallet,
     startPrice,
     marketPrice: marketPrice.toFixed(2),
@@ -71,6 +80,8 @@ const auctionTemplate = (item, wallet) => {
     bidsCount: item?.total_bids ?? 0,
     claimContract: auction.auction_amount_receiver,
     claimHash: auction.claim_tx_hash,
+    claimTime,
+    isClaimable,
     updated: false,
   }
 }
