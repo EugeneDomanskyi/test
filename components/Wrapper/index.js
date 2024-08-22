@@ -28,6 +28,7 @@ const Wrapper = ({ children }) => {
 
   const router = useRouter()
   const isLanding = router.asPath == '/'
+  const isBot = router.asPath?.includes('/bot')
   const isCampaign = router.asPath?.includes('/campaign')
   const isExchange = router.asPath?.includes('/exchange')
   const [_, page] = router.asPath.split('/')
@@ -131,28 +132,32 @@ const Wrapper = ({ children }) => {
   
   return (
     <div style={{ height: '100%' }}>
-      {
-        !isInIframe
-          ? <div style={{ height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden' }}>
-              <Analytics />
-              <StickyBanner />
+      {isBot ? (
+        children
+      ) : (
+        !isInIframe ? (
+          <div style={{ height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden' }}>
+            <Analytics />
+            <StickyBanner />
 
-              {isLanding ? (
-                <AuctionLandingBanner />
-              ) : null}
+            {isLanding ? (
+              <AuctionLandingBanner />
+            ) : null}
 
-              {!isCampaign && !isApp ? <Header /> : null}
+            {!isCampaign && !isApp ? <Header /> : null}
 
-              <div style={{marginTop: page !== '' ? (isMobile ? -48 : -72) : 0, height: stickyBannerVisible ? 'calc(100% - 28px)' : '100%'}}>
-                {children}
-                {!isCampaign && !isApp && !isExchange && !isGD && !isAuctions ? <Footer /> : null}
-              </div>
-
-              {page === 'exchange' && !isApp && showTournamentBanner  ? <SidebarBanner /> : null}
-              {page === 'exchange' && !isApp ? <OnboardingBanner /> : null}
+            <div style={{marginTop: page !== '' ? (isMobile ? -48 : -72) : 0, height: stickyBannerVisible ? 'calc(100% - 28px)' : '100%'}}>
+              {children}
+              {!isCampaign && !isApp && !isExchange && !isGD && !isAuctions ? <Footer /> : null}
             </div>
-          : <Footer />
-      }
+
+            {page === 'exchange' && !isApp && showTournamentBanner  ? <SidebarBanner /> : null}
+            {page === 'exchange' && !isApp ? <OnboardingBanner /> : null}
+          </div>
+        ) : (
+          <Footer />
+        )
+      )}
     </div>
   )
 }

@@ -12,12 +12,14 @@ const Bot  = () => {
       script.onload = () => {
         if (window.Telegram?.WebApp) {
           // Expand the web app to full height
-          window.Telegram.WebApp.expand();
+          window.Telegram.WebApp.expand()
+
+          window.Telegram.WebApp.setHeaderColor('bg_color', '#08051C')
 
           // Access theme parameters and apply them
           const themeParams = window.Telegram.WebApp.themeParams;
-          document.body.style.backgroundColor = themeParams.bg_color || '#FFFFFF';
-          document.body.style.color = themeParams.text_color || '#000000';
+          document.body.style.backgroundColor = themeParams.bg_color || '#08051C';
+          document.body.style.color = themeParams.text_color || '#fff';
         }
       };
       document.head.appendChild(script);
