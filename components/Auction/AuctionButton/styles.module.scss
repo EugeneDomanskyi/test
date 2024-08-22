@@ -104,6 +104,16 @@
       background: linear-gradient(180deg, #8B8B8B -6.02%, #fff 85.68%);
     }
 
+    &:not(.loading).disabled,
+    &:not(.loading).disabled:active {
+      background: #8B8B8B;
+      cursor: not-allowed;
+
+      &:not(.loading).disabled:hover:before {
+        opacity: 0;
+      }
+    }
+
     &.current {
       border-color: #53F19C;
       background: linear-gradient(180deg, #06B357 -6.02%, #0D6E3B 85.68%);
