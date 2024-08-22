@@ -76,8 +76,6 @@
 
     &.rounded {
       border-radius: 22px;
-      padding: 8px;
-      height: 44px;
     }
   }
 
@@ -180,6 +178,10 @@
         border-color: #4d29bb;
         background-color: transparent;
       }
+    }
+
+    &.rounded {
+      border-radius: 20px;
     }
   }
 

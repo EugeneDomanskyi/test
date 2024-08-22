@@ -1,0 +1,43 @@
+.banner {
+  max-height: 0;
+  overflow: hidden;
+  transition: all .3s;
+
+  &.open {
+    max-height: 200px;
+  }
+
+  .container {
+    padding: 24px 0;
+
+    @media (max-width: 768px) {
+      padding: 16px 0;
+    }
+
+    .content {
+      border-radius: 16px;
+      padding: 24px;
+      background: #6B41EB url('/images/auction-banner-background.png') right bottom / contain no-repeat;
+
+      @media (max-width: 768px) {
+        padding: 16px;
+        background: #6B41EB url('/images/auction-banner-mweb-background.png') right bottom / contain no-repeat;
+      }
+
+      .live {
+        border-radius: 60.674px;
+        background: rgba(6, 56, 47, 0.70);
+        backdrop-filter: blur(0.47191011905670166px); 
+        padding: 4.719px 7.551px;
+
+        .circle {
+          width: 15px;
+          height: 15px;
+          border-radius: 50%;
+          background: #4ADE80;
+          border: solid #15803D 3px;
+        }
+      }
+    }
+  }
+}

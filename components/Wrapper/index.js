@@ -17,6 +17,7 @@ import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
 import SidebarBanner from '@/components/Exchange/Sidebar/SidebarBanner'
 import OnboardingBanner from '@/components/Exchange/Sidebar/OnboardingBanner'
+import AuctionLandingBanner from '@/components/Auction/AuctionLandingBanner'
 
 const Analytics = dynamic(import('@/components/Analytics'), {ssr: false})
 
@@ -26,6 +27,7 @@ const Wrapper = ({ children }) => {
   const { wallet, connection } = useWagmiHelper()
 
   const router = useRouter()
+  const isLanding = router.asPath == '/'
   const isCampaign = router.asPath?.includes('/campaign')
   const isExchange = router.asPath?.includes('/exchange')
   const [_, page] = router.asPath.split('/')
@@ -38,6 +40,7 @@ const Wrapper = ({ children }) => {
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const platform = useSelector(({ $app }) => $app.platform)
   const stickyBannerVisible = useSelector(({ $app }) => $app.stickyBannerVisible)
+  const auctionBannerVisible = useSelector(({ $app }) => $app.auctionBannerVisible)
   const blockchain = useSelector($app.get.blockchain)
 
   const [isInIframe, setIsInIframe] = useState(false)
@@ -133,6 +136,10 @@ const Wrapper = ({ children }) => {
           ? <div style={{ height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden' }}>
               <Analytics />
               <StickyBanner />
+
+              {isLanding ? (
+                <AuctionLandingBanner />
+              ) : null}
 
               {!isCampaign && !isApp ? <Header /> : null}
 
