@@ -114,7 +114,7 @@ const Bot  = () => {
   const handleUpdatedAuction = async (data) => {
     const result = await $gem.api.auction(data.id)
     if (result) {
-      dispatch($gem.set.auctionUpdated({data: {auction: result.auction_id}, wallet: null}))
+      dispatch($gem.set.auctionUpdated({data: {...result, auction: result.auction_id}, wallet: null}))
     }
   }
 
