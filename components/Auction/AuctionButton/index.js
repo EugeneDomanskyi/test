@@ -135,9 +135,14 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
       return
     }
 
-    const user = await getUserInfo()
-    if (!user?.wallet || !user?.id) {
-      return
+    let user = null
+    if (TelegramBot.isBot()) {
+      user = telegramUser
+    } else {
+      user = await getUserInfo()
+      if (!user?.wallet || !user?.id) {
+        return
+      }
     }
 
     if (share) {
@@ -170,14 +175,14 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
 
     if (item.status == 'ongoing') {
       if (TelegramBot.isBot()) {
-        if (telegramUser.points * 1 >= item.gemsPrice * 1) {
+        if (user.points * 1 >= item.gemsPrice * 1) {
           const result = await $bot.api.bid({
             auction_id: item.id,
           })
 
           if (result && !result.error) {
-            dispatch($gem.set.auctionUpdated({data: {auction: result}, wallet: user.wallet}))
-            dispatch($bot.set.balance(telegramUser.points - item.gemsPrice))
+            dispatch($gem.set.auctionUpdated({data: {auction: result}, wallet: null}))
+            dispatch($bot.set.balance(user.points - item.gemsPrice))
 
             dispatch($alert.set.success({ title: t(`Bid Placed!`), text: t(`You placed a bid for ${item.nextPrice} ${item.token.currency}.`) }))
           }
