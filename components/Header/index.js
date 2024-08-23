@@ -16,7 +16,6 @@ const Header = () => {
   const router = useRouter()
   const isHome = router.asPath == '/'
   const isExchange = router.asPath?.includes('/exchange')
-  const isGD = router.asPath?.includes('/gems-dashboard')
   
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
 
@@ -58,15 +57,21 @@ const Header = () => {
                   </App.Flex>
                 </Link>
 
-                <Link href="/gems-dashboard" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/gems-dashboard')})}>
+                <Link href="/auctions" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/auctions')})}>
                   <App.Flex center fullHeight>
-                    <App.Text size={14} weight={600}>Gems Dashboard</App.Text>
+                    <App.Text size={14} weight={600}>Earn</App.Text>
                   </App.Flex>
                 </Link>
 
                 <Link href="/tournaments" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/tournaments')})}>
                   <App.Flex center fullHeight>
                     <App.Text size={14} weight={600}>Tournaments</App.Text>
+                  </App.Flex>
+                </Link>
+
+                <Link href="/gems-dashboard" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/gems-dashboard')})}>
+                  <App.Flex center fullHeight>
+                    <App.Text size={14} weight={600}>Gems</App.Text>
                   </App.Flex>
                 </Link>
               </App.Flex>
@@ -122,15 +127,21 @@ const Header = () => {
                 </App.Flex>
               </Link>
 
-              <Link href="/gems-dashboard" className={cn(styles.link)}>
+              <Link href="/auctions" className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
-                  <App.Text size={16} weight={600} color={router.pathname.includes('/gems-dashboard') ? '#A6DC37' : '#fff'}>Gems Dashboard</App.Text>
+                  <App.Text size={16} weight={600} color={router.pathname.includes('/auctions') ? '#A6DC37' : '#fff'}>Earn</App.Text>
                 </App.Flex>
               </Link>
 
               <Link href="/tournaments" className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   <App.Text size={16} weight={600} color={router.pathname.includes('/tournaments') ? '#A6DC37' : '#fff'}>Tournaments</App.Text>
+                </App.Flex>
+              </Link>
+
+              <Link href="/gems-dashboard" className={cn(styles.link)}>
+                <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
+                  <App.Text size={16} weight={600} color={router.pathname.includes('/gems-dashboard') ? '#A6DC37' : '#fff'}>Gems</App.Text>
                 </App.Flex>
               </Link>
 

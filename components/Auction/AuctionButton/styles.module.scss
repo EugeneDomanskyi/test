@@ -73,6 +73,10 @@
     border-color: #6B41EB;
     background: linear-gradient(180deg, #6B41EB -6.02%, #241164 85.68%);
 
+    &.flat {
+      background: #6B41EB;
+    }
+
     &.empty {
       justify-content: center;
     }
@@ -98,6 +102,16 @@
 
     &:not(.loading):active {
       background: linear-gradient(180deg, #8B8B8B -6.02%, #fff 85.68%);
+    }
+
+    &:not(.loading).disabled,
+    &:not(.loading).disabled:active {
+      background: #8B8B8B;
+      cursor: not-allowed;
+
+      &:not(.loading).disabled:hover:before {
+        opacity: 0;
+      }
     }
 
     &.current {

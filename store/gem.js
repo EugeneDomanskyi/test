@@ -23,6 +23,7 @@ const auctionTemplate = (item, wallet) => {
   const lastBidderWallet = auction.last_bidder.wallet_address.toLowerCase() || null
 
   const marketPrice = Number(item.auction_value)
+  const startPrice = formatUnits(auction.start_price.toString(), 6)
   const currentPrice = formatUnits((auction.last_bid_price > 0 ? auction.last_bid_price : auction.start_price).toString(), 6)
   const nextPrice = new Decimal(Number(currentPrice) + Number(formatUnits(auction.minimum_bid_price_increment, 6))).toDecimalPlaces(6).toFixed()
   const discount = marketPrice > 0 ? Math.round((marketPrice - currentPrice) / marketPrice * 100) : 0
@@ -41,14 +42,26 @@ const auctionTemplate = (item, wallet) => {
     })
   }
 
+  const isCurrent = wallet && wallet == lastBidderWallet
+  let claimTime = 0
+  let isClaimable = false
+  
+  if (status == 'closed' && auction.claim_tx_hash == '') {
+    // claimTime = moment().add(2, 'minutes')
+    claimTime = moment(auction.last_bid_timestamp * 1000).add(3 * 24 * 60 * 60, 'seconds')
+    const diff = claimTime.diff(now) < 0 ? 0 : claimTime.diff(now)
+    isClaimable = diff > 0
+  }
+
   return {
     id: auction.id,
     productId: auction.product.id,
     image: auction.s3_url || null,
     logo: auction.product.collection_url || null,
     status: status,
-    current: wallet && wallet == lastBidderWallet,
+    current: isCurrent,
     wallet: lastBidderWallet,
+    startPrice,
     marketPrice: marketPrice.toFixed(2),
     currentPrice,
     nextPrice,
@@ -66,8 +79,11 @@ const auctionTemplate = (item, wallet) => {
     lastBidTimestamp: auction.last_bid_timestamp,
     resetTimer: auction.reset_timer,
     history,
+    bidsCount: item?.total_bids ?? 0,
     claimContract: auction.auction_amount_receiver,
     claimHash: auction.claim_tx_hash,
+    claimTime,
+    isClaimable,
     updated: false,
   }
 }
@@ -110,13 +126,17 @@ export const gemSlice = createSlice({
     current: null,
     auctionWarning: false,
     showBrett: false,
+    showTelegramSubscription: null,
+    auctionBannerVisible: false,
 
+    gemsLoading: true,
     auctionsLoading: true,
   },
 
   reducers: {
     referral: (state, { payload }) => {
       state.referral = payload
+      state.gemsLoading = false
     },
 
     history: (state, { payload }) => {
@@ -316,6 +336,25 @@ export const gemSlice = createSlice({
       })
     },
 
+    auctionNotClaim: (state, { payload }) => {
+      state.auctions = state.auctions.map(item => {
+        if (item.id == payload.id) {
+          return {
+            ...payload,
+            isClaimable: false,
+            claimTime: 0,
+          }
+        }
+
+        return item
+      })
+
+      if (state.current?.id && state.current.id == payload.id) {
+        state.current.isClaimable = false
+        state.current.claimTime = false
+      }
+    },
+
     auctionsCheckCurrent: (state, { payload }) => {
       state.auctions = state.auctions.map(item => {
         if (item.wallet != null && item.wallet == payload) {
@@ -375,6 +414,14 @@ export const gemSlice = createSlice({
 
     claimId: (state, { payload }) => {
       state.claimId = payload
+    },
+
+    showTelegramSubscription: (state, { payload }) => {
+      state.showTelegramSubscription = payload
+    },
+
+    auctionBannerVisible: (state, { payload }) => {
+      state.auctionBannerVisible = payload
     },
 
     clear: (state, { payload }) => {
@@ -517,6 +564,10 @@ export const api = {
 
   tournaments: () => {
     return request(`tournament/list`, 'GET', {api: 'exchange'})
+  },
+
+  upload: (data) => {
+    return request(`upload/image`, 'POST', {api: 'admin'}, data)
   },
 }
 

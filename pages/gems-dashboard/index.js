@@ -11,7 +11,6 @@ import GemsBar from '@/components/Gems/GemsBar'
 import GemsHome from '@/components/Gems/GemsHome'
 import GemsLiquidity from '@/components/Gems/GemsLiquidity'
 import GemsRefer from '@/components/Gems/GemsRefer'
-import GemsAuction from '@/components/Gems/GemsAuction'
 
 import styles from './styles.module.scss'
 
@@ -21,28 +20,20 @@ const GemsDashboard = () => {
   const isApp = useSelector(({ $app }) => $app.isApp)
   const blockchain = useSelector($app.get.blockchain)
 
-  const [tab, setTab] = useState('auction')
+  const [tab, setTab] = useState('home')
 
   const tabs = [
     { title: t('Dashboard'), key: 'home' },
-    { title: t('Auction'), key: 'auction' },
     { title: t('Liquidity mining'), key: 'liquidity' },
     { title: t('Refer & earn'), key: 'refer' },
   ]
 
   useEffect(() => {
-    const currentTab = localStorage.getItem('gemsTab')
-    if (!currentTab || currentTab == tab) {
-      try {
-        Amplitude.event(`Page Visited`, {
-          'Page': 'Gems Dashboard: ' + tabs.find(t => t.key == tab)?.title,
-          'Chain ID': blockchain?.id,
-          'Source': isApp ? 'App' : 'Web',
-        })
-      } catch (error) {
-        console.log(error)
-      }
-    }
+    Amplitude.event(`Page Visited`, {
+      'Page': 'Gems Dashboard: ' + tabs.find(t => t.key == tab)?.title,
+      'Chain ID': blockchain?.id,
+      'Source': isApp ? 'App' : 'Web',
+    })
   }, [tab])
 
   const handleTab = (value) => {
@@ -52,10 +43,9 @@ const GemsDashboard = () => {
   const getGemsComponent = () => {
     switch (tab) {
       case 'home': return <GemsHome />
-      case 'auction': return <GemsAuction />
       case 'liquidity': return <GemsLiquidity />
       case 'refer': return <GemsRefer />
-      default: return <GemsAuction />
+      default: return <GemsHome />
     }
   }
 

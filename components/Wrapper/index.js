@@ -17,6 +17,7 @@ import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
 import SidebarBanner from '@/components/Exchange/Sidebar/SidebarBanner'
 import OnboardingBanner from '@/components/Exchange/Sidebar/OnboardingBanner'
+import AuctionLandingBanner from '@/components/Auction/AuctionLandingBanner'
 
 const Analytics = dynamic(import('@/components/Analytics'), {ssr: false})
 
@@ -26,10 +27,12 @@ const Wrapper = ({ children }) => {
   const { wallet, connection } = useWagmiHelper()
 
   const router = useRouter()
+  const isLanding = router.asPath == '/'
   const isCampaign = router.asPath?.includes('/campaign')
   const isExchange = router.asPath?.includes('/exchange')
   const [_, page] = router.asPath.split('/')
   const isGD = router.asPath?.includes('/gems-dashboard')
+  const isAuctions = router.asPath?.includes('/auctions')
   const { referral } = router.query
 
   const dispatch = useDispatch()
@@ -37,6 +40,7 @@ const Wrapper = ({ children }) => {
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const platform = useSelector(({ $app }) => $app.platform)
   const stickyBannerVisible = useSelector(({ $app }) => $app.stickyBannerVisible)
+  const auctionBannerVisible = useSelector(({ $app }) => $app.auctionBannerVisible)
   const blockchain = useSelector($app.get.blockchain)
 
   const [isInIframe, setIsInIframe] = useState(false)
@@ -133,11 +137,15 @@ const Wrapper = ({ children }) => {
               <Analytics />
               <StickyBanner />
 
+              {isLanding ? (
+                <AuctionLandingBanner />
+              ) : null}
+
               {!isCampaign && !isApp ? <Header /> : null}
 
               <div style={{marginTop: page !== '' ? (isMobile ? -48 : -72) : 0, height: stickyBannerVisible ? 'calc(100% - 28px)' : '100%'}}>
                 {children}
-                {!isCampaign && !isApp && !isExchange && !isGD ? <Footer /> : null}
+                {!isCampaign && !isApp && !isExchange && !isGD && !isAuctions ? <Footer /> : null}
               </div>
 
               {page === 'exchange' && !isApp && showTournamentBanner  ? <SidebarBanner /> : null}

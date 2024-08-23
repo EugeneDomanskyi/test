@@ -1,60 +1,55 @@
-.heroWrapper {
-  // width: 560px;
-  height: 563px;
+.mwebBack {
+  @media (max-width: 768px) {
+    background: url('/images/hero-background.png') center / cover no-repeat;
+  }
 }
 
-.heroImg {
-  // position: absolute;
-  // right: -120px;
-  z-index: -1;
-  width: 100%;
-  // transition: .6s;
+.container {
+  padding: 72px 0 56px;
+  background: url('/images/hero-background.png') center / cover no-repeat;
 
-  // &:hover {
-  //   right: 0;
-  // }
-}
-
-// @media (max-width: 1560px) {
-//   .heroImg {
-//     right: -280px;
-//   }
-// }
-
-@media (max-width: 991px) {
-  .textWrapper,
-  .textWrapper div {
-    align-items: center;
-    width: 100%;
+  @media (max-width: 768px) {
+    background-image: none;
   }
 
-  .heroWrapper {
-    width: 100%;
-    
-    .heroImg {
-      display: none;
+  .border {
+    border-radius: 8px;
+    position: relative;
+    padding: 8px;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      z-index: 0;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        rgba(151, 71, 255, 0) 0deg,
+        rgba(151, 71, 255, 1) 60deg,
+        rgba(151, 71, 255, 0) 120deg,
+        rgba(151, 71, 255, 0) 360deg
+      );
+      transform: rotate(0deg);
+      animation: rotate 5s linear infinite;
+    }
+
+    & > * {
+      position: relative;
+      z-index: 1;
     }
   }
 }
 
-@media (max-width: 380px) {
-  .heroWrapper {
-    width: 100%;
-    
-    .heroImg {
-      display: none;
-    }
-  }
-}
-
-@keyframes circleAnimation {
+@keyframes rotate {
   0% {
-    background-color: #1cbc7c;
-  }
-  50% {
-    background-color: #053421;
+    transform: rotate(0deg);
   }
   100% {
-    background-color: #1cbc7c;
+    transform: rotate(360deg);
   }
 }

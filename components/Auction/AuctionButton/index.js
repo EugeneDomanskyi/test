@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
@@ -15,7 +15,6 @@ import $gem from '@/store/gem'
 import $alert from '@/store/alert'
 
 import App from '@/components/App'
-import AuctionItemSimple from '@/components/Auction/AuctionItemSimple'
 
 import styles from './styles.module.scss'
 
@@ -27,7 +26,6 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
-  const jwt = useSelector(({ $gem }) => $gem.jwt)
   const referral = useSelector(({ $gem }) => $gem.referral)
   const claim = useSelector(({ $gem }) => $gem.claim)
   const claimId = useSelector(({ $gem }) => $gem.claimId)
@@ -130,7 +128,7 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
     }
 
     if (item.status == 'closed' && !item.current) {
-      router.push(`/gems-dashboard/${item.id}`)
+      router.push(`/auctions/${item.id}`)
       return
     }
 
@@ -179,6 +177,11 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
           if (result && !result.error) {
             dispatch($gem.set.auctionUpdated({data: {auction: result}, wallet: user.wallet}))
             dispatch($gem.set.totalGems(user.points - item.gemsPrice))
+
+            if ( ! user.isTelegram) {
+              dispatch($gem.set.showTelegramSubscription(item.id))
+            }
+
             dispatch($alert.set.success({ title: t(`Bid Placed!`), text: t(`You placed a bid for ${item.nextPrice} ${item.token.currency}.`) }))
 
             Amplitude.event(`Bid Placed`, {
@@ -196,7 +199,7 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
     }
 
     if (item.status == 'closed') {
-      if (item.current && item.claimHash == '') {
+      if (item.current && item.claimHash == '' && item.isClaimable) {
         if (item.claimContract && item.claimContract != '') {
           const currentJwt = await fetchJWT(user.wallet)
           if (currentJwt) {
@@ -205,7 +208,7 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
           }
         }
       } else {
-        router.push(`/gems-dashboard/${item.id}`)
+        router.push(`/auctions/${item.id}`)
       }
     }
   }
@@ -239,7 +242,7 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
   }
 
   const handleShare = () => {
-    const link = `${window.location.origin}/gems-dashboard`
+    const link = `${window.location.origin}/auctions`
     const tweetText = encodeURIComponent(`
 👀 1 ETH for just $100? Absolutely! ✨
 
@@ -265,7 +268,7 @@ Don't fade, join the fun today: ${link}
           ) : null}
         </div>
       ) : (
-        <button className={cn(styles.button, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current && !loading}, {[styles.loading]: loading}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 && duration.secondsNumber > 0 })} onClick={handeClick}>
+        <button className={cn(styles.button, {[styles.flat]: !wallet}, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current && !loading && item.isClaimable}, {[styles.disabled]: !item.isClaimable}, {[styles.loading]: loading}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 && duration.secondsNumber > 0 })} onClick={handeClick}>
           {share ? (
             <App.Icon icon="x2" />
           ) : null}
