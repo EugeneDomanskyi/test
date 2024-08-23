@@ -42,7 +42,7 @@ const auctionTemplate = (item, wallet) => {
     })
   }
 
-  const isCurrent = wallet && wallet == lastBidderWallet
+  const isCurrent = item?.is_last_bidder_me ?? (wallet && wallet == lastBidderWallet)
   let claimTime = 0
   let isClaimable = false
   
