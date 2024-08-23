@@ -1,83 +1,78 @@
 import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import Script from 'next/script'
-import crypto from 'crypto'
+
+import TelegramBot from '@/libs/TelegramBot'
+
+import $bot from '@/store/bot'
 
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
 const Bot  = () => {
-  const [initData, setInitData] = useState(null)
+  const dispatch = useDispatch()
+  const user = useSelector(({ $bot }) => $bot.user)
+
   const [isBot, setIsBot] = useState(null)
+  const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    if (initData) {
-      validateTelegramInitData()
-    }
-  }, [initData])
+  const handleScriptLoaded = async () => {
+    if (TelegramBot.getInitData()) {
+      const botResult = TelegramBot.init()
 
-  const handleScriptLoaded = () => {
-    if (typeof window !== 'undefined' && window?.Telegram?.WebApp) {
-      window.Telegram.WebApp.expand()
-      window.Telegram.WebApp.setHeaderColor('#08051C')
-      window.Telegram.WebApp.disableVerticalSwipes()
-
-      if (window.Telegram.WebApp.initData !== '') {
-        setInitData(window.Telegram.WebApp.initData)
-        return
+      const result = await $bot.api.user()
+      if (result) {
+        dispatch($bot.set.user(result))
       }
+
+      setIsBot(botResult)
+      return
     }
     
     setIsBot(false)
   }
 
-  const validateTelegramInitData = () => {
-    const params = new URLSearchParams(initData)
-    const hash = params.get('hash')
-    const authData = [...params.entries()]
-      .filter(([key]) => key !== 'hash')
-      .map(([key, value]) => `${key}=${value}`)
-      .sort()
-      .join('\n')
+  const handlePay = async () => {
+    setLoading(true)
 
-    const secretKey = crypto.createHmac('sha256', 'WebAppData').update(process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN).digest()
-    const generatedHash = crypto.createHmac('sha256', secretKey).update(authData).digest('hex')
-    setIsBot(generatedHash === hash)
+    const payload = {
+      title: '100 gems',
+      description: '100 gems for bidding',
+      payload: 'buy-gems',
+      provider_token: '',
+      currency: 'XTR',
+      prices: [
+        { label: 'Price', amount: 1 },
+      ],
+    }
+
+    const result = await $bot.api.invoice(payload)
+    if (result && result?.success) {
+      TelegramBot.openInvoice(result.invoice, handleInvoice)
+    } else {
+      setLoading(false)
+    }
   }
 
-  const handlePay = async () => {
-    window.Telegram.WebApp.openInvoice('https://t.me/$jN1TNx0SOEqaCQAABRtX8jVLCEA', (status) => {
-      alert(status)
-    })
-    // const payload = {
-    //   title: 'Your Product Name',
-    //   description: 'Description of the product',
-    //   payload: 'buy-gems',
-    //   provider_token: '',
-    //   currency: 'XTR',
-    //   prices: [
-    //     { label: 'Price', amount: 10 },
-    //   ],
-    // };
+  const handleInvoice = async (status) => {
+    if (status == 'paid') {
+      TelegramBot.showPopup('Payment was successful', 'You bought 100 gems')
+    } else {
+      TelegramBot.showPopup('Payment failed', 'But for testing you will receive your 100 gems')
+    }
 
-    // try {
-    //   const response = await fetch('https://c129-5-1-6-229.ngrok-free.app/generate-invoice', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(payload),
-    //   });
-    //   // alert(response.status)
-    //   // if (response.ok) {
-    //   //   alert('Invoice sent! Please check your Telegram chat.');
-    //   // } else {
-    //   //   alert('Failed to send the invoice.');
-    //   // }
-    // } catch (error) {
-    //   console.error('Error sending invoice:', error);
-    //   alert(error);
-    // }
+    const result = await $bot.api.transaction({
+      amount: 1,
+      currency: 'XTR',
+      gems: 100,
+    })
+
+    if (result) {
+      dispatch($bot.set.user(result))
+    }
+
+    setLoading(false)
   }
 
   return (
@@ -85,11 +80,14 @@ const Bot  = () => {
       <Script src="https://telegram.org/js/telegram-web-app.js" onReady={handleScriptLoaded} />
       
       {isBot !== null ? (
-        isBot ? (
-          <App.Flex center height={300}>
-            <App.Text>Welcome</App.Text>
+        isBot || !isBot ? (
+          <App.Flex row align="center" gap={24}>
+            <App.Flex row align="center" gap={8}>
+              <App.Text size={24} weight={700}>Gems:</App.Text>
+              <App.Text size={24} weight={700}>{Math.floor(user?.points ?? 0)}</App.Text>
+            </App.Flex>
 
-            <App.Button onClick={handlePay}>Buy Gems</App.Button>
+            <App.Button primary2 loading={loading} onClick={handlePay}>Buy 100 Gems</App.Button>
           </App.Flex>
         ) : (
           <App.Flex center height={300}>
