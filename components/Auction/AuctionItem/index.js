@@ -57,7 +57,14 @@ const AuctionItem = ({ item, onClear }) => {
       case 'ongoing': return null
       case 'closed': return item.current && item.claimHash == '' ? (
         <App.Flex row center gap={8} height={20}>
-          <App.Text center size={14} weight={600} height={1}>Claim your winnings in 72 hours!</App.Text>
+          {item.isClaimable ? (
+            <App.Flex row center>
+              <App.Text size={14} weight={400} height={1} color="#737373">{t('Claim in')}</App.Text>
+              <AuctionCountdown red time={item.claimTime} onZero={handleClaimOver} />
+            </App.Flex>
+           ) : (
+            <App.Text center size={14} weight={600} height={1}>Claim your winnings in 72 hours!</App.Text>
+           )}
           <App.Tooltip variant="v2" click={isMobile} text={'You have to claim your winnings within 72 hours. If not, it gets deposited back to the reward pool.'} placement="top-end">
             <App.Icon icon="info2" width={20} height={20} />
           </App.Tooltip>
@@ -87,6 +94,10 @@ const AuctionItem = ({ item, onClear }) => {
     if (onClear) {
       onClear(item.id)
     }
+  }
+
+  const handleClaimOver = () => {
+    dispatch($gem.set.auctionNotClaim(item))
   }
 
   return (

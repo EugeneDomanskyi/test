@@ -17,6 +17,7 @@ import AuctionButton from '@/components/Auction/AuctionButton'
 import AuctionClaim from '@/components/Auction/AuctionClaim'
 import AuctionWarning from '@/components/Auction/AuctionWarning'
 import AuctionSuybscribe from '@/components/Auction/AuctionSubscribe'
+import AuctionCountdown from '@/components/Auction/AuctionCountdown'
 
 import styles from './styles.module.scss'
 
@@ -107,6 +108,10 @@ const GemsAuctionInfo = () => {
     dispatch($gem.set.claim(false))
   }
 
+  const handleClaimOver = () => {
+    dispatch($gem.set.auctionNotClaim(item))
+  }
+
   return (
     <App.Flex column fullWidth className={styles.container}>
       <App.Container maxWidth={1230} sx={{ paddingBottom: 32 }}>
@@ -143,8 +148,24 @@ const GemsAuctionInfo = () => {
                     <App.Text size={24} weight={600} color={item.status == 'closed' && item.current ? '#53F19C' : '#fff'}>{item.currentPrice} {item.token.currency}</App.Text>
 
                     {item.status == 'closed' && item.current ? (
-                      <App.Flex fullWidth center height={30} className={styles.badge}>
-                        <App.Text size={16} weight={400} height={1} color="#53F19C">{t('You won the auction!')}</App.Text>
+                      <App.Flex column gap={16}>
+                        <App.Flex fullWidth center height={30} className={styles.badge}>
+                          <App.Text size={16} weight={400} height={1} color="#53F19C">{t('You won the auction!')}</App.Text>
+                        </App.Flex>
+
+                        <App.Flex row center gap={8} height={20}>
+                          {item.isClaimable ? (
+                            <App.Flex row center>
+                              <App.Text size={14} weight={400} height={1} color="#737373">{t('Claim in')}</App.Text>
+                              <AuctionCountdown red time={item.claimTime} onZero={handleClaimOver} />
+                            </App.Flex>
+                          ) : (
+                            <App.Text center size={14} weight={600} height={1}>Claim your winnings in 72 hours!</App.Text>
+                          )}
+                          <App.Tooltip variant="v2" click={isMobile} text={'You have to claim your winnings within 72 hours. If not, it gets deposited back to the reward pool.'} placement="top-end">
+                            <App.Icon icon="info2" width={20} height={20} />
+                          </App.Tooltip>
+                        </App.Flex>
                       </App.Flex>
                     ) : null}
 

@@ -42,13 +42,24 @@ const auctionTemplate = (item, wallet) => {
     })
   }
 
+  const isCurrent = wallet && wallet == lastBidderWallet
+  let claimTime = 0
+  let isClaimable = false
+  
+  if (status == 'closed' && auction.claim_tx_hash == '') {
+    // claimTime = moment().add(2, 'minutes')
+    claimTime = moment(auction.last_bid_timestamp * 1000).add(3 * 24 * 60 * 60, 'seconds')
+    const diff = claimTime.diff(now) < 0 ? 0 : claimTime.diff(now)
+    isClaimable = diff > 0
+  }
+
   return {
     id: auction.id,
     productId: auction.product.id,
     image: auction.s3_url || null,
     logo: auction.product.collection_url || null,
     status: status,
-    current: wallet && wallet == lastBidderWallet,
+    current: isCurrent,
     wallet: lastBidderWallet,
     startPrice,
     marketPrice: marketPrice.toFixed(2),
@@ -71,6 +82,8 @@ const auctionTemplate = (item, wallet) => {
     bidsCount: item?.total_bids ?? 0,
     claimContract: auction.auction_amount_receiver,
     claimHash: auction.claim_tx_hash,
+    claimTime,
+    isClaimable,
     updated: false,
   }
 }
@@ -321,6 +334,25 @@ export const gemSlice = createSlice({
 
         return item
       })
+    },
+
+    auctionNotClaim: (state, { payload }) => {
+      state.auctions = state.auctions.map(item => {
+        if (item.id == payload.id) {
+          return {
+            ...payload,
+            isClaimable: false,
+            claimTime: 0,
+          }
+        }
+
+        return item
+      })
+
+      if (state.current?.id && state.current.id == payload.id) {
+        state.current.isClaimable = false
+        state.current.claimTime = false
+      }
     },
 
     auctionsCheckCurrent: (state, { payload }) => {

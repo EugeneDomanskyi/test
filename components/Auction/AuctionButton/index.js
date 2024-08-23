@@ -219,7 +219,7 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
     }
 
     if (item.status == 'closed') {
-      if (item.current && item.claimHash == '') {
+      if (item.current && item.claimHash == '' && item.isClaimable) {
         if (item.claimContract && item.claimContract != '') {
           const currentJwt = await fetchJWT(user.wallet)
           if (currentJwt) {
@@ -288,7 +288,7 @@ Don't fade, join the fun today: ${link}
           ) : null}
         </div>
       ) : (
-        <button className={cn(styles.button, {[styles.flat]: !wallet && !TelegramBot.isBot()}, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current && !loading}, {[styles.loading]: loading}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 && duration.secondsNumber > 0 })} onClick={handeClick}>
+        <button className={cn(styles.button, {[styles.flat]: !wallet && !TelegramBot.isBot()}, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current && !loading && item.isClaimable}, {[styles.disabled]: !item.isClaimable}, {[styles.loading]: loading}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 && duration.secondsNumber > 0 })} onClick={handeClick}>
           {share ? (
             <App.Icon icon="x2" />
           ) : null}
