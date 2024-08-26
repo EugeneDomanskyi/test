@@ -9,6 +9,7 @@ import $bot from '@/store/bot'
 
 import App from '@/components/App'
 import BotBalance from '@/components/Bot/BotBalance'
+import BotWallet from '@/components/Bot/BotWallet'
 
 import styles from './styles.module.scss'
 
@@ -51,6 +52,7 @@ const BotWrapper = ({ children }) => {
         isBot || !isBot ? (
           <App.Flex column gap={24}>
             <BotBalance />
+            <BotWallet />
             {children}
           </App.Flex>
         ) : (
