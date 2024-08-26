@@ -301,7 +301,7 @@ export const gemSlice = createSlice({
     auctionUpdated: (state, { payload }) => {
       state.auctions = state.auctions.map(item => {
         if (Number(item.id) == Number(payload.data.auction.id)) {
-          const auction = auctionTemplate({auction: payload.data.auction, auction_value: item.marketPrice}, payload.wallet)
+          const auction = auctionTemplate(payload.data, payload.wallet)
           if (auction.status == 'ongoing' && auction.currentPrice * 1 < item.currentPrice * 1) {
             return item
           }
@@ -316,7 +316,7 @@ export const gemSlice = createSlice({
       })
 
       if (state.current?.id == payload.data.auction.id) {
-        const auction = auctionTemplate({auction: payload.data.auction, auction_value: state.current.marketPrice}, payload.wallet)
+        const auction = auctionTemplate(payload.data, payload.wallet)
         if ((auction.status == 'ongoing' && auction.currentPrice >= state.current.currentPrice) || auction.status != 'ongoing') {
           state.current = auction
         }
@@ -535,7 +535,7 @@ export const api = {
   },
 
   auction: (id) => {
-    return request(`token/price?auction_id=${id}`, 'GET', {api: 'bid'})
+    return request(`auction/${id}`, 'GET', {api: 'bid'})
   },
 
   login: (params) => {
