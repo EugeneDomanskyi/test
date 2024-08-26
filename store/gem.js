@@ -320,6 +320,11 @@ export const gemSlice = createSlice({
         if ((auction.status == 'ongoing' && auction.currentPrice >= state.current.currentPrice) || auction.status != 'ongoing') {
           state.current = auction
         }
+
+        state.current = {
+          ...auction,
+          updated: true,
+        }
       }
     },
 
@@ -535,7 +540,7 @@ export const api = {
   },
 
   auction: (id) => {
-    return request(`token/price?auction_id=${id}`, 'GET', {api: 'bid'})
+    return request(`auction/${id}`, 'GET', {api: 'bid'})
   },
 
   login: (params) => {
