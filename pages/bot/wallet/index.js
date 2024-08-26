@@ -3,18 +3,20 @@ import useWagmiHelper from '@/myhooks/useWagmiHelper'
 import WagmiHelper from '@/libs/WagmiHelper'
 
 import App from '@/components/App'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 const Wallet = () => {
   const { wallet, connection, connect } = useWagmiHelper()
 
+  const [disconnected, setDisconnected] = useState(false)
+
   useEffect(() => {
     if (!connection.loading) {
-      if (!connection.connected) {
+      if (!connection.connected && !disconnected) {
         handleConnect()
       }
     }
-  }, [connection])
+  }, [connection, disconnected])
 
   const handleConnect = async () => {
     const wallet = await connect()
@@ -22,7 +24,7 @@ const Wallet = () => {
       return
     }
 
-    handleCloseWindow()
+    handleBackToMiniApp()
   }
 
   const getShortWallet = () => {
@@ -35,13 +37,12 @@ const Wallet = () => {
   }
 
   const handleDisconnect = () => {
+    setDisconnected(true)
     WagmiHelper.disconnect()
-    handleCloseWindow()
   }
 
-  const handleCloseWindow = () => {
+  const handleBackToMiniApp = () => {
     window.location.href = 'tg://resolve?domain=local_tegro_bot'
-    // window.close()
   }
 
   return (
@@ -53,9 +54,13 @@ const Wallet = () => {
           <App.Flex column center gap={16}>
             <App.Text size={16} weight={600}>{getShortWallet()}</App.Text>
             <App.Button primary2 onClick={handleDisconnect}>Disconnect</App.Button>
+            <App.Button primary2 outlined onClick={handleBackToMiniApp}>Back to MiniApp</App.Button>
           </App.Flex>
         ) : (
-          <App.Button primary2 onClick={handleConnect}>Connect Wallet</App.Button>
+          <App.Flex column center gap={16}>
+            <App.Button primary2 onClick={handleConnect}>Connect Wallet</App.Button>
+            <App.Button primary2 outlined onClick={handleBackToMiniApp}>Back to MiniApp</App.Button>
+          </App.Flex>
         )
       )}
     </App.Flex>
