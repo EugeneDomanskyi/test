@@ -3,7 +3,12 @@ import TelegramBot from '@/libs/TelegramBot'
 
 const BotWallet = () => {
   const handleConnect = () => {
-    TelegramBot.showPopup('Connect Wallet', 'You will be redirect to Tegro websigte to connect Base wallet', [{ id: '1', type: 'ok', text: 'Ok' }])
+    TelegramBot.showPopup('Connect Wallet', 'You will be redirect to Tegro websigte to connect Base wallet', [{ id: 'ok', type: 'ok', text: 'Ok' }])
+    TelegramBot.on('popupClosed', (buttonId) => {
+      if (buttonId === 'ok') {
+        TelegramBot.openLink('https://beta.tegro.com/bot/wallet')
+      }  
+    })
   }
 
   return (
