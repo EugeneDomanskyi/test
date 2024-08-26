@@ -9,7 +9,7 @@ const HomeFeatures = () => {
     <App.Container maxWidth={1200} sx={{ paddingTop: 60, paddingBottom: 90 }}>
       <App.Flex fullWidth column gap={[64, 24]}>
         <App.Flex align={['center', 'flex-start']} column gap={10}>
-          <App.Text tag="h2" size={[80, 60]} weight={800} height={1}>CEX Speed, <App.Text inline size={[80, 60]} weight={700} color="#A6DC37">DEX Trust</App.Text></App.Text>
+          <App.Text tag="h2" size={[48, 32]} weight={800} height={1}>CEX Speed, <App.Text inline size={[48, 32]} weight={700} color="#A6DC37">DEX Trust</App.Text></App.Text>
           <App.Text size={16} color="#FFFFFF99" height={1}>Enjoy the best of both worlds!</App.Text>
         </App.Flex>
 
