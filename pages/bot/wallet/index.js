@@ -40,7 +40,8 @@ const Wallet = () => {
   }
 
   const handleCloseWindow = () => {
-    window.close()
+    window.location.href = 'tg://resolve?domain=local_tegro_bot'
+    // window.close()
   }
 
   return (
