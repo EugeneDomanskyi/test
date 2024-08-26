@@ -64,6 +64,18 @@ class TelegramBot {
       this.app.showPopup({title, message, buttons})
     }
   }
+
+  openLink = (url: string) => {
+    if (this.app) {
+      this.app.openLink(url)
+    }
+  }
+
+  on = (event: string, callback: (data: any) => {}) => {
+    if (this.app) {
+      this.app.onEvent(event, callback)
+    }
+  }
 }
 
 export default new TelegramBot()
