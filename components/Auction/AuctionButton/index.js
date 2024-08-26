@@ -175,7 +175,7 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
 
     if (item.status == 'ongoing') {
       if (TelegramBot.isBot()) {
-        if (user.points * 1 >= item.gemsPrice * 1) {
+        if (user?.points && user.points * 1 >= item.gemsPrice * 1) {
           const result = await $bot.api.bid({
             auction_id: item.id,
           })
