@@ -103,7 +103,7 @@ const Auctions = () => {
       if (a.status == 'closed') return -1
       if (b.status == 'closed') return 1
       return 0
-    })
+    }).slice(0, 12)
   }
 
   const handleClaimClose = () => {
