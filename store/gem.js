@@ -228,6 +228,12 @@ export const gemSlice = createSlice({
           value.currency = value.rewards[0].reward_currency ?? ''
         }
 
+        const temp = value.alias.toLowerCase().split('-')
+        value.code = temp[0]
+        value.name = value?.title
+        value.slogan = (`${temp[0]} ${temp[1]} ${value.alias == 'alpha-trader-s1' ? 'series' : ''}`).toUpperCase()
+        value.specialCurrency = value.alias == 'alpha-trader-s1' ? '$TOSHI & $PONCHO' : `$${value.currency}`
+
         switch (key) {
           case 'brett':
             value.name = 'BRETT Brawl'
@@ -281,7 +287,8 @@ export const gemSlice = createSlice({
       const currency = payload.rewards[0].reward_currency ?? ''
       const code = temp[0]
       const name = payload?.title
-      const slogan = (`${temp[0]} ${temp[1]}`).toUpperCase()
+      const slogan = (`${temp[0]} ${temp[1]} ${payload.alias == 'alpha-trader-s1' ? 'series' : ''}`).toUpperCase()
+      const specialCurrency = payload.alias == 'alpha-trader-s1' ? 'TOSHI & PONCHO' : `$${currency}`
 
       state.currentTournament = {
         ...payload,
@@ -290,6 +297,7 @@ export const gemSlice = createSlice({
         code,
         name,
         slogan,
+        specialCurrency,
       }
     },
 

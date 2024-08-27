@@ -59,6 +59,7 @@ const TournamentBanner = ({ tournament }) => {
       <App.Flex column gap={8}>
         <App.Text uppercase size={36} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">{getPool(tournament.rewards)} ${tournament.currency}</App.Text>
         <App.Text uppercase size={16} weight={600} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">in rewards!</App.Text>
+        <App.Text uppercase size={[16, 14]} weight={900} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">Collect 1 GEM for every $1 traded!</App.Text>
       </App.Flex>
 
       <App.Flex column gap={8}>
@@ -68,7 +69,7 @@ const TournamentBanner = ({ tournament }) => {
 
             <App.Flex column gap={2}>
               <App.Text uppercase size={[16, 12]} weight={900} height={1}>Trade</App.Text>
-              <App.Text size={[12, 9]} weight={500} height={1}>${tournament.currency}</App.Text>
+              <App.Text size={[12, 9]} weight={500} height={1}>{tournament.specialCurrency}</App.Text>
             </App.Flex>
           </App.Flex>
 
@@ -100,7 +101,7 @@ const TournamentBanner = ({ tournament }) => {
           </App.Flex>
         </App.Flex>
 
-        <App.Text uppercase size={[16, 14]} weight={900} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">Collect 1 GEM for every $1 traded!</App.Text>
+        <App.Text size={14} weight={600} height={1} color="#FFFFFF99">Activate streaks with daily min. trade vol. of $100!</App.Text>
       </App.Flex>
     </App.Flex>
   )

@@ -103,7 +103,7 @@ const SidebarBanner = () => {
             <img src={`/images/${current.code}-banner-short.png`} style={{ width: '100%' }} alt="" />
           </App.Flex>
           
-          <App.Flex center column gap={16} sx={{position: 'absolute'}}>
+          <App.Flex center column gap={8} sx={{position: 'absolute'}}>
             <App.Text center size={24} weight={900} height={1} gradient="radial-gradient(193.17% 113.6% at 96.29% 4.49%, #FFF6A3 0%, #FFF066 34.61%, #FFCB45 68.83%, #FFBD13 100%)">{getPool(current.rewards)} ${current.currency}<br /> in rewards!</App.Text>
             <App.Text center size={16} weight={700} height={1} gradient="linear-gradient(180deg, #FFF 0%, #C7C7C7 100%)">{current.slogan}</App.Text>
           </App.Flex>
@@ -111,14 +111,14 @@ const SidebarBanner = () => {
 
         <App.Flex fullWidth column gap={24} align="center">
           <App.Flex column gap={[12, 8]}>
-            <App.Flex gap={12} align="center" row>
+            <App.Flex gap={12} align="flex-start" row>
               <App.Flex center width={30}>
                 <App.Text size={[36, 24]} weight={900} height={1} color="#A6DC37">1</App.Text>
               </App.Flex>
 
-              <App.Flex direction={['column', 'row']} align={['flex-start', 'center']} gap={[4, 8]}>
-                {/* <App.Text uppercase size={16} weight={900} height={1}>Connect</App.Text> */}
-                <App.Text size={20} weight={600} height={1}>Trade ${current.currency}</App.Text>
+              <App.Flex column gap={4}>
+                <App.Text size={20} weight={600} height={1}>Trade {current.alias == 'alpha-trader-s1' ? current.specialCurrency : `$${current.currency}`}</App.Text>
+                <App.Text size={14} weight={400} height={1} color="#FFFFFF99">Activate streaks with daily min. trade vol. of $100!</App.Text>
               </App.Flex>
             </App.Flex>
 
