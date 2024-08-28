@@ -363,6 +363,35 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon === 'plus-in-square') {
+      return (
+        <svg width={width ?? 20} height={height ?? 21} viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <rect fill={color ?? '#A6DC37'} y="0.414062" width="20" height="20" rx="4" />
+          <rect x="8.5" y="2.41406" width="3" height="16" rx="1.5" fill="white"/>
+          <rect x="18" y="8.41406" width="4" height="16" rx="2" transform="rotate(90 18 8.41406)" fill="white"/>
+        </svg>
+      )
+    }
+
+    if (icon === 'wallet-bot') {
+      return (
+        <svg width={width ?? 20} height={height ?? 21} viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.25" d="M1.666 7.497h9.167M5 14.164h1.667M8.75 14.164h3.333" />
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.25" d="M18.333 9.856v3.983c0 2.925-.742 3.659-3.7 3.659H5.366c-2.958 0-3.7-.734-3.7-3.659V6.99c0-2.925.742-3.658 3.7-3.658h5.7" />
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.25" d="M14.166 3.122h2.608c.575 0 1.042.525 1.042 1.042 0 .575-.467 1.041-1.042 1.041h-2.608V3.122zM14.166 5.205h2.975c.658 0 1.192.467 1.192 1.042s-.534 1.041-1.192 1.041h-2.975V5.205zM15.633 7.288V8.33M15.633 2.08v1.042M15.157 3.122h-1.825M15.157 7.288h-1.825" />
+        </svg>
+      )
+    }
+
+    if (icon === 'clock-bot') {
+      return (
+        <svg width={width ?? 20} height={height ?? 21} viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.25" d="M18.333 10.414c0 4.6-3.734 8.334-8.334 8.334a8.336 8.336 0 01-8.333-8.334c0-4.6 3.733-8.333 8.333-8.333s8.334 3.733 8.334 8.333z" />
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.25" d="M13.091 13.063l-2.583-1.541c-.45-.267-.817-.909-.817-1.434V6.672" />
+        </svg>
+      )
+    }
+
     if (icon === 'wallet') {
       return (
         <svg width={width ?? 10} height={height ?? 10} viewBox="0 0 10 10" fill="none" {...props}>

@@ -8,8 +8,8 @@ import TelegramBot from '@/libs/TelegramBot'
 import $bot from '@/store/bot'
 
 import App from '@/components/App'
-import BotBalance from '@/components/Bot/BotBalance'
-import BotWallet from '@/components/Bot/BotWallet'
+import BotHeader from '@/components/Bot/BotHeader'
+import BotTabs from '@/components/Bot/BotTabs'
 
 import styles from './styles.module.scss'
 
@@ -50,10 +50,16 @@ const BotWrapper = ({ children }) => {
       <Script src="https://telegram.org/js/telegram-web-app.js" onReady={handleScriptLoaded} />
       {isBot !== null ? (
         isBot || !isBot ? (
-          <App.Flex column gap={24}>
-            <BotBalance />
-            <BotWallet />
-            {children}
+          <App.Flex column full gap={8}>
+            <BotHeader />
+
+            <App.Flex fullWidth flex={1} className={styles.content}>
+              <App.Flex column className={styles.scroll}>
+                {children}
+              </App.Flex>
+            </App.Flex>
+
+            <BotTabs />
           </App.Flex>
         ) : (
           <App.Flex center height={300}>
