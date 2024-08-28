@@ -50,7 +50,7 @@ const BotWrapper = ({ children }) => {
       <Script src="https://telegram.org/js/telegram-web-app.js" onReady={handleScriptLoaded} />
       {isBot !== null ? (
         isBot || !isBot ? (
-          <App.Flex column full gap={8}>
+          <App.Flex column full>
             <BotHeader />
 
             <App.Flex fullWidth flex={1} className={styles.content}>
