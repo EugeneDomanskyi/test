@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 import TelegramBot from '@/libs/TelegramBot'
 
@@ -7,7 +9,11 @@ import $bot from '@/store/bot'
 
 import App from '@/components/App'
 
+import styles from './styles.module.scss'
+
 const BotBalance = () => {
+  const router = useRouter()
+
   const dispatch = useDispatch()
   const user = useSelector(({ $bot }) => $bot.user)
 
@@ -55,14 +61,33 @@ const BotBalance = () => {
     setLoading(false)
   }
 
+  const handleShop = () => {
+    router.push('/bot/shop')
+  }
+
+  const formatBalance = (n) => {
+    const value = Math.floor(n ?? 0)
+    if (value >= 1000000000) {
+      return (value / 1000000000).toFixed(1) + 'B'
+    } else if (value >= 1000000) {
+      return (value / 1000000).toFixed(1) + 'M'
+    } else if (value >= 1000) {
+      return (value / 1000).toFixed(1) + 'K'
+    } else {
+      return value.toString()
+    }
+  }
+
   return (
-    <App.Flex row align="center" gap={24}>
-      <App.Flex row align="center" gap={8}>
-        <App.Text size={24} weight={700}>Gems:</App.Text>
-        <App.Text size={24} weight={700}>{Math.floor(user?.points ?? 0)}</App.Text>
+    <App.Flex row align="center" gap={8} className={styles.container}>
+      <App.Flex onClick={handleShop}>
+        <App.Icon icon="plus-in-square" />
       </App.Flex>
 
-      <App.Button primary2 loading={loading} disabled={loading} onClick={handlePay}>Buy 100 Gems</App.Button>
+      <App.Flex row align="center" gap={8}>
+        <App.Text size={16} weight={700} height={1}>{formatBalance(user?.points)}</App.Text>
+        <Image src="/images/bot/gem.png" width={24} height={20} alt="" />
+      </App.Flex>
     </App.Flex>
   )
 }
