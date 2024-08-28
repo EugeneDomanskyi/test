@@ -47,16 +47,16 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
 
     if (version != 'mobile') {
-      // Socket.on('order_placed', 'my_orders', (data) => {
-      //   dispatch($orders.set.add(data))
-      // })
-
       Socket.on('order_submitted', 'my_orders', (data) => {
         dispatch($orders.set.update(data))
+        dispatch($alert.set.success({ title: 'Matched & pending settlement' }))
+        dispatch($portfolio.set.update(true))
       })
 
       Socket.on('order_trade_processed', 'my_orders', (data) => {
         dispatch($orders.set.update(data))
+        dispatch($alert.set.success({ title: 'Settlement Complete' }))
+        dispatch($portfolio.set.update(true))
       })
 
       Socket.on('trade_points_rewarded', 'trade_points_rewarded', async (data) => {
