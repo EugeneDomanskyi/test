@@ -9,7 +9,7 @@ class TelegramBot {
   }
 
   getInitData = () => {
-    return 'query_id=AAEfkDliAAAAAB-QOWLyvY6G&user=%7B%22id%22%3A1647939615%2C%22first_name%22%3A%22Eugene%F0%9F%A6%B4%22%2C%22last_name%22%3A%22Domanskyi%22%2C%22username%22%3A%22ievgenii_domanskyi%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1724317098&hash=665570655d38e6e47102e7963fbf272e875600659397f7c2fcccf772ded8ffe1'
+    //return 'query_id=AAEfkDliAAAAAB-QOWLyvY6G&user=%7B%22id%22%3A1647939615%2C%22first_name%22%3A%22Eugene%F0%9F%A6%B4%22%2C%22last_name%22%3A%22Domanskyi%22%2C%22username%22%3A%22ievgenii_domanskyi%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1724317098&hash=665570655d38e6e47102e7963fbf272e875600659397f7c2fcccf772ded8ffe1'
     
     if (typeof window !== 'undefined' && (window as any)?.Telegram?.WebApp) {
       this.initData = (window as any).Telegram.WebApp.initData
@@ -68,6 +68,17 @@ class TelegramBot {
   openLink = (url: string) => {
     if (this.app) {
       this.app.openLink(url)
+    }
+  }
+
+  backButton = (show: boolean, callback: () => {}) => {
+    if (this.app) {
+      if (show) {
+        this.app.BackButton.show()
+        this.app.BackButton.onClick(callback)
+      } else {
+        this.app.BackButton.hide()
+      }
     }
   }
 
