@@ -51,29 +51,6 @@ const Exchange = ({  }) => {
     }
   }, [socketConnected, blockchain?.id, current?.id])
 
-  const handleAction = useCallback(({action, data}) => {
-    dispatch($portfolio.set.update(true))
-    if ( !isApp) {
-      switch (action) {
-        // case 'order_placed':
-        //   dispatch($alert.set.success({ title: 'Order placed successfully', text: `Your ${data.side} order for ${data.quantity} ${data.baseCurrency} has been placed successfully.` }))
-        //   break
-        case 'order_submitted':
-          dispatch($alert.set.success({ title: 'Matched & pending settlement' }))
-          break
-        case 'order_trade_processed':
-          dispatch($alert.set.success({ title: 'Settlement Complete' }))
-          break
-        case 'chain_event_OrderFilled':
-          dispatch($alert.set.success({ title: 'Order filled on-chain', text: `Your ${data.side} order for ${data.quantity} ${data.baseCurrency} has been executed ${data.quantity == data.quantityFilled ? 'fully' : 'partially'}.` }))
-          break
-        case 'chain_event_OrderCancelled':
-          dispatch($alert.set.success({ title: 'Order cancelled on-chain' }))
-          break
-      }
-    }
-  }, [])
-
   const handleClickOrder = useCallback(async order => {
     if (tradeForm.current) {
       tradeForm.current.setForm({formType: 'market', amount: order.quantity, price: order.price, side: order.side})

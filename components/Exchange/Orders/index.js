@@ -53,10 +53,14 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
       Socket.on('order_submitted', 'my_orders', (data) => {
         dispatch($orders.set.update(data))
+        dispatch($portfolio.set.update(true))
+        dispatch($alert.set.success({ title: 'Matched & pending settlement' }))
       })
 
       Socket.on('order_trade_processed', 'my_orders', (data) => {
         dispatch($orders.set.update(data))
+        dispatch($portfolio.set.update(true))
+        dispatch($alert.set.success({ title: 'Settlement Complete' }))
       })
 
       Socket.on('trade_points_rewarded', 'trade_points_rewarded', async (data) => {

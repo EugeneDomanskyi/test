@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 
 import TelegramBot from '@/libs/TelegramBot'
@@ -12,8 +11,6 @@ import App from '@/components/App'
 import styles from './styles.module.scss'
 
 const BotBalance = () => {
-  const router = useRouter()
-
   const dispatch = useDispatch()
   const user = useSelector(({ $bot }) => $bot.user)
 
@@ -62,7 +59,7 @@ const BotBalance = () => {
   }
 
   const handleShop = () => {
-    router.push('/bot/shop')
+    dispatch($bot.set.tab('shop'))
   }
 
   const formatBalance = (n) => {
