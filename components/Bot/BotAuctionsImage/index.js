@@ -5,9 +5,9 @@ import BotAuctionsBadge from '@/components/Bot/BotAuctionsBadge'
 
 import styles from './styles.module.scss'
 
-const BotAuctionsImage = ({ item, large }) => {
+const BotAuctionsImage = ({ item }) => {
   return (
-    <App.Flex column align="center" justify="space-between" className={cn(styles.itemImage, {[styles.large]: large}, {[styles.gray]: item.status == 'closed' && (!item.current || item.current && item.claimHash != '')})} sx={{ backgroundImage: `url("${item.image}")` }}>
+    <App.Flex column align="center" justify="space-between" className={cn(styles.itemImage, {[styles.gray]: item.status == 'closed' && (!item.current || item.current && item.claimHash != '')})} sx={{ backgroundImage: `url("${item.image}")` }}>
       <BotAuctionsBadge status={item.status} win={item.current && item.claimHash == ''} />
 
       {item.status == 'closed' && (!item.current || item.current && item.claimHash != '') ? (
@@ -17,7 +17,7 @@ const BotAuctionsImage = ({ item, large }) => {
         </App.Flex>
       ) : (
         <App.Flex center className={styles.marketPrice}>
-          <App.Text size={12} height={1}>Market Price: ${item.marketPrice}</App.Text>
+          <App.Text size={14} height={1}>Market Price: ${item.marketPrice}</App.Text>
         </App.Flex>
       )}
     </App.Flex>

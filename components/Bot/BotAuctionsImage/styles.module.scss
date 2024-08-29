@@ -8,22 +8,6 @@
   position: relative;
   z-index: 1;
 
-  &.large {
-    height: 314px;
-
-    @media (max-width: 768px) {
-      height: 288px;
-    }
-
-    .discountPrice {
-      right: 38px;
-    }
-
-    .marketPrice {
-      right: 38px;
-    }
-  }
-
   & > * {
     position: relative;
     z-index: 1;
@@ -43,18 +27,6 @@
     border-radius: 12px;
   }
 
-  .discountPrice {
-    padding: 6px;
-    border-radius: 50px;
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    background: rgba(23, 23, 23, 0.30);
-    backdrop-filter: blur(2px);
-    position: absolute;
-    z-index: 0;
-    right: 24px;
-    top: 50px;
-  }
-
   .marketPrice {
     padding: 6px;
     border-radius: 50px;
@@ -63,8 +35,8 @@
     backdrop-filter: blur(2px);
     position: absolute;
     z-index: 0;
-    right: 24px;
-    bottom: 50px;
+    right: 36px;
+    bottom: 30px;
   }
 
   .star {
