@@ -10,6 +10,7 @@ import $orders from './orders'
 import $portfolio from './portfolio'
 import $gem from './gem'
 import $bot from './bot'
+import $auction from './auction'
 
 const createStore = (initialData) => {
   let preloadedState = {}
@@ -40,6 +41,7 @@ const createStore = (initialData) => {
       $portfolio: $portfolio.reducer,
       $gem: $gem.reducer,
       $bot: $bot.reducer,
+      $auction: $auction.reducer,
     },
 
     preloadedState,

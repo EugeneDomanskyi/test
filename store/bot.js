@@ -32,7 +32,7 @@ export const botSlice = createSlice({
       const newHistory = [...state.tabHistory]
       state.tab = newHistory.pop()
       state.tabHistory = newHistory
-    }
+    },
   },
 })
 
