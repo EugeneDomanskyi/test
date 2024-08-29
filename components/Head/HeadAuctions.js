@@ -2,11 +2,11 @@ import Head from 'next/head'
 
 const HeadAuctions = ({ ssShare }) => {
   const getTitle = () => {
-    return 'Trade & Win Tokens | Tegro Tournaments'
+    return 'Get Base Memecoins & ETH at 95% OFF - Tegro Auctions | Bid Daily'
   }
 
   const getDescription = () => {
-    return 'Trade on Tegro order book DEX to collect gems and win top Base layer 2 tokens like BRETT, TOSHI, USDC, WETH, and more!'
+    return 'Join Tegro Auctions to grab your favorite Base memecoins and ETH at unbeatable discounts of up to 95% OFF. Use gems to place bids daily and win bags of your favorite tokens. Don’t miss out – start bidding now!'
   }
 
   const getUrl = () => {
@@ -14,7 +14,7 @@ const HeadAuctions = ({ ssShare }) => {
   }
 
   const getImage = () => {
-    return ssShare ? `https://storage.googleapis.com/auctions_shares/${ssShare}.png` : 'https://tegro.com/images/og-image.jpg'
+    return ssShare ? `https://storage.googleapis.com/auctions_shares/${ssShare}.png` : 'https://tegro.com/images/auctions-opengraph.jpg'
   }
 
   return (
