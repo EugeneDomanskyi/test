@@ -6,6 +6,28 @@
     max-width: 358px;
     width: 100%;
     position: relative;
+
+    .area {
+      border-radius: 12px;
+      background: #171717;
+      padding: 16px 24px;
+
+      .line {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.10);
+      }
+
+      .timer {
+        width: 160px;
+        height: 42px;
+        border-radius: 12px;
+        background: #262626;
+
+        .timerText {
+          width: 42px;
+        }
+      }
+    }
     
     .ripple {
       position: absolute;

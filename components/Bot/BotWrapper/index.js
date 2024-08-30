@@ -32,13 +32,13 @@ const BotWrapper = ({ children }) => {
   const handleScriptLoaded = async () => {
     if (TelegramBot.getInitData()) {
       const botResult = TelegramBot.init()
+      setIsBot(botResult)
 
       const result = await $bot.api.user()
       if (result) {
         dispatch($bot.set.user(result))
       }
 
-      setIsBot(botResult)
       return
     }
     
@@ -67,9 +67,7 @@ const BotWrapper = ({ children }) => {
           </App.Flex>
         )
       ) : (
-        <App.Flex center height={300}>
-          <App.Text>Loading...</App.Text>
-        </App.Flex>
+        <App.LoaderBlock height={300} />
       )}
     </App.Flex>
   )
