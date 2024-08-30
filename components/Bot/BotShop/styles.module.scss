@@ -1,0 +1,14 @@
+.box {
+  border-radius: 12px;
+  background: linear-gradient(91.77deg, #E792E4 2.92%, #B545BE 36.09%, #7931CB 70.47%, #4D42C9 100%);
+  width: 170px;
+  height: 232px;
+  padding: 3px;
+  overflow: hidden;
+
+  .inner {
+    border-radius: 9px;
+    background-color: #0B0915;
+    padding: 12px;
+  }
+}

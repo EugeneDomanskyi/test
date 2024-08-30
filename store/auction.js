@@ -109,7 +109,7 @@ export const auctionSlice = createSlice({
     },
 
     update: (state, { payload }) => {
-      state.all = state.auctions.map(item => {
+      state.all = state.all.map(item => {
         if (Number(item.id) == Number(payload.auction.id)) {
           const auction = template(payload)
           if (auction.status == 'ongoing' && auction.currentPrice * 1 < item.currentPrice * 1) {
@@ -137,7 +137,7 @@ export const auctionSlice = createSlice({
     },
 
     auctionNotUpdated: (state, { payload }) => {
-      state.auctions = state.auctions.map(item => {
+      state.all = state.all.map(item => {
         if (item.id == payload.id) {
           return {
             ...payload,
@@ -150,7 +150,7 @@ export const auctionSlice = createSlice({
     },
 
     auctionNotClaim: (state, { payload }) => {
-      state.auctions = state.auctions.map(item => {
+      state.all = state.all.map(item => {
         if (item.id == payload.id) {
           return {
             ...payload,
@@ -169,7 +169,7 @@ export const auctionSlice = createSlice({
     },
 
     auctionsCheckCurrent: (state, { payload }) => {
-      state.auctions = state.auctions.map(item => {
+      state.all = state.all.map(item => {
         if (item.wallet != null && item.wallet == payload) {
           return {
             ...item,
@@ -187,7 +187,7 @@ export const auctionSlice = createSlice({
 
     auctionsUpdateTimer: (state) => {
       const now = moment()
-      state.auctions = state.auctions.map(item => {
+      state.all = state.all.map(item => {
         let time = 0
         if (item.status == 'ongoing') {
           if (item.lastBidTimestamp > 0) {
@@ -206,7 +206,7 @@ export const auctionSlice = createSlice({
 
     current: (state, { payload }) => {
       state.current = auctionTemplate(payload.data, payload.wallet)
-      state.auctionsLoading = false
+      state.loading = false
     },
 
     auctionWarning: (state, { payload }) => {
