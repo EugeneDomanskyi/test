@@ -16,15 +16,15 @@ const BotTabs = () => {
   const tab = useSelector(({ $bot }) => $bot.tab)
   const tabHistory = useSelector(({ $bot }) => $bot.tabHistory)
 
-  useEffect(() => {
-    if (tabHistory.length === 0) {
-      TelegramBot.backButton(false, handleBack)
-    } else {
-      if (tabHistory.length === 1) {
-        TelegramBot.backButton(true, handleBack)
-      }
-    }
-  }, [tabHistory])
+  // useEffect(() => {
+  //   if (tabHistory.length === 0) {
+  //     TelegramBot.backButton(false, handleBack)
+  //   } else {
+  //     if (tabHistory.length === 1) {
+  //       TelegramBot.backButton(true, handleBack)
+  //     }
+  //   }
+  // }, [tabHistory])
 
   const handlePage = (newTab) => () => {
     dispatch($bot.set.tab(newTab))

@@ -32,6 +32,8 @@ const BotWrapper = ({ children }) => {
   const handleScriptLoaded = async () => {
     if (TelegramBot.getInitData()) {
       const botResult = TelegramBot.init()
+      console.log('botResult', botResult);
+      
       setIsBot(botResult)
 
       const result = await $bot.api.user()

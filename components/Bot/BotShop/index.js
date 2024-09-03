@@ -17,16 +17,14 @@ const BotShop = () => {
     gems: 0,
   }
 
-  const [transaction, setTransaction] = useState(initTransaction)
-
   const dispatch = useDispatch()
 
   const handlePay = (amount, gems) => async () => {
-    setTransaction({
+    const transaction = {
       amount,
       currency: 'XTR',
       gems,
-    })
+    }
 
     const payload = {
       title: `${gems} gems`,
@@ -41,11 +39,11 @@ const BotShop = () => {
 
     const result = await $bot.api.invoice(payload)
     if (result && result?.success) {
-      TelegramBot.openInvoice(result.invoice, handleInvoice)
+      TelegramBot.openInvoice(result.invoice, (status) => handleInvoice(status, transaction))
     }
   }
 
-  const handleInvoice = async (status) => {
+  const handleInvoice = async (status, transaction) => {
     if (status == 'paid') {
       TelegramBot.showPopup('Payment was successful', `You bought ${transaction.gems} gems`)
     } else {
@@ -56,8 +54,6 @@ const BotShop = () => {
     if (result) {
       dispatch($bot.set.user(result))
     }
-
-    setTransaction(initTransaction)
   }
 
   return (
