@@ -231,8 +231,10 @@ export const gemSlice = createSlice({
         const temp = value.alias.toLowerCase().split('-')
         value.code = temp[0]
         value.name = value?.title
-        value.slogan = (`${temp[0]} ${temp[1]} ${value.alias == 'alpha-trader-s1' ? 'series' : ''}`).toUpperCase()
-        value.specialCurrency = value.alias == 'alpha-trader-s1' ? '$TOSHI & $PONCHO' : `$${value.currency}`
+        // value.slogan = (`${temp[0]} ${temp[1]} ${value.alias == 'alpha-trader-s1' ? 'series' : ''}`).toUpperCase()
+        // value.specialCurrency = value.alias == 'alpha-trader-s1' ? '$TOSHI & $PONCHO' : `$${value.currency}`
+        value.slogan = (`${temp[0]} ${temp[1]} ${value.alias == 'alpha-trader-s2' ? 'series 2' : ''}`).toUpperCase()
+        value.specialCurrency = value.alias == 'alpha-trader-s2' ? '$BRETT & $EURC' : `$${value.currency}`
 
         switch (key) {
           case 'brett':
@@ -287,8 +289,10 @@ export const gemSlice = createSlice({
       const currency = payload.rewards[0].reward_currency ?? ''
       const code = temp[0]
       const name = payload?.title
-      const slogan = (`${temp[0]} ${temp[1]} ${payload.alias == 'alpha-trader-s1' ? 'series' : ''}`).toUpperCase()
-      const specialCurrency = payload.alias == 'alpha-trader-s1' ? 'TOSHI & PONCHO' : `$${currency}`
+      // const slogan = (`${temp[0]} ${temp[1]} ${payload.alias == 'alpha-trader-s1' ? 'series' : ''}`).toUpperCase()
+      // const specialCurrency = payload.alias == 'alpha-trader-s1' ? 'TOSHI & PONCHO' : `$${currency}`
+      const slogan = (`${temp[0]} ${temp[1]} ${payload.alias == 'alpha-trader-s1' ? 'series 2' : ''}`).toUpperCase()
+      const specialCurrency = payload.alias == 'alpha-trader-s2' ? '$BRETT & $EURC' : `$${currency}`
 
       state.currentTournament = {
         ...payload,

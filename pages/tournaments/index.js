@@ -106,7 +106,8 @@ const Tournaments = () => {
   }
 
   const getOngoingTournament = () => {
-    const key = getSortedKeys().find(key => tournaments[key].status == 'on-going')
+    // const key = getSortedKeys().find(key => tournaments[key].status == 'on-going')
+    const key = getSortedKeys().find(key => tournaments[key].status == 'upcoming')
     if (key) {
       return tournaments[key]
     }
@@ -252,6 +253,11 @@ const Tournaments = () => {
                                   <App.Button primary2 onClick={handleExchangeAddress(tournament, '0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4')}>Trade $TOSHI</App.Button>
                                   <App.Button primary2 onClick={handleExchangeAddress(tournament, '0xc2fe011c3885277c7f0e7ffd45ff90cadc8ecd12')}>Trade $PONCHO</App.Button>
                                 </App.Flex>
+                              ) : tournament.alias == 'alpha-trader-s2' ? (
+                                <App.Flex direction={['row', 'column']} gap={8}>
+                                  <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x532f27101965dd16442e59d40670faf5ebb142e4')}>Trade $BRETT</App.Button>
+                                  <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42')}>Trade $EURC</App.Button>
+                                </App.Flex>
                               ) : (
                                 <App.Button primary2 onClick={handleExchange(tournament)}>Trade now</App.Button>
                               )
@@ -349,6 +355,11 @@ const Tournaments = () => {
                               <App.Flex direction={['row', 'column']} gap={8}>
                                 <App.Button secondary2 outlined onClick={handleExchangeAddress(tournament, '0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4')}>Trade $TOSHI</App.Button>
                                 <App.Button secondary2 outlined onClick={handleExchangeAddress(tournament, '0xc2fe011c3885277c7f0e7ffd45ff90cadc8ecd12')}>Trade $PONCHO</App.Button>
+                              </App.Flex>
+                            ) : tournament.alias == 'alpha-trader-s2' ? (
+                              <App.Flex direction={['row', 'column']} gap={8}>
+                                <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x532f27101965dd16442e59d40670faf5ebb142e4')}>Trade $BRETT</App.Button>
+                                <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42')}>Trade $EURC</App.Button>
                               </App.Flex>
                             ) : (
                               <App.Button secondary2 outlined onClick={handleExchange(tournament)}>{`Trade ${tournament.currency}`}</App.Button>
