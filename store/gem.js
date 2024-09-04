@@ -20,7 +20,10 @@ const auctionTemplate = (item, wallet) => {
     }
   }
 
-  const lastBidderWallet = auction.last_bidder.wallet_address.toLowerCase() || null
+  console.log('autction', auction);
+  
+
+  const lastBidderWallet = auction.last_bidder.user_identifier.toLowerCase() || null
 
   const marketPrice = Number(item.auction_value)
   const startPrice = formatUnits(auction.start_price.toString(), 6)
