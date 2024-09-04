@@ -32,11 +32,10 @@ const BotWrapper = ({ children }) => {
   const handleScriptLoaded = async () => {
     if (TelegramBot.getInitData()) {
       const botResult = TelegramBot.init()
-      console.log('botResult', botResult);
       
       setIsBot(botResult)
 
-      const result = await $bot.api.user()
+      const result = await $bot.api.user({referral_code: ''})
       if (result) {
         dispatch($bot.set.user(result))
       }

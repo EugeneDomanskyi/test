@@ -14,7 +14,7 @@ const BotHeaderTimer = () => {
   const [timeLeft, setTimeLeft] = useState(upcomingAuction?.startsIn || 0)
 
   useEffect(() => {
-    if (upcomingAuction.startsIn) {
+    if (upcomingAuction?.startsIn) {
       const interval = setInterval(() => {
         setTimeLeft(prevTime => prevTime - 1000)
       }, 1000)
@@ -33,6 +33,7 @@ const BotHeaderTimer = () => {
   }
 
   return (
+    timeLeft > 0 &&
     <App.Flex row align="center" gap={4} className={styles.timerContainer}>
       <App.Text>Next Auction starts in</App.Text>
       <App.Text weight={700}>{formatTime(timeLeft)}</App.Text>

@@ -41,8 +41,8 @@ const api = {
     return request(`generate-invoice`, 'POST', {api: 'bot', ...params})
   },
 
-  user: () => {
-    return request(`telegram/create`, 'GET', {api: 'accounts'})
+  user: (params) => {
+    return request(`telegram/create`, 'POST', {api: 'accounts', ...params})
   },
 
   transaction: (params) => {
@@ -51,6 +51,14 @@ const api = {
 
   bid: (params) => {
     return request(`place-via-telegram`, 'POST', {api: 'bid', ...params})
+  },
+
+  generateWalletHash: (params) => {
+    return request(`telegram/hash/generate`, 'GET', {api: 'accounts', ...params})
+  },
+
+  assignWalletToUser: (params) => {
+    return request(`telegram/assign`, 'GET', {api: 'accounts', ...params})
   },
 }
 
