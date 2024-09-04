@@ -279,6 +279,19 @@ export const get = {
 
     return null
   }),
+
+  upcomingAuction: createSelector([
+    state => state.$auction.all,
+  ], (auctions) => {
+    const upcomingAuction = auctions.filter(item => item.status == 'upcoming')
+
+    // const upcomingAuction = auctions.filter(item => item.status == 'ongoing')
+    if (upcomingAuction) {
+      upcomingAuction.sort((a, b) => a.startsIn - b.startsIn)
+      return upcomingAuction[1]
+    }
+    return upcomingAuction || null
+  }),
 }
 
 export const api = {

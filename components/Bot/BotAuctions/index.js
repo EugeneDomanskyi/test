@@ -116,7 +116,7 @@ const BotAuctions = () => {
             <BotAuctionsButton item={ongoingAuction} />
 
             <App.Flex column gap={8} className={styles.area}>
-              <App.Flex row fullWIdth align="center" justify="space-between">
+              <App.Flex row fullWidth align="center" justify="space-between">
                 <App.Text size={14} weight={600} height={1}>Current Bid</App.Text>
                 <App.Text size={24} weight={600} height={1}>{ongoingAuction.currentPrice} {ongoingAuction.token.currency}</App.Text>
               </App.Flex>
@@ -124,7 +124,7 @@ const BotAuctions = () => {
               <div className={styles.line} />
 
               {ongoingAuction.wallet ? (
-                <App.Flex row fullWIdth align="center" justify="space-between">
+                <App.Flex row fullWidth align="center" justify="space-between">
                   <App.Flex column gap={4}>
                     <App.Text size={14} weight={600} height={1}>Bid by</App.Text>
                     <App.Text size={14} weight={600} height={1}>user_id</App.Text>
