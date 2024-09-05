@@ -12,6 +12,9 @@ const BotWallet = () => {
 
   const user = useSelector(({ $bot }) => $bot.user)
 
+  console.log('user', user);
+  
+
   const handleConnect = async () => {
     const hashRes = await $bot.api.generateWalletHash()
     const hash = hashRes?.hash || ''
