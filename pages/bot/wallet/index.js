@@ -60,7 +60,7 @@ const Wallet = () => {
   }
 
   const handleBackToMiniApp = () => {
-    window.location.href = 'tg://resolve?domain=local_tegro_bot'
+    window.location.href = 'tg://resolve?domain=local_tegro_bot&start=returning'
   }
 
   return (
