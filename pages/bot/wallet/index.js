@@ -27,10 +27,10 @@ const Wallet = () => {
   }, [connection, disconnected])
 
   useEffect(() => {
-    if (userRegistered && hash) {
+    if ((userRegistered && hash) || (wallet && hash)) {
       handleAssignWallet()
     }
-  }, [userRegistered])
+  }, [userRegistered, wallet])
 
   const handleAssignWallet = async () => {
     const assignRes = await $bot.api.assignWalletToUser({wallet_address: wallet, hash})
