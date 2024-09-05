@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Script from 'next/script'
+import { useRouter } from 'next/router';
 
 import Socket from '@/libs/ws.lib'
 import TelegramBot from '@/libs/TelegramBot'
@@ -14,6 +15,7 @@ import BotTabs from '@/components/Bot/BotTabs'
 import styles from './styles.module.scss'
 
 const BotWrapper = ({ children }) => {
+  const router = useRouter()
   const dispatch = useDispatch()
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
 
@@ -28,6 +30,15 @@ const BotWrapper = ({ children }) => {
       }
     }
   }, [socketConnected])
+
+  useEffect(() => {
+    const { start } = router.query;
+
+    if (start === 'returning') {
+      console.log('User has returned from the external website');
+      handleScriptLoaded()
+    }
+  }, [router.query])
 
   const handleScriptLoaded = async () => {
     if (TelegramBot.getInitData()) {

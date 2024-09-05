@@ -23,7 +23,7 @@ const BotWallet = () => {
     TelegramBot.on('popupClosed', (response) => {
       if (response.button_id === 'ok' && hash) {
         TelegramBot.openLink(`https://beta.tegro.com/bot/wallet?hash=${hash}`)
-      }  
+      }
     })
   }
 
@@ -37,14 +37,24 @@ const BotWallet = () => {
   }
 
   return (
-    <App.Flex row align="center" gap={8}>
+    <App.Flex column align="center" gap={8}>
+      <App.Flex row align="center" gap={8}>
+        {
+          user?.user
+            ? <App.Text>{ getShort(user.user.wallet_address) }</App.Text>
+            : <App.Button variant="bot" small onClick={handleConnect}><App.Icon icon="wallet-bot" /> Connect Wallet</App.Button>
+        }
+        
+        <App.Button variant="bot-default" small onClick={handleHistory}><App.Icon icon="clock-bot" /> History</App.Button>
+      </App.Flex>
+
       {
-        user?.user
-          ? <App.Text>{ getShort(user.user.wallet_address) }</App.Text>
-          : <App.Button variant="bot" small onClick={handleConnect}><App.Icon icon="wallet-bot" /> Connect Wallet</App.Button>
+        user?.metadata
+          ? <App.Text>{ user?.metadata.first_name + ' ' + user?.metadata.last_name }</App.Text>
+          : user?.user
+            ? <App.Text>{ getShort(user.user.wallet_address) }</App.Text>
+            : 'NOBODY'
       }
-      
-      <App.Button variant="bot-default" small onClick={handleHistory}><App.Icon icon="clock-bot" /> History</App.Button>
     </App.Flex>
   )
 }
