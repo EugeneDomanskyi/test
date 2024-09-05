@@ -21,6 +21,7 @@ const BotWrapper = ({ children }) => {
 
   const [isBot, setIsBot] = useState(null)
   const [test, setTest] = useState('')
+  const [test2, setTest2] = useState('')
 
   useEffect(() => {
     if (socketConnected) {
@@ -33,12 +34,30 @@ const BotWrapper = ({ children }) => {
   }, [socketConnected])
 
   useEffect(() => {
-    const { start } = router.query;
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        setTest('Window is now visible');
+        handleScriptLoaded()
+        // Perform any actions you need when the window becomes visible
+      }
+    };
 
-    if (start === 'returning') {
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    const { returning } = router.query;
+
+    if (returning === 'true') {
       console.log('User has returned from the external website');
       setTest('Hello from external link!')
       handleScriptLoaded()
+    } else {
+      setTest2(returning)
     }
   }, [router.query])
 
@@ -69,9 +88,14 @@ const BotWrapper = ({ children }) => {
 
             {
               test && (
-                <App.Flex center>
-                  <App.Text>{test}</App.Text>
-                </App.Flex>
+                <>
+                  <App.Flex center>
+                    <App.Text>test1: {test}</App.Text>
+                  </App.Flex>
+                  <App.Flex center>
+                    <App.Text>test2: {test2}</App.Text>
+                  </App.Flex>
+                </>
               )
             }
 
@@ -84,7 +108,7 @@ const BotWrapper = ({ children }) => {
             <BotTabs />
           </App.Flex>
         ) : (
-          <App.Flex center height={300}>
+          <App.Flex center height={300} sx={{overflow: 'auto'}}>
             <App.Text>It is not a bot</App.Text>
           </App.Flex>
         )
