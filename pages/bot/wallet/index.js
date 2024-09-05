@@ -13,7 +13,6 @@ import { useSelector } from 'react-redux'
 const Wallet = () => {
   const { query } = useRouter()
   const hash = query.hash
-  const { initialData: encodedInitialData } = query;
 
   const { wallet, connection, connect } = useWagmiHelper()
 
@@ -31,35 +30,20 @@ const Wallet = () => {
     }
   }, [connection, disconnected])
 
-  useEffect(() => {
-    // setDebug(`${hash ? 'hash present' : 'no hash'} & ${wallet ? 'wallet present' : 'no wallet'}`)
-    // console.log('hash', hash);
-    // console.log('encodedInitialData', encodedInitialData);
-    // console.log('wallet', wallet);
-    
-    if ((userRegistered && hash && encodedInitialData) || (wallet && hash && encodedInitialData)) {
-      handleAssignWallet(encodedInitialData)
+  useEffect(() => {    
+    if ((userRegistered && hash) || (wallet && hash)) {
+      handleAssignWallet()
     }
-  }, [userRegistered, wallet, encodedInitialData])
+  }, [userRegistered, wallet])
 
-  const handleAssignWallet = async (encodedInitialData) => {
-    let initialData = null;
-    try {
-      initialData = decodeURIComponent(encodedInitialData);
-    } catch (error) {
-      console.error('Failed to decode initialData:', error);
-    }
-
-    const assignRes = await $bot.api.assignWalletToUser({wallet_address: wallet, hash, initialData})
+  const handleAssignWallet = async () => {
+    const assignRes = await $bot.api.assignWalletToUser({wallet_address: wallet, hash})
     
     if (assignRes && ! assignRes.error) {
       handleBackToMiniApp()
     }
 
     console.log('assignRes', assignRes);
-    // const res = await assignRes;
-    // setDebug2(res);
-    // setDebug(`assignRes: ${assignRes}`);
   }
 
   const handleConnect = async () => {

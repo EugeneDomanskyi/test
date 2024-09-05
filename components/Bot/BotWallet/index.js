@@ -20,9 +20,8 @@ const BotWallet = () => {
     TelegramBot.showPopup('Connect Wallet', 'You will be redirect to Tegro website to connect Base wallet', [{ id: 'ok', type: 'ok', text: 'Ok' }])
     TelegramBot.on('popupClosed', (response) => {
       if (response.button_id === 'ok' && hash) {
-        const initialData = TelegramBot.getInitData();
-        const encodedInitialData = encodeURIComponent(initialData);
-        TelegramBot.openLink(`https://beta.tegro.com/bot/wallet?hash=${hash}&initialData=${encodedInitialData}`)
+        
+        TelegramBot.openLink(`https://beta.tegro.com/bot/wallet?hash=${hash}`)
       }
     })
   }
