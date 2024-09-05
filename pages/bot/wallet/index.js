@@ -13,11 +13,13 @@ import { useSelector } from 'react-redux'
 const Wallet = () => {
   const { query } = useRouter()
   const hash = query.hash
+  const initialData = query.initialData
 
   const { wallet, connection, connect } = useWagmiHelper()
 
   const [disconnected, setDisconnected] = useState(false)
   const [debug, setDebug] = useState('')
+  const [debug2, setDebug2] = useState('')
 
   const userRegistered = useSelector(({ $app }) => $app.userRegistered)
 
@@ -30,19 +32,23 @@ const Wallet = () => {
   }, [connection, disconnected])
 
   useEffect(() => {
-    setDebug(`${hash ? 'hash present' : 'no hash'} & ${wallet ? 'wallet present' : 'no wallet'}`)
-    if ((userRegistered && hash) || (wallet && hash)) {
+    // setDebug(`${hash ? 'hash present' : 'no hash'} & ${wallet ? 'wallet present' : 'no wallet'}`)
+    if ((userRegistered && hash && initialData) || (wallet && hash && initialData)) {
       handleAssignWallet()
     }
   }, [userRegistered, wallet])
 
   const handleAssignWallet = async () => {
-    const assignRes = await $bot.api.assignWalletToUser({wallet_address: wallet, hash})
-    console.log('assignRes', assignRes);
+    const assignRes = await $bot.api.assignWalletToUser({wallet_address: wallet, hash, initialData})
     
     if (assignRes && ! assignRes.error) {
       handleBackToMiniApp()
     }
+
+    console.log('assignRes', assignRes);
+    // const res = await assignRes;
+    // setDebug2(res);
+    // setDebug(`assignRes: ${assignRes}`);
   }
 
   const handleConnect = async () => {
@@ -88,7 +94,8 @@ const Wallet = () => {
           </App.Flex>
         )
       )}
-      <App.Text>{debug}</App.Text>
+      <App.Text>assignRes: {debug}</App.Text>
+      <App.Text>assignRes2: {debug2}</App.Text>
     </App.Flex>
   )
 }
