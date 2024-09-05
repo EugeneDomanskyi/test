@@ -3,6 +3,8 @@ import { useRouter } from 'next/router'
 
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
+import $bot from '@/store/bot'
+
 import WagmiHelper from '@/libs/WagmiHelper'
 
 import App from '@/components/App'
@@ -15,6 +17,7 @@ const Wallet = () => {
   const { wallet, connection, connect } = useWagmiHelper()
 
   const [disconnected, setDisconnected] = useState(false)
+  const [debug, setDebug] = useState('')
 
   const userRegistered = useSelector(({ $app }) => $app.userRegistered)
 
@@ -27,6 +30,7 @@ const Wallet = () => {
   }, [connection, disconnected])
 
   useEffect(() => {
+    setDebug(`${hash ? 'hash present' : 'no hash'} & ${wallet ? 'wallet present' : 'no wallet'}`)
     if ((userRegistered && hash) || (wallet && hash)) {
       handleAssignWallet()
     }
@@ -35,7 +39,10 @@ const Wallet = () => {
   const handleAssignWallet = async () => {
     const assignRes = await $bot.api.assignWalletToUser({wallet_address: wallet, hash})
     console.log('assignRes', assignRes);
-    handleBackToMiniApp()
+    
+    if (assignRes && ! assignRes.error) {
+      handleBackToMiniApp()
+    }
   }
 
   const handleConnect = async () => {
@@ -60,7 +67,7 @@ const Wallet = () => {
   }
 
   const handleBackToMiniApp = () => {
-    window.location.href = 'tg://resolve?domain=local_tegro_bot&returning=true'
+    window.location.href = 'tg://resolve?domain=local_tegro_bot'
   }
 
   return (
@@ -81,6 +88,7 @@ const Wallet = () => {
           </App.Flex>
         )
       )}
+      <App.Text>{debug}</App.Text>
     </App.Flex>
   )
 }

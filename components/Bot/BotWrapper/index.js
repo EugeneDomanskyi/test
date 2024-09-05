@@ -37,8 +37,7 @@ const BotWrapper = ({ children }) => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         setTest('Window is now visible');
-        handleScriptLoaded()
-        // Perform any actions you need when the window becomes visible
+        fetchUser()
       }
     };
 
@@ -55,7 +54,7 @@ const BotWrapper = ({ children }) => {
     if (returning === 'true') {
       console.log('User has returned from the external website');
       setTest('Hello from external link!')
-      handleScriptLoaded()
+      fetchUser()
     } else {
       setTest2(returning)
     }
@@ -64,18 +63,19 @@ const BotWrapper = ({ children }) => {
   const handleScriptLoaded = async () => {
     if (TelegramBot.getInitData()) {
       const botResult = TelegramBot.init()
-      
       setIsBot(botResult)
-
-      const result = await $bot.api.user({referral_code: ''})
-      if (result) {
-        dispatch($bot.set.user(result))
-      }
-
+      await fetchUser()
       return
     }
     
     setIsBot(false)
+  }
+
+  const fetchUser = async () => {
+    const result = await $bot.api.user({referral_code: ''})
+    if (result) {
+      dispatch($bot.set.user(result))
+    }
   }
 
   return (
