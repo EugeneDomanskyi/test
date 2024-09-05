@@ -13,7 +13,7 @@ import { useSelector } from 'react-redux'
 const Wallet = () => {
   const { query } = useRouter()
   const hash = query.hash
-  const initialData = query.initialData
+  const { initialData: encodedInitialData } = query;
 
   const { wallet, connection, connect } = useWagmiHelper()
 
@@ -33,12 +33,23 @@ const Wallet = () => {
 
   useEffect(() => {
     // setDebug(`${hash ? 'hash present' : 'no hash'} & ${wallet ? 'wallet present' : 'no wallet'}`)
-    if ((userRegistered && hash && initialData) || (wallet && hash && initialData)) {
-      handleAssignWallet()
+    // console.log('hash', hash);
+    // console.log('encodedInitialData', encodedInitialData);
+    // console.log('wallet', wallet);
+    
+    if ((userRegistered && hash && encodedInitialData) || (wallet && hash && encodedInitialData)) {
+      handleAssignWallet(encodedInitialData)
     }
-  }, [userRegistered, wallet])
+  }, [userRegistered, wallet, encodedInitialData])
 
-  const handleAssignWallet = async () => {
+  const handleAssignWallet = async (encodedInitialData) => {
+    let initialData = null;
+    try {
+      initialData = decodeURIComponent(encodedInitialData);
+    } catch (error) {
+      console.error('Failed to decode initialData:', error);
+    }
+
     const assignRes = await $bot.api.assignWalletToUser({wallet_address: wallet, hash, initialData})
     
     if (assignRes && ! assignRes.error) {
