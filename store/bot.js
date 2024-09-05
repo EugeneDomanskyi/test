@@ -58,7 +58,7 @@ const api = {
   },
 
   assignWalletToUser: (params) => {
-    return request(`telegram/assign`, 'GET', {api: 'accounts', ...params})
+    return request(`telegram/assign`, 'POST', {api: 'accounts', ...params})
   },
 }
 

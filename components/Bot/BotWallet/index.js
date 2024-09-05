@@ -17,10 +17,12 @@ const BotWallet = () => {
     const hashRes = await $bot.api.generateWalletHash()
     const hash = hashRes?.hash || ''
     
+    console.log(`https://beta.tegro.com/bot/wallet?hash=${hash}&initData=${TelegramBot.getInitData()}`);
     TelegramBot.showPopup('Connect Wallet', 'You will be redirect to Tegro website to connect Base wallet', [{ id: 'ok', type: 'ok', text: 'Ok' }])
     TelegramBot.on('popupClosed', (response) => {
       if (response.button_id === 'ok' && hash) {
-        TelegramBot.openLink(`https://beta.tegro.com/bot/wallet?hash=${hash}`)
+        
+        TelegramBot.openLink(`https://beta.tegro.com/bot/wallet?hash=${hash}&initData=${TelegramBot.getInitData()}`)
       }
     })
   }
