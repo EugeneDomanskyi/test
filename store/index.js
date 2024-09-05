@@ -61,10 +61,8 @@ export const request = async (uri, method = 'GET', {api, jwt_token, ...data} = {
     },
   }
 
-  if (TelegramBot.getInitData() || data.initialData) {
-    const initialData = TelegramBot.getInitData() || data.initialData
-    options.headers['X-Init-Data'] = initialData
-    delete data.initialData
+  if (TelegramBot.getInitData()) {
+    options.headers['X-Init-Data'] = TelegramBot.getInitData()
   }
 
   if (jwt_token) {
