@@ -47,7 +47,7 @@ const BotWrapper = ({ children }) => {
     if (TelegramBot.getInitData()) {
       const botResult = TelegramBot.init()
       setIsBot(botResult)
-      await fetchUser()
+      fetchUser()
       return
     }
     
@@ -56,8 +56,8 @@ const BotWrapper = ({ children }) => {
 
   const fetchUser = async () => {
     const result = await $bot.api.user({referral_code: ''})
-    if (result) {
-      dispatch($bot.set.user(result))
+    if (result && result.user) {
+      dispatch($bot.set.user(result.user))
     }
   }
 

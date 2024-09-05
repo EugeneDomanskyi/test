@@ -58,8 +58,6 @@ const BotAuctions = () => {
 
   const handleUpdatedAuction = async (data) => {
     const result = await $auction.api.getTelegram(data.id)
-    console.log('handleUpdatedAuction data', data);
-    console.log('handleUpdatedAuction result', result);
     
     if (result) {
       dispatch($auction.set.update(result))
