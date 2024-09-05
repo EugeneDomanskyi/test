@@ -31,11 +31,16 @@ const BotWallet = () => {
     router.push('/bot/history')
   }
 
+  const getShort = (address) => {
+    const n = 4
+    return `${address.substring(0, n)}...${address.substring(address.length - n)}`
+  }
+
   return (
     <App.Flex row align="center" gap={8}>
       {
         user?.user
-          ? <App.Text>Wallet Connected!</App.Text>
+          ? <App.Text>{ getShort(user.user.wallet_address) }</App.Text>
           : <App.Button variant="bot" small onClick={handleConnect}><App.Icon icon="wallet-bot" /> Connect Wallet</App.Button>
       }
       
