@@ -123,8 +123,6 @@ export const auctionSlice = createSlice({
     },
 
     update: (state, { payload }) => {
-      console.log('update payload', payload);
-      
       state.all = state.all.map(item => {
         if (Number(item.id) == Number(payload.auction.id)) {
           const auction = template(payload)
