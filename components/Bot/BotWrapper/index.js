@@ -20,6 +20,7 @@ const BotWrapper = ({ children }) => {
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
 
   const [isBot, setIsBot] = useState(null)
+  const [test, setTest] = useState('')
 
   useEffect(() => {
     if (socketConnected) {
@@ -36,6 +37,7 @@ const BotWrapper = ({ children }) => {
 
     if (start === 'returning') {
       console.log('User has returned from the external website');
+      setTest('Hello from external link!')
       handleScriptLoaded()
     }
   }, [router.query])
@@ -64,6 +66,14 @@ const BotWrapper = ({ children }) => {
         isBot || !isBot ? (
           <App.Flex column full>
             <BotHeader />
+
+            {
+              test && (
+                <App.Flex center>
+                  <App.Text>{test}</App.Text>
+                </App.Flex>
+              )
+            }
 
             <App.Flex fullWidth flex={1} className={styles.content}>
               <App.Flex column className={styles.scroll}>
