@@ -17,8 +17,6 @@ const Wallet = () => {
   const { wallet, connection, connect } = useWagmiHelper()
 
   const [disconnected, setDisconnected] = useState(false)
-  const [debug, setDebug] = useState('')
-  const [debug2, setDebug2] = useState('')
 
   const userRegistered = useSelector(({ $app }) => $app.userRegistered)
 
@@ -42,8 +40,6 @@ const Wallet = () => {
     if (assignRes && ! assignRes.error) {
       handleBackToMiniApp()
     }
-
-    console.log('assignRes', assignRes);
   }
 
   const handleConnect = async () => {
@@ -89,8 +85,6 @@ const Wallet = () => {
           </App.Flex>
         )
       )}
-      <App.Text>assignRes: {debug}</App.Text>
-      <App.Text>assignRes2: {debug2}</App.Text>
     </App.Flex>
   )
 }

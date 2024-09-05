@@ -12,15 +12,13 @@ const BotWallet = () => {
 
   const user = useSelector(({ $bot }) => $bot.user)
 
-  console.log('user', user);
   const handleConnect = async () => {
     const hashRes = await $bot.api.generateWalletHash()
     const hash = hashRes?.hash || ''
-    
+
     TelegramBot.showPopup('Connect Wallet', 'You will be redirect to Tegro website to connect Base wallet', [{ id: 'ok', type: 'ok', text: 'Ok' }])
     TelegramBot.on('popupClosed', (response) => {
       if (response.button_id === 'ok' && hash) {
-        
         TelegramBot.openLink(`https://beta.tegro.com/bot/wallet?hash=${hash}`)
       }
     })
@@ -46,14 +44,6 @@ const BotWallet = () => {
         
         <App.Button variant="bot-default" small onClick={handleHistory}><App.Icon icon="clock-bot" /> History</App.Button>
       </App.Flex>
-
-      {
-        user?.metadata
-          ? <App.Text>{ user?.metadata.first_name + ' ' + user?.metadata.last_name }</App.Text>
-          : user?.user
-            ? <App.Text>{ getShort(user.user.wallet_address) }</App.Text>
-            : 'NOBODY'
-      }
     </App.Flex>
   )
 }
