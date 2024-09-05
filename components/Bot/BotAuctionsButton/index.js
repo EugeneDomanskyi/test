@@ -38,6 +38,9 @@ const BotAuctionsButton = ({ item }) => {
           auction_id: item.id,
         })
 
+        console.log('result', result);
+        
+
         if (result && !result.error) {
           dispatch($bot.set.balance(user.points - item.gemsPrice))
           dispatch($alert.set.success({ title: t(`Bid Placed!`), text: `You placed a bid for ${item.nextPrice} ${item.token.currency}.` }))

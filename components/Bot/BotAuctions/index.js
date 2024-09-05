@@ -50,16 +50,20 @@ const BotAuctions = () => {
   }, [])
 
   const fetchAuctions = async () => {
-    const result = await $auction.api.all()
+    const result = await $auction.api.allTelegram()
     if (result) {
       dispatch($auction.set.all(result))
     }
   }
 
   const handleUpdatedAuction = async (data) => {
-    const result = await $auction.api.get(data.id)
+    const result = await $auction.api.getTelegram(data.id)
+    console.log('handleUpdatedAuction data', data);
+    console.log('handleUpdatedAuction result', result);
+    
     if (result) {
-      dispatch($auction.set.update({...result, auction: result.auction_id}))
+      dispatch($auction.set.update(result))
+      // dispatch($auction.set.update({...result, auction: result.auction_id}))
     }
   }
 
