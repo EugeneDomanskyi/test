@@ -55,8 +55,8 @@ const BotShop = () => {
     const transactionResponse = JSON.stringify(result)
     TelegramBot.showPopup('Transaction Details', transactionResponse)
 
-    if (result && result.user) {
-      dispatch($bot.set.user(result.user))
+    if (result) {
+      dispatch($bot.set.user(result))
     }
   }
 
