@@ -11,6 +11,9 @@ const BotBalance = () => {
   const dispatch = useDispatch()
   const user = useSelector(({ $bot }) => $bot.user)
 
+  console.log('BotBalance USER', user);
+  
+
   const handleShop = () => {
     dispatch($bot.set.tab('shop'))
   }
