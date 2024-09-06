@@ -56,8 +56,8 @@ const BotWrapper = ({ children }) => {
 
   const fetchUser = async () => {
     const result = await $bot.api.user({referral_code: ''})
-    if (result && result.user) {
-      dispatch($bot.set.user(result.user))
+    if (result) {
+      dispatch($bot.set.user(result))
     }
   }
 
