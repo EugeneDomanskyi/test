@@ -39,7 +39,6 @@ const BotAuctionsButton = ({ item }) => {
         })
 
         console.log('result', result);
-        
 
         if (result && !result.error) {
           dispatch($bot.set.balance(user.points - item.gemsPrice))
