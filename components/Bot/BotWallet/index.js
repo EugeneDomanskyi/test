@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import TelegramBot from '@/libs/TelegramBot'
 
@@ -8,6 +8,7 @@ import $bot from '@/store/bot'
 import App from '@/components/App'
 
 const BotWallet = () => {
+  const dispatch = useDispatch()
   const router = useRouter()
 
   const user = useSelector(({ $bot }) => $bot.user)
@@ -28,9 +29,22 @@ const BotWallet = () => {
     router.push('/bot/history')
   }
 
+  const handleMyEarnings = () => {
+    dispatch($bot.set.tab('my-earnings'))
+  }
+
   const getShort = (address) => {
     const n = 4
     return `${address.substring(0, n)}...${address.substring(address.length - n)}`
+  }
+
+  const handleDisconnect = async () => {
+    const result = await $bot.api.unassign()
+    console.log('handleDisconnect', result);
+    
+    if (result) {
+      dispatch($bot.set.user(result))
+    }
   }
 
   return (
@@ -38,7 +52,15 @@ const BotWallet = () => {
       <App.Flex row align="center" gap={8}>
         {
           user?.user
-            ? <App.Text>{ getShort(user.user.wallet_address) }</App.Text>
+            ? <App.Flex gap={8}>
+                <App.Button variant="bot-default" small onClick={handleDisconnect}>
+                  <App.Icon icon="trash" />
+                </App.Button>
+
+                <App.Button variant="bot-default" small onClick={handleMyEarnings}>
+                  <App.Text>{ getShort(user.user.wallet_address) }</App.Text>
+                </App.Button>
+              </App.Flex>
             : <App.Button variant="bot" small onClick={handleConnect}><App.Icon icon="wallet-bot" /> Connect Wallet</App.Button>
         }
         

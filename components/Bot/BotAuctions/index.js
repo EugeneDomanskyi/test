@@ -59,6 +59,8 @@ const BotAuctions = () => {
   const handleUpdatedAuction = async (data) => {
     const result = await $auction.api.getTelegram(data.id)
     
+    console.log('handleUpdatedAuction', result);
+    
     if (result) {
       dispatch($auction.set.update(result))
       // dispatch($auction.set.update({...result, auction: result.auction_id}))
@@ -129,7 +131,7 @@ const BotAuctions = () => {
                 <App.Flex row fullWidth align="center" justify="space-between">
                   <App.Flex column gap={4}>
                     <App.Text size={14} weight={600} height={1}>Bid by</App.Text>
-                    <App.Text size={14} weight={600} height={1}>user_id</App.Text>
+                    <App.Text size={14} weight={600} height={1}>{ ongoingAuction.wallet }</App.Text>
                   </App.Flex>
 
                   <App.Flex row center gap={4} className={styles.timer}>

@@ -307,6 +307,20 @@ export const get = {
     }
     return upcomingAuction || null
   }),
+
+  myClaimableEarnings: createSelector([
+    state => state.$auction.all,
+  ], (auctions) => {
+    const claimableAuctions = auctions.filter(item => item.isClaimable)
+
+    console.log('claimableAuctions', claimableAuctions);
+    
+    if (claimableAuctions) {
+      claimableAuctions.sort((a, b) => a.startsIn - b.startsIn)
+      return claimableAuctions
+    }
+    return null
+  }),
 }
 
 export const api = {

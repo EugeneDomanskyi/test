@@ -60,6 +60,10 @@ const api = {
   assignWalletToUser: (params) => {
     return request(`telegram/assign`, 'POST', {api: 'accounts', ...params})
   },
+
+  unassign: () => {
+    return request(`telegram/unassign`, 'DELETE', {api: 'accounts'})
+  },
 }
 
 export default {
