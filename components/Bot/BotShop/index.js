@@ -17,6 +17,8 @@ const BotShop = () => {
     gems: 0,
   }
 
+  const [debug, setDebug] = useState('')
+
   const dispatch = useDispatch()
 
   const handlePay = (amount, gems) => async () => {
@@ -53,6 +55,7 @@ const BotShop = () => {
     const result = await $bot.api.transaction(transaction)
     
     const transactionResponse = JSON.stringify(result)
+    setDebug(transactionResponse)
     TelegramBot.showPopup('Transaction Details', transactionResponse)
 
     if (result && result.user) {
@@ -100,6 +103,12 @@ const BotShop = () => {
           </App.Flex>
 
           <App.Text size={24} weight={900} height={1}>10000</App.Text>
+        </App.Flex>
+      </App.Flex>
+      
+      <App.Flex className={styles.box}>
+        <App.Flex column full align="center" justify="space-between" className={styles.inner}>
+          <App.Text size={16} weight={700} height={1}>{debug}</App.Text>
         </App.Flex>
       </App.Flex>
     </App.Flex>
