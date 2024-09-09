@@ -73,7 +73,7 @@ const BotWrapper = ({ children }) => {
 
             {
               debug &&
-              <App.Text>Websockets connected: { socketConnected }</App.Text>
+              <App.Text>Websockets connected: { socketConnected.toString() }</App.Text>
             }
 
             <App.Flex fullWidth flex={1} className={styles.content}>
