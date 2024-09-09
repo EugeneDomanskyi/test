@@ -18,12 +18,10 @@ const BotWrapper = ({ children }) => {
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
 
   const [isBot, setIsBot] = useState(null)
-  const [debug, setDebug] = useState(false)
 
   useEffect(() => {
     if (socketConnected) {
       Socket.subscribe('auctions')
-      setDebug(true)
 
       return () => {
         Socket.unsubscribe('auctions')
@@ -70,11 +68,6 @@ const BotWrapper = ({ children }) => {
         isBot || !isBot ? (
           <App.Flex column full>
             <BotHeader />
-
-            {
-              debug &&
-              <App.Text>Websockets connected: { socketConnected.toString() }</App.Text>
-            }
 
             <App.Flex fullWidth flex={1} className={styles.content}>
               <App.Flex column className={styles.scroll}>

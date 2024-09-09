@@ -54,7 +54,7 @@ const BotWallet = () => {
           user?.user
             ? <App.Flex gap={8}>
                 <App.Button variant="bot-default" small onClick={handleDisconnect}>
-                  <App.Icon icon="trash" />
+                  <App.Text size={12}>Disconnect</App.Text>
                 </App.Button>
 
                 <App.Button variant="bot-default" small onClick={handleMyEarnings}>
