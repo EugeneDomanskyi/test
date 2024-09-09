@@ -289,7 +289,11 @@ You don't wanna miss these insane deals! ✨
         ) : null}
       </App.Flex>
 
-      <AuctionShareImage onFinish={handleImageGenerate} />
+      {
+        item
+          ? <AuctionShareImage onFinish={handleImageGenerate} />
+          : null
+      }
     </App.Flex>
   )
 }

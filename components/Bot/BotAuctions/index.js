@@ -93,100 +93,109 @@ const BotAuctions = () => {
     }
   }
 
+  const handleHistory = () => {
+    router.push('/bot/history')
+  }
+
   useInterval(tick, duration.isEnd ? null : 1000)
 
   return loading ? (
     <App.LoaderBlock height={300} />
   ) : (
-    ongoingAuction ? (
-      <App.Flex column center fullHeight className={styles.container}>
-        <App.Flex column gap={10} className={styles.item}>
-          {ongoingAuction.updated ? (
-            <App.Flex className={styles.ripple}>
-              <App.Flex className={styles.circle} />
-            </App.Flex>
-          ) : null}
-
-          <BotAuctionsImage item={ongoingAuction} />
-
-          <App.Flex column gap={12} className={styles.itemContent}>
-            <App.Text center nowrap size={14} weight={600} height={1}>{ongoingAuction.status == 'closed' && (!ongoingAuction.current || (ongoingAuction.current && ongoingAuction.claimHash != '')) ? `${ongoingAuction.name} auctioned at` : `Buy ${ongoingAuction.name} for`}</App.Text>
-            {ongoingAuction.status == 'closed' && (!ongoingAuction.current || (ongoingAuction.current && ongoingAuction.claimHash != '')) ? (
-              <App.Text center nowrap size={24} weight={600} height={1} color="#A6DC37">{ongoingAuction.discount}% OFF</App.Text>
-            ) : (
-              <App.Text center nowrap size={24} weight={600} height={1}>{ongoingAuction.currentPrice} {ongoingAuction.token.currency}</App.Text>
-            )}
-
-            <BotAuctionsButton item={ongoingAuction} />
-
-            <App.Flex column gap={8} className={styles.area}>
-              <App.Flex row fullWidth align="center" justify="space-between">
-                <App.Text size={14} weight={600} height={1}>Current Bid</App.Text>
-                <App.Text size={24} weight={600} height={1}>{ongoingAuction.currentPrice} {ongoingAuction.token.currency}</App.Text>
-              </App.Flex>
-
-              <div className={styles.line} />
-
-              {ongoingAuction.wallet ? (
-                <App.Flex row fullWidth align="center" justify="space-between">
-                  <App.Flex column gap={4}>
-                    <App.Text size={14} weight={600} height={1}>Bid by</App.Text>
-                    <App.Text size={14} weight={600} height={1}>{ ongoingAuction.wallet }</App.Text>
+    <App.Flex column gap={8}>
+      <App.Button variant="bot-default" small onClick={handleHistory} sx={{width: 86, marginLeft: 16}}><App.Icon icon="clock-bot" /> History</App.Button>
+      {
+          ongoingAuction ? (
+            <App.Flex column center fullHeight className={styles.container}>
+              <App.Flex column gap={10} className={styles.item}>
+                {ongoingAuction.updated ? (
+                  <App.Flex className={styles.ripple}>
+                    <App.Flex className={styles.circle} />
                   </App.Flex>
-
-                  <App.Flex row center gap={4} className={styles.timer}>
-                    <App.Text size={16} weight={400} height={1}>Wins In</App.Text>
-                    <App.Flex row justify="flex-end" className={styles.timerText}>
-                      <App.Text size={16} weight={400} height={1} color="#FF1D61">{duration.minutes}:{duration.seconds}</App.Text>
-                    </App.Flex>
-                  </App.Flex>
-                </App.Flex>
-              ) : (
-                <App.Flex center>
-                  <App.Text center size={14} weight={600}>Be the first to bid</App.Text>
-                </App.Flex>
-              )}
-            </App.Flex>
-
-            {/* {item.status == 'closed' && (!item.current || (item.current && item.claimHash != '')) ? (
-              <App.Flex row center gap={8} height={22}>
-                <App.Icon icon="users" />
-                <App.Text size={14} weight={600} height={1}>{item.bidsCount} Bidder{item.bidsCount != 1 ? 's' : ''}</App.Text>
-              </App.Flex>
-            ) : (
-              <App.Flex center gap={8} className={cn(styles.info, {[styles.win]: item.status == 'closed' && item.current})}>
-                <App.Text size={14} weight={400} height={1} color={item.status == 'closed' && item.current ? '#53F19C' : "#737373"}>{t(firstText())}</App.Text>
-                {secondText() != 'hide' ? (
-                  item.status == 'upcoming' ? (
-                    <AuctionCountdown red time={item.startsIn} />
-                  ) : (
-                    <App.Text weight={400} height={1}>{t(secondText())}</App.Text>
-                  )
                 ) : null}
+    
+                <BotAuctionsImage item={ongoingAuction} />
+    
+                <App.Flex column gap={12} className={styles.itemContent}>
+                  <App.Text center nowrap size={14} weight={600} height={1}>{ongoingAuction.status == 'closed' && (!ongoingAuction.current || (ongoingAuction.current && ongoingAuction.claimHash != '')) ? `${ongoingAuction.name} auctioned at` : `Buy ${ongoingAuction.name} for`}</App.Text>
+                  {ongoingAuction.status == 'closed' && (!ongoingAuction.current || (ongoingAuction.current && ongoingAuction.claimHash != '')) ? (
+                    <App.Text center nowrap size={24} weight={600} height={1} color="#A6DC37">{ongoingAuction.discount}% OFF</App.Text>
+                  ) : (
+                    <App.Text center nowrap size={24} weight={600} height={1}>{ongoingAuction.currentPrice} {ongoingAuction.token.currency}</App.Text>
+                  )}
+    
+                  <BotAuctionsButton item={ongoingAuction} />
+    
+                  <App.Flex column gap={8} className={styles.area}>
+                    <App.Flex row fullWidth align="center" justify="space-between">
+                      <App.Text size={14} weight={600} height={1}>Current Bid</App.Text>
+                      <App.Text size={24} weight={600} height={1}>{ongoingAuction.currentPrice} {ongoingAuction.token.currency}</App.Text>
+                    </App.Flex>
+    
+                    <div className={styles.line} />
+    
+                    {ongoingAuction.wallet ? (
+                      <App.Flex row fullWidth align="center" justify="space-between">
+                        <App.Flex column gap={4}>
+                          <App.Text size={14} weight={600} height={1}>Bid by</App.Text>
+                          <App.Text size={14} weight={600} height={1}>{ ongoingAuction.wallet }</App.Text>
+                        </App.Flex>
+    
+                        <App.Flex row center gap={4} className={styles.timer}>
+                          <App.Text size={16} weight={400} height={1}>Wins In</App.Text>
+                          <App.Flex row justify="flex-end" className={styles.timerText}>
+                            <App.Text size={16} weight={400} height={1} color="#FF1D61">{duration.minutes}:{duration.seconds}</App.Text>
+                          </App.Flex>
+                        </App.Flex>
+                      </App.Flex>
+                    ) : (
+                      <App.Flex center>
+                        <App.Text center size={14} weight={600}>Be the first to bid</App.Text>
+                      </App.Flex>
+                    )}
+                  </App.Flex>
+    
+                  {/* {item.status == 'closed' && (!item.current || (item.current && item.claimHash != '')) ? (
+                    <App.Flex row center gap={8} height={22}>
+                      <App.Icon icon="users" />
+                      <App.Text size={14} weight={600} height={1}>{item.bidsCount} Bidder{item.bidsCount != 1 ? 's' : ''}</App.Text>
+                    </App.Flex>
+                  ) : (
+                    <App.Flex center gap={8} className={cn(styles.info, {[styles.win]: item.status == 'closed' && item.current})}>
+                      <App.Text size={14} weight={400} height={1} color={item.status == 'closed' && item.current ? '#53F19C' : "#737373"}>{t(firstText())}</App.Text>
+                      {secondText() != 'hide' ? (
+                        item.status == 'upcoming' ? (
+                          <AuctionCountdown red time={item.startsIn} />
+                        ) : (
+                          <App.Text weight={400} height={1}>{t(secondText())}</App.Text>
+                        )
+                      ) : null}
+                    </App.Flex>
+                  )}
+    
+                  {nextLine()}
+                  
+                  {item.status != 'closed' || (item.status == 'closed' && item.current && item.claimHash == '') ? (
+                    <AuctionButton key={item.currentPrice} item={item} share={item.status == 'upcoming' && referral.is_telegram_present} short />
+                  ) : null}
+    
+                  {!TelegramBot.isBot() && item.status == 'ongoing' || (item.status == 'closed' && (!item.current || item.current && item.claimHash != '')) ? (
+                    <App.Button primary2 large outlined onClick={handleClick}>View {item.status == 'closed' ? 'history' : 'more'}</App.Button>
+                  ) : null}
+    
+                  {onClear && item.status == 'closed' && host != null && host != 'tegro.com' ? (
+                    <App.Button small onClick={handleClear}>Clear</App.Button>
+                  ) : null} */}
+                </App.Flex>
               </App.Flex>
-            )}
-
-            {nextLine()}
-            
-            {item.status != 'closed' || (item.status == 'closed' && item.current && item.claimHash == '') ? (
-              <AuctionButton key={item.currentPrice} item={item} share={item.status == 'upcoming' && referral.is_telegram_present} short />
-            ) : null}
-
-            {!TelegramBot.isBot() && item.status == 'ongoing' || (item.status == 'closed' && (!item.current || item.current && item.claimHash != '')) ? (
-              <App.Button primary2 large outlined onClick={handleClick}>View {item.status == 'closed' ? 'history' : 'more'}</App.Button>
-            ) : null}
-
-            {onClear && item.status == 'closed' && host != null && host != 'tegro.com' ? (
-              <App.Button small onClick={handleClear}>Clear</App.Button>
-            ) : null} */}
-          </App.Flex>
-        </App.Flex>
-      </App.Flex>
-    ) : (
-      <App.Flex center height={300}>
-        <App.Text>No ongoing auction</App.Text>
-      </App.Flex>
-    )
+            </App.Flex>
+          ) : (
+            <App.Flex center height={300}>
+              <App.Text>No ongoing auction</App.Text>
+            </App.Flex>
+          )
+      }
+    </App.Flex>
   )
 }
 

@@ -25,10 +25,6 @@ const BotWallet = () => {
     })
   }
 
-  const handleHistory = () => {
-    router.push('/bot/history')
-  }
-
   const handleMyEarnings = () => {
     dispatch($bot.set.tab('my-earnings'))
   }
@@ -62,8 +58,6 @@ const BotWallet = () => {
               </App.Flex>
             : <App.Button variant="bot" small onClick={handleConnect}><App.Icon icon="wallet-bot" /> Connect Wallet</App.Button>
         }
-        
-        <App.Button variant="bot-default" small onClick={handleHistory}><App.Icon icon="clock-bot" /> History</App.Button>
       </App.Flex>
     </App.Flex>
   )
