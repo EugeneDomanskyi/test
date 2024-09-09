@@ -1,23 +1,29 @@
 import styles from './styles.module.scss'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cn from 'classnames'
 
 import TelegramBot from '@/libs/TelegramBot'
 
 import $bot from '@/store/bot'
+import $alert from '@/store/alert'
 
 import App from '@/components/App'
 
 const BotWallet = () => {
   const dispatch = useDispatch()
-  const router = useRouter()
 
   const user = useSelector(({ $bot }) => $bot.user)
 
   const [showDropdown, setShowDropdown] = useState(false)
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   const handleConnect = async () => {
     const hashRes = await $bot.api.generateWalletHash()
@@ -37,6 +43,7 @@ const BotWallet = () => {
   }
 
   const handleDisconnect = async () => {
+    setShowDropdown(false)
     const result = await $bot.api.unassign()
     
     if (result) {
@@ -45,7 +52,18 @@ const BotWallet = () => {
   }
 
   const handleCopyToClipboard = () => {
+    navigator.clipboard.writeText(user.user.wallet_address)
+    dispatch($alert.set.success({
+      title: `Address Copied!`,
+    }))
+    setShowDropdown(false)
+  }
 
+  const handleClickOutside = (event) => {
+    const container = document.querySelector(`.${styles.walletButtonContainer}`)
+    if (container && !container.contains(event.target)) {
+      setShowDropdown(false)
+    }
   }
 
   return (
