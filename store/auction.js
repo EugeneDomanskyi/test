@@ -6,8 +6,9 @@ import { request } from './index'
 import Decimal from 'decimal.js'
 
 const template = (item) => {
+  console.log('AUCTION item', item);
+  
   const auction = item?.auction ? item.auction : item.auction_id
-
   const now = moment()
 
   const status = auction.status == 1 ? 'upcoming' : auction.status == 2 ? 'ongoing' : 'closed'
@@ -40,21 +41,6 @@ const template = (item) => {
       }
     })
   }
-
-  // OLD bid_histories handling
-
-  // if (auction?.bid_histories) {
-  //   history = auction.bid_histories.map(bid => {
-  //     return {
-  //       bid: `${formatUnits(bid.price.toString(), 6)} USDC`,
-  //       wallet: bid.wallet.wallet_address,
-  //       date: moment(bid.created_at).format('HH:mm DD-MM-YYYY'),
-  //       time: moment(bid.created_at).format('HH:mm'),
-  //       day: moment(bid.created_at).format('DD-MM-YYYY'),
-  //       created_at: bid.created_at,
-  //     }
-  //   })
-  // }
 
   const isCurrent = item?.is_last_bidder_me
   let claimTime = 0
@@ -285,27 +271,24 @@ export const get = {
   ongoingAuction: createSelector([
     state => state.$auction.all,
   ], (auctions) => {
-    console.log('ongoingAuction auctions', auctions);
-    
     const ongoingAuctions = auctions.filter(item => item.status == 'ongoing')
     if (ongoingAuctions) {
       ongoingAuctions.sort((a, b) => a.startsIn - b.startsIn)
       return ongoingAuctions[0]
     }
-
     return null
   }),
 
   upcomingAuction: createSelector([
     state => state.$auction.all,
   ], (auctions) => {
-    const upcomingAuction = auctions.filter(item => item.status == 'upcoming')
+    const upcomingAuctions = auctions.filter(item => item.status == 'upcoming')
 
-    if (upcomingAuction) {
-      upcomingAuction.sort((a, b) => a.startsIn - b.startsIn)
-      return upcomingAuction[1]
+    if (upcomingAuctions) {
+      upcomingAuctions.sort((a, b) => a.startsIn - b.startsIn)
+      return upcomingAuctions[0]
     }
-    return upcomingAuction || null
+    return null
   }),
 
   myClaimableEarnings: createSelector([
@@ -313,8 +296,6 @@ export const get = {
   ], (auctions) => {
     const claimableAuctions = auctions.filter(item => item.isClaimable)
 
-    console.log('claimableAuctions', claimableAuctions);
-    
     if (claimableAuctions) {
       claimableAuctions.sort((a, b) => a.startsIn - b.startsIn)
       return claimableAuctions

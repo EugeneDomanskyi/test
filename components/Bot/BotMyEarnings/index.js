@@ -5,6 +5,8 @@ import moment from 'moment'
 
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
+import TelegramBot from '@/libs/TelegramBot'
+
 import $auction from '@/store/auction'
 
 import App from '@/components/App'
@@ -14,6 +16,10 @@ const MyEarnings = () => {
   const { connection } = useWagmiHelper()
 
   const earnings = useSelector($auction.get.myClaimableEarnings)
+
+  const handleClaim = (id) => {
+    TelegramBot.openLink(`https://beta.tegro.com/bot/claim?id=${id}`)
+  }
 
   return (
     <App.Flex sx={{padding: 16}}>
@@ -42,7 +48,7 @@ const MyEarnings = () => {
                     </App.Text>
                   </App.Flex>
 
-                  <App.Button fullWidth primary2>
+                  <App.Button fullWidth primary2 onClick={() => handleClaim(item.id)}>
                     <App.Text>Claim</App.Text>
                   </App.Button>
                 </App.Flex>
