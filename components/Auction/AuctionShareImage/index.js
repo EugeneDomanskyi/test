@@ -16,7 +16,13 @@ const AuctionShareImage = ({ onFinish }) => {
   const [debug, setDebug] = useState('')
 
   useEffect(() => {
-    setDebug(claimItem ? 'ClaimItem ID: ' + claimItem.id : 'No claim item')
+    // setDebug(claimItem ? 'ClaimItem ID: ' + claimItem.id : 'No claim item')
+    // setDebug(state => {
+    //   return (
+    //     state + '\n' +
+    //     'saveImage...'
+    //   )
+    // })
     if (claimItem) {
       ctxRef.current = canvasRef.current.getContext('2d')
 
@@ -25,24 +31,12 @@ const AuctionShareImage = ({ onFinish }) => {
   }, [claimItem])
 
   const generateImage = () => {
-    setDebug(state => {
-      return (
-        state + '\n' +
-        'Generating image...'
-      )
-    })
     const image = new Image()
     image.src = bg.src
     image.onload = printText(image)
   }
 
   const printText = (image) => () => {
-    setDebug(state => {
-      return (
-        state + '\n' +
-        'Print Text...'
-      )
-    })
     ctxRef.current.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height)
 
     let gradient = ctxRef.current.createRadialGradient(
@@ -83,12 +77,6 @@ const AuctionShareImage = ({ onFinish }) => {
   }
 
   const saveImage = async (blob) => {
-    setDebug(state => {
-      return (
-        state + '\n' +
-        'saveImage...'
-      )
-    })
     let host = 'd'
     if (window.location.hostname == 'testnet.tegro.com') {
       host = 't'
@@ -99,22 +87,10 @@ const AuctionShareImage = ({ onFinish }) => {
     }
 
     const image = `${host}${claimItem.id}`
-    setDebug(state => {
-      return (
-        state + '\n' +
-        `image: ${image}`
-      )
-    })
     const formData = new FormData()
     formData.append('file', blob, `${image}.png`)
     formData.append('filename', image)
 
-    setDebug(state => {
-      return (
-        state + '\n' +
-        `formData: ${formData}`
-      )
-    })
     await $gem.api.upload(formData)
 
     if (onFinish) {
@@ -123,21 +99,12 @@ const AuctionShareImage = ({ onFinish }) => {
   }
 
   return (
-    <>
-      {
-        debug && (
-          <div style={{ position: 'fixed', bottom: 100, left: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', color: '#fff', padding: 8 }}>
-            {debug}
-          </div>
-        )
-      }
-      <canvas
-        ref={canvasRef}
-        width={1200}
-        height={675}
-        style={{ display: 'none' }}
-      />
-    </>
+    <canvas
+      ref={canvasRef}
+      width={1200}
+      height={675}
+      style={{ display: 'none' }}
+    />
   )
 }
 
