@@ -32,6 +32,7 @@ const AuctionClaim = () => {
   const jwt = useSelector(({ $gem }) => $gem.jwt)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const item = useSelector($gem.get.claimItem)
+  const user = useSelector(({ $app }) => $app.user)
 
   const [step, setStep] = useState(0)
   const [scanLink, setScanLink] = useState(null)
@@ -55,7 +56,8 @@ const AuctionClaim = () => {
 
   useEffect(() => {
     console.log('Claim page item:', item);
-  }, [item])
+    console.log('Claim page user:', user);
+  }, [item, user])
 
   const fetchInfo = async () => {
     const result = await $auction.api.getTelegram(id)
@@ -77,7 +79,7 @@ const AuctionClaim = () => {
       const temp = await WagmiHelper.waitForTransaction(txid)
       if (temp) {
         setStep(3)
-        const result = await $gem.api.claim({
+        const result = await $gem.api.claimTelegram({
           auction_id: item.id,
           tx_hash: txid,
           jwt_token: jwt,
@@ -107,7 +109,36 @@ const AuctionClaim = () => {
     
   }
 
+  const fetchJWT = async (currentWallet) => {
+    const message = `Please sign this message to authenticate your wallet to participate in Tegro auctions. Wallet: ${currentWallet}`
+    let jwt = getJWT(currentWallet)
+    if (!jwt) {
+      const signature = await WagmiHelper.signMessage(message)
+      if (signature) {
+        jwt = await $gem.api.login({ wallet_address: currentWallet, message, signature })
+        if (jwt && !jwt?.error) {
+          localStorage.setItem('bidding-token-v2', JSON.stringify({ jwtToken: jwt, jwtWallet: currentWallet }))
+        }
+      }
+    }
+
+    dispatch($gem.set.jwt(jwt))
+    return jwt
+  }
+
+  const getJWT = (currentWallet) => {
+    const data = localStorage.getItem('bidding-token-v2')
+    if (data) {
+      const { jwtToken, jwtWallet } = JSON.parse(data)
+      if (currentWallet == jwtWallet) {
+        return jwtToken
+      }
+    }
+    return false
+  }
+
   const handleProceed = async () => {
+    await fetchJWT(user.wallet_address)
     setLoading(true)
 
     const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app' || (window.location.hostname == 'testnet.tegro.com' && item.id >= 3)) ? 'base' : 'amoy' 

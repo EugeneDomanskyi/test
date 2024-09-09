@@ -551,6 +551,10 @@ export const api = {
   claim: (params) => {
     return request(`auction/claim`, 'POST', {api: 'bid', ...params})
   },
+
+  claimTelegram: (params) => {
+    return request(`telegram/auction/claim`, 'POST', {api: 'bid', ...params})
+  },
   
   tournament: (alias) => {
     return request(`tournament/${alias}`, 'GET', {api: 'exchange'})
