@@ -6,6 +6,7 @@ import Socket from '@/libs/ws.lib'
 import useInterval from '@/myhooks/useInterval'
 
 import $auction from '@/store/auction'
+import $bot from '@/store/bot'
 
 import App from '@/components/App'
 import BotAuctionsImage from '@/components/Bot/BotAuctionsImage'
@@ -97,13 +98,21 @@ const BotAuctions = () => {
     router.push('/bot/history')
   }
 
+  const handleMyEarnings = () => {
+    dispatch($bot.set.tab('my-earnings'))
+  }
+
   useInterval(tick, duration.isEnd ? null : 1000)
 
   return loading ? (
     <App.LoaderBlock height={300} />
   ) : (
     <App.Flex column gap={8}>
-      <App.Button variant="bot-default" small onClick={handleHistory} sx={{width: 86, marginLeft: 16}}><App.Icon icon="clock-bot" /> History</App.Button>
+      <App.Flex row align="center" gap={8}>
+        <App.Button variant="bot-default" small onClick={handleHistory} sx={{width: 86, marginLeft: 8}}><App.Icon icon="clock-bot" /> History</App.Button>
+        <App.Button variant="bot-default" small onClick={handleMyEarnings}>My Earnings</App.Button>
+      </App.Flex>
+
       {
           ongoingAuction ? (
             <App.Flex column center fullHeight className={styles.container}>
@@ -114,7 +123,9 @@ const BotAuctions = () => {
                   </App.Flex>
                 ) : null}
     
-                <BotAuctionsImage item={ongoingAuction} />
+                <App.Flex fullWidth justify="center">
+                  <BotAuctionsImage item={ongoingAuction} />
+                </App.Flex>
     
                 <App.Flex column gap={12} className={styles.itemContent}>
                   <App.Text center nowrap size={14} weight={600} height={1}>{ongoingAuction.status == 'closed' && (!ongoingAuction.current || (ongoingAuction.current && ongoingAuction.claimHash != '')) ? `${ongoingAuction.name} auctioned at` : `Buy ${ongoingAuction.name} for`}</App.Text>

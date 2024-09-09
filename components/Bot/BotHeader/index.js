@@ -8,7 +8,7 @@ import styles from './styles.module.scss'
 const BotHeader = () => {
   return (
     <App.Flex column align="center" gap={8} className={styles.container}>
-      <App.Flex row align="center" justify="space-between" gap={8} className={styles.container}>
+      <App.Flex fullWidth row align="center" justify="space-between" gap={8} className={styles.container}>
         <BotWallet />
         <BotBalance />
       </App.Flex>
