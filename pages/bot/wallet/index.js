@@ -21,18 +21,12 @@ const Wallet = () => {
   const userRegistered = useSelector(({ $app }) => $app.userRegistered)
 
   useEffect(() => {
-    if (!wallet) {
-      handleConnect()
+    if (!connection.loading) {
+      if (!connection.connected && !disconnected) {
+        handleConnect()
+      }
     }
-  }, [wallet])
-
-  // useEffect(() => {
-  //   if (!connection.loading) {
-  //     if (!connection.connected && !disconnected) {
-  //       handleConnect()
-  //     }
-  //   }
-  // }, [connection, disconnected])
+  }, [connection, disconnected])
 
   useEffect(() => {    
     if ((userRegistered && hash) || (wallet && hash)) {
