@@ -120,9 +120,9 @@ const AuctionClaim = () => {
   }
 
   const fetchJWT = async (currentWallet) => {
-    const message = `Please sign this message to authenticate your wallet to participate in Tegro auctions. Wallet: ${currentWallet}`
     let jwt = getJWT(currentWallet)
     if (!jwt) {
+      const message = `Please sign this message to authenticate your wallet to participate in Tegro auctions. Wallet: ${currentWallet}`
       const signature = await WagmiHelper.signMessage(message)
       if (signature) {
         jwt = await $gem.api.login({ wallet_address: currentWallet, message, signature })
@@ -147,9 +147,12 @@ const AuctionClaim = () => {
     return false
   }
 
-  const handleProceed = async () => {
+  const handleCheckJWT = async () => {
     dispatch($auction.set.debug(`user.wallet_address: ${user.wallet_address}`))
     await fetchJWT(user.wallet_address)
+  }
+
+  const handleProceed = async () => {
     setLoading(true)
 
     const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app' || (window.location.hostname == 'testnet.tegro.com' && item.id >= 3)) ? 'base' : 'amoy' 
@@ -313,11 +316,11 @@ You don't wanna miss these insane deals! ✨
                     </App.Flex>
                   </App.Flex>
 
-                  {shared ? (
+                  {!shared ? (
                     <App.Button primary2 medium fullWidth loading={loading} onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
                   ) : (
-                    <App.Button loading={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
-                    // <App.Button loading={imageLoading} disabled={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
+                    // <App.Button loading={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
+                    <App.Button loading={imageLoading} disabled={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
                   )}
 
                   <App.Flex row center gap={8}>
