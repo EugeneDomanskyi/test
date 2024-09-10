@@ -109,6 +109,7 @@ export const auctionSlice = createSlice({
     showTelegramSubscription: null,
     auctionBannerVisible: false,
     loading: true,
+    debug: [],
   },
 
   reducers: {
@@ -236,6 +237,11 @@ export const auctionSlice = createSlice({
 
     auctionBannerVisible: (state, { payload }) => {
       state.auctionBannerVisible = payload
+    },
+
+    debug: (state, { payload }) => {
+      state.debug = [...state.debug, payload]
+      // state.debug = payload
     },
   },
 })

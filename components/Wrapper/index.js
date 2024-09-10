@@ -10,8 +10,10 @@ import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $app from '@/store/app'
 import $gem from '@/store/gem'
+import $auction from '@/store/auction'
 import $alert from '@/store/alert'
 
+import App from '@/components/App'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
@@ -43,6 +45,7 @@ const Wrapper = ({ children }) => {
   const stickyBannerVisible = useSelector(({ $app }) => $app.stickyBannerVisible)
   const auctionBannerVisible = useSelector(({ $app }) => $app.auctionBannerVisible)
   const blockchain = useSelector($app.get.blockchain)
+  const debug = useSelector(({ $auction }) => $auction.debug)
 
   const [isInIframe, setIsInIframe] = useState(false)
   const [showTournamentBanner, setShowTournamentBanner] = useState(false)
@@ -163,6 +166,21 @@ const Wrapper = ({ children }) => {
           <Footer />
         )
       )}
+
+      {
+        debug && (
+          <App.Flex column center sx={{position: 'absolute', overflow: 'auto', zIndex: 1111, top: 0, left: 0, width: '100%', maxHeight: 360, padding: 8, gap: 8, background: 'rgba(0,0,0,0.5)'}}>
+            <App.Text>Debug mode</App.Text>
+            <App.Flex column gap={8}>
+              {
+                debug.map((item, index) => (
+                  <App.Text key={index}>{item}</App.Text>
+                ))
+              }
+            </App.Flex>
+          </App.Flex>
+        )
+      }
     </div>
   )
 }
