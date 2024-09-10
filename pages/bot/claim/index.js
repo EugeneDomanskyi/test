@@ -83,6 +83,7 @@ const AuctionClaim = () => {
   }
 
   const transaction = async () => {
+    dispatch($auction.set.debug(`transaction?`))
     setScanLink(null)
     const price = parseUnits(item.currentPrice, item.token.decimals)
 
@@ -147,13 +148,9 @@ const AuctionClaim = () => {
     return false
   }
 
-  const handleCheckJWT = async () => {
-    dispatch($auction.set.debug(`user.wallet_address: ${user.wallet_address}`))
-    await fetchJWT(user.wallet_address)
-  }
-
   const handleProceed = async () => {
     setLoading(true)
+    await fetchJWT(user.wallet_address)
 
     const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app' || (window.location.hostname == 'testnet.tegro.com' && item.id >= 3)) ? 'base' : 'amoy' 
     const network = await WagmiHelper.changeChain(chainCode)
