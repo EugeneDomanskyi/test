@@ -21,12 +21,18 @@ const Wallet = () => {
   const userRegistered = useSelector(({ $app }) => $app.userRegistered)
 
   useEffect(() => {
-    if (!connection.loading) {
-      if (!connection.connected && !disconnected) {
-        handleConnect()
-      }
+    if (!wallet) {
+      handleConnect()
     }
-  }, [connection, disconnected])
+  }, [wallet])
+
+  // useEffect(() => {
+  //   if (!connection.loading) {
+  //     if (!connection.connected && !disconnected) {
+  //       handleConnect()
+  //     }
+  //   }
+  // }, [connection, disconnected])
 
   useEffect(() => {    
     if ((userRegistered && hash) || (wallet && hash)) {
@@ -43,10 +49,7 @@ const Wallet = () => {
   }
 
   const handleConnect = async () => {
-    const wallet = await connect()
-    if (!wallet) {
-      return
-    }
+    await connect()
   }
 
   const getShortWallet = () => {

@@ -324,7 +324,9 @@ You don't wanna miss these insane deals! ✨
                     ! wallet
                       ? <App.Button primary2 medium fullWidth onClick={handleConnect}>{t('Connect Wallet')}</App.Button>
                       : shared
-                          ? <App.Button primary2 medium fullWidth loading={loading} onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
+                          ? item.status === 'closed'
+                              ? <App.Button primary2 medium fullWidth disabled={true}>{t('Auction already claimed')}</App.Button>
+                              : <App.Button primary2 medium fullWidth loading={loading} onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
                           : <App.Button loading={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
                   }
 
