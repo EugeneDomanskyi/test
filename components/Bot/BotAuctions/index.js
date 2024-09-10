@@ -108,8 +108,8 @@ const BotAuctions = () => {
     <App.LoaderBlock height={300} />
   ) : (
     <App.Flex column gap={8}>
-      <App.Flex row align="center" gap={8}>
-        <App.Button variant="bot-default" small onClick={handleHistory} sx={{width: 86, marginLeft: 8}}><App.Icon icon="clock-bot" /> History</App.Button>
+      <App.Flex row align="center" gap={8} sx={{paddingLeft: 8}}>
+        {/* <App.Button variant="bot-default" small onClick={handleHistory} sx={{width: 86, marginLeft: 8}}><App.Icon icon="clock-bot" /> History</App.Button> */}
         <App.Button variant="bot-default" small onClick={handleMyEarnings}>My Earnings</App.Button>
       </App.Flex>
 

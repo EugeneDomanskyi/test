@@ -5,9 +5,9 @@ import { formatUnits } from 'viem'
 import { request } from './index'
 import Decimal from 'decimal.js'
 
+import TelegramBot from '@/libs/TelegramBot'
+
 const template = (item) => {
-  console.log('AUCTION item', item);
-  
   const auction = item?.auction ? item.auction : item.auction_id
   const now = moment()
 
@@ -42,7 +42,13 @@ const template = (item) => {
     })
   }
 
-  const isCurrent = item?.is_last_bidder_me
+  const tgUser = TelegramBot.getUsername()
+  let isLastBidderMe = false
+  if (tgUser) {
+    isLastBidderMe = lastBidderWallet == tgUser
+  }
+
+  const isCurrent = isLastBidderMe
   let claimTime = 0
   let isClaimable = false
   
@@ -98,7 +104,6 @@ export const auctionSlice = createSlice({
     auctionWarning: false,
     showTelegramSubscription: null,
     auctionBannerVisible: false,
-
     loading: true,
   },
 
@@ -294,8 +299,10 @@ export const get = {
   myClaimableEarnings: createSelector([
     state => state.$auction.all,
   ], (auctions) => {
-    const claimableAuctions = auctions.filter(item => item.isClaimable)
-
+    console.log('auctions', auctions);
+    
+    const claimableAuctions = auctions.filter(item => item.current && item.isClaimable)
+    
     if (claimableAuctions) {
       claimableAuctions.sort((a, b) => a.startsIn - b.startsIn)
       return claimableAuctions

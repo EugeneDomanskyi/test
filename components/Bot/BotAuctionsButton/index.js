@@ -23,6 +23,9 @@ const BotAuctionsButton = ({ item }) => {
 
   const [loading, setLoading] = useState(false)
 
+  console.log('BotAuctionsButton item', item);
+  
+
   const text = () => {
     switch (item.status) {
       case 'upcoming': return 'Notify Me'

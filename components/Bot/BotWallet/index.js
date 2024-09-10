@@ -29,6 +29,10 @@ const BotWallet = () => {
     const hashRes = await $bot.api.generateWalletHash()
     const hash = hashRes?.hash || ''
 
+    // console.log(`localhost:3000/bot/wallet?hash=${hash}`);
+    
+    // return
+
     TelegramBot.showPopup('Connect Wallet', 'You will be redirect to Tegro website to connect Base wallet', [{ id: 'ok', type: 'ok', text: 'Ok' }])
     TelegramBot.on('popupClosed', (response) => {
       if (response.button_id === 'ok' && hash) {
@@ -83,10 +87,10 @@ const BotWallet = () => {
                     <App.Text size={12}>Copy Address</App.Text>
                   </App.Flex>
 
-                  <App.Flex className={styles.menuItem} onClick={handleDisconnect}>
+                  {/* <App.Flex className={styles.menuItem} onClick={handleDisconnect}>
                     <App.Icon icon="logout2" color="#B9B8C5" width={12} height={12} />
                     <App.Text size={12}>Disconnect</App.Text>
-                  </App.Flex>
+                  </App.Flex> */}
                 </App.Flex>
               </App.Flex>
             : <App.Button variant="bot" small onClick={handleConnect}><App.Icon icon="wallet-bot" /> Connect Wallet</App.Button>
