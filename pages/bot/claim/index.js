@@ -42,7 +42,6 @@ const AuctionClaim = () => {
   const [imageLoading, setImageLoading] = useState(true)
   const [claimImage, setClaimImage] = useState()
   const [showError, setShowError] = useState(false)
-  const [showClaimButton, setShowClaimButton] = useState(false)
 
   useEffect(() => {
     if (step == 1) {
@@ -151,6 +150,7 @@ const AuctionClaim = () => {
 
   const handleProceed = async () => {
     setLoading(true)
+    await fetchJWT(wallet)
 
     const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app' || (window.location.hostname == 'testnet.tegro.com' && item.id >= 3)) ? 'base' : 'amoy' 
     const network = await WagmiHelper.changeChain(chainCode)
@@ -209,10 +209,6 @@ You don't wanna miss these insane deals! ✨
     if (! wallet) {
       await connect()
     }
-  }
-
-  const handleFetchJWT = async () => {
-    await fetchJWT(wallet)
   }
 
   return loadingPage
@@ -327,9 +323,7 @@ You don't wanna miss these insane deals! ✨
                   {
                     ! wallet
                       ? <App.Button primary2 medium fullWidth onClick={handleConnect}>{t('Connect Wallet')}</App.Button>
-                      : ! jwt
-                        ? <App.Button primary2 medium fullWidth onClick={handleFetchJWT}>{t('Sign the message')}</App.Button>
-                        : shared
+                      : shared
                           ? <App.Button primary2 medium fullWidth loading={loading} onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
                           : <App.Button loading={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
                   }
