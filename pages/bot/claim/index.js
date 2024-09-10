@@ -186,7 +186,8 @@ You don't wanna miss these insane deals! ✨
     `)
 
     const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}`
-    window.open(tweetUrl, '_blank')
+    // window.open(tweetUrl, '_blank')
+    window.open(tweetUrl)
 
     Amplitude.event(`Shared winnings`, {
       'Page': 'Auction',
@@ -313,11 +314,11 @@ You don't wanna miss these insane deals! ✨
                     </App.Flex>
                   </App.Flex>
 
-                  {!shared ? (
+                  {shared ? (
                     <App.Button primary2 medium fullWidth loading={loading} onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
                   ) : (
-                    // <App.Button loading={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
-                    <App.Button loading={imageLoading} disabled={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
+                    <App.Button loading={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
+                    // <App.Button loading={imageLoading} disabled={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
                   )}
 
                   <App.Flex row center gap={8}>
