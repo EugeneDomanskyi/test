@@ -26,7 +26,7 @@ const AuctionClaim = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const { wallet } = useWagmiHelper()
+  const { wallet, connect } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const jwt = useSelector(({ $gem }) => $gem.jwt)
@@ -42,6 +42,7 @@ const AuctionClaim = () => {
   const [imageLoading, setImageLoading] = useState(true)
   const [claimImage, setClaimImage] = useState()
   const [showError, setShowError] = useState(false)
+  const [showClaimButton, setShowClaimButton] = useState(false)
 
   useEffect(() => {
     if (step == 1) {
@@ -59,9 +60,10 @@ const AuctionClaim = () => {
   useEffect(() => {
     console.log('Claim page item:', item);
     console.log('Claim page user:', user);
+    console.log('Claim page wallet:', wallet);
     if (user && item) {
       const username = item.wallet;
-      dispatch($auction.set.debug(`user.wallet_address: ${user.wallet_address}`))
+      // dispatch($auction.set.debug(`user.wallet_address: ${user.wallet_address}`))
       const matchingUser = user.external_users.find(user => user.metadata.username === username);
 
       if (matchingUser) {
@@ -72,7 +74,7 @@ const AuctionClaim = () => {
         console.log("No matching user found.");
       }
     }
-  }, [item, user])
+  }, [item, user, wallet])
 
   const fetchInfo = async () => {
     const result = await $auction.api.getTelegram(id)
@@ -83,7 +85,6 @@ const AuctionClaim = () => {
   }
 
   const transaction = async () => {
-    dispatch($auction.set.debug(`transaction?`))
     setScanLink(null)
     const price = parseUnits(item.currentPrice, item.token.decimals)
 
@@ -150,7 +151,6 @@ const AuctionClaim = () => {
 
   const handleProceed = async () => {
     setLoading(true)
-    await fetchJWT(user.wallet_address)
 
     const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app' || (window.location.hostname == 'testnet.tegro.com' && item.id >= 3)) ? 'base' : 'amoy' 
     const network = await WagmiHelper.changeChain(chainCode)
@@ -160,10 +160,10 @@ const AuctionClaim = () => {
       return
     }
     dispatch($app.set.code(chainCode))
-    dispatch($auction.set.debug(`chainCode: ${chainCode}`))
+    // dispatch($auction.set.debug(`chainCode: ${chainCode}`))
 
     const balance = await WagmiHelper.balanceOf(item.token.address, chainCode)
-    dispatch($auction.set.debug(`balance: ${balance}`))
+    // dispatch($auction.set.debug(`balance: ${balance}`))
     if (balance >= item.currentPrice) {
       setStep(1)
     } else {
@@ -203,6 +203,16 @@ You don't wanna miss these insane deals! ✨
 
   const handleReturnToApp = () => {
     window.location.href = 'tg://resolve?domain=local_tegro_bot'
+  }
+
+  const handleConnect = async () => {
+    if (! wallet) {
+      await connect()
+    }
+  }
+
+  const handleFetchJWT = async () => {
+    await fetchJWT(wallet)
   }
 
   return loadingPage
@@ -314,12 +324,15 @@ You don't wanna miss these insane deals! ✨
                     </App.Flex>
                   </App.Flex>
 
-                  {shared ? (
-                    <App.Button primary2 medium fullWidth loading={loading} onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
-                  ) : (
-                    <App.Button loading={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
-                    // <App.Button loading={imageLoading} disabled={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
-                  )}
+                  {
+                    ! wallet
+                      ? <App.Button primary2 medium fullWidth onClick={handleConnect}>{t('Connect Wallet')}</App.Button>
+                      : ! jwt
+                        ? <App.Button primary2 medium fullWidth onClick={handleFetchJWT}>{t('Sign the message')}</App.Button>
+                        : shared
+                          ? <App.Button primary2 medium fullWidth loading={loading} onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
+                          : <App.Button loading={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
+                  }
 
                   <App.Flex row center gap={8}>
                     <App.Text size={14} weight={600} color="#FF1D61" height={1}>Claim your winnings within 72 hours!</App.Text>
