@@ -72,7 +72,7 @@ const Wallet = () => {
         connection.connected ? (
           <App.Flex column center gap={16}>
             <App.Text size={16} weight={600}>{getShortWallet()}</App.Text>
-            {/* <App.Button primary2 onClick={handleDisconnect}>Disconnect</App.Button> */}
+            <App.Button primary2 onClick={handleDisconnect}>Disconnect</App.Button>
             <App.Button primary2 outlined onClick={handleBackToMiniApp}>Back to MiniApp</App.Button>
           </App.Flex>
         ) : (
