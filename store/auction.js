@@ -8,6 +8,8 @@ import Decimal from 'decimal.js'
 import TelegramBot from '@/libs/TelegramBot'
 
 const template = (item) => {
+  console.log('template item', item);
+  
   const auction = item?.auction ? item.auction : item.auction_id
   const now = moment()
 
@@ -43,6 +45,8 @@ const template = (item) => {
   }
 
   const tgUser = TelegramBot.getUsername()
+  console.log('tgUser', tgUser);
+  
   let isLastBidderMe = false
   if (tgUser) {
     isLastBidderMe = lastBidderWallet == tgUser

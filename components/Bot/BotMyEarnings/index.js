@@ -16,10 +16,7 @@ const MyEarnings = () => {
   const { connection } = useWagmiHelper()
 
   const earnings = useSelector($auction.get.myClaimableEarnings)
-
-  console.log('TelegramBot', TelegramBot.getInitData());
   
-
   const handleClaim = (id) => {
     TelegramBot.openLink(`https://beta.tegro.com/bot/claim?id=${id}`)
   }
