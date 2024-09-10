@@ -168,7 +168,7 @@ const Wrapper = ({ children }) => {
       )}
 
       {
-        debug && (
+        debug && debug.length > 0 && (
           <App.Flex column center sx={{position: 'absolute', overflow: 'auto', zIndex: 1111, top: 0, left: 0, width: '100%', maxHeight: 360, padding: 8, gap: 8, background: 'rgba(0,0,0,0.5)'}}>
             <App.Text>Debug mode</App.Text>
             <App.Flex column gap={8}>

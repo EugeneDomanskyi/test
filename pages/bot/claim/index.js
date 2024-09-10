@@ -33,7 +33,6 @@ const AuctionClaim = () => {
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
   const item = useSelector($gem.get.claimItem)
   const user = useSelector(({ $app }) => $app.user)
-  const debug = useSelector(({ $auction }) => $auction.debug)
 
   const [step, setStep] = useState(0)
   const [scanLink, setScanLink] = useState(null)
@@ -62,6 +61,7 @@ const AuctionClaim = () => {
     console.log('Claim page user:', user);
     if (user && item) {
       const username = item.wallet;
+      dispatch($auction.set.debug(`user.wallet_address: ${user.wallet_address}`))
       const matchingUser = user.external_users.find(user => user.metadata.username === username);
 
       if (matchingUser) {

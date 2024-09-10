@@ -66,7 +66,7 @@ const BotWrapper = ({ children }) => {
   return (
     <App.Flex column full className={styles.container}>
       {
-        debug && (
+        debug && debug.length > 0 && (
           <App.Flex center height={50} sx={{position: 'fixed', zIndex: 1111, top: 0, left: 0, width: '100%', backgroundColor: 'rgba(0,0,0,0.3)'}}>
             <App.Text>Debug mode</App.Text>
             <App.Flex column gap={8}>
