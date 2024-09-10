@@ -148,8 +148,8 @@ const AuctionClaim = () => {
   }
 
   const handleProceed = async () => {
-    await fetchJWT(user.wallet_address)
     dispatch($auction.set.debug(`user.wallet_address: ${user.wallet_address}`))
+    await fetchJWT(user.wallet_address)
     setLoading(true)
 
     const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app' || (window.location.hostname == 'testnet.tegro.com' && item.id >= 3)) ? 'base' : 'amoy' 
