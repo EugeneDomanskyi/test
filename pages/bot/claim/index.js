@@ -37,7 +37,7 @@ const AuctionClaim = () => {
   const [step, setStep] = useState(0)
   const [scanLink, setScanLink] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [loadingPage, setLoadingPage] = useState(true)
+  const [loadingPage, setLoadingPage] = useState(false)
   const [shared, setShared] = useState(false)
   const [imageLoading, setImageLoading] = useState(true)
   const [claimImage, setClaimImage] = useState()
@@ -72,10 +72,10 @@ const AuctionClaim = () => {
       }
     }
 
-    if (user && !item) {
-      setLoadingPage(false)
-      setShowError("Auction not found")
-    }
+    // if (user && !item) {
+    //   setLoadingPage(false)
+    //   setShowError("Auction not found")
+    // }
   }, [item, user])
 
   const fetchInfo = async () => {
