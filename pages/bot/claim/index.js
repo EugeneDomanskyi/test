@@ -214,7 +214,7 @@ You don't wanna miss these insane deals! ✨
             <App.Text size={32} weight={600}>Page is missing</App.Text>
             <App.Text color="#e26222">(Testmode): {showError}</App.Text>
           </App.Flex>
-        : item.isClaimable 
+        : item?.isClaimable 
             ? <App.Flex column>
                 <App.Flex center height={46} className={styles.header}>
                   {step == 0 ? (
