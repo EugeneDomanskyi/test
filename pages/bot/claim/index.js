@@ -67,9 +67,14 @@ const AuctionClaim = () => {
         console.log("Matching user found:", matchingUser);
         setLoadingPage(false)
       } else {
-        setShowError(true)
+        setShowError('You can not claim this auction')
         console.log("No matching user found.");
       }
+    }
+
+    if (user && !item) {
+      setLoadingPage(false)
+      setShowError("Auction not found")
     }
   }, [item, user])
 
@@ -207,7 +212,7 @@ You don't wanna miss these insane deals! ✨
             <App.Icon icon="logo-tiger-head" width={62} height={62} />
             <App.Text size={42} weight={600}>404.</App.Text>
             <App.Text size={32} weight={600}>Page is missing</App.Text>
-            <App.Text color="#e26222">(Testmode): you can not claim this auction</App.Text>
+            <App.Text color="#e26222">(Testmode): {showError}</App.Text>
           </App.Flex>
         : item.isClaimable 
             ? <App.Flex column>
