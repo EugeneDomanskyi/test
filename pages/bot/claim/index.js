@@ -37,9 +37,11 @@ const AuctionClaim = () => {
   const [step, setStep] = useState(0)
   const [scanLink, setScanLink] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [loadingPage, setLoadingPage] = useState(true)
   const [shared, setShared] = useState(false)
   const [imageLoading, setImageLoading] = useState(true)
   const [claimImage, setClaimImage] = useState()
+  const [showError, setShowError] = useState(false)
 
   useEffect(() => {
     if (step == 1) {
@@ -57,11 +59,22 @@ const AuctionClaim = () => {
   useEffect(() => {
     console.log('Claim page item:', item);
     console.log('Claim page user:', user);
+    if (user && item) {
+      const username = item.wallet;
+      const matchingUser = user.external_users.find(user => user.metadata.username === username);
+
+      if (matchingUser) {
+        console.log("Matching user found:", matchingUser);
+        setLoadingPage(false)
+      } else {
+        setShowError(true)
+        console.log("No matching user found.");
+      }
+    }
   }, [item, user])
 
   const fetchInfo = async () => {
     const result = await $auction.api.getTelegram(id)
-    console.log('fetchInfo', result);
     
     if (result) {
       dispatch($gem.set.current({data: result, wallet}))
@@ -187,147 +200,156 @@ You don't wanna miss these insane deals! ✨
     setClaimImage(image)
   }
 
-  return (
-    <App.Flex column>
-      <App.Flex center height={46} className={styles.header}>
-        {step == 0 ? (
-          <App.Text size={20} weight={600} height={1}>{t('Congratulations!')}</App.Text>
-        ) : (
-          <App.Flex row center width={260}>
-            <App.Flex flex={1} align="center" justify="flex-start" className={styles.half}>
-              <App.Flex center className={cn(styles.circle, {[styles.active]: step >= 3})}>
-                <App.Icon icon="check" width={8} height={8} />
-              </App.Flex>
-
-              <App.Flex className={cn(styles.line, {[styles.active]: step >= 3})} />
-
-              <App.Flex center width={100} className={styles.text}>
-                <App.Text size={12} weight={400} height={1} color={step >= 3 ? '#fff' : '#9a9a9a'}>{t('Verify Deposit')}</App.Text>
-              </App.Flex>
-            </App.Flex>
-
-            <App.Flex flex={1} align="center" justify="flex-end" className={styles.half}>
-              <App.Flex center className={cn(styles.circle, {[styles.active]: step >= 4})}>
-                <App.Icon icon="check" width={8} height={8} />
-              </App.Flex>
-
-              <App.Flex className={cn(styles.line, {[styles.active]: step >= 4})} />
-
-              <App.Flex center width={100} className={cn(styles.text, styles.second)}>
-                <App.Text size={12} weight={400} height={1} color={step >= 4 ? '#fff' : '#9a9a9a'}>{t('Confirm NFT')}</App.Text>
-              </App.Flex>
-            </App.Flex>
+  return loadingPage
+    ? <App.LoaderBlock />
+    : showError
+        ? <App.Flex column height={600} center>
+            <App.Icon icon="logo-tiger-head" width={62} height={62} />
+            <App.Text size={42} weight={600}>404.</App.Text>
+            <App.Text size={32} weight={600}>Page is missing</App.Text>
+            <App.Text color="#e26222">(Testmode): you can not claim this auction</App.Text>
           </App.Flex>
-        )}
+        : item.isClaimable 
+            ? <App.Flex column>
+                <App.Flex center height={46} className={styles.header}>
+                  {step == 0 ? (
+                    <App.Text size={20} weight={600} height={1}>{t('Congratulations!')}</App.Text>
+                  ) : (
+                    <App.Flex row center width={260}>
+                      <App.Flex flex={1} align="center" justify="flex-start" className={styles.half}>
+                        <App.Flex center className={cn(styles.circle, {[styles.active]: step >= 3})}>
+                          <App.Icon icon="check" width={8} height={8} />
+                        </App.Flex>
 
-        {/* <App.Flex center className={styles.close} onClick={handleClose}>
-          <App.Icon icon="cross" color="#fff" />
-        </App.Flex> */}
-      </App.Flex>
+                        <App.Flex className={cn(styles.line, {[styles.active]: step >= 3})} />
 
-      <App.Flex column center gap={16} className={styles.content}>
-        {step == 0 ? (
-          <App.Flex center className={styles.badge}>
-            <App.Text size={20} weight={600} height={1} color="#53F19C">{t('You won the auction!')}</App.Text>
-          </App.Flex>
-        ) : null}
+                        <App.Flex center width={100} className={styles.text}>
+                          <App.Text size={12} weight={400} height={1} color={step >= 3 ? '#fff' : '#9a9a9a'}>{t('Verify Deposit')}</App.Text>
+                        </App.Flex>
+                      </App.Flex>
 
-        {step == 1 ? (
-          <App.Flex column center gap={12}>
-            <App.Text center size={24} weight={600} height={1}>{t('Approve the Transaction!')}</App.Text>
-            <App.Text center size={16} weight={400} color="#B9B8C5">{t('Tap "Approve" in your wallet to receive the winning in your wallet')}</App.Text>
-          </App.Flex>
-        ) : null}
+                      <App.Flex flex={1} align="center" justify="flex-end" className={styles.half}>
+                        <App.Flex center className={cn(styles.circle, {[styles.active]: step >= 4})}>
+                          <App.Icon icon="check" width={8} height={8} />
+                        </App.Flex>
 
-        {step == 2 ? (
-          <App.Flex column center gap={12}>
-            <App.Text center size={24} weight={600} height={1}>{t('Verifying your deposit')}</App.Text>
-            <App.Text center size={16} weight={400} color="#B9B8C5">{t('Please wait, it will take only a few seconds')}</App.Text>
-          </App.Flex>
-        ) : null}
+                        <App.Flex className={cn(styles.line, {[styles.active]: step >= 4})} />
 
-        {step == 3 ? (
-          <App.Flex column center gap={12}>
-            <App.Text center size={24} weight={600} height={1}>{t('Transferring your winnings')}</App.Text>
-            <App.Text center size={16} weight={400} color="#B9B8C5">{t('Please wait, it will take only a few seconds')}</App.Text>
-          </App.Flex>
-        ) : null}
+                        <App.Flex center width={100} className={cn(styles.text, styles.second)}>
+                          <App.Text size={12} weight={400} height={1} color={step >= 4 ? '#fff' : '#9a9a9a'}>{t('Confirm NFT')}</App.Text>
+                        </App.Flex>
+                      </App.Flex>
+                    </App.Flex>
+                  )}
+                </App.Flex>
 
-        {step == 4 ? (
-          <App.Flex column center gap={12}>
-            <App.Text center size={24} weight={600} height={1}>{t('Congratulations!')}</App.Text>
-            <App.Flex center className={styles.badge}>
-              <App.Text center size={[20, 16]} weight={600} height={1} color="#53F19C">{t('Your winnings have been added to your wallet')}</App.Text>
-            </App.Flex>
-          </App.Flex>
-        ) : null}
+                <App.Flex column center gap={16} className={styles.content}>
+                  {step == 0 ? (
+                    <App.Flex center className={styles.badge}>
+                      <App.Text size={20} weight={600} height={1} color="#53F19C">{t('You won the auction!')}</App.Text>
+                    </App.Flex>
+                  ) : null}
 
-        {step == 2 || step == 3 ? (
-          <AuctionLoader />
-        ) : null}
+                  {step == 1 ? (
+                    <App.Flex column center gap={12}>
+                      <App.Text center size={24} weight={600} height={1}>{t('Approve the Transaction!')}</App.Text>
+                      <App.Text center size={16} weight={400} color="#B9B8C5">{t('Tap "Approve" in your wallet to receive the winning in your wallet')}</App.Text>
+                    </App.Flex>
+                  ) : null}
 
-        <AuctionItemSimple item={item} large={step == 4} />
+                  {step == 2 ? (
+                    <App.Flex column center gap={12}>
+                      <App.Text center size={24} weight={600} height={1}>{t('Verifying your deposit')}</App.Text>
+                      <App.Text center size={16} weight={400} color="#B9B8C5">{t('Please wait, it will take only a few seconds')}</App.Text>
+                    </App.Flex>
+                  ) : null}
 
-        {step == 0 ? (
-          <App.Flex column gap={16} fullWidth center>
-            <App.Text center size={[20, 16]} weight={600} height={1}>{shared ? t(`Pay {{price}} {{currency}} to claim {{title}}`, {price: item.currentPrice, currency: item.token.currency, title: item.name}) : t('Complete the Steps to Claim Your Rewards')}</App.Text>
+                  {step == 3 ? (
+                    <App.Flex column center gap={12}>
+                      <App.Text center size={24} weight={600} height={1}>{t('Transferring your winnings')}</App.Text>
+                      <App.Text center size={16} weight={400} color="#B9B8C5">{t('Please wait, it will take only a few seconds')}</App.Text>
+                    </App.Flex>
+                  ) : null}
 
-            <App.Flex row align="center" justify="space-between" className={styles.steps}>
-              <App.Flex center className={cn(styles.circle, styles.active)}>
-                {shared ? <App.Icon icon="check" /> : <App.Text center size={14} weight={700} height={1}>1</App.Text>}
+                  {step == 4 ? (
+                    <App.Flex column center gap={12}>
+                      <App.Text center size={24} weight={600} height={1}>{t('Congratulations!')}</App.Text>
+                      <App.Flex center className={styles.badge}>
+                        <App.Text center size={[20, 16]} weight={600} height={1} color="#53F19C">{t('Your winnings have been added to your wallet')}</App.Text>
+                      </App.Flex>
+                    </App.Flex>
+                  ) : null}
+
+                  {step == 2 || step == 3 ? (
+                    <AuctionLoader />
+                  ) : null}
+
+                  <AuctionItemSimple item={item} large={step == 4} />
+
+                  {step == 0 ? (
+                    <App.Flex column gap={16} fullWidth center>
+                      <App.Text center size={[20, 16]} weight={600} height={1}>{shared ? t(`Pay {{price}} {{currency}} to claim {{title}}`, {price: item.currentPrice, currency: item.token.currency, title: item.name}) : t('Complete the Steps to Claim Your Rewards')}</App.Text>
+
+                      <App.Flex row align="center" justify="space-between" className={styles.steps}>
+                        <App.Flex center className={cn(styles.circle, styles.active)}>
+                          {shared ? <App.Icon icon="check" /> : <App.Text center size={14} weight={700} height={1}>1</App.Text>}
+                        </App.Flex>
+
+                        <App.Flex center className={cn(styles.circle, {[styles.active]: shared})}>
+                          <App.Text center size={14} weight={700} height={1}>2</App.Text>
+                        </App.Flex>
+
+                        <App.Flex className={styles.line} />
+
+                        <App.Flex center className={cn(styles.words, styles.left)}>
+                          <App.Text size={12} weight={400} height={1}>Share on Twitter</App.Text>
+                        </App.Flex>
+
+                        <App.Flex center className={cn(styles.words, styles.right)}>
+                          <App.Text size={12} weight={400} height={1}>Claim Rewards</App.Text>
+                        </App.Flex>
+                      </App.Flex>
+
+                      {shared ? (
+                        <App.Button primary2 medium fullWidth loading={loading} onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
+                      ) : (
+                        <App.Button loading={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
+                        // <App.Button loading={imageLoading} disabled={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
+                      )}
+
+                      <App.Flex row center gap={8}>
+                        <App.Text size={14} weight={600} color="#FF1D61" height={1}>Claim your winnings within 72 hours!</App.Text>
+                        <App.Tooltip variant="v2" click={isMobile} text={'You have to claim your winnings within 72 hours. If not, it gets deposited back to the reward pool.'} placement="top-end">
+                          <App.Icon icon="info2" width={20} height={20} />
+                        </App.Tooltip>
+                      </App.Flex>
+                    </App.Flex>
+                  ) : null}
+
+                  {step == 4 ? (
+                    <App.Flex row center gap={24} fullWidth>
+                      <App.Flex center flex={1}>
+                        <App.Button primary2 outlined fullWidth href={scanLink}>{t('View on Explorer')}</App.Button>
+                      </App.Flex>
+
+                      <App.Flex center flex={1}>
+                        <App.Button primary2 outlined fullWidth onClick={handleShare}>{t('Share Now')}</App.Button>
+                      </App.Flex>
+                    </App.Flex>
+                  ) : null}
+                </App.Flex>
+
+                {
+                  item
+                    ? <AuctionShareImage onFinish={handleImageGenerate} />
+                    : null
+                }
               </App.Flex>
-
-              <App.Flex center className={cn(styles.circle, {[styles.active]: shared})}>
-                <App.Text center size={14} weight={700} height={1}>2</App.Text>
+            : <App.Flex column height={600} center>
+                <App.Icon icon="logo-tiger-head" width={62} height={62} />
+                <App.Text center size={42} weight={600}>Claim period has been expired :(</App.Text>
               </App.Flex>
-
-              <App.Flex className={styles.line} />
-
-              <App.Flex center className={cn(styles.words, styles.left)}>
-                <App.Text size={12} weight={400} height={1}>Share on Twitter</App.Text>
-              </App.Flex>
-
-              <App.Flex center className={cn(styles.words, styles.right)}>
-                <App.Text size={12} weight={400} height={1}>Claim Rewards</App.Text>
-              </App.Flex>
-            </App.Flex>
-
-            {shared ? (
-              <App.Button primary2 medium fullWidth loading={loading} onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
-            ) : (
-              <App.Button loading={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
-              // <App.Button loading={imageLoading} disabled={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
-            )}
-
-            <App.Flex row center gap={8}>
-              <App.Text size={14} weight={600} color="#FF1D61" height={1}>Claim your winnings within 72 hours!</App.Text>
-              <App.Tooltip variant="v2" click={isMobile} text={'You have to claim your winnings within 72 hours. If not, it gets deposited back to the reward pool.'} placement="top-end">
-                <App.Icon icon="info2" width={20} height={20} />
-              </App.Tooltip>
-            </App.Flex>
-          </App.Flex>
-        ) : null}
-
-        {step == 4 ? (
-          <App.Flex row center gap={24} fullWidth>
-            <App.Flex center flex={1}>
-              <App.Button primary2 outlined fullWidth href={scanLink}>{t('View on Explorer')}</App.Button>
-            </App.Flex>
-
-            <App.Flex center flex={1}>
-              <App.Button primary2 outlined fullWidth onClick={handleShare}>{t('Share Now')}</App.Button>
-            </App.Flex>
-          </App.Flex>
-        ) : null}
-      </App.Flex>
-
-      {
-        item
-          ? <AuctionShareImage onFinish={handleImageGenerate} />
-          : null
-      }
-    </App.Flex>
-  )
+        
 }
 
 export default AuctionClaim
