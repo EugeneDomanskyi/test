@@ -29,10 +29,6 @@ const BotWallet = () => {
     const hashRes = await $bot.api.generateWalletHash()
     const hash = hashRes?.hash || ''
 
-    // console.log(`localhost:3000/bot/wallet?hash=${hash}`);
-    
-    // return
-
     TelegramBot.showPopup('Connect Wallet', 'You will be redirect to Tegro website to connect Base wallet', [{ id: 'ok', type: 'ok', text: 'Ok' }])
     TelegramBot.on('popupClosed', (response) => {
       if (response.button_id === 'ok' && hash) {
