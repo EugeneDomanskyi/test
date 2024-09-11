@@ -241,7 +241,6 @@ export const auctionSlice = createSlice({
 
     debug: (state, { payload }) => {
       state.debug = [...state.debug, payload]
-      // state.debug = payload
     },
   },
 })
@@ -308,9 +307,7 @@ export const get = {
 
   myClaimableEarnings: createSelector([
     state => state.$auction.all,
-  ], (auctions) => {
-    console.log('auctions', auctions);
-    
+  ], (auctions) => {    
     const claimableAuctions = auctions.filter(item => item.current && item.isClaimable)
     
     if (claimableAuctions) {
