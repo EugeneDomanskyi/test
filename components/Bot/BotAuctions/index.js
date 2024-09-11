@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
-import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
 
 import Socket from '@/libs/ws.lib'
 import useInterval from '@/myhooks/useInterval'
@@ -100,12 +100,12 @@ const BotAuctions = () => {
   }
 
   const hapticsImpactMedium = async () => {
-    await Haptics.impact({ style: ImpactStyle.Medium });
+    await Haptics.vibrate();
   };
 
   const handleMyEarnings = async () => {
-    await hapticsImpactMedium()
-    
+    hapticsImpactMedium()
+
     dispatch($bot.set.tab('my-earnings'))
   }
 
