@@ -32,6 +32,10 @@ const BotAuctionsButton = ({ item }) => {
   }
 
   const handeClick = async (e) => {
+    if (navigator.vibrate) {
+      navigator.vibrate(50); // Vibrate for 50 milliseconds
+    }
+    
     if (item.status == 'ongoing' && !item.current) {
       if (user?.points && user.points * 1 >= item.gemsPrice * 1) {
         const result = await $bot.api.bid({
