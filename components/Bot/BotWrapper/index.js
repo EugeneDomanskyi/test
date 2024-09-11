@@ -7,6 +7,7 @@ import TelegramBot from '@/libs/TelegramBot'
 
 import $bot from '@/store/bot'
 import $auction from '@/store/auction'
+import $alert from '@/store/alert'
 
 import App from '@/components/App'
 import BotHeader from '@/components/Bot/BotHeader'
@@ -20,6 +21,7 @@ const BotWrapper = ({ children }) => {
   const debug = useSelector(({ $auction }) => $auction.debug)
 
   const [isBot, setIsBot] = useState(null)
+  const [initData, setInitData] = useState(null)
 
   useEffect(() => {
     if (socketConnected) {
@@ -47,6 +49,10 @@ const BotWrapper = ({ children }) => {
 
   const handleScriptLoaded = async () => {
     if (TelegramBot.getInitData()) {
+      const data = TelegramBot.getInitData()
+      console.log('handleScriptLoaded data', data);
+      setInitData(data)
+      
       const botResult = TelegramBot.init()
       setIsBot(botResult)
       fetchUser()
@@ -61,6 +67,11 @@ const BotWrapper = ({ children }) => {
     if (result) {
       dispatch($bot.set.user(result))
     }
+  }
+
+  const handleCopyInitData = () => {
+    navigator.clipboard.writeText(JSON.stringify(initData, null, 2))
+    dispatch($alert.set.success({ title: 'initalData copied to clipboard'}))
   }
 
   return (
@@ -84,6 +95,13 @@ const BotWrapper = ({ children }) => {
         isBot || !isBot ? (
           <App.Flex column full>
             <BotHeader />
+
+            {
+              initData
+                ? <App.Button variant="bot-default" sx={{width: 120, marginLeft: 8, marginBottom: 8}} onClick={handleCopyInitData}>Copy initialData</App.Button>
+                : null
+            }
+            
 
             <App.Flex fullWidth flex={1} className={styles.content}>
               <App.Flex column className={styles.scroll}>

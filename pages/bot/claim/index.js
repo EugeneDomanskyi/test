@@ -88,6 +88,8 @@ const AuctionClaim = () => {
     const price = parseUnits(item.currentPrice, item.token.decimals)
 
     const txid = await WagmiHelper.transfer(item.token.address, item.claimContract, price)
+    console.log('transaction txid:', txid);
+    
     if (txid) {
       setStep(2)
 
