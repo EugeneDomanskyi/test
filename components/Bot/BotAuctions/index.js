@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 import Socket from '@/libs/ws.lib'
 import useInterval from '@/myhooks/useInterval'
@@ -98,10 +99,13 @@ const BotAuctions = () => {
     router.push('/bot/history')
   }
 
-  const handleMyEarnings = () => {
-    if (window.navigator.vibrate) {
-      window.navigator.vibrate(500); // Vibrate for 50 milliseconds
-    }
+  const hapticsImpactMedium = async () => {
+    await Haptics.impact({ style: ImpactStyle.Medium });
+  };
+
+  const handleMyEarnings = async () => {
+    await hapticsImpactMedium()
+    
     dispatch($bot.set.tab('my-earnings'))
   }
 
@@ -135,7 +139,17 @@ const BotAuctions = () => {
                   {ongoingAuction.status == 'closed' && (!ongoingAuction.current || (ongoingAuction.current && ongoingAuction.claimHash != '')) ? (
                     <App.Text center nowrap size={24} weight={600} height={1} color="#A6DC37">{ongoingAuction.discount}% OFF</App.Text>
                   ) : (
-                    <App.Text center nowrap size={24} weight={600} height={1}>{ongoingAuction.currentPrice} {ongoingAuction.token.currency}</App.Text>
+                    <>
+                      <App.Text center nowrap size={24} weight={600} height={1}>
+                        {ongoingAuction.currentPrice} {ongoingAuction.token.currency}
+                        
+                        <App.Text inline center nowrap size={20} weight={400} height={1} color="#A6DC37"> ({ongoingAuction.discount}% off)</App.Text>
+                      </App.Text>
+                      
+                      <App.Text center nowrap size={14} weight={400} color="#9B99AE" height={1}>
+                        Market price: <App.Text inline size={14} weight={400} color="#9B99AE" sx={{textDecoration: 'line-through'}}>{ongoingAuction.marketPrice} {ongoingAuction.token.currency}</App.Text>
+                      </App.Text>
+                    </>
                   )}
     
                   <BotAuctionsButton item={ongoingAuction} />

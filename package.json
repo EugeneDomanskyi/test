@@ -12,6 +12,7 @@
   "dependencies": {
     "@apollo/client": "^3.7.15",
     "@bandit-network/quest-widget": "^2.0.0-alpha.6",
+    "@capacitor/haptics": "^6.0.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.11.16",

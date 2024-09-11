@@ -93,11 +93,11 @@ const BotShop = () => {
 
                   <App.Flex column center gap={4}>
                     <Image src={item.image} width={100} height={100} alt="" />
-                    <App.Text center size={14} weight={700}>{item.gems} gems</App.Text>
+                    <App.Text center size={14} weight={700}>{item.gems.toLocaleString()} gems</App.Text>
                   </App.Flex>
 
                   <App.Flex row align="flex-start" gap={4}>
-                    <App.Text size={24} weight={900} height={1}>{item.price}</App.Text>
+                    <App.Text size={24} weight={900} height={1}>{item.price.toLocaleString()}</App.Text>
                     <img src="/images/tg-star.png" alt="" />
                   </App.Flex>
                 </App.Flex>

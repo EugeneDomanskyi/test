@@ -17,9 +17,12 @@ const BotWallet = () => {
   const user = useSelector(({ $bot }) => $bot.user)
 
   const [showDropdown, setShowDropdown] = useState(false)
+  const [initData, setInitData] = useState(null)
 
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside)
+    const data = TelegramBot.getInitData()
+    setInitData(data)
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
@@ -66,6 +69,11 @@ const BotWallet = () => {
     }
   }
 
+  const handleCopyInitData = () => {
+    navigator.clipboard.writeText(JSON.stringify(initData, null, 2))
+    dispatch($alert.set.success({ title: 'initalData copied to clipboard'}))
+  }
+
   return (
     <App.Flex column align="center" gap={8}>
       <App.Flex row align="center" gap={8}>
@@ -90,6 +98,11 @@ const BotWallet = () => {
                 </App.Flex>
               </App.Flex>
             : <App.Button variant="bot" small onClick={handleConnect}><App.Icon icon="wallet-bot" /> Connect Wallet</App.Button>
+        }
+        {
+          initData
+            ? <App.Button variant="bot-default" small sx={{width: 120}} onClick={handleCopyInitData}>Copy initialData</App.Button>
+            : null
         }
       </App.Flex>
     </App.Flex>
