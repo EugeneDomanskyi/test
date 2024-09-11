@@ -99,8 +99,8 @@ const BotAuctions = () => {
   }
 
   const handleMyEarnings = () => {
-    if (navigator.vibrate) {
-      navigator.vibrate(500); // Vibrate for 50 milliseconds
+    if (window.navigator.vibrate) {
+      window.navigator.vibrate(500); // Vibrate for 50 milliseconds
     }
     dispatch($bot.set.tab('my-earnings'))
   }
