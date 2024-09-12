@@ -35,6 +35,7 @@ const BotWrapper = ({ children }) => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         fetchUser()
+        fetchAuctions()
       }
     }
 
@@ -60,6 +61,13 @@ const BotWrapper = ({ children }) => {
     const result = await $bot.api.user({referral_code: ''})
     if (result) {
       dispatch($bot.set.user(result))
+    }
+  }
+
+  const fetchAuctions = async () => {
+    const result = await $auction.api.allTelegram()
+    if (result) {
+      dispatch($auction.set.all(result))
     }
   }
 

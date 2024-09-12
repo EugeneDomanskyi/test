@@ -44,11 +44,6 @@ const BotAuctions = () => {
   useEffect(() => {
     Socket.on('auctions', 'auction', handleUpdatedAuction)
     fetchAuctions()
-
-    document.addEventListener('visibilitychange', handleVisible)
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisible)
-    }
   }, [])
 
   const fetchAuctions = async () => {
@@ -66,12 +61,6 @@ const BotAuctions = () => {
     if (result) {
       dispatch($auction.set.update(result))
       // dispatch($auction.set.update({...result, auction: result.auction_id}))
-    }
-  }
-
-  const handleVisible = () => {
-    if (!document.hidden) {
-      fetchAuctions()
     }
   }
 
