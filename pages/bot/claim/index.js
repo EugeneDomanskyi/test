@@ -57,9 +57,9 @@ const AuctionClaim = () => {
   }, [id])
 
   useEffect(() => {
-    console.log('Claim page item:', item);
-    console.log('Claim page user:', user);
-    console.log('Claim page wallet:', wallet);
+    // console.log('Claim page item:', item);
+    // console.log('Claim page user:', user);
+    // console.log('Claim page wallet:', wallet);
     if (user && item) {
       const username = item.wallet;
       // dispatch($auction.set.debug(`user.wallet_address: ${user.wallet_address}`))
@@ -69,7 +69,7 @@ const AuctionClaim = () => {
         console.log("Matching user found:", matchingUser);
         setLoadingPage(false)
       } else {
-        setShowError('You can not claim this auction')
+        // setShowError('You can not claim this auction')
         console.log("No matching user found.");
       }
     }
@@ -89,12 +89,14 @@ const AuctionClaim = () => {
 
     const txid = await WagmiHelper.transfer(item.token.address, item.claimContract, price)
     console.log('transaction txid:', txid);
+    dispatch($auction.set.debug(`txid: ${txid.error ? txid.error : txid}`))
     
-    if (txid) {
+    if (txid && !txid.error) {
       setStep(2)
 
       const temp = await WagmiHelper.waitForTransaction(txid)
-      if (temp) {
+      dispatch($auction.set.debug(`waitForTransaction: ${temp.error ? temp.error : temp}`))
+      if (temp && !temp.error) {
         setStep(3)
         const result = await $gem.api.claimTelegram({
           auction_id: item.id,
