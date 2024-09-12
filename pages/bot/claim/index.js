@@ -107,7 +107,9 @@ const AuctionClaim = () => {
         if (result && !result?.error) {
           setStep(4)
           setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
-          dispatch($gem.set.auctionUpdated({data: result, wallet}))
+          
+          // using item.marketPrice because /telegram/auction/claim do not return auction_value
+          dispatch($gem.set.auctionUpdated({data: {...result, auction_value: item.marketPrice}, wallet}))
 
           Amplitude.event(`Prize Claimed`, {
             'Page': 'Auction',

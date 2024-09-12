@@ -23,6 +23,10 @@ const BotHeaderTimer = () => {
     }
   }, [upcomingAuction])
 
+  useEffect(() => {
+    console.log('timeLeft', moment(1726126266).format('d [days], h [hours], m [minutes], s [seconds]'));
+  }, [timeLeft])
+
   const formatTime = (milliseconds) => {
     const duration = moment.duration(milliseconds)
     const days = duration.days()

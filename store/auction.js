@@ -288,12 +288,12 @@ export const get = {
   upcomingAuction: createSelector([
     state => state.$auction.all,
   ], (auctions) => {
-    console.log('upcomingAuction', auctions);
     
     const upcomingAuctions = auctions.filter(item => item.status == 'upcoming')
-
+    
     if (upcomingAuctions) {
       upcomingAuctions.sort((a, b) => a.startsIn - b.startsIn)
+      console.log('upcomingAuctions', upcomingAuctions[0]);
       return upcomingAuctions[0]
     }
     return null
