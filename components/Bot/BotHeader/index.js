@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux'
+import moment from 'moment'
 
 import App from '@/components/App'
 import BotWallet from '@/components/Bot/BotWallet'
@@ -10,6 +11,7 @@ import $auction from '@/store/auction'
 import styles from './styles.module.scss'
 
 const BotHeader = () => {
+  const now = moment(); 
   const upcomingAuction = useSelector($auction.get.upcomingAuction)
 
   return (
@@ -20,7 +22,7 @@ const BotHeader = () => {
       </App.Flex>
 
       {
-        upcomingAuction?.startsIn
+        upcomingAuction?.startsIn && ! moment(upcomingAuction?.startsIn).isBefore(now)
           ? <BotHeaderTimer timestamp={upcomingAuction?.startsIn} />
           : null
       }
