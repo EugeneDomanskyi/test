@@ -22,6 +22,7 @@ const BotAuctionsButton = ({ item }) => {
   const user = useSelector(({ $bot }) => $bot.user)
 
   const [loading, setLoading] = useState(false)
+  const [forceDisable, setForceDisable] = useState(false)
 
   const text = () => {
     switch (item.status) {
@@ -32,6 +33,11 @@ const BotAuctionsButton = ({ item }) => {
   }
 
   const handeClick = async (e) => {
+    if (forceDisable || (forceDisable && item.current)) return
+    console.log('forceDisable', forceDisable);
+    
+    setForceDisable(true)
+
     if (navigator.vibrate) {
       navigator.vibrate(500);
     }
@@ -57,12 +63,15 @@ const BotAuctionsButton = ({ item }) => {
 
     if (item.status == 'closed') {
       if (item.current && item.claimHash == '' && item.isClaimable) {
+        dispatch($bot.set.tab('my-earnings'))
         if (item.claimContract && item.claimContract != '') {
           // dispatch($gem.set.claim(true))
           // dispatch($gem.set.claimId(item.id))
         }
       }
     }
+
+    setForceDisable(false)
   }
 
   return (
