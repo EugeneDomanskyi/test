@@ -167,7 +167,7 @@ const BotAuctions = () => {
                         <App.Flex row center gap={4} className={styles.timer}>
                           {
                             ongoingAuction.status === 'closed'
-                              ? <App.Text size={16} weight={400} height={1}>Ended</App.Text>
+                              ? <App.Text size={16} weight={400} height={1}>Closed</App.Text>
                               : <>
                                   <App.Text size={16} weight={400} height={1}>Wins In</App.Text>
                                   <App.Flex row justify="flex-end" className={styles.timerText}>
