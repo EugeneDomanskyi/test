@@ -54,6 +54,12 @@ const BotAuctions = () => {
   }
 
   const handleUpdatedAuction = async (data) => {
+    if (data.status === 1) {
+      console.log('fetch after receive UPCOMING auction');
+      fetchAuctions()
+      return
+    }
+
     const result = await $auction.api.getTelegram(data.id)
     
     console.log('handleUpdatedAuction WS data', data);
@@ -61,12 +67,6 @@ const BotAuctions = () => {
     
     if (result) {
       dispatch($auction.set.update(result))
-      // dispatch($auction.set.update({...result, auction: result.auction_id}))
-    }
-
-    if (data.status === 1) {
-      console.log('fetch after receive UPCOMING auction');
-      fetchAuctions()
     }
   }
 

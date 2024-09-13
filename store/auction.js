@@ -299,10 +299,9 @@ export const get = {
   upcomingAuction: createSelector([
     state => state.$auction.all,
   ], (auctions) => {
-    
     const upcomingAuctions = auctions.filter(item => item.status == 'upcoming')
     
-    if (upcomingAuctions) {
+    if (upcomingAuctions.length) {
       upcomingAuctions.sort((a, b) => a.startsIn - b.startsIn)
       console.log('upcomingAuctions', upcomingAuctions[0]);
       return upcomingAuctions[0]
@@ -329,6 +328,7 @@ export const api = {
   },
   
   allTelegram: () => {
+    console.log('FETCH allTelegram');
     return request(`telegram/auctions`, 'GET', {api: 'bid'})
   },
 
@@ -337,6 +337,7 @@ export const api = {
   },
 
   getTelegram: (id) => {
+    console.log('FETCH getTelegram BY ID', id);
     return request(`telegram/auction/${id}`, 'GET', {api: 'bid'})
   },
 

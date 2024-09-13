@@ -34,7 +34,6 @@ const BotAuctionsButton = ({ item }) => {
 
   const handeClick = async (e) => {
     if (forceDisable || (forceDisable && item.current)) return
-    console.log('forceDisable', forceDisable);
     
     setForceDisable(true)
 

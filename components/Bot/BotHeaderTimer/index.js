@@ -16,28 +16,26 @@ const BotHeaderTimer = () => {
 
   useEffect(() => {
     if (upcomingAuction?.startsIn) {
-      if (!timeLeft) {
-        setTimeLeft(upcomingAuction.startsIn)
-      }
+      setTimeLeft(upcomingAuction.startsIn);
     }
-  }, [upcomingAuction])
+  }, [upcomingAuction]);
 
   useEffect(() => {
     if (timeLeft > 0) {
       const interval = setInterval(() => {
-        setTimeLeft(prevTime => prevTime - 1000)
-      }, 1000)
-  
-      return () => clearInterval(interval)
+        setTimeLeft(prevTime => prevTime - 1000);
+      }, 1000);
+
+      return () => clearInterval(interval);
     }
-  }, [timeLeft])
+  }, [timeLeft]);
 
   const formatTime = (milliseconds) => {
     const now = moment()
 
     if (moment(timeLeft).isBefore(now)) {
       setTimeLeft(0)
-      fetchAuctions()
+      // fetchAuctions()
     }
     
     const targetTime = moment(milliseconds)
