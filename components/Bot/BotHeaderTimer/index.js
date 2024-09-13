@@ -37,7 +37,7 @@ const BotHeaderTimer = () => {
 
     if (moment(timeLeft).isBefore(now)) {
       setTimeLeft(0)
-      fetchAuctions()
+      // fetchAuctions()
     }
     
     const targetTime = moment(milliseconds)
