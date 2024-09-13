@@ -56,11 +56,17 @@ const BotAuctions = () => {
   const handleUpdatedAuction = async (data) => {
     const result = await $auction.api.getTelegram(data.id)
     
-    console.log('handleUpdatedAuction', result);
+    console.log('handleUpdatedAuction WS data', data);
+    console.log('handleUpdatedAuction getById result', result);
     
     if (result) {
       dispatch($auction.set.update(result))
       // dispatch($auction.set.update({...result, auction: result.auction_id}))
+    }
+
+    if (data.status === 1) {
+      console.log('fetch after receive UPCOMING auction');
+      fetchAuctions()
     }
   }
 
@@ -159,10 +165,16 @@ const BotAuctions = () => {
                         </App.Flex>
     
                         <App.Flex row center gap={4} className={styles.timer}>
-                          <App.Text size={16} weight={400} height={1}>Wins In</App.Text>
-                          <App.Flex row justify="flex-end" className={styles.timerText}>
-                            <App.Text size={16} weight={400} height={1} color="#FF1D61">{duration.minutes}:{duration.seconds}</App.Text>
-                          </App.Flex>
+                          {
+                            ongoingAuction.status === 'closed'
+                              ? <App.Text size={16} weight={400} height={1}>Ended</App.Text>
+                              : <>
+                                  <App.Text size={16} weight={400} height={1}>Wins In</App.Text>
+                                  <App.Flex row justify="flex-end" className={styles.timerText}>
+                                    <App.Text size={16} weight={400} height={1} color="#FF1D61">{duration.minutes}:{duration.seconds}</App.Text>
+                                  </App.Flex>
+                                </>
+                          }
                         </App.Flex>
                       </App.Flex>
                     ) : (

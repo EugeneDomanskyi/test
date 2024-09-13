@@ -9,31 +9,53 @@ import $auction from '@/store/auction'
 import App from '@/components/App'
 
 const BotHeaderTimer = () => {
+  const dispatch = useDispatch()
   const upcomingAuction = useSelector($auction.get.upcomingAuction)
 
-  const [timeLeft, setTimeLeft] = useState(upcomingAuction?.startsIn || 0)
+  const [timeLeft, setTimeLeft] = useState(0)
 
   useEffect(() => {
     if (upcomingAuction?.startsIn) {
+      if (!timeLeft) {
+        setTimeLeft(upcomingAuction.startsIn)
+      }
+    }
+  }, [upcomingAuction])
+
+  useEffect(() => {
+    if (timeLeft > 0) {
       const interval = setInterval(() => {
         setTimeLeft(prevTime => prevTime - 1000)
       }, 1000)
   
       return () => clearInterval(interval)
     }
-  }, [upcomingAuction])
-
-  useEffect(() => {
-    console.log('timeLeft', moment(1726126266).format('d [days], h [hours], m [minutes], s [seconds]'));
   }, [timeLeft])
 
   const formatTime = (milliseconds) => {
-    const duration = moment.duration(milliseconds)
+    const now = moment()
+
+    if (moment(timeLeft).isBefore(now)) {
+      setTimeLeft(0)
+      fetchAuctions()
+    }
+    
+    const targetTime = moment(milliseconds)
+    const duration = moment.duration(targetTime.diff(now))
+
     const days = duration.days()
     const hours = duration.hours()
     const minutes = String(duration.minutes()).padStart(2, '0')
     const seconds = String(duration.seconds()).padStart(2, '0')
-    return `${days > 0 ? `${days}d:` : ''}${hours > 0 ? `${hours}h:` : ''}${minutes}m:${seconds}s`
+    
+    return `${days ? days + 'd:' : ''} ${hours ? hours + 'h:' : ''} ${minutes}m:${seconds}s`
+  }
+
+  const fetchAuctions = async () => {
+    const result = await $auction.api.allTelegram()
+    if (result) {
+      dispatch($auction.set.all(result))
+    }
   }
 
   return (
