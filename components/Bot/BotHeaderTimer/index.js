@@ -13,7 +13,12 @@ const BotHeaderTimer = ({timestamp}) => {
   useEffect(() => {
     intervalRef.current = setInterval(() => {
       const now = moment()
-      const duration = moment(timestamp).diff(now)      
+      const duration = moment(timestamp).diff(now)
+      if (duration < 0) {
+        clearInterval(intervalRef.current)
+        setTimeLeft(0)
+        return
+      }
       setTimeLeft(duration)
     }, 1000)
 
@@ -30,6 +35,7 @@ const BotHeaderTimer = ({timestamp}) => {
   }
 
   return (
+    timeLeft > 0 &&
     <App.Flex row align="center" gap={4} className={styles.timerContainer}>
       <App.Text>Next Auction starts in</App.Text>
       <App.Text weight={700}>{formatTime(timeLeft)}</App.Text>
