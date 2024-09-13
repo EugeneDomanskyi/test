@@ -119,8 +119,9 @@ const SidebarBanner = () => {
               <App.Flex column gap={4}>
                 {/* <App.Text size={20} weight={600} height={1}>Trade {current.alias == 'alpha-trader-s1' ? current.specialCurrency : `$${current.currency}`}</App.Text> */}
                 {/* <App.Text size={14} weight={400} height={1} color="#FFFFFF99">Activate streaks with daily min. trade vol. of $100!</App.Text> */}
-                <App.Text size={20} weight={600} height={1}>Trade {current.alias == 'alpha-trader-s2' ? current.specialCurrency : `$${current.currency}`}</App.Text>
-                <App.Text size={14} weight={400} height={1} color="#FFFFFF99">Activate streaks with daily min. trade vol. of $200!</App.Text>
+                {/* <App.Text size={20} weight={600} height={1}>Trade {current.alias == 'alpha-trader-s2' ? current.specialCurrency : `$${current.currency}`}</App.Text> */}
+                <App.Text size={20} weight={600} height={1}>Trade {current.alias == 'alpha-trader-s3' ? current.specialCurrency : `$${current.currency}`}</App.Text>
+                <App.Text size={14} weight={400} height={1} color="#FFFFFF99">Activate streaks with daily min. trade vol. of $300!</App.Text>
               </App.Flex>
             </App.Flex>
 
