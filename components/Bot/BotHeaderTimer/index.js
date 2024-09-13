@@ -36,7 +36,7 @@ const BotHeaderTimer = ({timestamp}) => {
 
   return (
     timeLeft > 0 &&
-    <App.Flex row align="center" gap={4} className={styles.timerContainer}>
+    <App.Flex row align="center" fullWidth gap={4} className={styles.timerContainer}>
       <App.Text>Next Auction starts in</App.Text>
       <App.Text weight={700}>{formatTime(timeLeft)}</App.Text>
     </App.Flex>

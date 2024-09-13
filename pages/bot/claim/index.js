@@ -57,20 +57,12 @@ const AuctionClaim = () => {
   }, [id])
 
   useEffect(() => {
-    // console.log('Claim page item:', item);
-    // console.log('Claim page user:', user);
-    // console.log('Claim page wallet:', wallet);
     if (user && item) {
       const username = item.wallet;
-      // dispatch($auction.set.debug(`user.wallet_address: ${user.wallet_address}`))
       const matchingUser = user.external_users.find(user => user.metadata.username === username);
 
       if (matchingUser) {
-        console.log("Matching user found:", matchingUser);
         setLoadingPage(false)
-      } else {
-        // setShowError('You can not claim this auction')
-        console.log("No matching user found.");
       }
     }
   }, [item, user, wallet])
@@ -88,7 +80,6 @@ const AuctionClaim = () => {
     const price = parseUnits(item.currentPrice, item.token.decimals)
 
     const txid = await WagmiHelper.transfer(item.token.address, item.claimContract, price)
-    console.log('transaction txid:', txid);
     dispatch($auction.set.debug(`txid: ${txid.error ? txid.error : txid}`))
     
     if (txid && !txid.error) {
@@ -166,10 +157,9 @@ const AuctionClaim = () => {
       return
     }
     dispatch($app.set.code(chainCode))
-    // dispatch($auction.set.debug(`chainCode: ${chainCode}`))
 
     const balance = await WagmiHelper.balanceOf(item.token.address, chainCode)
-    // dispatch($auction.set.debug(`balance: ${balance}`))
+
     if (balance >= item.currentPrice) {
       setStep(1)
     } else {

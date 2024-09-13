@@ -53,7 +53,8 @@ const BotAuctionsButton = ({ item }) => {
 
         if (result && !result.error) {
           dispatch($bot.set.balance(user.points - item.gemsPrice))
-          dispatch($alert.set.success({ title: t(`Bid Placed!`), text: `You placed a bid for ${item.nextPrice} ${item.token.currency}.` }))
+          // dispatch($alert.set.success({ title: t(`Bid Placed!`), text: `You placed a bid for ${item.nextPrice} ${item.token.currency}.` }))
+          dispatch($alert.set.success({ title: t(`Bid Placed!`), text: `You placed a bid for ${item.currentPrice} ${item.token.currency}.` }))
         }
       } else {
         TelegramBot.showPopup('Not enough gems', 'Please top up your gems to place a bid.')
