@@ -31,7 +31,7 @@ const BotShop = () => {
     const payload = {
       title: `${gems} gems`,
       description: `${gems} gems for bidding`,
-      payload: `buy-${gems}-gems`,
+      payload: gems,
       provider_token: '',
       currency: 'XTR',
       prices: [
