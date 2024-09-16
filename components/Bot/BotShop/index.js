@@ -15,7 +15,7 @@ const shopItems = [
   {
     title: 'Pile Of Gems',
     gems: 1000,
-    price: 500,
+    price: 1,
     image: '/images/bot/shop-gems-1.png',
   },
   {
@@ -69,16 +69,16 @@ const BotShop = () => {
 
   const handleInvoice = async (status, transaction) => {
     if (status == 'paid') {
-      TelegramBot.showPopup('Payment was successful', `You bought ${transaction.gems} gems`)
+      TelegramBot.showPopup('Payment in pending', `You bought ${transaction.gems} gems. Waiting for server confirmation...`)
     } else {
-      TelegramBot.showPopup('Payment failed', `But for testing you will receive your ${transaction.gems} gems`)
+      TelegramBot.showPopup('Payment failed', `Please try again`)
     }
 
-    const result = await $bot.api.transaction(transaction)
+    // const result = await $bot.api.transaction(transaction)
 
-    if (result) {
-      dispatch($bot.set.user(result))
-    }
+    // if (result) {
+    //   dispatch($bot.set.user(result))
+    // }
   }
 
   return (
