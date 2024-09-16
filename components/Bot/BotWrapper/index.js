@@ -6,6 +6,7 @@ import Socket from '@/libs/ws.lib'
 import TelegramBot from '@/libs/TelegramBot'
 
 import $bot from '@/store/bot'
+import $auction from '@/store/auction'
 
 import App from '@/components/App'
 import BotHeader from '@/components/Bot/BotHeader'
@@ -16,6 +17,7 @@ import styles from './styles.module.scss'
 const BotWrapper = ({ children }) => {
   const dispatch = useDispatch()
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
+  const debug = useSelector(({ $auction }) => $auction.debug)
 
   const [isBot, setIsBot] = useState(null)
 
@@ -33,6 +35,7 @@ const BotWrapper = ({ children }) => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         fetchUser()
+        fetchAuctions()
       }
     }
 
@@ -61,8 +64,29 @@ const BotWrapper = ({ children }) => {
     }
   }
 
+  const fetchAuctions = async () => {
+    const result = await $auction.api.allTelegram()
+    if (result) {
+      dispatch($auction.set.all(result))
+    }
+  }
+
   return (
     <App.Flex column full className={styles.container}>
+      {
+        debug && debug.length > 0 && (
+          <App.Flex center height={50} sx={{position: 'fixed', zIndex: 1111, top: 0, left: 0, width: '100%', backgroundColor: 'rgba(0,0,0,0.3)'}}>
+            <App.Text>Debug mode</App.Text>
+            <App.Flex column gap={8}>
+              {
+                debug.map((item, index) => (
+                  <App.Text key={index}>{item}</App.Text>
+                ))
+              }
+            </App.Flex>
+          </App.Flex>
+        )
+      }
       <Script src="https://telegram.org/js/telegram-web-app.js" onReady={handleScriptLoaded} />
       {isBot !== null ? (
         isBot || !isBot ? (

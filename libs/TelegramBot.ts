@@ -13,6 +13,9 @@ class TelegramBot {
     
     // Denys' initialData:
     // return 'query_id=AAFhv2YnAAAAAGG_ZieMSCM1&user=%7B%22id%22%3A661045089%2C%22first_name%22%3A%22Denys%22%2C%22last_name%22%3A%22Domanskyi%22%2C%22username%22%3A%22ddomanskyi%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1725546094&hash=ae1a36adc645a29c4baac89d9b1cacf944ff65b277db7e3ad12fcf2722df0d9a'
+    
+    // Suryansh initialData:
+    // return 'query_id=AAFhnR1EAAAAAGGdHUSndwz_&user=%7B%22id%22%3A1142791521%2C%22first_name%22%3A%22Suryansh%22%2C%22last_name%22%3A%22Chandak%22%2C%22username%22%3A%22atheistc137%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1726119372&hash=f8f2c83717a4ee464b0d6a59128a2d0a8d2030aa1d56dd6b408a9148efe93fdc'
 
     if (typeof window !== 'undefined' && (window as any)?.Telegram?.WebApp) {
       this.initData = (window as any).Telegram.WebApp.initData
@@ -37,6 +40,32 @@ class TelegramBot {
     }
 
     return false
+  }
+
+  getUsername = () => {
+    const initData = this.getInitData()
+    const params = new URLSearchParams(initData);
+
+    // Get the encoded user field
+    const encodedUser = params.get('user');
+    if (!encodedUser) {
+      return null;
+    }
+
+    // Decode the user field
+    const decodedUser = decodeURIComponent(encodedUser);
+
+    // Parse the decoded user field as JSON
+    let user = null;
+    try {
+      user = JSON.parse(decodedUser);
+    } catch (error) {
+      console.error('Failed to parse user JSON:', error);
+      return null;
+    }
+
+    // Extract and return the username
+    return user.username || null;
   }
 
   validateInitData = (initData: string) => {

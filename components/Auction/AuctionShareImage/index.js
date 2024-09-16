@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import $gem from '@/store/gem'
@@ -13,7 +13,16 @@ const AuctionShareImage = ({ onFinish }) => {
   const canvasRef = useRef(null)
   const ctxRef = useRef(null)
 
+  const [debug, setDebug] = useState('')
+
   useEffect(() => {
+    // setDebug(claimItem ? 'ClaimItem ID: ' + claimItem.id : 'No claim item')
+    // setDebug(state => {
+    //   return (
+    //     state + '\n' +
+    //     'saveImage...'
+    //   )
+    // })
     if (claimItem) {
       ctxRef.current = canvasRef.current.getContext('2d')
 

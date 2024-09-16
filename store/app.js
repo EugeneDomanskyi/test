@@ -35,6 +35,7 @@ export const appSlice = createSlice({
     appConnected: false,
     stickyBannerVisible: false,
     userRegistered: false,
+    user: null
   },
 
   reducers: {
@@ -85,6 +86,10 @@ export const appSlice = createSlice({
 
     userRegistered: (state, { payload }) => {
       state.userRegistered = payload
+    },
+
+    user: (state, { payload }) => {
+      state.user = payload
     },
   },
 })

@@ -10,8 +10,10 @@ import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $app from '@/store/app'
 import $gem from '@/store/gem'
+import $auction from '@/store/auction'
 import $alert from '@/store/alert'
 
+import App from '@/components/App'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
@@ -43,6 +45,7 @@ const Wrapper = ({ children }) => {
   const stickyBannerVisible = useSelector(({ $app }) => $app.stickyBannerVisible)
   const auctionBannerVisible = useSelector(({ $app }) => $app.auctionBannerVisible)
   const blockchain = useSelector($app.get.blockchain)
+  const debug = useSelector(({ $auction }) => $auction.debug)
 
   const [isInIframe, setIsInIframe] = useState(false)
   const [showTournamentBanner, setShowTournamentBanner] = useState(false)
@@ -100,6 +103,7 @@ const Wrapper = ({ children }) => {
     const create = await $gem.api.register({ wallet_address: wallet, referral_code: localStorage.getItem('referral') ?? '' })
     if (create) {
       dispatch($app.set.userRegistered(true))
+      dispatch($app.set.user(create.user))
       
       if (create?.is_points_added) {
         dispatch($alert.set.success({title: '50 Gems Credited'}))
@@ -162,6 +166,21 @@ const Wrapper = ({ children }) => {
           <Footer />
         )
       )}
+
+      {/* {
+        debug && debug.length > 0 && (
+          <App.Flex column center sx={{position: 'absolute', overflowY: 'auto', zIndex: 1111, top: 0, left: 0, right: 0, maxHeight: 360, padding: 8, gap: 8, background: 'rgba(0,0,0,0.5)'}}>
+            <App.Text>Debug mode</App.Text>
+            <App.Flex fullWidth column gap={8}>
+              {
+                debug.map((item, index) => (
+                  <App.Text sx={{wordWrap: 'break-word', borderBottom: '1px solid #fff', paddingBottom: 4}} key={index}>{item}</App.Text>
+                ))
+              }
+            </App.Flex>
+          </App.Flex>
+        )
+      } */}
     </div>
   )
 }

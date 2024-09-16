@@ -7,7 +7,6 @@ import Decimal from 'decimal.js'
 
 const auctionTemplate = (item, wallet) => {
   const auction = item?.auction ? item.auction : item.auction_id
-
   const now = moment()
 
   const status = auction.status == 1 ? 'upcoming' : auction.status == 2 ? 'ongoing' : 'closed'
@@ -21,7 +20,6 @@ const auctionTemplate = (item, wallet) => {
   }
 
   const lastBidderWallet = auction.last_bidder.user_identifier.toLowerCase() || null
-
   const marketPrice = Number(item.auction_value)
   const startPrice = formatUnits(auction.start_price.toString(), 6)
   const currentPrice = formatUnits((auction.last_bid_price > 0 ? auction.last_bid_price : auction.start_price).toString(), 6)
@@ -29,11 +27,12 @@ const auctionTemplate = (item, wallet) => {
   const discount = marketPrice > 0 ? Math.round((marketPrice - currentPrice) / marketPrice * 100) : 0
 
   let history = []
-  if (auction?.bid_histories) {
+  if (auction?.bid_histories && item?.bid_history_user_info) {
     history = auction.bid_histories.map(bid => {
       return {
         bid: `${formatUnits(bid.price.toString(), 6)} USDC`,
-        wallet: bid.wallet.wallet_address,
+        // wallet: bid.wallet.wallet_address,
+        wallet: item.bid_history_user_info[bid.wallet_id].user,
         date: moment(bid.created_at).format('HH:mm DD-MM-YYYY'),
         time: moment(bid.created_at).format('HH:mm'),
         day: moment(bid.created_at).format('DD-MM-YYYY'),
@@ -42,12 +41,11 @@ const auctionTemplate = (item, wallet) => {
     })
   }
 
-  const isCurrent = item?.is_last_bidder_me ?? (wallet && wallet == lastBidderWallet)
+  const isCurrent = (wallet && wallet == auction.last_bidder.user_identifier.toLowerCase()) ?? item?.is_last_bidder_me
   let claimTime = 0
   let isClaimable = false
   
   if (status == 'closed' && auction.claim_tx_hash == '') {
-    // claimTime = moment().add(2, 'minutes')
     claimTime = moment(auction.last_bid_timestamp * 1000).add(3 * 24 * 60 * 60, 'seconds')
     const diff = claimTime.diff(now) < 0 ? 0 : claimTime.diff(now)
     isClaimable = diff > 0
@@ -552,6 +550,10 @@ export const api = {
 
   claim: (params) => {
     return request(`auction/claim`, 'POST', {api: 'bid', ...params})
+  },
+
+  claimTelegram: (params) => {
+    return request(`telegram/auction/claim`, 'POST', {api: 'bid', ...params})
   },
   
   tournament: (alias) => {

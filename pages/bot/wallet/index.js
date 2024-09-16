@@ -43,10 +43,7 @@ const Wallet = () => {
   }
 
   const handleConnect = async () => {
-    const wallet = await connect()
-    if (!wallet) {
-      return
-    }
+    await connect()
   }
 
   const getShortWallet = () => {

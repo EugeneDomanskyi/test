@@ -22,6 +22,7 @@ const BotAuctionsButton = ({ item }) => {
   const user = useSelector(({ $bot }) => $bot.user)
 
   const [loading, setLoading] = useState(false)
+  const [forceDisable, setForceDisable] = useState(false)
 
   const text = () => {
     switch (item.status) {
@@ -32,18 +33,28 @@ const BotAuctionsButton = ({ item }) => {
   }
 
   const handeClick = async (e) => {
+    if (forceDisable || (forceDisable && item.current)) return
+    
+    setForceDisable(true)
+
+    if (navigator.vibrate) {
+      navigator.vibrate(500);
+    }
+    
+    if (window.navigator.vibrate) {
+      window.navigator.vibrate(500);
+    }
+
     if (item.status == 'ongoing' && !item.current) {
       if (user?.points && user.points * 1 >= item.gemsPrice * 1) {
         const result = await $bot.api.bid({
           auction_id: item.id,
         })
 
-        console.log('result', result);
-        
-
         if (result && !result.error) {
           dispatch($bot.set.balance(user.points - item.gemsPrice))
-          dispatch($alert.set.success({ title: t(`Bid Placed!`), text: `You placed a bid for ${item.nextPrice} ${item.token.currency}.` }))
+          // dispatch($alert.set.success({ title: t(`Bid Placed!`), text: `You placed a bid for ${item.nextPrice} ${item.token.currency}.` }))
+          dispatch($alert.set.success({ title: t(`Bid Placed!`), text: `You placed a bid for ${item.currentPrice} ${item.token.currency}.` }))
         }
       } else {
         TelegramBot.showPopup('Not enough gems', 'Please top up your gems to place a bid.')
@@ -52,12 +63,15 @@ const BotAuctionsButton = ({ item }) => {
 
     if (item.status == 'closed') {
       if (item.current && item.claimHash == '' && item.isClaimable) {
+        dispatch($bot.set.tab('my-earnings'))
         if (item.claimContract && item.claimContract != '') {
           // dispatch($gem.set.claim(true))
           // dispatch($gem.set.claimId(item.id))
         }
       }
     }
+
+    setForceDisable(false)
   }
 
   return (

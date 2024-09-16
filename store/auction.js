@@ -5,9 +5,10 @@ import { formatUnits } from 'viem'
 import { request } from './index'
 import Decimal from 'decimal.js'
 
+import TelegramBot from '@/libs/TelegramBot'
+
 const template = (item) => {
   const auction = item?.auction ? item.auction : item.auction_id
-
   const now = moment()
 
   const status = auction.status == 1 ? 'upcoming' : auction.status == 2 ? 'ongoing' : 'closed'
@@ -41,22 +42,9 @@ const template = (item) => {
     })
   }
 
-  // OLD bid_histories handling
-
-  // if (auction?.bid_histories) {
-  //   history = auction.bid_histories.map(bid => {
-  //     return {
-  //       bid: `${formatUnits(bid.price.toString(), 6)} USDC`,
-  //       wallet: bid.wallet.wallet_address,
-  //       date: moment(bid.created_at).format('HH:mm DD-MM-YYYY'),
-  //       time: moment(bid.created_at).format('HH:mm'),
-  //       day: moment(bid.created_at).format('DD-MM-YYYY'),
-  //       created_at: bid.created_at,
-  //     }
-  //   })
-  // }
-
-  const isCurrent = item?.is_last_bidder_me
+  const tgUser = TelegramBot.getUsername()
+  let isLastBidderMe = tgUser ? lastBidderWallet == tgUser : false
+  const isCurrent = isLastBidderMe
   let claimTime = 0
   let isClaimable = false
   
@@ -112,8 +100,8 @@ export const auctionSlice = createSlice({
     auctionWarning: false,
     showTelegramSubscription: null,
     auctionBannerVisible: false,
-
     loading: true,
+    debug: [],
   },
 
   reducers: {
@@ -242,6 +230,10 @@ export const auctionSlice = createSlice({
     auctionBannerVisible: (state, { payload }) => {
       state.auctionBannerVisible = payload
     },
+
+    debug: (state, { payload }) => {
+      state.debug = [...state.debug, payload]
+    },
   },
 })
 
@@ -285,27 +277,48 @@ export const get = {
   ongoingAuction: createSelector([
     state => state.$auction.all,
   ], (auctions) => {
-    console.log('ongoingAuction auctions', auctions);
-    
     const ongoingAuctions = auctions.filter(item => item.status == 'ongoing')
-    if (ongoingAuctions) {
+    console.log('ongoingAuctions', ongoingAuctions);
+    
+    if (ongoingAuctions.length) {
       ongoingAuctions.sort((a, b) => a.startsIn - b.startsIn)
       return ongoingAuctions[0]
+    } else {
+      const closedAuctions = auctions.filter(item => item.status == 'closed')
+      console.log('closedAuctions', closedAuctions);
+      
+      if (closedAuctions.length) {
+        closedAuctions.sort((a, b) => b.startsIn - a.startsIn)
+        console.log('recent closedAuction', closedAuctions[0]);
+        return closedAuctions[0]
+      }
     }
-
     return null
   }),
 
   upcomingAuction: createSelector([
     state => state.$auction.all,
   ], (auctions) => {
-    const upcomingAuction = auctions.filter(item => item.status == 'upcoming')
-
-    if (upcomingAuction) {
-      upcomingAuction.sort((a, b) => a.startsIn - b.startsIn)
-      return upcomingAuction[1]
+    const upcomingAuctions = auctions.filter(item => item.status == 'upcoming')
+    
+    if (upcomingAuctions.length) {
+      upcomingAuctions.sort((a, b) => a.startsIn - b.startsIn)
+      console.log('upcomingAuctions', upcomingAuctions[0]);
+      return upcomingAuctions[0]
     }
-    return upcomingAuction || null
+    return null
+  }),
+
+  myClaimableEarnings: createSelector([
+    state => state.$auction.all,
+  ], (auctions) => {    
+    const claimableAuctions = auctions.filter(item => item.current && item.isClaimable)
+    
+    if (claimableAuctions) {
+      claimableAuctions.sort((a, b) => a.startsIn - b.startsIn)
+      return claimableAuctions
+    }
+    return null
   }),
 }
 
@@ -315,6 +328,7 @@ export const api = {
   },
   
   allTelegram: () => {
+    console.log('FETCH allTelegram');
     return request(`telegram/auctions`, 'GET', {api: 'bid'})
   },
 
@@ -323,6 +337,7 @@ export const api = {
   },
 
   getTelegram: (id) => {
+    console.log('FETCH getTelegram BY ID', id);
     return request(`telegram/auction/${id}`, 'GET', {api: 'bid'})
   },
 

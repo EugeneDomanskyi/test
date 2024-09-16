@@ -4,7 +4,7 @@ import App from '@/components/App'
 
 const BotEarn = () => {
   return (
-    <App.Flex center>
+    <App.Flex center sx={{padding: 16}}>
       <App.Flex className={styles.container} center column>
         <App.Flex gap={4}>
           <App.Text size={16} weight={600}>Complete These Tasks <App.Text color="#A6DC37" size={16} weight={600} inline>To Earn Tokens:</App.Text></App.Text>
