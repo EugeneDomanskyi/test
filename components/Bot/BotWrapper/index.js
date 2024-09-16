@@ -29,20 +29,36 @@ const BotWrapper = ({ children }) => {
     }
   }, [socketConnected])
 
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchUser()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    };
+  }, [])
+
   const handleScriptLoaded = async () => {
     if (TelegramBot.getInitData()) {
       const botResult = TelegramBot.init()
       setIsBot(botResult)
-
-      const result = await $bot.api.user()
-      if (result) {
-        dispatch($bot.set.user(result))
-      }
-
+      fetchUser()
       return
     }
     
     setIsBot(false)
+  }
+
+  const fetchUser = async () => {
+    const result = await $bot.api.user({referral_code: ''})
+    if (result) {
+      dispatch($bot.set.user(result))
+    }
   }
 
   return (
@@ -62,7 +78,7 @@ const BotWrapper = ({ children }) => {
             <BotTabs />
           </App.Flex>
         ) : (
-          <App.Flex center height={300}>
+          <App.Flex center height={300} sx={{overflow: 'auto'}}>
             <App.Text>It is not a bot</App.Text>
           </App.Flex>
         )

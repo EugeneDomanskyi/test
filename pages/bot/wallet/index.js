@@ -1,14 +1,24 @@
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
+
+import $bot from '@/store/bot'
 
 import WagmiHelper from '@/libs/WagmiHelper'
 
 import App from '@/components/App'
-import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 
 const Wallet = () => {
+  const { query } = useRouter()
+  const hash = query.hash
+
   const { wallet, connection, connect } = useWagmiHelper()
 
   const [disconnected, setDisconnected] = useState(false)
+
+  const userRegistered = useSelector(({ $app }) => $app.userRegistered)
 
   useEffect(() => {
     if (!connection.loading) {
@@ -18,13 +28,25 @@ const Wallet = () => {
     }
   }, [connection, disconnected])
 
+  useEffect(() => {    
+    if ((userRegistered && hash) || (wallet && hash)) {
+      handleAssignWallet()
+    }
+  }, [userRegistered, wallet])
+
+  const handleAssignWallet = async () => {
+    const assignRes = await $bot.api.assignWalletToUser({wallet_address: wallet, hash})
+    
+    if (assignRes && ! assignRes.error) {
+      handleBackToMiniApp()
+    }
+  }
+
   const handleConnect = async () => {
     const wallet = await connect()
     if (!wallet) {
       return
     }
-
-    handleBackToMiniApp()
   }
 
   const getShortWallet = () => {

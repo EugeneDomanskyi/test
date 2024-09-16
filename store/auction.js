@@ -20,8 +20,7 @@ const template = (item) => {
     }
   }
 
-  const lastBidderWallet = auction.last_bidder.wallet_address.toLowerCase() || null
-
+  const lastBidderWallet = auction.last_bidder.user_identifier.toLowerCase() || null
   const marketPrice = Number(item.auction_value)
   const startPrice = formatUnits(auction.start_price.toString(), 6)
   const currentPrice = formatUnits((auction.last_bid_price > 0 ? auction.last_bid_price : auction.start_price).toString(), 6)
@@ -29,11 +28,11 @@ const template = (item) => {
   const discount = marketPrice > 0 ? Math.round((marketPrice - currentPrice) / marketPrice * 100) : 0
 
   let history = []
-  if (auction?.bid_histories) {
+  if (auction?.bid_histories && auction?.bid_history_user_info) {
     history = auction.bid_histories.map(bid => {
       return {
         bid: `${formatUnits(bid.price.toString(), 6)} USDC`,
-        wallet: bid.wallet.wallet_address,
+        wallet: auction.bid_history_user_info[bid.wallet_id].user,
         date: moment(bid.created_at).format('HH:mm DD-MM-YYYY'),
         time: moment(bid.created_at).format('HH:mm'),
         day: moment(bid.created_at).format('DD-MM-YYYY'),
@@ -41,6 +40,21 @@ const template = (item) => {
       }
     })
   }
+
+  // OLD bid_histories handling
+
+  // if (auction?.bid_histories) {
+  //   history = auction.bid_histories.map(bid => {
+  //     return {
+  //       bid: `${formatUnits(bid.price.toString(), 6)} USDC`,
+  //       wallet: bid.wallet.wallet_address,
+  //       date: moment(bid.created_at).format('HH:mm DD-MM-YYYY'),
+  //       time: moment(bid.created_at).format('HH:mm'),
+  //       day: moment(bid.created_at).format('DD-MM-YYYY'),
+  //       created_at: bid.created_at,
+  //     }
+  //   })
+  // }
 
   const isCurrent = item?.is_last_bidder_me
   let claimTime = 0
@@ -271,6 +285,8 @@ export const get = {
   ongoingAuction: createSelector([
     state => state.$auction.all,
   ], (auctions) => {
+    console.log('ongoingAuction auctions', auctions);
+    
     const ongoingAuctions = auctions.filter(item => item.status == 'ongoing')
     if (ongoingAuctions) {
       ongoingAuctions.sort((a, b) => a.startsIn - b.startsIn)
@@ -279,15 +295,35 @@ export const get = {
 
     return null
   }),
+
+  upcomingAuction: createSelector([
+    state => state.$auction.all,
+  ], (auctions) => {
+    const upcomingAuction = auctions.filter(item => item.status == 'upcoming')
+
+    if (upcomingAuction) {
+      upcomingAuction.sort((a, b) => a.startsIn - b.startsIn)
+      return upcomingAuction[1]
+    }
+    return upcomingAuction || null
+  }),
 }
 
 export const api = {
   all: () => {
     return request(`auctions`, 'GET', {api: 'bid'})
   },
+  
+  allTelegram: () => {
+    return request(`telegram/auctions`, 'GET', {api: 'bid'})
+  },
 
   get: (id) => {
     return request(`auction/${id}`, 'GET', {api: 'bid'})
+  },
+
+  getTelegram: (id) => {
+    return request(`telegram/auction/${id}`, 'GET', {api: 'bid'})
   },
 
   login: (params) => {
