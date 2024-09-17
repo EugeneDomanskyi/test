@@ -120,6 +120,27 @@ class TelegramBot {
       this.app.onEvent(event, callback)
     }
   }
+
+  host = () => {
+    let host = window.location.hostname
+    if (window.location.hostname == 'localhost') {
+      host = 'beta.tegro.com'
+    }
+
+    if (window.location.hostname == 'nft20-git-production-toraverse.vercel.app') {
+      host = 'tegro.com'
+    }
+
+    return host
+  }
+
+  domain = () => {
+    switch (this.host()) {
+      case 'tegro.com': return 'tegro_fi_bot'
+      case 'testnet.tegro.com': return 'testnet_tegro_bot'
+      default: return 'local_tegro_bot'
+    }
+  }
 }
 
 export default new TelegramBot()

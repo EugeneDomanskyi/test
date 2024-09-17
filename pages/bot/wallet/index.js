@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
+import TelegramBot from '@/libs/TelegramBot'
+import WagmiHelper from '@/libs/WagmiHelper'
 
 import $bot from '@/store/bot'
 
-import WagmiHelper from '@/libs/WagmiHelper'
-
 import App from '@/components/App'
-import { useSelector } from 'react-redux'
 
 const Wallet = () => {
   const { query } = useRouter()
@@ -16,9 +16,9 @@ const Wallet = () => {
 
   const { wallet, connection, connect } = useWagmiHelper()
 
-  const [disconnected, setDisconnected] = useState(false)
-
   const userRegistered = useSelector(({ $app }) => $app.userRegistered)
+
+  const [disconnected, setDisconnected] = useState(false)
 
   useEffect(() => {
     if (!connection.loading) {
@@ -36,7 +36,6 @@ const Wallet = () => {
 
   const handleAssignWallet = async () => {
     const assignRes = await $bot.api.assignWalletToUser({wallet_address: wallet, hash})
-    
     if (assignRes && ! assignRes.error) {
       handleBackToMiniApp()
     }
@@ -61,7 +60,7 @@ const Wallet = () => {
   }
 
   const handleBackToMiniApp = () => {
-    window.location.href = 'tg://resolve?domain=local_tegro_bot'
+    window.location.href = `tg://resolve?domain=${TelegramBot.domain()}`
   }
 
   return (
