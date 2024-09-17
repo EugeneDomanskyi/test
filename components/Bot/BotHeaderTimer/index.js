@@ -11,7 +11,7 @@ const BotHeaderTimer = ({ timestamp }) => {
   const [timeLeft, setTimeLeft] = useState(moment(timestamp).diff(moment()))
 
   useEffect(() => {
-    if (! moment(timestamp).isBefore(moment())) {
+    if (timestamp && ! moment(timestamp).isBefore(moment())) {
       intervalRef.current = setInterval(() => {
         const now = moment()
         const duration = moment(timestamp).diff(now)
