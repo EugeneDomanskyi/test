@@ -38,7 +38,7 @@ export const botSlice = createSlice({
 
 const api = {
   invoice: (params) => {
-    return request(`generate-invoice`, 'POST', {api: 'bot', ...params})
+    return request(`telegram/generate-invoice`, 'POST', {api: 'accounts', ...params})
   },
 
   user: (params) => {

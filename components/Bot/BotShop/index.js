@@ -53,7 +53,7 @@ const BotShop = () => {
     const payload = {
       title: `${gems} gems`,
       description: `${gems} gems for bidding`,
-      payload: gems,
+      payload: gems.toString(),
       provider_token: '',
       currency: 'XTR',
       prices: [
@@ -62,23 +62,17 @@ const BotShop = () => {
     }
 
     const result = await $bot.api.invoice(payload)
-    if (result && result?.success) {
-      TelegramBot.openInvoice(result.invoice, (status) => handleInvoice(status, transaction))
+    if (!result?.error) {
+      TelegramBot.openInvoice(result, (status) => handleInvoice(status, transaction))
     }
   }
 
   const handleInvoice = async (status, transaction) => {
-    if (status == 'paid') {
+    if (status == 'paid' || status == 'pending') {
       TelegramBot.showPopup('Payment in pending', `You bought ${transaction.gems} gems. Waiting for server confirmation...`)
     } else {
       TelegramBot.showPopup('Payment failed', `Please try again`)
     }
-
-    // const result = await $bot.api.transaction(transaction)
-
-    // if (result) {
-    //   dispatch($bot.set.user(result))
-    // }
   }
 
   return (
