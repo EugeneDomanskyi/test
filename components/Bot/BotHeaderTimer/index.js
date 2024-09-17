@@ -5,7 +5,7 @@ import moment from 'moment'
 
 import App from '@/components/App'
 
-const BotHeaderTimer = ({timestamp}) => {
+const BotHeaderTimer = ({ timestamp }) => {
   const intervalRef = useRef(null)
 
   const [timeLeft, setTimeLeft] = useState(moment(timestamp).diff(moment()))
@@ -35,10 +35,15 @@ const BotHeaderTimer = ({timestamp}) => {
   }
 
   return (
-    timeLeft > 0 &&
     <App.Flex row align="center" fullWidth gap={4} className={styles.timerContainer}>
-      <App.Text>Next Auction starts in</App.Text>
-      <App.Text weight={700}>{formatTime(timeLeft)}</App.Text>
+      {timeLeft > 0 ? (
+        <>
+          <App.Text size={13} weight={400}>Next Auction starts in</App.Text>
+          <App.Text size={13} weight={600}>{formatTime(timeLeft)}</App.Text>
+        </>
+      ) : (
+        <App.Text size={13} weight={400}>New Auctions Scheduled Every 10 Minutes!</App.Text>
+      )}
     </App.Flex>
   )
 }
