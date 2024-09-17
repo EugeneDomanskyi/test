@@ -43,7 +43,7 @@ const BotAuctions = () => {
 
   useEffect(() => {
     Socket.on('auctions', 'auction', handleUpdatedAuction)
-    fetchAuctions()
+    //fetchAuctions()
   }, [])
 
   const fetchAuctions = async () => {
@@ -90,31 +90,12 @@ const BotAuctions = () => {
     }
   }
 
-  const handleHistory = () => {
-    router.push('/bot/history')
-  }
-
-  const hapticsImpactMedium = async () => {
-    await Haptics.vibrate();
-  };
-
-  const handleMyEarnings = async () => {
-    hapticsImpactMedium()
-
-    dispatch($bot.set.tab('my-earnings'))
-  }
-
   useInterval(tick, duration.isEnd ? null : 1000)
 
   return loading ? (
     <App.LoaderBlock height={300} />
   ) : (
     <App.Flex column gap={8}>
-      <App.Flex row align="center" gap={8} sx={{paddingLeft: 8}}>
-        {/* <App.Button variant="bot-default" small onClick={handleHistory} sx={{width: 86, marginLeft: 8}}><App.Icon icon="clock-bot" /> History</App.Button> */}
-        <App.Button variant="bot-default" small onClick={handleMyEarnings}>My Earnings</App.Button>
-      </App.Flex>
-
       {
           ongoingAuction ? (
             <App.Flex column center fullHeight className={styles.container}>
@@ -157,7 +138,7 @@ const BotAuctions = () => {
     
                     <div className={styles.line} />
     
-                    {ongoingAuction.wallet ? (
+                    {ongoingAuction.lastBidTimestamp > 0 ? (
                       <App.Flex row fullWidth align="center" justify="space-between">
                         <App.Flex column gap={4}>
                           <App.Text size={14} weight={600} height={1}>Bid by</App.Text>
@@ -165,16 +146,16 @@ const BotAuctions = () => {
                         </App.Flex>
     
                         <App.Flex row center gap={4} className={styles.timer}>
-                          {
-                            ongoingAuction.status === 'closed'
-                              ? <App.Text size={16} weight={400} height={1}>Closed</App.Text>
-                              : <>
-                                  <App.Text size={16} weight={400} height={1}>Wins In</App.Text>
-                                  <App.Flex row justify="flex-end" className={styles.timerText}>
-                                    <App.Text size={16} weight={400} height={1} color="#FF1D61">{duration.minutes}:{duration.seconds}</App.Text>
-                                  </App.Flex>
-                                </>
-                          }
+                          {ongoingAuction.status === 'closed' ? (
+                            <App.Text size={16} weight={400} height={1}>Closed</App.Text>
+                          ) : (
+                            <>
+                              <App.Text size={16} weight={400} height={1}>Wins In</App.Text>
+                              <App.Flex row justify="flex-end" className={styles.timerText}>
+                                <App.Text size={16} weight={400} height={1} color="#FF1D61">{duration.minutes}:{duration.seconds}</App.Text>
+                              </App.Flex>
+                            </>
+                          )}
                         </App.Flex>
                       </App.Flex>
                     ) : (
