@@ -1,9 +1,9 @@
-import styles from './styles.module.scss'
-
 import { useEffect, useState, useRef } from 'react'
 import moment from 'moment'
 
 import App from '@/components/App'
+
+import styles from './styles.module.scss'
 
 const BotHeaderTimer = ({ timestamp }) => {
   const intervalRef = useRef(null)
@@ -11,18 +11,20 @@ const BotHeaderTimer = ({ timestamp }) => {
   const [timeLeft, setTimeLeft] = useState(moment(timestamp).diff(moment()))
 
   useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      const now = moment()
-      const duration = moment(timestamp).diff(now)
-      if (duration < 0) {
-        clearInterval(intervalRef.current)
-        setTimeLeft(0)
-        return
-      }
-      setTimeLeft(duration)
-    }, 1000)
+    if (! moment(timestamp).isBefore(moment())) {
+      intervalRef.current = setInterval(() => {
+        const now = moment()
+        const duration = moment(timestamp).diff(now)
+        if (duration < 0) {
+          clearInterval(intervalRef.current)
+          setTimeLeft(0)
+          return
+        }
+        setTimeLeft(duration)
+      }, 1000)
 
-    return () => clearInterval(intervalRef.current)
+      return () => clearInterval(intervalRef.current)
+    }
   }, [timestamp])
 
   const formatTime = (milliseconds) => {
