@@ -75,7 +75,7 @@ const BotShop = () => {
   }
 
   return (
-    <App.Flex column full center gap={12}>
+    <App.Flex column fullWidth center gap={12}>
       <App.Flex row gap={12} justify="center" sx={{flexWrap: 'wrap'}}>
         {
           shopItems.map((item, index) => {

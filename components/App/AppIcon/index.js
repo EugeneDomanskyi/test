@@ -392,6 +392,15 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon === 'earn-bot') {
+      return (
+        <svg width={width ?? 20} height={height ?? 20} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" d="M10 12.4974C13.1066 12.4974 15.625 10.0723 15.625 7.08073C15.625 4.08919 13.1066 1.66406 10 1.66406C6.8934 1.66406 4.375 4.08919 4.375 7.08073C4.375 10.0723 6.8934 12.4974 10 12.4974Z" />
+          <path stroke={color ?? '#fff'} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" d="M6.26808 11.2633L6.25977 17.4133C6.25977 18.1633 6.78477 18.5299 7.43477 18.2216L9.6681 17.1633C9.85143 17.0716 10.1598 17.0716 10.3431 17.1633L12.5848 18.2216C13.2264 18.5216 13.7598 18.1633 13.7598 17.4133V11.1133" />
+        </svg>
+      )
+    }
+
     if (icon === 'wallet') {
       return (
         <svg width={width ?? 10} height={height ?? 10} viewBox="0 0 10 10" fill="none" {...props}>

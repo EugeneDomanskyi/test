@@ -17,12 +17,10 @@ const BotWallet = () => {
   const user = useSelector(({ $bot }) => $bot.user)
 
   const [showDropdown, setShowDropdown] = useState(false)
-  const [initData, setInitData] = useState(null)
 
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside)
-    const data = TelegramBot.getInitData()
-    setInitData(data)
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
@@ -32,10 +30,10 @@ const BotWallet = () => {
     const hashRes = await $bot.api.generateWalletHash()
     const hash = hashRes?.hash || ''
 
-    TelegramBot.showPopup('Connect Wallet', 'You will be redirect to Tegro website to connect Base wallet', [{ id: 'ok', type: 'ok', text: 'Ok' }])
+    TelegramBot.showPopup('Connect Wallet', `You will be redirect to Tegro website to connect Base wallet ${TelegramBot.host()}`, [{ id: 'ok', type: 'ok', text: 'Ok' }])
     TelegramBot.on('popupClosed', (response) => {
       if (response.button_id === 'ok' && hash) {
-        TelegramBot.openLink(`https://beta.tegro.com/bot/wallet?hash=${hash}`)
+        TelegramBot.openLink(`https://${TelegramBot.host()}/bot/wallet?hash=${hash}`)
       }
     })
   }
@@ -69,41 +67,31 @@ const BotWallet = () => {
     }
   }
 
-  const handleCopyInitData = () => {
-    navigator.clipboard.writeText(JSON.stringify(initData, null, 2))
-    dispatch($alert.set.success({ title: 'initalData copied to clipboard'}))
-  }
-
   return (
     <App.Flex column align="center" gap={8}>
       <App.Flex row align="center" gap={8}>
-        {
-          user?.user
-            ? <App.Flex gap={8} className={styles.walletButtonContainer}>
-                <App.Button variant="bot-default" small onClick={() => setShowDropdown(!showDropdown)}>
-                  <App.Icon icon="logo-tiger-head" width={16} height={16} />
-                  <App.Text>{ getShort(user.user.wallet_address) }</App.Text>
-                </App.Button>
+        {user?.user ? (
+          <App.Flex gap={8} className={styles.walletButtonContainer}>
+            <App.Button variant="bot-default" small onClick={() => setShowDropdown(!showDropdown)}>
+              <App.Icon icon="logo-tiger-head" width={16} height={16} />
+              <App.Text>{ getShort(user.user.wallet_address) }</App.Text>
+            </App.Button>
 
-                <App.Flex className={cn(styles.dropdownMenu, {[styles.isOpen]: showDropdown})}>
-                  <App.Flex className={styles.menuItem} onClick={handleCopyToClipboard}>
-                    <App.Icon icon="copy2" color="#B9B8C5" width={14} height={14} />
-                    <App.Text size={12}>Copy Address</App.Text>
-                  </App.Flex>
-
-                  <App.Flex className={styles.menuItem} onClick={handleDisconnect}>
-                    <App.Icon icon="logout2" color="#B9B8C5" width={12} height={12} />
-                    <App.Text size={12}>Disconnect</App.Text>
-                  </App.Flex>
-                </App.Flex>
+            <App.Flex className={cn(styles.dropdownMenu, {[styles.isOpen]: showDropdown})}>
+              <App.Flex className={styles.menuItem} onClick={handleCopyToClipboard}>
+                <App.Icon icon="copy2" color="#B9B8C5" width={14} height={14} />
+                <App.Text size={12}>Copy Address</App.Text>
               </App.Flex>
-            : <App.Button variant="bot" small onClick={handleConnect}><App.Icon icon="wallet-bot" /> Connect Wallet</App.Button>
-        }
-        {
-          initData
-            ? <App.Button variant="bot-default" small sx={{width: 120}} onClick={handleCopyInitData}>Copy initialData</App.Button>
-            : null
-        }
+
+              <App.Flex className={styles.menuItem} onClick={handleDisconnect}>
+                <App.Icon icon="logout2" color="#B9B8C5" width={12} height={12} />
+                <App.Text size={12}>Disconnect</App.Text>
+              </App.Flex>
+            </App.Flex>
+          </App.Flex>
+        ) : (
+          <App.Button variant="bot" small outlined onClick={handleConnect}><App.Icon icon="wallet-bot" /> Connect Wallet</App.Button>
+        )}
       </App.Flex>
     </App.Flex>
   )
