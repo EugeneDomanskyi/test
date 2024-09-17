@@ -105,9 +105,12 @@ export const auctionSlice = createSlice({
   },
 
   reducers: {
+    loading: (state, { payload }) => {
+      state.loading = payload
+    },
+
     all: (state, { payload }) => {
       state.all = payload.map(item => template(item))
-      state.loading = false
     },
 
     update: (state, { payload }) => {
@@ -208,7 +211,6 @@ export const auctionSlice = createSlice({
 
     current: (state, { payload }) => {
       state.current = auctionTemplate(payload.data, payload.wallet)
-      state.loading = false
     },
 
     auctionWarning: (state, { payload }) => {
@@ -248,7 +250,7 @@ export const get = {
 
   bidPrice: createSelector([
     state => state.$gem.auctions,
-    state => state.$gem.auctionsLoading,
+    state => state.$gem.loading,
     state => state.$gem.current,
   ], (auctions, loading, current) => {
     let price = 100

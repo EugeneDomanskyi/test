@@ -51,6 +51,8 @@ const BotAuctions = () => {
     if (result) {
       dispatch($auction.set.all(result))
     }
+
+    dispatch($auction.set.loading(false))
   }
 
   const handleUpdatedAuction = async (data) => {
