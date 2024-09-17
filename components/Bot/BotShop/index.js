@@ -44,12 +44,6 @@ const BotShop = () => {
 
     setPlayAnimationId(amount)
 
-    const transaction = {
-      amount,
-      currency: 'XTR',
-      gems,
-    }
-
     const payload = {
       title: `${gems} gems`,
       description: `${gems} gems for bidding`,
@@ -63,15 +57,20 @@ const BotShop = () => {
 
     const result = await $bot.api.invoice(payload)
     if (!result?.error) {
-      TelegramBot.openInvoice(result, (status) => handleInvoice(status, transaction))
+      TelegramBot.openInvoice(result, handleInvoice)
     }
   }
 
-  const handleInvoice = async (status, transaction) => {
+  const handleInvoice = async (status) => {
     if (status == 'paid' || status == 'pending') {
-      TelegramBot.showPopup('Payment in pending', `You bought ${transaction.gems} gems. Waiting for server confirmation...`)
-    } else {
-      TelegramBot.showPopup('Payment failed', `Please try again`)
+      fetchUser()
+    }
+  }
+
+  const fetchUser = async () => {
+    const result = await $bot.api.user({referral_code: ''})
+    if (result) {
+      dispatch($bot.set.user(result))
     }
   }
 
