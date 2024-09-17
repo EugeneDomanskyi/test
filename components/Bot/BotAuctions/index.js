@@ -43,7 +43,7 @@ const BotAuctions = () => {
 
   useEffect(() => {
     Socket.on('auctions', 'auction', handleUpdatedAuction)
-    //fetchAuctions()
+    fetchAuctions()
   }, [])
 
   const fetchAuctions = async () => {

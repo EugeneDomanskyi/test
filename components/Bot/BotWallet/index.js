@@ -17,6 +17,7 @@ const BotWallet = () => {
   const user = useSelector(({ $bot }) => $bot.user)
 
   const [showDropdown, setShowDropdown] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside)
@@ -30,7 +31,7 @@ const BotWallet = () => {
     const hashRes = await $bot.api.generateWalletHash()
     const hash = hashRes?.hash || ''
 
-    TelegramBot.showPopup('Connect Wallet', `You will be redirect to Tegro website to connect Base wallet ${TelegramBot.host()}`, [{ id: 'ok', type: 'ok', text: 'Ok' }])
+    TelegramBot.showPopup('Connect Wallet', `You will be redirect to Tegro website to connect Base wallet`, [{ id: 'ok', type: 'ok', text: 'Ok' }])
     TelegramBot.on('popupClosed', (response) => {
       if (response.button_id === 'ok' && hash) {
         TelegramBot.openLink(`https://${TelegramBot.host()}/bot/wallet?hash=${hash}`)
@@ -44,20 +45,17 @@ const BotWallet = () => {
   }
 
   const handleDisconnect = async () => {
-    setShowDropdown(false)
     const result = await $bot.api.unassign()
-    
     if (result) {
       dispatch($bot.set.user(result))
+      setShowDropdown(false)
     }
   }
 
   const handleCopyToClipboard = () => {
     navigator.clipboard.writeText(user.user.wallet_address)
-    dispatch($alert.set.success({
-      title: `Address Copied!`,
-    }))
-    setShowDropdown(false)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   const handleClickOutside = (event) => {
@@ -80,12 +78,12 @@ const BotWallet = () => {
             <App.Flex className={cn(styles.dropdownMenu, {[styles.isOpen]: showDropdown})}>
               <App.Flex className={styles.menuItem} onClick={handleCopyToClipboard}>
                 <App.Icon icon="copy2" color="#B9B8C5" width={14} height={14} />
-                <App.Text size={12}>Copy Address</App.Text>
+                <App.Text size={12}>{copied ? 'Copied' : 'Copy Wallet Address'}</App.Text>
               </App.Flex>
 
               <App.Flex className={styles.menuItem} onClick={handleDisconnect}>
                 <App.Icon icon="logout2" color="#B9B8C5" width={12} height={12} />
-                <App.Text size={12}>Disconnect</App.Text>
+                <App.Text size={12}>Logout</App.Text>
               </App.Flex>
             </App.Flex>
           </App.Flex>
