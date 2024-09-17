@@ -34,6 +34,8 @@ export const appSlice = createSlice({
     wallet: null,
     appConnected: false,
     stickyBannerVisible: false,
+    userRegistered: false,
+    user: null
   },
 
   reducers: {
@@ -80,6 +82,14 @@ export const appSlice = createSlice({
 
     stickyBannerVisible: (state, { payload }) => {
       state.stickyBannerVisible = payload
+    },
+
+    userRegistered: (state, { payload }) => {
+      state.userRegistered = payload
+    },
+
+    user: (state, { payload }) => {
+      state.user = payload
     },
   },
 })

@@ -1,0 +1,52 @@
+.itemImage {
+  width: 92%;
+  height: 238px;
+  // height: 258px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  border-radius: 12px;
+  position: relative;
+  z-index: 1;
+
+  & > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &.gray::before {
+    content: "";
+    display: block;
+    position: absolute;
+    inset: 0;
+    background-image: inherit;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    filter: grayscale(100%);
+    z-index: 0;
+    border-radius: 12px;
+  }
+
+  .marketPrice {
+    padding: 6px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: rgba(23, 23, 23, 0.30);
+    backdrop-filter: blur(2px);
+    position: absolute;
+    z-index: 0;
+    right: 36px;
+    bottom: 30px;
+  }
+
+  .star {
+    width: 138px;
+    height: 138px;
+    position: absolute;
+    z-index: 0;
+    bottom: 0;
+    right: 0;
+    background: url('/images/star-back.png') center / contain no-repeat;
+  }
+}

@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
 
+import TelegramBot from '@/libs/TelegramBot'
+
 import $gem from '@/store/gem'
 
 import App from '@/components/App'
@@ -142,11 +144,11 @@ const AuctionItem = ({ item, onClear }) => {
           <AuctionButton key={item.currentPrice} item={item} share={item.status == 'upcoming' && referral.is_telegram_present} short />
         ) : null}
 
-        {item.status == 'ongoing' || (item.status == 'closed' && (!item.current || item.current && item.claimHash != '')) ? (
+        {!TelegramBot.isBot() && item.status == 'ongoing' || (item.status == 'closed' && (!item.current || item.current && item.claimHash != '')) ? (
           <App.Button primary2 large outlined onClick={handleClick}>View {item.status == 'closed' ? 'history' : 'more'}</App.Button>
         ) : null}
 
-        {item.status == 'closed' && host != null && host != 'tegro.com' ? (
+        {onClear && item.status == 'closed' && host != null && host != 'tegro.com' ? (
           <App.Button small onClick={handleClear}>Clear</App.Button>
         ) : null}
       </App.Flex>

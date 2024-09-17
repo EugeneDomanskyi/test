@@ -10,8 +10,10 @@ import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $app from '@/store/app'
 import $gem from '@/store/gem'
+import $auction from '@/store/auction'
 import $alert from '@/store/alert'
 
+import App from '@/components/App'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
@@ -28,6 +30,7 @@ const Wrapper = ({ children }) => {
 
   const router = useRouter()
   const isLanding = router.asPath == '/'
+  const isBot = router.asPath?.includes('/bot')
   const isCampaign = router.asPath?.includes('/campaign')
   const isExchange = router.asPath?.includes('/exchange')
   const [_, page] = router.asPath.split('/')
@@ -42,6 +45,7 @@ const Wrapper = ({ children }) => {
   const stickyBannerVisible = useSelector(({ $app }) => $app.stickyBannerVisible)
   const auctionBannerVisible = useSelector(({ $app }) => $app.auctionBannerVisible)
   const blockchain = useSelector($app.get.blockchain)
+  const debug = useSelector(({ $auction }) => $auction.debug)
 
   const [isInIframe, setIsInIframe] = useState(false)
   const [showTournamentBanner, setShowTournamentBanner] = useState(false)
@@ -97,8 +101,13 @@ const Wrapper = ({ children }) => {
 
   const registerUser = async () => {
     const create = await $gem.api.register({ wallet_address: wallet, referral_code: localStorage.getItem('referral') ?? '' })
-    if (create && create?.is_points_added) {
-      dispatch($alert.set.success({title: '50 Gems Credited'}))
+    if (create) {
+      dispatch($app.set.userRegistered(true))
+      dispatch($app.set.user(create.user))
+      
+      if (create?.is_points_added) {
+        dispatch($alert.set.success({title: '50 Gems Credited'}))
+      }
     }
 
     fetchUserInfo()
@@ -131,28 +140,47 @@ const Wrapper = ({ children }) => {
   
   return (
     <div style={{ height: '100%' }}>
-      {
-        !isInIframe
-          ? <div style={{ height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden' }}>
-              <Analytics />
-              <StickyBanner />
+      {isBot ? (
+        children
+      ) : (
+        !isInIframe ? (
+          <div style={{ height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden' }}>
+            <Analytics />
+            <StickyBanner />
 
-              {isLanding ? (
-                <AuctionLandingBanner />
-              ) : null}
+            {isLanding ? (
+              <AuctionLandingBanner />
+            ) : null}
 
-              {!isCampaign && !isApp ? <Header /> : null}
+            {!isCampaign && !isApp ? <Header /> : null}
 
-              <div style={{marginTop: page !== '' ? (isMobile ? -48 : -72) : 0, height: stickyBannerVisible ? 'calc(100% - 28px)' : '100%'}}>
-                {children}
-                {!isCampaign && !isApp && !isExchange && !isGD && !isAuctions ? <Footer /> : null}
-              </div>
-
-              {page === 'exchange' && !isApp && showTournamentBanner  ? <SidebarBanner /> : null}
-              {page === 'exchange' && !isApp ? <OnboardingBanner /> : null}
+            <div style={{marginTop: page !== '' ? (isMobile ? -48 : -72) : 0, height: stickyBannerVisible ? 'calc(100% - 28px)' : '100%'}}>
+              {children}
+              {!isCampaign && !isApp && !isExchange && !isGD && !isAuctions ? <Footer /> : null}
             </div>
-          : <Footer />
-      }
+
+            {page === 'exchange' && !isApp && showTournamentBanner  ? <SidebarBanner /> : null}
+            {page === 'exchange' && !isApp ? <OnboardingBanner /> : null}
+          </div>
+        ) : (
+          <Footer />
+        )
+      )}
+
+      {/* {
+        debug && debug.length > 0 && (
+          <App.Flex column center sx={{position: 'absolute', overflowY: 'auto', zIndex: 1111, top: 0, left: 0, right: 0, maxHeight: 360, padding: 8, gap: 8, background: 'rgba(0,0,0,0.5)'}}>
+            <App.Text>Debug mode</App.Text>
+            <App.Flex fullWidth column gap={8}>
+              {
+                debug.map((item, index) => (
+                  <App.Text sx={{wordWrap: 'break-word', borderBottom: '1px solid #fff', paddingBottom: 4}} key={index}>{item}</App.Text>
+                ))
+              }
+            </App.Flex>
+          </App.Flex>
+        )
+      } */}
     </div>
   )
 }

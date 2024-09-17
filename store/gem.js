@@ -7,7 +7,6 @@ import Decimal from 'decimal.js'
 
 const auctionTemplate = (item, wallet) => {
   const auction = item?.auction ? item.auction : item.auction_id
-
   const now = moment()
 
   const status = auction.status == 1 ? 'upcoming' : auction.status == 2 ? 'ongoing' : 'closed'
@@ -20,8 +19,7 @@ const auctionTemplate = (item, wallet) => {
     }
   }
 
-  const lastBidderWallet = auction.last_bidder.wallet_address.toLowerCase() || null
-
+  const lastBidderWallet = auction.last_bidder.user_identifier.toLowerCase() || null
   const marketPrice = Number(item.auction_value)
   const startPrice = formatUnits(auction.start_price.toString(), 6)
   const currentPrice = formatUnits((auction.last_bid_price > 0 ? auction.last_bid_price : auction.start_price).toString(), 6)
@@ -29,11 +27,12 @@ const auctionTemplate = (item, wallet) => {
   const discount = marketPrice > 0 ? Math.round((marketPrice - currentPrice) / marketPrice * 100) : 0
 
   let history = []
-  if (auction?.bid_histories) {
+  if (auction?.bid_histories && item?.bid_history_user_info) {
     history = auction.bid_histories.map(bid => {
       return {
         bid: `${formatUnits(bid.price.toString(), 6)} USDC`,
-        wallet: bid.wallet.wallet_address,
+        // wallet: bid.wallet.wallet_address,
+        wallet: item.bid_history_user_info[bid.wallet_id].user,
         date: moment(bid.created_at).format('HH:mm DD-MM-YYYY'),
         time: moment(bid.created_at).format('HH:mm'),
         day: moment(bid.created_at).format('DD-MM-YYYY'),
@@ -42,12 +41,11 @@ const auctionTemplate = (item, wallet) => {
     })
   }
 
-  const isCurrent = wallet && wallet == lastBidderWallet
+  const isCurrent = (wallet && wallet == auction.last_bidder.user_identifier.toLowerCase()) ?? item?.is_last_bidder_me
   let claimTime = 0
   let isClaimable = false
   
   if (status == 'closed' && auction.claim_tx_hash == '') {
-    // claimTime = moment().add(2, 'minutes')
     claimTime = moment(auction.last_bid_timestamp * 1000).add(3 * 24 * 60 * 60, 'seconds')
     const diff = claimTime.diff(now) < 0 ? 0 : claimTime.diff(now)
     isClaimable = diff > 0
@@ -301,7 +299,7 @@ export const gemSlice = createSlice({
     auctionUpdated: (state, { payload }) => {
       state.auctions = state.auctions.map(item => {
         if (Number(item.id) == Number(payload.data.auction.id)) {
-          const auction = auctionTemplate({auction: payload.data.auction, auction_value: item.marketPrice}, payload.wallet)
+          const auction = auctionTemplate(payload.data, payload.wallet)
           if (auction.status == 'ongoing' && auction.currentPrice * 1 < item.currentPrice * 1) {
             return item
           }
@@ -316,7 +314,7 @@ export const gemSlice = createSlice({
       })
 
       if (state.current?.id == payload.data.auction.id) {
-        const auction = auctionTemplate({auction: payload.data.auction, auction_value: state.current.marketPrice}, payload.wallet)
+        const auction = auctionTemplate(payload.data, payload.wallet)
         if ((auction.status == 'ongoing' && auction.currentPrice >= state.current.currentPrice) || auction.status != 'ongoing') {
           state.current = auction
         }
@@ -535,7 +533,7 @@ export const api = {
   },
 
   auction: (id) => {
-    return request(`token/price?auction_id=${id}`, 'GET', {api: 'bid'})
+    return request(`auction/${id}`, 'GET', {api: 'bid'})
   },
 
   login: (params) => {
@@ -552,6 +550,10 @@ export const api = {
 
   claim: (params) => {
     return request(`auction/claim`, 'POST', {api: 'bid', ...params})
+  },
+
+  claimTelegram: (params) => {
+    return request(`telegram/auction/claim`, 'POST', {api: 'bid', ...params})
   },
   
   tournament: (alias) => {

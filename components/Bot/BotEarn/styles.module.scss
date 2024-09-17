@@ -1,0 +1,21 @@
+.container {
+  border: 1px solid #8E70EA;
+  border-radius: 12px;
+  padding: 16px;
+  gap: 24px;
+  // max-width: 358px;
+  width: 100%;
+
+  .taskContainer {
+    padding: 16px 8px;
+    gap: 16px;
+    border-radius: 12px;
+    background: radial-gradient(632.92% 163.98% at 0% 0%, #231F38 0%, #100D21 100%);
+
+    .taskDescription {
+      color: rgba(255, 255, 255, 0.60);
+      font-size: 16px;
+      font-weight: 400;
+    }
+  }
+}

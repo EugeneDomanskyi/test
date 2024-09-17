@@ -9,9 +9,11 @@ import Amplitude from '@/libs/amplitude.lib'
 import useInterval from '@/myhooks/useInterval'
 import WagmiHelper from '@/libs/WagmiHelper'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
+import TelegramBot from '@/libs/TelegramBot'
 
 import $app from '@/store/app'
 import $gem from '@/store/gem'
+import $bot from '@/store/bot'
 import $alert from '@/store/alert'
 
 import App from '@/components/App'
@@ -29,6 +31,7 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
   const referral = useSelector(({ $gem }) => $gem.referral)
   const claim = useSelector(({ $gem }) => $gem.claim)
   const claimId = useSelector(({ $gem }) => $gem.claimId)
+  const telegramUser = useSelector(({ $bot }) => $bot.user)
 
   const [loading, setLoading] = useState(false)
   const [time, setTime] = useState(item.time)
@@ -132,9 +135,14 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
       return
     }
 
-    const user = await getUserInfo()
-    if (!user?.wallet || !user?.id) {
-      return
+    let user = null
+    if (TelegramBot.isBot()) {
+      user = telegramUser
+    } else {
+      user = await getUserInfo()
+      if (!user?.wallet || !user?.id) {
+        return
+      }
     }
 
     if (share) {
@@ -166,34 +174,51 @@ const AuctionButton = ({ item, small, share, short, telegram }) => {
     }
 
     if (item.status == 'ongoing') {
-      const currentJwt = await fetchJWT(user.wallet)
-      if (currentJwt) {
-        if (user.points * 1 >= item.gemsPrice * 1) {
-          const result = await $gem.api.bid({
+      if (TelegramBot.isBot()) {
+        if (user?.points && user.points * 1 >= item.gemsPrice * 1) {
+          const result = await $bot.api.bid({
             auction_id: item.id,
-            jwt_token: currentJwt,
           })
 
           if (result && !result.error) {
-            dispatch($gem.set.auctionUpdated({data: {auction: result}, wallet: user.wallet}))
-            dispatch($gem.set.totalGems(user.points - item.gemsPrice))
-
-            if ( ! user.isTelegram) {
-              dispatch($gem.set.showTelegramSubscription(item.id))
-            }
+            // dispatch($gem.set.auctionUpdated({data: {auction: result}, wallet: null}))
+            dispatch($bot.set.balance(user.points - item.gemsPrice))
 
             dispatch($alert.set.success({ title: t(`Bid Placed!`), text: t(`You placed a bid for ${item.nextPrice} ${item.token.currency}.`) }))
-
-            Amplitude.event(`Bid Placed`, {
-                'Page': 'Auction',
-              })
           }
         } else {
-          dispatch($gem.set.auctionWarning(true))
+          TelegramBot.showPopup('Not enough gems', 'Please top up your gems to place a bid.')
+        }
+      } else {
+        const currentJwt = await fetchJWT(user.wallet)
+        if (currentJwt) {
+          if (user.points * 1 >= item.gemsPrice * 1) {
+            const result = await $gem.api.bid({
+              auction_id: item.id,
+              jwt_token: currentJwt,
+            })
 
-          Amplitude.event(`Bid Initiated`, {
-            'Page': 'Auction',
-          })
+            if (result && !result.error) {
+              dispatch($gem.set.auctionUpdated({data: {auction: result}, wallet: user.wallet}))
+              dispatch($gem.set.totalGems(user.points - item.gemsPrice))
+
+              if ( ! user.isTelegram) {
+                dispatch($gem.set.showTelegramSubscription(item.id))
+              }
+
+              dispatch($alert.set.success({ title: t(`Bid Placed!`), text: t(`You placed a bid for ${item.nextPrice} ${item.token.currency}.`) }))
+
+              Amplitude.event(`Bid Placed`, {
+                  'Page': 'Auction',
+                })
+            }
+          } else {
+            dispatch($gem.set.auctionWarning(true))
+
+            Amplitude.event(`Bid Initiated`, {
+              'Page': 'Auction',
+            })
+          }
         }
       }
     }
@@ -268,7 +293,7 @@ Don't fade, join the fun today: ${link}
           ) : null}
         </div>
       ) : (
-        <button className={cn(styles.button, {[styles.flat]: !wallet}, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current && !loading && item.isClaimable}, {[styles.disabled]: !item.isClaimable}, {[styles.loading]: loading}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 && duration.secondsNumber > 0 })} onClick={handeClick}>
+        <button className={cn(styles.button, {[styles.flat]: !wallet && !TelegramBot.isBot()}, {[styles.small]: small}, {[styles.share]: share}, styles[item.status], {[styles.telegram]: telegram}, styles[item.status], {[styles.empty]: !item.wallet}, {[styles.current]: item.current && !loading && item.isClaimable}, {[styles.disabled]: !item.isClaimable}, {[styles.loading]: loading}, {[styles.highlight]: duration.minutesNumber == 0 && duration.secondsNumber <= 15 && duration.secondsNumber > 0 })} onClick={handeClick}>
           {share ? (
             <App.Icon icon="x2" />
           ) : null}
