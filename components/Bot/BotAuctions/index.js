@@ -172,7 +172,8 @@ const BotAuctions = () => {
                   {(ongoingAuction.status != 'closed' || ongoingAuction.status == 'closed' && ongoingAuction.current) ? (
                     <BotAuctionsButton item={ongoingAuction} />
                   ) : (
-                    <App.Button variant="bot" large fullWidth outlined onClick={handleAuctionHistory}>View history</App.Button>
+                    <App.Flex />
+                    // <App.Button variant="bot" large fullWidth outlined onClick={handleAuctionHistory}>View history</App.Button>
                   )}
                   
                   {ongoingAuction.status != 'closed' ? (

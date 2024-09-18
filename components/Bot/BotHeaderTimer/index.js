@@ -1,5 +1,8 @@
 import { useEffect, useState, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
+
+import $auction from '@/store/auction'
 
 import App from '@/components/App'
 
@@ -8,6 +11,9 @@ import styles from './styles.module.scss'
 const BotHeaderTimer = ({ timestamp }) => {
   const intervalRef = useRef(null)
 
+  const dispatch = useDispatch()
+  const showUpcoming = useSelector(({ $auction }) => $auction.showUpcoming)
+
   const [timeLeft, setTimeLeft] = useState(moment(timestamp).diff(moment()))
 
   useEffect(() => {
@@ -15,9 +21,14 @@ const BotHeaderTimer = ({ timestamp }) => {
       intervalRef.current = setInterval(() => {
         const now = moment()
         const duration = moment(timestamp).diff(now)
+        if (duration <= 10000 && !showUpcoming) {
+          dispatch($auction.set.showUpcoming(true))
+        }
+
         if (duration < 0) {
           clearInterval(intervalRef.current)
           setTimeLeft(0)
+          $auction.set.showUpcoming(false)
           return
         }
         setTimeLeft(duration)

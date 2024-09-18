@@ -64,6 +64,10 @@ const api = {
   unassign: () => {
     return request(`telegram/unassign`, 'DELETE', {api: 'accounts'})
   },
+
+  claim: (params) => {
+    return request(`telegram/claim/task`, 'POST', {api: 'accounts', ...params})
+  },
 }
 
 export default {
