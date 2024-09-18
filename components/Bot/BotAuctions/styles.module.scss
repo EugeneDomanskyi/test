@@ -87,6 +87,16 @@
       }
     }
   }
+
+  .info {
+    height: 22px;
+    border-radius: 4px;
+    width: 100%;
+
+    &.win {
+      background-color: #06382F;
+    }
+  }
 }
 
 @keyframes ripple {
