@@ -104,6 +104,12 @@ class TelegramBot {
     }
   }
 
+  openTelegramLink = (url: string) => {
+    if (this.app) {
+      this.app.openTelegramLink(url)
+    }
+  }
+
   backButton = (show: boolean, callback: () => {}) => {
     if (this.app) {
       if (show) {

@@ -19,7 +19,7 @@ const BotEarn = () => {
   const [telegram, setTelegram] = useState(false)
 
   const handleTelegram = () => {
-    TelegramBot.openLink('https://t.me/TegroChat')
+    TelegramBot.openTelegramLink('https://t.me/TegroChat')
     setTelegram(true)
   }
 
