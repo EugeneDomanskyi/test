@@ -45,7 +45,7 @@ const BotEarn = () => {
   }
 
   return (
-    <App.Flex center>
+    <App.Flex center sx={{ padding: 8 }}>
       <App.Flex className={styles.container} column>
         <App.Flex justify="flex-start" gap={4}>
           <App.Text size={16} weight={600}><App.Text color="#A6DC37" size={16} weight={600} inline>Earn Gems</App.Text> On Finishing These Tasks:</App.Text>
