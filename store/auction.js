@@ -280,18 +280,13 @@ export const get = {
     state => state.$auction.all,
   ], (auctions) => {
     const ongoingAuctions = auctions.filter(item => item.status == 'ongoing')
-    console.log('ongoingAuctions', ongoingAuctions);
-    
     if (ongoingAuctions.length) {
       ongoingAuctions.sort((a, b) => a.startsIn - b.startsIn)
       return ongoingAuctions[0]
     } else {
       const closedAuctions = auctions.filter(item => item.status == 'closed')
-      console.log('closedAuctions', closedAuctions);
-      
       if (closedAuctions.length) {
         closedAuctions.sort((a, b) => b.startsIn - a.startsIn)
-        console.log('recent closedAuction', closedAuctions[0]);
         return closedAuctions[0]
       }
     }

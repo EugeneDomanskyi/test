@@ -205,6 +205,15 @@
       border-radius: 6px;
     }
 
+    &.large {
+      padding: 0 16px;
+      height: 48px;
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1;
+      border-radius: 12px;
+    }
+
     &.active:not(:disabled),
     &:hover:not(:disabled) {
       background: #4d29bb;

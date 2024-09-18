@@ -65,6 +65,11 @@ const BotWallet = () => {
     }
   }
 
+  const handleCopyInitData = () => {
+    navigator.clipboard.writeText(JSON.stringify(TelegramBot.getInitData(), null, 2))
+    dispatch($alert.set.success({ title: 'initalData copied to clipboard'}))
+  }
+
   return (
     <App.Flex column align="center" gap={8}>
       <App.Flex row align="center" gap={8}>
@@ -90,6 +95,10 @@ const BotWallet = () => {
         ) : (
           <App.Button variant="bot" small outlined onClick={handleConnect}><App.Icon icon="wallet-bot" /> Connect Wallet</App.Button>
         )}
+
+        {TelegramBot.host() != 'tegro.com' ? (
+          <App.Button variant="bot-default" small onClick={handleCopyInitData}>Copy initData</App.Button>
+        ) : null}
       </App.Flex>
     </App.Flex>
   )
