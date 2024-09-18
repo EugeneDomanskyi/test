@@ -21,7 +21,7 @@ const MyEarnings = () => {
   const user = useSelector(({ $bot }) => $bot.user)
   
   const handleClaim = (id) => {
-    TelegramBot.openLink(`https://beta.tegro.com/bot/claim?id=${id}`)
+    TelegramBot.openLink(`https://${TelegramBot.host()}/bot/claim?id=${id}`)
   }
 
   const handleConnect = async () => {
@@ -31,7 +31,7 @@ const MyEarnings = () => {
     TelegramBot.showPopup('Connect Wallet', 'You will be redirect to Tegro website to connect Base wallet', [{ id: 'ok', type: 'ok', text: 'Ok' }])
     TelegramBot.on('popupClosed', (response) => {
       if (response.button_id === 'ok' && hash) {
-        TelegramBot.openLink(`https://beta.tegro.com/bot/wallet?hash=${hash}`)
+        TelegramBot.openLink(`https://${TelegramBot.host()}/bot/wallet?hash=${hash}`)
       }
     })
   }
