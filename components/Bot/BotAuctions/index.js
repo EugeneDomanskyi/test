@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import cn from 'classnames'
 
 import Socket from '@/libs/ws.lib'
 import useInterval from '@/myhooks/useInterval'
 
 import $auction from '@/store/auction'
-import $bot from '@/store/bot'
 
 import App from '@/components/App'
 import BotAuctionsImage from '@/components/Bot/BotAuctionsImage'
 import BotAuctionsButton from '@/components/Bot/BotAuctionsButton'
 
 import styles from './styles.module.scss'
+import AuctionCountdown from '@/components/Auction/AuctionCountdown'
 
 const BotAuctions = () => {
   const dispatch = useDispatch()
@@ -57,16 +57,11 @@ const BotAuctions = () => {
 
   const handleUpdatedAuction = async (data) => {
     if (data.status === 1) {
-      console.log('fetch after receive UPCOMING auction');
       fetchAuctions()
       return
     }
 
     const result = await $auction.api.getTelegram(data.id)
-    
-    console.log('handleUpdatedAuction WS data', data);
-    console.log('handleUpdatedAuction getById result', result);
-    
     if (result) {
       dispatch($auction.set.update(result))
     }
@@ -94,6 +89,14 @@ const BotAuctions = () => {
 
   useInterval(tick, duration.isEnd ? null : 1000)
 
+  const handleClaimOver = () => {
+    dispatch($auction.set.auctionNotClaim(ongoingAuction))
+  }
+
+  const handleAuctionHistory = () => {
+    // implement
+  }
+
   return loading ? (
     <App.LoaderBlock height={300} />
   ) : (
@@ -112,92 +115,102 @@ const BotAuctions = () => {
                   <BotAuctionsImage item={ongoingAuction} />
                 </App.Flex>
     
-                <App.Flex column gap={12} className={styles.itemContent}>
-                  <App.Text center nowrap size={14} weight={600} height={1}>{ongoingAuction.status == 'closed' && (!ongoingAuction.current || (ongoingAuction.current && ongoingAuction.claimHash != '')) ? `${ongoingAuction.name} auctioned at` : `Buy ${ongoingAuction.name} for`}</App.Text>
-                  {ongoingAuction.status == 'closed' && (!ongoingAuction.current || (ongoingAuction.current && ongoingAuction.claimHash != '')) ? (
-                    <App.Text center nowrap size={24} weight={600} height={1} color="#A6DC37">{ongoingAuction.discount}% OFF</App.Text>
-                  ) : (
+                <App.Flex column gap={12} className={styles.itemContent} align={ongoingAuction.status == 'closed' && ongoingAuction.current ? 'flex-start' : null}>
+                  <App.Text center={ongoingAuction.status == 'closed' && ongoingAuction.current ? false : true} nowrap size={14} weight={600} height={1}>{ongoingAuction.status == 'closed' && (!ongoingAuction.current || (ongoingAuction.current && ongoingAuction.claimHash != '')) ? `${ongoingAuction.name} auctioned at` : `Buy ${ongoingAuction.name} for`}</App.Text>
+                  {ongoingAuction.status == 'closed' && ongoingAuction.current ? (
                     <>
-                      <App.Text center nowrap size={24} weight={600} height={1}>
-                        {ongoingAuction.currentPrice} {ongoingAuction.token.currency}
-                        
-                        <App.Text inline center nowrap size={20} weight={400} height={1} color="#A6DC37"> ({ongoingAuction.discount}% off)</App.Text>
-                      </App.Text>
-                      
-                      <App.Text center nowrap size={14} weight={400} color="#9B99AE" height={1}>
-                        Market price: <App.Text inline size={14} weight={400} color="#9B99AE" sx={{textDecoration: 'line-through'}}>{ongoingAuction.marketPrice} {ongoingAuction.token.currency}</App.Text>
-                      </App.Text>
-                    </>
-                  )}
-    
-                  <BotAuctionsButton item={ongoingAuction} />
-    
-                  <App.Flex column gap={8} className={styles.area}>
-                    <App.Flex row fullWidth align="center" justify="space-between">
-                      <App.Text size={14} weight={600} height={1}>Current Bid</App.Text>
-                      <App.Text size={24} weight={600} height={1}>{ongoingAuction.currentPrice} {ongoingAuction.token.currency}</App.Text>
-                    </App.Flex>
-    
-                    <div className={styles.line} />
-    
-                    {ongoingAuction.lastBidTimestamp > 0 ? (
-                      <App.Flex row fullWidth align="center" justify="space-between">
-                        <App.Flex column gap={4}>
-                          <App.Text size={14} weight={600} height={1}>Bid by</App.Text>
-                          <App.Text size={14} weight={600} height={1}>{ ongoingAuction.wallet }</App.Text>
-                        </App.Flex>
-    
-                        <App.Flex row center gap={4} className={styles.timer}>
-                          {ongoingAuction.status === 'closed' ? (
-                            <App.Text size={16} weight={400} height={1}>Closed</App.Text>
-                          ) : (
-                            <>
-                              <App.Text size={16} weight={400} height={1}>Wins In</App.Text>
-                              <App.Flex row justify="flex-end" className={styles.timerText}>
-                                <App.Text size={16} weight={400} height={1} color="#FF1D61">{duration.minutes}:{duration.seconds}</App.Text>
-                              </App.Flex>
-                            </>
-                          )}
-                        </App.Flex>
+                      <App.Text nowrap size={24} weight={600} height={1} color="#53F19C">{ongoingAuction.currentPrice} {ongoingAuction.token.currency}</App.Text>
+
+                      <App.Flex center gap={8} className={cn(styles.info, styles.win)}>
+                        <App.Text size={14} weight={400} height={1} color="#53F19C">You won the auction!</App.Text>
                       </App.Flex>
-                    ) : (
-                      <App.Flex center>
-                        <App.Text center size={14} weight={600}>Be the first to bid</App.Text>
-                      </App.Flex>
-                    )}
-                  </App.Flex>
-    
-                  {/* {item.status == 'closed' && (!item.current || (item.current && item.claimHash != '')) ? (
-                    <App.Flex row center gap={8} height={22}>
-                      <App.Icon icon="users" />
-                      <App.Text size={14} weight={600} height={1}>{item.bidsCount} Bidder{item.bidsCount != 1 ? 's' : ''}</App.Text>
-                    </App.Flex>
-                  ) : (
-                    <App.Flex center gap={8} className={cn(styles.info, {[styles.win]: item.status == 'closed' && item.current})}>
-                      <App.Text size={14} weight={400} height={1} color={item.status == 'closed' && item.current ? '#53F19C' : "#737373"}>{t(firstText())}</App.Text>
-                      {secondText() != 'hide' ? (
-                        item.status == 'upcoming' ? (
-                          <AuctionCountdown red time={item.startsIn} />
+
+                      <App.Flex row fullWidth center gap={8} height={20}>
+                        {ongoingAuction.isClaimable ? (
+                          <App.Flex row center>
+                            <App.Text size={14} weight={400} height={1} color="#737373">Claim in</App.Text>
+                            <AuctionCountdown red time={ongoingAuction.claimTime} onZero={handleClaimOver} />
+                          </App.Flex>
                         ) : (
-                          <App.Text weight={400} height={1}>{t(secondText())}</App.Text>
-                        )
-                      ) : null}
-                    </App.Flex>
+                          <App.Text center size={14} weight={600} height={1}>Claim your winnings in 72 hours!</App.Text>
+                        )}
+                        <App.Tooltip variant="v2" click text={'You have to claim your winnings within 72 hours. If not, it gets deposited back to the reward pool.'} placement="top-end">
+                          <App.Icon icon="info2" width={20} height={20} />
+                        </App.Tooltip>
+                      </App.Flex>
+                    </>
+                  ) : (
+                    ongoingAuction.status != 'closed' ? (
+                      <>
+                        <App.Text center nowrap size={24} weight={600} height={1}>
+                          {ongoingAuction.currentPrice} {ongoingAuction.token.currency}
+                          
+                          <App.Text inline center nowrap size={20} weight={400} height={1} color="#A6DC37"> ({ongoingAuction.discount}% off)</App.Text>
+                        </App.Text>
+                        
+                        <App.Text center nowrap size={14} weight={400} color="#9B99AE" height={1}>
+                          Market price: <App.Text inline size={14} weight={400} color="#9B99AE" sx={{textDecoration: 'line-through'}}>{ongoingAuction.marketPrice} {ongoingAuction.token.currency}</App.Text>
+                        </App.Text>
+                      </>
+                    ) : (
+                      <App.Flex column gap={8}>
+                        <App.Text center nowrap size={24} weight={700} height={1} color="#A6DC37">{ongoingAuction.discount}% OFF</App.Text>
+
+                        <App.Flex row center gap={8} height={22}>
+                          <App.Icon icon="users" />
+                          <App.Text size={14} weight={600} height={1}>{ongoingAuction.bidsCount} Bidder{ongoingAuction.bidsCount != 1 ? 's' : ''}</App.Text>
+                        </App.Flex>
+
+                        <App.Flex row center gap={8} height={20}>
+                          <App.Icon icon="cup2" />
+                          <App.Text size={14} weight={600} color="#FFBB01" height={1}>Winning bid: {ongoingAuction.wallet}</App.Text>
+                        </App.Flex>
+                      </App.Flex>
+                    )
                   )}
-    
-                  {nextLine()}
+
+                  {(ongoingAuction.status != 'closed' || ongoingAuction.status == 'closed' && ongoingAuction.current) ? (
+                    <BotAuctionsButton item={ongoingAuction} />
+                  ) : (
+                    <App.Button variant="bot" large fullWidth outlined onClick={handleAuctionHistory}>View history</App.Button>
+                  )}
                   
-                  {item.status != 'closed' || (item.status == 'closed' && item.current && item.claimHash == '') ? (
-                    <AuctionButton key={item.currentPrice} item={item} share={item.status == 'upcoming' && referral.is_telegram_present} short />
+                  {ongoingAuction.status != 'closed' ? (
+                    <App.Flex column gap={8} className={styles.area}>
+                      <App.Flex row fullWidth align="center" justify="space-between">
+                        <App.Text size={14} weight={600} height={1}>Current Bid</App.Text>
+                        <App.Text size={24} weight={600} height={1}>{ongoingAuction.currentPrice} {ongoingAuction.token.currency}</App.Text>
+                      </App.Flex>
+      
+                      <div className={styles.line} />
+      
+                      {ongoingAuction.lastBidTimestamp > 0 ? (
+                        <App.Flex row fullWidth align="center" justify="space-between">
+                          <App.Flex column gap={4}>
+                            <App.Text size={14} weight={600} height={1}>Bid by</App.Text>
+                            <App.Text size={14} weight={600} height={1}>{ ongoingAuction.wallet }</App.Text>
+                          </App.Flex>
+      
+                          <App.Flex row center gap={4} className={styles.timer}>
+                            {ongoingAuction.status === 'closed' ? (
+                              <App.Text size={16} weight={400} height={1}>Closed</App.Text>
+                            ) : (
+                              <>
+                                <App.Text size={16} weight={400} height={1}>Wins In</App.Text>
+                                <App.Flex row justify="flex-end" className={styles.timerText}>
+                                  <App.Text size={16} weight={400} height={1} color="#FF1D61">{duration.minutes}:{duration.seconds}</App.Text>
+                                </App.Flex>
+                              </>
+                            )}
+                          </App.Flex>
+                        </App.Flex>
+                      ) : (
+                        <App.Flex center>
+                          <App.Text center size={14} weight={600}>Be the first to bid</App.Text>
+                        </App.Flex>
+                      )}
+                    </App.Flex>
                   ) : null}
-    
-                  {!TelegramBot.isBot() && item.status == 'ongoing' || (item.status == 'closed' && (!item.current || item.current && item.claimHash != '')) ? (
-                    <App.Button primary2 large outlined onClick={handleClick}>View {item.status == 'closed' ? 'history' : 'more'}</App.Button>
-                  ) : null}
-    
-                  {onClear && item.status == 'closed' && host != null && host != 'tegro.com' ? (
-                    <App.Button small onClick={handleClear}>Clear</App.Button>
-                  ) : null} */}
                 </App.Flex>
               </App.Flex>
             </App.Flex>

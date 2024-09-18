@@ -63,11 +63,12 @@ const BotAuctionsButton = ({ item }) => {
 
     if (item.status == 'closed') {
       if (item.current && item.claimHash == '' && item.isClaimable) {
-        dispatch($bot.set.tab('my-earnings'))
-        if (item.claimContract && item.claimContract != '') {
-          // dispatch($gem.set.claim(true))
-          // dispatch($gem.set.claimId(item.id))
-        }
+        TelegramBot.openLink(`https://${TelegramBot.host()}/bot/claim?id=${item.id}`)
+        // dispatch($bot.set.tab('my-earnings'))
+        // if (item.claimContract && item.claimContract != '') {
+        //   dispatch($gem.set.claim(true))
+        //   dispatch($gem.set.claimId(item.id))
+        // }
       }
     }
 
