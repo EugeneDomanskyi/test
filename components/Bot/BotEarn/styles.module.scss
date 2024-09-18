@@ -1,15 +1,17 @@
 .container {
-  border: 1px solid #8E70EA;
   border-radius: 12px;
   padding: 16px;
-  gap: 24px;
-  // max-width: 358px;
+  gap: 16px;
   width: 100%;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0px 10px 72px 0px rgba(0, 0, 0, 0.11), 0px 2px 11.7px 0px rgba(0, 0, 0, 0.05);
 
   .taskContainer {
-    padding: 16px 8px;
+    padding: 16px;
     gap: 16px;
-    border-radius: 12px;
+    border-radius: 8px;
+    border: 1px solid #8E70EA;
     background: radial-gradient(632.92% 163.98% at 0% 0%, #231F38 0%, #100D21 100%);
 
     .taskDescription {
@@ -17,5 +19,11 @@
       font-size: 16px;
       font-weight: 400;
     }
+  }
+
+  .claimed {
+    height: 40px;
+    border: 1px solid #A6DC37;
+    border-radius: 12px;
   }
 }
