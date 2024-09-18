@@ -43,7 +43,7 @@ const BotWrapper = ({ children }) => {
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
-    };
+    }
   }, [])
 
   const handleScriptLoaded = async () => {

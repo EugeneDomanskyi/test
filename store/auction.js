@@ -101,6 +101,7 @@ export const auctionSlice = createSlice({
     showTelegramSubscription: null,
     auctionBannerVisible: false,
     loading: true,
+    showUpcoming: false,
     debug: [],
   },
 
@@ -225,6 +226,10 @@ export const auctionSlice = createSlice({
       state.claimId = payload
     },
 
+    showUpcoming: (state, { payload }) => {
+      state.showUpcoming = payload
+    },
+
     showTelegramSubscription: (state, { payload }) => {
       state.showTelegramSubscription = payload
     },
@@ -278,7 +283,16 @@ export const get = {
 
   ongoingAuction: createSelector([
     state => state.$auction.all,
-  ], (auctions) => {
+    state => state.$auction.showUpcoming,
+  ], (auctions, showUpcoming) => {
+    if (showUpcoming) {
+      const upcomingAuctions = auctions.filter(item => item.status == 'upcoming')
+      if (upcomingAuctions.length) {
+        upcomingAuctions.sort((a, b) => a.startsIn - b.startsIn)
+        return upcomingAuctions[0]
+      }
+    }
+
     const ongoingAuctions = auctions.filter(item => item.status == 'ongoing')
     if (ongoingAuctions.length) {
       ongoingAuctions.sort((a, b) => a.startsIn - b.startsIn)

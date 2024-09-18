@@ -50,12 +50,12 @@ const BotTabs = () => {
         <App.Text size={13} weight={tab == 'auctions' ? 700 : 400} color={tab == 'auctions' ? '#FFBB01' : '#fff'} height={1}>Auctions</App.Text>
       </App.Flex>
 
-      {/* <App.Flex column align="center" flex={1} className={cn(styles.tab, {[styles.active]: tab == 'earn'})} onClick={handlePage('earn')}>
+      <App.Flex column align="center" flex={1} className={cn(styles.tab, {[styles.active]: tab == 'earn'})} onClick={handlePage('earn')}>
         <App.Flex fullWidth height={tab == 'earn' ? 72 : 56} column justify="center" align="center" sx={{ marginTop: tab == 'earn' ? -24 : -4 }}>
           <Image src="/images/bot/earn.png" width={tab == 'earn' ? 72 : 56} height={tab == 'earn' ? 56 : 48} />
         </App.Flex>
         <App.Text size={13} weight={tab == 'earn' ? 700 : 400} color={tab == 'earn' ? '#FFBB01' : '#fff'}>Earn</App.Text>
-      </App.Flex> */}
+      </App.Flex>
     </App.Flex>
   )
 }
