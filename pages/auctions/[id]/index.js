@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { formatUnits } from 'viem'
 import { useTranslation } from 'react-i18next'
+import cn from 'classnames'
 
 import Socket from '@/libs/ws.lib'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
@@ -182,15 +183,15 @@ const GemsAuctionInfo = () => {
                   </App.Flex>
 
                   <App.Flex column gap={24} flex={1}>
-                    <App.Flex column gap={24} className={styles.box}>
-                      <App.Flex row align="center" justify="space-between">
+                    <App.Flex column className={styles.box}>
+                      <App.Flex row align="center" justify="space-between" sx={{ padding: 24 }}>
                         <App.Text size={14} weight={600} color="#FFFFFF99" height={1}>{t(item.status == 'closed' ? 'Winning Bid' : 'Current Bid')}</App.Text>
                         <App.Text size={32} weight={600} height={1} color={item.status == 'closed' && item.current ? '#53F19C' : '#fff'}>{item.currentPrice} {item.token.currency}</App.Text>
                       </App.Flex>
 
                       <div className={styles.line} />
 
-                      <App.Flex row align="center" justify="space-between">
+                      <App.Flex row align="center" justify="space-between" className={cn(styles.shaker, {[styles.run]: item.updated})}>
                         <App.Flex row align="center" gap={12}>
                           {/* <App.Flex center className={styles.circle}></App.Flex> */}
 

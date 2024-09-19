@@ -21,7 +21,6 @@
   }
 
   .box {
-    padding: 24px;
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.10);
     background: #171717;
@@ -58,5 +57,62 @@
         padding: 0 8px;
       }
     }
+  }
+
+  .shaker {
+    padding: 24px;
+    border-radius: 12px;
+    
+    &.run {
+      animation: shake .7s ease-in-out forwards;
+      background-color: rgba(107, 65, 235, 1);
+    }
+  }
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+    background-color: rgba(107, 65, 235, 1);
+  }
+  10% {
+    transform: translateX(-10px);
+    background-color: rgba(107, 65, 235, .9);
+  }
+  20% {
+    transform: translateX(10px);
+    background-color: rgba(107, 65, 235, .8);
+  }
+  30% {
+    transform: translateX(-10px);
+    background-color: rgba(107, 65, 235, .7);
+  }
+  40% {
+    transform: translateX(10px);
+    background-color: rgba(107, 65, 235, .6);
+  }
+  50% {
+    transform: translateX(-10px);
+    background-color: rgba(107, 65, 235, .5);
+  }
+  60% {
+    transform: translateX(10px);
+    background-color: rgba(107, 65, 235, .4);
+  }
+  70% {
+    transform: translateX(-10px);
+    background-color: rgba(107, 65, 235, .3);
+  }
+  80% {
+    transform: translateX(10px);
+    background-color: rgba(107, 65, 235, .2);
+  }
+  90% {
+    transform: translateX(-10px);
+    background-color: rgba(107, 65, 235, .1);
+  }
+  100% {
+    transform: translateX(0);
+    background-color: rgba(128, 0, 128, 0);
   }
 }

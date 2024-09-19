@@ -16,10 +16,6 @@ const AuctionImage = ({ item, large }) => {
 
       {/* <App.Flex center className={styles.discountPrice}>
         <App.Text size={12} height={1}>{t('{{discount}}% OFF', { discount: item.discount })}</App.Text>
-      </App.Flex>
-
-      <App.Flex center className={styles.marketPrice}>
-        <App.Text size={12} height={1}>{t('Market Price: ${{price}}', { price: item.marketPrice })}</App.Text>
       </App.Flex> */}
 
       {item.status == 'closed' && (!item.current || item.current && item.claimHash != '') ? (
@@ -27,7 +23,11 @@ const AuctionImage = ({ item, large }) => {
           <App.Text size={18} weight={700} height={1} color="#171717"><s>${item.marketPrice}</s></App.Text>
           <App.Text size={24} weight={800} height={1} color="#FF1D61">${item.currentPrice}</App.Text>
         </App.Flex>
-      ) : null}
+      ) : (
+        <App.Flex center className={styles.marketPrice}>
+          <App.Text size={12} height={1}>{t('Market Price: ${{price}}', { price: item.marketPrice })}</App.Text>
+        </App.Flex>
+      )}
     </App.Flex>
   )
 }
