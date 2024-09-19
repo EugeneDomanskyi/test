@@ -87,6 +87,7 @@ const AuctionClaim = () => {
 
       const temp = await WagmiHelper.waitForTransaction(txid)
       dispatch($auction.set.debug(`waitForTransaction: ${temp.error ? temp.error : temp}`))
+
       if (temp && !temp.error) {
         setStep(3)
         const result = await $gem.api.claimTelegram({
@@ -108,7 +109,7 @@ const AuctionClaim = () => {
           
           return
         } else {
-          //dispatch($alert.set.error({title: result?.error}))
+          dispatch($alert.set.error({text: result?.error}))
         }
       }
     }
