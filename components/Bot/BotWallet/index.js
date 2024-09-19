@@ -86,10 +86,10 @@ const BotWallet = () => {
                 <App.Text size={12}>{copied ? 'Copied' : 'Copy Wallet Address'}</App.Text>
               </App.Flex>
 
-              <App.Flex className={styles.menuItem} onClick={handleDisconnect}>
+              {/* <App.Flex className={styles.menuItem} onClick={handleDisconnect}>
                 <App.Icon icon="logout2" color="#B9B8C5" width={12} height={12} />
                 <App.Text size={12}>Logout</App.Text>
-              </App.Flex>
+              </App.Flex> */}
             </App.Flex>
           </App.Flex>
         ) : (

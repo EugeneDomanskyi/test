@@ -25,7 +25,7 @@ const template = (item) => {
   const marketPrice = Number(item.auction_value)
   const startPrice = formatUnits(auction.start_price.toString(), 6)
   const currentPrice = formatUnits((auction.last_bid_price > 0 ? auction.last_bid_price : auction.start_price).toString(), 6)
-  const nextPrice = new Decimal(Number(currentPrice) + Number(formatUnits(auction.minimum_bid_price_increment, 6))).toDecimalPlaces(6).toFixed()
+  const nextPrice = new Decimal(Number(currentPrice) + (auction.last_bid_price > 0 ? Number(formatUnits(auction.minimum_bid_price_increment, 6)) : 0)).toDecimalPlaces(6).toFixed()
   const discount = marketPrice > 0 ? Math.round((marketPrice - currentPrice) / marketPrice * 100) : 0
 
   let history = []
@@ -102,6 +102,7 @@ export const auctionSlice = createSlice({
     auctionBannerVisible: false,
     loading: true,
     showUpcoming: false,
+    earnings: [],
     debug: [],
   },
 
@@ -238,6 +239,10 @@ export const auctionSlice = createSlice({
       state.auctionBannerVisible = payload
     },
 
+    earnings: (state, { payload }) => {
+      state.earnings = payload.map(item => template(item))
+    },
+
     debug: (state, { payload }) => {
       state.debug = [...state.debug, payload]
     },
@@ -319,18 +324,6 @@ export const get = {
     }
     return null
   }),
-
-  myClaimableEarnings: createSelector([
-    state => state.$auction.all,
-  ], (auctions) => {    
-    const claimableAuctions = auctions.filter(item => item.current && item.isClaimable)
-    
-    if (claimableAuctions) {
-      claimableAuctions.sort((a, b) => a.startsIn - b.startsIn)
-      return claimableAuctions
-    }
-    return null
-  }),
 }
 
 export const api = {
@@ -350,6 +343,10 @@ export const api = {
   getTelegram: (id) => {
     console.log('FETCH getTelegram BY ID', id);
     return request(`telegram/auction/${id}`, 'GET', {api: 'bid'})
+  },
+
+  earnings: () => {
+    return request(`telegram/auctions/won`, 'GET', {api: 'bid'})
   },
 
   login: (params) => {

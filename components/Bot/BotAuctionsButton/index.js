@@ -28,7 +28,7 @@ const BotAuctionsButton = ({ item }) => {
     switch (item.status) {
       case 'upcoming': return 'Bid Now'
       case 'ongoing': return 'Bid Now'
-      case 'closed': return item.current && item.claimHash == '' ? 'Proceed to checkout' : 'Auction Ended'
+      case 'closed': return item.current && item.claimHash == '' ? (user?.user ? 'Proceed to checkout' : 'Connect wallet to Claim') : 'Auction Ended'
     }
   }
 
@@ -53,8 +53,7 @@ const BotAuctionsButton = ({ item }) => {
 
         if (result && !result.error) {
           dispatch($bot.set.balance(user.points - item.gemsPrice))
-          // dispatch($alert.set.success({ title: t(`Bid Placed!`), text: `You placed a bid for ${item.nextPrice} ${item.token.currency}.` }))
-          dispatch($alert.set.success({ title: t(`Bid Placed!`), text: `You placed a bid for ${item.currentPrice} ${item.token.currency}.` }))
+          dispatch($alert.set.success({ title: t(`Bid Placed!`), text: `You placed a bid for ${item.nextPrice} ${item.token.currency}.` }))
         }
       } else {
         TelegramBot.showPopup('Not enough gems', 'Please top up your gems to place a bid.')
@@ -63,12 +62,19 @@ const BotAuctionsButton = ({ item }) => {
 
     if (item.status == 'closed') {
       if (item.current && item.claimHash == '' && item.isClaimable) {
-        TelegramBot.openLink(`https://${TelegramBot.host()}/bot/claim?id=${item.id}`)
-        // dispatch($bot.set.tab('my-earnings'))
-        // if (item.claimContract && item.claimContract != '') {
-        //   dispatch($gem.set.claim(true))
-        //   dispatch($gem.set.claimId(item.id))
-        // }
+        if (user?.user) {
+          TelegramBot.openLink(`https://${TelegramBot.host()}/bot/claim?id=${item.id}`)
+        } else {
+          const hashRes = await $bot.api.generateWalletHash()
+          const hash = hashRes?.hash || ''
+
+          TelegramBot.showPopup('Connect Wallet', 'You will be redirect to Tegro website to connect Base wallet', [{ id: 'ok', type: 'ok', text: 'Ok' }])
+          TelegramBot.on('popupClosed', (response) => {
+            if (response.button_id === 'ok' && hash) {
+              TelegramBot.openLink(`https://${TelegramBot.host()}/bot/wallet?hash=${hash}`)
+            }
+          })
+        }
       }
     }
 
