@@ -16,7 +16,10 @@ const BotAuctionsImage = ({ item }) => {
           <App.Text size={24} weight={800} height={1} color="#FF1D61">${item.currentPrice}</App.Text>
         </App.Flex>
       ) : (
-        null
+        <App.Flex className={styles.name}>
+          <App.Text size={20} weight={700} color="#FFBB01">{item.name}</App.Text>
+        </App.Flex>
+
         // <App.Text size={24} weight={800} height={1} color="#FF1D61">{item.id}</App.Text>
 
         // <App.Flex center className={styles.marketPrice}>

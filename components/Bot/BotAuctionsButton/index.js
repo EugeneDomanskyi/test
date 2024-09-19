@@ -26,7 +26,7 @@ const BotAuctionsButton = ({ item }) => {
 
   const text = () => {
     switch (item.status) {
-      case 'upcoming': return 'Notify Me'
+      case 'upcoming': return 'Bid Now'
       case 'ongoing': return 'Bid Now'
       case 'closed': return item.current && item.claimHash == '' ? 'Proceed to checkout' : 'Auction Ended'
     }
@@ -76,7 +76,7 @@ const BotAuctionsButton = ({ item }) => {
   }
 
   return (
-    <button className={cn(styles.button, styles[item.status], {[styles.current]: item.current && item.isClaimable}, {[styles.disabled]: (item.status == 'closed' && !item.isClaimable) || (item.status == 'ongoing' && item.current)})} onClick={handeClick}>
+    <button className={cn(styles.button, styles[item.status], {[styles.current]: item.current && item.isClaimable}, {[styles.disabled]: item.status == 'upcoming' || (item.status == 'closed' && !item.isClaimable) || (item.status == 'ongoing' && item.current)})} onClick={handeClick}>
       <App.Text size={20} weight={600} height={1}>{t(text())}</App.Text>
     </button>
   )

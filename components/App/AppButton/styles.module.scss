@@ -216,7 +216,8 @@
 
     &.active:not(:disabled),
     &:hover:not(:disabled) {
-      background: #4d29bb;
+      background-color: #6B41EB;
+      border-color: #6B41EB;
     }
 
     &.outlined {

@@ -29,17 +29,15 @@ const BotHeader = () => {
         <BotBalance />
       </App.Flex>
 
-      {user?.user ? (
-        <App.Flex fullWidth row align="center" gap={8}>
-          {/* <App.Flex flex={1}>
-            <App.Button variant="bot-default" small fullWidth onClick={handleTab('history')}><App.Icon icon="clock-bot" /> History</App.Button>
-          </App.Flex> */}
+      <App.Flex fullWidth row align="center" gap={8}>
+        {/* <App.Flex flex={1}>
+          <App.Button variant="bot-default" small fullWidth onClick={handleTab('history')}><App.Icon icon="clock-bot" /> History</App.Button>
+        </App.Flex> */}
 
-          <App.Flex flex={1}>
-            <App.Button variant="bot-default" small fullWidth onClick={handleTab('my-earnings')}><App.Icon icon="earn-bot" /> My Earnings</App.Button>
-          </App.Flex>
+        <App.Flex flex={1}>
+          <App.Button variant="bot-default" small fullWidth onClick={handleTab('my-earnings')}><App.Icon icon="earn-bot" /> My Earnings</App.Button>
         </App.Flex>
-      ) : null}
+      </App.Flex>
 
       <BotHeaderTimer timestamp={upcomingAuction?.startsIn} />
       {/* {upcomingAuction?.startsIn && ! moment(upcomingAuction?.startsIn).isBefore(now) ? (
