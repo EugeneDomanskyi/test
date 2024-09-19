@@ -25,16 +25,17 @@ const BotHeaderTimer = ({ timestamp }) => {
           dispatch($auction.set.showUpcoming(true))
         }
 
-        if (duration < 0) {
+        if (duration <= -1000) {
+          dispatch($auction.set.showUpcoming(false))
           clearInterval(intervalRef.current)
           setTimeLeft(0)
-          $auction.set.showUpcoming(false)
           return
         }
+
         setTimeLeft(duration)
       }, 1000)
 
-      return () => clearInterval(intervalRef.current)
+      // return () => clearInterval(intervalRef.current)
     }
   }, [timestamp])
 
@@ -46,7 +47,7 @@ const BotHeaderTimer = ({ timestamp }) => {
     const seconds = String(duration.seconds()).padStart(2, '0')
     return `${days ? days + 'd:' : ''} ${hours ? hours + 'h:' : ''}${minutes}m:${seconds}s`
   }
-
+// console.log(timeLeft)
   return (
     <App.Flex row align="center" fullWidth gap={4} className={styles.timerContainer}>
       {timeLeft > 0 ? (

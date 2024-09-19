@@ -103,7 +103,7 @@ const BotEarn = () => {
           ) : (
             twitter ? (
               <App.Button variant="bot" onClick={handleClaim('twitter_follow')}>
-                Claim
+                Verify & Claim
                 <App.Flex row center gap={4}>
                   <App.Text size={16} weight={600} inline>200</App.Text>
                   <Image src="/images/bot/gem.png" width={20} height={16} alt="" />
