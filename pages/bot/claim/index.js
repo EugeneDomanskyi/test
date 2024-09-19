@@ -287,7 +287,13 @@ You don't wanna miss these insane deals! ✨
               ) : null}
 
               {step == 2 || step == 3 ? (
-                <AuctionLoader />
+                <>
+                  <AuctionLoader />
+
+                  <App.Flex center className={styles.warning}>
+                    <App.Text center color="#FF1D61">We’re sending {item.name} to your wallet.<br />PLEASE DO NOT refresh the page or go back</App.Text>
+                  </App.Flex>
+                </>
               ) : null}
 
               <AuctionItemSimple item={item} large={step == 4} />

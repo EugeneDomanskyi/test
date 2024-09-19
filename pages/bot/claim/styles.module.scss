@@ -90,6 +90,12 @@
   padding: 16px 40px 40px;
   max-width: 440px;
 
+  .warning {
+    padding: 8px;
+    border-radius: 12px;
+    border: solid #FF1D61 1px;
+  }
+
   .badge {
     padding: 12px;
     border-radius: 4px;
