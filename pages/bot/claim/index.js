@@ -108,7 +108,7 @@ const AuctionClaim = () => {
           
           return
         } else {
-          dispatch($alert.set.error({title: result?.error}))
+          //dispatch($alert.set.error({title: result?.error}))
         }
       }
     }

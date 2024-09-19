@@ -1,10 +1,8 @@
-import styles from './styles.module.scss'
-
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
-
 import TelegramBot from '@/libs/TelegramBot'
 
 import $auction from '@/store/auction'
@@ -13,12 +11,28 @@ import $bot from '@/store/bot'
 import App from '@/components/App'
 import Timer from '@/components/Bot/BotTimer'
 
+import styles from './styles.module.scss'
+
 const MyEarnings = () => {
   const dispatch = useDispatch()
-  const { connection } = useWagmiHelper()
 
-  const earnings = useSelector($auction.get.myClaimableEarnings)
+  const [loading, setLoading] = useState(true)
+
+  const earnings = useSelector(({ $auction }) => $auction.earnings)
   const user = useSelector(({ $bot }) => $bot.user)
+
+  useEffect(() => {
+    fetchEarnings()
+  }, [])
+
+  const fetchEarnings = async () => {
+    const result = await $auction.api.earnings()
+    if (result && !result?.error) {
+      dispatch($auction.set.earnings(result))
+    }
+
+    setLoading(false)
+  }
   
   const handleClaim = (id) => {
     TelegramBot.openLink(`https://${TelegramBot.host()}/bot/claim?id=${id}`)
@@ -41,9 +55,9 @@ const MyEarnings = () => {
   }
 
   return (
-    <App.Flex sx={{padding: 16, paddingTop: 8}}>
-      {connection.loading ? (
-        <App.Loader size={32} />
+    <App.Flex center sx={{padding: 16, paddingTop: 8}}>
+      {loading ? (
+        <App.LoaderBlock height={300} />
       ) : (
         <App.Flex column fullWidth gap={16}>
           <App.Flex row fullWidth align="center" gap={8} onClick={handleBack}>
