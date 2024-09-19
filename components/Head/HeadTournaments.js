@@ -30,7 +30,7 @@ const HeadTournaments = () => {
         <meta property="twitter:url" content={getUrl()} />
         <meta name="twitter:title" content={getTitle()} />
         <meta name="twitter:description" content={getDescription()} />
-        <meta name="twitter:image" content='https://tegro.com/images/tournament-og.jpg' />
+        <meta name="twitter:image" content='https://tegro.com/images/tournament-tt-og.jpg' />
       </Head>
   )
 }

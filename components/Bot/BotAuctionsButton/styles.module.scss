@@ -42,6 +42,17 @@
     &:active {
       background: linear-gradient(180deg, #B45309 -6.02%, #F59E0B 85.68%);
     }
+
+    &.disabled,
+    &.disabled:active {
+      border-color: #8B8B8B;
+      background: #8B8B8B;
+      cursor: not-allowed;
+
+      &.disabled:hover:before {
+        opacity: 0;
+      }
+    }
   }
 
   &.ongoing {

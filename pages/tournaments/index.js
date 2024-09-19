@@ -58,6 +58,16 @@ const Tournaments = () => {
     }
   }
 
+  const handleExchangeAddress = (tournament, address) => () => {
+    Amplitude.event(`Tournament Trade ${tournament.name}`, {
+      'Page': Amplitude.page(),
+    })
+
+    const contract = tournament.contracts.find(item => item.address.toLowerCase() == address.toLowerCase())
+    dispatch($token.set.current({}))
+    router.push(`/exchange/${WagmiHelper.getChainCodeById(contract.chain_id)}/${address.toLowerCase()}`)
+  }
+
   const getColor = (position, reward) => {
     switch (position) {
       case 1: return '#E3A951'
@@ -237,7 +247,24 @@ const Tournaments = () => {
                             )}
     
                             {tournament.status == 'on-going' ? (
-                              <App.Button primary2 onClick={handleExchange(tournament)}>Trade now</App.Button>
+                              tournament.alias == 'alpha-trader-s1' ? (
+                                <App.Flex direction={['row', 'column']} gap={8}>
+                                  <App.Button primary2 onClick={handleExchangeAddress(tournament, '0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4')}>Trade $TOSHI</App.Button>
+                                  <App.Button primary2 onClick={handleExchangeAddress(tournament, '0xc2fe011c3885277c7f0e7ffd45ff90cadc8ecd12')}>Trade $PONCHO</App.Button>
+                                </App.Flex>
+                              ) : tournament.alias == 'alpha-trader-s2' ? (
+                                <App.Flex direction={['row', 'column']} gap={8}>
+                                  <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x532f27101965dd16442e59d40670faf5ebb142e4')}>Trade $BRETT</App.Button>
+                                  <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42')}>Trade $EURC</App.Button>
+                                </App.Flex>
+                              ) : tournament.alias == 'alpha-trader-s3' ? (
+                                <App.Flex direction={['row', 'column']} gap={8}>
+                                  <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42')}>Trade $EURC</App.Button>
+                                  <App.Button primary2 onClick={handleExchangeAddress(tournament, '0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4')}>Trade $TOSHI</App.Button>
+                                </App.Flex>
+                              ) : (
+                                <App.Button primary2 onClick={handleExchange(tournament)}>Trade now</App.Button>
+                              )
                             ) : (
                               <App.Button primary2 outlined fullWidth={isMobile} href="https://discord.com/invite/tegro"><App.Icon icon="discord2" />Join Discord {tournament.status == 'closed' ? 'To Claim Rewards' : ''}</App.Button>
                             )}
@@ -256,7 +283,7 @@ const Tournaments = () => {
     
                             <App.Flex gap={4} flex={1} center>
                               <App.Text center weight={400} height={1} color="#A6DC37">Gems{isMobile ? '' : ' Earned'}</App.Text>
-                              <App.Tooltip variant="v2" click={isMobile} text={getTooltip(tournament.currency)} placement={isMobile ? 'bottom' : 'right'}>
+                              <App.Tooltip variant="v2" click={isMobile} text={getTooltip(tournament.specialCurrency)} placement={isMobile ? 'bottom' : 'right'}>
                                 <App.Icon icon="info2" />
                               </App.Tooltip>
                             </App.Flex>
@@ -327,8 +354,25 @@ const Tournaments = () => {
     
                         {tournament.status == 'on-going' && tournament.leaderboard.filter(item => item.points > 0).length <= 5 ? (
                           <App.Flex direction={['row', 'column']} center gap={24}>
-                            <App.Text center size={20} weight={400} height={1}>{`Trade ${tournament.currency} to start collecting gems 🚀`}</App.Text>
-                            <App.Button secondary2 outlined onClick={handleExchange(tournament)}>{`Trade ${tournament.currency}`}</App.Button>
+                            <App.Text center size={20} weight={400} height={1}>{`Trade ${tournament.specialCurrency} to start collecting gems 🚀`}</App.Text>
+                            {tournament.alias == 'alpha-trader-s1' ? (
+                              <App.Flex direction={['row', 'column']} gap={8}>
+                                <App.Button secondary2 outlined onClick={handleExchangeAddress(tournament, '0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4')}>Trade $TOSHI</App.Button>
+                                <App.Button secondary2 outlined onClick={handleExchangeAddress(tournament, '0xc2fe011c3885277c7f0e7ffd45ff90cadc8ecd12')}>Trade $PONCHO</App.Button>
+                              </App.Flex>
+                            ) : tournament.alias == 'alpha-trader-s2' ? (
+                              <App.Flex direction={['row', 'column']} gap={8}>
+                                <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x532f27101965dd16442e59d40670faf5ebb142e4')}>Trade $BRETT</App.Button>
+                                <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42')}>Trade $EURC</App.Button>
+                              </App.Flex>
+                            ) : tournament.alias == 'alpha-trader-s3' ? (
+                              <App.Flex direction={['row', 'column']} gap={8}>
+                                <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42')}>Trade $EURC</App.Button>
+                                <App.Button primary2 onClick={handleExchangeAddress(tournament, '0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4')}>Trade $TOSHI</App.Button>
+                              </App.Flex>
+                            ) : (
+                              <App.Button secondary2 outlined onClick={handleExchange(tournament)}>{`Trade ${tournament.currency}`}</App.Button>
+                            )}
                           </App.Flex>
                         ) : null}
                       </App.Flex>
