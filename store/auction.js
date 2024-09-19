@@ -240,7 +240,9 @@ export const auctionSlice = createSlice({
     },
 
     earnings: (state, { payload }) => {
-      state.earnings = payload.map(item => template(item))
+      const temp = payload.map(item => template(item))
+      temp.sort((a, b) => b.startsIn - a.startsIn)
+      state.earnings = temp
     },
 
     debug: (state, { payload }) => {
