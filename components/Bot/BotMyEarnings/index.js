@@ -85,20 +85,28 @@ const MyEarnings = () => {
                         <App.Text className={styles.claimItemSecondarytext}>{moment(item.startsIn).format('DD-MM-YYYY')}</App.Text>
                       </App.Flex>
                       <App.Text className={styles.claimItemText}>{item.currentPrice + ' ' + item.token.currency}</App.Text>
-                      <App.Text className={styles.claimItemText}>
-                        <Timer claimTime={item.claimTime} />
-                      </App.Text>
+
+                      <App.Flex justify="flex-end" width={80}>
+                        <App.Text className={styles.claimItemText}>
+                          <Timer claimTime={item.claimTime} />
+                        </App.Text>
+                      </App.Flex>
                     </App.Flex>
 
-                    {
-                      user?.user
-                        ? <App.Button fullWidth primary2 onClick={() => handleClaim(item.id)}>
-                            <App.Text>Claim</App.Text>
-                          </App.Button>
-                        : <App.Button fullWidth primary2 onClick={handleConnect}>
-                            <App.Text>Connect wallet to Claim</App.Text>
-                          </App.Button>
-                    }
+                    {item.claimHash == '' ? (
+                      user?.user ? (
+                        <App.Button fullWidth primary2 onClick={() => handleClaim(item.id)}>Claim</App.Button>
+                      ) : (
+                        <App.Button fullWidth primary2 onClick={handleConnect}>
+                          <App.Text>Connect wallet to Claim</App.Text>
+                        </App.Button>
+                      )
+                    ) : (
+                      <App.Flex fullWidth center gap={4} className={styles.claimed}>
+                        <App.Icon icon="check" />
+                        <App.Text size={14} weight={700} height={1}>Claimed</App.Text>
+                      </App.Flex>
+                    )}
                   </App.Flex>
                 ))
                 : <App.Text>No earnings</App.Text>

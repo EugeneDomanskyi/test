@@ -2,21 +2,24 @@ import React, { useEffect, useState } from 'react'
 import moment from 'moment'
 
 const BotTimer = ({ claimTime }) => {
-  const [timeLeft, setTimeLeft] = useState(moment(claimTime).diff(moment()))
+  const [timeLeft, setTimeLeft] = useState(claimTime > 0 ? moment(claimTime).diff(moment()) : 0)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const now = moment()
-      const duration = moment(claimTime).diff(now)
-      setTimeLeft(duration)
-    }, 1000)
+    if (claimTime > 0) {
+      const interval = setInterval(() => {
+        const now = moment()
+        const duration = moment(claimTime).diff(now)
+        setTimeLeft(duration)
+      }, 1000)
 
-    return () => clearInterval(interval)
+      return () => clearInterval(interval)
+    }
   }, [claimTime])
 
   const formatTime = (milliseconds) => {
-    // const duration = moment.utc(milliseconds).format('HH:mm:ss');
-    // console.log('formattedTime', formattedTime);
+    if (milliseconds == 0) {
+      return '---'
+    }
     
     
     const duration = moment.duration(milliseconds)
