@@ -84,16 +84,22 @@ const AuctionClaim = () => {
     const price = parseUnits(item.currentPrice, item.token.decimals)
 
     const txid = await WagmiHelper.transfer(item.token.address, item.claimContract, price)
+    console.log('Transaction ID received', txid)
     dispatch($auction.set.debug(`txid: ${txid.error ? txid.error : txid}`))
     
     if (txid && !txid.error) {
       setStep(2)
+      console.log('Sending Transaction ID to BE (for example)', txid)
 
+      console.log('Start listen the Transaction result')
       const temp = await WagmiHelper.waitForTransaction(txid)
       dispatch($auction.set.debug(`waitForTransaction: ${temp.error ? temp.error : temp}`))
 
       if (temp && !temp.error) {
+        console.log('Transaction was success', temp)
+
         setStep(3)
+        console.log('Call claim endpoint')
         const result = await $gem.api.claimTelegram({
           auction_id: item.id,
           tx_hash: txid,
@@ -115,7 +121,11 @@ const AuctionClaim = () => {
         } else {
           dispatch($alert.set.error({text: result?.error}))
         }
+      } else {
+        console.log('Transaction result error', temp.error)
       }
+    } else {
+      console.log('TXID error', txid.error)
     }
 
     setLoading(false)
