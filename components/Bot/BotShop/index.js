@@ -15,9 +15,7 @@ const shopItems = [
   {
     title: 'Pile Of Gems',
     gems: 1000,
-    price: 1,
-    // REMOVE-ON-PROD
-    // price: typeof window != 'undefined' ? (TelegramBot.host() == 'tegro.com' ? 500 : 1) : 500,
+    price: typeof window != 'undefined' ? (TelegramBot.host() == 'tegro.com' ? 500 : 1) : 500,
     image: '/images/bot/shop-gems-1.png',
   },
   {
