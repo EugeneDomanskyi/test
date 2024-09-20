@@ -36,6 +36,7 @@ const BotWrapper = ({ children }) => {
       if (document.visibilityState === 'visible') {
         fetchUser()
         fetchAuctions()
+        fetchEarnings()
       }
     }
 
@@ -68,6 +69,13 @@ const BotWrapper = ({ children }) => {
     const result = await $auction.api.allTelegram()
     if (result && !result.error) {
       dispatch($auction.set.all(result))
+    }
+  }
+
+  const fetchEarnings = async () => {
+    const result = await $auction.api.earnings()
+    if (result && !result?.error) {
+      dispatch($auction.set.earnings(result))
     }
   }
 
