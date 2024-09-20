@@ -247,7 +247,7 @@ You don't wanna miss these insane deals! ✨
                     <App.Flex className={cn(styles.line, {[styles.active]: step >= 4})} />
 
                     <App.Flex center width={100} className={cn(styles.text, styles.second)}>
-                      <App.Text size={12} weight={400} height={1} color={step >= 4 ? '#fff' : '#9a9a9a'}>{t('Confirm NFT')}</App.Text>
+                      <App.Text size={12} weight={400} height={1} color={step >= 4 ? '#fff' : '#9a9a9a'}>{t('Confirm Deposit')}</App.Text>
                     </App.Flex>
                   </App.Flex>
                 </App.Flex>
