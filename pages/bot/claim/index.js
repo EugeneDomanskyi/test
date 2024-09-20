@@ -59,7 +59,10 @@ const AuctionClaim = () => {
   useEffect(() => {
     if (user && item) {
       const username = item.wallet;
-      const matchingUser = user.external_users.find(user => user.metadata.username === username);
+      const matchingUser = user.external_users.find(user => {
+        const name = user.metadata.username != '' ? user.metadata.username : user.metadata.first_name
+        return name === username
+      })
 
       if (matchingUser) {
         setLoadingPage(false)
