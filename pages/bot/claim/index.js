@@ -84,16 +84,22 @@ const AuctionClaim = () => {
     const price = parseUnits(item.currentPrice, item.token.decimals)
 
     const txid = await WagmiHelper.transfer(item.token.address, item.claimContract, price)
+    console.log('Transaction ID received', txid)
     dispatch($auction.set.debug(`txid: ${txid.error ? txid.error : txid}`))
     
     if (txid && !txid.error) {
       setStep(2)
+      console.log('Sending Transaction ID to BE (for example)', txid)
 
+      console.log('Start listen the Transaction result')
       const temp = await WagmiHelper.waitForTransaction(txid)
       dispatch($auction.set.debug(`waitForTransaction: ${temp.error ? temp.error : temp}`))
 
       if (temp && !temp.error) {
+        console.log('Transaction was success', temp)
+
         setStep(3)
+        console.log('Call claim endpoint')
         const result = await $gem.api.claimTelegram({
           auction_id: item.id,
           tx_hash: txid,
@@ -115,7 +121,11 @@ const AuctionClaim = () => {
         } else {
           dispatch($alert.set.error({text: result?.error}))
         }
+      } else {
+        console.log('Transaction result error', temp.error)
       }
+    } else {
+      console.log('TXID error', txid.error)
     }
 
     setLoading(false)
@@ -247,7 +257,7 @@ You don't wanna miss these insane deals! ✨
                     <App.Flex className={cn(styles.line, {[styles.active]: step >= 4})} />
 
                     <App.Flex center width={100} className={cn(styles.text, styles.second)}>
-                      <App.Text size={12} weight={400} height={1} color={step >= 4 ? '#fff' : '#9a9a9a'}>{t('Confirm NFT')}</App.Text>
+                      <App.Text size={12} weight={400} height={1} color={step >= 4 ? '#fff' : '#9a9a9a'}>{t('Confirm Deposit')}</App.Text>
                     </App.Flex>
                   </App.Flex>
                 </App.Flex>
