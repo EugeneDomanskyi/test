@@ -16,8 +16,6 @@ const Wallet = () => {
 
   const { wallet, connection, connect } = useWagmiHelper()
 
-  const userRegistered = useSelector(({ $app }) => $app.userRegistered)
-
   const [disconnected, setDisconnected] = useState(false)
 
   useEffect(() => {
@@ -28,17 +26,15 @@ const Wallet = () => {
     }
   }, [connection, disconnected])
 
-  useEffect(() => {    
-    if ((userRegistered && hash) || (wallet && hash)) {
+  useEffect(() => {
+    if (hash && wallet) {
       handleAssignWallet()
     }
-  }, [userRegistered, wallet])
+  }, [hash, wallet])
 
   const handleAssignWallet = async () => {
-    const assignRes = await $bot.api.assignWalletToUser({wallet_address: wallet, hash})
-    if (assignRes && ! assignRes.error) {
-      handleBackToMiniApp()
-    }
+    await $bot.api.assignWalletToUser({wallet_address: wallet, hash})
+    handleBackToMiniApp()
   }
 
   const handleConnect = async () => {

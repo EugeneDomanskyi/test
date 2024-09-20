@@ -8,6 +8,7 @@ import cn from 'classnames'
 import Amplitude from '@/libs/amplitude.lib'
 import WagmiHelper from '@/libs/WagmiHelper'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
+import TelegramBot from '@/libs/TelegramBot'
 
 import $app from 'store/app'
 import $gem from 'store/gem'

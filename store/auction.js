@@ -326,6 +326,12 @@ export const get = {
     }
     return null
   }),
+
+  earningToBeClaimedCount: createSelector([
+    state => state.$auction.earnings,
+  ], (earnings) => {
+    return earnings.filter(item => item.claimHash == '').length
+  }),
 }
 
 export const api = {
