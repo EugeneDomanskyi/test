@@ -102,7 +102,7 @@ class TelegramBot {
 
   openLink = (url: string) => {
     if (this.app) {
-      this.app.openLink(url, {try_browser: true})
+      this.app.openLink(url, {try_browser: 'chrome'})
     }
   }
 
