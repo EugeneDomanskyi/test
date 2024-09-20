@@ -48,7 +48,7 @@ const BotAuctions = () => {
 
   const fetchAuctions = async () => {
     const result = await $auction.api.allTelegram()
-    if (result) {
+    if (result && !result.error) {
       dispatch($auction.set.all(result))
     }
 
@@ -62,7 +62,7 @@ const BotAuctions = () => {
     }
 
     const result = await $auction.api.getTelegram(data.id)
-    if (result) {
+    if (result && !result.error) {
       dispatch($auction.set.update(result))
     }
   }

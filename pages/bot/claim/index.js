@@ -59,7 +59,10 @@ const AuctionClaim = () => {
   useEffect(() => {
     if (user && item) {
       const username = item.wallet;
-      const matchingUser = user.external_users.find(user => user.metadata.username === username);
+      const matchingUser = user.external_users.find(user => {
+        const name = user.metadata.username != '' ? user.metadata.username : user.metadata.first_name
+        return name === username
+      })
 
       if (matchingUser) {
         setLoadingPage(false)
@@ -87,6 +90,7 @@ const AuctionClaim = () => {
 
       const temp = await WagmiHelper.waitForTransaction(txid)
       dispatch($auction.set.debug(`waitForTransaction: ${temp.error ? temp.error : temp}`))
+
       if (temp && !temp.error) {
         setStep(3)
         const result = await $gem.api.claimTelegram({
@@ -108,7 +112,7 @@ const AuctionClaim = () => {
           
           return
         } else {
-          //dispatch($alert.set.error({title: result?.error}))
+          dispatch($alert.set.error({text: result?.error}))
         }
       }
     }
@@ -198,7 +202,7 @@ You don't wanna miss these insane deals! ✨
   }
 
   const handleReturnToApp = () => {
-    window.location.href = 'tg://resolve?domain=local_tegro_bot'
+    window.location.href = `tg://resolve?domain=${TelegramBot.domain()}`
   }
 
   const handleConnect = async () => {

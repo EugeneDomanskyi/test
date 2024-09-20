@@ -30,7 +30,7 @@ const BotEarn = () => {
 
   const handleClaim = (type) => async () => {
     const result = await $bot.api.claim({type})
-    if (result) {
+    if (result && !result.error) {
       dispatch($bot.set.user(result))
     } else {
       if (type == 'join_telegram_group') {

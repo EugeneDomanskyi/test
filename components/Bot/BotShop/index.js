@@ -15,7 +15,9 @@ const shopItems = [
   {
     title: 'Pile Of Gems',
     gems: 1000,
-    price: typeof window != 'undefined' ? (TelegramBot.host() == 'tegro.com' ? 500 : 1) : 500,
+    price: 1,
+    // REMOVE-ON-PROD
+    // price: typeof window != 'undefined' ? (TelegramBot.host() == 'tegro.com' ? 500 : 1) : 500,
     image: '/images/bot/shop-gems-1.png',
   },
   {
@@ -69,7 +71,7 @@ const BotShop = () => {
 
   const fetchUser = async () => {
     const result = await $bot.api.user({referral_code: ''})
-    if (result) {
+    if (result && !result.error) {
       dispatch($bot.set.user(result))
     }
   }
