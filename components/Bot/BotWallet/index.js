@@ -46,7 +46,7 @@ const BotWallet = () => {
 
   const handleDisconnect = async () => {
     const result = await $bot.api.unassign()
-    if (result) {
+    if (result && !result.error) {
       dispatch($bot.set.user(result))
       setShowDropdown(false)
     }

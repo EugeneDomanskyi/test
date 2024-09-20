@@ -71,7 +71,7 @@ const BotShop = () => {
 
   const fetchUser = async () => {
     const result = await $bot.api.user({referral_code: ''})
-    if (result) {
+    if (result && !result.error) {
       dispatch($bot.set.user(result))
     }
   }
