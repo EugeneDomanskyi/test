@@ -202,7 +202,7 @@ You don't wanna miss these insane deals! ✨
   }
 
   const handleReturnToApp = () => {
-    window.location.href = 'tg://resolve?domain=local_tegro_bot'
+    window.location.href = `tg://resolve?domain=${TelegramBot.domain()}`
   }
 
   const handleConnect = async () => {
