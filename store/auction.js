@@ -241,7 +241,15 @@ export const auctionSlice = createSlice({
 
     earnings: (state, { payload }) => {
       const temp = payload.map(item => template(item))
-      temp.sort((a, b) => b.startsIn - a.startsIn)
+      temp.sort((a, b) => {
+        if (a.claimHash === '' && b.claimHash !== '') return -1
+        if (a.claimHash !== '' && b.claimHash === '') return 1
+        if (a.claimHash === '' && b.claimHash === '') {
+          return a.claimTime - b.claimTime
+        }
+
+        return b.startsIn - a.startsIn
+      })
       state.earnings = temp
     },
 
