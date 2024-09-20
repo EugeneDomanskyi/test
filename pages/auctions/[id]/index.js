@@ -37,12 +37,16 @@ const GemsAuctionInfo = () => {
   const claim = useSelector(({ $gem }) => $gem.claim)
   const claimItem = useSelector($gem.get.claimItem)
 
-  useEffect(() => {
+  useEffect(() => {    
     document.addEventListener('visibilitychange', handleVisible)
     return () => {
       document.removeEventListener('visibilitychange', handleVisible)
     }
   }, [wallet])
+
+  useEffect(() => {    
+    console.log('GemsAuctionInfo useEffect', item);
+  }, [item])
 
   useEffect(() => {
     if (socketConnected) {
@@ -72,14 +76,17 @@ const GemsAuctionInfo = () => {
   }
 
   const handleUpdatedAuction = (data) => {
-    dispatch($gem.set.auctionUpdated({data: { auction: data }, wallet}))
-
-    if (data.last_bidder.wallet_address.toLowerCase() != wallet) {
-      const bidWallet = data.last_bidder.wallet_address.toLowerCase()
-      const address = `0x...${bidWallet.substring(bidWallet.length - 4)}`
-      const price = formatUnits(data.last_bid_price, data.auction_token.decimals)
-      const currency = data.auction_token.symbol.toUpperCase()
-      dispatch($alert.set.info({ text: t(`${address} placed a bid for ${price} ${currency}.`) }))
+    if (data && data.type && data.type == 1) {
+      dispatch($gem.set.auctionUpdated({data: { auction: data }, wallet}))
+      console.log('handleUpdatedAuction', data);
+      
+      if (data.last_bidder.wallet_address.toLowerCase() != wallet) {
+        const bidWallet = data.last_bidder.wallet_address.toLowerCase()
+        const address = `0x...${bidWallet.substring(bidWallet.length - 4)}`
+        const price = formatUnits(data.last_bid_price, data.auction_token.decimals)
+        const currency = data.auction_token.symbol.toUpperCase()
+        dispatch($alert.set.info({ text: t(`${address} placed a bid for ${price} ${currency}.`) }))
+      }
     }
   }
 

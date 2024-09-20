@@ -1,12 +1,16 @@
 
 import { configureStore } from '@reduxjs/toolkit'
 
+import TelegramBot from '@/libs/TelegramBot'
+
 import $app, { appSlice } from './app'
 import $alert from './alert'
 import $token from './token'
 import $orders from './orders'
 import $portfolio from './portfolio'
 import $gem from './gem'
+import $bot from './bot'
+import $auction from './auction'
 
 const createStore = (initialData) => {
   let preloadedState = {}
@@ -36,6 +40,8 @@ const createStore = (initialData) => {
       $orders: $orders.reducer,
       $portfolio: $portfolio.reducer,
       $gem: $gem.reducer,
+      $bot: $bot.reducer,
+      $auction: $auction.reducer,
     },
 
     preloadedState,
@@ -53,6 +59,10 @@ export const request = async (uri, method = 'GET', {api, jwt_token, ...data} = {
     headers: {
       'Accept': 'application/json',
     },
+  }
+
+  if (TelegramBot.getInitData()) {
+    options.headers['X-Init-Data'] = TelegramBot.getInitData()
   }
 
   if (jwt_token) {
@@ -139,6 +149,8 @@ const getBaseUrl = (api) => {
       return process.env.NEXT_PUBLIC_EXCHANGE_URL
     case 'orderbook':
       return process.env.NEXT_PUBLIC_ORDERBOOK_URL
+    case 'bot':
+      return process.env.NEXT_PUBLIC_BOT_URL
     default:
       return process.env.NEXT_PUBLIC_BACKEND_URL
   }

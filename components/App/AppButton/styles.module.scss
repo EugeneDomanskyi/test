@@ -185,6 +185,72 @@
     }
   }
 
+  &.bot {
+    height: 40px;
+    background-color: #6B41EB;
+    border-color: #6B41EB;
+    border-radius: 100px;
+    padding: 0 16px;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 25px;
+    border-radius: 12px;
+
+    &.small {
+      padding: 0 8px;
+      height: 37px;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1;
+      border-radius: 6px;
+    }
+
+    &.large {
+      padding: 0 16px;
+      height: 48px;
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1;
+      border-radius: 12px;
+    }
+
+    &.active:not(:disabled),
+    &:hover:not(:disabled) {
+      background-color: #6B41EB;
+      border-color: #6B41EB;
+    }
+
+    &.outlined {
+      background: transparent;
+    }
+  }
+
+  &.bot-default {
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.07);
+    border-color: transparent;
+    border-radius: 100px;
+    padding: 0 16px;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 25px;
+    border-radius: 12px;
+
+    &.small {
+      padding: 0 8px;
+      height: 36px;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1;
+      border-radius: 6px;
+    }
+
+    &.active:not(:disabled),
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.14);
+    }
+  }
+
   &.twitter {
     height: 40px;
     background: linear-gradient(180deg, #1DA1F2 -6.02%, #068ADB 85.68%);

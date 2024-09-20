@@ -141,7 +141,9 @@ const GemsLiquidityOrders = ({ loading }) => {
                       <App.Flex width={180} column gap={4} center>
                         <App.Flex row center gap={6}>
                           <App.Flex center sx={{ position: 'relative' }}>
-                            <Image src={image} width={24} height={24} alt="" />
+                            {image ? (
+                              <Image src={image} width={24} height={24} alt="" />
+                            ) : null}
                             <App.Flex center sx={{ position: 'absolute', top: 0, left: -6, }}>
                               {image ? (
                                 <Image src={`/images/icon-${chainCode}.png`} width={12} height={12} alt="" />
@@ -191,7 +193,9 @@ const GemsLiquidityOrders = ({ loading }) => {
                       <App.Flex width={128} column gap={4} center>
                         <App.Flex row center gap={6}>
                           <App.Flex center sx={{ position: 'relative' }}>
-                            <Image src={item.market.image} width={24} height={24} alt="" />
+                            {item.market.image ? (
+                              <Image src={item.market.image} width={24} height={24} alt="" />
+                            ) : null}
                             <App.Flex center sx={{ position: 'absolute', top: 0, left: -6, }}>
                               <Image src={`/images/icon-${chainCode}.png`} width={12} height={12} alt="" />
                             </App.Flex>

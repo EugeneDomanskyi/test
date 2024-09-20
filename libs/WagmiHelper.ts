@@ -547,6 +547,7 @@ class WagmiHelper {
       return result
     } catch (error) {
       this.error('Approve amount failed', error)
+      return {error}
       return null
     }
   }
@@ -588,6 +589,7 @@ class WagmiHelper {
       return hash
     } catch (error) {
       this.error('Wait for transaction failed', error)
+      return {error}
       return null
     }
   }
