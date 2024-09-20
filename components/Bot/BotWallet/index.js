@@ -46,7 +46,7 @@ const BotWallet = () => {
 
   const handleDisconnect = async () => {
     const result = await $bot.api.unassign()
-    if (result) {
+    if (result && !result.error) {
       dispatch($bot.set.user(result))
       setShowDropdown(false)
     }
@@ -86,21 +86,27 @@ const BotWallet = () => {
                 <App.Text size={12}>{copied ? 'Copied' : 'Copy Wallet Address'}</App.Text>
               </App.Flex>
 
-              {TelegramBot.host() != 'tegro.com' ? (
+              {/* {TelegramBot.host() != 'tegro.com' ? (
                 <App.Flex className={styles.menuItem} onClick={handleDisconnect}>
                   <App.Icon icon="logout2" color="#B9B8C5" width={12} height={12} />
                   <App.Text size={12}>Logout</App.Text>
                 </App.Flex>
-              ) : null}
+              ) : null} */}
+
+              <App.Flex className={styles.menuItem} onClick={handleDisconnect}>
+                  <App.Icon icon="logout2" color="#B9B8C5" width={12} height={12} />
+                  <App.Text size={12}>Logout</App.Text>
+                </App.Flex>
             </App.Flex>
           </App.Flex>
         ) : (
           <App.Button variant="bot" small outlined onClick={handleConnect}><App.Icon icon="wallet-bot" /> Connect Wallet</App.Button>
         )}
 
-        {TelegramBot.host() != 'tegro.com' ? (
+        {/* {TelegramBot.host() != 'tegro.com' ? (
           <App.Button variant="bot-default" small onClick={handleCopyInitData}>Copy initData</App.Button>
-        ) : null}
+        ) : null} */}
+        <App.Button variant="bot-default" small onClick={handleCopyInitData}>Copy initData</App.Button>
       </App.Flex>
     </App.Flex>
   )

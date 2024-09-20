@@ -59,14 +59,14 @@ const BotWrapper = ({ children }) => {
 
   const fetchUser = async () => {
     const result = await $bot.api.user({referral_code: ''})
-    if (result) {
+    if (result && !result.error) {
       dispatch($bot.set.user(result))
     }
   }
 
   const fetchAuctions = async () => {
     const result = await $auction.api.allTelegram()
-    if (result) {
+    if (result && !result.error) {
       dispatch($auction.set.all(result))
     }
   }
