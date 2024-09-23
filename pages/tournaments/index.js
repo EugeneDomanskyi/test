@@ -262,6 +262,11 @@ const Tournaments = () => {
                                   <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42')}>Trade $EURC</App.Button>
                                   <App.Button primary2 onClick={handleExchangeAddress(tournament, '0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4')}>Trade $TOSHI</App.Button>
                                 </App.Flex>
+                              ) : tournament.alias == 'og-trader-s1' ? (
+                                <App.Flex direction={['row', 'column']} gap={8}>
+                                  <App.Button primary2 onClick={handleExchangeAddress(tournament, '0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf')}>Trade $cbBTC</App.Button>
+                                  <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x4200000000000000000000000000000000000006')}>Trade $WETH</App.Button>
+                                </App.Flex>
                               ) : (
                                 <App.Button primary2 onClick={handleExchange(tournament)}>Trade now</App.Button>
                               )
@@ -369,6 +374,11 @@ const Tournaments = () => {
                               <App.Flex direction={['row', 'column']} gap={8}>
                                 <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42')}>Trade $EURC</App.Button>
                                 <App.Button primary2 onClick={handleExchangeAddress(tournament, '0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4')}>Trade $TOSHI</App.Button>
+                              </App.Flex>
+                            ) : tournament.alias == 'og-trader-s1' ? (
+                              <App.Flex direction={['row', 'column']} gap={8}>
+                                <App.Button primary2 onClick={handleExchangeAddress(tournament, '0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf')}>Trade $cbBTC</App.Button>
+                                <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x4200000000000000000000000000000000000006')}>Trade $WETH</App.Button>
                               </App.Flex>
                             ) : (
                               <App.Button secondary2 outlined onClick={handleExchange(tournament)}>{`Trade ${tournament.currency}`}</App.Button>
