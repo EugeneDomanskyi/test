@@ -101,7 +101,7 @@ const TournamentBanner = ({ tournament }) => {
           </App.Flex>
         </App.Flex>
 
-        <App.Text size={14} weight={600} height={1} color="#FFFFFF99">Activate streaks with daily min. trade vol. of $300!</App.Text>
+        <App.Text size={14} weight={600} height={1} color="#FFFFFF99">Activate streaks with daily min. trade vol. of $150!</App.Text>
       </App.Flex>
     </App.Flex>
   )
