@@ -13,7 +13,7 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const BotAuctionsButton = ({ item }) => {
+const BotAuctionsButton = ({ item, onClaim }) => {
   const { t } = useTranslation()
 
   const dispatch = useDispatch()
@@ -28,7 +28,7 @@ const BotAuctionsButton = ({ item }) => {
     switch (item.status) {
       case 'upcoming': return 'Bid Now'
       case 'ongoing': return 'Bid Now'
-      case 'closed': return item.current && item.claimHash == '' ? (user?.user ? 'Proceed to checkout' : 'Connect wallet to Claim') : 'Auction Ended'
+      case 'closed': return item.current && item.claimHash == '' ? 'Proceed to checkout' : 'Auction Ended'
     }
   }
 
@@ -61,20 +61,8 @@ const BotAuctionsButton = ({ item }) => {
     }
 
     if (item.status == 'closed') {
-      if (item.current && item.claimHash == '' && item.isClaimable) {
-        if (user?.user) {
-          TelegramBot.openLink(`https://${TelegramBot.host()}/bot/claim?id=${item.id}`)
-        } else {
-          const hashRes = await $bot.api.generateWalletHash()
-          const hash = hashRes?.hash || ''
-
-          TelegramBot.showPopup('Connect Wallet', 'You will be redirect to Tegro website to connect Base wallet', [{ id: 'ok', type: 'ok', text: 'Ok' }])
-          TelegramBot.on('popupClosed', (response) => {
-            if (response.button_id === 'ok' && hash) {
-              TelegramBot.openLink(`https://${TelegramBot.host()}/bot/wallet?hash=${hash}`)
-            }
-          })
-        }
+      if (item.current) {
+        onClaim(item)
       }
     }
 

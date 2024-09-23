@@ -82,6 +82,7 @@ const template = (item) => {
     history,
     bidsCount: item?.total_bids ?? 0,
     claimContract: auction.auction_amount_receiver,
+    txHash: auction.tx_hash,
     claimHash: auction.claim_tx_hash,
     claimTime,
     isClaimable,
@@ -375,6 +376,10 @@ export const api = {
 
   clear: (id) => {
     return request(`auction/clear/${id}`, 'POST', {api: 'bid'})
+  },
+
+  txHash: (params) => {
+    return request(`auction/tx`, 'POST', {api: 'bid', ...params})
   },
 
   claim: (params) => {
