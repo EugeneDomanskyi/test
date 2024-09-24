@@ -229,13 +229,30 @@ export const gemSlice = createSlice({
         const temp = value.alias.toLowerCase().split('-')
         value.code = temp[0]
         value.name = value?.title
-        // value.slogan = (`${temp[0]} ${temp[1]} ${value.alias == 'alpha-trader-s1' ? 'series' : ''}`).toUpperCase()
-        // value.specialCurrency = value.alias == 'alpha-trader-s1' ? '$TOSHI & $PONCHO' : `$${value.currency}`
-        // value.slogan = (`${temp[0]} ${temp[1]} ${value.alias == 'alpha-trader-s2' ? 'series 2' : ''}`).toUpperCase()
-        // value.specialCurrency = value.alias == 'alpha-trader-s2' ? '$BRETT & $EURC' : `$${value.currency}`
-        value.slogan = (`${temp[0]} ${temp[1]} ${value.alias == 'alpha-trader-s3' ? 'series 3' : ''}`).toUpperCase()
-        value.specialCurrency = value.alias == 'alpha-trader-s3' ? '$EURC & $TOSHI' : `$${value.currency}`
 
+        switch (value.alias) {
+          case 'alpha-trader-s1':
+            value.slogan = (`${temp[0]} ${temp[1]} series`).toUpperCase()
+            value.specialCurrency = '$TOSHI & $PONCHO'
+            break
+          case 'alpha-trader-s2':
+            value.slogan = (`${temp[0]} ${temp[1]} series 2`).toUpperCase()
+            value.specialCurrency = '$BRETT & $EURC'
+            break
+          case 'alpha-trader-s3':
+            value.slogan = (`${temp[0]} ${temp[1]} series 3`).toUpperCase()
+            value.specialCurrency = '$EURC & $TOSHI'
+            break
+          case 'og-trader-s1':
+            value.slogan = (`${temp[0]} ${temp[1]} s1`).toUpperCase()
+            value.specialCurrency = '$cbBTC & $WETH'
+            break
+          default:
+            value.slogan = (`${temp[0]} ${temp[1]}`).toUpperCase()
+            value.specialCurrency = `$${value.currency}`
+            break
+        }
+console.log(value.slogan)
         switch (key) {
           case 'brett':
             value.name = 'BRETT Brawl'
@@ -289,12 +306,32 @@ export const gemSlice = createSlice({
       const currency = payload.rewards[0].reward_currency ?? ''
       const code = temp[0]
       const name = payload?.title
-      // const slogan = (`${temp[0]} ${temp[1]} ${payload.alias == 'alpha-trader-s1' ? 'series' : ''}`).toUpperCase()
-      // const specialCurrency = payload.alias == 'alpha-trader-s1' ? 'TOSHI & PONCHO' : `$${currency}`
-      // const slogan = (`${temp[0]} ${temp[1]} ${payload.alias == 'alpha-trader-s1' ? 'series 2' : ''}`).toUpperCase()
-      // const specialCurrency = payload.alias == 'alpha-trader-s2' ? '$BRETT & $EURC' : `$${currency}`
-      const slogan = (`${temp[0]} ${temp[1]} ${payload.alias == 'alpha-trader-s3' ? 'series 3' : ''}`).toUpperCase()
-      const specialCurrency = payload.alias == 'alpha-trader-s3' ? '$EURC & $TOSHI' : `$${currency}`
+
+      let slogan = ''
+      let specialCurrency = ''
+      console.log(payload.alias)
+      switch (payload.alias) {
+        case 'alpha-trader-s1':
+          slogan = (`${temp[0]} ${temp[1]} series`).toUpperCase()
+          specialCurrency = '$TOSHI & $PONCHO'
+          break
+        case 'alpha-trader-s2':
+          slogan = (`${temp[0]} ${temp[1]} series 2`).toUpperCase()
+          specialCurrency = '$BRETT & $EURC'
+          break
+        case 'alpha-trader-s3':
+          slogan = (`${temp[0]} ${temp[1]} series 3`).toUpperCase()
+          specialCurrency = '$EURC & $TOSHI'
+          break
+        case 'og-trader-s1':
+          slogan = (`${temp[0]} ${temp[1]} s1`).toUpperCase()
+          specialCurrency = '$cbBTC & $WETH'
+          break
+        default:
+          slogan = (`${temp[0]} ${temp[1]}`).toUpperCase()
+          specialCurrency = `$${currency}`
+          break
+      }
 
       state.currentTournament = {
         ...payload,
