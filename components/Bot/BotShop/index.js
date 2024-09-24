@@ -20,14 +20,14 @@ const shopItems = [
   },
   {
     title: 'Barrel of Gems',
-    gems: 10000,
-    price: 5000,
+    gems: 5000,
+    price: 2500,
     image: '/images/bot/shop-gems-2.png',
   },
   {
     title: 'Chest Full of Gems',
-    gems: 100000,
-    price: 50000,
+    gems: 10000,
+    price: 5000,
     image: '/images/bot/shop-gems-3.png',
   },
 ]

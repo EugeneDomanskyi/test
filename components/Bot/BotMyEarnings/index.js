@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 
-import useWagmiHelper from '@/myhooks/useWagmiHelper'
-import TelegramBot from '@/libs/TelegramBot'
-
 import $auction from '@/store/auction'
 import $bot from '@/store/bot'
 
@@ -13,17 +10,29 @@ import Timer from '@/components/Bot/BotTimer'
 
 import styles from './styles.module.scss'
 
-const MyEarnings = () => {
+const MyEarnings = ({ onClaim }) => {
   const dispatch = useDispatch()
 
   const [loading, setLoading] = useState(true)
+  const [buttonLoading, setButtonLoading] = useState()
 
   const earnings = useSelector(({ $auction }) => $auction.earnings)
   const user = useSelector(({ $bot }) => $bot.user)
 
   useEffect(() => {
     fetchEarnings()
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
   }, [])
+
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === 'visible') {
+      setButtonLoading(null)
+    }
+  }
 
   const fetchEarnings = async () => {
     const result = await $auction.api.earnings()
@@ -34,20 +43,10 @@ const MyEarnings = () => {
     setLoading(false)
   }
   
-  const handleClaim = (id) => {
-    TelegramBot.openLink(`https://${TelegramBot.host()}/bot/claim?id=${id}`)
-  }
-
-  const handleConnect = async () => {
-    const hashRes = await $bot.api.generateWalletHash()
-    const hash = hashRes?.hash || ''
-
-    TelegramBot.showPopup('Connect Wallet', 'You will be redirect to Tegro website to connect Base wallet', [{ id: 'ok', type: 'ok', text: 'Ok' }])
-    TelegramBot.on('popupClosed', (response) => {
-      if (response.button_id === 'ok' && hash) {
-        TelegramBot.openLink(`https://${TelegramBot.host()}/bot/wallet?hash=${hash}`)
-      }
-    })
+  const handleClaim = async (auction) => {
+    setButtonLoading(auction.id)
+    await onClaim(auction)
+    setButtonLoading(null)
   }
   
   const handleBack = () => {
@@ -88,18 +87,20 @@ const MyEarnings = () => {
 
                       <App.Flex justify="flex-end" width={80}>
                         <App.Text className={styles.claimItemText}>
-                          <Timer claimTime={item.claimTime} />
+                          {item.claimTime && item.claimTime.diff(moment()) > 0 ? (
+                            <Timer claimTime={item.claimTime} />
+                          ) : '---'}
                         </App.Text>
                       </App.Flex>
                     </App.Flex>
 
                     {item.claimHash == '' ? (
-                      user?.user ? (
-                        <App.Button fullWidth primary2 onClick={() => handleClaim(item.id)}>Claim</App.Button>
+                      item.claimTime && item.claimTime.diff(moment()) > 0 ? (
+                        <App.Button fullWidth primary2 loading={item.id == buttonLoading} onClick={() => item.id == buttonLoading ? null : handleClaim(item)}>Claim</App.Button>
                       ) : (
-                        <App.Button fullWidth primary2 onClick={handleConnect}>
-                          <App.Text>Connect wallet to Claim</App.Text>
-                        </App.Button>
+                        <App.Flex fullWidth center gap={4} className={styles.claimed}>
+                          <App.Text size={14} weight={700} height={1}>Time&apos;s up</App.Text>
+                        </App.Flex>
                       )
                     ) : (
                       <App.Flex fullWidth center gap={4} className={styles.claimed}>
