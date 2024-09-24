@@ -187,6 +187,7 @@ You don't wanna miss these insane deals! ✨
     setInitCheck(false)
 
     if (wallet) {
+      console.log('Wallet before connect', wallet)
       WagmiHelper.disconnect()
     }
 

@@ -103,7 +103,7 @@ class WagmiHelper {
         currentChainCode = chains[0]?.code
       }
     }
-
+    console.log('currentChainCode', currentChainCode)
     nookies.set(ctx, 'currentChainCode', currentChainCode, {path: '/'})
     return currentChainCode
   }
