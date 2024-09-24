@@ -99,7 +99,7 @@ const MyEarnings = ({ onClaim }) => {
                         <App.Button fullWidth primary2 loading={item.id == buttonLoading} onClick={() => item.id == buttonLoading ? null : handleClaim(item)}>Claim</App.Button>
                       ) : (
                         <App.Flex fullWidth center gap={4} className={styles.claimed}>
-                          <App.Text size={14} weight={700} height={1}>Time's up</App.Text>
+                          <App.Text size={14} weight={700} height={1}>Time&apos;s up</App.Text>
                         </App.Flex>
                       )
                     ) : (
