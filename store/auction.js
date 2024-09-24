@@ -21,7 +21,8 @@ const template = (item) => {
     }
   }
 
-  const lastBidderWallet = auction.last_bidder.user_identifier.toLowerCase() || null
+  const userIdentifier = auction.last_bidder.user_identifier
+  const lastBidderWallet = (userIdentifier.startsWith('0x') ? userIdentifier.toLowerCase() : userIdentifier) || null
   const marketPrice = Number(item.auction_value)
   const startPrice = formatUnits(auction.start_price.toString(), 6)
   const currentPrice = formatUnits((auction.last_bid_price > 0 ? auction.last_bid_price : auction.start_price).toString(), 6)
