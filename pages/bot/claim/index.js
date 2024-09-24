@@ -133,7 +133,6 @@ const AuctionClaim = () => {
 
     const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app' || (window.location.hostname == 'testnet.tegro.com' && item.id >= 3)) ? 'base' : 'amoy' 
     const network = await WagmiHelper.changeChain(chainCode)
-    console.log(network)
     if (!network) {
       setLoading(false)
       dispatch($alert.set.error({title: 'Something went wrong'}))
