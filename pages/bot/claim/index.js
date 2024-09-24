@@ -141,6 +141,7 @@ const AuctionClaim = () => {
     dispatch($app.set.code(chainCode))
 
     const balance = await WagmiHelper.balanceOf(item.token.address, chainCode)
+    console.log('Balance is ', balance)
     if (balance && balance >= item.currentPrice) {
       setStep(1)
     } else {
