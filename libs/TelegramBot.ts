@@ -47,28 +47,28 @@ class TelegramBot {
 
   getUsername = () => {
     const initData = this.getInitData()
-    const params = new URLSearchParams(initData);
+    const params = new URLSearchParams(initData)
 
     // Get the encoded user field
-    const encodedUser = params.get('user');
+    const encodedUser = params.get('user')
     if (!encodedUser) {
-      return null;
+      return null
     }
 
     // Decode the user field
-    const decodedUser = decodeURIComponent(encodedUser);
+    const decodedUser = decodeURIComponent(encodedUser)
 
     // Parse the decoded user field as JSON
-    let user = null;
+    let user = null
     try {
-      user = JSON.parse(decodedUser);
+      user = JSON.parse(decodedUser)
     } catch (error) {
-      console.error('Failed to parse user JSON:', error);
-      return null;
+      console.error('Failed to parse user JSON:', error)
+      return null
     }
 
     // Extract and return the username
-    return user.username || null;
+    return user.username ?? user.first_name ?? null
   }
 
   validateInitData = (initData: string) => {

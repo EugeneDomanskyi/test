@@ -84,7 +84,7 @@ const AuctionClaim = () => {
     
     if (txid && !txid.error) {
       console.log('Sending Transaction ID to BE', txid)
-      $auction.api.txHash({ tx_hash: txid, hash })
+      $auction.api.txHash({ auction_id: item.id, tx_hash: txid, external_user_hash: hash })
 
       setStep(2)
 
@@ -99,8 +99,7 @@ const AuctionClaim = () => {
         console.log('Call claim endpoint')
         const result = await $gem.api.claimTelegram({
           auction_id: item.id,
-          tx_hash: txid,
-          hash,
+          external_user_hash: hash,
         })
 
         if (result && !result?.error) {
@@ -189,10 +188,14 @@ You don't wanna miss these insane deals! ✨
       WagmiHelper.disconnect()
     }
 
-    const result = await connect()
-    if (result) {
-      $bot.api.assignWalletToUser({wallet_address: result, hash})
-      setConnected(true)
+    try {
+      const result = await connect()
+      if (result) {
+        $bot.api.assignWalletToUser({wallet_address: result, hash})
+        setConnected(true)
+      }
+    } catch (e) {
+      console.log(e)
     }
   }
 

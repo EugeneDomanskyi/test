@@ -21,7 +21,18 @@ const MyEarnings = ({ onClaim }) => {
 
   useEffect(() => {
     fetchEarnings()
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
   }, [])
+
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === 'visible') {
+      setButtonLoading(null)
+    }
+  }
 
   const fetchEarnings = async () => {
     const result = await $auction.api.earnings()
@@ -76,7 +87,7 @@ const MyEarnings = ({ onClaim }) => {
 
                       <App.Flex justify="flex-end" width={80}>
                         <App.Text className={styles.claimItemText}>
-                          {item.claimTime.diff(moment()) > 0 ? (
+                          {item.claimTime && item.claimTime.diff(moment()) > 0 ? (
                             <Timer claimTime={item.claimTime} />
                           ) : '---'}
                         </App.Text>
@@ -84,7 +95,7 @@ const MyEarnings = ({ onClaim }) => {
                     </App.Flex>
 
                     {item.claimHash == '' ? (
-                      item.claimTime.diff(moment()) > 0 ? (
+                      item.claimTime && item.claimTime.diff(moment()) > 0 ? (
                         <App.Button fullWidth primary2 loading={item.id == buttonLoading} onClick={() => item.id == buttonLoading ? null : handleClaim(item)}>Claim</App.Button>
                       ) : (
                         <App.Flex fullWidth center gap={4} className={styles.claimed}>

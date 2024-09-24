@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 
 import TelegramBot from '@/libs/TelegramBot'
@@ -6,6 +6,7 @@ import TelegramBot from '@/libs/TelegramBot'
 import $bot from '@/store/bot'
 import $auction from '@/store/auction'
 import $gem from '@/store/gem'
+import $alert from '@/store/alert'
 
 import BotWrapper from '@/components/Bot/BotWrapper'
 import BotAuctions from '@/components/Bot/BotAuctions'
@@ -14,14 +15,16 @@ import BotShop from '@/components/Bot/BotShop'
 import BotMyEarnings from '@/components/Bot/BotMyEarnings'
 
 const Bot  = () => {
+  const dispatch = useDispatch()
   const tab = useSelector(({ $bot }) => $bot.tab)
 
   const handleClaim = async (auction) => {
     const result = await $bot.api.generateWalletHash()
     if (result && !result.error && result?.hash) {
       const hash = result.hash
-      // window.open(`http://localhost:3000/bot/claim?id=${auction.id}&hash=${hash}`)
+
       if (auction.txHash == '') {
+        // window.open(`http://localhost:3000/bot/claim?id=${auction.id}&hash=${hash}`)
         TelegramBot.showPopup('Claim reward', `You will be redirect to Tegro website to connect Base wallet and claim reward`, [{ id: 'ok', type: 'ok', text: 'Ok' }])
         TelegramBot.on('popupClosed', (response) => {
           if (response.button_id === 'ok' && hash) {
@@ -32,7 +35,7 @@ const Bot  = () => {
         if (auction.claimHash == '' && auction.claimTime.diff(moment()) > 0) {
           const result = await $gem.api.claimTelegram({
             auction_id: auction.id,
-            hash,
+            external_user_hash: hash,
           })
 
           if (result && !result.error) {
