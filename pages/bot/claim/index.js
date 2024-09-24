@@ -78,7 +78,8 @@ const AuctionClaim = () => {
     setScanLink(null)
     const price = parseUnits(item.currentPrice, item.token.decimals)
 
-    const txid = await WagmiHelper.transfer(item.token.address, item.claimContract, price)
+    const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app' || (window.location.hostname == 'testnet.tegro.com' && item.id >= 3)) ? 'base' : 'amoy' 
+    const txid = await WagmiHelper.transfer(item.token.address, item.claimContract, price, chainCode)
     console.log('Transaction ID received', txid)
     dispatch($auction.set.debug(`txid: ${txid.error ? txid.error : txid}`))
     

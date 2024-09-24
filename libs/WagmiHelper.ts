@@ -495,8 +495,8 @@ class WagmiHelper {
     }
   }
 
-  transfer = async (contractAddress: `0x${string}`, recipient: `0x${string}`, amount: number) => {
-    const chain = this.getChainByCode()
+  transfer = async (contractAddress: `0x${string}`, recipient: `0x${string}`, amount: number, chainCode: string = null) => {
+    const chain = this.getChainByCode(chainCode)
 
     const abi = [{
       name: 'transfer',
@@ -523,6 +523,7 @@ class WagmiHelper {
         recipient,
         amount,
       ],
+      chainId: chain.id,
     }
 
     let config: any = {}
