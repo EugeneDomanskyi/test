@@ -214,6 +214,7 @@ class WagmiHelper {
 
     const currentChainId = getChainId(this.wagmiConfig)
     const newChain = this.getChainByCode(newChainCode)
+    console.log(currentChainId)
     if (newChain) {
       if (currentChainId == newChain?.id) {
         return true
