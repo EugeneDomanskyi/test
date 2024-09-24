@@ -15,7 +15,7 @@ import BotAuctionsButton from '@/components/Bot/BotAuctionsButton'
 import styles from './styles.module.scss'
 import AuctionCountdown from '@/components/Auction/AuctionCountdown'
 
-const BotAuctions = () => {
+const BotAuctions = ({ onClaim }) => {
   const dispatch = useDispatch()
   const ongoingAuction = useSelector($auction.get.ongoingAuction)
   const loading = useSelector(({ $auction }) => $auction.loading)
@@ -170,7 +170,7 @@ const BotAuctions = () => {
                   )}
 
                   {(ongoingAuction.status != 'closed' || ongoingAuction.status == 'closed' && ongoingAuction.current) ? (
-                    <BotAuctionsButton item={ongoingAuction} />
+                    <BotAuctionsButton item={ongoingAuction} onClaim={onClaim} />
                   ) : (
                     <App.Flex />
                     // <App.Button variant="bot" large fullWidth outlined onClick={handleAuctionHistory}>View history</App.Button>

@@ -154,6 +154,11 @@
         left: -30px;
       }
 
+      &.center {
+        left: 50%;
+        margin-left: -50px;
+      }
+
       &.right {
         right: -30px;
       }

@@ -1,31 +1,19 @@
-import styles from './styles.module.scss'
-
-import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import cn from 'classnames'
 
 import TelegramBot from '@/libs/TelegramBot'
 
 import $bot from '@/store/bot'
+import $auction from '@/store/auction'
 import $alert from '@/store/alert'
 
 import App from '@/components/App'
 
+import styles from './styles.module.scss'
+
 const BotWallet = () => {
   const dispatch = useDispatch()
+  const earningToBeClaimedCount = useSelector($auction.get.earningToBeClaimedCount)
 
-  const user = useSelector(({ $bot }) => $bot.user)
-
-  const [showDropdown, setShowDropdown] = useState(false)
-  const [copied, setCopied] = useState(false)
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside)
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
 
   const handleConnect = async () => {
     const hashRes = await $bot.api.generateWalletHash()
@@ -39,30 +27,8 @@ const BotWallet = () => {
     })
   }
 
-  const getShort = (address) => {
-    const n = 4
-    return `${address.substring(0, n)}...${address.substring(address.length - n)}`
-  }
-
-  const handleDisconnect = async () => {
-    const result = await $bot.api.unassign()
-    if (result && !result.error) {
-      dispatch($bot.set.user(result))
-      setShowDropdown(false)
-    }
-  }
-
-  const handleCopyToClipboard = () => {
-    navigator.clipboard.writeText(user.user.wallet_address)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
-  const handleClickOutside = (event) => {
-    const container = document.querySelector(`.${styles.walletButtonContainer}`)
-    if (container && !container.contains(event.target)) {
-      setShowDropdown(false)
-    }
+  const handleMyEarnings = () => {
+    dispatch($bot.set.tab('my-earnings'))
   }
 
   const handleCopyInitData = () => {
@@ -73,35 +39,14 @@ const BotWallet = () => {
   return (
     <App.Flex column align="center" gap={8}>
       <App.Flex row align="center" gap={8}>
-        {user?.user ? (
-          <App.Flex gap={8} className={styles.walletButtonContainer}>
-            <App.Button variant="bot-default" small onClick={() => setShowDropdown(!showDropdown)}>
-              <App.Icon icon="logo-tiger-head" width={16} height={16} />
-              <App.Text>{ getShort(user.user.wallet_address) }</App.Text>
-            </App.Button>
-
-            <App.Flex className={cn(styles.dropdownMenu, {[styles.isOpen]: showDropdown})}>
-              <App.Flex className={styles.menuItem} onClick={handleCopyToClipboard}>
-                <App.Icon icon="copy2" color="#B9B8C5" width={14} height={14} />
-                <App.Text size={12}>{copied ? 'Copied' : 'Copy Wallet Address'}</App.Text>
-              </App.Flex>
-
-              {/* {TelegramBot.host() != 'tegro.com' ? (
-                <App.Flex className={styles.menuItem} onClick={handleDisconnect}>
-                  <App.Icon icon="logout2" color="#B9B8C5" width={12} height={12} />
-                  <App.Text size={12}>Logout</App.Text>
-                </App.Flex>
-              ) : null} */}
-
-              <App.Flex className={styles.menuItem} onClick={handleDisconnect}>
-                  <App.Icon icon="logout2" color="#B9B8C5" width={12} height={12} />
-                  <App.Text size={12}>Logout</App.Text>
-                </App.Flex>
+        <App.Button variant="bot-default" small onClick={handleMyEarnings}>
+          <App.Icon icon="earn-bot" /> My Earnings
+          {earningToBeClaimedCount > 0 ? (
+            <App.Flex center className={styles.dot}>
+              <App.Text size={12} weight={700} height={1}>{earningToBeClaimedCount}</App.Text>
             </App.Flex>
-          </App.Flex>
-        ) : (
-          <App.Button variant="bot" small outlined onClick={handleConnect}><App.Icon icon="wallet-bot" /> Connect Wallet</App.Button>
-        )}
+          ) : null}
+        </App.Button>
 
         {TelegramBot.host() != 'tegro.com' ? (
           <App.Button variant="bot-default" small onClick={handleCopyInitData}>Copy initData</App.Button>

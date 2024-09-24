@@ -82,6 +82,7 @@ const template = (item) => {
     history,
     bidsCount: item?.total_bids ?? 0,
     claimContract: auction.auction_amount_receiver,
+    txHash: auction.tx_hash,
     claimHash: auction.claim_tx_hash,
     claimTime,
     isClaimable,
@@ -241,7 +242,22 @@ export const auctionSlice = createSlice({
 
     earnings: (state, { payload }) => {
       const temp = payload.map(item => template(item))
-      temp.sort((a, b) => b.startsIn - a.startsIn)
+      const now = moment()
+      temp.sort((a, b) => {
+        if (a.claimHash === '' && b.claimHash !== '') return -1
+        if (a.claimHash !== '' && b.claimHash === '') return 1
+        if (a.claimHash === '' && b.claimHash === '') {
+          const aClaimTime = moment(a.claimTime)
+          const bClaimTime = moment(b.claimTime)
+
+          if (aClaimTime.isBefore(now) && bClaimTime.isSameOrAfter(now)) return 1
+          if (aClaimTime.isSameOrAfter(now) && bClaimTime.isBefore(now)) return -1
+
+          return aClaimTime.diff(bClaimTime)
+        }
+
+        return b.startsIn - a.startsIn
+      })
       state.earnings = temp
     },
 
@@ -330,7 +346,7 @@ export const get = {
   earningToBeClaimedCount: createSelector([
     state => state.$auction.earnings,
   ], (earnings) => {
-    return earnings.filter(item => item.claimHash == '').length
+    return earnings.filter(item => item.claimHash == '' && moment(item.claimTime).diff(moment()) > 0).length
   }),
 }
 
@@ -367,6 +383,10 @@ export const api = {
 
   clear: (id) => {
     return request(`auction/clear/${id}`, 'POST', {api: 'bid'})
+  },
+
+  txHash: (params) => {
+    return request(`telegram/auction/claim/save-tx`, 'POST', {api: 'bid', ...params})
   },
 
   claim: (params) => {

@@ -164,8 +164,9 @@
     }
 
     &.active:not(:disabled),
+    &:focus:not(:disabled),
     &:hover:not(:disabled) {
-      background: #4d29bb;
+      background: #6B41EB;
     }
 
     &.outlined {

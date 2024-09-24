@@ -1,26 +1,6 @@
-.walletButtonContainer {
-  position: relative;
-
-  .dropdownMenu {
-    top: 46px;
-    display: none;
-    position: absolute;
-    z-index: 1;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #332D52;
-    gap: 24px;
-    flex-direction: column;
-    background: linear-gradient(0deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.07) 100%), #0B0915;
-    width: 180px;
-
-    &.isOpen {
-      display: flex;
-    }
-
-    .menuItem {
-      align-items: center;
-      gap: 8px;
-    }
-  }
+.dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #FF1D61;
 }
