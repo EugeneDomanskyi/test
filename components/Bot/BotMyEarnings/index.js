@@ -67,7 +67,7 @@ const MyEarnings = ({ onClaim }) => {
             <App.Text>Auctions</App.Text>
           </App.Flex> */}
 
-          {!earnings?.length > 0 ? (
+          {earnings?.length > 0 ? (
             <App.Flex column align="center" gap={16} className={styles.earningsWrapper}>
               <App.Flex fullWidth className={styles.header}>
                 <App.Text className={styles.headerText}>Auction</App.Text>
