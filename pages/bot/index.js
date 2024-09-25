@@ -20,17 +20,23 @@ const Bot  = () => {
 
   const handleClaim = async (auction) => {
     if (auction.txHash == '') {
+      const result = await $bot.api.generateWalletHash()
+      if (result && !result.error && result?.hash) {
+        const hash = result.hash
+        TelegramBot.openLink(`https://${TelegramBot.host()}/bot/claim?id=${auction.id}&hash=${hash}`)
+      }
+
       // window.open(`http://localhost:3000/bot/claim?id=${auction.id}&hash=${hash}`)
-      TelegramBot.showPopup('Claim reward', `You will be redirect to Tegro website to connect Base wallet and claim reward`, [{ id: 'ok', type: 'ok', text: 'Ok' }])
-      TelegramBot.on('popupClosed', async (response) => {
-        const result = await $bot.api.generateWalletHash()
-        if (result && !result.error && result?.hash) {
-          const hash = result.hash
-          if (response.button_id === 'ok' && hash) {
-            TelegramBot.openLink(`https://${TelegramBot.host()}/bot/claim?id=${auction.id}&hash=${hash}`)
-          }
-        }
-      })
+      // TelegramBot.showPopup('Claim reward', `You will be redirect to Tegro website to connect Base wallet and claim reward`, [{ id: 'ok', type: 'ok', text: 'Ok' }])
+      // TelegramBot.on('popupClosed', async (response) => {
+      //   const result = await $bot.api.generateWalletHash()
+      //   if (result && !result.error && result?.hash) {
+      //     const hash = result.hash
+      //     if (response.button_id === 'ok' && hash) {
+      //       TelegramBot.openLink(`https://${TelegramBot.host()}/bot/claim?id=${auction.id}&hash=${hash}`)
+      //     }
+      //   }
+      // })
     } else {
       const result = await $bot.api.generateWalletHash()
       if (result && !result.error && result?.hash) {
