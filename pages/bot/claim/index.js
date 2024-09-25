@@ -194,7 +194,10 @@ You don't wanna miss these insane deals! ✨
     try {
       const result = await connect()
       if (result) {
-        $bot.api.assignWalletToUser({wallet_address: result, hash})
+        const create = await $gem.api.register({ wallet_address: result, referral_code: localStorage.getItem('referral') ?? '' })
+        if (create && !create.error) {
+          await $bot.api.assignWalletToUser({wallet_address: result, hash})
+        }
         setConnected(true)
       }
     } catch (e) {
