@@ -90,11 +90,11 @@ const useWagmiHelper = () => {
 
   const connect = () => {
     return new Promise((resolve, reject) => {
-      const wallet = WagmiHelper.getWallet()
-      if (wallet) {
-        resolve(wallet)
-        return
-      }
+      // const wallet = WagmiHelper.getWallet()
+      // if (wallet) {
+      //   resolve(wallet)
+      //   return
+      // }
 
       if (openConnectModal) {
         openConnectModal()

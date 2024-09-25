@@ -47,7 +47,8 @@ const AuctionClaim = () => {
   useEffect(() => {
     if (!connection.loading) {
       if (connection.connected && initCheck) {
-        WagmiHelper.disconnect()
+        console.log('Disconnect wallet in useEffect')
+        // WagmiHelper.disconnect()
       }
     }
   }, [connection])
@@ -188,7 +189,8 @@ You don't wanna miss these insane deals! ✨
 
     if (wallet) {
       console.log('Wallet before connect', wallet)
-      WagmiHelper.disconnect()
+      console.log('Disconnect wallet in Connect')
+      // await WagmiHelper.disconnect()
     }
 
     try {
@@ -201,7 +203,7 @@ You don't wanna miss these insane deals! ✨
         setConnected(true)
       }
     } catch (e) {
-      console.log(e)
+      console.log('Error in connect', e)
     }
   }
 
