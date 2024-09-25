@@ -97,13 +97,13 @@ class WagmiHelper {
     const [_, page, queryChainCode] = ctx.req.url.split('/')
     let currentChainCode = (page != '_next' ? queryChainCode : null) ?? nookies.get(ctx)?.currentChainCode
     if (!currentChainCode) {
-      currentChainCode = chains[0]?.code
+      currentChainCode = chains.find(chain => chain.code === 'base')?.code || chains[0]?.code
     } else {
       if (chains.length && !chains.some(item => item.code == currentChainCode)) {
         currentChainCode = chains[0]?.code
       }
     }
-
+    console.log('currentChainCode', currentChainCode)
     nookies.set(ctx, 'currentChainCode', currentChainCode, {path: '/'})
     return currentChainCode
   }
@@ -214,6 +214,7 @@ class WagmiHelper {
 
     const currentChainId = getChainId(this.wagmiConfig)
     const newChain = this.getChainByCode(newChainCode)
+    console.log(currentChainId, newChain?.id)
     if (newChain) {
       if (currentChainId == newChain?.id) {
         return true
@@ -494,8 +495,8 @@ class WagmiHelper {
     }
   }
 
-  transfer = async (contractAddress: `0x${string}`, recipient: `0x${string}`, amount: number) => {
-    const chain = this.getChainByCode()
+  transfer = async (contractAddress: `0x${string}`, recipient: `0x${string}`, amount: number, chainCode: string = null) => {
+    const chain = this.getChainByCode(chainCode)
 
     const abi = [{
       name: 'transfer',
@@ -522,6 +523,7 @@ class WagmiHelper {
         recipient,
         amount,
       ],
+      chainId: chain.id,
     }
 
     let config: any = {}

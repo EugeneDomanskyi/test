@@ -78,7 +78,8 @@ const AuctionClaim = () => {
     setScanLink(null)
     const price = parseUnits(item.currentPrice, item.token.decimals)
 
-    const txid = await WagmiHelper.transfer(item.token.address, item.claimContract, price)
+    const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app' || (window.location.hostname == 'testnet.tegro.com' && item.id >= 3)) ? 'base' : 'amoy' 
+    const txid = await WagmiHelper.transfer(item.token.address, item.claimContract, price, chainCode)
     console.log('Transaction ID received', txid)
     dispatch($auction.set.debug(`txid: ${txid.error ? txid.error : txid}`))
     
@@ -141,6 +142,7 @@ const AuctionClaim = () => {
     dispatch($app.set.code(chainCode))
 
     const balance = await WagmiHelper.balanceOf(item.token.address, chainCode)
+    console.log('Balance is ', balance)
     if (balance && balance >= item.currentPrice) {
       setStep(1)
     } else {
@@ -185,13 +187,17 @@ You don't wanna miss these insane deals! ✨
     setInitCheck(false)
 
     if (wallet) {
+      console.log('Wallet before connect', wallet)
       WagmiHelper.disconnect()
     }
 
     try {
       const result = await connect()
       if (result) {
-        $bot.api.assignWalletToUser({wallet_address: result, hash})
+        const create = await $gem.api.register({ wallet_address: result, referral_code: localStorage.getItem('referral') ?? '' })
+        if (create && !create.error) {
+          await $bot.api.assignWalletToUser({wallet_address: result, hash})
+        }
         setConnected(true)
       }
     } catch (e) {
