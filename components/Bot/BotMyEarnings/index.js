@@ -59,60 +59,62 @@ const MyEarnings = ({ onClaim }) => {
         <App.LoaderBlock height={300} />
       ) : (
         <App.Flex column fullWidth gap={16}>
-          <App.Flex row fullWidth align="center" gap={8} onClick={handleBack}>
+          {/* <App.Flex row fullWidth align="center" gap={8} onClick={handleBack}>
             <App.Flex sx={{transform: 'rotate(180deg)'}}>
               <App.Icon icon='arrow-right' />
             </App.Flex>
 
             <App.Text>Auctions</App.Text>
-          </App.Flex>
+          </App.Flex> */}
 
-          <App.Flex column align="center" gap={16} className={styles.earningsWrapper}>
-            <App.Flex fullWidth className={styles.header}>
-              <App.Text className={styles.headerText}>Auction</App.Text>
-              <App.Text className={styles.headerText}>Winning price</App.Text>
-              <App.Text className={styles.headerText}>Expiry</App.Text>
-            </App.Flex>
+          {earnings?.length > 0 ? (
+            <App.Flex column align="center" gap={16} className={styles.earningsWrapper}>
+              <App.Flex fullWidth className={styles.header}>
+                <App.Text className={styles.headerText}>Auction</App.Text>
+                <App.Text className={styles.headerText}>Winning price</App.Text>
+                <App.Text className={styles.headerText}>Expiry</App.Text>
+              </App.Flex>
 
-            {
-              earnings?.length > 0
-                ? earnings.map((item, index) => (
-                  <App.Flex key={index} className={styles.claimItem}>
-                    <App.Flex row className={styles.claimItemHeader}>
-                      <App.Flex column>
-                        <App.Text className={styles.claimItemText}>{item.name}</App.Text>
-                        <App.Text className={styles.claimItemSecondarytext}>{moment(item.startsIn).format('DD-MM-YYYY')}</App.Text>
-                      </App.Flex>
-                      <App.Text className={styles.claimItemText}>{item.currentPrice + ' ' + item.token.currency}</App.Text>
-
-                      <App.Flex justify="flex-end" width={80}>
-                        <App.Text className={styles.claimItemText}>
-                          {item.claimTime && item.claimTime.diff(moment()) > 0 ? (
-                            <Timer claimTime={item.claimTime} />
-                          ) : '---'}
-                        </App.Text>
-                      </App.Flex>
+              {earnings.map((item, index) => (
+                <App.Flex key={index} className={styles.claimItem}>
+                  <App.Flex row className={styles.claimItemHeader}>
+                    <App.Flex column>
+                      <App.Text className={styles.claimItemText}>{item.name}</App.Text>
+                      <App.Text className={styles.claimItemSecondarytext}>{moment(item.startsIn).format('DD-MM-YYYY')}</App.Text>
                     </App.Flex>
+                    <App.Text className={styles.claimItemText}>{item.currentPrice + ' ' + item.token.currency}</App.Text>
 
-                    {item.claimHash == '' ? (
-                      item.claimTime && item.claimTime.diff(moment()) > 0 ? (
-                        <App.Button fullWidth primary2 loading={item.id == buttonLoading} onClick={() => item.id == buttonLoading ? null : handleClaim(item)}>Claim</App.Button>
-                      ) : (
-                        <App.Flex fullWidth center gap={4} className={styles.claimed}>
-                          <App.Text size={14} weight={700} height={1}>Time&apos;s up</App.Text>
-                        </App.Flex>
-                      )
+                    <App.Flex justify="flex-end" width={80}>
+                      <App.Text className={styles.claimItemText}>
+                        {item.claimTime && item.claimTime.diff(moment()) > 0 ? (
+                          <Timer claimTime={item.claimTime} />
+                        ) : '---'}
+                      </App.Text>
+                    </App.Flex>
+                  </App.Flex>
+
+                  {item.claimHash == '' ? (
+                    item.claimTime && item.claimTime.diff(moment()) > 0 ? (
+                      <App.Button fullWidth primary2 loading={item.id == buttonLoading} onClick={() => item.id == buttonLoading ? null : handleClaim(item)}>Claim</App.Button>
                     ) : (
                       <App.Flex fullWidth center gap={4} className={styles.claimed}>
-                        <App.Icon icon="check" />
-                        <App.Text size={14} weight={700} height={1}>Claimed</App.Text>
+                        <App.Text size={14} weight={700} height={1}>Time&apos;s up</App.Text>
                       </App.Flex>
-                    )}
-                  </App.Flex>
-                ))
-                : <App.Text>No earnings</App.Text>
-            }
-          </App.Flex>
+                    )
+                  ) : (
+                    <App.Flex fullWidth center gap={4} className={styles.claimed}>
+                      <App.Icon icon="check" />
+                      <App.Text size={14} weight={700} height={1}>Claimed</App.Text>
+                    </App.Flex>
+                  )}
+                </App.Flex>
+              ))}
+            </App.Flex>
+          ) : (
+            <App.Flex center column className={styles.emptyBox}>
+              <App.Text>No earnings</App.Text>
+            </App.Flex>
+          )}
         </App.Flex>
       )}
     </App.Flex>
