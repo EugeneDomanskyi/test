@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import Image from 'next/image'
 import moment from 'moment'
 
 import $auction from '@/store/auction'
@@ -51,6 +52,12 @@ const MyEarnings = ({ onClaim }) => {
   
   const handleBack = () => {
     dispatch($bot.set.tab('auctions'))
+  }
+
+  const handleHistory = (auction) => {
+    dispatch($auction.set.current(auction))
+    dispatch($auction.set.auctionHistory([]))
+    dispatch($bot.set.tab('auction-history'))
   }
 
   return (
@@ -107,12 +114,23 @@ const MyEarnings = ({ onClaim }) => {
                       <App.Text size={14} weight={700} height={1}>Claimed</App.Text>
                     </App.Flex>
                   )}
+
+{/* <App.Button fullWidth primary2 onClick={() => handleHistory(item)}>History</App.Button> */}
                 </App.Flex>
               ))}
             </App.Flex>
           ) : (
-            <App.Flex center column className={styles.emptyBox}>
-              <App.Text>No earnings</App.Text>
+            <App.Flex column gap={16} className={styles.emptyBox}>
+              <App.Text size={16} weight={700}>Mmm...</App.Text>
+              <App.Text size={16} weight={400} color="#FFFFFFCC">Looks like you haven’t won any auctions yet.</App.Text>
+              <App.Flex center>
+                <Image src="/images/bot/tiger.png" width={198} height={202} alt="" />
+              </App.Flex>
+              <App.Text size={16} weight={400} color="#FFFFFFCC">No worries.</App.Text>
+              <App.Text size={16} weight={400} color="#FFFFFFCC">Keep trying fellow Tiger.</App.Text>
+              <App.Text size={16} weight={400} color="#FFFFFFCC">You got this.</App.Text>
+
+              <App.Button primary2 onClick={handleBack}>Go back to Auctions 🔥</App.Button>
             </App.Flex>
           )}
         </App.Flex>

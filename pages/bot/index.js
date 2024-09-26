@@ -13,6 +13,7 @@ import BotAuctions from '@/components/Bot/BotAuctions'
 import BotEarn from '@/components/Bot/BotEarn'
 import BotShop from '@/components/Bot/BotShop'
 import BotMyEarnings from '@/components/Bot/BotMyEarnings'
+import BotAuctionHistory from '@/components/Bot/BotAuctionHistory'
 
 const Bot  = () => {
   const dispatch = useDispatch()
@@ -70,6 +71,7 @@ const Bot  = () => {
       case 'earn': return <BotEarn />
       case 'shop': return <BotShop />
       case 'my-earnings': return <BotMyEarnings onClaim={handleClaim} />
+      case 'auction-history': return <BotAuctionHistory />
       default: return <BotAuctions />
     }
   }
