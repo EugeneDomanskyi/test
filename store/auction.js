@@ -29,20 +29,6 @@ const template = (item) => {
   const nextPrice = new Decimal(Number(currentPrice) + (auction.last_bid_price > 0 ? Number(formatUnits(auction.minimum_bid_price_increment, 6)) : 0)).toDecimalPlaces(6).toFixed()
   const discount = marketPrice > 0 ? Math.round((marketPrice - currentPrice) / marketPrice * 100) : 0
 
-  let history = []
-  if (auction?.bid_histories && auction?.bid_history_user_info) {
-    history = auction.bid_histories.map(bid => {
-      return {
-        bid: `${formatUnits(bid.price.toString(), 6)} USDC`,
-        wallet: auction.bid_history_user_info[bid.wallet_id].user,
-        date: moment(bid.created_at).format('HH:mm DD-MM-YYYY'),
-        time: moment(bid.created_at).format('HH:mm'),
-        day: moment(bid.created_at).format('DD-MM-YYYY'),
-        created_at: bid.created_at,
-      }
-    })
-  }
-
   const tgUser = TelegramBot.getUsername()
   let isLastBidderMe = tgUser ? lastBidderWallet == tgUser : false
   const isCurrent = isLastBidderMe
@@ -80,7 +66,7 @@ const template = (item) => {
     gemsPrice: auction.points_to_deduct,
     lastBidTimestamp: auction.last_bid_timestamp,
     resetTimer: auction.reset_timer,
-    history,
+    history: auctionHistoryTemplate(item),
     bidsCount: item?.total_bids ?? 0,
     claimContract: auction.auction_amount_receiver,
     txHash: auction.tx_hash,
@@ -89,6 +75,26 @@ const template = (item) => {
     isClaimable,
     updated: false,
   }
+}
+
+const auctionHistoryTemplate = (item) => {
+  const auction = item?.auction ? item.auction : item.auction_id
+
+  let history = []
+  if (auction?.bid_histories && item?.bid_history_user_info) {
+    history = auction.bid_histories.map(bid => {
+      return {
+        bid: `${formatUnits(bid.price.toString(), auction.auction_token.decimals)} ${auction.auction_token.symbol.toUpperCase()}`,
+        wallet: item.bid_history_user_info[bid.wallet_id].user,
+        date: moment(bid.created_at).format('HH:mm DD-MM-YYYY'),
+        time: moment(bid.created_at).format('HH:mm'),
+        day: moment(bid.created_at).format('DD-MM-YYYY'),
+        created_at: bid.created_at,
+      }
+    })
+  }
+
+  return history
 }
 
 export const auctionSlice = createSlice({
@@ -105,6 +111,7 @@ export const auctionSlice = createSlice({
     loading: true,
     showUpcoming: false,
     earnings: [],
+    auctionHistory: [],
     debug: [],
   },
 
@@ -214,7 +221,11 @@ export const auctionSlice = createSlice({
     },
 
     current: (state, { payload }) => {
-      state.current = auctionTemplate(payload.data, payload.wallet)
+      state.current = payload
+    },
+
+    auctionHistory: (state, { payload }) => {
+      state.auctionHistory = auctionHistoryTemplate(payload)
     },
 
     auctionWarning: (state, { payload }) => {
