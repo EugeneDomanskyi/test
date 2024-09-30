@@ -44,6 +44,23 @@ const BotEarn = () => {
     }
   }
 
+  const handleShop = () => {
+    dispatch($bot.set.tab('shop'))
+  }
+
+  const handleShare = () => {
+    const referralLink = `${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}/app?startapp=${user.referral_code}`
+    const referralText = `Join Tegro and get 5000 gems for free!`
+    const link = `https://t.me/share/url?url=${referralLink}&text=${referralText}`
+    TelegramBot.openTelegramLink(link)
+  }
+
+  const handleCopy = () => {
+    const referralLink = `${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}/app?startapp=${user.referral_code}`
+    navigator.clipboard.writeText(referralLink)
+    dispatch($alert.set.success({ title: 'Link copied to clipboard' }))
+  }
+
   return (
     <App.Flex center sx={{ padding: 8 }}>
       <App.Flex className={styles.container} column>
@@ -56,7 +73,7 @@ const BotEarn = () => {
             <App.Text size={16} weight={600}>1. Join Our Telegram Channel</App.Text>
 
             <App.Flex row center gap={4}>
-              <App.Text color="#67C9F9" size={16} weight={600} inline>200</App.Text>
+              <App.Text color="#67C9F9" size={16} weight={600} inline>2000</App.Text>
               <Image src="/images/bot/gem.png" width={20} height={16} alt="" />
             </App.Flex>
           </App.Flex>
@@ -73,7 +90,7 @@ const BotEarn = () => {
               <App.Button variant="bot" onClick={handleClaim('join_telegram_group')}>
                 Verify & Claim
                 <App.Flex row center gap={4}>
-                  <App.Text size={16} weight={600} inline>200</App.Text>
+                  <App.Text size={16} weight={600} inline>2000</App.Text>
                   <Image src="/images/bot/gem.png" width={20} height={16} alt="" />
                 </App.Flex>
               </App.Button>
@@ -88,7 +105,7 @@ const BotEarn = () => {
             <App.Text size={16} weight={600}>2. Follow Us on Twitter</App.Text>
             
             <App.Flex row center gap={4}>
-              <App.Text color="#67C9F9" size={16} weight={600} inline>200</App.Text>
+              <App.Text color="#67C9F9" size={16} weight={600} inline>2000</App.Text>
               <Image src="/images/bot/gem.png" width={20} height={16} alt="" />
             </App.Flex>
           </App.Flex>
@@ -105,7 +122,7 @@ const BotEarn = () => {
               <App.Button variant="bot" onClick={handleClaim('twitter_follow')}>
                 Verify & Claim
                 <App.Flex row center gap={4}>
-                  <App.Text size={16} weight={600} inline>200</App.Text>
+                  <App.Text size={16} weight={600} inline>2000</App.Text>
                   <Image src="/images/bot/gem.png" width={20} height={16} alt="" />
                 </App.Flex>
               </App.Button>
@@ -113,6 +130,59 @@ const BotEarn = () => {
               <App.Button variant="twitter" onClick={handleX}><App.Icon icon="x" width={20} /> Follow us on Twitter</App.Button>
             )
           )}
+        </App.Flex>
+
+        <App.Flex fullWidth className={styles.taskContainer} column gap={16}>
+          <App.Flex fullWidth justify="space-between" gap={8}>
+            <App.Text size={16} weight={600}>3. Buy Stars from Shop</App.Text>
+            
+            <App.Flex row center gap={4}>
+              <App.Text color="#67C9F9" size={16} weight={600} inline>5000</App.Text>
+              <Image src="/images/bot/gem.png" width={20} height={16} alt="" />
+            </App.Flex>
+          </App.Flex>
+
+          {user.is_claimed_twitter ? (
+            <App.Flex center gap={8} className={styles.claimed}>
+              <App.Icon icon="check-circle" />
+              <App.Text color="#A6DC37">Claimed</App.Text>
+            </App.Flex>
+          ) : (
+            <App.Button variant="bot" onClick={handleShop}>
+              Buy Stars
+            </App.Button>
+          )}
+        </App.Flex>
+
+        <App.Flex fullWidth className={styles.taskContainer} column gap={16}>
+          <App.Flex fullWidth justify="space-between" gap={8}>
+            <App.Text size={16} weight={600}>4. Invite your friends</App.Text>
+            
+            <App.Flex row center gap={4}>
+              <App.Text color="#67C9F9" size={16} weight={600} inline>5000-10000</App.Text>
+              <Image src="/images/bot/gem.png" width={20} height={16} alt="" />
+            </App.Flex>
+          </App.Flex>
+          
+          <App.Flex row gap={8}>
+            <App.Flex flex={1}>
+              <App.Text className={styles.taskDescription}>Normal User: 5000 gems, 5% of their winnings</App.Text>
+            </App.Flex>
+
+            <App.Flex flex={1}>
+              <App.Text className={styles.taskDescription}>Premium User: 10000 gems, 10% of their winnings</App.Text>
+            </App.Flex>
+          </App.Flex>
+
+          <App.Flex row gap={16}>
+            <App.Flex flex={8}>
+              <App.Button variant="bot" fullWidth onClick={handleShare}>Share on Telegram</App.Button>
+            </App.Flex>
+
+            <App.Flex flex={2}>
+              <App.Button variant="bot" fullWidth onClick={handleCopy}><App.Icon icon="copy3" /></App.Button>
+            </App.Flex>
+          </App.Flex>
         </App.Flex>
       </App.Flex>
     </App.Flex>
