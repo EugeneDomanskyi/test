@@ -59,7 +59,7 @@ const BotWrapper = ({ children }) => {
   }
 
   const fetchUser = async () => {
-    const result = await $bot.api.user({referral_code: ''})
+    const result = await $bot.api.user({referral_code: TelegramBot.getReferralCode()})
     if (result && !result.error) {
       dispatch($bot.set.user(result))
     }
