@@ -7,7 +7,7 @@ class TelegramBot {
   isBot = () => {
     return this.app !== undefined
   }
-
+  
   getInitData = () => {
     // return 'query_id=AAEfkDliAAAAAB-QOWLyvY6G&user=%7B%22id%22%3A1647939615%2C%22first_name%22%3A%22Eugene%F0%9F%A6%B4%22%2C%22last_name%22%3A%22Domanskyi%22%2C%22username%22%3A%22ievgenii_domanskyi%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1724317098&hash=665570655d38e6e47102e7963fbf272e875600659397f7c2fcccf772ded8ffe1'
     // return 'query_id=AAEfkDliAAAAAB-QOWLrWEts&user=%7B%22id%22%3A1647939615%2C%22first_name%22%3A%22Eugene%F0%9F%A6%B4%22%2C%22last_name%22%3A%22Domanskyi%22%2C%22username%22%3A%22ievgenii_domanskyi%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1726580040&hash=1c31b725421db020fead18da41f0e61010fe65b54b353a6958189f4694d41961'
@@ -87,6 +87,14 @@ class TelegramBot {
     const secretKey = crypto.createHmac('sha256', 'WebAppData').update(process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN).digest()
     const generatedHash = crypto.createHmac('sha256', secretKey).update(authData).digest('hex')
     return generatedHash === hash
+  }
+
+  getReferralCode = () => {
+    if (this.app && this.app.initDataUnsafe?.start_param && this.app.initDataUnsafe.start_param !== '') {
+      return this.app.initDataUnsafe?.start_param
+    }
+
+    return ''
   }
 
   openInvoice = (invoice: any, callback: (status: string) => {}) => {
