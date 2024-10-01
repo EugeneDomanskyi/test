@@ -366,6 +366,10 @@ export const api = {
   all: () => {
     return request(`auctions`, 'GET', {api: 'bid'})
   },
+
+  history: (params) => {
+    return request(`telegram/auctions/won`, 'GET', {api: 'bid_v2', ...params})
+  },
   
   allTelegram: () => {
     console.log('FETCH allTelegram');
