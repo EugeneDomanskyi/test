@@ -24,10 +24,13 @@ const template = (item) => {
   const userIdentifier = auction.last_bidder.user_identifier
   const lastBidderWallet = (userIdentifier.startsWith('0x') ? userIdentifier.toLowerCase() : userIdentifier) || null
   const marketPrice = Number(item.auction_value)
-  const startPrice = formatUnits(auction.start_price.toString(), 6)
-  const currentPrice = formatUnits((auction.last_bid_price > 0 ? auction.last_bid_price : auction.start_price).toString(), 6)
-  const nextPrice = new Decimal(Number(currentPrice) + (auction.last_bid_price > 0 ? Number(formatUnits(auction.minimum_bid_price_increment, 6)) : 0)).toDecimalPlaces(6).toFixed()
+  const startPrice = formatUnits(auction.start_price.toString(), auction.auction_token.decimals)
+  const currentPrice = formatUnits((auction.last_bid_price > 0 ? auction.last_bid_price : auction.start_price).toString(), auction.auction_token.decimals)
+  const nextPrice = new Decimal(Number(currentPrice) + (auction.last_bid_price > 0 ? Number(formatUnits(auction.minimum_bid_price_increment, auction.auction_token.decimals)) : 0)).toDecimalPlaces(auction.auction_token.decimals).toFixed()
   const discount = marketPrice > 0 ? Math.round((marketPrice - currentPrice) / marketPrice * 100) : 0
+  const priceLimit = auction.auction_amount_limit != '' ? formatUnits(auction.auction_amount_limit.toString(), auction.auction_token.decimals) : 0
+
+  const isBiddable = (priceLimit > 0 && currentPrice < priceLimit) || priceLimit == 0
 
   const tgUser = TelegramBot.getUsername()
   let isLastBidderMe = tgUser ? lastBidderWallet == tgUser : false
@@ -53,6 +56,8 @@ const template = (item) => {
     marketPrice: marketPrice.toFixed(2),
     currentPrice,
     nextPrice,
+    priceLimit,
+    isBiddable,
     discount,
     token: {
       currency: auction.auction_token.symbol.toUpperCase(),
@@ -113,6 +118,8 @@ export const auctionSlice = createSlice({
     earnings: [],
     auctionHistory: [],
     debug: [],
+    earnings_page: 1,
+    earnings_limit: 10,
   },
 
   reducers: {
@@ -383,6 +390,10 @@ export const api = {
 
   earnings: () => {
     return request(`telegram/auctions/won`, 'GET', {api: 'bid'})
+  },
+
+  earnings_v2: (params) => {
+    return request(`telegram/auctions/won`, 'GET', {api: 'bid_v2', ...params})
   },
 
   login: (params) => {

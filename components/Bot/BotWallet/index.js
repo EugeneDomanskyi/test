@@ -14,21 +14,12 @@ const BotWallet = () => {
   const dispatch = useDispatch()
   const earningToBeClaimedCount = useSelector($auction.get.earningToBeClaimedCount)
 
-
-  const handleConnect = async () => {
-    const hashRes = await $bot.api.generateWalletHash()
-    const hash = hashRes?.hash || ''
-
-    TelegramBot.showPopup('Connect Wallet', `You will be redirect to Tegro website to connect Base wallet`, [{ id: 'ok', type: 'ok', text: 'Ok' }])
-    TelegramBot.on('popupClosed', (response) => {
-      if (response.button_id === 'ok' && hash) {
-        TelegramBot.openLink(`https://${TelegramBot.host()}/bot/wallet?hash=${hash}`)
-      }
-    })
-  }
-
   const handleMyEarnings = () => {
     dispatch($bot.set.tab('my-earnings'))
+  }
+
+  const handleHistory = () => {
+    dispatch($bot.set.tab('history'))
   }
 
   const handleCopyInitData = () => {
@@ -47,6 +38,8 @@ const BotWallet = () => {
             </App.Flex>
           ) : null}
         </App.Button>
+
+        {/* <App.Button variant="bot-default" small onClick={handleHistory}>History</App.Button> */}
 
         {TelegramBot.host() != 'tegro.com' ? (
           <App.Button variant="bot-default" small onClick={handleCopyInitData}>Copy initData</App.Button>

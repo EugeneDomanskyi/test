@@ -19,6 +19,8 @@ const MyEarnings = ({ onClaim }) => {
 
   const earnings = useSelector(({ $auction }) => $auction.earnings)
   const user = useSelector(({ $bot }) => $bot.user)
+  const earnings_page = useSelector(({ $auction }) => $auction.earnings_page)
+  const earnings_limit = useSelector(({ $auction }) => $auction.earnings_limit)
 
   useEffect(() => {
     fetchEarnings()
@@ -35,7 +37,8 @@ const MyEarnings = ({ onClaim }) => {
     }
   }
 
-  const fetchEarnings = async () => {
+  const fetchEarnings = async (page) => {
+    // const result = await $auction.api.earnings_v2({ page: page ?? earnings_page, limit: earnings_limit })
     const result = await $auction.api.earnings()
     if (result && !result?.error) {
       dispatch($auction.set.earnings(result))

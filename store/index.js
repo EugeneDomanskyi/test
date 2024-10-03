@@ -143,6 +143,8 @@ const getBaseUrl = (api) => {
       return process.env.NEXT_PUBLIC_ADMIN_URL
     case 'bid':
       return process.env.NEXT_PUBLIC_BID_URL
+    case 'bid_v2':
+      return process.env.NEXT_PUBLIC_BID_V2_URL
     case 'accounts':
       return process.env.NEXT_PUBLIC_ACCOUNTS_URL
     case 'exchange':
