@@ -34,6 +34,8 @@ const BotAuctionsButton = ({ item, onClaim }) => {
 
   const handeClick = async (e) => {
     if (forceDisable || (forceDisable && item.current)) return
+
+    if (!item.isBiddable) return
     
     setForceDisable(true)
 
@@ -70,7 +72,7 @@ const BotAuctionsButton = ({ item, onClaim }) => {
   }
 
   return (
-    <button className={cn(styles.button, styles[item.status], {[styles.current]: item.current && item.isClaimable}, {[styles.disabled]: item.status == 'upcoming' || (item.status == 'closed' && !item.isClaimable) || (item.status == 'ongoing' && item.current)})} onClick={handeClick}>
+    <button className={cn(styles.button, styles[item.status], {[styles.current]: item.current && item.isClaimable}, {[styles.disabled]: !item.isBiddable || item.status == 'upcoming' || (item.status == 'closed' && !item.isClaimable) || (item.status == 'ongoing' && item.current)})} onClick={handeClick}>
       <App.Text size={20} weight={600} height={1}>{t(text())}</App.Text>
     </button>
   )
