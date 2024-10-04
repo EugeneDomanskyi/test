@@ -142,7 +142,7 @@ const BotEarn = () => {
             </App.Flex>
           </App.Flex>
 
-          {user.is_claimed_twitter ? (
+          {user.is_claimed_first_payment ? (
             <App.Flex center gap={8} className={styles.claimed}>
               <App.Icon icon="check-circle" />
               <App.Text color="#A6DC37">Claimed</App.Text>
