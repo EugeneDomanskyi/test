@@ -121,7 +121,7 @@ const MyEarnings = ({ onClaim }) => {
                 <App.Flex row center gap={8}>
                   {Array.from({ length: earnings_page.total }, (_, i) => (
                     (i + 1) == earnings_page.current ? (
-                      <App.Flex fullWidth center gap={4} className={styles.claimed}>
+                      <App.Flex key={i} fullWidth center gap={4} className={styles.claimed}>
                         <App.Text size={14} weight={700} height={1}>{i + 1}</App.Text>
                       </App.Flex>
                     ) : (
