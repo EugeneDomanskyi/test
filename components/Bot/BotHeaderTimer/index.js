@@ -48,7 +48,7 @@ const BotHeaderTimer = ({ timestamp }) => {
     const seconds = String(duration.seconds()).padStart(2, '0')
     return `${days ? days + 'd:' : ''} ${hours ? hours + 'h:' : ''}${minutes}m:${seconds}s`
   }
-// console.log(timeLeft)
+
   return (
     <App.Flex row align="center" fullWidth gap={4} className={styles.timerContainer}>
       {ongoingAuction?.id && !ongoingAuction.isBiddable ? (
