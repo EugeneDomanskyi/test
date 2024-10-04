@@ -115,6 +115,17 @@ export const earnings_template_v2 = (item) => {
   }
 }
 
+const bid_history_template_v2 = (item, token) => {
+  return {
+    bid: `${formatUnits(item.price.toString(), token.decimals)} ${token.symbol.toUpperCase()}`,
+    user: item.user_details,
+    date: moment(item.timestamp).format('HH:mm DD-MM-YYYY'),
+    time: moment(item.timestamp).format('HH:mm'),
+    day: moment(item.timestamp).format('DD-MM-YYYY'),
+    created_at: item.timestamp,
+  }
+}
+
 export const auctionSlice = createSlice({
   name: '$auction',
 
@@ -128,9 +139,15 @@ export const auctionSlice = createSlice({
     auctionBannerVisible: false,
     loading: true,
     showUpcoming: false,
-    earnings: [],
     auctionHistory: [],
+    bid_history: [],
+    bid_page: {
+      current: 1,
+      limit: 5,
+      total: 0,
+    },
     debug: [],
+    earnings: [],
     earnings_page: {
       current: 1,
       limit: 5,
@@ -309,6 +326,14 @@ export const auctionSlice = createSlice({
       state.earnings_page = payload
     },
 
+    bid_history_v2: (state, { payload }) => {
+      state.bid_history = payload.map(item => bid_history_template_v2(item, state.current.token))
+    },
+
+    bid_history_v2: (state, { payload }) => {
+      state.bid_history_page = payload
+    },
+
     debug: (state, { payload }) => {
       state.debug = [...state.debug, payload]
     },
@@ -423,6 +448,10 @@ export const api = {
 
   earnings_v2: (params) => {
     return request(`telegram/auctions/won`, 'GET', {api: 'bid_v2', ...params})
+  },
+
+  bid_history_v2: (id, params) => {
+    return request(`telegram/auction/${id}/bid-histories`, 'GET', {api: 'bid_v2', ...params})
   },
 
   login: (params) => {

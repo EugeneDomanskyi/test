@@ -11,18 +11,25 @@ import styles from './styles.module.scss'
 const BotAuctionHistory = () => {
   const dispatch = useDispatch()
   const current = useSelector(({ $auction }) => $auction.current)
-  const auctionHistory = useSelector(({ $auction }) => $auction.auctionHistory)
+  const bid_history = useSelector(({ $auction }) => $auction.bid_history)
+  const bid_page = useSelector(({ $auction }) => $auction.bid_page)
 
   useEffect(() => {
+    fetchHistory()
     if (current?.id) {
-      fetchCurrent()
     }
   }, [current?.id])
 
-  const fetchCurrent = async () => {
-    const result = await $auction.api.getTelegram(current.id)
+  const fetchHistory = async (page) => {
+    const id = '1727168541425405200'
+    const result = await $auction.api.bid_history_v2(id, { page: page ?? bid_page.current, limit: bid_page.limit })
     if (result && !result?.error) {
-      dispatch($auction.set.auctionHistory(result))
+      dispatch($auction.set.bid_history_v2(result.bid_histories))
+      dispatch($auction.set.bid_history_page_v2({
+        current: page ?? bid_page.current,
+        limit: bid_page.limit,
+        total: result.total_pages,
+      }))
     }
   }
 
@@ -72,15 +79,15 @@ const BotAuctionHistory = () => {
                 </App.Flex>
               </App.Flex>
               
-              {auctionHistory.length ? (
-                auctionHistory.map((bid, index) => (
+              {bid_history.length ? (
+                bid_history.map((bid, index) => (
                   <App.Flex key={index} row gap={8} className={styles.row}>
                     <App.Flex width={70} align="center">
                       <App.Text size={14} weight={600} height={1}>{bid.bid}</App.Text>
                     </App.Flex>
 
                     <App.Flex flex={1} align="center">
-                      <App.Text size={14} weight={600} height={1}>{bid.wallet}</App.Text>
+                      <App.Text size={14} weight={600} height={1}>{bid.user}</App.Text>
                     </App.Flex>
 
                     <App.Flex width={50} align="center" justify="flex-end">

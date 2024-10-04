@@ -7,7 +7,7 @@ export const botSlice = createSlice({
 
   initialState: {
     user: null,
-    tab: 'auctions',
+    tab: 'auction-history',
     tabHistory: [],
   },
 
