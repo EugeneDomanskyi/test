@@ -590,6 +590,10 @@ export const api = {
     return request(`auctions`, 'GET', {api: 'bid'})
   },
 
+  auctionsV2: (params) => {
+    return request(`auctions/won`, 'GET', {api: 'bid', ...params})
+  },
+
   auction: (id) => {
     return request(`auction/${id}`, 'GET', {api: 'bid'})
   },

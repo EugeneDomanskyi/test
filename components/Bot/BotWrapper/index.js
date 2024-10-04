@@ -18,6 +18,8 @@ const BotWrapper = ({ children }) => {
   const dispatch = useDispatch()
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
   const debug = useSelector(({ $auction }) => $auction.debug)
+  const earnings_page = useSelector(({ $auction }) => $auction.earnings_page)
+  const earnings_limit = useSelector(({ $auction }) => $auction.earnings_limit)
 
   const [isBot, setIsBot] = useState(null)
 
@@ -59,7 +61,7 @@ const BotWrapper = ({ children }) => {
   }
 
   const fetchUser = async () => {
-    const result = await $bot.api.user({referral_code: ''})
+    const result = await $bot.api.user({referral_code: TelegramBot.getReferralCode()})
     if (result && !result.error) {
       dispatch($bot.set.user(result))
     }
@@ -72,7 +74,8 @@ const BotWrapper = ({ children }) => {
     }
   }
 
-  const fetchEarnings = async () => {
+  const fetchEarnings = async (page) => {
+    // const result = await $auction.api.earnings_v2({ page: page ?? earnings_page, limit: earnings_limit })
     const result = await $auction.api.earnings()
     if (result && !result?.error) {
       dispatch($auction.set.earnings(result))

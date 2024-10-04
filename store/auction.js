@@ -24,24 +24,13 @@ const template = (item) => {
   const userIdentifier = auction.last_bidder.user_identifier
   const lastBidderWallet = (userIdentifier.startsWith('0x') ? userIdentifier.toLowerCase() : userIdentifier) || null
   const marketPrice = Number(item.auction_value)
-  const startPrice = formatUnits(auction.start_price.toString(), 6)
-  const currentPrice = formatUnits((auction.last_bid_price > 0 ? auction.last_bid_price : auction.start_price).toString(), 6)
-  const nextPrice = new Decimal(Number(currentPrice) + (auction.last_bid_price > 0 ? Number(formatUnits(auction.minimum_bid_price_increment, 6)) : 0)).toDecimalPlaces(6).toFixed()
+  const startPrice = formatUnits(auction.start_price.toString(), auction.auction_token.decimals)
+  const currentPrice = formatUnits((auction.last_bid_price > 0 ? auction.last_bid_price : auction.start_price).toString(), auction.auction_token.decimals)
+  const nextPrice = new Decimal(Number(currentPrice) + (auction.last_bid_price > 0 ? Number(formatUnits(auction.minimum_bid_price_increment, auction.auction_token.decimals)) : 0)).toDecimalPlaces(auction.auction_token.decimals).toFixed()
   const discount = marketPrice > 0 ? Math.round((marketPrice - currentPrice) / marketPrice * 100) : 0
+  const priceLimit = auction.auction_amount_limit != '' ? formatUnits(auction.auction_amount_limit.toString(), auction.auction_token.decimals) : 0
 
-  let history = []
-  if (auction?.bid_histories && auction?.bid_history_user_info) {
-    history = auction.bid_histories.map(bid => {
-      return {
-        bid: `${formatUnits(bid.price.toString(), 6)} USDC`,
-        wallet: auction.bid_history_user_info[bid.wallet_id].user,
-        date: moment(bid.created_at).format('HH:mm DD-MM-YYYY'),
-        time: moment(bid.created_at).format('HH:mm'),
-        day: moment(bid.created_at).format('DD-MM-YYYY'),
-        created_at: bid.created_at,
-      }
-    })
-  }
+  const isBiddable = (priceLimit > 0 && currentPrice < priceLimit) || priceLimit == 0
 
   const tgUser = TelegramBot.getUsername()
   let isLastBidderMe = tgUser ? lastBidderWallet == tgUser : false
@@ -67,6 +56,8 @@ const template = (item) => {
     marketPrice: marketPrice.toFixed(2),
     currentPrice,
     nextPrice,
+    priceLimit,
+    isBiddable,
     discount,
     token: {
       currency: auction.auction_token.symbol.toUpperCase(),
@@ -80,7 +71,7 @@ const template = (item) => {
     gemsPrice: auction.points_to_deduct,
     lastBidTimestamp: auction.last_bid_timestamp,
     resetTimer: auction.reset_timer,
-    history,
+    history: auctionHistoryTemplate(item),
     bidsCount: item?.total_bids ?? 0,
     claimContract: auction.auction_amount_receiver,
     txHash: auction.tx_hash,
@@ -89,6 +80,26 @@ const template = (item) => {
     isClaimable,
     updated: false,
   }
+}
+
+const auctionHistoryTemplate = (item) => {
+  const auction = item?.auction ? item.auction : item.auction_id
+
+  let history = []
+  if (auction?.bid_histories && item?.bid_history_user_info) {
+    history = auction.bid_histories.map(bid => {
+      return {
+        bid: `${formatUnits(bid.price.toString(), auction.auction_token.decimals)} ${auction.auction_token.symbol.toUpperCase()}`,
+        wallet: item.bid_history_user_info[bid.wallet_id].user,
+        date: moment(bid.created_at).format('HH:mm DD-MM-YYYY'),
+        time: moment(bid.created_at).format('HH:mm'),
+        day: moment(bid.created_at).format('DD-MM-YYYY'),
+        created_at: bid.created_at,
+      }
+    })
+  }
+
+  return history
 }
 
 export const auctionSlice = createSlice({
@@ -105,7 +116,10 @@ export const auctionSlice = createSlice({
     loading: true,
     showUpcoming: false,
     earnings: [],
+    auctionHistory: [],
     debug: [],
+    earnings_page: 1,
+    earnings_limit: 10,
   },
 
   reducers: {
@@ -214,7 +228,11 @@ export const auctionSlice = createSlice({
     },
 
     current: (state, { payload }) => {
-      state.current = auctionTemplate(payload.data, payload.wallet)
+      state.current = payload
+    },
+
+    auctionHistory: (state, { payload }) => {
+      state.auctionHistory = auctionHistoryTemplate(payload)
     },
 
     auctionWarning: (state, { payload }) => {
@@ -372,6 +390,10 @@ export const api = {
 
   earnings: () => {
     return request(`telegram/auctions/won`, 'GET', {api: 'bid'})
+  },
+
+  earnings_v2: (params) => {
+    return request(`telegram/auctions/won`, 'GET', {api: 'bid_v2', ...params})
   },
 
   login: (params) => {
