@@ -57,11 +57,11 @@ const Header = () => {
                   </App.Flex>
                 </Link>
 
-                <Link href="/auctions" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/auctions')})}>
+                <a href={process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL} target="_blank" rel="noreferrer" className={cn(styles.navItem)}>
                   <App.Flex center fullHeight>
                     <App.Text size={14} weight={600}>Earn</App.Text>
                   </App.Flex>
-                </Link>
+                </a>
 
                 <Link href="/tournaments" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/tournaments')})}>
                   <App.Flex center fullHeight>
@@ -127,11 +127,11 @@ const Header = () => {
                 </App.Flex>
               </Link>
 
-              <Link href="/auctions" className={cn(styles.link)}>
+              <a href={process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL} target="_blank" rel="noreferrer" className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
-                  <App.Text size={16} weight={600} color={router.pathname.includes('/auctions') ? '#A6DC37' : '#fff'}>Earn</App.Text>
+                  <App.Text size={16} weight={600}>Earn</App.Text>
                 </App.Flex>
-              </Link>
+              </a>
 
               <Link href="/tournaments" className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>

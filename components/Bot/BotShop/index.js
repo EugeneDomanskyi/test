@@ -14,19 +14,19 @@ import styles from './styles.module.scss'
 const shopItems = [
   {
     title: 'Pile Of Gems',
-    gems: 1000,
+    gems: 10000,
     price: typeof window != 'undefined' ? (TelegramBot.host() == 'tegro.com' ? 50 : 1) : 50,
     image: '/images/bot/shop-gems-1.png',
   },
   {
     title: 'Barrel of Gems',
-    gems: 5000,
+    gems: 50000,
     price: 250,
     image: '/images/bot/shop-gems-2.png',
   },
   {
     title: 'Chest Full of Gems',
-    gems: 10000,
+    gems: 100000,
     price: 500,
     image: '/images/bot/shop-gems-3.png',
   },
@@ -98,32 +98,7 @@ const BotShop = () => {
             )
           })
         }
-        {/* <App.Flex className={cn(styles.box, {[styles.scaleAnimation]: playAnimation})} onClick={handlePay(5000, 10000)}>
-          <App.Flex column full align="center" justify="space-between" className={styles.inner}>
-            <App.Text size={16} weight={700} height={1}>Barrel of Gems</App.Text>
-
-            <App.Flex column center gap={4}>
-              <Image src="/images/bot/shop-gems-2.png" width={100} height={100} alt="" />
-              <App.Text center size={14} weight={700}>10.000 gems</App.Text>
-            </App.Flex>
-
-            <App.Text size={24} weight={900} height={1}>5000</App.Text>
-          </App.Flex>
-        </App.Flex> */}
       </App.Flex>
-
-      {/* <App.Flex className={cn(styles.box, {[styles.scaleAnimation]: playAnimation})} onClick={handlePay(50000, 100000)}>
-        <App.Flex column full align="center" justify="space-between" className={styles.inner}>
-          <App.Text size={16} weight={700} height={1}>Chest Full of Gems</App.Text>
-
-          <App.Flex column center gap={4}>
-            <Image src="/images/bot/shop-gems-3.png" width={100} height={100} alt="" />
-            <App.Text center size={14} weight={700}>100.000 gems</App.Text>
-          </App.Flex>
-
-          <App.Text size={24} weight={900} height={1}>50000</App.Text>
-        </App.Flex>
-      </App.Flex> */}
     </App.Flex>
   )
 }

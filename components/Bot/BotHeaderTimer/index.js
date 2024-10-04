@@ -12,6 +12,7 @@ const BotHeaderTimer = ({ timestamp }) => {
   const intervalRef = useRef(null)
 
   const dispatch = useDispatch()
+  const ongoingAuction = useSelector($auction.get.ongoingAuction)
   const showUpcoming = useSelector(({ $auction }) => $auction.showUpcoming)
 
   const [timeLeft, setTimeLeft] = useState(moment(timestamp).diff(moment()))
@@ -47,7 +48,7 @@ const BotHeaderTimer = ({ timestamp }) => {
     const seconds = String(duration.seconds()).padStart(2, '0')
     return `${days ? days + 'd:' : ''} ${hours ? hours + 'h:' : ''}${minutes}m:${seconds}s`
   }
-// console.log(timeLeft)
+
   return (
     <App.Flex row align="center" fullWidth gap={4} className={styles.timerContainer}>
       {timeLeft > 0 ? (
@@ -56,7 +57,11 @@ const BotHeaderTimer = ({ timestamp }) => {
           <App.Text size={13} weight={600}>{formatTime(timeLeft)}</App.Text>
         </>
       ) : (
-        <App.Text size={13} weight={400}>New Auctions Scheduled Every 10 Minutes!</App.Text>
+        ongoingAuction?.id && ongoingAuction.priceLimit > 0 ? (
+          <App.Text size={13} weight={400}>👀 Auction ends at <b>{ongoingAuction.priceLimit} {ongoingAuction.token.currency}</b>, scheduled every 10 mins</App.Text>
+        ) : (
+          <App.Text size={13} weight={400}>New Auctions Scheduled Every 10 Minutes!</App.Text>
+        )
       )}
     </App.Flex>
   )

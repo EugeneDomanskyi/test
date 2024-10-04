@@ -18,6 +18,7 @@ const BotWrapper = ({ children }) => {
   const dispatch = useDispatch()
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
   const debug = useSelector(({ $auction }) => $auction.debug)
+  const earnings_page = useSelector(({ $auction }) => $auction.earnings_page)
 
   const [isBot, setIsBot] = useState(null)
 
@@ -59,7 +60,7 @@ const BotWrapper = ({ children }) => {
   }
 
   const fetchUser = async () => {
-    const result = await $bot.api.user({referral_code: ''})
+    const result = await $bot.api.user({referral_code: TelegramBot.getReferralCode()})
     if (result && !result.error) {
       dispatch($bot.set.user(result))
     }
@@ -72,10 +73,16 @@ const BotWrapper = ({ children }) => {
     }
   }
 
-  const fetchEarnings = async () => {
-    const result = await $auction.api.earnings()
+  const fetchEarnings = async (page) => {
+    const result = await $auction.api.earnings_v2({ page: page ?? earnings_page.current, limit: earnings_page.limit })
     if (result && !result?.error) {
-      dispatch($auction.set.earnings(result))
+      dispatch($auction.set.earnings_v2(result.data.won_auctions))
+      dispatch($auction.set.earnings_unclaimed_v2(result.data.uncalimed_won_auctions))
+      dispatch($auction.set.earnings_page_v2({
+        current: result.current_page,
+        limit: earnings_page.limit,
+        total: result.total_pages,
+      }))
     }
   }
 

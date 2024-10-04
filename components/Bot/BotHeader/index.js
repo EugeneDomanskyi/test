@@ -14,6 +14,7 @@ import styles from './styles.module.scss'
 const BotHeader = () => {
   const dispatch = useDispatch()
   const upcomingAuction = useSelector($auction.get.upcomingAuction)
+  const earnings_page = useSelector(({ $auction }) => $auction.earnings_page)
 
   useEffect(() => {
     fetchEarnings()
@@ -23,10 +24,16 @@ const BotHeader = () => {
     dispatch($bot.set.tab(uri))
   }
 
-  const fetchEarnings = async () => {
-    const result = await $auction.api.earnings()
+  const fetchEarnings = async (page) => {
+    const result = await $auction.api.earnings_v2({ page: page ?? earnings_page.current, limit: earnings_page.limit })
     if (result && !result?.error) {
-      dispatch($auction.set.earnings(result))
+      dispatch($auction.set.earnings_v2(result.data.won_auctions))
+      dispatch($auction.set.earnings_unclaimed_v2(result.data.uncalimed_won_auctions))
+      dispatch($auction.set.earnings_page_v2({
+        current: result.current_page,
+        limit: earnings_page.limit,
+        total: result.total_pages,
+      }))
     }
   }
 

@@ -12,7 +12,9 @@ import BotWrapper from '@/components/Bot/BotWrapper'
 import BotAuctions from '@/components/Bot/BotAuctions'
 import BotEarn from '@/components/Bot/BotEarn'
 import BotShop from '@/components/Bot/BotShop'
+import BotHistory from '@/components/Bot/BotHistory'
 import BotMyEarnings from '@/components/Bot/BotMyEarnings'
+import BotAuctionHistory from '@/components/Bot/BotAuctionHistory'
 
 const Bot  = () => {
   const dispatch = useDispatch()
@@ -25,18 +27,6 @@ const Bot  = () => {
         const hash = result.hash
         TelegramBot.openLink(`https://${TelegramBot.host()}/bot/claim?id=${auction.id}&hash=${hash}`)
       }
-
-      // window.open(`http://localhost:3000/bot/claim?id=${auction.id}&hash=${hash}`)
-      // TelegramBot.showPopup('Claim reward', `You will be redirect to Tegro website to connect Base wallet and claim reward`, [{ id: 'ok', type: 'ok', text: 'Ok' }])
-      // TelegramBot.on('popupClosed', async (response) => {
-      //   const result = await $bot.api.generateWalletHash()
-      //   if (result && !result.error && result?.hash) {
-      //     const hash = result.hash
-      //     if (response.button_id === 'ok' && hash) {
-      //       TelegramBot.openLink(`https://${TelegramBot.host()}/bot/claim?id=${auction.id}&hash=${hash}`)
-      //     }
-      //   }
-      // })
     } else {
       const result = await $bot.api.generateWalletHash()
       if (result && !result.error && result?.hash) {
@@ -69,7 +59,9 @@ const Bot  = () => {
       case 'auctions': return <BotAuctions onClaim={handleClaim} />
       case 'earn': return <BotEarn />
       case 'shop': return <BotShop />
+      case 'history': return <BotHistory />
       case 'my-earnings': return <BotMyEarnings onClaim={handleClaim} />
+      case 'auction-history': return <BotAuctionHistory />
       default: return <BotAuctions />
     }
   }
