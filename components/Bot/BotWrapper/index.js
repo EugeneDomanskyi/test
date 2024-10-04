@@ -19,7 +19,6 @@ const BotWrapper = ({ children }) => {
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
   const debug = useSelector(({ $auction }) => $auction.debug)
   const earnings_page = useSelector(({ $auction }) => $auction.earnings_page)
-  const earnings_limit = useSelector(({ $auction }) => $auction.earnings_limit)
 
   const [isBot, setIsBot] = useState(null)
 
@@ -75,10 +74,15 @@ const BotWrapper = ({ children }) => {
   }
 
   const fetchEarnings = async (page) => {
-    // const result = await $auction.api.earnings_v2({ page: page ?? earnings_page, limit: earnings_limit })
-    const result = await $auction.api.earnings()
+    const result = await $auction.api.earnings_v2({ page: page ?? earnings_page.current, limit: earnings_page.limit })
     if (result && !result?.error) {
-      dispatch($auction.set.earnings(result))
+      dispatch($auction.set.earnings_v2(result.data.won_auctions))
+      dispatch($auction.set.earnings_unclaimed_v2(result.data.uncalimed_won_auctions))
+      dispatch($auction.set.earnings_page_v2({
+        current: result.current_page,
+        limit: earnings_page.limit,
+        total: result.total_pages,
+      }))
     }
   }
 

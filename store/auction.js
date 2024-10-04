@@ -102,6 +102,19 @@ const auctionHistoryTemplate = (item) => {
   return history
 }
 
+export const earnings_template_v2 = (item) => {
+  return {
+    id: item.id,
+    name: item.product_title,
+    endsAt: moment(item.last_bid_timestamp * 1000).valueOf(),
+    currentPrice: formatUnits(item.last_bid_price.toString(), item.decimals),
+    currency: item.auction_token_currency,
+    txHash: item.claim_tx_hash,
+    claimHash: item.claim_tx_hash,
+    claimTime: moment(item.last_bid_timestamp * 1000).add(3 * 24 * 60 * 60, 'seconds'),
+  }
+}
+
 export const auctionSlice = createSlice({
   name: '$auction',
 
@@ -118,8 +131,12 @@ export const auctionSlice = createSlice({
     earnings: [],
     auctionHistory: [],
     debug: [],
-    earnings_page: 1,
-    earnings_limit: 10,
+    earnings_page: {
+      current: 1,
+      limit: 5,
+      total: 0,
+    },
+    earnings_unclaimed: 0,
   },
 
   reducers: {
@@ -278,6 +295,18 @@ export const auctionSlice = createSlice({
         return b.startsIn - a.startsIn
       })
       state.earnings = temp
+    },
+
+    earnings_v2: (state, { payload }) => {
+      state.earnings = payload.map(item => earnings_template_v2(item))
+    },
+
+    earnings_unclaimed_v2: (state, { payload }) => {
+      state.earnings_unclaimed = payload
+    },
+
+    earnings_page_v2: (state, { payload }) => {
+      state.earnings_page = payload
     },
 
     debug: (state, { payload }) => {
