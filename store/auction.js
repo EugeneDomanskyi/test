@@ -112,6 +112,7 @@ export const earnings_template_v2 = (item) => {
     txHash: item.claim_tx_hash,
     claimHash: item.claim_tx_hash,
     claimTime: moment(item.last_bid_timestamp * 1000).add(3 * 24 * 60 * 60, 'seconds'),
+    status: 'closed',
   }
 }
 
@@ -327,10 +328,10 @@ export const auctionSlice = createSlice({
     },
 
     bid_history_v2: (state, { payload }) => {
-      state.bid_history = payload.map(item => bid_history_template_v2(item, state.current.token))
+      state.bid_history = payload.map(item => bid_history_template_v2(item, {decimals: 6, symbol: 'USDC'}))
     },
 
-    bid_history_v2: (state, { payload }) => {
+    bid_history_page_v2: (state, { payload }) => {
       state.bid_history_page = payload
     },
 

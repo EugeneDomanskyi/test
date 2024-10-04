@@ -15,14 +15,13 @@ const BotAuctionHistory = () => {
   const bid_page = useSelector(({ $auction }) => $auction.bid_page)
 
   useEffect(() => {
-    fetchHistory()
     if (current?.id) {
+      fetchHistory()
     }
   }, [current?.id])
 
   const fetchHistory = async (page) => {
-    const id = '1727168541425405200'
-    const result = await $auction.api.bid_history_v2(id, { page: page ?? bid_page.current, limit: bid_page.limit })
+    const result = await $auction.api.bid_history_v2(current?.id, { page: page ?? bid_page.current, limit: bid_page.limit })
     if (result && !result?.error) {
       dispatch($auction.set.bid_history_v2(result.bid_histories))
       dispatch($auction.set.bid_history_page_v2({
@@ -43,16 +42,16 @@ const BotAuctionHistory = () => {
         <App.Flex column gap={12}>
           <App.Text nowrap size={20} weight={600} height={1}>Buy {current.name} for</App.Text>
 
-          <App.Text nowrap size={24} weight={600} height={1}>{current.currentPrice} {current.token.currency}</App.Text>
+          <App.Text nowrap size={24} weight={600} height={1}>{current.currentPrice} {current.currency}</App.Text>
 
           <App.Flex column gap={24} flex={1}>
             <App.Flex column className={styles.box}>
               <App.Flex row align="center" justify="space-between" sx={{ padding: 24 }}>
                 <App.Text size={14} weight={600} color="#FFFFFF99" height={1}>Winning Bid</App.Text>
-                <App.Text size={32} weight={600} height={1}>{current.currentPrice} {current.token.currency}</App.Text>
+                <App.Text size={32} weight={600} height={1}>{current.currentPrice} {current.currency}</App.Text>
               </App.Flex>
 
-              <div className={styles.line} />
+              {/* <div className={styles.line} />
 
               <App.Flex row align="center" justify="space-between" sx={{ padding: 24 }}>
                 <App.Flex row align="center" gap={12}>
@@ -61,7 +60,7 @@ const BotAuctionHistory = () => {
                     <App.Text size={16} weight={600} height={1}>{current.wallet}</App.Text>
                   </App.Flex>
                 </App.Flex>
-              </App.Flex>
+              </App.Flex> */}
             </App.Flex>
 
             <App.Flex column className={styles.table}>

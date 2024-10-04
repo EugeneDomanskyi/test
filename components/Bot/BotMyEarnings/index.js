@@ -114,6 +114,8 @@ const MyEarnings = ({ onClaim }) => {
                       <App.Text size={14} weight={700} height={1}>Claimed</App.Text>
                     </App.Flex>
                   )}
+
+                  <App.Button fullWidth variant="bot" onClick={() => item.id == buttonLoading ? null : handleHistory(item)}>History</App.Button>
                 </App.Flex>
               ))}
 
