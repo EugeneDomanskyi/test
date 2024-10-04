@@ -125,7 +125,7 @@ const MyEarnings = ({ onClaim }) => {
                         <App.Text size={14} weight={700} height={1}>{i + 1}</App.Text>
                       </App.Flex>
                     ) : (
-                      <App.Button variant="bot" onClick={() =>  fetchEarnings(i + 1)}>{i + 1}</App.Button>
+                      <App.Button key={i} variant="bot" onClick={() =>  fetchEarnings(i + 1)}>{i + 1}</App.Button>
                     )
                   ))}
                 </App.Flex>
