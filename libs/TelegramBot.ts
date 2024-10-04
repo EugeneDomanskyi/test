@@ -154,7 +154,7 @@ class TelegramBot {
 
   domain = () => {
     switch (this.host()) {
-      case 'tegro.com': return 'tegro_fi_bot'
+      case 'tegro.com': return 'tegrofi_bot'
       case 'testnet.tegro.com': return 'testnet_tegro_bot'
       default: return 'local_tegro_bot'
     }
