@@ -51,14 +51,14 @@ const BotHeaderTimer = ({ timestamp }) => {
 
   return (
     <App.Flex row align="center" fullWidth gap={4} className={styles.timerContainer}>
-      {ongoingAuction?.id && !ongoingAuction.isBiddable ? (
-        <App.Text size={13} weight={400}>👀 on the prize. Auction ends at <b>{ongoingAuction.currentPrice} {ongoingAuction.token.currency}</b></App.Text>
+      {timeLeft > 0 ? (
+        <>
+          <App.Text size={13} weight={400}>Next Auction starts in</App.Text>
+          <App.Text size={13} weight={600}>{formatTime(timeLeft)}</App.Text>
+        </>
       ) : (
-        timeLeft > 0 ? (
-          <>
-            <App.Text size={13} weight={400}>Next Auction starts in</App.Text>
-            <App.Text size={13} weight={600}>{formatTime(timeLeft)}</App.Text>
-          </>
+        ongoingAuction?.id && ongoingAuction.priceLimit > 0 ? (
+          <App.Text size={13} weight={400}>👀 Auction ends at <b>{ongoingAuction.priceLimit} {ongoingAuction.token.currency}</b>, scheduled every 10 mins</App.Text>
         ) : (
           <App.Text size={13} weight={400}>New Auctions Scheduled Every 10 Minutes!</App.Text>
         )

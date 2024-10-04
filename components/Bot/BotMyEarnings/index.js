@@ -20,7 +20,6 @@ const MyEarnings = ({ onClaim }) => {
   const earnings = useSelector(({ $auction }) => $auction.earnings)
   const user = useSelector(({ $bot }) => $bot.user)
   const earnings_page = useSelector(({ $auction }) => $auction.earnings_page)
-  const earnings_limit = useSelector(({ $auction }) => $auction.earnings_limit)
 
   useEffect(() => {
     fetchEarnings()
@@ -38,10 +37,15 @@ const MyEarnings = ({ onClaim }) => {
   }
 
   const fetchEarnings = async (page) => {
-    // const result = await $auction.api.earnings_v2({ page: page ?? earnings_page, limit: earnings_limit })
-    const result = await $auction.api.earnings()
+    const result = await $auction.api.earnings_v2({ page: page ?? earnings_page.current, limit: earnings_page.limit })
     if (result && !result?.error) {
-      dispatch($auction.set.earnings(result))
+      dispatch($auction.set.earnings_v2(result.data.won_auctions))
+      dispatch($auction.set.earnings_unclaimed_v2(result.data.uncalimed_won_auctions))
+      dispatch($auction.set.earnings_page_v2({
+        current: result.current_page,
+        limit: earnings_page.limit,
+        total: result.total_pages,
+      }))
     }
 
     setLoading(false)
@@ -69,14 +73,6 @@ const MyEarnings = ({ onClaim }) => {
         <App.LoaderBlock height={300} />
       ) : (
         <App.Flex column fullWidth gap={16}>
-          {/* <App.Flex row fullWidth align="center" gap={8} onClick={handleBack}>
-            <App.Flex sx={{transform: 'rotate(180deg)'}}>
-              <App.Icon icon='arrow-right' />
-            </App.Flex>
-
-            <App.Text>Auctions</App.Text>
-          </App.Flex> */}
-
           {earnings?.length > 0 ? (
             <App.Flex column align="center" gap={16} className={styles.earningsWrapper}>
               <App.Flex fullWidth className={styles.header}>
@@ -90,9 +86,10 @@ const MyEarnings = ({ onClaim }) => {
                   <App.Flex row className={styles.claimItemHeader}>
                     <App.Flex column>
                       <App.Text className={styles.claimItemText}>{item.name}</App.Text>
-                      <App.Text className={styles.claimItemSecondarytext}>{moment(item.startsIn).format('DD-MM-YYYY')}</App.Text>
+                      <App.Text className={styles.claimItemSecondarytext}>{moment(item.endsAt).format('DD-MM-YYYY')}</App.Text>
                     </App.Flex>
-                    <App.Text className={styles.claimItemText}>{item.currentPrice + ' ' + item.token.currency}</App.Text>
+
+                    <App.Text className={styles.claimItemText}>{item.currentPrice + ' ' + item.currency}</App.Text>
 
                     <App.Flex justify="flex-end" width={80}>
                       <App.Text className={styles.claimItemText}>
@@ -105,7 +102,7 @@ const MyEarnings = ({ onClaim }) => {
 
                   {item.claimHash == '' ? (
                     item.claimTime && item.claimTime.diff(moment()) > 0 ? (
-                      <App.Button fullWidth primary2 loading={item.id == buttonLoading} onClick={() => item.id == buttonLoading ? null : handleClaim(item)}>Claim</App.Button>
+                      <App.Button fullWidth variant="bot" loading={item.id == buttonLoading} onClick={() => item.id == buttonLoading ? null : handleClaim(item)}>Claim</App.Button>
                     ) : (
                       <App.Flex fullWidth center gap={4} className={styles.claimed}>
                         <App.Text size={14} weight={700} height={1}>Time&apos;s up</App.Text>
@@ -117,10 +114,22 @@ const MyEarnings = ({ onClaim }) => {
                       <App.Text size={14} weight={700} height={1}>Claimed</App.Text>
                     </App.Flex>
                   )}
-
-{/* <App.Button fullWidth primary2 onClick={() => handleHistory(item)}>History</App.Button> */}
                 </App.Flex>
               ))}
+
+              {earnings_page.total > 1 ? (
+                <App.Flex row center gap={8}>
+                  {Array.from({ length: earnings_page.total }, (_, i) => (
+                    (i + 1) == earnings_page.current ? (
+                      <App.Flex key={i} fullWidth center gap={4} className={styles.claimed}>
+                        <App.Text size={14} weight={700} height={1}>{i + 1}</App.Text>
+                      </App.Flex>
+                    ) : (
+                      <App.Button key={i} variant="bot" onClick={() =>  fetchEarnings(i + 1)}>{i + 1}</App.Button>
+                    )
+                  ))}
+                </App.Flex>
+              ) : null}
             </App.Flex>
           ) : (
             <App.Flex column gap={16} className={styles.emptyBox}>
