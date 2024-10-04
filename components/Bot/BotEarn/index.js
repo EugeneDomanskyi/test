@@ -49,14 +49,14 @@ const BotEarn = () => {
   }
 
   const handleShare = () => {
-    const referralLink = `${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}/app?startapp=${user.referral_code}`
+    const referralLink = `${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}?startapp=${user.referral_code}`
     const referralText = `Join Tegro and get 5000 gems for free!`
     const link = `https://t.me/share/url?url=${referralLink}&text=${referralText}`
     TelegramBot.openTelegramLink(link)
   }
 
   const handleCopy = () => {
-    const referralLink = `${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}/app?startapp=${user.referral_code}`
+    const referralLink = `${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}?startapp=${user.referral_code}`
     navigator.clipboard.writeText(referralLink)
     dispatch($alert.set.success({ title: 'Link copied to clipboard' }))
   }

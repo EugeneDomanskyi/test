@@ -41,9 +41,10 @@ const BotWallet = () => {
 
         {/* <App.Button variant="bot-default" small onClick={handleHistory}>History</App.Button> */}
 
-        {TelegramBot.host() != 'tegro.com' ? (
+        {/* {TelegramBot.host() != 'tegro.com' ? (
           <App.Button variant="bot-default" small onClick={handleCopyInitData}>Copy initData</App.Button>
-        ) : null}
+        ) : null} */}
+        <App.Button variant="bot-default" small onClick={handleCopyInitData}>Copy initData</App.Button>
       </App.Flex>
     </App.Flex>
   )
