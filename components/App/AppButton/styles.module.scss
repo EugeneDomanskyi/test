@@ -222,8 +222,12 @@
       border-color: #6B41EB;
     }
 
-    &.outlined {
+    &.outlined,
+    &.outlined:hover,
+    &.outlined:active,
+    &.outlined:focus {
       background: transparent;
+      border: 1px solid #6B41EB;
     }
   }
 

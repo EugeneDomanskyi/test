@@ -38,7 +38,9 @@ const MyEarnings = ({ onClaim }) => {
 
   const fetchEarnings = async (page) => {
     const result = await $auction.api.earnings_v2({ page: page ?? earnings_page.current, limit: earnings_page.limit })
+    // const result = await $auction.api.earnings()
     if (result && !result?.error) {
+      // dispatch($auction.set.earnings(result))
       dispatch($auction.set.earnings_v2(result.data.won_auctions))
       dispatch($auction.set.earnings_unclaimed_v2(result.data.uncalimed_won_auctions))
       dispatch($auction.set.earnings_page_v2({
@@ -89,7 +91,7 @@ const MyEarnings = ({ onClaim }) => {
                       <App.Text className={styles.claimItemSecondarytext}>{moment(item.endsAt).format('DD-MM-YYYY')}</App.Text>
                     </App.Flex>
 
-                    <App.Text className={styles.claimItemText}>{item.currentPrice + ' ' + item.currency}</App.Text>
+                    <App.Text className={styles.claimItemText}>{item.currentPrice + ' ' + item.token.currency}</App.Text>
 
                     <App.Flex justify="flex-end" width={80}>
                       <App.Text className={styles.claimItemText}>

@@ -57,7 +57,7 @@ const Header = () => {
                   </App.Flex>
                 </Link>
 
-                <a href={`${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}/app`} target="_blank" rel="noreferrer" className={cn(styles.navItem)}>
+                <a href={process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL} target="_blank" rel="noreferrer" className={cn(styles.navItem)}>
                   <App.Flex center fullHeight>
                     <App.Text size={14} weight={600}>Earn</App.Text>
                   </App.Flex>
@@ -127,7 +127,7 @@ const Header = () => {
                 </App.Flex>
               </Link>
 
-              <a href={`${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}/app`} target="_blank" rel="noreferrer" className={cn(styles.link)}>
+              <a href={process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL} target="_blank" rel="noreferrer" className={cn(styles.link)}>
                 <App.Flex align="center" height="100%" gap={8} onClick={handleMobileMenuClick}>
                   <App.Text size={16} weight={600}>Earn</App.Text>
                 </App.Flex>
