@@ -7,6 +7,7 @@ import Socket from '@/libs/ws.lib'
 import useInterval from '@/myhooks/useInterval'
 
 import $auction from '@/store/auction'
+import $bot from '@/store/bot'
 
 import App from '@/components/App'
 import BotAuctionsImage from '@/components/Bot/BotAuctionsImage'
@@ -93,8 +94,10 @@ const BotAuctions = ({ onClaim }) => {
     dispatch($auction.set.auctionNotClaim(ongoingAuction))
   }
 
-  const handleAuctionHistory = () => {
-    // implement
+  const handleAuctionHistory = (auction) => () => {
+    dispatch($auction.set.current(auction))
+    dispatch($auction.set.auctionHistory([]))
+    dispatch($bot.set.tab('auction-history'))
   }
 
   return loading ? (
@@ -172,8 +175,8 @@ const BotAuctions = ({ onClaim }) => {
                   {(ongoingAuction.status != 'closed' || ongoingAuction.status == 'closed' && ongoingAuction.current) ? (
                     <BotAuctionsButton item={ongoingAuction} onClaim={onClaim} />
                   ) : (
-                    <App.Flex />
-                    // <App.Button variant="bot" large fullWidth outlined onClick={handleAuctionHistory}>View history</App.Button>
+                    // <App.Flex />
+                    <App.Button variant="bot" large fullWidth outlined onClick={handleAuctionHistory(ongoingAuction)}>View history</App.Button>
                   )}
                   
                   {ongoingAuction.status != 'closed' ? (

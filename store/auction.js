@@ -425,6 +425,10 @@ export const api = {
     return request(`telegram/auctions/won`, 'GET', {api: 'bid_v2', ...params})
   },
 
+  bid_history_v2: (id, params) => {
+    return request(`telegram//auction/${id}/bid-histories`, 'GET', {api: 'bid_v2', ...params})
+  },
+
   login: (params) => {
     return request(`login`, 'POST', {api: 'bid', ...params})
   },
