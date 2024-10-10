@@ -45,6 +45,7 @@ const SidebarBanner = () => {
 
   const fetchTournament = async () => {
     const result = await $gem.api.currentTournament()
+    // const result = await $gem.api.tournament('uptober-s2')
     if (result && result?.id) {
       dispatch($gem.set.currentTournament(result))
     }
