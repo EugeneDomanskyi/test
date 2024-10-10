@@ -135,6 +135,7 @@ export const auctionSlice = createSlice({
     claim: false,
     claimId: null,
     current: null,
+    claimAuction: null,
     auctionWarning: false,
     showTelegramSubscription: null,
     auctionBannerVisible: false,
@@ -264,6 +265,10 @@ export const auctionSlice = createSlice({
 
     current: (state, { payload }) => {
       state.current = payload
+    },
+
+    claimAuction: (state, { payload }) => {
+      state.claimAuction = template(payload)
     },
 
     auctionHistory: (state, { payload }) => {

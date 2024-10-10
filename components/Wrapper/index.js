@@ -140,31 +140,27 @@ const Wrapper = ({ children }) => {
   
   return (
     <div style={{ height: '100%' }}>
-      {isBot ? (
-        children
-      ) : (
-        !isInIframe ? (
-          <div style={{ height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden' }}>
-            <Analytics />
-            <StickyBanner />
+      {!isInIframe ? (
+        <div style={{ height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden' }}>
+          <Analytics />
+          {!isBot ? <StickyBanner /> : null}
 
-            {isLanding ? (
-              <AuctionLandingBanner />
-            ) : null}
+          {isLanding ? (
+            <AuctionLandingBanner />
+          ) : null}
 
-            {!isCampaign && !isApp ? <Header /> : null}
+          {!isCampaign && !isApp ? <Header /> : null}
 
-            <div style={{marginTop: page !== '' ? (isMobile ? -48 : -72) : 0, height: stickyBannerVisible ? 'calc(100% - 28px)' : '100%'}}>
-              {children}
-              {!isCampaign && !isApp && !isExchange && !isGD && !isAuctions ? <Footer /> : null}
-            </div>
-
-            {page === 'exchange' && !isApp && showTournamentBanner  ? <SidebarBanner /> : null}
-            {page === 'exchange' && !isApp ? <OnboardingBanner /> : null}
+          <div style={{marginTop: page !== '' ? (isMobile ? -48 : -72) : 0, height: stickyBannerVisible ? 'calc(100% - 28px)' : '100%'}}>
+            {children}
+            {!isCampaign && !isApp && !isExchange && !isGD && !isAuctions && !isBot ? <Footer /> : null}
           </div>
-        ) : (
-          <Footer />
-        )
+
+          {page === 'exchange' && !isApp && !isBot && showTournamentBanner  ? <SidebarBanner /> : null}
+          {page === 'exchange' && !isApp && !isBot ? <OnboardingBanner /> : null}
+        </div>
+      ) : (
+        <Footer />
       )}
 
       {/* {

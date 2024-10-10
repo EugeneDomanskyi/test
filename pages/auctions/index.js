@@ -30,8 +30,9 @@ const Auctions = () => {
   const claimItem = useSelector($gem.get.claimItem)
 
   useEffect(() => {
-    fetchAuctions()
-    dispatch($gem.set.auctionsUpdateTimer())
+    window.location.href = process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL
+    // fetchAuctions()
+    // dispatch($gem.set.auctionsUpdateTimer())
   }, [])
 
   useEffect(() => {
@@ -110,7 +111,7 @@ const Auctions = () => {
     dispatch($gem.set.claim(false))
   }
 
-  return (
+  return null; (
     <App.Container maxWidth={1230} className={styles.container}>
       <App.Flex column fullWidth flex={1} gap={16}>
         <AuctionBar />
