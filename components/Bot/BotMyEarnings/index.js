@@ -63,10 +63,48 @@ const MyEarnings = ({ onClaim }) => {
     dispatch($bot.set.tab('auctions'))
   }
 
-  const handleHistory = (auction) => {
-    dispatch($auction.set.current(auction))
-    dispatch($auction.set.auctionHistory([]))
-    dispatch($bot.set.tab('auction-history'))
+  const renderPagination = () => {
+    const totalPages = earnings_page.total
+    const currentPage = earnings_page.current
+    const pages = []
+  
+    pages.push(currentPage == 1 ? (
+      <App.Flex key={1} fullWidth center gap={4} className={styles.claimed}>
+        <App.Text size={14} weight={700} height={1}>1</App.Text>
+      </App.Flex>
+    ) : (
+      <App.Button key={1} variant="bot" onClick={() =>  fetchEarnings(1)}>1</App.Button>
+    ))
+  
+    if (currentPage > 3) {
+      pages.push(<App.Text key="dots1">...</App.Text>);
+    }
+  
+    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+      pages.push(i === currentPage ? (
+        <App.Flex key={i} fullWidth center gap={4} className={styles.claimed}>
+          <App.Text size={14} weight={700} height={1}>{i}</App.Text>
+        </App.Flex>
+      ) : (
+        <App.Button key={i} variant="bot" onClick={() => fetchEarnings(i)}>{i}</App.Button>
+      ))
+    }
+  
+    if (currentPage < totalPages - 2) {
+      pages.push(<App.Text key="dots2">...</App.Text>);
+    }
+  
+    if (totalPages > 1) {
+      pages.push(currentPage == totalPages ? (
+        <App.Flex key={totalPages} fullWidth center gap={4} className={styles.claimed}>
+          <App.Text size={14} weight={700} height={1}>{totalPages}</App.Text>
+        </App.Flex>
+      ) : (
+        <App.Button key={totalPages} variant="bot" onClick={() =>  fetchEarnings(totalPages)}>{totalPages}</App.Button>
+      ))
+    }
+  
+    return pages
   }
 
   return (
@@ -91,7 +129,7 @@ const MyEarnings = ({ onClaim }) => {
                       <App.Text className={styles.claimItemSecondarytext}>{moment(item.endsAt).format('DD-MM-YYYY')}</App.Text>
                     </App.Flex>
 
-                    <App.Text className={styles.claimItemText}>{item.currentPrice + ' ' + item.token.currency}</App.Text>
+                    <App.Text className={styles.claimItemText}>{item.currentPrice + ' ' + item.currency}</App.Text>
 
                     <App.Flex justify="flex-end" width={80}>
                       <App.Text className={styles.claimItemText}>
@@ -116,22 +154,12 @@ const MyEarnings = ({ onClaim }) => {
                       <App.Text size={14} weight={700} height={1}>Claimed</App.Text>
                     </App.Flex>
                   )}
-
-                  <App.Button fullWidth variant="bot" onClick={() => item.id == buttonLoading ? null : handleHistory(item)}>History</App.Button>
                 </App.Flex>
               ))}
 
               {earnings_page.total > 1 ? (
                 <App.Flex row center gap={8}>
-                  {Array.from({ length: earnings_page.total }, (_, i) => (
-                    (i + 1) == earnings_page.current ? (
-                      <App.Flex key={i} fullWidth center gap={4} className={styles.claimed}>
-                        <App.Text size={14} weight={700} height={1}>{i + 1}</App.Text>
-                      </App.Flex>
-                    ) : (
-                      <App.Button key={i} variant="bot" onClick={() =>  fetchEarnings(i + 1)}>{i + 1}</App.Button>
-                    )
-                  ))}
+                  {renderPagination()}
                 </App.Flex>
               ) : null}
             </App.Flex>

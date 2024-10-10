@@ -144,7 +144,7 @@ export const auctionSlice = createSlice({
     bid_history: [],
     bid_page: {
       current: 1,
-      limit: 5,
+      limit: 10,
       total: 0,
     },
     debug: [],
@@ -332,7 +332,7 @@ export const auctionSlice = createSlice({
     },
 
     bid_history_page_v2: (state, { payload }) => {
-      state.bid_history_page = payload
+      state.bid_page = payload
     },
 
     debug: (state, { payload }) => {
@@ -391,7 +391,7 @@ export const get = {
     }
 
     const ongoingAuctions = auctions.filter(item => item.status == 'ongoing')
-    if (ongoingAuctions.length) {
+    if (!ongoingAuctions.length) {
       ongoingAuctions.sort((a, b) => a.startsIn - b.startsIn)
       return ongoingAuctions[0]
     } else {

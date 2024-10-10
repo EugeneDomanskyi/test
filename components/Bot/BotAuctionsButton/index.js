@@ -28,7 +28,7 @@ const BotAuctionsButton = ({ item, onClaim }) => {
     switch (item.status) {
       case 'upcoming': return 'Bid Now'
       case 'ongoing': return 'Bid Now'
-      case 'closed': return item.current && item.claimHash == '' ? 'Proceed to checkout' : 'Auction Ended'
+      case 'closed': return item.current && item.claimHash == '' ? `Pay ${item.currentPrice} ${item.token.currency}` : 'Auction Ended'
     }
   }
 
