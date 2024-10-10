@@ -53,9 +53,33 @@ const BotClaim = () => {
   useEffect(() => {
     if (id) {
       fetchInfo()
-      // dispatch($gem.set.claimId(id))
     }
   }, [id])
+
+  useEffect(() => {
+    if (claimAuction?.id) {
+      if (claimAuction.txHash != '') {
+        if (claimAuction.claimTxHash != '') {
+          setScanLink(WagmiHelper.generateScanUrl(claimAuction.claimTxHash, 'tx'))
+          setStep(4)
+        } else {
+          reclaim()
+        }
+      }
+    }
+  }, [claimAuction])
+
+  const reclaim = async () => {
+    const result = await $gem.api.claimTelegram({ auction_id: claimAuction.id, external_user_hash: hash })
+    if (result && result?.error) {
+      setLoadingPay(false)
+      dispatch($alert.set.error({title: 'Something went wrong', text: result.error}))
+      return
+    }
+
+    setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
+    setStep(4)
+  }
 
   const fetchInfo = async () => {
     const result = await $auction.api.getTelegram(id)
@@ -298,7 +322,7 @@ You don't wanna miss these insane deals! ✨
 
       {step == 4 ? (
         <App.Flex column gap={24} className={styles.padding}>
-          <App.Button fullwidth href={`tg://resolve?domain=${TelegramBot.domain()}`} primary2 outlined>Return to app</App.Button>
+          <App.Button fullWidth href={`tg://resolve?domain=${TelegramBot.domain()}`} primary2 outlined>Return to app</App.Button>
           {scanLink ? (
             <App.Flex row center gap={8} onClick={handleScan}>
               <App.Text size={14} weight={600} height={1} color="#6B41EB">View on Basescan</App.Text>
