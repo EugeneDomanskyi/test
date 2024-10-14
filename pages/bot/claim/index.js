@@ -38,6 +38,7 @@ const BotClaim = () => {
   const [scanLink, setScanLink] = useState()
   const [txDialogVisible, setTxDialogVisible] = useState(false)
   const [txId, setTxId] = useState('')
+  const [txLoading, setTxLoading] = useState(false)
 
   useEffect(() => {
     if (!connection.loading) {
@@ -221,6 +222,26 @@ You don't wanna miss these insane deals! ✨
     setTxId(value)
   }
 
+  const handleTxIdSubmit = async () => {
+    if (txId != '') {
+      setTxLoading(true)
+      const result = await $auction.api.saveTxId({
+        auction_id: claimAuction.id,
+        external_user_hash: hash,
+        tx_hash: txId,
+      })
+      
+      if (result && !result.error) {
+        setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
+        setStep(4)
+        setTxDialogVisible(false)
+      } else {
+        dispatch($alert.set.error({title: 'Verification failed', text: 'We were not able to validate your transaction. Reach out to us on Discord for help.'}))
+      }
+      setTxLoading(false)
+    }
+  }
+
   return loadingPage ? (
     <App.LoaderBlock />
   ) : (
@@ -350,12 +371,19 @@ You don't wanna miss these insane deals! ✨
       )}
 
       <App.Dialog open={txDialogVisible} title="Enter your transaction hash" onClose={handleTxDialogClose}>
-        <App.Flex column className={styles.modal}>
-          <App.TextField
-            value={txId}
-            placeholder="Paste your transaction hash here"
-            onChange={handleTxIdChange}
-          />
+        <App.Flex column gap={16} className={styles.modal}>
+          <App.Flex column>
+            <App.Text size={12} weight={400} color="#FFFFFF99">Transaction hash</App.Text>
+            <App.TextField
+              value={txId}
+              placeholder="Paste your transaction hash here"
+              onChange={handleTxIdChange}
+            />
+          </App.Flex>
+
+          <App.Text size={14} weight={400} color="#FFFFFF99">You’ll be able to find this using an explorer like basescan.</App.Text>
+
+          <App.Button variant="bot" loading={txLoading} disabled={txLoading} onClick={handleTxIdSubmit}>Submit</App.Button>
         </App.Flex>
       </App.Dialog>
     </App.Flex>

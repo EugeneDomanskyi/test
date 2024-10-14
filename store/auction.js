@@ -483,6 +483,10 @@ export const api = {
   upload: (data) => {
     return request(`upload/image`, 'POST', {api: 'admin'}, data)
   },
+
+  saveTxId: (data) => {
+    return request(`auction/claim/save-and-claim`, 'POST', {api: 'bid'}, data)
+  },
 }
 
 export default {
