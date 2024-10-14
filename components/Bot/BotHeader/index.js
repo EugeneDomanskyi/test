@@ -25,17 +25,17 @@ const BotHeader = () => {
   }
 
   const fetchEarnings = async (page) => {
-    // const result = await $auction.api.earnings_v2({ page: page ?? earnings_page.current, limit: earnings_page.limit })
-    const result = await $auction.api.earnings()
+    const result = await $auction.api.earnings_v2({ page: page ?? earnings_page.current, limit: earnings_page.limit })
+    // const result = await $auction.api.earnings()
     if (result && !result?.error) {
-      dispatch($auction.set.earnings(result))
-      // dispatch($auction.set.earnings_v2(result.data.won_auctions))
-      // dispatch($auction.set.earnings_unclaimed_v2(result.data.uncalimed_won_auctions))
-      // dispatch($auction.set.earnings_page_v2({
-      //   current: result.current_page,
-      //   limit: earnings_page.limit,
-      //   total: result.total_pages,
-      // }))
+      // dispatch($auction.set.earnings(result))
+      dispatch($auction.set.earnings_v2(result.data.won_auctions))
+      dispatch($auction.set.earnings_unclaimed_v2(result.data.uncalimed_won_auctions))
+      dispatch($auction.set.earnings_page_v2({
+        current: result.current_page,
+        limit: earnings_page.limit,
+        total: result.total_pages,
+      }))
     }
   }
 
