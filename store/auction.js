@@ -396,7 +396,7 @@ export const get = {
     }
 
     const ongoingAuctions = auctions.filter(item => item.status == 'ongoing')
-    if (!ongoingAuctions.length) {
+    if (ongoingAuctions.length) {
       ongoingAuctions.sort((a, b) => a.startsIn - b.startsIn)
       return ongoingAuctions[0]
     } else {

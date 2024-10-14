@@ -17,12 +17,7 @@ const BotAuctionsButton = ({ item, onClaim }) => {
   const { t } = useTranslation()
 
   const dispatch = useDispatch()
-  const claim = useSelector(({ $gem }) => $gem.claim)
-  const claimId = useSelector(({ $gem }) => $gem.claimId)
   const user = useSelector(({ $bot }) => $bot.user)
-
-  const [loading, setLoading] = useState(false)
-  const [forceDisable, setForceDisable] = useState(false)
 
   const text = () => {
     switch (item.status) {
@@ -33,19 +28,7 @@ const BotAuctionsButton = ({ item, onClaim }) => {
   }
 
   const handeClick = async (e) => {
-    if (forceDisable || (forceDisable && item.current)) return
-
-    if (!item.isBiddable) return
-    
-    setForceDisable(true)
-
-    if (navigator.vibrate) {
-      navigator.vibrate(500);
-    }
-    
-    if (window.navigator.vibrate) {
-      window.navigator.vibrate(500);
-    }
+    if (item.status == 'ongoing' && !item.isBiddable) return
 
     if (item.status == 'ongoing' && !item.current) {
       if (user?.points && user.points * 1 >= item.gemsPrice * 1) {
@@ -67,8 +50,6 @@ const BotAuctionsButton = ({ item, onClaim }) => {
         onClaim(item)
       }
     }
-
-    setForceDisable(false)
   }
 
   return (

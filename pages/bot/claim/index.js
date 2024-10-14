@@ -36,6 +36,8 @@ const BotClaim = () => {
   const [initCheck, setInitCheck] = useState(true)
   const [claimImage, setClaimImage] = useState()
   const [scanLink, setScanLink] = useState()
+  const [txDialogVisible, setTxDialogVisible] = useState(false)
+  const [txId, setTxId] = useState('')
 
   useEffect(() => {
     if (!connection.loading) {
@@ -58,8 +60,9 @@ const BotClaim = () => {
 
   useEffect(() => {
     if (claimAuction?.id) {
-      if (claimAuction.txHash != '') {
-        if (claimAuction.claimTxHash != '') {
+      if (claimAuction.txHash && claimAuction.txHash != '') {
+        if (claimAuction.claimTxHash && claimAuction.claimTxHash != '') {
+          console.log(claimAuction)
           setScanLink(WagmiHelper.generateScanUrl(claimAuction.claimTxHash, 'tx'))
           setStep(4)
         } else {
@@ -203,11 +206,19 @@ You don't wanna miss these insane deals! ✨
   }
 
   const handleEnterTx = () => {
+    setTxDialogVisible(true)
+  }
 
+  const handleTxDialogClose = () => {
+    setTxDialogVisible(false)
   }
 
   const handleScan = () => {
     window.open(scanLink, '_blank')
+  }
+
+  const handleTxIdChange = (value) => {
+    setTxId(value)
   }
 
   return loadingPage ? (
@@ -337,6 +348,16 @@ You don't wanna miss these insane deals! ✨
           <App.Button href="https://discord.com/invite/tegro" primary2 outlined rounded><App.Icon icon="discord2" /> Need help?</App.Button>
         </App.Flex>
       )}
+
+      <App.Dialog open={txDialogVisible} title="Enter your transaction hash" onClose={handleTxDialogClose}>
+        <App.Flex column className={styles.modal}>
+          <App.TextField
+            value={txId}
+            placeholder="Paste your transaction hash here"
+            onChange={handleTxIdChange}
+          />
+        </App.Flex>
+      </App.Dialog>
     </App.Flex>
   )
 }
