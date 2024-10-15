@@ -487,7 +487,7 @@ export const api = {
   },
 
   saveTxId: (params) => {
-    return request(`auction/claim/save-and-claim`, 'POST', {api: 'bid', ...params})
+    return request(`telegram/auction/claim/save-and-claim`, 'POST', {api: 'bid', ...params})
   },
 }
 
