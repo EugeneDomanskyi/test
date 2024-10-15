@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import moment from 'moment'
 
+import Amplitude from '@/libs/amplitude.lib'
+
 import $auction from '@/store/auction'
 import $bot from '@/store/bot'
 
@@ -55,6 +57,10 @@ const MyEarnings = ({ onClaim }) => {
   
   const handleClaim = async (auction) => {
     setButtonLoading(auction.id)
+    Amplitude.event(`Initiated Prize Claim`, {
+      'Page': 'My earnings',
+    })
+
     await onClaim(auction)
     setButtonLoading(null)
   }

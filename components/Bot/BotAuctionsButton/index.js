@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import cn from 'classnames'
 
 import TelegramBot from '@/libs/TelegramBot'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $gem from '@/store/gem'
 import $bot from '@/store/bot'
@@ -53,6 +54,10 @@ const BotAuctionsButton = ({ item, onClaim }) => {
 
     if (item.status == 'closed') {
       if (item.current) {
+        Amplitude.event(`Initiated Prize Claim`, {
+          'Page': 'Auction',
+        })
+
         await onClaim(item)
       }
     }

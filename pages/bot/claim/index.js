@@ -7,6 +7,7 @@ import cn from 'classnames'
 import WagmiHelper from '@/libs/WagmiHelper'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 import TelegramBot from '@/libs/TelegramBot'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $app from '@/store/app'
 import $auction from '@/store/auction'
@@ -98,6 +99,10 @@ const BotClaim = () => {
     setInitCheck(false)
     setLoadingConnect(true)
 
+    Amplitude.event(`Connect wallet for checkout`, {
+      'Page': 'Checkout',
+    })
+
     const tempWallet = WagmiHelper.getWallet()
     if (tempWallet) {
       console.log('Wallet before connect', tempWallet)
@@ -108,20 +113,39 @@ const BotClaim = () => {
     try {
       const result = await connect()
       if (result) {
+        Amplitude.event(`Connect wallet for checkout`, {
+          'Page': 'Checkout',
+          'Result': 'Success',
+        })
+
         const create = await $gem.api.register({ wallet_address: result, referral_code: localStorage.getItem('referral') ?? '' })
         if (create && !create.error) {
           await $bot.api.assignWalletToUser({wallet_address: result, hash})
           setStep(2)
         }
+      } else {
+        Amplitude.event(`Connect wallet for checkout`, {
+          'Page': 'Checkout',
+          'Result': 'Failed',
+        })
       }
     } catch (e) {
       console.log('Error during connect', e)
+
+      Amplitude.event(`Connect wallet for checkout`, {
+        'Page': 'Checkout',
+        'Result': 'Failed',
+      })
     }
 
     setLoadingConnect(false)
   }
 
   const handleShare = () => {
+    Amplitude.event(`Shared on twitter`, {
+      'Page': 'Checkout',
+    })
+
     const link = `${window.location.origin}/auctions`
     const tweetText = claimImage ? `${link}?share=${claimImage}` : encodeURIComponent(`
 🚀 Unbelievable! I just bagged ${claimAuction.name} for just ${claimAuction.currentPrice} ${claimAuction.token.currency} on Tegro! 👀
@@ -136,16 +160,16 @@ You don't wanna miss these insane deals! ✨
     const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}`
     window.open(tweetUrl)
 
-    // Amplitude.event(`Shared winnings`, {
-    //   'Page': 'Auction',
-    // })
-
     setStep(3)
   }
 
   const handlePay = async () => {
     setLoadingPay(true)
     setScanLink(null)
+
+    Amplitude.event(`Click on Pay`, {
+      'Page': 'Checkout',
+    })
 
     const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app' || (window.location.hostname == 'testnet.tegro.com' && item.id >= 3)) ? 'base' : 'amoy' 
     const network = await WagmiHelper.changeChain(chainCode)
@@ -173,11 +197,18 @@ You don't wanna miss these insane deals! ✨
     const price = parseUnits(claimAuction.currentPrice, claimAuction.token.decimals)
     const txid = await WagmiHelper.transfer(claimAuction.token.address, claimAuction.claimContract, price, chainCode)
     if (txid && txid?.error) {
+      Amplitude.event(`Payment pending`, {
+        'Page': 'Checkout',
+      })
+
       setLoadingPay(false)
       dispatch($alert.set.error({title: 'Something went wrong', text: txid.error}))
       return
     }
     console.log('Transaction ID received', txid)
+    Amplitude.event(`Pay success`, {
+      'Page': 'Checkout',
+    })
 
     $auction.api.txHash({ auction_id: claimAuction.id, tx_hash: txid, external_user_hash: hash })
 
@@ -189,13 +220,25 @@ You don't wanna miss these insane deals! ✨
       return
     }
 
+    Amplitude.event(`Transaction finished, call claim endpoint`, {
+      'Page': 'Checkout',
+    })
+
     console.log('Call claim endpoint')
     const result = await $gem.api.claimTelegram({ auction_id: claimAuction.id, external_user_hash: hash })
     if (result && result?.error) {
+      Amplitude.event(`Claim failed`, {
+        'Page': 'Checkout',
+      })
+
       setLoadingPay(false)
       dispatch($alert.set.error({title: 'Something went wrong', text: result.error}))
       return
     }
+
+    Amplitude.event(`Claim success`, {
+      'Page': 'Checkout',
+    })
 
     setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
     setStep(4)
@@ -207,6 +250,10 @@ You don't wanna miss these insane deals! ✨
   }
 
   const handleEnterTx = () => {
+    Amplitude.event(`Clicked on "Paid already but din't receive rewards"`, {
+      'Page': 'Checkout',
+    })
+
     setTxDialogVisible(true)
   }
 
@@ -232,10 +279,18 @@ You don't wanna miss these insane deals! ✨
       })
       
       if (result && !result.error) {
+        Amplitude.event(`Submit tx manually success`, {
+          'Page': 'Checkout',
+        })
+
         setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
         setStep(4)
         setTxDialogVisible(false)
       } else {
+        Amplitude.event(`Submit tx manually failed`, {
+          'Page': 'Checkout',
+        })
+
         dispatch($alert.set.error({title: 'Verification failed', text: 'We were not able to validate your transaction. Reach out to us on Discord for help.'}))
       }
       setTxLoading(false)
