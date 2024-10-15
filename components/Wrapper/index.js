@@ -29,17 +29,17 @@ const Wrapper = ({ children }) => {
   const { wallet, connection } = useWagmiHelper()
 
   const router = useRouter()
-  const isLanding = router.asPath == '/'
-  const isBot = router.asPath == '/bot' || router.asPath == '/bot/'
-  const isClaimBot = router.asPath?.includes('/bot/claim')
+  const asPath = router.asPath.split('#')[0]
+  const pathname = asPath.split('?')[0]
+  const isLanding = pathname == '/'
+  const isBot = pathname == '/bot'
+  const isClaimBot = pathname?.includes('/bot/claim')
   const isCampaign = router.asPath?.includes('/campaign')
   const isExchange = router.asPath?.includes('/exchange')
   const [_, page] = router.asPath.split('/')
   const isGD = router.asPath?.includes('/gems-dashboard')
   const isAuctions = router.asPath?.includes('/auctions')
   const { referral } = router.query
-
-  console.log(router.asPath, isBot, isClaimBot)
 
   const dispatch = useDispatch()
   const isApp = useSelector(({ $app }) => $app.isApp)
