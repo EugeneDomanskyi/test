@@ -108,7 +108,9 @@ export const earnings_template_v2 = (item) => {
     name: item.product_title,
     endsAt: moment(item.last_bid_timestamp * 1000).valueOf(),
     currentPrice: formatUnits(item.last_bid_price.toString(), item.decimals),
-    currency: item.auction_token_currency,
+    token: {
+      currency: item.auction_token_currency.toUpperCase(),
+    },
     txHash: item.claim_tx_hash,
     claimHash: item.claim_tx_hash,
     claimTime: moment(item.last_bid_timestamp * 1000).add(3 * 24 * 60 * 60, 'seconds'),
