@@ -1,9 +1,11 @@
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import cn from 'classnames'
 
 import TelegramBot from '@/libs/TelegramBot'
 
+import $gem from '@/store/gem'
 import $bot from '@/store/bot'
 import $alert from '@/store/alert'
 
@@ -17,16 +19,22 @@ const BotAuctionsButton = ({ item, onClaim }) => {
   const dispatch = useDispatch()
   const user = useSelector(({ $bot }) => $bot.user)
 
+  const [loading, setLoading] = useState(false)
+
   const text = () => {
     switch (item.status) {
       case 'upcoming': return 'Bid Now'
       case 'ongoing': return 'Bid Now'
-      case 'closed': return item.current && item.claimHash == '' ? 'Proceed to checkout' : 'Auction Ended'
+      case 'closed': return item.current && item.claimHash == '' ? `Pay ${item.currentPrice} ${item.token.currency}` : 'Auction Ended'
     }
   }
 
   const handeClick = async (e) => {
     if (item.status == 'ongoing' && !item.isBiddable) return
+
+    if (loading) return
+
+    setLoading(true)
 
     if (item.status == 'ongoing' && !item.current) {
       if (user?.points && user.points * 1 >= item.gemsPrice * 1) {
@@ -45,14 +53,20 @@ const BotAuctionsButton = ({ item, onClaim }) => {
 
     if (item.status == 'closed') {
       if (item.current) {
-        onClaim(item)
+        await onClaim(item)
       }
     }
+
+    setLoading(false)
   }
 
   return (
-    <button className={cn(styles.button, styles[item.status], {[styles.current]: item.current && item.isClaimable}, {[styles.disabled]: !item.isBiddable || item.status == 'upcoming' || (item.status == 'closed' && !item.isClaimable) || (item.status == 'ongoing' && item.current)})} onClick={handeClick}>
-      <App.Text size={20} weight={600} height={1}>{t(text())}</App.Text>
+    <button className={cn(styles.button, styles[item.status], {[styles.current]: item.current && item.isClaimable}, {[styles.dark]: loading}, {[styles.disabled]: !item.isBiddable || item.status == 'upcoming' || (item.status == 'closed' && !item.isClaimable) || (item.status == 'ongoing' && item.current)})} onClick={handeClick}>
+      {loading ? (
+        <App.Loader size={20} />
+      ) : (
+        <App.Text size={20} weight={600} height={1}>{t(text())}</App.Text>
+      )}
     </button>
   )
 }
