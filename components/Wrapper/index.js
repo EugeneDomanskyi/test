@@ -30,7 +30,7 @@ const Wrapper = ({ children }) => {
 
   const router = useRouter()
   const isLanding = router.asPath == '/'
-  const isBot = router.asPath == '/bot'
+  const isBot = router.asPath == '/bot' || router.asPath == '/bot/'
   const isClaimBot = router.asPath?.includes('/bot/claim')
   const isCampaign = router.asPath?.includes('/campaign')
   const isExchange = router.asPath?.includes('/exchange')
@@ -141,15 +141,12 @@ const Wrapper = ({ children }) => {
   
   return (
     <div style={{ height: '100%' }}>
+      <Analytics />
       {isBot ? (
-        <>
-          <Analytics />
-          {children}
-        </>
+        children
       ) : (
         !isInIframe ? (
           <div style={{ height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden' }}>
-            <Analytics />
             {!isClaimBot ? <StickyBanner /> : null}
 
             {isLanding ? (
@@ -170,21 +167,6 @@ const Wrapper = ({ children }) => {
           <Footer />
         )
       )}
-
-      {/* {
-        debug && debug.length > 0 && (
-          <App.Flex column center sx={{position: 'absolute', overflowY: 'auto', zIndex: 1111, top: 0, left: 0, right: 0, maxHeight: 360, padding: 8, gap: 8, background: 'rgba(0,0,0,0.5)'}}>
-            <App.Text>Debug mode</App.Text>
-            <App.Flex fullWidth column gap={8}>
-              {
-                debug.map((item, index) => (
-                  <App.Text sx={{wordWrap: 'break-word', borderBottom: '1px solid #fff', paddingBottom: 4}} key={index}>{item}</App.Text>
-                ))
-              }
-            </App.Flex>
-          </App.Flex>
-        )
-      } */}
     </div>
   )
 }
