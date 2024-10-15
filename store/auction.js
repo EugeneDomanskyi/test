@@ -486,8 +486,8 @@ export const api = {
     return request(`upload/image`, 'POST', {api: 'admin'}, data)
   },
 
-  saveTxId: (data) => {
-    return request(`auction/claim/save-and-claim`, 'POST', {api: 'bid'}, data)
+  saveTxId: (params) => {
+    return request(`telegram/auction/claim/save-and-claim`, 'POST', {api: 'bid', ...params})
   },
 }
 
