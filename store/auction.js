@@ -114,6 +114,18 @@ export const earnings_template_v2 = (item) => {
     txHash: item.claim_tx_hash,
     claimHash: item.claim_tx_hash,
     claimTime: moment(item.last_bid_timestamp * 1000).add(3 * 24 * 60 * 60, 'seconds'),
+    status: 'closed',
+  }
+}
+
+const bid_history_template_v2 = (item, token) => {
+  return {
+    bid: `${formatUnits(item.price.toString(), token.decimals)} ${token.symbol.toUpperCase()}`,
+    user: item.user_details,
+    date: moment(item.timestamp).format('HH:mm DD-MM-YYYY'),
+    time: moment(item.timestamp).format('HH:mm'),
+    day: moment(item.timestamp).format('DD-MM-YYYY'),
+    created_at: item.timestamp,
   }
 }
 
@@ -125,14 +137,21 @@ export const auctionSlice = createSlice({
     claim: false,
     claimId: null,
     current: null,
+    claimAuction: null,
     auctionWarning: false,
     showTelegramSubscription: null,
     auctionBannerVisible: false,
     loading: true,
     showUpcoming: false,
-    earnings: [],
     auctionHistory: [],
+    bid_history: [],
+    bid_page: {
+      current: 1,
+      limit: 10,
+      total: 0,
+    },
     debug: [],
+    earnings: [],
     earnings_page: {
       current: 1,
       limit: 5,
@@ -250,6 +269,10 @@ export const auctionSlice = createSlice({
       state.current = payload
     },
 
+    claimAuction: (state, { payload }) => {
+      state.claimAuction = template(payload)
+    },
+
     auctionHistory: (state, { payload }) => {
       state.auctionHistory = auctionHistoryTemplate(payload)
     },
@@ -309,6 +332,14 @@ export const auctionSlice = createSlice({
 
     earnings_page_v2: (state, { payload }) => {
       state.earnings_page = payload
+    },
+
+    bid_history_v2: (state, { payload }) => {
+      state.bid_history = payload.map(item => bid_history_template_v2(item, {decimals: 6, symbol: 'USDC'}))
+    },
+
+    bid_history_page_v2: (state, { payload }) => {
+      state.bid_page = payload
     },
 
     debug: (state, { payload }) => {
@@ -428,7 +459,7 @@ export const api = {
   },
 
   bid_history_v2: (id, params) => {
-    return request(`telegram//auction/${id}/bid-histories`, 'GET', {api: 'bid_v2', ...params})
+    return request(`telegram/auction/${id}/bid-histories`, 'GET', {api: 'bid_v2', ...params})
   },
 
   login: (params) => {
@@ -453,6 +484,10 @@ export const api = {
   
   upload: (data) => {
     return request(`upload/image`, 'POST', {api: 'admin'}, data)
+  },
+
+  saveTxId: (data) => {
+    return request(`auction/claim/save-and-claim`, 'POST', {api: 'bid'}, data)
   },
 }
 

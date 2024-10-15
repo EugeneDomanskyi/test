@@ -30,7 +30,8 @@ const Wrapper = ({ children }) => {
 
   const router = useRouter()
   const isLanding = router.asPath == '/'
-  const isBot = router.asPath?.includes('/bot')
+  const isBot = router.asPath == '/bot'
+  const isClaimBot = router.asPath?.includes('/bot/claim')
   const isCampaign = router.asPath?.includes('/campaign')
   const isExchange = router.asPath?.includes('/exchange')
   const [_, page] = router.asPath.split('/')
@@ -141,12 +142,15 @@ const Wrapper = ({ children }) => {
   return (
     <div style={{ height: '100%' }}>
       {isBot ? (
-        children
+        <>
+          <Analytics />
+          {children}
+        </>
       ) : (
         !isInIframe ? (
           <div style={{ height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden' }}>
             <Analytics />
-            <StickyBanner />
+            {!isClaimBot ? <StickyBanner /> : null}
 
             {isLanding ? (
               <AuctionLandingBanner />
@@ -156,11 +160,11 @@ const Wrapper = ({ children }) => {
 
             <div style={{marginTop: page !== '' ? (isMobile ? -48 : -72) : 0, height: stickyBannerVisible ? 'calc(100% - 28px)' : '100%'}}>
               {children}
-              {!isCampaign && !isApp && !isExchange && !isGD && !isAuctions ? <Footer /> : null}
+              {!isCampaign && !isApp && !isExchange && !isGD && !isAuctions && !isClaimBot ? <Footer /> : null}
             </div>
 
-            {page === 'exchange' && !isApp && showTournamentBanner  ? <SidebarBanner /> : null}
-            {page === 'exchange' && !isApp ? <OnboardingBanner /> : null}
+            {page === 'exchange' && !isApp && !isClaimBot && showTournamentBanner  ? <SidebarBanner /> : null}
+            {page === 'exchange' && !isApp && !isClaimBot ? <OnboardingBanner /> : null}
           </div>
         ) : (
           <Footer />

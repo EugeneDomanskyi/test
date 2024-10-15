@@ -535,6 +535,7 @@ class WagmiHelper {
       }
     } catch (error) {
       this.error('Simulate contract failed', error)
+      return {error}
       return null
     }
 
