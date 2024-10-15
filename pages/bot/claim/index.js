@@ -378,7 +378,7 @@ You don't wanna miss these insane deals! ✨
               {step == 3 ? (
                 <App.Flex column gap={8}>
                   <App.Flex column gap={4} className={styles.hint}>
-                    <App.Text size={14} weight={400} color="#FFFFFFCC">&bull; Please make sure you have 6 USDC in your wallet to complete this transaction.</App.Text>
+                    <App.Text size={14} weight={400} color="#FFFFFFCC">&bull; Please make sure you have {claimAuction.currentPrice} {claimAuction.token.currency} in your wallet to complete this transaction.</App.Text>
                     <App.Text size={14} weight={400} color="#FFFFFFCC">&bull; Keep ETH (base) in your wallet to cover gas fees.</App.Text>
                     <App.Text size={14} weight={400} color="#FFFFFFCC">&bull; Please do not refresh this page.</App.Text>
                   </App.Flex>
