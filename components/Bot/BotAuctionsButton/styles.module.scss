@@ -82,6 +82,10 @@
         background: linear-gradient(180deg, #8F0C45 -6.02%, #FF1D61 85.68%);
       }
     }
+
+    &.dark {
+      opacity: .7;
+    }
   }
 
   &.closed {
@@ -110,6 +114,10 @@
       &:active {
         background: linear-gradient(180deg, #0D6E3B -6.02%, #06B357 85.68%);
       }
+    }
+
+    &.dark {
+      opacity: .7;
     }
   }
 }

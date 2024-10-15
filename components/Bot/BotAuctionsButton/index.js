@@ -19,6 +19,8 @@ const BotAuctionsButton = ({ item, onClaim }) => {
   const dispatch = useDispatch()
   const user = useSelector(({ $bot }) => $bot.user)
 
+  const [loading, setLoading] = useState(false)
+
   const text = () => {
     switch (item.status) {
       case 'upcoming': return 'Bid Now'
@@ -29,6 +31,10 @@ const BotAuctionsButton = ({ item, onClaim }) => {
 
   const handeClick = async (e) => {
     if (item.status == 'ongoing' && !item.isBiddable) return
+
+    if (loading) return
+
+    setLoading(true)
 
     if (item.status == 'ongoing' && !item.current) {
       if (user?.points && user.points * 1 >= item.gemsPrice * 1) {
@@ -47,14 +53,20 @@ const BotAuctionsButton = ({ item, onClaim }) => {
 
     if (item.status == 'closed') {
       if (item.current) {
-        onClaim(item)
+        await onClaim(item)
       }
     }
+
+    setLoading(false)
   }
 
   return (
-    <button className={cn(styles.button, styles[item.status], {[styles.current]: item.current && item.isClaimable}, {[styles.disabled]: !item.isBiddable || item.status == 'upcoming' || (item.status == 'closed' && !item.isClaimable) || (item.status == 'ongoing' && item.current)})} onClick={handeClick}>
-      <App.Text size={20} weight={600} height={1}>{t(text())}</App.Text>
+    <button className={cn(styles.button, styles[item.status], {[styles.current]: item.current && item.isClaimable}, {[styles.dark]: loading}, {[styles.disabled]: !item.isBiddable || item.status == 'upcoming' || (item.status == 'closed' && !item.isClaimable) || (item.status == 'ongoing' && item.current)})} onClick={handeClick}>
+      {loading ? (
+        <App.Loader size={20} />
+      ) : (
+        <App.Text size={20} weight={600} height={1}>{t(text())}</App.Text>
+      )}
     </button>
   )
 }
