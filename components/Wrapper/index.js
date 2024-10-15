@@ -39,6 +39,8 @@ const Wrapper = ({ children }) => {
   const isAuctions = router.asPath?.includes('/auctions')
   const { referral } = router.query
 
+  console.log(router.asPath, isBot, isClaimBot)
+
   const dispatch = useDispatch()
   const isApp = useSelector(({ $app }) => $app.isApp)
   const isMobile = useSelector(({ $app }) => $app.size.isMobile)
