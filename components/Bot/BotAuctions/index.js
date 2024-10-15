@@ -151,7 +151,7 @@ const BotAuctions = ({ onClaim }) => {
                       </App.Flex>
 
                       <App.Flex column gap={4} className={styles.instructions}>
-                        <App.Text size={12} weight={400} color="#FFFFFFCC">&bull; Pay 6 USDC to receive 10 USDC back to your wallet.</App.Text>
+                        <App.Text size={12} weight={400} color="#FFFFFFCC">&bull; Pay {ongoingAuction.currentPrice} {ongoingAuction.token.currency} to receive 10 USDC back to your wallet.</App.Text>
                         <App.Text size={12} weight={400} color="#FFFFFFCC">&bull; Keep atleast $0.1 worth of ETH (base) in your wallet to cover gas fees.</App.Text>
                       </App.Flex>
                     </App.Flex>
