@@ -135,7 +135,7 @@ const MyEarnings = ({ onClaim }) => {
                       <App.Text className={styles.claimItemSecondarytext}>{moment(item.endsAt).format('DD-MM-YYYY')}</App.Text>
                     </App.Flex>
 
-                    <App.Text className={styles.claimItemText}>{item.currentPrice + ' ' + item.currency}</App.Text>
+                    <App.Text className={styles.claimItemText}>{item.currentPrice + ' ' + item.token.currency}</App.Text>
 
                     <App.Flex justify="flex-end" width={80}>
                       <App.Text className={styles.claimItemText}>

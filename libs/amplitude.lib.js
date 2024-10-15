@@ -95,6 +95,14 @@ class Amplitude {
     if (window.location.pathname.includes('auctions')) {
       return 'Earn'
     }
+
+    if (window.location.pathname.includes('/bot/claim')) {
+      return 'Auction Checkout'
+    }
+
+    if (window.location.pathname.includes('/bot')) {
+      return 'Auction Mini App'
+    }
   
     if (window.location.pathname.includes('tournaments')) {
       return 'Tournament'

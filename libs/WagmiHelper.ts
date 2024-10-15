@@ -95,9 +95,12 @@ class WagmiHelper {
 
   getCurrentChainCode = (ctx: any, chains: Array<any> = []) => {
     const [_, page, queryChainCode] = ctx.req.url.split('/')
-    let currentChainCode = (page != '_next' ? queryChainCode : null) ?? nookies.get(ctx)?.currentChainCode
+
+    let currentChainCode = (page == 'exchange' ? queryChainCode : null) ?? nookies.get(ctx)?.currentChainCode
+    currentChainCode = currentChainCode === 'optimism' ? 'amoy' : currentChainCode
+
     if (!currentChainCode) {
-      currentChainCode = chains.find(chain => chain.code === 'base')?.code || chains[0]?.code
+      currentChainCode = chains.find(chain => chain.code === 'base')?.code || chains.find(chain => chain.code === 'amoy')?.code || chains[0]?.code
     } else {
       if (chains.length && !chains.some(item => item.code == currentChainCode)) {
         currentChainCode = chains[0]?.code
@@ -214,7 +217,6 @@ class WagmiHelper {
 
     const currentChainId = getChainId(this.wagmiConfig)
     const newChain = this.getChainByCode(newChainCode)
-    console.log(currentChainId, newChain?.id)
     if (newChain) {
       if (currentChainId == newChain?.id) {
         return true

@@ -100,7 +100,7 @@ const BotClaim = () => {
     setLoadingConnect(true)
 
     Amplitude.event(`Connect wallet for checkout`, {
-      'Page': 'Checkout',
+      'Page': 'Auction Checkout',
     })
 
     const tempWallet = WagmiHelper.getWallet()
@@ -109,12 +109,12 @@ const BotClaim = () => {
       console.log('Disconnect wallet in Connect')
       await WagmiHelper.disconnect()
     }
-
+    
     try {
       const result = await connect()
       if (result) {
         Amplitude.event(`Connect wallet for checkout`, {
-          'Page': 'Checkout',
+          'Page': 'Auction Checkout',
           'Result': 'Success',
         })
 
@@ -125,7 +125,7 @@ const BotClaim = () => {
         }
       } else {
         Amplitude.event(`Connect wallet for checkout`, {
-          'Page': 'Checkout',
+          'Page': 'Auction Checkout',
           'Result': 'Failed',
         })
       }
@@ -133,7 +133,7 @@ const BotClaim = () => {
       console.log('Error during connect', e)
 
       Amplitude.event(`Connect wallet for checkout`, {
-        'Page': 'Checkout',
+        'Page': 'Auction Checkout',
         'Result': 'Failed',
       })
     }
@@ -143,7 +143,7 @@ const BotClaim = () => {
 
   const handleShare = () => {
     Amplitude.event(`Shared on twitter`, {
-      'Page': 'Checkout',
+      'Page': 'Auction Checkout',
     })
 
     const link = `${window.location.origin}/auctions`
@@ -168,7 +168,7 @@ You don't wanna miss these insane deals! ✨
     setScanLink(null)
 
     Amplitude.event(`Click on Pay`, {
-      'Page': 'Checkout',
+      'Page': 'Auction Checkout',
     })
 
     const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app' || (window.location.hostname == 'testnet.tegro.com' && item.id >= 3)) ? 'base' : 'amoy' 
@@ -198,7 +198,7 @@ You don't wanna miss these insane deals! ✨
     const txid = await WagmiHelper.transfer(claimAuction.token.address, claimAuction.claimContract, price, chainCode)
     if (txid && txid?.error) {
       Amplitude.event(`Payment pending`, {
-        'Page': 'Checkout',
+        'Page': 'Auction Checkout',
       })
 
       setLoadingPay(false)
@@ -207,7 +207,7 @@ You don't wanna miss these insane deals! ✨
     }
     console.log('Transaction ID received', txid)
     Amplitude.event(`Pay success`, {
-      'Page': 'Checkout',
+      'Page': 'Auction Checkout',
     })
 
     $auction.api.txHash({ auction_id: claimAuction.id, tx_hash: txid, external_user_hash: hash })
@@ -221,14 +221,14 @@ You don't wanna miss these insane deals! ✨
     }
 
     Amplitude.event(`Transaction finished, call claim endpoint`, {
-      'Page': 'Checkout',
+      'Page': 'Auction Checkout',
     })
 
     console.log('Call claim endpoint')
     const result = await $gem.api.claimTelegram({ auction_id: claimAuction.id, external_user_hash: hash })
     if (result && result?.error) {
       Amplitude.event(`Claim failed`, {
-        'Page': 'Checkout',
+        'Page': 'Auction Checkout',
       })
 
       setLoadingPay(false)
@@ -237,10 +237,12 @@ You don't wanna miss these insane deals! ✨
     }
 
     Amplitude.event(`Claim success`, {
-      'Page': 'Checkout',
+      'Page': 'Auction Checkout',
     })
 
-    setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
+    if (result?.auction?.claim_tx_hash && result.auction.claim_tx_hash != '') {
+      setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
+    }
     setStep(4)
   }
 
@@ -251,7 +253,7 @@ You don't wanna miss these insane deals! ✨
 
   const handleEnterTx = () => {
     Amplitude.event(`Clicked on "Paid already but din't receive rewards"`, {
-      'Page': 'Checkout',
+      'Page': 'Auction Checkout',
     })
 
     setTxDialogVisible(true)
@@ -280,7 +282,7 @@ You don't wanna miss these insane deals! ✨
       
       if (result && !result.error) {
         Amplitude.event(`Submit tx manually success`, {
-          'Page': 'Checkout',
+          'Page': 'Auction Checkout',
         })
 
         setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
@@ -288,7 +290,7 @@ You don't wanna miss these insane deals! ✨
         setTxDialogVisible(false)
       } else {
         Amplitude.event(`Submit tx manually failed`, {
-          'Page': 'Checkout',
+          'Page': 'Auction Checkout',
         })
 
         dispatch($alert.set.error({title: 'Verification failed', text: 'We were not able to validate your transaction. Reach out to us on Discord for help.'}))
