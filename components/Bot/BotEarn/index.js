@@ -58,7 +58,8 @@ const BotEarn = () => {
         })
 
         setTelegram(false)
-        dispatch($alert.set.error({text: 'You should join our Telegram channel first'}))
+        const error = result.error == 'user_not_joined' ? 'You should join our Telegram channel first' : result.error
+        dispatch($alert.set.error({text: error}))
       }
 
       if (type == 'twitter_follow') {
