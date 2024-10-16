@@ -97,7 +97,7 @@ class WagmiHelper {
     const [_, page, queryChainCode] = ctx.req.url.split('/')
 
     let currentChainCode = (page == 'exchange' ? queryChainCode : null) ?? nookies.get(ctx)?.currentChainCode
-    currentChainCode = currentChainCode === 'optimism' ? 'amoy' : currentChainCode
+    // currentChainCode = currentChainCode === 'optimism' ? 'amoy' : currentChainCode
 
     if (!currentChainCode) {
       currentChainCode = chains.find(chain => chain.code === 'base')?.code || chains.find(chain => chain.code === 'amoy')?.code || chains[0]?.code
