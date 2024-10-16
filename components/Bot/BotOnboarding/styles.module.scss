@@ -1,0 +1,15 @@
+.container {
+  position: absolute;
+  z-index: 6;
+  inset: 0;
+  background: #0B0915;
+
+  .content {
+    background: red;
+  }
+
+  .bottom {
+    background: green;
+    padding: 16px 16px 32px;
+  }
+}
