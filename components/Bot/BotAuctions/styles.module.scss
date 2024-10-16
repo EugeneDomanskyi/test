@@ -75,16 +75,6 @@
       padding: 12px;
       position: relative;
       z-index: 1;
-
-      .info {
-        height: 22px;
-        border-radius: 4px;
-        width: 100%;
-
-        &.win {
-          background-color: #06382F;
-        }
-      }
     }
   }
 
@@ -95,7 +85,16 @@
 
     &.win {
       background-color: #06382F;
+      width: fit-content;
+      padding: 0 16px;
     }
+  }
+
+  .instructions {
+    border-radius: 6px;
+    border: 1px solid #6B41EB;
+    background: rgba(107, 65, 235, 0.20);
+    padding: 12px 8px;
   }
 }
 

@@ -21,7 +21,7 @@ const Bot  = () => {
   const tab = useSelector(({ $bot }) => $bot.tab)
 
   const handleClaim = async (auction) => {
-    if (!auction.txHash) {
+    if (!auction.txHash || auction.txHash == '') {
       const result = await $bot.api.generateWalletHash()
       if (result && !result.error && result?.hash) {
         const hash = result.hash

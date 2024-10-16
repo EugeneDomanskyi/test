@@ -75,7 +75,9 @@ const BotWrapper = ({ children }) => {
 
   const fetchEarnings = async (page) => {
     const result = await $auction.api.earnings_v2({ page: page ?? earnings_page.current, limit: earnings_page.limit })
+    // const result = await $auction.api.earnings()
     if (result && !result?.error) {
+      // dispatch($auction.set.earnings(result))
       dispatch($auction.set.earnings_v2(result.data.won_auctions))
       dispatch($auction.set.earnings_unclaimed_v2(result.data.uncalimed_won_auctions))
       dispatch($auction.set.earnings_page_v2({

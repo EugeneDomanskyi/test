@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import cn from 'classnames'
 
 import TelegramBot from '@/libs/TelegramBot'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $gem from '@/store/gem'
 import $bot from '@/store/bot'
@@ -17,35 +18,24 @@ const BotAuctionsButton = ({ item, onClaim }) => {
   const { t } = useTranslation()
 
   const dispatch = useDispatch()
-  const claim = useSelector(({ $gem }) => $gem.claim)
-  const claimId = useSelector(({ $gem }) => $gem.claimId)
   const user = useSelector(({ $bot }) => $bot.user)
 
   const [loading, setLoading] = useState(false)
-  const [forceDisable, setForceDisable] = useState(false)
 
   const text = () => {
     switch (item.status) {
       case 'upcoming': return 'Bid Now'
       case 'ongoing': return 'Bid Now'
-      case 'closed': return item.current && item.claimHash == '' ? 'Proceed to checkout' : 'Auction Ended'
+      case 'closed': return item.current && item.claimHash == '' ? `Pay ${item.currentPrice} ${item.token.currency}` : 'Auction Ended'
     }
   }
 
   const handeClick = async (e) => {
-    if (forceDisable || (forceDisable && item.current)) return
+    if (item.status == 'ongoing' && !item.isBiddable) return
 
-    if (!item.isBiddable) return
-    
-    setForceDisable(true)
+    if (loading) return
 
-    if (navigator.vibrate) {
-      navigator.vibrate(500);
-    }
-    
-    if (window.navigator.vibrate) {
-      window.navigator.vibrate(500);
-    }
+    setLoading(true)
 
     if (item.status == 'ongoing' && !item.current) {
       if (user?.points && user.points * 1 >= item.gemsPrice * 1) {
@@ -64,16 +54,24 @@ const BotAuctionsButton = ({ item, onClaim }) => {
 
     if (item.status == 'closed') {
       if (item.current) {
-        onClaim(item)
+        Amplitude.event(`Initiated Prize Claim`, {
+          'Page': 'Auction',
+        })
+
+        await onClaim(item)
       }
     }
 
-    setForceDisable(false)
+    setLoading(false)
   }
 
   return (
-    <button className={cn(styles.button, styles[item.status], {[styles.current]: item.current && item.isClaimable}, {[styles.disabled]: !item.isBiddable || item.status == 'upcoming' || (item.status == 'closed' && !item.isClaimable) || (item.status == 'ongoing' && item.current)})} onClick={handeClick}>
-      <App.Text size={20} weight={600} height={1}>{t(text())}</App.Text>
+    <button className={cn(styles.button, styles[item.status], {[styles.current]: item.current && item.isClaimable}, {[styles.dark]: loading}, {[styles.disabled]: !item.isBiddable || item.status == 'upcoming' || (item.status == 'closed' && !item.isClaimable) || (item.status == 'ongoing' && item.current)})} onClick={handeClick}>
+      {loading ? (
+        <App.Loader size={20} />
+      ) : (
+        <App.Text size={20} weight={600} height={1}>{t(text())}</App.Text>
+      )}
     </button>
   )
 }

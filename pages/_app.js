@@ -57,7 +57,7 @@ function MyApp({ Component, pageProps, initialData, ssRoute, ssShare, ssCurrent 
       localStorage.setItem('ms_vid', router.query.vid)
     }
   }, [])
-
+  
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
@@ -109,7 +109,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
 
     chains = await WagmiHelper.fetchChains(ctx)
     blockchain = WagmiHelper.getCurrentChainCode(ctx, chains)
-
+    
     if (ssRoute.includes('/exchange')) {
       if (ctx?.query && ctx?.query?.address && ctx.query.address.length && ctx.query.address.length > 0) {
         const blockchainCode = ctx.query.blockchain

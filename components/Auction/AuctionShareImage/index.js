@@ -5,9 +5,8 @@ import $gem from '@/store/gem'
 
 import bg from '../../../public/images/auction-share-background.png'
 
-const AuctionShareImage = ({ onFinish }) => {
+const AuctionShareImage = ({ claimItem, onFinish }) => {
   const dispatch = useDispatch()
-  const claimItem = useSelector($gem.get.claimItem)
 
   const imageRef = useRef(null)
   const canvasRef = useRef(null)
