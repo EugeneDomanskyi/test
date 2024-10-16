@@ -29,8 +29,11 @@ const Wrapper = ({ children }) => {
   const { wallet, connection } = useWagmiHelper()
 
   const router = useRouter()
-  const isLanding = router.asPath == '/'
-  const isBot = router.asPath?.includes('/bot')
+  const asPath = router.asPath.split('#')[0]
+  const pathname = asPath.split('?')[0]
+  const isLanding = pathname == '/'
+  const isBot = pathname == '/bot'
+  const isClaimBot = pathname?.includes('/bot/claim')
   const isCampaign = router.asPath?.includes('/campaign')
   const isExchange = router.asPath?.includes('/exchange')
   const [_, page] = router.asPath.split('/')
@@ -74,7 +77,7 @@ const Wrapper = ({ children }) => {
       setShowTournamentBanner(true)
     }
 
-    if (page != 'gems-dashboard') {
+    if (!isGD && !isBot) {
       Amplitude.event(`Page Visited`, {
         'Page': Amplitude.page(),
         'Chain ID': blockchain?.id,
@@ -140,13 +143,13 @@ const Wrapper = ({ children }) => {
   
   return (
     <div style={{ height: '100%' }}>
+      <Analytics />
       {isBot ? (
         children
       ) : (
         !isInIframe ? (
           <div style={{ height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden' }}>
-            <Analytics />
-            <StickyBanner />
+            {!isClaimBot ? <StickyBanner /> : null}
 
             {isLanding ? (
               <AuctionLandingBanner />
@@ -156,31 +159,16 @@ const Wrapper = ({ children }) => {
 
             <div style={{marginTop: page !== '' ? (isMobile ? -48 : -72) : 0, height: stickyBannerVisible ? 'calc(100% - 28px)' : '100%'}}>
               {children}
-              {!isCampaign && !isApp && !isExchange && !isGD && !isAuctions ? <Footer /> : null}
+              {!isCampaign && !isApp && !isExchange && !isGD && !isAuctions && !isClaimBot ? <Footer /> : null}
             </div>
 
-            {page === 'exchange' && !isApp && showTournamentBanner  ? <SidebarBanner /> : null}
-            {page === 'exchange' && !isApp ? <OnboardingBanner /> : null}
+            {page === 'exchange' && !isApp && !isClaimBot && showTournamentBanner  ? <SidebarBanner /> : null}
+            {page === 'exchange' && !isApp && !isClaimBot ? <OnboardingBanner /> : null}
           </div>
         ) : (
           <Footer />
         )
       )}
-
-      {/* {
-        debug && debug.length > 0 && (
-          <App.Flex column center sx={{position: 'absolute', overflowY: 'auto', zIndex: 1111, top: 0, left: 0, right: 0, maxHeight: 360, padding: 8, gap: 8, background: 'rgba(0,0,0,0.5)'}}>
-            <App.Text>Debug mode</App.Text>
-            <App.Flex fullWidth column gap={8}>
-              {
-                debug.map((item, index) => (
-                  <App.Text sx={{wordWrap: 'break-word', borderBottom: '1px solid #fff', paddingBottom: 4}} key={index}>{item}</App.Text>
-                ))
-              }
-            </App.Flex>
-          </App.Flex>
-        )
-      } */}
     </div>
   )
 }

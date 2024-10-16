@@ -26,8 +26,8 @@ class Amplitude {
   }
 
   os = () => {
-    let userAgent = window.navigator.userAgent,
-        platform = window.navigator.platform,
+    let userAgent = typeof window != 'undefined' ? window.navigator.userAgent : null,
+        platform = typeof window != 'undefined' ? window.navigator.platform : null,
         macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
         windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
         iosPlatforms = ['iPhone', 'iPad', 'iPod'],
@@ -48,9 +48,9 @@ class Amplitude {
   }
 
   device = () => {
-    const userAgent = navigator.userAgent.toLowerCase()
-    const isMobile = /iPhone|Android/i.test(navigator.userAgent)
-    const isTablet = /(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(userAgent)
+    const userAgent = typeof navigator != 'undefined' ? navigator.userAgent.toLowerCase() : null
+    const isMobile = typeof navigator != 'undefined' ? /iPhone|Android/i.test(navigator.userAgent) : null
+    const isTablet = /(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(userAgent) 
     if (isMobile) {
       return 'Mobile'
     } else if (isTablet){
@@ -95,6 +95,14 @@ class Amplitude {
     if (window.location.pathname.includes('auctions')) {
       return 'Earn'
     }
+
+    if (window.location.pathname.includes('/bot/claim')) {
+      return 'Auction Checkout'
+    }
+
+    if (window.location.pathname.includes('/bot')) {
+      return 'Auction Mini App'
+    }
   
     if (window.location.pathname.includes('tournaments')) {
       return 'Tournament'
@@ -110,7 +118,7 @@ class Amplitude {
       OS: this.os(),
       Device: this.device(),
       Source: props?.Source ? props.Source : 'Web',
-      Domain: window.location.hostname
+      Domain: typeof window != 'undefined' ? window.location.hostname : null
     }
     amplitude.getInstance().logEvent(name, data)
   }

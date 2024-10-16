@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import cn from 'classnames'
 
 import TelegramBot from '@/libs/TelegramBot'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $gem from '@/store/gem'
 import $bot from '@/store/bot'
@@ -43,16 +44,30 @@ const BotAuctionsButton = ({ item, onClaim }) => {
         })
 
         if (result && !result.error) {
+          Amplitude.event(`Bid Placed`, {
+            'Page': 'Auctions',
+            'Source': 'Telegram',
+          })
+
           dispatch($bot.set.balance(user.points - item.gemsPrice))
           dispatch($alert.set.success({ title: t(`Bid Placed!`), text: `You placed a bid for ${item.nextPrice} ${item.token.currency}.` }))
         }
       } else {
+        Amplitude.event(`Bid Failed`, {
+          'Page': 'Auctions',
+          'Source': 'Telegram',
+        })
         TelegramBot.showPopup('Not enough gems', 'Please top up your gems to place a bid.')
       }
     }
 
     if (item.status == 'closed') {
       if (item.current) {
+        Amplitude.event(`Initiated Prize Claim`, {
+          'Page': 'Auctions',
+          'Source': 'Telegram',
+        })
+
         await onClaim(item)
       }
     }

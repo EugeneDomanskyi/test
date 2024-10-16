@@ -57,7 +57,7 @@ function MyApp({ Component, pageProps, initialData, ssRoute, ssShare, ssCurrent 
       localStorage.setItem('ms_vid', router.query.vid)
     }
   }, [])
-
+  
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>

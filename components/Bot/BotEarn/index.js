@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 
 import TelegramBot from '@/libs/TelegramBot'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $bot from '@/store/bot'
 import $alert from '@/store/alert'
@@ -19,11 +20,21 @@ const BotEarn = () => {
   const [telegram, setTelegram] = useState(false)
 
   const handleTelegram = () => {
+    Amplitude.event(`Join Channel click`, {
+      'Page': 'Earn',
+      'Source': 'Telegram',
+    })
+
     TelegramBot.openTelegramLink('https://t.me/TegroChat')
     setTelegram(true)
   }
 
   const handleX = () => {
+    Amplitude.event(`Follow Twitter click`, {
+      'Page': 'Earn',
+      'Source': 'Telegram',
+    })
+
     TelegramBot.openLink('https://twitter.com/TegroFi')
     setTwitter(true)
   }
@@ -31,20 +42,44 @@ const BotEarn = () => {
   const handleClaim = (type) => async () => {
     const result = await $bot.api.claim({type})
     if (result && !result.error) {
+      Amplitude.event(type == 'join_telegram_group' ? `Join Channel result` : `Follow twitter result`, {
+        'Page': 'Earn',
+        'Source': 'Telegram',
+        'Result': 'Success',
+      })
+
       dispatch($bot.set.user(result))
     } else {
       if (type == 'join_telegram_group') {
+        Amplitude.event(`Join Channel result`, {
+          'Page': 'Earn',
+          'Source': 'Telegram',
+          'Result': 'Failed',
+        })
+
         setTelegram(false)
-        dispatch($alert.set.error({text: 'You should join our Telegram channel first'}))
+        const error = result.error == 'user_not_joined' ? 'You should join our Telegram channel first' : result.error
+        dispatch($alert.set.error({text: error}))
       }
 
       if (type == 'twitter_follow') {
+        Amplitude.event(`Follow twitter result`, {
+          'Page': 'Earn',
+          'Source': 'Telegram',
+          'Result': 'Failed',
+        })
+
         setTwitter(false)
       }
     }
   }
 
   const handleShop = () => {
+    Amplitude.event(`Buy Gems click`, {
+      'Page': 'Earn',
+      'Source': 'Telegram',
+    })
+
     dispatch($bot.set.tab('shop'))
   }
 

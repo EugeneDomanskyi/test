@@ -1,54 +1,55 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'react-i18next'
 import { parseUnits } from 'viem'
 import cn from 'classnames'
 
-import Amplitude from '@/libs/amplitude.lib'
 import WagmiHelper from '@/libs/WagmiHelper'
 import useWagmiHelper from '@/myhooks/useWagmiHelper'
 import TelegramBot from '@/libs/TelegramBot'
+import Amplitude from '@/libs/amplitude.lib'
 
-import $app from 'store/app'
-import $gem from 'store/gem'
-import $bot from 'store/bot'
-import $auction from 'store/auction'
-import $alert from 'store/alert'
+import $app from '@/store/app'
+import $auction from '@/store/auction'
+import $gem from '@/store/gem'
+import $bot from '@/store/bot'
+import $alert from '@/store/alert'
 
-import App from 'components/App'
-import AuctionItemSimple from 'components/Auction/AuctionItemSimple'
-import AuctionLoader from 'components/Auction/AuctionLoader'
+import App from '@/components/App'
 import AuctionShareImage from '@/components/Auction/AuctionShareImage'
 
 import styles from './styles.module.scss'
 
-const AuctionClaim = () => {
-  const { t } = useTranslation()
+const BotClaim = () => {
   const router = useRouter()
   const { id, hash } = router.query
 
-  const { wallet, connection, connect } = useWagmiHelper()
+  const { connection, connect } = useWagmiHelper()
 
   const dispatch = useDispatch()
-  const isMobile = useSelector(({ $app }) => $app.size.isMobile)
-  const item = useSelector($gem.get.claimItem)
+  const claimAuction = useSelector(({ $auction }) => $auction.claimAuction)
 
-  const [step, setStep] = useState(0)
-  const [scanLink, setScanLink] = useState(null)
-  const [loading, setLoading] = useState(false)
   const [loadingPage, setLoadingPage] = useState(true)
-  const [shared, setShared] = useState(false)
-  const [connected, setConnected] = useState(false)
-  const [imageLoading, setImageLoading] = useState(true)
-  const [claimImage, setClaimImage] = useState()
+  const [loadingConnect, setLoadingConnect] = useState(false)
+  const [loadingImage, setLoadingImage] = useState(true)
+  const [loadingPay, setLoadingPay] = useState(false)
+  const [step, setStep] = useState(1)
   const [initCheck, setInitCheck] = useState(true)
+  const [claimImage, setClaimImage] = useState()
+  const [scanLink, setScanLink] = useState()
+  const [txDialogVisible, setTxDialogVisible] = useState(false)
+  const [txId, setTxId] = useState('')
+  const [txLoading, setTxLoading] = useState(false)
 
   useEffect(() => {
     if (!connection.loading) {
-      if (connection.connected && initCheck) {
-        console.log('Disconnect wallet in useEffect')
-        WagmiHelper.disconnect()
+      if (connection.connected) {
+        if (initCheck) {
+          console.log('Disconnect wallet in useEffect')
+          WagmiHelper.disconnect()
+        }
+      } else {
+        setStep(1)
       }
     }
   }, [connection])
@@ -56,109 +57,100 @@ const AuctionClaim = () => {
   useEffect(() => {
     if (id) {
       fetchInfo()
-      dispatch($gem.set.claimId(id))
     }
   }, [id])
 
   useEffect(() => {
-    if (step == 1) {
-      transaction()
+    if (claimAuction?.id) {
+      if (claimAuction.txHash && claimAuction.txHash != '') {
+        if (claimAuction.claimTxHash && claimAuction.claimTxHash != '') {
+          console.log(claimAuction)
+          setScanLink(WagmiHelper.generateScanUrl(claimAuction.claimTxHash, 'tx'))
+          setStep(4)
+        } else {
+          reclaim()
+        }
+      }
     }
-  }, [step])
+  }, [claimAuction])
+
+  const reclaim = async () => {
+    const result = await $gem.api.claimTelegram({ auction_id: claimAuction.id, external_user_hash: hash })
+    if (result && result?.error) {
+      setLoadingPay(false)
+      dispatch($alert.set.error({title: 'Something went wrong', text: result.error}))
+      return
+    }
+
+    setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
+    setStep(4)
+  }
 
   const fetchInfo = async () => {
     const result = await $auction.api.getTelegram(id)
     if (result) {
-      dispatch($gem.set.current({data: result, wallet}))
+      dispatch($auction.set.claimAuction(result))
     }
 
     setLoadingPage(false)
   }
 
-  const transaction = async () => {
-    setScanLink(null)
-    const price = parseUnits(item.currentPrice, item.token.decimals)
+  const handleConnect = async () => {
+    setInitCheck(false)
+    setLoadingConnect(true)
 
-    const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app' || (window.location.hostname == 'testnet.tegro.com' && item.id >= 3)) ? 'base' : 'amoy' 
-    const txid = await WagmiHelper.transfer(item.token.address, item.claimContract, price, chainCode)
-    console.log('Transaction ID received', txid)
-    dispatch($auction.set.debug(`txid: ${txid.error ? txid.error : txid}`))
+    Amplitude.event(`Connect wallet for checkout`, {
+      'Page': 'Auction Checkout',
+    })
+
+    const tempWallet = WagmiHelper.getWallet()
+    if (tempWallet) {
+      console.log('Wallet before connect', tempWallet)
+      console.log('Disconnect wallet in Connect')
+      await WagmiHelper.disconnect()
+    }
     
-    if (txid && !txid.error) {
-      console.log('Sending Transaction ID to BE', txid)
-      $auction.api.txHash({ auction_id: item.id, tx_hash: txid, external_user_hash: hash })
-
-      setStep(2)
-
-      console.log('Start listen the Transaction result')
-      const temp = await WagmiHelper.waitForTransaction(txid)
-      dispatch($auction.set.debug(`waitForTransaction: ${temp.error ? temp.error : temp}`))
-
-      if (temp && !temp.error) {
-        console.log('Transaction was success', temp)
-
-        setStep(3)
-        console.log('Call claim endpoint')
-        const result = await $gem.api.claimTelegram({
-          auction_id: item.id,
-          external_user_hash: hash,
+    try {
+      const result = await connect()
+      if (result) {
+        Amplitude.event(`Connect wallet for checkout`, {
+          'Page': 'Auction Checkout',
+          'Result': 'Success',
         })
 
-        if (result && !result?.error) {
-          setStep(4)
-          setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
-          
-          // using item.marketPrice because /telegram/auction/claim do not return auction_value
-          dispatch($gem.set.auctionUpdated({data: {...result, auction_value: item.marketPrice}, wallet}))
-
-          Amplitude.event(`Prize Claimed`, {
-            'Page': 'Auction',
-          })
-          
-          return
-        } else {
-          dispatch($alert.set.error({text: result?.error}))
+        const create = await $gem.api.register({ wallet_address: result, referral_code: localStorage.getItem('referral') ?? '' })
+        if (create && !create.error) {
+          await $bot.api.assignWalletToUser({wallet_address: result, hash})
+          setStep(2)
         }
       } else {
-        console.log('Transaction result error', temp.error)
+        Amplitude.event(`Connect wallet for checkout`, {
+          'Page': 'Auction Checkout',
+          'Result': 'Failed',
+        })
       }
-    } else {
-      console.log('TXID error', txid.error)
+    } catch (e) {
+      console.log('Error during connect', e)
+
+      Amplitude.event(`Connect wallet for checkout`, {
+        'Page': 'Auction Checkout',
+        'Result': 'Failed',
+      })
     }
 
-    setLoading(false)
-    setStep(0)
-  }
-
-  const handleProceed = async () => {
-    setLoading(true)
-
-    const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app' || (window.location.hostname == 'testnet.tegro.com' && item.id >= 3)) ? 'base' : 'amoy' 
-    const network = await WagmiHelper.changeChain(chainCode)
-    if (!network) {
-      setLoading(false)
-      dispatch($alert.set.error({title: 'Something went wrong'}))
-      return
-    }
-    dispatch($app.set.code(chainCode))
-
-    const balance = await WagmiHelper.balanceOf(item.token.address, chainCode)
-    console.log('Balance is ', balance)
-    if (balance && balance >= item.currentPrice) {
-      setStep(1)
-    } else {
-      dispatch($alert.set.error({title: 'Insufficient balance'}))
-    }
-    
-    setLoading(false)
+    setLoadingConnect(false)
   }
 
   const handleShare = () => {
+    Amplitude.event(`Shared on twitter`, {
+      'Page': 'Auction Checkout',
+    })
+
     const link = `${window.location.origin}/auctions`
     const tweetText = claimImage ? `${link}?share=${claimImage}` : encodeURIComponent(`
-🚀 Unbelievable! I just bagged ${item.name} for just ${item.currentPrice} ${item.token.currency} on Tegro! 👀
+🚀 Unbelievable! I just bagged ${claimAuction.name} for just ${claimAuction.currentPrice} ${claimAuction.token.currency} on Tegro! 👀
 
-That's a whopping ${item.discount}% off! 😱
+That's a whopping ${claimAuction.discount}% off! 😱
 
 You don't wanna miss these insane deals! ✨
 
@@ -168,204 +160,291 @@ You don't wanna miss these insane deals! ✨
     const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}`
     window.open(tweetUrl)
 
-    Amplitude.event(`Shared winnings`, {
-      'Page': 'Auction',
-    })
-
-    setShared(true)
+    setStep(3)
   }
 
-  const handleImageGenerate = (image) => {
-    setImageLoading(false)
+  const handlePay = async () => {
+    setLoadingPay(true)
+    setScanLink(null)
+
+    Amplitude.event(`Click on Pay`, {
+      'Page': 'Auction Checkout',
+    })
+
+    const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app' || window.location.hostname == 'testnet.tegro.com') ? 'base' : 'amoy' 
+    const network = await WagmiHelper.changeChain(chainCode)
+    if (!network) {
+      setLoadingPay(false)
+      dispatch($alert.set.error({title: 'Something went wrong'}))
+      return
+    }
+    dispatch($app.set.code(chainCode))
+
+    const balance = await WagmiHelper.balanceOf(claimAuction.token.address, chainCode)
+    if ( ! balance) {
+      setLoadingPay(false)
+      dispatch($alert.set.error({title: 'Something went wrong', text: 'Can not get balance of your wallet'}))
+      return
+    }
+    console.log('Balance is ', balance)
+    
+    if (balance && balance < claimAuction.currentPrice) {
+      setLoadingPay(false)
+      dispatch($alert.set.error({title: 'Insufficient balance'}))
+      return
+    }
+
+    const price = parseUnits(claimAuction.currentPrice, claimAuction.token.decimals)
+    const txid = await WagmiHelper.transfer(claimAuction.token.address, claimAuction.claimContract, price, chainCode)
+    if (txid && txid?.error) {
+      Amplitude.event(`Payment pending`, {
+        'Page': 'Auction Checkout',
+      })
+
+      setLoadingPay(false)
+      dispatch($alert.set.error({title: 'Something went wrong', text: txid.error?.shortMessage ?? txid.error.toString()}))
+      return
+    }
+    console.log('Transaction ID received', txid)
+    Amplitude.event(`Pay success`, {
+      'Page': 'Auction Checkout',
+    })
+
+    $auction.api.txHash({ auction_id: claimAuction.id, tx_hash: txid, external_user_hash: hash })
+
+    console.log('Start listen the Transaction result')
+    const temp = await WagmiHelper.waitForTransaction(txid)
+    if (temp && temp?.error) {
+      setLoadingPay(false)
+      dispatch($alert.set.error({title: 'Something went wrong', text: temp.error}))
+      return
+    }
+
+    Amplitude.event(`Transaction finished, call claim endpoint`, {
+      'Page': 'Auction Checkout',
+    })
+
+    console.log('Call claim endpoint')
+    const result = await $gem.api.claimTelegram({ auction_id: claimAuction.id, external_user_hash: hash })
+    if (result && result?.error) {
+      Amplitude.event(`Claim failed`, {
+        'Page': 'Auction Checkout',
+      })
+
+      setLoadingPay(false)
+      dispatch($alert.set.error({title: 'Something went wrong', text: result.error}))
+      return
+    }
+
+    Amplitude.event(`Claim success`, {
+      'Page': 'Auction Checkout',
+    })
+
+    if (result?.auction?.claim_tx_hash && result.auction.claim_tx_hash != '') {
+      setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
+    }
+    setStep(4)
+  }
+
+  const handleImageGenerated = (image) => {
+    setLoadingImage(false)
     setClaimImage(image)
   }
 
-  const handleReturnToApp = () => {
-    window.location.href = `tg://resolve?domain=${TelegramBot.domain()}`
+  const handleEnterTx = () => {
+    Amplitude.event(`Clicked on "Paid already but din't receive rewards"`, {
+      'Page': 'Auction Checkout',
+    })
+
+    setTxDialogVisible(true)
   }
 
-  const handleConnect = async () => {
-    setInitCheck(false)
+  const handleTxDialogClose = () => {
+    setTxDialogVisible(false)
+  }
 
-    const tempWallet = WagmiHelper.getWallet()
-    if (tempWallet) {
-      console.log('Wallet before connect', tempWallet)
-      console.log('Disconnect wallet in Connect')
-      await WagmiHelper.disconnect()
-    }
+  const handleScan = () => {
+    window.open(scanLink, '_blank')
+  }
 
-    try {
-      const result = await connect()
-      if (result) {
-        const create = await $gem.api.register({ wallet_address: result, referral_code: localStorage.getItem('referral') ?? '' })
-        if (create && !create.error) {
-          await $bot.api.assignWalletToUser({wallet_address: result, hash})
-        }
-        setConnected(true)
+  const handleTxIdChange = (value) => {
+    setTxId(value)
+  }
+
+  const handleTxIdSubmit = async () => {
+    if (txId != '') {
+      setTxLoading(true)
+      const result = await $auction.api.saveTxId({
+        auction_id: claimAuction.id,
+        external_user_hash: hash,
+        tx_hash: txId,
+      })
+      
+      if (result && !result.error) {
+        Amplitude.event(`Submit tx manually success`, {
+          'Page': 'Auction Checkout',
+        })
+
+        setScanLink(WagmiHelper.generateScanUrl(result.auction.claim_tx_hash, 'tx'))
+        setStep(4)
+        setTxDialogVisible(false)
+      } else {
+        Amplitude.event(`Submit tx manually failed`, {
+          'Page': 'Auction Checkout',
+        })
+
+        dispatch($alert.set.error({title: 'Verification failed', text: 'We were not able to validate your transaction. Reach out to us on Discord for help.'}))
       }
-    } catch (e) {
-      console.log('Error in connect', e)
+      setTxLoading(false)
     }
   }
 
   return loadingPage ? (
     <App.LoaderBlock />
   ) : (
-    <App.Flex column center>
-      <App.Flex center height={46} className={styles.header}>
-        {step == 0 ? (
-          <App.Text size={20} weight={600} height={1}>{t('Congratulations!')}</App.Text>
+    <App.Flex column fullWidth justify="space-between" className={styles.container}>
+      {claimAuction?.id ? (
+        step == 4 ? (
+          <App.Flex column center gap={16} className={styles.success}>
+            <App.Flex center className={styles.bigCircle}>
+              <App.Icon icon="check" width={50} height={40} color="#303745" />
+            </App.Flex>
+
+            <App.Text center size={24} weight={600} height={1}>Deposit Successful!</App.Text>
+            <App.Text center size={16} weight={400} color="#FFFFFFCC" height={1}>{claimAuction.name} has been sent to your wallet</App.Text>
+          </App.Flex>
         ) : (
-          <App.Flex row center width={260}>
-            <App.Flex flex={1} align="center" justify="flex-start" className={styles.half}>
-              <App.Flex center className={cn(styles.circle, {[styles.active]: step >= 3})}>
-                <App.Icon icon="check" width={8} height={8} />
-              </App.Flex>
+          <App.Flex column>
+            <AuctionShareImage claimItem={claimAuction} onFinish={handleImageGenerated} />
 
-              <App.Flex className={cn(styles.line, {[styles.active]: step >= 3})} />
-
-              <App.Flex center width={100} className={styles.text}>
-                <App.Text size={12} weight={400} height={1} color={step >= 3 ? '#fff' : '#9a9a9a'}>{t('Verify Deposit')}</App.Text>
-              </App.Flex>
+            <App.Flex column gap={4} className={styles.section}>
+              <App.Text size={20} weight={700} height={1}>Buy {claimAuction.name} for {claimAuction.currentPrice} {claimAuction.token.currency}</App.Text>
+              <App.Text size={14} weight={400} color="#FFFFFFCC">Complete the steps to claim your rewards to your wallet.</App.Text>
             </App.Flex>
 
-            <App.Flex flex={1} align="center" justify="flex-end" className={styles.half}>
-              <App.Flex center className={cn(styles.circle, {[styles.active]: step >= 4})}>
-                <App.Icon icon="check" width={8} height={8} />
+            <App.Flex column gap={8} className={styles.section}>
+              <App.Flex row justify="space-between" gap={16}>
+                <App.Text size={20} weight={700} height={1}>1. Connect Wallet</App.Text>
+
+                {loadingConnect ? (
+                  <App.Loader size={24} />
+                ) : (
+                  <App.Flex center className={cn(styles.circle, {[styles.active]: step >= 2})}>
+                    <App.Icon icon="check" width={10} height={8} />
+                  </App.Flex>
+                )}
               </App.Flex>
+              
+              {step == 1 ? (
+                <App.Flex column gap={8}>
+                  <App.Flex column gap={4} className={styles.hint}>
+                    <App.Text size={14} weight={400} color="#FFFFFFCC">&bull; Return to this page after you’ve connected your wallet.</App.Text>
+                    <App.Text size={14} weight={400} color="#FFFFFFCC">&bull; Please do not refresh this page.</App.Text>
+                  </App.Flex>
 
-              <App.Flex className={cn(styles.line, {[styles.active]: step >= 4})} />
-
-              <App.Flex center width={100} className={cn(styles.text, styles.second)}>
-                <App.Text size={12} weight={400} height={1} color={step >= 4 ? '#fff' : '#9a9a9a'}>{t('Confirm Deposit')}</App.Text>
-              </App.Flex>
-            </App.Flex>
-          </App.Flex>
-        )}
-      </App.Flex>
-
-      <App.Flex column center gap={16} className={styles.content}>
-        {step == 0 ? (
-          <App.Flex center className={styles.badge}>
-            <App.Text size={20} weight={600} height={1} color="#53F19C">{t('You won the auction!')}</App.Text>
-          </App.Flex>
-        ) : null}
-
-        {step == 1 ? (
-          <App.Flex column center gap={12}>
-            <App.Text center size={24} weight={600} height={1}>{t('Approve the Transaction!')}</App.Text>
-            <App.Text center size={16} weight={400} color="#B9B8C5">{t('Tap "Approve" in your wallet to receive the winning in your wallet')}</App.Text>
-          </App.Flex>
-        ) : null}
-
-        {step == 2 ? (
-          <App.Flex column center gap={12}>
-            <App.Text center size={24} weight={600} height={1}>{t('Verifying your deposit')}</App.Text>
-            <App.Text center size={16} weight={400} color="#B9B8C5">{t('Please wait, it will take only a few seconds')}</App.Text>
-          </App.Flex>
-        ) : null}
-
-        {step == 3 ? (
-          <App.Flex column center gap={12}>
-            <App.Text center size={24} weight={600} height={1}>{t('Transferring your winnings')}</App.Text>
-            <App.Text center size={16} weight={400} color="#B9B8C5">{t('Please wait, it will take only a few seconds')}</App.Text>
-          </App.Flex>
-        ) : null}
-
-        {step == 4 ? (
-          <App.Flex column center gap={12}>
-            <App.Text center size={24} weight={600} height={1}>{t('Congratulations!')}</App.Text>
-            <App.Flex center className={styles.badge}>
-              <App.Text center size={[20, 16]} weight={600} height={1} color="#53F19C">{t('Your winnings have been added to your wallet')}</App.Text>
-            </App.Flex>
-          </App.Flex>
-        ) : null}
-
-        {step == 2 || step == 3 ? (
-          <>
-            <AuctionLoader />
-
-            <App.Flex center className={styles.warning}>
-              <App.Text center color="#FF1D61">We’re sending {item.name} to your wallet.<br />PLEASE DO NOT refresh the page or go back</App.Text>
-            </App.Flex>
-          </>
-        ) : null}
-
-        <AuctionItemSimple item={item} large={step == 4} />
-
-        {step == 0 ? (
-          <App.Flex column gap={16} fullWidth center>
-            <App.Text center size={[20, 16]} weight={600} height={1}>{shared ? t(`Pay {{price}} {{currency}} to claim {{title}}`, {price: item.currentPrice, currency: item.token.currency, title: item.name}) : t('Complete the Steps to Claim Your Rewards')}</App.Text>
-
-            <App.Flex row align="center" justify="space-between" className={styles.steps}>
-              <App.Flex center className={cn(styles.circle, styles.active)}>
-                {connected ? <App.Icon icon="check" /> : <App.Text center size={14} weight={700} height={1}>1</App.Text>}
-              </App.Flex>
-
-              <App.Flex center className={cn(styles.circle, {[styles.active]: connected})}>
-                {shared ? <App.Icon icon="check" /> : <App.Text center size={14} weight={700} height={1}>2</App.Text>}
-              </App.Flex>
-
-              <App.Flex center className={cn(styles.circle, {[styles.active]: shared})}>
-                <App.Text center size={14} weight={700} height={1}>3</App.Text>
-              </App.Flex>
-
-              <App.Flex className={styles.line} />
-
-              <App.Flex center className={cn(styles.words, styles.left)}>
-                <App.Text size={12} weight={400} height={1}>Connect Wallet</App.Text>
-              </App.Flex>
-
-              <App.Flex center className={cn(styles.words, styles.center)}>
-                <App.Text size={12} weight={400} height={1}>Share on Twitter</App.Text>
-              </App.Flex>
-
-              <App.Flex center className={cn(styles.words, styles.right)}>
-                <App.Text size={12} weight={400} height={1}>Claim Rewards</App.Text>
-              </App.Flex>
+                  <App.Button variant="bot" loading={loadingConnect} disabled={loadingConnect} onClick={handleConnect}>Connect Wallet</App.Button>
+                </App.Flex>
+              ) : null}
             </App.Flex>
 
-            {!connected ? (
-              <App.Button primary2 medium fullWidth onClick={handleConnect}>{t('Connect Wallet')}</App.Button>
-            ) : (
-              shared ? (
-                <App.Button primary2 medium fullWidth loading={loading} onClick={handleProceed}>{t('Proceed to checkout')}</App.Button>
-              ) : (
-                <App.Button loading={imageLoading} disabled={imageLoading} twitter medium fullWidth onClick={handleShare}><App.Icon icon="x2" /> {t('Tweet Now')}</App.Button>
-              )
-            )}
+            <App.Flex column gap={8} className={styles.section}>
+              <App.Flex row justify="space-between" gap={16}>
+                <App.Text size={20} weight={700} height={1}>2. Share on Twitter</App.Text>
 
-            <App.Flex row center gap={8}>
-              <App.Text size={14} weight={600} color="#FF1D61" height={1}>Claim your winnings within 72 hours!</App.Text>
-              <App.Tooltip variant="v2" click={isMobile} text={'You have to claim your winnings within 72 hours. If not, it gets deposited back to the reward pool.'} placement="top-end">
-                <App.Icon icon="info2" width={20} height={20} />
-              </App.Tooltip>
+                <App.Flex center className={cn(styles.circle, {[styles.active]: step >= 3})}>
+                  <App.Icon icon="check" width={10} height={8} />
+                </App.Flex>
+              </App.Flex>
+              
+              {step == 2 ? (
+                <App.Flex column gap={8}>
+                  <App.Text size={14} weight={400} color="#FFFFFFCC">Let your friends know about your victory!</App.Text>
+                  <App.Button loading={loadingImage} disabled={loadingImage} twitter fullWidth onClick={handleShare}><App.Icon icon="x2" /> Tweet Now</App.Button>
+                </App.Flex>
+              ) : null}
+            </App.Flex>
+
+            <App.Flex column gap={8} className={styles.section}>
+              <App.Flex row justify="space-between" gap={16}>
+                <App.Text size={20} weight={700} height={1}>3. Pay {claimAuction.currentPrice} {claimAuction.token.currency}</App.Text>
+
+                {loadingPay ? (
+                  <App.Loader size={24} />
+                ) : (
+                  <App.Flex center className={cn(styles.circle, {[styles.active]: step >= 4})}>
+                    <App.Icon icon="check" width={10} height={8} />
+                  </App.Flex>
+                )}
+              </App.Flex>
+              
+              {step == 3 ? (
+                <App.Flex column gap={8}>
+                  <App.Flex column gap={4} className={styles.hint}>
+                    <App.Text size={14} weight={400} color="#FFFFFFCC">&bull; Please make sure you have {claimAuction.currentPrice} {claimAuction.token.currency} in your wallet to complete this transaction.</App.Text>
+                    <App.Text size={14} weight={400} color="#FFFFFFCC">&bull; Keep ETH (base) in your wallet to cover gas fees.</App.Text>
+                    <App.Text size={14} weight={400} color="#FFFFFFCC">&bull; Please do not refresh this page.</App.Text>
+                  </App.Flex>
+
+                  <App.Button variant="bot" loading={loadingPay} disabled={loadingPay} onClick={handlePay}>Pay {claimAuction.currentPrice} {claimAuction.token.currency}</App.Button>
+                </App.Flex>
+              ) : null}
+            </App.Flex>
+
+            <App.Flex column gap={24} className={styles.padding}>
+              <App.Text center size={14} weight={600} color="#6B41EB" className={styles.link}><a onClick={handleEnterTx}>Paid {claimAuction.currentPrice} {claimAuction.token.currency} already, and didn’t receive your rewards?</a></App.Text>
+
+              {step == 3 ? (
+                loadingPay ? (
+                  <App.Flex column center gap={4} className={cn(styles.hint, styles.warning)}>
+                    <App.Text size={14} weight={400} color="#FFFFFFCC">Please do not refresh this page.</App.Text>
+                  </App.Flex>
+                ) : (
+                  <App.Flex column gap={4} className={cn(styles.hint, styles.warning)}>
+                    <App.Text size={14} weight={400} color="#FFFFFFCC">Please return to this page after completing the transaction in your wallet</App.Text>
+                  </App.Flex>
+                )
+              ) : null}
             </App.Flex>
           </App.Flex>
-        ) : null}
+        )
+      ) : null}
 
-        {step == 4 ? (
-          <App.Flex column center gap={24} fullWidth>
-            <App.Flex row center gap={24} fullWidth>
-              <App.Flex center flex={1}>
-                <App.Button primary2 outlined fullWidth href={scanLink}>{t('View on Explorer')}</App.Button>
-              </App.Flex>
-
-              <App.Flex center flex={1}>
-                <App.Button primary2 outlined fullWidth onClick={handleShare}>{t('Share Now')}</App.Button>
-              </App.Flex>
+      {step == 4 ? (
+        <App.Flex column gap={24} className={styles.padding}>
+          <App.Button fullWidth href={`tg://resolve?domain=${TelegramBot.domain()}`} primary2 outlined>Return to app</App.Button>
+          {scanLink ? (
+            <App.Flex row center gap={8} onClick={handleScan}>
+              <App.Text size={14} weight={600} height={1} color="#6B41EB">View on Basescan</App.Text>
+              <App.Icon icon="arrow-45" color="#6B41EB" />
             </App.Flex>
+          ) : null}
 
-            <App.Flex center flex={1}>
-              <App.Button primary2 outlined fullWidth onClick={handleReturnToApp}>{t('Return to app')}</App.Button>
-            </App.Flex>
+          <App.Flex />
+        </App.Flex>
+      ) : (
+        <App.Flex row justify="flex-end" className={styles.discord}>
+          <App.Button href="https://discord.com/invite/tegro" primary2 outlined rounded><App.Icon icon="discord2" /> Need help?</App.Button>
+        </App.Flex>
+      )}
+
+      <App.Dialog open={txDialogVisible} title="Enter your transaction hash" onClose={handleTxDialogClose}>
+        <App.Flex column gap={16} className={styles.modal}>
+          <App.Flex column>
+            <App.Text size={12} weight={400} color="#FFFFFF99">Transaction hash</App.Text>
+            <App.TextField
+              value={txId}
+              placeholder="Paste your transaction hash here"
+              onChange={handleTxIdChange}
+            />
           </App.Flex>
-        ) : null}
-      </App.Flex>
 
-      {item ? <AuctionShareImage onFinish={handleImageGenerate} /> : null}
+          <App.Text size={14} weight={400} color="#FFFFFF99">You’ll be able to find this using an explorer like basescan.</App.Text>
+
+          <App.Button variant="bot" loading={txLoading} disabled={txLoading} onClick={handleTxIdSubmit}>Submit</App.Button>
+        </App.Flex>
+      </App.Dialog>
     </App.Flex>
   )
 }
 
-export default AuctionClaim
+export default BotClaim

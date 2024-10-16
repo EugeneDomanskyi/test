@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 
 import TelegramBot from '@/libs/TelegramBot'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $bot from '@/store/bot'
 import $auction from '@/store/auction'
@@ -21,10 +22,11 @@ const Bot  = () => {
   const tab = useSelector(({ $bot }) => $bot.tab)
 
   const handleClaim = async (auction) => {
-    if (!auction.txHash) {
+    if (!auction.txHash || auction.txHash == '') {
       const result = await $bot.api.generateWalletHash()
       if (result && !result.error && result?.hash) {
         const hash = result.hash
+        console.log(`https://${TelegramBot.host()}/bot/claim?id=${auction.id}&hash=${hash}`)
         TelegramBot.openLink(`https://${TelegramBot.host()}/bot/claim?id=${auction.id}&hash=${hash}`)
       }
     } else {
@@ -55,6 +57,14 @@ const Bot  = () => {
   }
 
   const getComponent = () => {
+    if (typeof window != 'undefined') {
+      const page = tab.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+      Amplitude.event(`Page Visited`, {
+        'Page': page,
+        'Source': 'Telegram',
+      })
+    }
+
     switch (tab) {
       case 'auctions': return <BotAuctions onClaim={handleClaim} />
       case 'earn': return <BotEarn />
