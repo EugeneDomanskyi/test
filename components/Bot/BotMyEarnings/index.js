@@ -59,6 +59,7 @@ const MyEarnings = ({ onClaim }) => {
     setButtonLoading(auction.id)
     Amplitude.event(`Initiated Prize Claim`, {
       'Page': 'My earnings',
+      'Source': 'Telegram',
     })
 
     await onClaim(auction)

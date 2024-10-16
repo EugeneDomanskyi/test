@@ -77,7 +77,7 @@ const Wrapper = ({ children }) => {
       setShowTournamentBanner(true)
     }
 
-    if (page != 'gems-dashboard') {
+    if (!isGD && !isBot) {
       Amplitude.event(`Page Visited`, {
         'Page': Amplitude.page(),
         'Chain ID': blockchain?.id,
