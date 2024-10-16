@@ -171,7 +171,7 @@ You don't wanna miss these insane deals! ✨
       'Page': 'Auction Checkout',
     })
 
-    const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app' || (window.location.hostname == 'testnet.tegro.com' && item.id >= 3)) ? 'base' : 'amoy' 
+    const chainCode = (window.location.hostname == 'tegro.com' || window.location.hostname == 'nft20-git-production-toraverse.vercel.app' || window.location.hostname == 'testnet.tegro.com') ? 'base' : 'amoy' 
     const network = await WagmiHelper.changeChain(chainCode)
     if (!network) {
       setLoadingPay(false)
