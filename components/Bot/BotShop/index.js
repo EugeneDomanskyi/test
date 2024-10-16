@@ -4,6 +4,7 @@ import Image from 'next/image'
 import cn from 'classnames'
 
 import TelegramBot from '@/libs/TelegramBot'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $bot from '@/store/bot'
 
@@ -38,11 +39,13 @@ const BotShop = () => {
   const [playAnimationId, setPlayAnimationId] = useState(null)
 
   const handlePay = (amount, gems) => async () => {
-    if (navigator.vibrate) {
-      navigator.vibrate(50); // Vibrate for 50 milliseconds
-    }
-
     setPlayAnimationId(amount)
+
+    Amplitude.event(`Buy Gems`, {
+      'Page': 'Shop',
+      'Source': 'Telegram',
+      'Amount': gems,
+    })
 
     const payload = {
       title: `${gems} gems`,

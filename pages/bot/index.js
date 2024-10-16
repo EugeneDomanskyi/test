@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 
 import TelegramBot from '@/libs/TelegramBot'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $bot from '@/store/bot'
 import $auction from '@/store/auction'
@@ -55,6 +56,14 @@ const Bot  = () => {
   }
 
   const getComponent = () => {
+    if (typeof window != 'undefined') {
+      const page = tab.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+      Amplitude.event(`Page Visited`, {
+        'Page': page,
+        'Source': 'Telegram',
+      })
+    }
+
     switch (tab) {
       case 'auctions': return <BotAuctions onClaim={handleClaim} />
       case 'earn': return <BotEarn />
