@@ -26,6 +26,7 @@ const Bot  = () => {
       const result = await $bot.api.generateWalletHash()
       if (result && !result.error && result?.hash) {
         const hash = result.hash
+        console.log(`https://${TelegramBot.host()}/bot/claim?id=${auction.id}&hash=${hash}`)
         TelegramBot.openLink(`https://${TelegramBot.host()}/bot/claim?id=${auction.id}&hash=${hash}`)
       }
     } else {

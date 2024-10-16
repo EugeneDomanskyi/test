@@ -202,7 +202,7 @@ You don't wanna miss these insane deals! ✨
       })
 
       setLoadingPay(false)
-      dispatch($alert.set.error({title: 'Something went wrong', text: txid.error}))
+      dispatch($alert.set.error({title: 'Something went wrong', text: txid.error?.shortMessage ?? txid.error.toString()}))
       return
     }
     console.log('Transaction ID received', txid)
