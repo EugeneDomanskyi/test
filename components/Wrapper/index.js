@@ -143,12 +143,12 @@ const Wrapper = ({ children }) => {
   
   return (
     <div style={{ height: '100%' }}>
-      <Analytics />
       {isBot ? (
         children
       ) : (
         !isInIframe ? (
           <div style={{ height: '100%', position: 'relative', transition: '.4s', overflowX: 'hidden' }}>
+            {!isClaimBot ? <Analytics /> : null}
             {!isClaimBot ? <StickyBanner /> : null}
 
             {isLanding ? (

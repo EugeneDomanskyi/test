@@ -4,6 +4,7 @@ import Script from 'next/script'
 
 import Socket from '@/libs/ws.lib'
 import TelegramBot from '@/libs/TelegramBot'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $bot from '@/store/bot'
 import $auction from '@/store/auction'
@@ -47,6 +48,12 @@ const BotWrapper = ({ children }) => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [])
+
+  useEffect(() => {
+    if (isBot) {
+      Amplitude.identify(TelegramBot.getId().toString(), 'tgID')
+    }
+  }, [isBot])
 
   const handleScriptLoaded = async () => {
     if (TelegramBot.getInitData()) {
