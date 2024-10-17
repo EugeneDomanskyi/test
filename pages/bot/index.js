@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 
@@ -26,8 +27,8 @@ const Bot  = () => {
       const result = await $bot.api.generateWalletHash()
       if (result && !result.error && result?.hash) {
         const hash = result.hash
-        console.log(`https://${TelegramBot.host()}/bot/claim?id=${auction.id}&hash=${hash}`)
-        TelegramBot.openLink(`https://${TelegramBot.host()}/bot/claim?id=${auction.id}&hash=${hash}`)
+        console.log(`https://${TelegramBot.host()}/bot/claim?id=${auction.id}&hash=${hash}&salt=${TelegramBot.getId()}`)
+        TelegramBot.openLink(`https://${TelegramBot.host()}/bot/claim?id=${auction.id}&hash=${hash}&salt=${TelegramBot.getId()}`)
       }
     } else {
       const result = await $bot.api.generateWalletHash()
@@ -58,6 +59,7 @@ const Bot  = () => {
 
   const getComponent = () => {
     if (typeof window != 'undefined') {
+      console.log('Page Visit')
       const page = tab.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
       Amplitude.event(`Page Visited`, {
         'Page': page,
