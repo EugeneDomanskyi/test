@@ -437,7 +437,6 @@ export const api = {
   },
   
   allTelegram: () => {
-    console.log('FETCH allTelegram');
     return request(`telegram/auctions`, 'GET', {api: 'bid'})
   },
 
@@ -446,7 +445,6 @@ export const api = {
   },
 
   getTelegram: (id) => {
-    console.log('FETCH getTelegram BY ID', id);
     return request(`telegram/auction/${id}`, 'GET', {api: 'bid'})
   },
 

@@ -19,6 +19,7 @@ const BotAuctionsButton = ({ item, onClaim }) => {
 
   const dispatch = useDispatch()
   const user = useSelector(({ $bot }) => $bot.user)
+  const onboard = useSelector(({ $bot }) => $bot.onboard)
 
   const [loading, setLoading] = useState(false)
 
@@ -51,6 +52,10 @@ const BotAuctionsButton = ({ item, onClaim }) => {
 
           dispatch($bot.set.balance(user.points - item.gemsPrice))
           dispatch($alert.set.success({ title: t(`Bid Placed!`), text: `You placed a bid for ${item.nextPrice} ${item.token.currency}.` }))
+
+          if (onboard == 'bid') {
+            dispatch($bot.set.onboard('modal'))
+          }
         }
       } else {
         Amplitude.event(`Bid Failed`, {

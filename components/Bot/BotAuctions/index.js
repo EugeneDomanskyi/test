@@ -12,6 +12,7 @@ import $bot from '@/store/bot'
 import App from '@/components/App'
 import BotAuctionsImage from '@/components/Bot/BotAuctionsImage'
 import BotAuctionsButton from '@/components/Bot/BotAuctionsButton'
+import BotHand from '@/components/Bot/BotHand'
 
 import styles from './styles.module.scss'
 import AuctionCountdown from '@/components/Auction/AuctionCountdown'
@@ -19,6 +20,7 @@ import AuctionCountdown from '@/components/Auction/AuctionCountdown'
 const BotAuctions = ({ onClaim }) => {
   const dispatch = useDispatch()
   const ongoingAuction = useSelector($auction.get.ongoingAuction)
+  const onboard = useSelector(({ $bot }) => $bot.onboard)
   const loading = useSelector(({ $auction }) => $auction.loading)
 
   const [time, setTime] = useState(0)
@@ -106,7 +108,7 @@ const BotAuctions = ({ onClaim }) => {
     <App.Flex column gap={8}>
       {
           ongoingAuction ? (
-            <App.Flex column center fullHeight className={styles.container}>
+            <App.Flex column center fullHeight className={cn(styles.container, styles[onboard])}>
               <App.Flex column gap={10} className={styles.item}>
                 {ongoingAuction.updated ? (
                   <App.Flex className={styles.ripple}>
@@ -189,14 +191,20 @@ const BotAuctions = ({ onClaim }) => {
                     </>
                   )}
 
-                  {(ongoingAuction.status != 'closed' || ongoingAuction.status == 'closed' && ongoingAuction.current) ? (
-                    <BotAuctionsButton item={ongoingAuction} onClaim={onClaim} />
-                  ) : (
-                    <App.Button variant="bot" large fullWidth outlined onClick={handleAuctionHistory(ongoingAuction)}>View history</App.Button>
-                  )}
+                  <App.Flex fullWidth className={styles.buttonContainer}>
+                    {(ongoingAuction.status != 'closed' || ongoingAuction.status == 'closed' && ongoingAuction.current) ? (
+                      <BotAuctionsButton item={ongoingAuction} onClaim={onClaim} />
+                    ) : (
+                      <App.Button variant="bot" large fullWidth outlined onClick={handleAuctionHistory(ongoingAuction)}>View history</App.Button>
+                    )}
+
+                    {(ongoingAuction.status == 'ongoing' && !ongoingAuction.current && onboard === 'bid') ? (
+                      <BotHand type="bid" />
+                    ) : null}
+                  </App.Flex>
                   
                   {ongoingAuction.status != 'closed' ? (
-                    <App.Flex column gap={8} className={styles.area}>
+                    <App.Flex column gap={8} className={cn(styles.area, styles[onboard])}>
                       <App.Flex row fullWidth align="center" justify="space-between">
                         <App.Text size={14} weight={600} height={1}>Current Bid</App.Text>
                         <App.Text size={24} weight={600} height={1}>{ongoingAuction.currentPrice} {ongoingAuction.token.currency}</App.Text>

@@ -16,6 +16,186 @@
       .slide {
         width: 100%;
         background: url('/images/bot/onboard-stars.png') center 100px no-repeat;
+        position: relative;
+        z-index: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 16px;
+        overflow: hidden;
+
+        .onboardingTop1 {
+          width: 296px;
+          height: 226px;
+          position: absolute;
+          z-index: 0;
+          left: 0;
+          top: 20px;
+          background: url('/images/bot/image-placeholder.png') center no-repeat;
+
+          .name {
+            padding-bottom: 48px;
+            width: 50%;
+      
+            .text {
+              width: 94px;
+            }
+          }
+      
+          .discount {
+            width: 50%;
+            padding-left: 20px;
+          }
+        }
+
+        .taskContainer {
+          position: absolute;
+          top: 40px;
+          left: 16px;
+          width: 80%;
+          padding: 16px;
+          gap: 16px;
+          border-radius: 8px;
+          border: 1px solid #FFBB01;
+          background: linear-gradient(158deg, #6B41EB -6.02%, #241164 85.68%);
+      
+          .taskDescription {
+            color: rgba(255, 255, 255, 0.60);
+            font-size: 12px;
+            font-weight: 500;
+          }
+        }
+
+        .onboardingTop2 {
+          width: 350px;
+          height: 350px;
+          position: absolute;
+          z-index: 0;
+          left: 50%;
+          top: 40%;
+          transform: translate(-50%, -50%);
+          background: url('/images/bot/onboarding-top-2.png') center no-repeat;
+        }
+
+        .onboardingTop3 {
+          width: 390px;
+          height: 467px;
+          position: absolute;
+          z-index: 0;
+          left: 50%;
+          top: 40%;
+          transform: translate(-50%, -50%);
+          background: url('/images/bot/onboarding-top-3.png') center no-repeat;
+
+          .text {
+            position: absolute;
+            z-index: 0;
+            top: 50%;
+            left: 50%;
+            margin: -170px 0 0 60px;
+          }
+        }
+
+        .onboardingTop4 {
+          width: 399px;
+          height: 392px;
+          position: absolute;
+          z-index: 0;
+          left: 50%;
+          top: 40%;
+          transform: translate(-50%, -50%);
+          background: url('/images/bot/onboarding-top-4.png') center no-repeat;
+
+          .text {
+            position: absolute;
+            z-index: 0;
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, 0);
+          }
+        }
+
+        .textBlock {
+          border-radius: 8px;
+          padding: 24px;
+          position: relative;
+          z-index: 0;
+
+          &.yellow {
+            background: linear-gradient(96deg, #ECBA2F -1.06%, #DC6F20 103.57%);
+          }
+
+          &.orange {
+            background: linear-gradient(100deg, #EA9046 26.07%, #D9671B 85.3%);
+          }
+
+          &.green {
+            background: linear-gradient(338deg, #517714 14.28%, #8AC31F 85.72%);
+          }
+
+          &.blue {
+            background: linear-gradient(95deg, #449CED -2.37%, #1958BF 48.41%);
+          }
+
+          &.red {
+            background: linear-gradient(95deg, #ED448A -2.37%, #BF194D 48.41%);
+          }
+
+          &.purple {
+            background: linear-gradient(338deg, #581477 14.28%, #AD1FC3 85.72%);
+          }
+
+          .onboardingImage1 {
+            width: 293px;
+            height: 427px;
+            position: absolute;
+            z-index: 1;
+            right: -25px;
+            top: -325px;
+            background: url('/images/bot/onboarding-image-1.png') center no-repeat;
+          }
+
+          .onboardingImage2 {
+            width: 391px;
+            height: 580px;
+            position: absolute;
+            z-index: 1;
+            right: -15px;
+            top: -454px;
+            background: url('/images/bot/onboarding-image-2.png') center no-repeat;
+          }
+
+          .onboardingImage3 {
+            width: 232px;
+            height: 304px;
+            position: absolute;
+            z-index: 1;
+            right: 0;
+            top: -295px;
+            background: url('/images/bot/onboarding-image-3.png') center no-repeat;
+          }
+
+          .onboardingImage4 {
+            width: 135px;
+            height: 106px;
+            position: absolute;
+            z-index: 1;
+            right: 10px;
+            top: -65px;
+            background: url('/images/bot/onboarding-image-4.png') center no-repeat;
+          }
+
+          .onboardingImage5 {
+            width: 226px;
+            height: 271px;
+            position: absolute;
+            z-index: 1;
+            right: -15px;
+            top: -140px;
+            background: url('/images/bot/onboarding-image-5.png') center no-repeat;
+          }
+        }
       }
     }
   }

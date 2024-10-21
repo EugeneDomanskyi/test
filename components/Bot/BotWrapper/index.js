@@ -13,6 +13,7 @@ import BotHeader from '@/components/Bot/BotHeader'
 import BotTabs from '@/components/Bot/BotTabs'
 import BotLoading from '@/components/Bot/BotLoading'
 import BotOnboarding from '@/components/Bot/BotOnboarding'
+import BotOnboardingModal from '@/components/Bot/BotOnboardingModal'
 
 import styles from './styles.module.scss'
 
@@ -20,6 +21,7 @@ const BotWrapper = ({ children }) => {
   const dispatch = useDispatch()
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
   const earnings_page = useSelector(({ $auction }) => $auction.earnings_page)
+  const user = useSelector(({ $bot }) => $bot.user)
 
   const [loading, setLoading] = useState(true)
   const [isBot, setIsBot] = useState(null)
@@ -49,6 +51,12 @@ const BotWrapper = ({ children }) => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [])
+
+  useEffect(() => {
+    if (user?.is_claimed_first_bid === false) {
+      dispatch($bot.set.onboard('bid'))
+    }
+  }, [user?.is_claimed_first_bid])
 
   const handleScriptLoaded = async () => {
     if (TelegramBot.getInitData()) {
@@ -108,7 +116,11 @@ const BotWrapper = ({ children }) => {
 
           <BotTabs />
 
-          <BotOnboarding />
+          {user?.is_claimed_onboarding === false ? (
+            <BotOnboarding />
+          ) : null}
+
+          <BotOnboardingModal />
         </App.Flex>
       ) : (
         <App.Flex center height={300} sx={{overflow: 'auto'}}>

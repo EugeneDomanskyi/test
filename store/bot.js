@@ -9,6 +9,7 @@ export const botSlice = createSlice({
     user: null,
     tab: 'auctions',
     tabHistory: [],
+    onboard: null,
   },
 
   reducers: {
@@ -26,6 +27,10 @@ export const botSlice = createSlice({
     tab: (state, { payload }) => {
       state.tab = payload
       state.tabHistory = [...state.tabHistory, payload]
+    },
+
+    onboard: (state, { payload }) => {
+      state.onboard = payload
     },
 
     back: (state) => {

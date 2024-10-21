@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
+import cn from 'classnames'
 
 import $auction from '@/store/auction'
 
@@ -14,6 +15,7 @@ const BotHeaderTimer = ({ timestamp }) => {
   const dispatch = useDispatch()
   const ongoingAuction = useSelector($auction.get.ongoingAuction)
   const showUpcoming = useSelector(({ $auction }) => $auction.showUpcoming)
+  const onboard = useSelector(({ $bot }) => $bot.onboard)
 
   const [timeLeft, setTimeLeft] = useState(moment(timestamp).diff(moment()))
 
@@ -50,7 +52,7 @@ const BotHeaderTimer = ({ timestamp }) => {
   }
 
   return (
-    <App.Flex row align="center" fullWidth gap={4} className={styles.timerContainer}>
+    <App.Flex row align="center" fullWidth gap={4} className={cn(styles.timerContainer, styles[onboard])}>
       {timeLeft > 0 ? (
         <>
           <App.Text size={13} weight={400}>Next Auction starts in</App.Text>
