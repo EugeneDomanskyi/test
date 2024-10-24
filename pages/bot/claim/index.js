@@ -22,7 +22,7 @@ import styles from './styles.module.scss'
 
 const BotClaim = () => {
   const router = useRouter()
-  const { id, hash } = router.query
+  const { id, hash, salt } = router.query
 
   const { connection, connect } = useWagmiHelper()
 
@@ -53,6 +53,12 @@ const BotClaim = () => {
       }
     }
   }, [connection])
+
+  useEffect(() => {
+    if (salt) {
+      Amplitude.identify(salt.toString(), 'tgID')
+    }
+  }, [salt])
 
   useEffect(() => {
     if (id) {
@@ -202,7 +208,7 @@ You don't wanna miss these insane deals! ✨
       })
 
       setLoadingPay(false)
-      dispatch($alert.set.error({title: 'Something went wrong', text: txid.error}))
+      dispatch($alert.set.error({title: 'Something went wrong', text: txid.error?.shortMessage ?? txid.error.toString()}))
       return
     }
     console.log('Transaction ID received', txid)

@@ -58,7 +58,8 @@ const BotEarn = () => {
         })
 
         setTelegram(false)
-        dispatch($alert.set.error({text: 'You should join our Telegram channel first'}))
+        const error = result.error == 'user_not_joined' ? 'You should join our Telegram channel first' : result.error
+        dispatch($alert.set.error({text: error}))
       }
 
       if (type == 'twitter_follow') {
@@ -198,7 +199,7 @@ const BotEarn = () => {
             </App.Flex>
           </App.Flex>
 
-          <App.Text size={14} weight={400} color="#FFFFFF99">Both you and your friends get gems.</App.Text>
+          <App.Text size={14} weight={400} color="#FFFFFF99">Both you and your friends get gems when they place their first bid.</App.Text>
           
           <App.Flex row gap={8}>
             <App.Flex flex={1}>

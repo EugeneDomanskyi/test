@@ -44,20 +44,17 @@ class TelegramBot {
     return false
   }
 
-  getUsername = () => {
+  getId = () => {
     const initData = this.getInitData()
     const params = new URLSearchParams(initData)
-
-    // Get the encoded user field
+    
     const encodedUser = params.get('user')
     if (!encodedUser) {
       return null
     }
 
-    // Decode the user field
     const decodedUser = decodeURIComponent(encodedUser)
 
-    // Parse the decoded user field as JSON
     let user = null
     try {
       user = JSON.parse(decodedUser)
@@ -66,7 +63,28 @@ class TelegramBot {
       return null
     }
 
-    // Extract and return the username
+    return user.id
+  }
+
+  getUsername = () => {
+    const initData = this.getInitData()
+    const params = new URLSearchParams(initData)
+
+    const encodedUser = params.get('user')
+    if (!encodedUser) {
+      return null
+    }
+
+    const decodedUser = decodeURIComponent(encodedUser)
+
+    let user = null
+    try {
+      user = JSON.parse(decodedUser)
+    } catch (error) {
+      console.error('Failed to parse user JSON:', error)
+      return null
+    }
+
     return user.username ?? user.first_name ?? null
   }
 

@@ -14,9 +14,9 @@ class Amplitude {
     }
   }
 
-  identify = (address) => {
+  identify = (address, idField = 'wallet') => {
     const identifyObj = new amplitude.Identify()
-    identifyObj.set('wallet', address.toLowerCase())
+    identifyObj.set(idField, address.toLowerCase())
     amplitude.identify(identifyObj)
     amplitude.getInstance().setUserId(address.toLowerCase())
   }
