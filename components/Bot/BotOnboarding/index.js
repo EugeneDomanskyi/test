@@ -28,6 +28,7 @@ const BotOnboarding = () => {
     infinite: false,
     adaptiveHeight: true,
     speed: 500,
+    swipe: false,
     slidesToShow: 1,
     slidesToScroll: 1,
   }

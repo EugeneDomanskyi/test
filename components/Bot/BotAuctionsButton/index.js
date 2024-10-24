@@ -62,7 +62,8 @@ const BotAuctionsButton = ({ item, onClaim }) => {
           'Page': 'Auctions',
           'Source': 'Telegram',
         })
-        TelegramBot.showPopup('Not enough gems', 'Please top up your gems to place a bid.')
+        // TelegramBot.showPopup('Not enough gems', 'Please top up your gems to place a bid.')
+        dispatch($bot.set.outbid(true))
       }
     }
 

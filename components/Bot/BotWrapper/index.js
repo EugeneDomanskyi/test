@@ -14,6 +14,7 @@ import BotTabs from '@/components/Bot/BotTabs'
 import BotLoading from '@/components/Bot/BotLoading'
 import BotOnboarding from '@/components/Bot/BotOnboarding'
 import BotOnboardingModal from '@/components/Bot/BotOnboardingModal'
+import BotOutbidModal from '@/components/Bot/BotOutbidModal'
 
 import styles from './styles.module.scss'
 
@@ -40,6 +41,7 @@ const BotWrapper = ({ children }) => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         fetchUser()
+        fetchMegaAuction()
         fetchAuctions()
         fetchEarnings()
       }
@@ -76,6 +78,13 @@ const BotWrapper = ({ children }) => {
     const result = await $bot.api.user({referral_code: TelegramBot.getReferralCode()})
     if (result && !result.error) {
       dispatch($bot.set.user(result))
+    }
+  }
+
+  const fetchMegaAuction = async () => {
+    const result = await $auction.api.mega_auction_v2()
+    if (result && !result.error) {
+      dispatch($auction.set.mega_auction_v2(result))
     }
   }
 
@@ -121,6 +130,7 @@ const BotWrapper = ({ children }) => {
           ) : null}
 
           <BotOnboardingModal />
+          <BotOutbidModal />
         </App.Flex>
       ) : (
         <App.Flex center height={300} sx={{overflow: 'auto'}}>

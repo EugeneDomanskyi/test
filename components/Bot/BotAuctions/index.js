@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import Image from 'next/image'
 import moment from 'moment'
 import cn from 'classnames'
 
 import Socket from '@/libs/ws.lib'
 import useInterval from '@/myhooks/useInterval'
+import TelegramBot from '@/libs/TelegramBot'
+import Amplitude from '@/libs/amplitude.lib'
 
 import $auction from '@/store/auction'
 import $bot from '@/store/bot'
@@ -13,15 +16,16 @@ import App from '@/components/App'
 import BotAuctionsImage from '@/components/Bot/BotAuctionsImage'
 import BotAuctionsButton from '@/components/Bot/BotAuctionsButton'
 import BotHand from '@/components/Bot/BotHand'
+import AuctionCountdown from '@/components/Auction/AuctionCountdown'
 
 import styles from './styles.module.scss'
-import AuctionCountdown from '@/components/Auction/AuctionCountdown'
 
 const BotAuctions = ({ onClaim }) => {
   const dispatch = useDispatch()
   const ongoingAuction = useSelector($auction.get.ongoingAuction)
   const onboard = useSelector(({ $bot }) => $bot.onboard)
   const loading = useSelector(({ $auction }) => $auction.loading)
+  const user = useSelector(({ $bot }) => $bot.user)
 
   const [time, setTime] = useState(0)
   const [duration, setDuration] = useState({
@@ -46,6 +50,7 @@ const BotAuctions = ({ onClaim }) => {
 
   useEffect(() => {
     Socket.on('auctions', 'auction', handleUpdatedAuction)
+    fetchMegaAuction()
     fetchAuctions()
   }, [])
 
@@ -60,6 +65,7 @@ const BotAuctions = ({ onClaim }) => {
 
   const handleUpdatedAuction = async (data) => {
     if (data.status === 1) {
+      fetchMegaAuction()
       fetchAuctions()
       return
     }
@@ -67,6 +73,13 @@ const BotAuctions = ({ onClaim }) => {
     const result = await $auction.api.getTelegram(data.id)
     if (result && !result.error) {
       dispatch($auction.set.update(result))
+    }
+  }
+
+  const fetchMegaAuction = async () => {
+    const result = await $auction.api.mega_auction_v2()
+    if (result && !result.error) {
+      dispatch($auction.set.mega_auction_v2(result))
     }
   }
 
@@ -100,6 +113,20 @@ const BotAuctions = ({ onClaim }) => {
     dispatch($auction.set.current(auction))
     dispatch($auction.set.auctionHistory([]))
     dispatch($bot.set.tab('auction-history'))
+  }
+
+  const handleTelegram = () => {
+    Amplitude.event(`Join Channel click`, {
+      'Page': 'Earn',
+      'Source': 'Telegram',
+    })
+
+    TelegramBot.openTelegramLink('https://t.me/TegroChat')
+    dispatch($bot.set.tab('earn'))
+  }
+
+  const handleEarn = () => {
+    dispatch($bot.set.tab('earn'))
   }
 
   return loading ? (
@@ -175,11 +202,11 @@ const BotAuctions = ({ onClaim }) => {
                         </>
                       ) : (
                         <App.Flex column gap={8}>
-                          <App.Text center nowrap size={24} weight={700} height={1} color="#A6DC37">{ongoingAuction.discount}% OFF</App.Text>
+                          <App.Text center nowrap size={20} weight={700} height={1} color="#A6DC37">{ongoingAuction.discount}% OFF</App.Text>
 
                           <App.Flex row center gap={8} height={22}>
                             <App.Icon icon="users" />
-                            <App.Text size={14} weight={600} height={1}>{ongoingAuction.bidsCount} Bidder{ongoingAuction.bidsCount != 1 ? 's' : ''}</App.Text>
+                            <App.Text size={14} weight={600} height={1}>{ongoingAuction.bidsCount} Bid{ongoingAuction.bidsCount != 1 ? 's' : ''}</App.Text>
                           </App.Flex>
 
                           <App.Flex row center gap={8} height={20}>
@@ -195,7 +222,47 @@ const BotAuctions = ({ onClaim }) => {
                     {(ongoingAuction.status != 'closed' || ongoingAuction.status == 'closed' && ongoingAuction.current) ? (
                       <BotAuctionsButton item={ongoingAuction} onClaim={onClaim} />
                     ) : (
-                      <App.Button variant="bot" large fullWidth outlined onClick={handleAuctionHistory(ongoingAuction)}>View history</App.Button>
+                      <App.Flex column gap={16} fullWidth>
+                        <App.Button variant="bot" large fullWidth outlined onClick={handleAuctionHistory(ongoingAuction)}>View history</App.Button>
+
+                        {user?.is_claimed_telegram ? (
+                          <App.Flex fullWidth className={styles.taskContainer} column gap={8}>
+                            <App.Flex fullWidth align="flex-start" justify="space-between" gap={4}>
+                              <App.Text size={16} weight={600}>Earn gems while you wait for the next auction</App.Text>
+                  
+                              <App.Flex row center width={112} gap={4}>
+                                <App.Text nowrap color="#67C9F9" size={16} weight={600} inline>Upto 20,000</App.Text>
+                                <Image src="/images/bot/gem.png" width={20} height={16} alt="" />
+                              </App.Flex>
+                            </App.Flex>
+
+                            <App.Flex column fullWidth gap={8}>
+                              <App.Text size={13} weight={400} color="#FFFFFFCC">Complete simple tasks and earn gems so that you can bid more and win more.</App.Text>
+                            </App.Flex>
+                  
+                            <App.Button variant="bot" onClick={handleEarn}>Earn Gems</App.Button>
+                          </App.Flex>
+                        ) : (
+                          <App.Flex fullWidth className={styles.taskContainer} column gap={16}>
+                            <App.Flex fullWidth justify="space-between" gap={8}>
+                              <App.Text size={16} weight={600} height={1}>Join our Telegram Channel</App.Text>
+                  
+                              <App.Flex row center gap={4}>
+                                <App.Text color="#67C9F9" size={16} weight={600} inline>2000</App.Text>
+                                <Image src="/images/bot/gem.png" width={20} height={16} alt="" />
+                              </App.Flex>
+                            </App.Flex>
+
+                            <App.Flex column fullWidth gap={8}>
+                              <App.Text size={13} weight={400} height={1} color="#FFFFFFCC">✅ Interact with other players</App.Text>
+                              <App.Text size={13} weight={400} height={1} color="#FFFFFFCC">✅ Learn their strategies</App.Text>
+                              <App.Text size={13} weight={400} height={1} color="#FFFFFFCC">✅ Get exclusive alpha from Tegro Deals team</App.Text>
+                            </App.Flex>
+                  
+                            <App.Button variant="telegram" onClick={handleTelegram}><App.Icon icon="telegram2" width={20} /> Join Now</App.Button>
+                          </App.Flex>
+                        )}
+                      </App.Flex>
                     )}
 
                     {(ongoingAuction.status == 'ongoing' && !ongoingAuction.current && onboard === 'bid') ? (

@@ -42,7 +42,7 @@ const BotOnboardingModal = () => {
             </App.Flex>
           </App.Flex>
 
-          <App.Flex column fullWIdth center gap={16} className={styles.body}>
+          <App.Flex column fullWidth center gap={16} className={styles.body}>
             <App.Flex className={styles.image} />
             <App.Text center size={24} weight={700}><App.Text inline center size={24} weight={700} color="#A6DC37">+5000 gems</App.Text> credited to your account.</App.Text>
 
