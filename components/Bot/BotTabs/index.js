@@ -15,6 +15,7 @@ const BotTabs = () => {
   const dispatch = useDispatch()
   const tab = useSelector(({ $bot }) => $bot.tab)
   const tabHistory = useSelector(({ $bot }) => $bot.tabHistory)
+  const onboard = useSelector(({ $bot }) => $bot.onboard)
 
   // useEffect(() => {
   //   if (tabHistory.length === 0) {
@@ -35,7 +36,7 @@ const BotTabs = () => {
   }
 
   return (
-    <App.Flex row className={styles.container}>
+    <App.Flex row className={cn(styles.container, styles[onboard])}>
       <App.Flex column align="center" flex={1} className={cn(styles.tab, {[styles.active]: tab == 'shop'})} onClick={handlePage('shop')}>
         <App.Flex fullWidth height={tab == 'shop' ? 72 : 56} column justify="center" align="center" sx={{ marginTop: tab == 'shop' ? -24 : -4 }}>
           <Image src="/images/bot/shop.png" width={tab == 'shop' ? 72 : 56} height={tab == 'shop' ? 56 : 48}  alt="" />

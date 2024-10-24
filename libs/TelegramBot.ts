@@ -12,13 +12,11 @@ class TelegramBot {
     // return 'query_id=AAEfkDliAAAAAB-QOWLyvY6G&user=%7B%22id%22%3A1647939615%2C%22first_name%22%3A%22Eugene%F0%9F%A6%B4%22%2C%22last_name%22%3A%22Domanskyi%22%2C%22username%22%3A%22ievgenii_domanskyi%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1724317098&hash=665570655d38e6e47102e7963fbf272e875600659397f7c2fcccf772ded8ffe1'
     // return 'query_id=AAEfkDliAAAAAB-QOWLrWEts&user=%7B%22id%22%3A1647939615%2C%22first_name%22%3A%22Eugene%F0%9F%A6%B4%22%2C%22last_name%22%3A%22Domanskyi%22%2C%22username%22%3A%22ievgenii_domanskyi%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1726580040&hash=1c31b725421db020fead18da41f0e61010fe65b54b353a6958189f4694d41961'
     // return 'query_id=AAEfkDliAAAAAB-QOWJAHhnd&user=%7B%22id%22%3A1647939615%2C%22first_name%22%3A%22Eugene%F0%9F%A6%B4%22%2C%22last_name%22%3A%22Domanskyi%22%2C%22username%22%3A%22ievgenii_domanskyi%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1728383232&hash=f8125f9199f49bbc6c2bc4190c456cc845883dfaec3b4439884410a1206abda9'
-
-    // return 'query_id=AAH5ncY2AwAAAPmdxjYTctbI&user=%7B%22id%22%3A7361437177%2C%22first_name%22%3A%22%D0%84%D0%B2%D0%B3%D0%B5%D0%BD%D1%96%D0%B9%22%2C%22last_name%22%3A%22%D0%94%D0%BE%D0%BC%D0%B0%D0%BD%D1%81%D1%8C%D0%BA%D0%B8%D0%B9%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1726817439&hash=c675c248ce5e853acec04f461736d8cd98bf2cd7aa4cdbd9a8091020e91c0bf3'
     
     // Akash' initialData:
     // return 'query_id=AAGY1a9VAgAAAJjVr1WDHPT6&user=%7B%22id%22%3A5732554136%2C%22first_name%22%3A%22Ryu%20%7C%20Tegro%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22ryu_tegro%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1726757476&hash=a7e0a4e9ac54c3f14d75dc416d86b9d49c7ed8964bb17483023f2c892cb0889c'
     
-    // Suryansh initialData:
+    // Suryansh Local Bot initialData:
     // return 'query_id=AAFhnR1EAAAAAGGdHUSndwz_&user=%7B%22id%22%3A1142791521%2C%22first_name%22%3A%22Suryansh%22%2C%22last_name%22%3A%22Chandak%22%2C%22username%22%3A%22atheistc137%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1726119372&hash=f8f2c83717a4ee464b0d6a59128a2d0a8d2030aa1d56dd6b408a9148efe93fdc'
 
     if (typeof window !== 'undefined' && (window as any)?.Telegram?.WebApp) {

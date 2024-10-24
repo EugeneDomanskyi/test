@@ -4,12 +4,14 @@ import Image from 'next/image'
 import $bot from '@/store/bot'
 
 import App from '@/components/App'
+import BotHand from '@/components/Bot/BotHand'
 
 import styles from './styles.module.scss'
 
 const BotBalance = () => {
   const dispatch = useDispatch()
   const user = useSelector(({ $bot }) => $bot.user)
+  const onboard = useSelector(({ $bot }) => $bot.onboard)
 
   const handleShop = () => {
     dispatch($bot.set.tab('shop'))
@@ -38,6 +40,10 @@ const BotBalance = () => {
         <App.Text size={16} weight={700} height={1}>{formatBalance(user?.points)}</App.Text>
         <Image src="/images/bot/gem.png" width={24} height={20} alt="" />
       </App.Flex>
+
+      {onboard === 'gems' ? (
+        <BotHand type="gems" />
+      ) : null}
     </App.Flex>
   )
 }

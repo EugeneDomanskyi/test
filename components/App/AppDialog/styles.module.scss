@@ -41,6 +41,10 @@
       overflow: hidden;
       margin: auto;
 
+      &.visible {
+        overflow: visible;
+      }
+
       &.full,
       &.fullBody {
         width: 100%;
