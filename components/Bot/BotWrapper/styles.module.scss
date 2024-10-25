@@ -1,5 +1,7 @@
 .container {
   background-color: #08051C;
+  position: relative;
+  z-index: 0;
 
   .content {
     position: relative;

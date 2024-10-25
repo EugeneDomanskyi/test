@@ -12,15 +12,20 @@ import $auction from '@/store/auction'
 import App from '@/components/App'
 import BotHeader from '@/components/Bot/BotHeader'
 import BotTabs from '@/components/Bot/BotTabs'
+import BotLoading from '@/components/Bot/BotLoading'
+import BotOnboarding from '@/components/Bot/BotOnboarding'
+import BotOnboardingModal from '@/components/Bot/BotOnboardingModal'
+import BotOutbidModal from '@/components/Bot/BotOutbidModal'
 
 import styles from './styles.module.scss'
 
 const BotWrapper = ({ children }) => {
   const dispatch = useDispatch()
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
-  const debug = useSelector(({ $auction }) => $auction.debug)
   const earnings_page = useSelector(({ $auction }) => $auction.earnings_page)
+  const user = useSelector(({ $bot }) => $bot.user)
 
+  const [loading, setLoading] = useState(true)
   const [isBot, setIsBot] = useState(null)
 
   useEffect(() => {
@@ -37,6 +42,7 @@ const BotWrapper = ({ children }) => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         fetchUser()
+        fetchMegaAuction()
         fetchAuctions()
         fetchEarnings()
       }
@@ -50,6 +56,12 @@ const BotWrapper = ({ children }) => {
   }, [])
 
   useEffect(() => {
+    if (user?.is_claimed_first_bid === false) {
+      dispatch($bot.set.onboard('bid'))
+    }
+  }, [user?.is_claimed_first_bid])
+
+  useEffect(() => {
     if (isBot) {
       Amplitude.identify(TelegramBot.getId().toString(), 'tgID')
     }
@@ -59,17 +71,31 @@ const BotWrapper = ({ children }) => {
     if (TelegramBot.getInitData()) {
       const botResult = TelegramBot.init()
       setIsBot(botResult)
-      fetchUser()
-      return
+      fetchUser(true)
+    } else {
+      setIsBot(false)
     }
-    
-    setIsBot(false)
+
+    setTimeout(() => {
+      setLoading(false)
+    }, 500)
   }
 
-  const fetchUser = async () => {
+  const fetchUser = async (checkOfBalance = false) => {
     const result = await $bot.api.user({referral_code: TelegramBot.getReferralCode()})
     if (result && !result.error) {
       dispatch($bot.set.user(result))
+
+      if (checkOfBalance && result?.points == 0) {
+        dispatch($bot.set.outbid(true))
+      }
+    }
+  }
+
+  const fetchMegaAuction = async () => {
+    const result = await $auction.api.mega_auction_v2()
+    if (result && !result.error) {
+      dispatch($auction.set.mega_auction_v2(result))
     }
   }
 
@@ -97,42 +123,33 @@ const BotWrapper = ({ children }) => {
 
   return (
     <App.Flex column full className={styles.container}>
-      {
-        debug && debug.length > 0 && (
-          <App.Flex center height={50} sx={{position: 'fixed', zIndex: 1111, top: 0, left: 0, width: '100%', backgroundColor: 'rgba(0,0,0,0.3)'}}>
-            <App.Text>Debug mode</App.Text>
-            <App.Flex column gap={8}>
-              {
-                debug.map((item, index) => (
-                  <App.Text key={index}>{item}</App.Text>
-                ))
-              }
-            </App.Flex>
-          </App.Flex>
-        )
-      }
       <Script src="https://telegram.org/js/telegram-web-app.js" onReady={handleScriptLoaded} />
-      {isBot !== null ? (
-        isBot || !isBot ? (
-          <App.Flex column full>
-            <BotHeader />
+      {isBot !== null && (isBot || !isBot) ? (
+        <App.Flex column full>
+          <BotHeader />
 
-            <App.Flex fullWidth flex={1} className={styles.content}>
-              <App.Flex column className={styles.scroll}>
-                {children}
-              </App.Flex>
+          <App.Flex fullWidth flex={1} className={styles.content}>
+            <App.Flex column className={styles.scroll}>
+              {children}
             </App.Flex>
+          </App.Flex>
 
-            <BotTabs />
-          </App.Flex>
-        ) : (
-          <App.Flex center height={300} sx={{overflow: 'auto'}}>
-            <App.Text>It is not a bot</App.Text>
-          </App.Flex>
-        )
+          <BotTabs />
+
+          {user?.is_claimed_onboarding === false ? (
+            <BotOnboarding />
+          ) : null}
+
+          <BotOnboardingModal />
+          <BotOutbidModal />
+        </App.Flex>
       ) : (
-        <App.LoaderBlock height={300} />
+        <App.Flex center height={300} sx={{overflow: 'auto'}}>
+          <App.Text>It is not a bot</App.Text>
+        </App.Flex>
       )}
+
+      <BotLoading open={loading} />
     </App.Flex>
   )
 }

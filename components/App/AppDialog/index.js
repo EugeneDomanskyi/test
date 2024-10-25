@@ -11,7 +11,7 @@ import styles from './styles.module.scss'
 
 gsap.registerPlugin(CustomEase)
 
-const AppDialog = ({ children, open, size, hideHeader, hideClose, title, subtitle, toTop, full, fullBody, fromRight, width, onClose }) => {
+const AppDialog = ({ children, open, size, hideHeader, hideClose, title, visible, subtitle, toTop, full, fullBody, fromRight, width, onClose }) => {
   const [opened, setOpened] = useState(false)
 
   const layout = useRef(null)
@@ -63,7 +63,7 @@ const AppDialog = ({ children, open, size, hideHeader, hideClose, title, subtitl
     <div ref={layout} className={cn(styles.layout, {[styles.fullBody]: fullBody})}>
       <div ref={content} className={cn(styles.content, {[styles.toTop]: toTop}, {[styles.full]: full}, {[styles.fullBody]: fullBody})} onClick={handleClose}>
         <div onClick={e => e.stopPropagation()} style={full || fullBody ? { width: '100%', height: '100%' } : null}>
-          <div className={cn(styles.wrapper, {[styles[size]]: size}, {[styles.full]: full}, {[styles.fullBody]: fullBody})} style={{ width: width }}>
+          <div className={cn(styles.wrapper, {[styles[size]]: size}, {[styles.visible]: visible}, {[styles.full]: full}, {[styles.fullBody]: fullBody})} style={{ width: width }}>
             {!hideHeader ? (
               <div className={styles.header}>
                 {title ? (
