@@ -71,7 +71,7 @@ const BotWrapper = ({ children }) => {
     if (TelegramBot.getInitData()) {
       const botResult = TelegramBot.init()
       setIsBot(botResult)
-      fetchUser()
+      fetchUser(true)
     } else {
       setIsBot(false)
     }
@@ -81,10 +81,14 @@ const BotWrapper = ({ children }) => {
     }, 500)
   }
 
-  const fetchUser = async () => {
+  const fetchUser = async (checkOfBalance = false) => {
     const result = await $bot.api.user({referral_code: TelegramBot.getReferralCode()})
     if (result && !result.error) {
       dispatch($bot.set.user(result))
+
+      if (checkOfBalance && result?.points == 0) {
+        dispatch($bot.set.outbid(true))
+      }
     }
   }
 
