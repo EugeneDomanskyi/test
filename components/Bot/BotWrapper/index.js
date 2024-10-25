@@ -86,7 +86,7 @@ const BotWrapper = ({ children }) => {
     if (result && !result.error) {
       dispatch($bot.set.user(result))
 
-      if (checkOfBalance && result?.points == 0) {
+      if (checkOfBalance && result?.is_claimed_onboarding === true && result?.points == 0) {
         dispatch($bot.set.outbid(true))
       }
     }
