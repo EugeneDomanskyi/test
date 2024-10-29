@@ -346,7 +346,7 @@ export const auctionSlice = createSlice({
 
     mega_auction_v2: (state, { payload }) => {
       const auction = {...payload[0]}
-      auction.counter = auction.auction_counter != auction.original_auction_counter ? auction.auction_counter : 0
+      auction.counter = auction.auction_counter
       state.mega_auction = auction
     },
 
