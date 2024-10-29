@@ -100,10 +100,10 @@ const BotHeaderTimer = ({ timestamp }) => {
 
         <div>
           <App.Flex row fullWidth center height={32}>
-            {mega_auction?.counter > 0 ? (
-              <App.Text size={13} weight={400}><App.Text inline size={13} weight={700} color="#FFBB01">{mega_auction.counter}</App.Text> auction{mega_auction.counter == 1 ? '' : 's'} left for <App.Text inline size={13} weight={700} color="#FFBB01">$50 USDC Mega Auction!</App.Text> 🤑</App.Text>
-            ) : (
+            {ongoingAuction && ongoingAuction.status != 'closed' && ongoingAuction.isMega ? (
               <App.Text size={13} weight={700} color="#FFBB01">$50 USDC Mega Auction! 🤑</App.Text>
+            ) : (
+              <App.Text size={13} weight={400}><App.Text inline size={13} weight={700} color="#FFBB01">{mega_auction.counter}</App.Text> auction{mega_auction.counter == 1 ? '' : 's'} left for <App.Text inline size={13} weight={700} color="#FFBB01">$50 USDC Mega Auction!</App.Text> 🤑</App.Text>
             )}
           </App.Flex>
         </div>
