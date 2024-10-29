@@ -56,6 +56,10 @@ const BotAuctionsButton = ({ item, onClaim }) => {
           if (onboard == 'bid') {
             dispatch($bot.set.onboard('modal'))
           }
+        } else {
+          if (result?.error && result.error == 'auction_gems_criteria_failed') {
+            dispatch($bot.set.megaModal(true))
+          }
         }
       } else {
         Amplitude.event(`Bid Failed`, {
