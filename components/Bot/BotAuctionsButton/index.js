@@ -19,6 +19,7 @@ const BotAuctionsButton = ({ item, onClaim }) => {
 
   const dispatch = useDispatch()
   const user = useSelector(({ $bot }) => $bot.user)
+  const onboard = useSelector(({ $bot }) => $bot.onboard)
 
   const [loading, setLoading] = useState(false)
 
@@ -51,13 +52,22 @@ const BotAuctionsButton = ({ item, onClaim }) => {
 
           dispatch($bot.set.balance(user.points - item.gemsPrice))
           dispatch($alert.set.success({ title: t(`Bid Placed!`), text: `You placed a bid for ${item.nextPrice} ${item.token.currency}.` }))
+
+          if (onboard == 'bid') {
+            dispatch($bot.set.onboard('modal'))
+          }
+        } else {
+          if (result?.error && result.error == 'auction_gems_criteria_failed') {
+            dispatch($bot.set.megaModal(true))
+          }
         }
       } else {
         Amplitude.event(`Bid Failed`, {
           'Page': 'Auctions',
           'Source': 'Telegram',
         })
-        TelegramBot.showPopup('Not enough gems', 'Please top up your gems to place a bid.')
+        // TelegramBot.showPopup('Not enough gems', 'Please top up your gems to place a bid.')
+        dispatch($bot.set.outbid(true))
       }
     }
 

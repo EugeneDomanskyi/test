@@ -21,7 +21,7 @@ const template = (item) => {
     }
   }
 
-  const userIdentifier = auction.last_bidder.user_identifier
+  const userIdentifier = auction?.last_bidder?.user_identifier ?? ''
   const lastBidderWallet = (userIdentifier.startsWith('0x') ? userIdentifier.toLowerCase() : userIdentifier) || null
   const marketPrice = Number(item.auction_value)
   const startPrice = formatUnits(auction.start_price.toString(), auction.auction_token.decimals)
@@ -78,6 +78,7 @@ const template = (item) => {
     claimHash: auction.claim_tx_hash,
     claimTime,
     isClaimable,
+    isMega: auction.is_mega_auction,
     updated: false,
   }
 }
@@ -158,6 +159,7 @@ export const auctionSlice = createSlice({
       total: 0,
     },
     earnings_unclaimed: 0,
+    mega_auction: null,
   },
 
   reducers: {
@@ -342,6 +344,12 @@ export const auctionSlice = createSlice({
       state.bid_page = payload
     },
 
+    mega_auction_v2: (state, { payload }) => {
+      const auction = {...payload[0]}
+      auction.counter = auction.auction_counter
+      state.mega_auction = auction
+    },
+
     debug: (state, { payload }) => {
       state.debug = [...state.debug, payload]
     },
@@ -392,14 +400,22 @@ export const get = {
     if (showUpcoming) {
       const upcomingAuctions = auctions.filter(item => item.status == 'upcoming')
       if (upcomingAuctions.length) {
-        upcomingAuctions.sort((a, b) => a.startsIn - b.startsIn)
+        upcomingAuctions.sort((a, b) => {
+          if (a.isMega && !b.isMega) return -1
+          if (!a.isMega && b.isMega) return 1
+          return a.startsIn - b.startsIn
+        })
         return upcomingAuctions[0]
       }
     }
 
     const ongoingAuctions = auctions.filter(item => item.status == 'ongoing')
     if (ongoingAuctions.length) {
-      ongoingAuctions.sort((a, b) => a.startsIn - b.startsIn)
+      ongoingAuctions.sort((a, b) => {
+        if (a.isMega && !b.isMega) return -1
+        if (!a.isMega && b.isMega) return 1
+        return a.startsIn - b.startsIn
+      })
       return ongoingAuctions[0]
     } else {
       const closedAuctions = auctions.filter(item => item.status == 'closed')
@@ -417,8 +433,11 @@ export const get = {
     const upcomingAuctions = auctions.filter(item => item.status == 'upcoming')
     
     if (upcomingAuctions.length) {
-      upcomingAuctions.sort((a, b) => a.startsIn - b.startsIn)
-      console.log('upcomingAuctions', upcomingAuctions[0]);
+      upcomingAuctions.sort((a, b) => {
+        if (a.isMega && !b.isMega) return -1
+        if (!a.isMega && b.isMega) return 1
+        return a.startsIn - b.startsIn
+      })
       return upcomingAuctions[0]
     }
     return null
@@ -437,7 +456,6 @@ export const api = {
   },
   
   allTelegram: () => {
-    console.log('FETCH allTelegram');
     return request(`telegram/auctions`, 'GET', {api: 'bid'})
   },
 
@@ -446,7 +464,6 @@ export const api = {
   },
 
   getTelegram: (id) => {
-    console.log('FETCH getTelegram BY ID', id);
     return request(`telegram/auction/${id}`, 'GET', {api: 'bid'})
   },
 
@@ -488,6 +505,10 @@ export const api = {
 
   saveTxId: (params) => {
     return request(`telegram/auction/claim/save-and-claim`, 'POST', {api: 'bid', ...params})
+  },
+
+  mega_auction_v2: () => {
+    return request(`telegram/auctions/megaAuctions`, 'GET', {api: 'bid_v2'})
   },
 }
 
