@@ -11,6 +11,7 @@ export const botSlice = createSlice({
     tabHistory: [],
     onboard: null,
     outbid: false,
+    megaModal: false,
   },
 
   reducers: {
@@ -36,6 +37,10 @@ export const botSlice = createSlice({
 
     outbid: (state, { payload }) => {
       state.outbid = payload
+    },
+
+    megaModal: (state, { payload }) => {
+      state.megaModal = payload
     },
 
     back: (state) => {

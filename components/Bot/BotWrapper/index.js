@@ -16,6 +16,7 @@ import BotLoading from '@/components/Bot/BotLoading'
 import BotOnboarding from '@/components/Bot/BotOnboarding'
 import BotOnboardingModal from '@/components/Bot/BotOnboardingModal'
 import BotOutbidModal from '@/components/Bot/BotOutbidModal'
+import BotMegaModal from '@/components/Bot/BotMegaModal'
 
 import styles from './styles.module.scss'
 
@@ -142,6 +143,7 @@ const BotWrapper = ({ children }) => {
 
           <BotOnboardingModal />
           <BotOutbidModal />
+          <BotMegaModal />
         </App.Flex>
       ) : (
         <App.Flex center height={300} sx={{overflow: 'auto'}}>
