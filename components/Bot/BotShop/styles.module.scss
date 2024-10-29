@@ -1,3 +1,35 @@
+.container {
+  padding: 16px;
+
+  .title {
+    position: relative;
+    z-index: 0;
+
+    .text {
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      bottom: 4px;
+    }
+  }
+
+  .offer {
+    padding: 8px;
+    border-radius: 12px;
+    background: linear-gradient(133deg, rgba(91, 24, 234, 0.90) 4.25%, rgba(152, 128, 255, 0.90) 13.56%, rgba(140, 108, 251, 0.90) 19.45%, rgba(91, 24, 234, 0.90) 38.62%, rgba(91, 24, 234, 0.90) 44.98%, rgba(70, 42, 138, 0.90) 53.2%, rgba(62, 23, 140, 0.90) 69.33%, rgba(60, 22, 139, 0.90) 86.95%, rgba(43, 4, 98, 0.90) 96.44%), linear-gradient(102deg, #631DFF 0%, #A91DFF 100%);
+    box-shadow: 0px 0px 4px 1px rgba(3, 253, 251, 0.50), 0px 4px 0px 0px #5028C8;
+
+    .header {
+      padding: 16px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.13);
+      box-shadow: 0px 0px 0px 1px rgba(169, 29, 255, 0.40), 0px 1px 1px 0px rgba(0, 0, 0, 0.25) inset;
+    }
+  }
+}
+
+
+
 .box {
   border-radius: 12px;
   background: linear-gradient(91.77deg, #E792E4 2.92%, #B545BE 36.09%, #7931CB 70.47%, #4D42C9 100%);
