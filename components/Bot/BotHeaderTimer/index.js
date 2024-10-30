@@ -13,16 +13,17 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import styles from './styles.module.scss'
 
-const BotHeaderTimer = ({ timestamp }) => {
+const BotHeaderTimer = () => {
   const intervalRef = useRef(null)
 
   const dispatch = useDispatch()
   const ongoingAuction = useSelector($auction.get.ongoingAuction)
+  const upcomingAuction = useSelector($auction.get.upcomingAuction)
   const showUpcoming = useSelector(({ $auction }) => $auction.showUpcoming)
   const onboard = useSelector(({ $bot }) => $bot.onboard)
   const mega_auction = useSelector(({ $auction }) => $auction.mega_auction)
 
-  const [timeLeft, setTimeLeft] = useState(moment(timestamp).diff(moment()))
+  const [timeLeft, setTimeLeft] = useState(moment(upcomingAuction?.startsIn).diff(moment()))
 
   const sliderRef = useRef(null)
 
@@ -40,10 +41,10 @@ const BotHeaderTimer = ({ timestamp }) => {
   }
 
   useEffect(() => {
-    if (timestamp && ! moment(timestamp).isBefore(moment())) {
+    if (upcomingAuction?.startsIn && ! moment(upcomingAuction?.startsIn).isBefore(moment())) {
       intervalRef.current = setInterval(() => {
         const now = moment()
-        const duration = moment(timestamp).diff(now)
+        const duration = moment(upcomingAuction?.startsIn).diff(now)
         if (duration <= 10000 && !showUpcoming) {
           dispatch($auction.set.showUpcoming(true))
         }
@@ -60,7 +61,7 @@ const BotHeaderTimer = ({ timestamp }) => {
 
       // return () => clearInterval(intervalRef.current)
     }
-  }, [timestamp])
+  }, [upcomingAuction?.startsIn])
 
   const formatTime = (milliseconds) => {
     const duration = moment.duration(milliseconds)
@@ -73,14 +74,14 @@ const BotHeaderTimer = ({ timestamp }) => {
 
   return mega_auction ? (
     <div className={cn(styles.timerContainer, styles[onboard])}>
-      <Slider ref={slider => { sliderRef.current = slider }} {...settings}>
-        <div>
-          {timeLeft > 0 ? (
-            <App.Flex row fullWidth center gap={8} height={32}>
-              <App.Text size={13} weight={400}>Next Auction starts in</App.Text>
-              <App.Text size={13} weight={600}>{formatTime(timeLeft)}</App.Text>
-            </App.Flex>
-          ) : (
+      {timeLeft > 0 ? (
+        <App.Flex row fullWidth center gap={8} height={32}>
+          <App.Text size={13} weight={400}>{upcomingAuction?.isMega ? 'Mega auction' : 'Next Auction'} starts in</App.Text>
+          <App.Text size={13} weight={600}>{formatTime(timeLeft)}</App.Text>
+        </App.Flex>
+      ) : (
+        <Slider ref={slider => { sliderRef.current = slider }} {...settings}>
+          <div>
             <App.Flex row fullWidth center height={32}>
               {ongoingAuction?.id && ongoingAuction.priceLimit > 0 ? (
                 <App.Text size={13} weight={400}>👀 Auction ends at <b>{ongoingAuction.priceLimit} {ongoingAuction.token.currency}</b>, scheduled every 10 mins</App.Text>
@@ -88,26 +89,26 @@ const BotHeaderTimer = ({ timestamp }) => {
                 <App.Text size={13} weight={400}>New Auctions Scheduled Every 10 Minutes!</App.Text>
               )}
             </App.Flex>
-          )}
-        </div>
-        
-        <div>
-          <App.Flex row fullWidth center gap={4} height={32}>
-            <App.Text size={13} weight={400} height={1}>1 Bid = 1000</App.Text>
-            <Image src="/images/bot/gem.png" width={19} height={16} alt="" />
-          </App.Flex>
-        </div>
+          </div>
+          
+          <div>
+            <App.Flex row fullWidth center gap={4} height={32}>
+              <App.Text size={13} weight={400} height={1}>1 Bid = 1000</App.Text>
+              <Image src="/images/bot/gem.png" width={19} height={16} alt="" />
+            </App.Flex>
+          </div>
 
-        <div>
-          <App.Flex row fullWidth center height={32}>
-            {ongoingAuction && ongoingAuction.status != 'closed' && ongoingAuction.isMega ? (
-              <App.Text size={13} weight={700} color="#FFBB01">$50 USDC Mega Auction! 🤑</App.Text>
-            ) : (
-              <App.Text size={13} weight={400}><App.Text inline size={13} weight={700} color="#FFBB01">{mega_auction.counter}</App.Text> auction{mega_auction.counter == 1 ? '' : 's'} left for <App.Text inline size={13} weight={700} color="#FFBB01">$50 USDC Mega Auction!</App.Text> 🤑</App.Text>
-            )}
-          </App.Flex>
-        </div>
-      </Slider>
+          <div>
+            <App.Flex row fullWidth center height={32}>
+              {ongoingAuction && ongoingAuction.status != 'closed' && ongoingAuction.isMega ? (
+                <App.Text size={13} weight={700} color="#FFBB01">Mega auction live!</App.Text>
+              ) : (
+                <App.Text size={13} weight={400}><App.Text inline size={13} weight={700} color="#FFBB01">{mega_auction.counter}</App.Text> auction{mega_auction.counter == 1 ? '' : 's'} left for <App.Text inline size={13} weight={700} color="#FFBB01">Mega Auction!</App.Text> 🤑</App.Text>
+              )}
+            </App.Flex>
+          </div>
+        </Slider>
+      )}
     </div>
   ) : null
 }
