@@ -14,47 +14,62 @@ import styles from './styles.module.scss'
 
 const shopItems = [
   {
-    title: 'Pile Of Gems',
-    gems: 10000,
+    id: 1,
+    title: 'Pile of Gems',
+    className: 'yellow',
+    gems: '10,000',
     price: typeof window != 'undefined' ? (TelegramBot.host() == 'tegro.com' ? 50 : 1) : 50,
-    image: '/images/bot/shop-gems-1.png',
-  },
-  {
+    image: '/images/bot/shop-image-1.png',
+    discount: '',
+  }, {
+    id: 2,
+    title: 'Bag of Gems',
+    className: 'orange',
+    gems: '25,000',
+    price: 99,
+    image: '/images/bot/shop-image-2.png',
+    discount: '(20% Off)',
+  }, {
+    id: 3,
     title: 'Barrel of Gems',
-    gems: 50000,
-    price: 250,
-    image: '/images/bot/shop-gems-2.png',
-  },
-  {
+    className: 'blue',
+    gems: '50,000',
+    price: 199,
+    image: '/images/bot/shop-image-3.png',
+    discount: '(25% Off)',
+  }, {
+    id: 4,
     title: 'Chest Full of Gems',
-    gems: 100000,
-    price: 500,
-    image: '/images/bot/shop-gems-3.png',
+    className: 'red',
+    gems: '112,000',
+    price: 399,
+    image: '/images/bot/shop-image-4.png',
+    discount: '(40% Off)',
   },
 ]
 
 const BotShop = () => {
   const dispatch = useDispatch()
 
-  const [playAnimationId, setPlayAnimationId] = useState(null)
+  const paid = false
 
-  const handlePay = (amount, gems) => async () => {
-    setPlayAnimationId(amount)
+  const handlePay = (id) => async () => {
+    const item = shopItems.find(item => item.id === id)
 
     Amplitude.event(`Buy Gems`, {
       'Page': 'Shop',
       'Source': 'Telegram',
-      'Amount': gems,
+      'Amount': item.gems,
     })
 
     const payload = {
-      title: `${gems} gems`,
-      description: `${gems} gems for bidding`,
-      payload: gems.toString(),
+      title: `${item.gems} gems`,
+      description: `${item.gems} gems for bidding`,
+      payload: `product_id=${id}`,
       provider_token: '',
       currency: 'XTR',
       prices: [
-        { label: 'Price', amount },
+        { label: 'Price', amount: item.price },
       ],
     }
 
@@ -77,6 +92,10 @@ const BotShop = () => {
     }
   }
 
+  const handleOffer = async () => {
+
+  }
+
   return (
     <App.Flex column fullWidth center gap={32} className={styles.container}>
       <App.Flex column fullWidth gap={16}>
@@ -88,64 +107,90 @@ const BotShop = () => {
           </App.Flex>
         </App.Flex>
 
-        <App.Flex column fullWidth gap={4} className={styles.offer}>
-          <App.Flex row align="center" justify="space-between" className={styles.header}>
-            <App.Flex row align="center" width="45%">
-              <App.Text size={16} weight={700} color="#FFBB01" sx={{ textShadow: '0px 1.484px 9.063px rgba(182, 0, 0, 0.55), 0px 1px 3px rgba(0, 0, 0, 0.25)' }}>First Purchase Discount</App.Text>
+        <App.Flex column fullWidth gap={4} className={styles.offer} onClick={handleOffer}>
+          {paid ? (
+            <App.Flex row center gap={4} className={cn(styles.header, styles.small)}>
+              <App.Icon icon="check-circle-fill" width={20} height={20} secondaryColor={'transparent'} />
+              <App.Text size={16} weight={700} color="#FFBB01" sx={{ textShadow: '0px 1.484px 9.063px rgba(182, 0, 0, 0.55), 0px 1px 3px rgba(0, 0, 0, 0.25)' }}>Purchased!</App.Text>
             </App.Flex>
-
-            <App.Flex row align="center" justify="flex-end" width="45%">
-              <App.Text right size={28} weight={800} color="#FFBB01" sx={{ textShadow: '0px 1.484px 9.063px rgba(182, 0, 0, 0.55), 0px 1px 3px rgba(0, 0, 0, 0.25)' }}>50% OFF</App.Text>
-            </App.Flex>
-          </App.Flex>
-
-          <App.Flex row justify="space-between">
-            <App.Flex column align="center" width="40%" gap={4}>
-              <Image src="/images/bot/shop-image-1.png" width={76} height={76} alt="" />
-
-              <App.Text center size={13} weight={900} height={1}>10,000 gems</App.Text>
-            </App.Flex>
-
-            <App.Flex column justify="center" align="flex-start" width="40%" gap={8}>
-              <App.Text size={17} weight={700} height={1}>Pile of Gems</App.Text>
-              <App.Flex row align="center">
-                <App.Flex row align="center" gap={4}>
-                  <App.Text lineThrough size={20} weight={700} height={1}>50</App.Text>
-                  <App.Text size={20} weight={800} height={1}>25</App.Text>
-                </App.Flex>
-
-                <Image src="/images/bot/star.png" width={23} height={22} alt="" />
+          ) : (
+            <App.Flex row align="center" justify="space-between" className={styles.header}>
+              <App.Flex row align="center" width="45%">
+                <App.Text size={16} weight={700} color="#FFBB01" sx={{ textShadow: '0px 1.484px 9.063px rgba(182, 0, 0, 0.55), 0px 1px 3px rgba(0, 0, 0, 0.25)' }}>First Purchase Discount</App.Text>
               </App.Flex>
 
-              <App.Button variant="bot" small>Buy Now</App.Button>
+              <App.Flex row align="center" justify="flex-end" width="45%">
+                <App.Text right size={28} weight={800} color="#FFBB01" sx={{ textShadow: '0px 1.484px 9.063px rgba(182, 0, 0, 0.55), 0px 1px 3px rgba(0, 0, 0, 0.25)' }}>50% OFF</App.Text>
+              </App.Flex>
             </App.Flex>
+          )}
+
+          <App.Flex row justify="space-between" align="center">
+            <App.Flex column align="center" width={paid ? '100%' : '40%'} gap={4}>
+              <Image src="/images/bot/shop-image-1.png" width={76} height={76} alt="" />
+
+              <App.Text center size={13} weight={800} height={1}>10,000 gems</App.Text>
+            </App.Flex>
+
+            {!paid ? (
+              <App.Flex column justify="center" align="flex-start" width="40%" gap={8} sx={{ paddingTop: 8 }}>
+                <App.Text size={14} weight={700} height={1} sx={{ textShadow: '0px 1px 3px rgba(0, 0, 0, 0.25)' }}>Pile of Gems</App.Text>
+                <App.Flex row align="center">
+                  <App.Flex row align="center" gap={4}>
+                    <App.Text lineThrough size={20} weight={700} height={1}>50</App.Text>
+                    <App.Text size={20} weight={800} height={1}>25</App.Text>
+                  </App.Flex>
+
+                  <Image src="/images/bot/star.png" width={23} height={22} alt="" />
+                </App.Flex>
+
+                <App.Button variant="bot" small>Buy Now</App.Button>
+              </App.Flex>
+            ) : null}
           </App.Flex>
         </App.Flex>
       </App.Flex>
 
-      {/* <App.Flex row gap={12} justify="center" sx={{flexWrap: 'wrap'}}>
-        {
-          shopItems.map((item, index) => {
+      <App.Flex column fullWidth gap={16}>
+        <App.Flex center className={styles.title}>
+          <Image src="/images/bot/shop-title-2.png" width={358} height={43} alt="" />
+
+          <App.Flex center className={styles.text}>
+            <App.Text size={16} weight={700} height={1} color="#FFBB01">Gems</App.Text>
+          </App.Flex>
+        </App.Flex>
+
+        <App.Flex column fullWidth gap={16} className={styles.gems}>
+          {shopItems.map((item, index) => {
             return (
-              <App.Flex key={index} className={cn(styles.box, {[styles.scaleAnimation]: item.price === playAnimationId})} onClick={handlePay(item.price, item.gems)}>
-                <App.Flex column full align="center" justify="space-between" className={styles.inner}>
-                  <App.Text size={16} weight={700} height={1}>{item.title}</App.Text>
+              <App.Flex key={index} fullWidth className={cn(styles.box, styles[item.className])} onClick={handlePay(item.id)}>
+                <App.Flex fullWidth className={styles.inner}>
+                  <App.Flex row fullWidth justify="space-between" align="center">
+                    <App.Flex column align="center" width="40%" gap={4}>
+                      <Image src={item.image} width={76} height={76} alt="" />
 
-                  <App.Flex column center gap={4}>
-                    <Image src={item.image} width={100} height={100} alt="" />
-                    <App.Text center size={14} weight={700}>{item.gems.toLocaleString()} gems</App.Text>
-                  </App.Flex>
+                      <App.Text center size={13} weight={800} height={1}>{item.gems} gems</App.Text>
+                    </App.Flex>
 
-                  <App.Flex row align="flex-start" gap={4}>
-                    <App.Text size={24} weight={900} height={1}>{item.price.toLocaleString()}</App.Text>
-                    <img src="/images/tg-star.png" alt="" />
+                    <App.Flex column justify="center" align="flex-start" width="50%" gap={16} sx={{ paddingTop: 8 }}>
+                      <App.Flex column fullWidth gap={8}>
+                        <App.Text size={14} weight={700} height={1} sx={{ textShadow: '0px 1px 3px rgba(0, 0, 0, 0.25)' }}>{item.title}</App.Text>
+                        <App.Flex row align="center">
+                          <App.Text size={20} weight={800} height={1}>{item.price}</App.Text>
+                          <Image src="/images/bot/star.png" width={23} height={22} alt="" />
+                          <App.Text size={14} weight={400} height={1}>{item.discount}</App.Text>
+                        </App.Flex>
+                      </App.Flex>
+
+                      <App.Button variant="bot" small>Buy Now</App.Button>
+                    </App.Flex>
                   </App.Flex>
                 </App.Flex>
               </App.Flex>
             )
-          })
-        }
-      </App.Flex> */}
+          })}
+        </App.Flex>
+      </App.Flex>
     </App.Flex>
   )
 }
