@@ -444,9 +444,9 @@ export const get = {
   }),
 
   earningToBeClaimedCount: createSelector([
-    state => state.$auction.earnings,
-  ], (earnings) => {
-    return earnings.filter(item => item.claimHash == '' && moment(item.claimTime).diff(moment()) > 0).length
+    state => state.$auction.earnings_unclaimed,
+  ], (earnings_unclaimed) => {
+    return earnings_unclaimed
   }),
 }
 
