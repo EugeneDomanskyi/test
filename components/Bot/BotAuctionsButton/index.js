@@ -61,7 +61,7 @@ const BotAuctionsButton = ({ item, onClaim }) => {
             dispatch($bot.set.megaModal(true))
 
             if (onboard != null) {
-              dispatch($bot.set.onboard(null))
+              dispatch($bot.set.onboard('never'))
             }
           }
         }

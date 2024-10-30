@@ -7,7 +7,7 @@ import styles from './styles.module.scss'
 
 const BotAuctionsImage = ({ item }) => {
   return (
-    <App.Flex column align="center" className={cn(styles.container, {[styles.gray]: item.status == 'closed'}, {[styles.mega]: item.isMega})}>
+    <App.Flex column align="center" className={cn(styles.container, {[styles.gray]: item.status == 'closed' && !item.current}, {[styles.mega]: item.isMega})}>
       <BotAuctionsBadge status={item.status} win={item.current && item.claimHash == ''} isMega={item.isMega} />
 
       <App.Flex className={cn(styles.itemImage, {[styles.gray]: item.status == 'closed' && (!item.current || item.current && item.claimHash != '')})} sx={{ backgroundImage: `url("/images/bot/image-placeholder${item.isMega ? '-mega' : ''}.png")` }}>
