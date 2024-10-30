@@ -199,10 +199,9 @@
     background: linear-gradient(180deg, #6B41EB -6.02%, #241164 85.68%);
 
     &.small {
-      padding: 0 8px;
-      height: 37px;
+      height: 26px;
       font-size: 14px;
-      font-weight: 400;
+      font-weight: 600;
       line-height: 1;
       border-radius: 6px;
     }
@@ -305,6 +304,46 @@
     font-size: 14px;
     line-height: 25px;
     border-radius: 12px;
+
+    &.small {
+      padding: 0 16px;
+      height: 32px;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: normal;
+      border-radius: 6px;
+    }
+
+    &.large {
+      height: 60px;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    &.medium {
+      height: 48px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+  }
+
+  &.green {
+    height: 48px;
+    background: linear-gradient(0deg, #517714 14.28%, #8AC31F 85.72%);
+    border-width: 0;
+    border-bottom: 3px solid #A6DC37;
+    border-radius: 8px;
+    padding: 0 16px;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 25px;
+
+    &:active {
+      background: linear-gradient(1800deg, #517714 14.28%, #8AC31F 85.72%);
+      border-bottom-color: transparent;
+    }
 
     &.small {
       padding: 0 16px;

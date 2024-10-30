@@ -4,6 +4,15 @@
   border-radius: 12px;
   background: linear-gradient(158deg, #5028C8 -6.02%, #241452 85.68%);
 
+  &.mega {
+    border: 3px solid var(--Yellow, #FFBB01);
+    background: linear-gradient(83deg, #ED448A 3.08%, #BF194D 90.71%);
+  }
+
+  &.gray {
+    background: linear-gradient(83deg, #8d8d8d 3.08%, #555555 90.71%);
+  }
+
   .itemImage {
     width: 296px;
     height: 222px;

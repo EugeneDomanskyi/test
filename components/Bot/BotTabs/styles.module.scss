@@ -3,6 +3,20 @@
   position: relative;
   z-index: 1;
 
+  &.bid,
+  &.gems {
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      top: -20px;
+      background: rgba(0, 0, 0, 0.60);
+      backdrop-filter: blur(5px);
+    }
+  }
+
   .tab {
     background-color: #1C163C;
     height: 72px;

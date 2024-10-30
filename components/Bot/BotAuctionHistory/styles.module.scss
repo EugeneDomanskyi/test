@@ -1,6 +1,10 @@
 .container {
   padding: 0 8px;
 
+  .back {
+    padding: 8px 0 16px 0;
+  }
+
   .item {
     overflow: hidden;
     max-width: 358px;

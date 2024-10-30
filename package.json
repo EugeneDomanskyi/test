@@ -39,7 +39,9 @@
     "react-draggable": "^4.4.6",
     "react-i18next": "^14.0.5",
     "react-redux": "^8.1.0",
+    "react-slick": "^0.30.2",
     "sass": "^1.63.4",
+    "slick-carousel": "^1.8.1",
     "smartlook-client": "^8.2.0",
     "viem": "^2.21.14",
     "wagmi": "^2.12.14"
