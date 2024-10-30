@@ -25,7 +25,9 @@ const BotWrapper = ({ children }) => {
   const ongoingAuction = useSelector($auction.get.ongoingAuction)
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
   const earnings_page = useSelector(({ $auction }) => $auction.earnings_page)
+  const onboard = useSelector(({ $bot }) => $bot.onboard)
   const user = useSelector(({ $bot }) => $bot.user)
+  const tab = useSelector(({ $bot }) => $bot.tab)
 
   const [loading, setLoading] = useState(true)
   const [isBot, setIsBot] = useState(null)
@@ -59,7 +61,13 @@ const BotWrapper = ({ children }) => {
 
   useEffect(() => {
     if (user?.is_claimed_first_bid === false && ongoingAuction && ongoingAuction.status === 'ongoing') {
-      dispatch($bot.set.onboard('bid'))
+      if (onboard !== 'never') {
+        dispatch($bot.set.onboard('bid'))
+      }
+
+      if (tab !== 'auctions') {
+        dispatch($bot.set.tab('auctions'))
+      }
     }
   }, [user?.is_claimed_first_bid, ongoingAuction])
 
