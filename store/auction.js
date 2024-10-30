@@ -30,7 +30,7 @@ const template = (item) => {
   const discount = marketPrice > 0 ? Math.round((marketPrice - currentPrice) / marketPrice * 100) : 0
   const priceLimit = auction.auction_amount_limit != '' ? formatUnits(auction.auction_amount_limit.toString(), auction.auction_token.decimals) : 0
 
-  const isBiddable = (priceLimit > 0 && currentPrice < priceLimit) || priceLimit == 0
+  const isBiddable = ((priceLimit * 1) > 0 && (currentPrice * 1) < (priceLimit * 1)) || priceLimit == 0
 
   const tgUser = TelegramBot.getUsername()
   let isLastBidderMe = tgUser ? lastBidderWallet == tgUser : false
