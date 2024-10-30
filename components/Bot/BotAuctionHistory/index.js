@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
+import $bot from '@/store/bot'
 import $auction from '@/store/auction'
 
 import App from '@/components/App'
@@ -76,8 +77,17 @@ const BotAuctionHistory = () => {
     return pages
   }
 
+  const handleBack = () => {
+    dispatch($bot.set.tab('auctions'))
+  }
+
   return current ? (
     <App.Flex column center className={styles.container}>
+      <App.Flex row align="center" fullWidth className={styles.back} onClick={handleBack}>
+        <App.Icon icon="chevron-left2" width={24} height={24} />
+        <App.Text size={16} weiht={600} height={1}>Back</App.Text>
+      </App.Flex>
+
       <App.Flex column gap={16} className={styles.item}>
         <App.Flex fullWidth justify="center">
           <BotAuctionsImage item={current} />
