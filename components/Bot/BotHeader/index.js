@@ -13,7 +13,6 @@ import styles from './styles.module.scss'
 
 const BotHeader = () => {
   const dispatch = useDispatch()
-  const upcomingAuction = useSelector($auction.get.upcomingAuction)
   const earnings_page = useSelector(({ $auction }) => $auction.earnings_page)
 
   useEffect(() => {
@@ -52,7 +51,7 @@ const BotHeader = () => {
         </App.Flex>
       </App.Flex> */}
 
-      <BotHeaderTimer timestamp={upcomingAuction?.startsIn} />
+      <BotHeaderTimer />
     </App.Flex>
   )
 }
