@@ -49,4 +49,8 @@
   &.italic {
     font-style: italic;
   }
+
+  &.lineThrough {
+    text-decoration: line-through;
+  }
 }

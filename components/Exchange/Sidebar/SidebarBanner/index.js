@@ -45,6 +45,7 @@ const SidebarBanner = () => {
 
   const fetchTournament = async () => {
     const result = await $gem.api.currentTournament()
+    // const result = await $gem.api.tournament('uptober-s2')
     if (result && result?.id) {
       dispatch($gem.set.currentTournament(result))
     }
@@ -121,7 +122,7 @@ const SidebarBanner = () => {
                 {/* <App.Text size={14} weight={400} height={1} color="#FFFFFF99">Activate streaks with daily min. trade vol. of $100!</App.Text> */}
                 {/* <App.Text size={20} weight={600} height={1}>Trade {current.alias == 'alpha-trader-s2' ? current.specialCurrency : `$${current.currency}`}</App.Text> */}
                 <App.Text size={20} weight={600} height={1}>Trade {current.specialCurrency}</App.Text>
-                <App.Text size={14} weight={400} height={1} color="#FFFFFF99">Activate streaks with daily min. trade vol. of $150!</App.Text>
+                <App.Text size={14} weight={400} height={1} color="#FFFFFF99">Activate streaks with daily min. trade vol. of $250!</App.Text>
               </App.Flex>
             </App.Flex>
 
