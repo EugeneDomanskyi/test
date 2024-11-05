@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
+import { formatUnits } from 'viem'
 import cn from 'classnames'
 
 import TelegramBot from '@/libs/TelegramBot'
@@ -50,8 +51,10 @@ const BotAuctionsButton = ({ item, onClaim }) => {
             'Source': 'Telegram',
           })
 
+          const price = formatUnits((result.last_bid_price > 0 ? result.last_bid_price : result.start_price).toString(), result.auction_token.decimals)
+
           dispatch($bot.set.balance(user.points - item.gemsPrice))
-          dispatch($alert.set.success({ title: t(`Bid Placed!`), text: `You placed a bid for ${item.nextPrice} ${item.token.currency}.` }))
+          dispatch($alert.set.success({ title: t(`Bid Placed!`), text: `You placed a bid for ${price} ${item.token.currency}.` }))
 
           if (onboard == 'bid') {
             dispatch($bot.set.onboard('modal'))
