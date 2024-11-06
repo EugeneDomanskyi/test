@@ -5,7 +5,7 @@ import { usePropsHelper } from '@/myhooks/props-helper'
 
 import styles from './styles.module.scss'
 
-const AppText = ({ children, tag = 'p', html, inline, family, size, weight, style, color, hoverColor, gradient, height, spacing, nowrap, lines, uppercase, lowercase, capitalize, center, italic, right, transition, variant, flex, className, id, sx = {}, onClick }) => {
+const AppText = ({ children, tag = 'p', html, inline, family, size, weight, style, color, lineThrough, hoverColor, gradient, height, spacing, nowrap, lines, uppercase, lowercase, capitalize, center, italic, right, transition, variant, flex, className, id, sx = {}, onClick }) => {
   const { propValue } = usePropsHelper()
 
   const [isHovered, setIsHovered] = useState(false)
@@ -23,6 +23,7 @@ const AppText = ({ children, tag = 'p', html, inline, family, size, weight, styl
       {[styles.capitalize]: propValue(capitalize)},
       {[styles.center]: propValue(center)},
       {[styles.italic]: propValue(italic)},
+      {[styles.lineThrough]: propValue(lineThrough)},
       {[styles.right]: propValue(right)},
       {[styles[variant]]: propValue(variant)}
     )

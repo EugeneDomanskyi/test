@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSelector, createSlice } from '@reduxjs/toolkit'
 
 import { request } from './index'
 
@@ -12,6 +12,8 @@ export const botSlice = createSlice({
     onboard: null,
     outbid: false,
     megaModal: false,
+    products: [],
+    invoices: [],
   },
 
   reducers: {
@@ -48,8 +50,47 @@ export const botSlice = createSlice({
       state.tab = newHistory.pop()
       state.tabHistory = newHistory
     },
+
+    products: (state, { payload }) => {
+      state.products = payload.map(item => {
+        return {
+          id: item.id,
+          active: item.active,
+          position: item.position * 1,
+          title: item.title,
+          className: item.color,
+          gems: item.gems.toLocaleString('en-US'),
+          price: item.price,
+          priceOld: item.price_old,
+          currency: item.price_currency.toUpperCase(),
+          image: item.image,
+          discount: item.description,
+          offer: item.restriction === 'one_time',
+        }
+      })
+    },
+
+    invoices: (state, { payload }) => {
+      state.invoices = payload
+    },
   },
 })
+
+const get = {
+  activeProducts: createSelector([
+    state => state.$bot.products,
+  ], (products) => {
+    const newProducts = [...products].sort((a, b) => a.position - b.position)
+    return newProducts.filter(item => item.active && !item.offer)
+  }),
+
+  offer: createSelector([
+    state => state.$bot.products,
+  ], (products) => {
+    const newProducts = [...products].sort((a, b) => a.position - b.position)
+    return newProducts.find(item => item.offer && item.active)
+  }),
+}
 
 const api = {
   invoice: (params) => {
@@ -83,10 +124,15 @@ const api = {
   claim: (params) => {
     return request(`telegram/claim/task`, 'POST', {api: 'accounts', ...params})
   },
+
+  products: () => {
+    return request(`products`, 'GET', {api: 'accounts'})
+  },
 }
 
 export default {
   reducer: botSlice.reducer,
   set: botSlice.actions,
+  get,
   api,
 }
