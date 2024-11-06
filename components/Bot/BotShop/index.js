@@ -74,8 +74,12 @@ const BotShop = () => {
     }
   }
 
-  const handleOffer = async () => {
+  const isBoughtOffer = () => {
+    if (user && user?.products_ids && offer) {
+      return user.product_ids.includes(offer.id)
+    }
 
+    return false
   }
 
   return (
@@ -91,7 +95,7 @@ const BotShop = () => {
           </App.Flex>
 
           <App.Flex column fullWidth gap={4} className={styles.offer} onClick={handlePay(offer)}>
-            {user.product_ids.includes(offer.id) ? (
+            {isBoughtOffer() ? (
               <App.Flex row center gap={4} className={cn(styles.header, styles.small)}>
                 <App.Icon icon="check-circle-fill" width={20} height={20} secondaryColor={'transparent'} />
                 <App.Text size={16} weight={700} color="#FFBB01" sx={{ textShadow: '0px 1.484px 9.063px rgba(182, 0, 0, 0.55), 0px 1px 3px rgba(0, 0, 0, 0.25)' }}>Purchased!</App.Text>
@@ -109,13 +113,13 @@ const BotShop = () => {
             )}
 
             <App.Flex row justify="space-between" align="center">
-              <App.Flex column align="center" width={user.product_ids.includes(offer.id) ? '100%' : '40%'} gap={4}>
+              <App.Flex column align="center" width={isBoughtOffer() ? '100%' : '40%'} gap={4}>
                 <Image src={`/images/bot/${offer.image}`} width={76} height={76} alt="" />
 
                 <App.Text center size={13} weight={800} height={1}>{offer.gems} gems</App.Text>
               </App.Flex>
 
-              {!user.product_ids.includes(offer.id) ? (
+              {!isBoughtOffer() ? (
                 <App.Flex column justify="center" align="flex-start" width="40%" gap={8} sx={{ paddingTop: 8 }}>
                   <App.Text size={14} weight={700} height={1} sx={{ textShadow: '0px 1px 3px rgba(0, 0, 0, 0.25)' }}>{offer.title}</App.Text>
                   <App.Flex row align="center">

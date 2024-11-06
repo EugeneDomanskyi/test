@@ -14,7 +14,7 @@ class TelegramBot {
     // return 'query_id=AAEfkDliAAAAAB-QOWJAHhnd&user=%7B%22id%22%3A1647939615%2C%22first_name%22%3A%22Eugene%F0%9F%A6%B4%22%2C%22last_name%22%3A%22Domanskyi%22%2C%22username%22%3A%22ievgenii_domanskyi%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1728383232&hash=f8125f9199f49bbc6c2bc4190c456cc845883dfaec3b4439884410a1206abda9'
     
     // Akash' initialData:
-    // return 'query_id=AAGY1a9VAgAAAJjVr1WDHPT6&user=%7B%22id%22%3A5732554136%2C%22first_name%22%3A%22Ryu%20%7C%20Tegro%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22ryu_tegro%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1726757476&hash=a7e0a4e9ac54c3f14d75dc416d86b9d49c7ed8964bb17483023f2c892cb0889c'
+    // return 'query_id=AAGY1a9VAgAAAJjVr1WhxyZe&user=%7B%22id%22%3A5732554136%2C%22first_name%22%3A%22Ryu%20%7C%20Tegro%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22ryu_tegro%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1730890720&hash=db9b4ec71721d947b1a0848d7a8247f7669c36f313daa73e73fe62b68e4ac8e8'
     
     // Suryansh Local Bot initialData:
     // return 'query_id=AAFhnR1EAAAAAGGdHUSndwz_&user=%7B%22id%22%3A1142791521%2C%22first_name%22%3A%22Suryansh%22%2C%22last_name%22%3A%22Chandak%22%2C%22username%22%3A%22atheistc137%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1726119372&hash=f8f2c83717a4ee464b0d6a59128a2d0a8d2030aa1d56dd6b408a9148efe93fdc'
