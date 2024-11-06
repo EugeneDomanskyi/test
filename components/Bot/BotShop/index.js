@@ -22,7 +22,7 @@ const BotShop = () => {
   const [loading, setLoading] = useState(false)
 
   const handlePay = (item) => async () => {
-    if (loading) {
+    if (loading || !user) {
       return
     }
 
