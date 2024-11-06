@@ -94,7 +94,7 @@ const BotShop = () => {
             </App.Flex>
           </App.Flex>
 
-          <App.Flex column fullWidth gap={4} className={styles.offer} onClick={handlePay(offer)}>
+          <App.Flex column fullWidth gap={4} className={styles.offer} onClick={isBoughtOffer() ? null : handlePay(offer)}>
             {isBoughtOffer() ? (
               <App.Flex row center gap={4} className={cn(styles.header, styles.small)}>
                 <App.Icon icon="check-circle-fill" width={20} height={20} secondaryColor={'transparent'} />
