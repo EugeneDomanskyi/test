@@ -62,6 +62,10 @@ const BotAuctionsButton = ({ item, onClaim }) => {
         } else {
           if (result?.error && result.error == 'auction_gems_criteria_failed') {
             dispatch($bot.set.megaModal(true))
+
+            if (onboard != null) {
+              dispatch($bot.set.onboard('never'))
+            }
           }
         }
       } else {

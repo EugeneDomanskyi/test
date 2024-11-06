@@ -22,10 +22,13 @@ import styles from './styles.module.scss'
 
 const BotWrapper = ({ children }) => {
   const dispatch = useDispatch()
+  const ongoingAuction = useSelector($auction.get.ongoingAuction)
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
   const earnings_page = useSelector(({ $auction }) => $auction.earnings_page)
+  const onboard = useSelector(({ $bot }) => $bot.onboard)
   const user = useSelector(({ $bot }) => $bot.user)
   const products = useSelector(({  $bot }) => $bot.products)
+  const tab = useSelector(({ $bot }) => $bot.tab)
 
   const [loading, setLoading] = useState(true)
   const [isBot, setIsBot] = useState(null)
@@ -66,10 +69,16 @@ const BotWrapper = ({ children }) => {
   }, [products])
 
   useEffect(() => {
-    if (user?.is_claimed_first_bid === false) {
-      dispatch($bot.set.onboard('bid'))
+    if (user?.is_claimed_first_bid === false && ongoingAuction && ongoingAuction.status === 'ongoing') {
+      if (onboard !== 'never') {
+        dispatch($bot.set.onboard('bid'))
+      }
+
+      if (tab !== 'auctions') {
+        dispatch($bot.set.tab('auctions'))
+      }
     }
-  }, [user?.is_claimed_first_bid])
+  }, [user?.is_claimed_first_bid, ongoingAuction])
 
   useEffect(() => {
     if (isBot) {

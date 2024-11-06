@@ -1,4 +1,22 @@
 .badge {
   position: relative;
   z-index: 0;
+
+  .notMega {
+    display: block;
+  }
+
+  .isMega {
+    display: none;
+  }
+
+  &.mega {
+    .notMega {
+      display: none;
+    }
+
+    .isMega {
+      display: block;
+    }
+  }
 }

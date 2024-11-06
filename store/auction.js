@@ -30,7 +30,7 @@ const template = (item) => {
   const discount = marketPrice > 0 ? Math.round((marketPrice - currentPrice) / marketPrice * 100) : 0
   const priceLimit = auction.auction_amount_limit != '' ? formatUnits(auction.auction_amount_limit.toString(), auction.auction_token.decimals) : 0
 
-  const isBiddable = (priceLimit > 0 && currentPrice < priceLimit) || priceLimit == 0
+  const isBiddable = ((priceLimit * 1) > 0 && (currentPrice * 1) < (priceLimit * 1)) || priceLimit == 0
 
   const tgUser = TelegramBot.getUsername()
   let isLastBidderMe = tgUser ? lastBidderWallet == tgUser : false
@@ -444,9 +444,9 @@ export const get = {
   }),
 
   earningToBeClaimedCount: createSelector([
-    state => state.$auction.earnings,
-  ], (earnings) => {
-    return earnings.filter(item => item.claimHash == '' && moment(item.claimTime).diff(moment()) > 0).length
+    state => state.$auction.earnings_unclaimed,
+  ], (earnings_unclaimed) => {
+    return earnings_unclaimed
   }),
 }
 
