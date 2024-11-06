@@ -12,82 +12,52 @@ import App from '@/components/App'
 
 import styles from './styles.module.scss'
 
-const shopItems = [
-  {
-    id: 1,
-    title: 'Pile of Gems',
-    className: 'yellow',
-    gems: '10,000',
-    price: typeof window != 'undefined' ? (TelegramBot.host() == 'tegro.com' ? 50 : 1) : 50,
-    image: '/images/bot/shop-image-1.png',
-    discount: '',
-  }, {
-    id: 2,
-    title: 'Bag of Gems',
-    className: 'orange',
-    gems: '25,000',
-    price: 99,
-    image: '/images/bot/shop-image-2.png',
-    discount: '(20% Off)',
-  }, {
-    id: 3,
-    title: 'Barrel of Gems',
-    className: 'blue',
-    gems: '50,000',
-    price: 199,
-    image: '/images/bot/shop-image-3.png',
-    discount: '(25% Off)',
-  }, {
-    id: 4,
-    title: 'Chest Full of Gems',
-    className: 'red',
-    gems: '112,000',
-    price: 399,
-    image: '/images/bot/shop-image-4.png',
-    discount: '(40% Off)',
-  },
-]
-
 const BotShop = () => {
   const dispatch = useDispatch()
   const products = useSelector($bot.get.activeProducts)
+  const invoices = useSelector(({ $bot }) => $bot.invoices)
   const offer = useSelector($bot.get.offer)
   const user = useSelector(({ $bot }) => $bot.user)
 
-  useEffect(() => {
-    fetchProducts()
-  }, [])
+  const [loading, setLoading] = useState(false)
 
-  const fetchProducts = async () => {
-    const result = await $bot.api.products()
-    if (result && !result.error) {
-      dispatch($bot.set.products(result))
-    }
-  }
-
-  const handlePay = (id) => async () => {
-    const item = shopItems.find(item => item.id === id)
-
-    Amplitude.event(`Buy Gems`, {
-      'Page': 'Shop',
-      'Source': 'Telegram',
-      'Amount': item.gems,
-    })
-
-    const payload = {
-      title: `${item.gems} gems`,
-      description: `${item.gems} gems for bidding`,
-      payload: `product_id=${id}`,
-      provider_token: '',
-      currency: 'XTR',
-      prices: [
-        { label: 'Price', amount: item.price },
-      ],
+  const handlePay = (item) => async () => {
+    if (loading) {
+      return
     }
 
-    const result = await $bot.api.invoice(payload)
-    if (!result?.error) {
-      TelegramBot.openInvoice(result, handleInvoice)
+    let invoice = invoices.find(el => el.id === item.id)?.invoice
+
+    if (!invoice) {
+      setLoading(true)
+
+      const payload = {
+        title: `${item.gems} gems`,
+        description: `${item.gems} gems for bidding`,
+        payload: `product_id=${item.id}`,
+        provider_token: '',
+        currency: 'XTR',
+        prices: [
+          { label: 'Price', amount: item.price },
+        ],
+      }
+
+      const result = await $bot.api.invoice(payload)
+      if (!result?.error) {
+        invoice = result
+      }
+
+      setLoading(false)
+    }
+
+    if (invoice) {
+      Amplitude.event(`Buy Gems`, {
+        'Page': 'Shop',
+        'Source': 'Telegram',
+        'Amount': item.gems,
+      })
+
+      TelegramBot.openInvoice(invoice, handleInvoice)
     }
   }
 
@@ -120,7 +90,7 @@ const BotShop = () => {
             </App.Flex>
           </App.Flex>
 
-          <App.Flex column fullWidth gap={4} className={styles.offer} onClick={handlePay(offer.id)}>
+          <App.Flex column fullWidth gap={4} className={styles.offer} onClick={handlePay(offer)}>
             {user.product_ids.includes(offer.id) ? (
               <App.Flex row center gap={4} className={cn(styles.header, styles.small)}>
                 <App.Icon icon="check-circle-fill" width={20} height={20} secondaryColor={'transparent'} />
@@ -182,7 +152,7 @@ const BotShop = () => {
           <App.Flex column fullWidth gap={16} className={styles.gems}>
             {products.map((item, index) => {
               return (
-                <App.Flex key={index} fullWidth className={cn(styles.box, styles[item.className])} onClick={handlePay(item.id)}>
+                <App.Flex key={index} fullWidth className={cn(styles.box, styles[item.className])} onClick={handlePay(item)}>
                   <App.Flex fullWidth className={styles.inner}>
                     <App.Flex row fullWidth justify="space-between" align="center">
                       <App.Flex column align="center" width="40%" gap={4}>
