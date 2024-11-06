@@ -75,7 +75,7 @@ const BotShop = () => {
   }
 
   const isBoughtOffer = () => {
-    if (user && user?.products_ids && offer) {
+    if (user && user?.product_ids && offer) {
       return user.product_ids.includes(offer.id)
     }
 
