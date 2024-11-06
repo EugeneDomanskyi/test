@@ -13,6 +13,7 @@ export const botSlice = createSlice({
     outbid: false,
     megaModal: false,
     products: [],
+    invoices: [],
   },
 
   reducers: {
@@ -67,7 +68,11 @@ export const botSlice = createSlice({
           offer: item.restriction === 'one_time',
         }
       })
-    }
+    },
+
+    invoices: (state, { payload }) => {
+      state.invoices = payload
+    },
   },
 })
 
