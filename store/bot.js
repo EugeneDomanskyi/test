@@ -34,7 +34,8 @@ export const botSlice = createSlice({
     },
 
     onboard: (state, { payload }) => {
-      state.onboard = payload
+      // state.onboard = payload
+      state.onboard = null
     },
 
     outbid: (state, { payload }) => {
