@@ -27,6 +27,7 @@ const BotWrapper = ({ children }) => {
   const earnings_page = useSelector(({ $auction }) => $auction.earnings_page)
   const onboard = useSelector(({ $bot }) => $bot.onboard)
   const user = useSelector(({ $bot }) => $bot.user)
+  const products = useSelector(({  $bot }) => $bot.products)
   const tab = useSelector(({ $bot }) => $bot.tab)
 
   const [loading, setLoading] = useState(true)
@@ -52,12 +53,20 @@ const BotWrapper = ({ children }) => {
       }
     }
 
+    fetchProducts()
+
     document.addEventListener('visibilitychange', handleVisibilityChange)
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [])
+
+  useEffect(() => {
+    if (products.length) {
+      generateInvoices()
+    }
+  }, [products])
 
   useEffect(() => {
     if (user?.is_claimed_first_bid === false && ongoingAuction && ongoingAuction.status === 'ongoing') {
@@ -76,6 +85,48 @@ const BotWrapper = ({ children }) => {
       Amplitude.identify(TelegramBot.getId().toString(), 'tgID')
     }
   }, [isBot])
+
+  const fetchProducts = async () => {
+    const result = await $bot.api.products()
+    if (result && !result.error) {
+      dispatch($bot.set.products(result))
+    }
+  }
+
+  const generateInvoices = () => {
+    const ids = []
+    const calls = []
+    for (const product of products) {
+      if (product.active) {
+        ids.push(product.id)
+
+        const payload = {
+          title: `${product.gems} gems`,
+          description: `${product.gems} gems for bidding`,
+          payload: `product_id=${product.id}`,
+          provider_token: '',
+          currency: 'XTR',
+          prices: [
+            { label: 'Price', amount: product.price },
+          ],
+        }
+
+        calls.push($bot.api.invoice(payload))
+      }
+    }
+
+    Promise.all(calls).then((results) => {
+      const invoices = []
+      for (const key in results) {
+        const result = results[key]
+        if (!result?.error) {
+          invoices.push({id: ids[key], invoice: result})
+        }
+      }
+
+      dispatch($bot.set.invoices(invoices))
+    })
+  }
 
   const handleScriptLoaded = async () => {
     if (TelegramBot.getInitData()) {

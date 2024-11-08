@@ -152,16 +152,16 @@ const BotClaim = () => {
       'Page': 'Auction Checkout',
     })
 
+    // ${claimImage ? `${link}?share=${claimImage}` : ''}
+
     const link = `${window.location.origin}/auctions`
-    const tweetText = claimImage ? `${link}?share=${claimImage}` : encodeURIComponent(`
-🚀 Unbelievable! I just bagged ${claimAuction.name} for just ${claimAuction.currentPrice} ${claimAuction.token.currency} on Tegro! 👀
+    const tweetText = encodeURIComponent(`
+🎉 Woohoo! Just won ${claimAuction.name} playing @tegrodeals!
 
-That's a whopping ${claimAuction.discount}% off! 😱
+🔥 Next ${claimAuction.name.split(' ')[1]} auction begins in 5 minutes—I'm in, are you?
 
-You don't wanna miss these insane deals! ✨
-
-🔗 Connect your wallet & place the BID now at ${link}
-    `)
+🔗 Join me on Telegram! ${process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL}`
+    )
 
     const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}`
     window.open(tweetUrl)
