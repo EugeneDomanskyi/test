@@ -37,9 +37,9 @@ const BotMegaModal = () => {
             <App.Flex column fullWidth gap={8} sx={{padding: '0 8px'}}>
               <App.Text size={14} weight={700} height={1}>To qualify for Mega Auctions:</App.Text>
 
-              <App.Text size={14} weight={400}>You should have purchased at least 10,000 gems from the shop in the last 7 days.</App.Text>
+              <App.Text size={14} weight={400}>You should have purchased at least 100,000 gems from the shop in the last 7 days.</App.Text>
               <App.Text center size={14} weight={400}>OR</App.Text>
-              <App.Text size={14} weight={400}>Purchased 50,000 gems in the last 30 days.</App.Text>
+              <App.Text size={14} weight={400}>Purchased 500,000 gems in the last 30 days.</App.Text>
             </App.Flex>
 
             <App.Flex column align="flex-start" gap={8} justify="center" className={styles.blueBox}>
