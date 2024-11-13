@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import moment from 'moment'
@@ -24,6 +24,7 @@ const BotAuctions = ({ onClaim }) => {
   const dispatch = useDispatch()
   const ongoingAuction = useSelector($auction.get.ongoingAuction)
   const onboard = useSelector(({ $bot }) => $bot.onboard)
+  const outbidClosed = useSelector(({ $bot }) => $bot.outbidClosed)
   const loading = useSelector(({ $auction }) => $auction.loading)
   const user = useSelector(({ $bot }) => $bot.user)
 
@@ -35,6 +36,28 @@ const BotAuctions = ({ onClaim }) => {
     secondsNumber: 0,
     isEnd: false,
   })
+
+  const timerRef = useRef(null)
+
+  useEffect(() => {
+    if (user?.is_claimed_first_bid && user?.is_claimed_onboarding) {
+      if (!outbidClosed) {
+        if (user?.points == 0) {
+          timerRef.current = setTimeout(() => {
+            dispatch($bot.set.outbid(true))
+          }, 10000)
+        } else {
+          clearTimeout(timerRef.current)
+        }
+      } else {
+        clearTimeout(timerRef.current)
+      }
+    }
+
+    return () => {
+      clearTimeout(timerRef.current)
+    }
+  }, [user, outbidClosed])
 
   useEffect(() => {
     if (ongoingAuction?.time) {

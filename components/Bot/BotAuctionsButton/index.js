@@ -39,7 +39,7 @@ const BotAuctionsButton = ({ item, onClaim }) => {
 
     setLoading(true)
 
-    if (item.status == 'ongoing' && !item.current) {
+    if (item.status == 'ongoing') {
       if (user?.points && user.points * 1 >= item.gemsPrice * 1) {
         const result = await $bot.api.bid({
           auction_id: item.id,
@@ -93,7 +93,7 @@ const BotAuctionsButton = ({ item, onClaim }) => {
   }
 
   return (
-    <button className={cn(styles.button, styles[item.status], {[styles.current]: item.current && item.isClaimable}, {[styles.dark]: loading}, {[styles.disabled]: !item.isBiddable || item.status == 'upcoming' || (item.status == 'closed' && !item.isClaimable) || (item.status == 'ongoing' && item.current)})} onClick={handeClick}>
+    <button className={cn(styles.button, styles[item.status], {[styles.current]: item.current && item.isClaimable}, {[styles.dark]: loading}, {[styles.disabled]: !item.isBiddable || item.status == 'upcoming' || (item.status == 'closed' && !item.isClaimable)})} onClick={handeClick}>
       {loading ? (
         <App.Loader size={20} />
       ) : (

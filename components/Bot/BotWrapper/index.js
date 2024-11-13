@@ -26,6 +26,7 @@ const BotWrapper = ({ children }) => {
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
   const earnings_page = useSelector(({ $auction }) => $auction.earnings_page)
   const onboard = useSelector(({ $bot }) => $bot.onboard)
+  const outbidClosed = useSelector(({ $bot }) => $bot.outbidClosed)
   const user = useSelector(({ $bot }) => $bot.user)
   const products = useSelector(({  $bot }) => $bot.products)
   const tab = useSelector(({ $bot }) => $bot.tab)
@@ -147,7 +148,7 @@ const BotWrapper = ({ children }) => {
     if (result && !result.error) {
       dispatch($bot.set.user(result))
 
-      if (checkOfBalance && result?.is_claimed_onboarding === true && result?.points == 0) {
+      if (checkOfBalance && result?.is_claimed_onboarding === true && result?.points == 0 && !outbidClosed) {
         dispatch($bot.set.outbid(true))
       }
     }
