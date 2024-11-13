@@ -13,6 +13,7 @@ const BotOutbidModal = () => {
 
   const handleClose = () => {
     dispatch($bot.set.outbid(false))
+    dispatch($bot.set.outbidClosed(true))
   }
 
   const handleTab = (tab) => () => {
