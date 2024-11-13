@@ -27,7 +27,7 @@ const AppAlert = () => {
   useEffect(() => {
     if (messages.length) {
       setCurrentMessages(state => {
-        return [
+        const newMessages = [
           ...messages.map(item => ({
             ...item,
             id: Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000,
@@ -35,6 +35,8 @@ const AppAlert = () => {
           })),
           ...state,
         ]
+
+        return newMessages.slice(0, 3)
       })
 
       dispatch($alert.set.clear())
@@ -64,6 +66,13 @@ const AppAlert = () => {
             visible: true,
           }))
         })
+      }
+
+      if (currentMessages.length > 3) {
+        const messagesToClose = currentMessages.slice(3)
+        for (const message of messagesToClose) {
+          await handleClose(message.id)
+        }
       }
     })()
   }, [currentMessages, alertsRef.current])
