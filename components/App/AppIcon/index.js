@@ -172,6 +172,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon == 'check-circle-fill2') {
+      return (
+        <svg width={width ?? 18} height={height ?? 17} viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill="#53F19C" d="m7.667 12.167 5.875-5.875-1.167-1.167-4.708 4.708-2.375-2.375-1.167 1.167zm1.166 4.5a8.1 8.1 0 0 1-3.25-.657 8.4 8.4 0 0 1-2.645-1.78 8.4 8.4 0 0 1-1.781-2.647A8.1 8.1 0 0 1 .5 8.333a8.1 8.1 0 0 1 .657-3.25 8.4 8.4 0 0 1 1.78-2.645A8.4 8.4 0 0 1 5.584.656 8.1 8.1 0 0 1 8.833 0q1.73 0 3.25.656a8.4 8.4 0 0 1 2.646 1.782 8.4 8.4 0 0 1 1.781 2.645 8.1 8.1 0 0 1 .657 3.25 8.1 8.1 0 0 1-.657 3.25 8.4 8.4 0 0 1-1.78 2.646 8.4 8.4 0 0 1-2.647 1.781 8.1 8.1 0 0 1-3.25.657" />
+        </svg>
+      )
+    }
+
     if (icon == 'check-circle') {
       return (
         <svg width={width ?? 16} height={height ?? 17} viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>

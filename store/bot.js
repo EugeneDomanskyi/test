@@ -15,6 +15,8 @@ export const botSlice = createSlice({
     megaModal: false,
     products: [],
     invoices: [],
+    tasks: [],
+    claimedTask: null,
   },
 
   reducers: {
@@ -80,6 +82,14 @@ export const botSlice = createSlice({
     invoices: (state, { payload }) => {
       state.invoices = payload
     },
+
+    tasks: (state, { payload }) => {
+      state.tasks = payload
+    },
+
+    claimedTask: (state, { payload }) => {
+      state.claimedTask = payload
+    },
   },
 })
 
@@ -134,6 +144,14 @@ const api = {
 
   products: () => {
     return request(`products`, 'GET', {api: 'accounts'})
+  },
+
+  tasks: () => {
+    return request(`telegram/task/list`, 'GET', {api: 'accounts'})
+  },
+
+  taskClaim: (params) => {
+    return request(`telegram/task/claim`, 'POST', {api: 'accounts', ...params})
   },
 }
 
