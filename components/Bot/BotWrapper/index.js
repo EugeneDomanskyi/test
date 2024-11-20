@@ -87,8 +87,12 @@ const BotWrapper = ({ children }) => {
       const tgId = TelegramBot.getId().toString()
       Amplitude.identify(tgId, 'tgID')
 
-      Socket.subscribe(tgId)
-      Socket.on('task_claimed', 'task_claimed', handleTaskClaimed)
+      setTimeout(() => {
+        const tgId = TelegramBot.getId().toString()
+        console.log(tgId)
+        Socket.subscribe(tgId)
+        Socket.on('task_claimed', 'task_claimed', handleTaskClaimed)
+      }, 500)
 
       return () => {
         Socket.unsubscribe(tgId)
