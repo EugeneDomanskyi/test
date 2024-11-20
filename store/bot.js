@@ -16,6 +16,7 @@ export const botSlice = createSlice({
     products: [],
     invoices: [],
     tasks: [],
+    claimedTask: null,
   },
 
   reducers: {
@@ -84,6 +85,10 @@ export const botSlice = createSlice({
 
     tasks: (state, { payload }) => {
       state.tasks = payload
+    },
+
+    claimedTask: (state, { payload }) => {
+      state.claimedTask = payload
     },
   },
 })

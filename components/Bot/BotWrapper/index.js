@@ -17,6 +17,7 @@ import BotOnboarding from '@/components/Bot/BotOnboarding'
 import BotOnboardingModal from '@/components/Bot/BotOnboardingModal'
 import BotOutbidModal from '@/components/Bot/BotOutbidModal'
 import BotMegaModal from '@/components/Bot/BotMegaModal'
+import BotTaskModal from '@/components/Bot/BotTaskModal'
 
 import styles from './styles.module.scss'
 
@@ -83,9 +84,21 @@ const BotWrapper = ({ children }) => {
 
   useEffect(() => {
     if (isBot) {
-      Amplitude.identify(TelegramBot.getId().toString(), 'tgID')
+      const tgId = TelegramBot.getId().toString()
+      Amplitude.identify(tgId, 'tgID')
+
+      Socket.subscribe(tgId)
+      Socket.on('task_claimed', 'task_claimed', handleTaskClaimed)
+
+      return () => {
+        Socket.unsubscribe(tgId)
+      }
     }
   }, [isBot])
+
+  const handleTaskClaimed = (data) => {
+    dispatch($bot.set.claimedTask(data))
+  }
 
   const fetchProducts = async () => {
     const result = await $bot.api.products()
@@ -205,6 +218,7 @@ const BotWrapper = ({ children }) => {
           <BotOnboardingModal />
           <BotOutbidModal />
           <BotMegaModal />
+          <BotTaskModal />
         </App.Flex>
       ) : (
         <App.Flex center height={300} sx={{overflow: 'auto'}}>
