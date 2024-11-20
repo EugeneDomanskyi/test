@@ -17,7 +17,7 @@ const GemsStreak = ({ streaks, position }) => {
     return 1
   }
 
-  return (
+  return streaks.length > 1 ? (
     <App.Flex column>
       <App.Flex row gap={90} className={styles.container}>
         <App.Flex column flex={1} gap={12}>
@@ -133,7 +133,7 @@ const GemsStreak = ({ streaks, position }) => {
         </App.Flex>
       </App.Flex>
     </App.Flex>
-  )
+  ) : null
 }
 
 export default GemsStreak
