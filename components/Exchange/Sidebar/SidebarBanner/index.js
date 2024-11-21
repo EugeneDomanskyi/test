@@ -44,8 +44,8 @@ const SidebarBanner = () => {
   }, [current])
 
   const fetchTournament = async () => {
-    const result = await $gem.api.currentTournament()
-    // const result = await $gem.api.tournament('uptober-s2')
+    // const result = await $gem.api.currentTournament()
+    const result = await $gem.api.tournament('cyborg-trader-s1')
     if (result && result?.id) {
       dispatch($gem.set.currentTournament(result))
     }
@@ -118,22 +118,17 @@ const SidebarBanner = () => {
               </App.Flex>
 
               <App.Flex column gap={4}>
-                {/* <App.Text size={20} weight={600} height={1}>Trade {current.alias == 'alpha-trader-s1' ? current.specialCurrency : `$${current.currency}`}</App.Text> */}
-                {/* <App.Text size={14} weight={400} height={1} color="#FFFFFF99">Activate streaks with daily min. trade vol. of $100!</App.Text> */}
-                {/* <App.Text size={20} weight={600} height={1}>Trade {current.alias == 'alpha-trader-s2' ? current.specialCurrency : `$${current.currency}`}</App.Text> */}
-                <App.Text size={20} weight={600} height={1}>Trade {current.specialCurrency}</App.Text>
-                <App.Text size={14} weight={400} height={1} color="#FFFFFF99">Activate streaks with daily min. trade vol. of $250!</App.Text>
+                <App.Text size={20} weight={600} height={1}>Setup Trading Bot</App.Text>
               </App.Flex>
             </App.Flex>
 
-            <App.Flex gap={12} align="center" row>
+            <App.Flex gap={12} align="flex-start" row>
               <App.Flex center width={30}>
                 <App.Text size={[36, 24]} weight={900} height={1} color="#A6DC37">2</App.Text>
               </App.Flex>
 
-              <App.Flex direction={['column', 'row']} align={['flex-start', 'center']} gap={[4, 8]}>
-                {/* <App.Text uppercase size={16} weight={900} height={1}>Trade</App.Text> */}
-                <App.Text size={20} weight={600} height={1}>Collect Gems</App.Text>
+              <App.Flex column gap={4}>
+                <App.Text size={20} weight={600} height={1}>Trade {current.specialCurrency}</App.Text>
               </App.Flex>
             </App.Flex>
 
@@ -143,14 +138,23 @@ const SidebarBanner = () => {
               </App.Flex>
 
               <App.Flex direction={['column', 'row']} align={['flex-start', 'center']} gap={[4, 8]}>
-                {/* <App.Text uppercase size={16} weight={900} height={1}>Climb</App.Text> */}
-                <App.Text size={20} weight={600} height={1}>Climb Leaderboard</App.Text>
+                <App.Text size={20} weight={600} height={1}>Collect Gems</App.Text>
               </App.Flex>
             </App.Flex>
 
             <App.Flex gap={12} align="center" row>
               <App.Flex center width={30}>
                 <App.Text size={[36, 24]} weight={900} height={1} color="#A6DC37">4</App.Text>
+              </App.Flex>
+
+              <App.Flex direction={['column', 'row']} align={['flex-start', 'center']} gap={[4, 8]}>
+                <App.Text size={20} weight={600} height={1}>Climb Leaderboard</App.Text>
+              </App.Flex>
+            </App.Flex>
+
+            <App.Flex gap={12} align="center" row>
+              <App.Flex center width={30}>
+                <App.Text size={[36, 24]} weight={900} height={1} color="#A6DC37">5</App.Text>
               </App.Flex>
 
               <App.Flex direction={['column', 'row']} align={['flex-start', 'center']} gap={[4, 8]}>

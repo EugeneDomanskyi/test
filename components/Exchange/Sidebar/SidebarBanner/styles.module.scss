@@ -7,7 +7,6 @@
   left: 8px;
   max-width: 393px;
   z-index: 0;
-  // bottom: -500px;
   bottom: 0;
   transition: height .3s;
   height: 0;
@@ -21,7 +20,7 @@
 
   &.show {
     padding: 16px;
-    height: 467px;
+    height: 508px;
     border: 1px solid #FFFFFF33;
 
     @media (max-width: 768px) {
