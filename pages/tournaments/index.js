@@ -176,19 +176,19 @@ const Tournaments = () => {
                   <GemsStreak streaks={getOngoingTournament().tiers} position={getStreakPosition()} />
                 ) : null}
 
-                <App.Flex row align="center" justify="space-between" className={styles.botBanner}>
-                  <App.Flex row align="center" gap={16}>
+                <App.Flex direction={['row', 'column']} gap={16} align="center" justify="space-between" className={styles.botBanner}>
+                  <App.Flex row align={['center', 'flex-start']} gap={16}>
                     <App.Flex row center className={styles.bag}>
                       <App.Text size={30}>💰</App.Text>
                     </App.Flex>
 
-                    <App.Flex column gap={4}>
+                    <App.Flex column gap={[4, 12]}>
                       <App.Text size={16} weight={700}>Claim your share of $1000 USDC prize pool</App.Text>
                       <App.Text size={14} weight={500}>Read our detailed guide on how to deploy a trading bot that wins you tournaments.</App.Text>
                     </App.Flex>
                   </App.Flex>
 
-                  <App.Button href="https://bit.ly/tegro-cyborg-trader-s1" target="_blank" primary2 outlined>Build your trading bot today!</App.Button>
+                  <App.Button href="https://bit.ly/tegro-cyborg-trader-s1" fullWidth={isMobile} target="_blank" primary2 outlined>Build your trading bot today!</App.Button>
                 </App.Flex>
 
                 {getSortedKeys().map((key, index) => {
