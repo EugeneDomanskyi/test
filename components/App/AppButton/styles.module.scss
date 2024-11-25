@@ -103,12 +103,15 @@
   }
 
   &.primary {
+    height: 40px;
+    border-radius: 100px;
+    padding: 0 16px;
     background-color: #0052FF;
     border-color: #0052FF;
 
     &.active:not(:disabled),
     &:hover:not(:disabled) {
-      background-color: #5000b8;
+      background-color: #0043d4;
     }
 
     &.outlined {
