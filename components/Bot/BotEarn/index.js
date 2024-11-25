@@ -160,9 +160,9 @@ const BotEarn = () => {
                   task.key == 'join_telegram_group' ? (
                     <App.Button variant="telegram" onClick={handleTelegram}><App.Icon icon="telegram2" width={20} /> Join Now</App.Button>
                   ) : task.key == 'twitter_follow' ? (
-                    <App.Button variant="twitter" onClick={handleX}><App.Icon icon="x" width={20} /> Follow X</App.Button>
+                    <App.Button variant="twitter" onClick={handleX}><App.Icon icon="x" width={20} /> Follow us on X</App.Button>
                   ) : task.key == 'join_discord' ? (
-                    <App.Button variant="bot" onClick={handleDiscord}><App.Icon icon="discord2" width={20} /> Join Now</App.Button>
+                    <App.Button variant="twitter" onClick={handleDiscord}><App.Icon icon="discord2" width={20} /> Join us on Discord</App.Button>
                   ) : task.key == 'first_time_buy_gems' ? (
                     <App.Button variant="bot" onClick={handleShop}>Buy Now</App.Button>
                   ) : task.key.startsWith('invite') ? (
