@@ -49,6 +49,15 @@ const BotEarn = () => {
     setTwitter(true)
   }
 
+  const handleDiscord = () => {
+    Amplitude.event(`Join Discord click`, {
+      'Page': 'Earn',
+      'Source': 'Telegram',
+    })
+
+    TelegramBot.openLink('https://discord.com/invite/tegro')
+  }
+
   const handleClaim = (task) => async () => {
     const result = await $bot.api.taskClaim({type: task.key})
     if (result && !result.error) {
@@ -150,6 +159,12 @@ const BotEarn = () => {
                 ) : (
                   task.key == 'join_telegram_group' ? (
                     <App.Button variant="telegram" onClick={handleTelegram}><App.Icon icon="telegram2" width={20} /> Join Now</App.Button>
+                  ) : task.key == 'twitter_follow' ? (
+                    <App.Button variant="twitter" onClick={handleX}><App.Icon icon="x" width={20} /> Follow X</App.Button>
+                  ) : task.key == 'join_discord' ? (
+                    <App.Button variant="bot" onClick={handleDiscord}><App.Icon icon="discord2" width={20} /> Join Now</App.Button>
+                  ) : task.key == 'first_time_buy_gems' ? (
+                    <App.Button variant="bot" onClick={handleShop}>Buy Now</App.Button>
                   ) : task.key.startsWith('invite') ? (
                     <App.Flex row gap={16}>
                       <App.Flex flex={8}>
