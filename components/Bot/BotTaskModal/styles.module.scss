@@ -1,0 +1,61 @@
+.container {
+  border-radius: 12px 12px 0 0;
+  border-bottom: 3px solid #6B41EB;
+  padding: 8px;
+  background: linear-gradient(180deg, #5028C8 -6.02%, #241452 85.68%);
+  position: relative;
+  z-index: 1;
+
+  .tiger {
+    width: 324px;
+    height: 369px;
+    position: absolute;
+    z-index: 0;
+    top: -252px;
+    left: -50px;
+    background: url('/images/bot/onboarding-tiger.png') center / contain no-repeat;
+    pointer-events: none;
+  }
+
+  .inner {
+    border-radius: 12px;
+    border: 1px solid #631DFF;
+    position: relative;
+    z-index: 1;
+
+    .header {
+      height: 48px;
+      border-radius: 12px 12px 0 0;
+      background: linear-gradient(90deg, #6B41EB 0%, #6342C7 100%);
+      position: relative;
+      z-index: 0;
+
+      .close {
+        position: absolute;
+        z-index: 0;
+        right: 16px;
+      }
+    }
+
+    .body {
+      padding: 8px;
+      background: url('/images/bot/onboarding-top-4.png') center 40px / cover no-repeat;
+      background-size: 70%;
+
+      .image {
+        width: 360px;
+        height: 120px;
+      }
+
+      .taskContainer {
+        border-radius: 12px;
+        background: linear-gradient(95deg, #449CED -2.37%, #1958BF 99.19%);
+        box-shadow: 1.094px 2.188px 2.188px 0px rgba(0, 0, 0, 0.50);
+    
+        .title {
+          padding: 16px 16px 8px;
+        }
+      }
+    }
+  }
+}

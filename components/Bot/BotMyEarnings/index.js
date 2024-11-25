@@ -76,7 +76,7 @@ const MyEarnings = ({ onClaim }) => {
     const pages = []
   
     pages.push(currentPage == 1 ? (
-      <App.Flex key={1} fullWidth center gap={4} className={styles.claimed}>
+      <App.Flex key={1} center gap={4} className={styles.claimed}>
         <App.Text size={14} weight={700} height={1}>1</App.Text>
       </App.Flex>
     ) : (
@@ -89,7 +89,7 @@ const MyEarnings = ({ onClaim }) => {
   
     for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
       pages.push(i === currentPage ? (
-        <App.Flex key={i} fullWidth center gap={4} className={styles.claimed}>
+        <App.Flex key={i} center gap={4} className={styles.claimed}>
           <App.Text size={14} weight={700} height={1}>{i}</App.Text>
         </App.Flex>
       ) : (
@@ -103,7 +103,7 @@ const MyEarnings = ({ onClaim }) => {
   
     if (totalPages > 1) {
       pages.push(currentPage == totalPages ? (
-        <App.Flex key={totalPages} fullWidth center gap={4} className={styles.claimed}>
+        <App.Flex key={totalPages} center gap={4} className={styles.claimed}>
           <App.Text size={14} weight={700} height={1}>{totalPages}</App.Text>
         </App.Flex>
       ) : (

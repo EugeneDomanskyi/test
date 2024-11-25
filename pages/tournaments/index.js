@@ -176,6 +176,21 @@ const Tournaments = () => {
                   <GemsStreak streaks={getOngoingTournament().tiers} position={getStreakPosition()} />
                 ) : null}
 
+                <App.Flex direction={['row', 'column']} gap={16} align="center" justify="space-between" className={styles.botBanner}>
+                  <App.Flex row align={['center', 'flex-start']} gap={16}>
+                    <App.Flex row center className={styles.bag}>
+                      <App.Text size={30}>💰</App.Text>
+                    </App.Flex>
+
+                    <App.Flex column gap={[4, 12]}>
+                      <App.Text size={16} weight={700}>Claim your share of $1000 USDC prize pool</App.Text>
+                      <App.Text size={14} weight={500}>Read our detailed guide on how to deploy a trading bot that wins you tournaments.</App.Text>
+                    </App.Flex>
+                  </App.Flex>
+
+                  <App.Button href="https://bit.ly/tegro-cyborg-trader-s1" fullWidth={isMobile} target="_blank" primary2 outlined>Build your trading bot today!</App.Button>
+                </App.Flex>
+
                 {getSortedKeys().map((key, index) => {
                     const tournament = tournaments[key]
                     return (
@@ -262,7 +277,7 @@ const Tournaments = () => {
                                   <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42')}>Trade $EURC</App.Button>
                                   <App.Button primary2 onClick={handleExchangeAddress(tournament, '0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4')}>Trade $TOSHI</App.Button>
                                 </App.Flex>
-                              ) : tournament.alias == 'og-trader-s1' || tournament.alias == 'uptober-s1' || tournament.alias == 'uptober-s2' || tournament.alias == 'rocketship-s1' ? (
+                              ) : tournament.alias == 'og-trader-s1' || tournament.alias == 'uptober-s1' || tournament.alias == 'uptober-s2' || tournament.alias == 'rocketship-s1' || tournament.alias == 'cyborg-trader-s1' ? (
                                 <App.Flex direction={['row', 'column']} gap={8}>
                                   <App.Button primary2 onClick={handleExchangeAddress(tournament, '0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf')}>Trade $cbBTC</App.Button>
                                   <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x4200000000000000000000000000000000000006')}>Trade $WETH</App.Button>
@@ -375,7 +390,7 @@ const Tournaments = () => {
                                 <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42')}>Trade $EURC</App.Button>
                                 <App.Button primary2 onClick={handleExchangeAddress(tournament, '0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4')}>Trade $TOSHI</App.Button>
                               </App.Flex>
-                            ) : tournament.alias == 'og-trader-s1' || tournament.alias == 'uptober-s1' || tournament.alias == 'uptober-s2' || tournament.alias == 'rocketship-s1' ? (
+                            ) : tournament.alias == 'og-trader-s1' || tournament.alias == 'uptober-s1' || tournament.alias == 'uptober-s2' || tournament.alias == 'rocketship-s1' || tournament.alias == 'cyborg-trader-s1' ? (
                               <App.Flex direction={['row', 'column']} gap={8}>
                                 <App.Button primary2 onClick={handleExchangeAddress(tournament, '0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf')}>Trade $cbBTC</App.Button>
                                 <App.Button primary2 onClick={handleExchangeAddress(tournament, '0x4200000000000000000000000000000000000006')}>Trade $WETH</App.Button>

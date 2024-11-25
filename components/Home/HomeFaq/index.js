@@ -25,7 +25,7 @@ const HomeFaq = () => {
       answer: `To start trading, connect your wallet to the platform and navigate to <a href="http://www.tegro.com/exchange">Tegro Exchange</a>. Select a trading pair from those available on the Base L2 chain and begin your trading activities. Tegro plans to expand its support to more chains and trading pairs in the future.`,
     }, {
       question: 'Can I earn rewards when I trade on Tegro?',
-      answer: `Yes, trading on Tegro lets you earn rewards in USDC, and other tokens. Visit <a href="https://www.tegro.com/earn?utm_source=homepage&utm_medium=faq&utm_campaign=exchange">Tegro Earn</a> to discover ongoing and upcoming contests and events. Any rewards you earn on Tegro are deposited directly into your wallet.`,
+      answer: `Yes, trading on Tegro lets you earn rewards in USDC, and other tokens. Visit <a href="https://tegro.com/tournaments?utm_source=homepage&utm_medium=faq&utm_campaign=exchange">Tournaments</a> to discover ongoing and upcoming contests and events. Any rewards you earn on Tegro are deposited directly into your wallet.`,
     },
   ]
 

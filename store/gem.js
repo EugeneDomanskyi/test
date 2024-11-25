@@ -255,6 +255,10 @@ export const gemSlice = createSlice({
             value.slogan = (`${temp[0]} ${temp[1]}`).toUpperCase()
             value.specialCurrency = '$cbBTC & $WETH'
             break
+          case 'cyborg-trader-s1':
+            value.slogan = (`${temp[0]} ${temp[1]} s1`).toUpperCase()
+            value.specialCurrency = '$cbBTC & $WETH'
+            break
           default:
             value.slogan = (`${temp[0]} ${temp[1]}`).toUpperCase()
             value.specialCurrency = `$${value.currency}`
@@ -341,6 +345,10 @@ export const gemSlice = createSlice({
           break
         case 'rocketship-s1':
           slogan = (`${temp[0]} ${temp[1]}`).toUpperCase()
+          specialCurrency = '$cbBTC & $WETH'
+          break
+        case 'cyborg-trader-s1':
+          slogan = (`${temp[0]} ${temp[1]} s1`).toUpperCase()
           specialCurrency = '$cbBTC & $WETH'
           break
         default:
