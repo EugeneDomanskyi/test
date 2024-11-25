@@ -17,6 +17,17 @@ export const botSlice = createSlice({
     invoices: [],
     tasks: [],
     claimedTask: null,
+    referrals: [],
+    referrals_stats: {
+      totalReferrals: 0,
+      totalGems: 0,
+      hasReferrals: null,
+    },
+    referrals_page: {
+      current: 1,
+      limit: 10,
+      total: 0,
+    },
   },
 
   reducers: {
@@ -90,6 +101,25 @@ export const botSlice = createSlice({
     claimedTask: (state, { payload }) => {
       state.claimedTask = payload
     },
+
+    referrals: (state, { payload }) => {
+      const referrals = Object.keys(payload).map(key => ({
+        name: key,
+        gems: Number(payload[key]),
+      }))
+
+      referrals.sort((a, b) => b.gems - a.gems)
+
+      state.referrals = referrals
+    },
+
+    referrals_stats: (state, { payload }) => {
+      state.referrals_stats = payload
+    },
+
+    referrals_page: (state, { payload }) => {
+      state.referrals_page = payload
+    },
   },
 })
 
@@ -152,6 +182,14 @@ const api = {
 
   taskClaim: (params) => {
     return request(`telegram/task/claim`, 'POST', {api: 'accounts', ...params})
+  },
+
+  referrals: (params) => {
+    return request(`telegram/user/referral/info`, 'GET', {api: 'bid_v2', ...params})
+  },
+
+  referrals_stats: () => {
+    return request(`telegram/user/referral/stats`, 'GET', {api: 'bid_v2'})
   },
 }
 
