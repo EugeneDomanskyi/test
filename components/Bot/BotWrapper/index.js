@@ -76,9 +76,9 @@ const BotWrapper = ({ children }) => {
         dispatch($bot.set.onboard('bid'))
       }
 
-      if (tab !== 'auctions') {
-        dispatch($bot.set.tab('auctions'))
-      }
+      // if (tab !== 'auctions') {
+      //   dispatch($bot.set.tab('auctions'))
+      // }
     }
   }, [user?.is_claimed_first_bid, ongoingAuction])
 
@@ -89,10 +89,10 @@ const BotWrapper = ({ children }) => {
 
       setTimeout(() => {
         const tgId = TelegramBot.getId().toString()
-        console.log(tgId)
+
         Socket.subscribe(tgId)
         Socket.on('task_claimed', 'task_claimed', handleTaskClaimed)
-      }, 500)
+      }, 1000)
 
       return () => {
         Socket.unsubscribe(tgId)
