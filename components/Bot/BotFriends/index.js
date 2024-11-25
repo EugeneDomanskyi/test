@@ -174,8 +174,8 @@ const BotFriends = () => {
             {stats.hasReferrals === true ? getStats() : null}
 
             <App.Flex column fullWidth gap={16} className={styles.body}>
-              <App.Text size={16} weight={700}>You win 10% of all the gems your friend purchases plus 5000 gems.</App.Text>
-              <App.Text size={14} weight={400}>Both you and your friends get gems when they place their first bid. </App.Text>
+              <App.Text size={16} weight={700}>You win 10% of all the gems your friend purchases plus 1000 gems.</App.Text>
+              <App.Text size={14} weight={400}>Both you and your friend get gems when they place their first 3 bids.</App.Text>
 
               <App.Flex row gap={16}>
                 <App.Flex flex={8}>
