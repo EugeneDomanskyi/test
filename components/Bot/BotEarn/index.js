@@ -49,6 +49,15 @@ const BotEarn = () => {
     setTwitter(true)
   }
 
+  const handleDiscord = () => {
+    Amplitude.event(`Join Discord click`, {
+      'Page': 'Earn',
+      'Source': 'Telegram',
+    })
+
+    TelegramBot.openLink('https://discord.com/invite/tegro')
+  }
+
   const handleClaim = (task) => async () => {
     const result = await $bot.api.taskClaim({type: task.key})
     if (result && !result.error) {
@@ -126,11 +135,15 @@ const BotEarn = () => {
                 </App.Flex>
               </App.Flex>
 
-              <BotProgress currentValue={task.progress} maxValue={task.steps} steps={task.steps > 5 ? 5 : 0} />
+              {task.progressive ? (
+                <BotProgress currentValue={task.progress} maxValue={task.steps} steps={task.steps > 5 ? 5 : 0} />
+              ) : null}
             </App.Flex>
 
             <App.Flex column fullWidth gap={16} className={styles.body}>
-              <App.Text size={14} weight={400}>{task.description}</App.Text>
+              {task.description !== '' ? (
+                <App.Text size={14} weight={400}>{task.description}</App.Text>
+              ) : null}
 
               {task.is_claimed ? (
                 <App.Button variant="bot"><App.Icon icon="check-circle-fill2" /> Claimed</App.Button>
@@ -146,6 +159,12 @@ const BotEarn = () => {
                 ) : (
                   task.key == 'join_telegram_group' ? (
                     <App.Button variant="telegram" onClick={handleTelegram}><App.Icon icon="telegram2" width={20} /> Join Now</App.Button>
+                  ) : task.key == 'twitter_follow' ? (
+                    <App.Button variant="twitter" onClick={handleX}><App.Icon icon="x" width={20} /> Follow X</App.Button>
+                  ) : task.key == 'join_discord' ? (
+                    <App.Button variant="bot" onClick={handleDiscord}><App.Icon icon="discord2" width={20} /> Join Now</App.Button>
+                  ) : task.key == 'first_time_buy_gems' ? (
+                    <App.Button variant="bot" onClick={handleShop}>Buy Now</App.Button>
                   ) : task.key.startsWith('invite') ? (
                     <App.Flex row gap={16}>
                       <App.Flex flex={8}>
