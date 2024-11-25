@@ -15,18 +15,21 @@ const getDuration = (startTime, endTime) => {
     hours: hours > 9 ? hours : `0${hours}`,
     minutes: minutes > 9 ? minutes : `0${minutes}`,
     seconds: seconds > 9 ? seconds : `0${seconds}`,
-    isEnd: diff < 0,
+    isEnd: diff <= 0,
   }
 }
 
-const useCountdown = (endTime) => {
+const useCountdown = (endTime, alternate) => {
   const [time, setTime] = useState(moment())
 
   const tick = () => {
     setTime(moment())
   }
 
-  const duration = getDuration(time, endTime)
+  const from = alternate ? endTime : time
+  const to = alternate ? time : endTime
+
+  const duration = getDuration(from, to)
 
   useInterval(tick, duration.isEnd ? null : 1000)
 

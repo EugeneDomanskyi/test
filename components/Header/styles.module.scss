@@ -1,20 +1,22 @@
 .container {
   width: 100%;
-  position: absolute;
+  position: relative;
   z-index: 5;
   top: 0;
   left: 0;
 
   .containerHeader {
-    height: 90px;
+    height: 72px;
+    border-top: 1px solid #FFFFFF1A;
+    border-bottom: 1px solid #FFFFFF1A;
+    background: #0B091566;
 
     @media (max-width: 768px) {
-      height: 60px;
+      height: 48px;
     }
 
     .logo {
       position: relative;
-      padding-top: 11px;
   
       .badge {
         position: absolute;
@@ -36,12 +38,17 @@
 
   .navItem {
     position: relative;
-    padding: 0 44px;
+    padding: 0 24px;
     cursor: pointer;
     display: block;
     height: 100%;
 
-    &.active {
+    p {
+      transition: .3s;
+    }
+
+    &:hover:not(.disabled),
+    &.active:not(.disabled) {
       p {
         color: rgb(166, 220, 55);
       }
@@ -52,7 +59,7 @@
     }
 
     &.disabled {
-      opacity: .5;
+      opacity: .8;
     }
     
     &:not(.disabled) {
@@ -74,13 +81,13 @@
 
   .supportButton {
     position: relative;
-    z-index: 10;
+    z-index: 1;
 
     .dropdownMenu {
       position: absolute;
       width: 200px;
       z-index: 11;
-      top: 63px;
+      top: 40px;
       left: 0;
       padding: 16px;
       border-radius: 8px;
@@ -223,7 +230,7 @@
 
   .mobileMenu {
     position: fixed;
-    top: 60px;
+    top: 48px;
     right: 100vw;
     left: 0;
     bottom: 0;
@@ -248,9 +255,11 @@
       flex-direction: column;
   
       .link {
-        padding: 16px;
+        padding: 0 16px;
+        height: 64px;
         width: 100%;
-        height: 56px;
+        white-space: nowrap;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.10);
 
         &.disabled {
           opacity: .6;

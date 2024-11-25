@@ -1,9 +1,11 @@
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 import cn from 'classnames'
 
-import useWalletConnect from '@/myhooks/wallet-connect'
+import WagmiHelper from '@/libs/WagmiHelper'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import $app from '@/store/app'
 import $alert from '@/store/alert'
@@ -12,12 +14,11 @@ import $portfolio from '@/store/portfolio'
 import App from '@/components/App'
 
 import styles from './styles.module.scss'
-import { useState } from 'react'
 
 const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
   const router = useRouter()
 
-  const { wallet, scanUrl } = useWalletConnect()
+  const { wallet } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -26,6 +27,32 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
   const portfolioList = useSelector(({ $portfolio }) => $portfolio.list)
 
   const [isClicked, setIsClicked] = useState()
+  const [image, setImage] = useState({})
+
+  useEffect(() => {
+    if (portfolioList.length) {
+      const values = portfolioList.reduce((acc, value) => {
+        return {
+          ...acc,
+          [value.symbol]: value.image,
+        }
+      }, {})
+      setImage(values)
+    }
+  }, [portfolioList])
+
+  const getRandomColor = () => {
+    const randomColor = Math.floor(Math.random()*16777215).toString(16)
+    return `#${randomColor}`
+  }
+
+  const getSymbolForLogo = (item) => {
+    if (item?.symbol?.length > 4) {
+      return item.symbol.slice(0, 4) + '.'
+    }
+
+    return item.symbol
+  }
 
   const handleClose = () => {
     if (onClose) {
@@ -73,40 +100,43 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
         </App.Flex>
 
         <App.Flex className={styles.portfolioCardBox}>
-          <App.Frame width="100%" padding={1} radius={12} background="linear-gradient(99deg, #6100FF 0.33%, rgba(97, 0, 255, 0.13) 100%)" gradient="linear-gradient(135deg, #E2DDFF, #ECE9FF54, #FFFFFF1F)">
-            <App.Flex column gap={24} className={styles.portfolioCard}>
-              <App.Flex row gap={16} align="center" justify="space-between">
-                <App.Flex row gap={12} align="center">
-                  <App.Flex row gap={4} align="center">
-                    <Image src={logo} width={34} height={34} alt="" />
-                    <App.Text size={[16, 14]} weight={600} height={1}>{address}</App.Text>
-                  </App.Flex>
-
-                  <App.Icon icon="copy3" onClick={handleCopy} style={{ cursor: 'pointer' }} />
-
-                  <a href={scanUrl(wallet, 'address', blockchain)} target="_blank" rel="noreferrer" style={{ lineHeight: 1 }}>
-                    <App.Icon icon={blockchain.code == 'polygon' || blockchain.code == 'mumbai' ? 'polyscan' : 'etherscan'} width={16} height={16} opacity={1} color="#fff" />
-                  </a>
+          <App.Flex column gap={24} className={styles.portfolioCard}>
+            <App.Flex row gap={16} align="center" justify="space-between">
+              <App.Flex row gap={12} align="center">
+                <App.Flex row gap={4} align="center">
+                  <Image src={logo} width={34} height={34} alt="" />
+                  <App.Text size={[16, 14]} weight={600} height={1}>{address}</App.Text>
                 </App.Flex>
 
-                <App.Icon icon="logout2" onClick={handleDisconnect} style={{ cursor: 'pointer' }}/>
+                <App.Icon icon="copy3" onClick={handleCopy} style={{ cursor: 'pointer' }} />
+
+                <a href={WagmiHelper.generateScanUrl(wallet, 'address')} target="_blank" rel="noreferrer" style={{ lineHeight: 1 }}>
+                  <App.Icon icon={blockchain?.code == 'polygon' || blockchain?.code == 'amoy' ? 'polyscan' : 'etherscan'} width={16} height={16} opacity={1} color="#fff" />
+                </a>
               </App.Flex>
 
-              <App.Flex column gap={6}>
-                <App.Text size={12} weight={600} height={1} color="#B9B8C5">Balance</App.Text>
-                <App.Text size={[32, 24]} weight={700} height={1}>${portfolioUsd}</App.Text>
-
-                {/* {portfolioUsd * 0 > 0 ? (
-                  <App.Flex align="center" gap={4}>
-                    {portfolioTicker?.type != 'zero' ? (
-                      <App.Icon style={{transform: `rotate(${portfolioTicker?.type == 'minus' ? '0' : '180'}deg)`}} icon="caret-down" color={portfolioTicker?.type == 'minus' ? '#FF1D61' : '#53F19C' } width={12} height={12} />
-                    ) : null}
-                    <App.Text size={[16, 14]} height={1} color={portfolioTicker?.type == 'minus' ? '#FF1D61' : portfolioTicker?.type == 'plus' ? '#53F19C' : '#B9B8C5'}>{ portfolioTicker?.percent }%</App.Text>
-                  </App.Flex>
-                ) : null} */}
+              <App.Flex row center gap={16}>
+                <App.Icon icon="logout2" onClick={handleDisconnect} style={{ cursor: 'pointer' }} />
+                <App.Flex center className={styles.close}>
+                  <App.Icon icon="cross" onClick={handleClose} color="#fff" />
+                </App.Flex>
               </App.Flex>
             </App.Flex>
-          </App.Frame>
+
+            <App.Flex column gap={6}>
+              <App.Text size={12} weight={600} height={1} color="#B9B8C5">Balance</App.Text>
+              <App.Text size={[32, 24]} weight={700} height={1}>${portfolioUsd}</App.Text>
+
+              {/* {portfolioUsd * 0 > 0 ? (
+                <App.Flex align="center" gap={4}>
+                  {portfolioTicker?.type != 'zero' ? (
+                    <App.Icon style={{transform: `rotate(${portfolioTicker?.type == 'minus' ? '0' : '180'}deg)`}} icon="caret-down" color={portfolioTicker?.type == 'minus' ? '#FF1D61' : '#53F19C' } width={12} height={12} />
+                  ) : null}
+                  <App.Text size={[16, 14]} height={1} color={portfolioTicker?.type == 'minus' ? '#FF1D61' : portfolioTicker?.type == 'plus' ? '#53F19C' : '#B9B8C5'}>{ portfolioTicker?.percent }%</App.Text>
+                </App.Flex>
+              ) : null} */}
+            </App.Flex>
+          </App.Flex>
         </App.Flex>
         
         {portfolioList.length > 0 ? (
@@ -118,53 +148,69 @@ const Portfolio = ({ open, address, logo, onClose, onDisconnect }) => {
             <App.Flex column flex={1} sx={{ position: 'relative' }}>
               <div className={styles.scroll}>
                 <App.Flex column>
-                  {portfolioList.map(item => (
-                    <App.Flex key={item.address} column className={cn(styles.row, styles.clickable)} onMouseLeave={handleClick(null)} onClick={handleClick(item.address)}>
-                      <App.Flex row align="center" justify="space-between">
-                        <App.Flex row gap={8} align="center">
-                          {item.image ? (
-                            <Image src={item.image} width={40} height={40} alt="" />
-                          ) : (
-                            <div className={styles.emptyImage} />
-                          )}
+                  {portfolioList.map(item => {
+                    const colors = [getRandomColor(), getRandomColor()]
+                    return (
+                      <App.Flex key={item.address} column className={cn(styles.row, styles.clickable)} onMouseLeave={handleClick(null)} onClick={handleClick(item.address)}>
+                        <App.Flex column gap={16}>
+                          <App.Flex row align="center" justify="space-between">
+                            <App.Flex row gap={8} align="center">
+                              {image[item.symbol] ? (
+                                <Image src={item.image} width={28} height={28} alt="" style={{ width: 'auto', height: 'auto', }} onError={() => setImage({ ...image, [item.symbol]: null })} />
+                              ) : (
+                                <div className={styles.emptyImage} style={{background: `linear-gradient(0deg, ${colors[0]}, ${colors[1]})`}}>
+                                  <App.Text center size={10} weight={600}>{ getSymbolForLogo(item) }</App.Text>
+                                </div>
+                              )}
 
-                          <App.Flex column gap={6}>
-                            <App.Text size={16} weight={700} height={1}>{item.name}</App.Text>
-                            <App.Text size={12} weight={600} height={1} color="#5E5C6B">{item.balance} {item.symbol}</App.Text>
+                              <App.Text size={16} weight={600} height={1}>{item.balance} {item.symbol}</App.Text>
+                            </App.Flex>
+
+                            <App.Flex column gap={6}>
+                              <App.Text size={14} weight={600} height={1}>${item.usdFormatted}</App.Text>
+
+                              <App.Flex align="center" justify="flex-end" gap={4}>
+                                {item.ticker?.type != 'zero' ? (
+                                  <App.Icon style={{transform: `rotate(${item.ticker?.type == 'minus' ? '0' : '180'}deg)`}} icon="caret-down" color={item.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C' } width={10} height={10} />
+                                ) : null}
+                                <App.Text size={12} weight={400} height={1} color={item.ticker?.type == 'minus' ? '#FF1D61' : item.ticker?.type == 'plus' ? '#53F19C' : '#5E5C6B' }>{ item.ticker?.percent }%</App.Text>
+                              </App.Flex>
+                            </App.Flex>
+                          </App.Flex>
+
+                          <App.Flex column gap={8} className={styles.balances}>
+                            <App.Flex row align="center" justify="space-between">
+                              <App.Text size={14} weight={400} height={1} color="#FFFFFF99">Available:</App.Text>
+                              <App.Text size={14} weight={400} height={1} color="#FFFFFF99">{item.available} {item.symbol}</App.Text>
+                            </App.Flex>
+
+                            <App.Flex row align="center" justify="space-between">
+                              <App.Text size={14} weight={400} height={1} color="#FFFFFF99">In Order:</App.Text>
+                              <App.Text size={14} weight={400} height={1} color="#FFFFFF99">{item.placed} {item.symbol}</App.Text>
+                            </App.Flex>
                           </App.Flex>
                         </App.Flex>
 
-                        <App.Flex column gap={6}>
-                          <App.Text size={16} weight={700} height={1}>${item.usd}</App.Text>
+                        {!item.isNative && !item.isUsdt ? (
+                          <App.Flex row fullWidth className={cn(styles.buttonsBox, {[styles.active]: isClicked == item.address})}>
+                            <App.Flex row fullWidth align="center" gap={16}>
+                              <App.Flex flex={1}>
+                                <App.Button fullWidth variant="success" onClick={handleTrade(item, 'buy')}>Buy</App.Button>
+                              </App.Flex>
 
-                          <App.Flex align="center" justify="flex-end" gap={4}>
-                            {item.ticker?.type != 'zero' ? (
-                              <App.Icon style={{transform: `rotate(${item.ticker?.type == 'minus' ? '0' : '180'}deg)`}} icon="caret-down" color={item.ticker?.type == 'minus' ? '#FF1D61' : '#53F19C' } width={10} height={10} />
-                            ) : null}
-                            <App.Text size={12} height={1} color={item.ticker?.type == 'minus' ? '#FF1D61' : item.ticker?.type == 'plus' ? '#53F19C' : '#5E5C6B' }>{ item.ticker?.percent }%</App.Text>
+                              <App.Flex flex={1}>
+                                <App.Button fullWidth variant="danger" onClick={handleTrade(item, 'sell')}>Sell</App.Button>
+                              </App.Flex>
+                            </App.Flex>
                           </App.Flex>
-                        </App.Flex>
+                        ) : (
+                          <App.Flex className={cn(styles.textBox, {[styles.active]: isClicked == item.address})}>
+                            <App.Text style="italic" color="#FFD600">This cryptocurrency is currently tradable only in token format.</App.Text>
+                          </App.Flex>
+                        )}
                       </App.Flex>
-
-                      {!item.isNative && !item.isUsdt ? (
-                        <App.Flex row fullWidth className={cn(styles.buttonsBox, {[styles.active]: isClicked == item.address})}>
-                          <App.Flex row fullWidth align="center" gap={16}>
-                            <App.Flex flex={1}>
-                              <App.Button fullWidth variant="success" onClick={handleTrade(item, 'buy')}>Buy</App.Button>
-                            </App.Flex>
-
-                            <App.Flex flex={1}>
-                              <App.Button fullWidth variant="danger" onClick={handleTrade(item, 'sell')}>Sell</App.Button>
-                            </App.Flex>
-                          </App.Flex>
-                        </App.Flex>
-                      ) : (
-                        <App.Flex className={cn(styles.textBox, {[styles.active]: isClicked == item.address})}>
-                          <App.Text style="italic" color="#FFD600">This cryptocurrency is currently tradable only in token format.</App.Text>
-                        </App.Flex>
-                      )}
-                    </App.Flex>
-                  ))}
+                    )}
+                  )}
                 </App.Flex>
               </div>
             </App.Flex>

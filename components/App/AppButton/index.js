@@ -4,11 +4,16 @@ import AppLoader from '@/components/App/AppLoader'
 
 import styles from './styles.module.scss'
 
-const AppButton = ({children, primary, secondary, variant, outlined, group, rounded, small, large, xl, center, fullWidth, fitWidth, onClick, loading, href, noPadding, sx, ...props}) => {
+const AppButton = ({children, primary, primary2, default2, secondary2, secondary, variant, outlined, group, rounded, small, large, xl, xs, medium, twitter, telegram, center, fullWidth, fitWidth, onClick, loading, href, target = "_blank", noPadding, sx, ...props}) => {
   const classes = () => {
     return cn(
       styles.button,
       {[styles.primary]: primary},
+      {[styles.primary2]: primary2},
+      {[styles.twitter]: twitter},
+      {[styles.telegram]: telegram},
+      {[styles.default2]: default2},
+      {[styles.secondary2]: secondary2},
       {[styles.secondary]: secondary},
       {[styles[variant]]: variant},
       {[styles.outlined]: outlined},
@@ -16,7 +21,9 @@ const AppButton = ({children, primary, secondary, variant, outlined, group, roun
       {[styles.rounded]: rounded},
       {[styles.small]: small},
       {[styles.large]: large},
+      {[styles.medium]: medium},
       {[styles.xl]: xl},
+      {[styles.xs]: xs},
       {[styles.noPadding]: noPadding},
       {[styles.fullWidth]: fullWidth},
       {[styles.fitWidth]: fitWidth},
@@ -31,7 +38,7 @@ const AppButton = ({children, primary, secondary, variant, outlined, group, roun
   }
 
   return href ? (
-    <a href={href} target="_blank" rel="noreferrer" className={classes()} style={sx} {...props}>
+    <a href={href} target={target} rel="noreferrer" className={classes()} style={sx} {...props}>
       {loading ? (<AppLoader size={20} />) : null}
       {children}
     </a>

@@ -10,9 +10,12 @@ import Socket from '@/libs/ws.lib'
 import $app from '@/store/app'
 import $orders from '@/store/orders'
 import $alert from '@/store/alert'
+import $portfolio from '@/store/portfolio'
+import $gem from '@/store/gem'
 
+import WagmiHelper from '@/libs/WagmiHelper'
 import Amplitude from '@/libs/amplitude.lib'
-import useWalletConnect from '@/myhooks/wallet-connect'
+import useWagmiHelper from '@/myhooks/useWagmiHelper'
 
 import App from '@/components/App'
 import OrderDetails from '@/components/Exchange/OrderDetails'
@@ -20,7 +23,7 @@ import OrderDetails from '@/components/Exchange/OrderDetails'
 const Orders = ({global, type, version, onClickOrder}) => {
   const router = useRouter()
 
-  const { wallet, connect, getConnectorName, sign } = useWalletConnect()
+  const { wallet, connect } = useWagmiHelper()
 
   const dispatch = useDispatch()
   const blockchain = useSelector($app.get.blockchain)
@@ -28,10 +31,9 @@ const Orders = ({global, type, version, onClickOrder}) => {
   const socketConnected = useSelector(({ $app }) => $app.socketConnected)
   const current = useSelector(({ $token }) => $token.current)
   const orders = useSelector($orders.get.list)
+  const loading = useSelector(({ $orders }) => $orders.loading)
 
-  const [loading, setLoading] = useState(true)
   const [showCollectionOrders, setShowCollectionOrders] = useState(false)
-  const [hideCancelledOrders, setHideCancelledOrders] = useState(true)
   const [ordersType, setOrderTypes] = useState('open')
   const [orderForCancel, setOrderForCancel] = useState()
   const [detailsOrder, setDetailsOrder] = useState()
@@ -45,12 +47,25 @@ const Orders = ({global, type, version, onClickOrder}) => {
     }
 
     if (version != 'mobile') {
-      Socket.on('order_placed', 'my_orders', (data) => {
-        dispatch($orders.set.add(data))
-      })
-      
       Socket.on('order_submitted', 'my_orders', (data) => {
         dispatch($orders.set.update(data))
+        dispatch($alert.set.success({ title: 'Matched & pending settlement' }))
+        dispatch($portfolio.set.update(true))
+      })
+
+      Socket.on('order_trade_processed', 'my_orders', (data) => {
+        dispatch($orders.set.update(data))
+        dispatch($alert.set.success({ title: 'Settlement Complete' }))
+        dispatch($portfolio.set.update(true))
+      })
+
+      Socket.on('trade_points_rewarded', 'trade_points_rewarded', async (data) => {
+        dispatch($alert.set.success({title: '100 Gems Credited'}))
+
+        const result = await $gem.api.referral(wallet)
+        if (result) {
+          dispatch($gem.set.referral(result))
+        }
       })
     }
   }, [wallet, current?.id])
@@ -76,7 +91,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
       dispatch($orders.set.list(result ?? []))
     }
 
-    setLoading(false)
+    dispatch($orders.set.loading(false))
   }
 
   const handlePressCancelConfirm = (order) => (e) => {
@@ -99,20 +114,46 @@ const Orders = ({global, type, version, onClickOrder}) => {
     handleDialogClose('cancelAll')()
     handleDialogOpen('approve')()
 
-    const signature = await sign(wallet)
-    if (signature) {
-      const result = await $orders.api.cancelAll({ wallet_address: wallet, chain_id: blockchain.id, signature })
-      if (result?.data) {
-        const updatedOrders = orders.open.reduce((acc, o) => ({
-          ...acc,
-          [o.orderId]: 'cancelled',
-        }), {})
-        console.log(updatedOrders)
-        dispatch($orders.set.updateOrderStatus(updatedOrders))
-        dispatch($alert.set.success({ title: 'Orders cancelled', text: `You have cancelled ${orders.open.length} order(s) successfully.` }))
-      }
-    } else {
-      dispatch($alert.set.error({ title: 'Orders not cancelled', text: `Please try again to cancel your ${orders.open.length} open order(s).` }))
+    const network = await WagmiHelper.changeChain(blockchain.code)
+    if (!network) {
+      return
+    }
+
+    const typedData = await $orders.api.cancelTypedData({
+      order_ids: orders.open.map(item => item.order_id),
+      user_address: wallet,
+    })
+
+    if (typedData?.error || ! typedData) {
+      dispatch($alert.set.error({title: 'Orders not cancelled', text: `Please try again to cancel your ${orders.open.length} open order(s).`}))
+      return
+    }
+
+    const signature = await WagmiHelper.signTypedData(typedData.sign_data).catch(error => {
+      dispatch($alert.set.error({title: 'Orders not cancelled', text: `Please try again to cancel your ${orders.open.length} open order(s).`}))
+      return
+    })
+
+    if (!signature) {
+      dispatch($alert.set.error({title: 'Orders not cancelled', text: `Please try again to cancel your ${orders.open.length} open order(s).`}))
+      return
+    }
+
+    const result = await $orders.api.cancel({
+      ...typedData.cancel_order,
+      signature,
+    })
+
+    if (result) {
+      Amplitude.event('Bulk Cancel Order')
+      const updatedOrders = orders.open.reduce((acc, o) => ({
+        ...acc,
+        [o.order_id]: 'cancelled',
+      }), {})
+      dispatch($orders.set.updateOrderStatus(updatedOrders))
+      dispatch($alert.set.success({ title: 'Orders cancelled', text: `You have cancelled ${orders.open.length} order(s) successfully.` }))
+
+      dispatch($portfolio.set.update(true))
     }
 
     handleDialogClose('approve')()
@@ -135,44 +176,86 @@ const Orders = ({global, type, version, onClickOrder}) => {
   const handlePressCancel = (order) => async (e) => {
     e.stopPropagation()
     handleDialogOpen('approve')()
-    if (order.status === 'completed' || order.status === 'cancelled') {
+    if (order.status === 'completed' || order.status === 'cancelled' || order.status === 'partial') {
       return
     }
-    
+
+    const network = await WagmiHelper.changeChain(blockchain.code)
+    if (!network) {
+      return
+    }
+
     const eventPost = {
-      'Base Currency': order.baseCurrency,
-      'Quote Currency': order.quoteCurrency,
+      'Base Currency': order.base_currency,
+      'Quote Currency': order.quote_currency,
       'Side': order.side.toUpperCase(),
-      'Quantity': order.quantity,
-      'Price': order.itemPrice,
-      'Total': order.price,
-      'Network': blockchain.code.toUpperCase(),
+      'Quantity': order.quantity - order.quantity_filled,
+      'Price': order.price,
+      'Total': order.price * order.quantity,
+      'Filled Percent': `${Math.round(order.quantity_filled * 100 / order.quantity)}%`,
+      'Chain ID': blockchain?.id,
+      'Market ID': current?.address,
     }
     Amplitude.event('Cancel Order Submit', eventPost)
 
-    const signature = await sign(wallet)
-    if (signature) {
-      const result = await $orders.api.cancel({ id: order.orderId, chain_id: blockchain.id, signature })
-      if (result) {
-        Amplitude.event('Cancel Order Success', eventPost)
-        dispatch($orders.set.updateOrderStatus({[order.orderId]: 'cancelled'}))
-        dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity} ${order.baseCurrency} has been cancelled successfully.` }))
-      } else {
-        dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity} ${order.baseCurrency}.` }))
-      }
-    } else {
-      dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity} ${order.baseCurrency}.` }))
+    const typedData = await $orders.api.cancelTypedData({
+      order_ids: [order.order_id],
+      user_address: wallet,
+    })
+
+    if (typedData?.error || ! typedData) {
+      dispatch($alert.set.error({title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantity_filled} ${order.base_currency}.`}))
+      return
     }
+
+    const signature = await WagmiHelper.signTypedData(typedData.sign_data).catch(error => {
+      dispatch($alert.set.error({title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantity_filled} ${order.base_currency}.`}))
+      return
+    })
+
+    if (!signature) {
+      dispatch($alert.set.error({title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantity_filled} ${order.base_currency}.`}))
+      return
+    }
+
+    const result = await $orders.api.cancel({
+      ...typedData.cancel_order,
+      signature,
+    })
+
+    if (result) {
+      dispatch($orders.set.updateOrderStatus({[order.order_id]: 'cancelled'}))
+      dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity - order.quantity_filled} ${order.base_currency} has been cancelled successfully.` }))
+
+      dispatch($portfolio.set.update(true))
+    } else {
+      dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantity_filled} ${order.base_currency}.` }))
+    }
+
+    // const signature = await WagmiHelper.signMessage()
+    // if (signature) {
+    //   const result = await $orders.api.cancel({ id: order.order_id, chain_id: blockchain.id, signature })
+    //   if (result) {
+    //     dispatch($orders.set.updateOrderStatus({[order.order_id]: 'cancelled'}))
+    //     dispatch($alert.set.success({ title: 'Order cancelled', text: `Your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency} has been cancelled successfully.` }))
+
+    //     dispatch($portfolio.set.update(true))
+    //   } else {
+    //     dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.` }))
+    //   }
+    // } else {
+    //   dispatch($alert.set.error({ title: 'Order not cancelled', text: `Please try again to cancel your order for ${order.quantity - order.quantityFilled} ${order.baseCurrency}.` }))
+    // }
     handleDialogClose('approve')()
   }
 
   const handlePressCopy = order => (e) => {
     e.stopPropagation()
     const [_, _seg1, seg2] = router.asPath.split('/')
-    router.push(`/${[_seg1, seg2, order.contractAddress].join('/')}`, undefined, {scroll: false})
+    router.push(`/${[_seg1, seg2, order.contract_address].join('/')}`, undefined, {scroll: false})
     onClickOrder({
       quantity: order.quantity,
-      price: order.itemPrice,
+      price: order.price,
       side: order.side,
     })
   }
@@ -180,7 +263,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
   const handleClickDetails = order => e => {
     e.stopPropagation()
     const { cancel, ...rest } = order
-    setDetailsOrder({...rest, itemPrice: order.itemPrice})
+    setDetailsOrder({...rest, itemPrice: order.price})
     handleDialogOpen('details')()
   }
 
@@ -189,42 +272,23 @@ const Orders = ({global, type, version, onClickOrder}) => {
   }
 
   const handleChangeOrdersType = type => () => {
-    Amplitude.event(`View ${type == 'open' ? 'Open' : 'Completed'} Order`, {
-      'Base Currency': current?.symbol ?? 'Global',
-      'Quote Currency': current?.quoteSymbol,
-      'Network': blockchain.code.toUpperCase(),
-    })
-
     setOrderTypes(type)
-  }
-
-  const handleHideCancelledOrders = value => {
-    setHideCancelledOrders(value)
   }
 
   const handleConnectWallet = async () => {
     if ( ! wallet) {
       Amplitude.event('Wallet Connect Clicked', {
-        'Source': Amplitude.page(),
+        'Page': Amplitude.page(),
+        'Chain ID': blockchain?.id,
+        'Market ID': current?.address,
       })
 
-      const result = await connect()
-      if (result) {
-        const walletName = await getConnectorName()
-        Amplitude.event('Wallet Connect Success', {
-          'Source': Amplitude.page(),
-          'Type': walletName,
-        })
-      }
+      await connect()
     }
   }
 
   const filterByAddress = (order) => {
-    return !showCollectionOrders || (!global && order.contractAddress === current?.address)
-  }
-
-  const filteredByStatus = order => {
-    return !hideCancelledOrders || (order.status !== 'cancelled')
+    return !showCollectionOrders || (!global && order.contract_address === current?.address)
   }
 
   return (
@@ -234,7 +298,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
           <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'open' ? '#fff' : '#5E5C6B'} height={1}>Open Orders</App.Text>
         </App.Flex>
         <App.Flex flex={1} center className={cn(styles.tab, {[styles.active]: ordersType === 'closed'})} onClick={handleChangeOrdersType('closed')}>
-          <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'closed' ? '#fff' : '#5E5C6B'} height={1}>Completed Orders</App.Text>
+          <App.Text size={[12, 14]} uppercase={[true, null]} color={ordersType === 'closed' ? '#fff' : '#5E5C6B'} height={1}>Order History</App.Text>
         </App.Flex>
 
         <div className={styles.badge} style={{transform: `translateX(${ordersType === 'open' ? 0 : 100}%)`}} />
@@ -274,18 +338,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
               <App.Flex />
             )}
 
-            {ordersType === 'closed' ? (
-              <App.Flex align="center" gap={8} flex={1}>
-                <App.Switch
-                  width={40}
-                  height={20}
-                  checked={hideCancelledOrders}
-                  onChange={handleHideCancelledOrders}
-                />
-
-                <App.Text color="#B9B8C5" size={[10, 12]} weight={600} height={1}>{version != 'mobile' ? 'Hide All Cancelled Orders' : 'Hide Cancelled Orders'}</App.Text>
-              </App.Flex>
-            ) : (
+            {ordersType !== 'closed' && orders[ordersType].length > 0 ? (
               version == 'mobile' ? (
                 <App.Text weight={600} color="#FFAF38" onClick={handleCancelAllClick}>CANCEL ALL</App.Text>
               ) : (
@@ -293,7 +346,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                   Cancel All
                 </App.Button>
               )
-            )}
+            ) : null}
           </App.Flex>
 
           {version != 'mobile' ? (
@@ -315,40 +368,46 @@ const Orders = ({global, type, version, onClickOrder}) => {
 
               <App.Flex column flex={1} sx={{overflow: 'auto'}}>
               {
-                orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map((order) => {
+                orders[ordersType].filter(order => filterByAddress(order)).map((order) => {
                   return (
                     <App.Flex column key={order.id}>
                       <App.Flex column className={styles.orderContainer}>
-                        <App.Flex align="center" className={cn(styles.order, {[styles.disabled]: order.status === 'completed' || order.status === 'cancelled'})}>
+                        <App.Flex align="center" className={cn(styles.order, {[styles.disabled]: order.status === 'closed' || order.status === 'cancelled'})}>
                           <div className={styles.side} style={{backgroundColor: order.side === 'buy' ? '#53F19C' : '#FF1D61'}} />
-                          <App.Flex column align="center" justify="center" sx={{width: 90, padding: 8}}>
-                            {order.image && type === 'nfts' ? (
-                              <Image alt="" src={order.image} width={35} height={35} />
-                            ) : (
-                              order.quoteCurrency ? (
-                                <App.Flex column gap={4}>
-                                  <App.Text size={12} weight={600} center height={1}>{ order.baseCurrency }</App.Text>
-                                  <div style={{width: '100%', minWidth: 20, height: 1, background: '#B9B8C5'}} />
-                                  <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ order.quoteCurrency }</App.Text>
-                                </App.Flex>
-                              ) : null
-                            )}
+                          <App.Flex sx={{width: 90, paddingRight: 8}}>
+                            <App.Flex justify={'center'} align={'center'} sx={{width: 30}} className={cn(styles.iconGlass, {[styles.active]: order.quantity_pending * 1 > 0})}>
+                              <App.Icon width={20} height={20} color="#fff" icon={"hourglass"} />
+                            </App.Flex>
+                            <App.Flex column align="center" justify="center" >
+                              {order.image && type === 'nfts' ? (
+                                <Image alt="" src={order.image} width={35} height={35} />
+                              ) : (
+                                order.quote_currency ? (
+                                  <App.Flex column gap={4}>
+                                    <App.Text size={12} weight={600} center height={1}>{ order.base_currency }</App.Text>
+                                    <div style={{width: '100%', minWidth: 20, height: 1, background: '#B9B8C5'}} />
+                                    <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ order.quote_currency }</App.Text>
+                                  </App.Flex>
+                                ) : null
+                              )}
+                            </App.Flex>
                           </App.Flex>
+
 
                           <App.Flex column sx={{width: 60, padding: 8}} align="center" justify="center">
                             <App.Flex column gap={4}>
-                              <App.Text size={12} weight={600} center height={1}>{ order.quantityFilled }</App.Text>
+                              <App.Text size={12} weight={600} center height={1}>{ order.quantity_filled }</App.Text>
                               <div style={{width: '100%', minWidth: 20, height: 1, background: '#B9B8C5'}} />
                               <App.Text color="#B9B8C5" size={8} weight={600} center height={1}>{ order.quantity }</App.Text>
                             </App.Flex>
                           </App.Flex>
 
                           <App.Flex flex={1} column sx={{padding: 8}} align="center" justify="center">
-                            <App.Text size={12} weight={600} center color="#B9B8C5" height={1}>{ order.itemPrice }</App.Text>
+                            <App.Text size={12} weight={600} center color="#B9B8C5" height={1}>{ order.price }</App.Text>
                           </App.Flex>
 
                           <App.Flex flex={1} column align="center" justify="center" sx={{padding: 8, position: 'relative', height: '100%', overflow: 'hidden'}}>
-                            <App.Text size={12} weight={600}>{ order.price }</App.Text>
+                            <App.Text size={12} weight={600}>{ order.total }</App.Text>
                           </App.Flex>
                         </App.Flex>
 
@@ -356,28 +415,28 @@ const Orders = ({global, type, version, onClickOrder}) => {
                           <App.Text color="rgba(185, 184, 197, 1)" size={10} weight={500} sx={{marginRight: 12}} height={1}>{ order.time }</App.Text>
                           {order.status !== 'open' ? (
                             <App.Text color="#B9B8C5" size={10} weight={600} uppercase height={1}>
-                              {(order.status === 'completed' || order.status === 'cancelled') ? order.status : 'Cancel order'}
+                              {order.status === 'cancelled' && order.quantity_filled !== '0'  ? 'Partially filled' : order.status}
                             </App.Text>
                           ) : null}
-                          
+
                           <App.Flex className={styles.actionButton} align="center" justify="center" onClick={handlePressCopy(order)}>
                             <App.Icon icon="copy" width={12} height={12} color="#B9B8C5" />
                           </App.Flex>
 
-                          {order.status !== 'open' ? (
+                          {order.status !== 'open' && order.quantity_pending == 0 ? (
                             <App.Flex className={styles.actionButton} align="center" justify="center" onClick={handleClickDetails(order)}>
                               <App.Icon icon="order-details" />
                             </App.Flex>
                           ) : null}
 
-                          {order.status === 'open' ? (
+                          {order.status === 'open' && order.quantity_pending == 0 ? (
                             <App.Flex className={styles.actionButton} align="center" justify="center" onClick={handlePressCancelConfirm(order)}>
                               <App.Icon icon="cross-circle" />
                             </App.Flex>
                           ) : null}
                         </App.Flex>
-
-                        <App.Flex row className={cn(styles.filled, styles[Math.round(order.quantityFilled * 100 / order.quantity) < 100 ? 'notComplete' : 'complete'])} width={`${Math.round(order.quantityFilled * 100 / order.quantity)}%`} />
+                        {/* <App.Flex row className={cn(styles.filled, styles.pending)} width={`${Math.round(order.quantityFilled * 100 / order.quantity)}%`} /> */}
+                        <App.Flex row className={cn(styles.filled, styles[order.side == 'sell' ? 'notComplete' : 'complete'])} width={`${Math.round(order.quantity_filled * 100 / order.quantity)}%`} />
                       </App.Flex>
                     </App.Flex>
                   )
@@ -391,9 +450,9 @@ const Orders = ({global, type, version, onClickOrder}) => {
             ) : (
               <App.Flex column flex={1} fullWidth sx={{position: 'relative' }}>
                 <App.Flex column sx={{position: 'absolute', inset: 0, overflow: 'auto'}}>
-                  {orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).length ? 
-                    orders[ordersType].filter(order => filterByAddress(order) && filteredByStatus(order)).map((order) => {
-                      const percent = Math.round(order.quantityFilled * 100 / order.quantity)
+                  {orders[ordersType].filter(order => filterByAddress(order)).length ?
+                    orders[ordersType].filter(order => filterByAddress(order)).map((order) => {
+                      const percent = Math.round(order.quantity_filled * 100 / order.quantity)
                       const perimeter =  2 * Math.PI * 19.5
                       const length = (1 + Math.max(0, Math.min(percent / 100, 1))) * perimeter
 
@@ -424,7 +483,7 @@ const Orders = ({global, type, version, onClickOrder}) => {
                           <App.Flex row justify="space-between" flex={1}>
                             <App.Flex column gap={8}>
                               <App.Flex row center gap={10} height={25} className={styles.currency} onClick={handleClickDetails(order)}>
-                                <App.Text size={12} weight={700} height={1}>{order.baseCurrency} <App.Text inline size={10} weight={700} color="#5E5C6B" height={1}>/ {order.quoteCurrency}</App.Text></App.Text>
+                                <App.Text size={12} weight={700} height={1}>{order.base_currency} <App.Text inline size={10} weight={700} color="#5E5C6B" height={1}>/ {order.quote_currency}</App.Text></App.Text>
                                 <App.Icon icon="chevron-right2" />
                               </App.Flex>
 
@@ -432,21 +491,21 @@ const Orders = ({global, type, version, onClickOrder}) => {
                                 <App.Flex width={60}>
                                   <App.Text size={12} uppercase height={1} color="#5E5C6B">Amount:</App.Text>
                                 </App.Flex>
-                                <App.Text size={14} weight={600} height={1}>{ order.quantityFilled } <App.Text inline size={12} weight={600} height={1} color="#5E5C6B">/ { order.quantity }</App.Text></App.Text>
+                                <App.Text size={14} weight={600} height={1}>{ order.quantity_filled } <App.Text inline size={12} weight={600} height={1} color="#5E5C6B">/ { order.quantity }</App.Text></App.Text>
                               </App.Flex>
 
                               <App.Flex row align="center">
                                 <App.Flex width={60}>
                                   <App.Text size={12} uppercase height={1} color="#5E5C6B">Price:</App.Text>
                                 </App.Flex>
-                                <App.Text size={14} weight={600} height={1}>{ order.itemPrice }</App.Text>
+                                <App.Text size={14} weight={600} height={1}>{ order.price }</App.Text>
                               </App.Flex>
 
                               <App.Flex row align="center">
                                 <App.Flex width={60}>
                                   <App.Text size={12} uppercase height={1} color="#5E5C6B">Total:</App.Text>
                                 </App.Flex>
-                                <App.Text size={14} weight={600} height={1} color="#5E5C6B">{ order.price }</App.Text>
+                                <App.Text size={14} weight={600} height={1} color="#5E5C6B">{ order.total }</App.Text>
                               </App.Flex>
                             </App.Flex>
 

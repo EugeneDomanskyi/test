@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { gsap } from 'gsap'
 import cn from 'classnames'
 
-import useApp from '@/myhooks/useApp'
+import AppHelper from '@/libs/AppHelper'
 
 import $alert from '@/store/alert'
 
@@ -27,7 +27,7 @@ const AppAlert = () => {
   useEffect(() => {
     if (messages.length) {
       setCurrentMessages(state => {
-        return [
+        const newMessages = [
           ...messages.map(item => ({
             ...item,
             id: Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000,
@@ -35,6 +35,8 @@ const AppAlert = () => {
           })),
           ...state,
         ]
+
+        return newMessages.slice(0, 3)
       })
 
       dispatch($alert.set.clear())
@@ -46,22 +48,16 @@ const AppAlert = () => {
       if (currentMessages.some(item => ! item.visible)) {
         const unvisibleMessages = currentMessages.filter(item => ! item.visible)
         for (const message of unvisibleMessages) {
-          const isOpen = await handleOpen(message.id)
+          if (!isApp) {
+            const isOpen = await handleOpen(message.id)
             if (isOpen) {
               timerRef.current[message.id] = setTimeout(async () => {
                 handleClose(message.id)
               }, message.delay)
             }
-          // if (!isApp) {
-          //   const isOpen = await handleOpen(message.id)
-          //   if (isOpen) {
-          //     timerRef.current[message.id] = setTimeout(async () => {
-          //       handleClose(message.id)
-          //     }, message.delay)
-          //   }
-          // } else {
-          //   appPost({notification: message})
-          // }
+          } else {
+            AppHelper.send({notification: message})
+          }
         }
 
         setCurrentMessages(state => {
@@ -70,6 +66,13 @@ const AppAlert = () => {
             visible: true,
           }))
         })
+      }
+
+      if (currentMessages.length > 3) {
+        const messagesToClose = currentMessages.slice(3)
+        for (const message of messagesToClose) {
+          await handleClose(message.id)
+        }
       }
     })()
   }, [currentMessages, alertsRef.current])

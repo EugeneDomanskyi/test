@@ -1,6 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
+
 import { request } from './index'
-import numeral from "numeral";
+import Decimal from 'decimal.js'
+
+export const formatNumberWithDecimals = (num, decimals) => {
+  let formattedNum = Number(num).toFixed(decimals)
+  formattedNum = formattedNum.replace(/(?:\.0*|(\.\d+?)0+)$/, '$1')
+  return formattedNum
+}
 
 export const portfolioSlice = createSlice({
   name: '$portfolio',
@@ -21,25 +28,37 @@ export const portfolioSlice = createSlice({
       side: 'buy',
       amount: 0,
     },
+    update: false,
   },
 
   reducers: {
     details: (state, { payload }) => {
       const native = payload.data.find(item => item.type === 'native')
       state.native = {
-        value: (native?.balance ?? 0).toFixed(4),
-        symbol: native?.symbol,
+        value: native?.balance ?? 0,
+        symbol: native?.symbol ?? '',
       }
 
-      state.list = payload.data.filter(item => item.price > 0 && !['native'].includes(item.type) || item.balance > 1 && ['quote'].includes(item.type)).map(item => {
+      state.list = payload.data.filter(item => !['native'].includes(item.type)).map(item => {
+        const usd = new Decimal(item.type === 'quote' ? item.balance : (item.price * item.balance))
+        const usdFormatted = usd.toDecimalPlaces(6).toFixed()
+        const image = item.image
+          || (item.symbol === 'USDT' ? '/images/icon-usdt.png' : null)
+          || (item.symbol === 'USDC' ? '/images/icon-usdc.png' : null)
+          || (item.symbol === 'WETH' ? 'https://tegro.com/images/0x4200000000000000000000000000000000000006.png' : null)
+          || (payload?.blockchain?.code == 'base' ? `https://storage.googleapis.com/token-assets/assets/${payload?.blockchain?.code}/${item.address.toLowerCase()}.png` : null)
+          
         return {
           address: item.address,
           name: item.name,
           symbol: item.symbol,
-          image: item.image || (item.type === 'quote' ? '/images/icon-usdt.png' : null) || `https://storage.googleapis.com/token-assets/assets/${payload?.blockchain?.code}/${item.address.toLowerCase()}.png`,
-          balance: item.balance.toLocaleString('fullwide', {useGrouping:false}),
-          price: item.price || (item.type === 'quote' ? item.balance : 0),
-          usd: (item.price || (item.type === 'quote' ? item.balance : 0)).toFixed(4),
+          image,
+          balance: item.balance,
+          placed: item.placed_amount,
+          available: new Decimal((item.balance - item.placed_amount) < 0 ? 0 : (item.balance - item.placed_amount)).toFixed(),
+          price: (item.price || (item.type === 'quote' ? item.balance : 0)),
+          usd: usd.toFixed(),
+          usdFormatted,
           ticker: {
             type: item.price_change_24_h > 0 ? 'plus' : item.price_change_24_h < 0 ? 'minus' : 'zero',
             price_change_24_h: item.price_change_24_h,
@@ -51,9 +70,9 @@ export const portfolioSlice = createSlice({
       })
 
       const usd = state.list.reduce((acc, item) => {
-        return acc + item.price
+        return acc + item.usd * 1
       }, 0)
-      state.usd = usd.toFixed(4)
+      state.usd = new Decimal(usd).toDecimalPlaces(6).toFixed()
 
       // const usdTicker = state.list.reduce((acc, item) => {
       //   return acc + (item.price * item.ticker.price_change_24_h / 100)
@@ -72,6 +91,10 @@ export const portfolioSlice = createSlice({
 
     prefill: (state, { payload }) => {
       state.prefill = payload
+    },
+
+    update: (state, { payload }) => {
+      state.update = payload
     },
   },
 })

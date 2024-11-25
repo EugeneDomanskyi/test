@@ -18,7 +18,7 @@ const HomeStats = () => {
   const date = moment().startOf('day').format('MMM DD, hh:mm A')
 
   useEffect(() => {
-    fetchStats()
+    //fetchStats()
   }, [])
 
   const fetchStats = async () => {
@@ -32,32 +32,15 @@ const HomeStats = () => {
     setLoading(false)
   }
 
-  const formatNumber = (number) => {
-    const suffixes = ['', 'K', 'M', 'B', 'T', 'Q']
-    let suffixIndex = 0
-  
-    while (number >= 1000 && suffixIndex < suffixes.length - 1) {
-      number /= 1000
-      suffixIndex++
-    }
-  
-    return `${number.toFixed(1)}${suffixes[suffixIndex]}`
-  }
-
   return !isMobile ? (
-    <App.Container maxWidth={1230} sx={{ paddingBottom: 32 }} className={styles.container}>
+    <App.Container maxWidth={1230} sx={{ paddingTop: 32, paddingBottom: 32 }} className={styles.container}>
       <App.Flex column gap={32}>
-        <App.Text center size={[64, 48]} weight={700} height={1}>
-          DEX with <App.Text inline italic size={[64, 48]} weight={700} height={1} family="Playfair Display" color="#A8DC43">Unmatched Gas Efficiency</App.Text><br />and <App.Text inline italic size={[64, 48]} weight={700} height={1} family="Playfair Display" color="#7364FF">Market Tools</App.Text>
-        </App.Text>
-
         <App.Flex row fullWidth gap={16}>
           <App.Flex row flex={1} gap={16}>
             <App.Flex column flex={1} gap={16}>
-              <App.Text center tag="h2" uppercase size={40} weight={700} height={1}>Testnet Stats</App.Text>
-              <App.Flex column center gap={32} className={styles.statsGradientBox}>
+              <App.Flex column fullHeight center gap={32} className={styles.statsGradientBox}>
                 <App.Flex center column>
-                  <App.Text center size={24} weight={700} height={1.2}>Total Trades Settled</App.Text>
+                  <App.Text center size={24} weight={700} height={1.2}>Trades Settled</App.Text>
                   <App.Text center size={24} weight={700} italic family="Playfair Display">(On-chain)</App.Text>
                 </App.Flex>
                 
@@ -69,15 +52,11 @@ const HomeStats = () => {
                   <App.Text size={48} weight={700} height={1}>{stats.settled}</App.Text>
                 )}
               </App.Flex>
-
-              <App.Flex column>
-                <App.Text size={14} weight={400} color="#9B99AE" className={styles.bottomText} height={1}><a href="https://stats.tegro.com/?utm_source=home&utm_medium=tegro&utm_campaign=testnet" target="_blank" rel="noreferrer">View more Testnet Stats &gt;</a></App.Text>
-              </App.Flex>
             </App.Flex>
 
             <App.Flex flex={1} column gap={8} className={cn(styles.statsBox, styles.noPadding)}>
               <App.Flex column full gap={12} justify="flex-end" className={styles.gasBack}>
-                <App.Text size={24} weight={700} height={1}>Gas <App.Text inline size={24} weight={700} italic family="Playfair Display">Saved</App.Text></App.Text>
+                <App.Text size={24} weight={700} height={1}>Gas <App.Text inline size={24} weight={700} italic family="Playfair Display">Savings</App.Text></App.Text>
 
                 {loading ? (
                   <App.Flex height={39} align="center">
@@ -86,6 +65,8 @@ const HomeStats = () => {
                 ) : (
                   <App.Text size={39} weight={800} height={1}>${stats.gas}</App.Text>
                 )}
+
+                <App.Text size={14} weight={400} height={1} color="#9B99AE">compared to 46 biggest Dexes</App.Text>
               </App.Flex>
             </App.Flex>
           </App.Flex>
@@ -113,7 +94,7 @@ const HomeStats = () => {
             <App.Flex row flex={1} gap={16}>
               <App.Flex column flex={7} gap={8} className={cn(styles.statsBox, styles.noPadding)}>
                 <App.Flex column gap={12} className={styles.volumeBack}>
-                  <App.Text size={24} weight={700}>7-Day <App.Text inline size={24} weight={700} italic family="Playfair Display">Trading</App.Text> Volume</App.Text>
+                  <App.Text size={24} weight={700}>Trading <App.Text inline size={24} weight={700} italic family="Playfair Display">Volume</App.Text></App.Text>
 
                   {loading ? (
                     <App.Flex height={60} align="center">
@@ -127,8 +108,8 @@ const HomeStats = () => {
 
               <App.Flex column flex={3} center gap={12} className={styles.statsGradientBox}>
                 <App.Flex center column>
-                  <App.Text center size={24} weight={700} height={1}>Total Orders</App.Text>
-                  <App.Text center size={24} weight={700} italic family="Playfair Display" height={1}>Cancelled</App.Text>
+                  <App.Text center size={24} weight={700} height={1}>Wallets</App.Text>
+                  <App.Text center size={24} weight={700} italic family="Playfair Display" height={1}>Connected</App.Text>
                 </App.Flex>
 
                 {loading ? (
@@ -147,104 +128,89 @@ const HomeStats = () => {
   ) : (
     <App.Container className={styles.container}>
       <App.Flex column gap={32}>
-      <App.Text center size={[64, 48]} weight={700} height={1}>
-          DEX with <App.Text inline italic size={[64, 48]} weight={700} height={1} family="Playfair Display" color="#A8DC43">Unmatched Gas Efficiency</App.Text><br />and <App.Text inline italic size={[64, 48]} weight={700} height={1} family="Playfair Display" color="#7364FF">Market Tools</App.Text>
-        </App.Text>
-        
         <App.Flex fullWidth column gap={16}>
-          <App.Text center tag="h2" uppercase size={40} weight={700} height={1}>Testnet Stats</App.Text>
-
-          <App.Flex column center gap={12} className={styles.statsGradientBox}>
-            <App.Flex center column>
-              <App.Text center size={20} weight={700} height={1.2}>Total Trades Settled</App.Text>
-              <App.Text center size={20} weight={700} italic family="Playfair Display">(On-chain)</App.Text>
+          <App.Flex column gap={12} className={styles.statsGradientBox} sx={{ position: 'relative' }}>
+            <App.Flex align="flex-start" column>
+              <App.Text size={24} weight={800} height={1.2}>Trades Settled</App.Text>
+              <App.Text size={24} weight={800} italic family="Playfair Display">(On-chain)</App.Text>
             </App.Flex>
             
             {loading ? (
-              <App.Flex height={48} align="center" justify="center">
-                <App.Loader size={48} />
+              <App.Flex height={32} align="center">
+                <App.Loader size={32} />
               </App.Flex>
             ) : (
-              <App.Text size={48} weight={700} height={1}>{stats.settled}</App.Text>
+              <App.Text size={32} weight={700} height={1}>{stats.settled}</App.Text>
             )}
+
+            <App.Flex center width={48} height={48} sx={{ position: 'absolute', top: 16, right: 16 }}>
+              <img src="/images/home/stats-3.png" alt="" className={styles.img} />
+            </App.Flex>
           </App.Flex>
 
-          <App.Flex row fullWidth gap={16}>
-            <App.Flex flex={7} column gap={8} className={cn(styles.statsBox, styles.noPadding)}>
-              <App.Flex column full gap={20} justify="flex-end" className={styles.gasBack}>
-                <App.Text size={20} weight={700} height={1}>
-                  Gas<br />
-                  <App.Text inline size={20} weight={700} italic family="Playfair Display">Saved</App.Text>
-                </App.Text>
-
-                {loading ? (
-                  <App.Flex height={28} align="center">
-                    <App.Loader size={28} />
-                  </App.Flex>
-                ) : (
-                  <App.Text size={28} weight={800} height={1}>${stats.gas}</App.Text>
-                )}
-              </App.Flex>
-            </App.Flex>
-
-            <App.Flex column flex={3} gap={12} fullWidth justify="space-between" sx={{ paddingBottom: 48 }} className={cn(styles.statsBox, styles.newGradient)}>
-              <App.Flex column>
-                <App.Text size={16} weight={700}>Total</App.Text>
-                <App.Text size={16} weight={700}>Orders</App.Text>
-                <App.Text size={16} weight={700} italic family="Playfair Display">Created</App.Text>
-              </App.Flex>
+          <App.Flex flex={7} column gap={8} className={cn(styles.statsBox, styles.noPadding)}>
+            <App.Flex column full gap={20} justify="flex-end" className={styles.gasBack}>
+              <App.Text size={24} weight={800} height={1}>
+                Gas <App.Text inline size={24} weight={700} italic family="Playfair Display">Savings</App.Text>
+              </App.Text>
 
               {loading ? (
-                <App.Flex height={44} align="center">
-                  <App.Loader size={44} />
+                <App.Flex height={32} align="center">
+                  <App.Loader size={32} />
                 </App.Flex>
               ) : (
-                <App.Text size={44} weight={800} height={1}>{stats.created}</App.Text>
+                <App.Text size={32} weight={800} height={1}>${stats.gas}</App.Text>
               )}
-
-              <App.Flex center width={48} height={48} sx={{ position: 'absolute', bottom: -8, right: -8 }}>
-                <img src="/images/home/stats-3.png" alt="" className={styles.img} />
-              </App.Flex>
             </App.Flex>
           </App.Flex>
 
           <App.Flex row fullWidth gap={16}>
             <App.Flex column flex={1} gap={8} className={cn(styles.statsBox, styles.noPadding)}>
               <App.Flex column gap={12} className={styles.volumeBack}>
-                <App.Text size={20} weight={700}>
-                  7-Day<br />
-                  <App.Text inline size={20} weight={700} italic family="Playfair Display">Trading</App.Text><br />
-                  Volume
+                <App.Text size={24} weight={700}>
+                  Trading<br />
+                  <App.Text inline size={24} weight={700} italic family="Playfair Display">Volume</App.Text>
                 </App.Text>
 
                 {loading ? (
-                  <App.Flex height={40} align="center">
-                    <App.Loader size={40} />
+                  <App.Flex height={32} align="center">
+                    <App.Loader size={32} />
                   </App.Flex>
                 ) : (
-                  <App.Text size={40} weight={800} height={1}>${stats.volume}</App.Text>
+                  <App.Text size={32} weight={800} height={1}>${stats.volume}</App.Text>
                 )}
               </App.Flex>
             </App.Flex>
 
             <App.Flex column flex={1} center gap={12} className={styles.statsGradientBox}>
               <App.Flex center column>
-                <App.Text center size={20} weight={700} height={1}>Total Orders</App.Text>
-                <App.Text center size={20} weight={700} italic family="Playfair Display" height={1}>Cancelled</App.Text>
+                <App.Text center size={24} weight={700} height={1}>Wallets</App.Text>
+                <App.Text center size={24} weight={700} italic family="Playfair Display" height={1}>Connected</App.Text>
               </App.Flex>
 
               {loading ? (
-                <App.Flex height={40} align="center" justify="center">
-                  <App.Loader size={40} />
+                <App.Flex height={32} align="center" justify="center">
+                  <App.Loader size={32} />
                 </App.Flex>
               ) : (
-                <App.Text center size={40} weight={700} height={1}>{stats.cancelled}</App.Text>
+                <App.Text center size={32} weight={700} height={1}>{stats.cancelled}</App.Text>
               )}
             </App.Flex>
           </App.Flex>
 
-          <App.Flex center>
-            <App.Text center size={14} weight={400} color="#9B99AE" className={styles.bottomText}><a href="https://stats.tegro.com/?utm_source=home&utm_medium=tegro&utm_campaign=testnet" target="_blank" rel="noreferrer">View more Testnet Stats &gt;</a></App.Text>
+          <App.Flex row gap={12} fullWidth align="center" justify="space-between" className={cn(styles.statsBox, styles.newGradient)}>
+            <App.Flex column>
+              <App.Text size={24} weight={700}>Total Orders</App.Text>
+              <App.Text size={24} weight={700} italic family="Playfair Display">Created</App.Text>
+            </App.Flex>
+
+            {loading ? (
+              <App.Flex height={32} align="center">
+                <App.Loader size={32} />
+              </App.Flex>
+            ) : (
+              <App.Text size={32} weight={800} height={1}>{stats.created}</App.Text>
+            )}
           </App.Flex>
         </App.Flex>
       </App.Flex>

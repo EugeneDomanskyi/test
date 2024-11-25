@@ -1,10 +1,11 @@
+import { forwardRef } from 'react'
 import cn from 'classnames'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
 
 import styles from './styles.module.scss'
 
-const AppFlex = ({ children, row, column, direction, center, align, justify, gap, flex, width, height, fullWidth, fullHeight, full, order, className, wrap, sx = {}, ...props }) => {
+const AppFlex = forwardRef(({ children, row, column, direction, center, align, justify, gap, flex, width, height, fullWidth, fullHeight, full, order, className, wrap, sx = {}, ...props }, ref) => {
   const { propValue } = usePropsHelper()
 
   const classes = () => {
@@ -67,13 +68,13 @@ const AppFlex = ({ children, row, column, direction, center, align, justify, gap
     if (order) {
       result.order = propValue(order, true)
     }
-
+    
     return result
   }
-
+  
   return (
-    <div className={classes()} style={styleObject()} {...props}>{children}</div>
+    <div ref={ref} className={classes()} style={styleObject()} {...props}>{children}</div>
   )
-}
+})
 
 export default AppFlex

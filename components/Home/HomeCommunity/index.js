@@ -43,12 +43,6 @@ const HomeCommunity = () => {
         break
     }
 
-    if (community) {
-      Amplitude.event('Community Resources Visited', {
-        'Community': community,
-      })
-    }
-
     window.open(url, '_blank')
   }
 
@@ -70,7 +64,7 @@ const HomeCommunity = () => {
             <App.Flex column>
               <App.Text tag="h2" size={40} weight={600} height={1}>
                 Building Tomorrow&apos;s DEX,<br />
-                <App.Text inline italic size={40} weight={700} color="#A6DC37" family="Playfair Display" height={1}>Today – With You, For You</App.Text>
+                <App.Text inline size={40} weight={700} color="#A6DC37" height={1}>Today – With You, For You</App.Text>
               </App.Text>
             </App.Flex>
 
@@ -136,7 +130,7 @@ const HomeCommunity = () => {
             <App.Flex direction={['row', 'column']} align={['center', 'flex-start']} fullWidth gap={12}>
               <App.Flex column width={[430, '100%']}>
                 <App.Text size={20} weight={600}>
-                  Never miss <App.Text inline italic size={20} weight={700} family="Playfair Display" color="#7364FF">an Update</App.Text>
+                  Never miss <App.Text inline size={20} weight={700} color="#7364FF">an update</App.Text>
                 </App.Text>
 
                 <App.Text size={14} weight={500} color="#9B99BD">

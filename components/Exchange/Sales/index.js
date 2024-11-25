@@ -7,6 +7,7 @@ import Socket from '@/libs/ws.lib'
 
 import $app from '@/store/app'
 import $orders from '@/store/orders'
+import $portfolio from '@/store/portfolio'
 
 import App from '@/components/App'
 
@@ -26,9 +27,11 @@ const Sales = ({ version, onClickSale }) => {
     if (current?.id) {
       Socket.on('trade_created', 'trades', (trade) => {
         dispatch($orders.set.addTrades(trade))
+        dispatch($portfolio.set.update(true))
       })
       Socket.on('trade_updated', 'trades', (trade) => {
         dispatch($orders.set.updateTrade(trade))
+        dispatch($portfolio.set.update(true))
       })
 
       getTrades()
@@ -44,8 +47,8 @@ const Sales = ({ version, onClickSale }) => {
       limit: 10,
     })
 
-    if (result?.success && Array.isArray(result.data)) {
-      dispatch($orders.set.trades({data: result.data, token: current}))
+    if (result && Array.isArray(result)) {
+      dispatch($orders.set.trades({data: result, token: current}))
     } else {
       dispatch($orders.set.trades({data: [], token: current}))
     }
@@ -74,10 +77,21 @@ const Sales = ({ version, onClickSale }) => {
 
       <App.Flex column height={version != 'mobile' ? 'calc(100% - 32px)' : '100%'}>
         <App.Flex className={styles.rowHeader} justify="space-between" align="center">
-          <App.Text flex={1} size={[10, 12]} color="#B9B8C5" weight={[600, 500]} height={1}>Price</App.Text>
-          <App.Text flex={1} size={[10, 12]} color="#B9B8C5" center weight={[600, 500]} height={1}>Volume</App.Text>
-          <App.Text flex={1} size={[10, 12]} color="#B9B8C5" center weight={[600, 500]} height={1}>Status</App.Text>
-          <App.Text flex={1} size={[10, 12]} color="#B9B8C5" right weight={[600, 500]} height={1}>Time</App.Text>
+          <App.Flex flex={1}>
+            <App.Text size={[10, 12]} color="#B9B8C5" weight={[600, 500]} height={1}>Price</App.Text>
+          </App.Flex>
+
+          <App.Flex flex={1}>
+            <App.Text size={[10, 12]} color="#B9B8C5" center weight={[600, 500]} height={1}>Volume</App.Text>
+          </App.Flex>
+
+          <App.Flex width={50}>
+            <App.Text flex={1} size={[10, 12]} color="#B9B8C5" center weight={[600, 500]} height={1}>Status</App.Text>
+          </App.Flex>
+
+          <App.Flex width={80}>
+            <App.Text flex={1} size={[10, 12]} color="#B9B8C5" right weight={[600, 500]} height={1}>Time</App.Text>
+          </App.Flex>
         </App.Flex>
 
         <App.Flex flex={1} column sx={{overflow: 'auto'}}>
@@ -98,11 +112,17 @@ const Sales = ({ version, onClickSale }) => {
 
               previousPrice = sale.price * 1
               return (
-                <App.Flex key={sale.id || sale.signature} column>
-                  <App.Flex  justify="space-between" align="center" className={styles.sale} sx={{backgroundColor: color.row}} onClick={handleClick({...sale, side: color.side})}>
-                    <App.Text flex={1} size={12} color={color.price} height={1}>{ sale.price }</App.Text>
-                    <App.Text flex={1} size={12} weight={600} center height={1}>{ sale.amount }</App.Text>
-                    <App.Flex flex={1} size={12} weight={600} center height={1}>
+                <App.Flex key={sale.id || sale.signature} column className={styles.salesParent}>
+                  <App.Flex  justify="space-between" align="center" className={styles.sale} onClick={handleClick({...sale, side: color.side})}>
+                    <App.Flex flex={1}>
+                      <App.Text size={12} color={color.price} height={1}>{ sale.price }</App.Text>
+                    </App.Flex>
+
+                    <App.Flex flex={1}>
+                      <App.Text size={12} weight={600} center height={1}>{ sale.amount }</App.Text>
+                    </App.Flex>
+
+                    <App.Flex center width={50}>
                       { (state => {
                         switch (state) {
                           case 'success':
@@ -111,12 +131,17 @@ const Sales = ({ version, onClickSale }) => {
                             return <App.Icon width={14} height={11} color="#fff" icon={"cross"} />
                           case 'matched':
                             return <App.Icon width={20} height={20} color="#fff" icon={"hourglass"} />
+                          case 'in_progress':
+                            return <App.Icon width={20} height={20} color="#fff" icon={"hourglass"} />
                           default:
                             return null
                         }
                       })(sale.state) }
                     </App.Flex>
-                    <App.Text flex={1} size={12} right height={1}>{ moment(sale.time).format('hh:mm:ss A') }</App.Text>
+
+                    <App.Flex width={80}>
+                      <App.Text flex={1} size={12} right height={1}>{ moment((sale.time ?? sale.timestamp) * 1000).format('hh:mm:ss A') }</App.Text>
+                    </App.Flex>
                   </App.Flex>
                 </App.Flex>
               )

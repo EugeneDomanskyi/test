@@ -8,6 +8,10 @@
   background: radial-gradient(113.88% 113.88% at 67.99% -35.17%, #231F38 0%, #100D21 100%);
   padding: 16px;
 
+  @media (max-width: 768px) {
+    padding: 24px;
+  }
+
   &.newGradient {
     background: radial-gradient(751.8% 165.3% at 71.74% -97.8%, #100D21 0%, #231F38 100%);
     border: 1px solid #749828;
@@ -36,6 +40,10 @@
   padding: 16px;
   background: linear-gradient(101.49deg, #749828 -1.14%, #674EFF 109.57%);
   border-radius: 16px;
+
+  @media (max-width: 768px) {
+    padding: 24px;
+  }
 }
 
 .img {

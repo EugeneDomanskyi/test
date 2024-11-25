@@ -1,6 +1,10 @@
 .form {
-  padding: 23px 10px 10px;
+  padding: 10px;
   flex: 1;
+
+  @media (max-width: 950px) {
+    min-height: 300px;
+  }
 
   .balance {
     margin-top: -1px;
@@ -61,6 +65,14 @@
   
       .multipler {
         padding-left: 10px;
+      }
+
+      &.error {
+        border-color: #FF1D61;
+  
+        .multipler {
+          border-color: #FF1D61;
+        }
       }
     }
 

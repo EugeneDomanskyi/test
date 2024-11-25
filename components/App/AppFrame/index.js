@@ -1,8 +1,10 @@
+import cn from 'classnames'
+
 import { usePropsHelper } from '@/myhooks/props-helper'
 
 import styles from './styles.module.scss'
 
-const AppFrame = ({ children, border, radius, padding = 16, background, blur, width, height, overflow, gradient, sx = {}, onClick }) => {
+const AppFrame = ({ children, border, radius, padding = 16, button, flex, background, blur, width, height, overflow, gradient, sx = {}, className, onClick }) => {
   const { propValue } = usePropsHelper()
 
   const styleBox = () => {
@@ -23,6 +25,10 @@ const AppFrame = ({ children, border, radius, padding = 16, background, blur, wi
 
     if (radius) {
       result.borderRadius = propValue(radius)
+    }
+
+    if (flex) {
+      result.flex = propValue(flex, true)
     }
 
     return result
@@ -78,11 +84,11 @@ const AppFrame = ({ children, border, radius, padding = 16, background, blur, wi
       result.height = overflow == 'hidden' ? '100%' : height
     }
 
-    if (width) {
+    if (width && !button) {
       result.width = propValue(width)
     }
 
-    if (height) {
+    if (height && !button) {
       result.height = propValue(height)
     }
 
@@ -96,7 +102,7 @@ const AppFrame = ({ children, border, radius, padding = 16, background, blur, wi
   }
 
   return (
-    <div className={styles.box} style={styleBox()} onClick={handleClick}>
+    <div className={cn(styles.box, className)} style={styleBox()} onClick={handleClick}>
       <div className={styles.border} style={styleBorder()} />
       <div className={styles.background} style={styleBackground()} />
       <div className={styles.content} style={styleContent()}>

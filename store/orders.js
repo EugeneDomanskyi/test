@@ -3,30 +3,45 @@ import { formatUnits, parseUnits } from 'viem'
 import moment from 'moment'
 
 import { request } from './index'
+import Decimal from 'decimal.js'
 
 export const template = (item) => {
-  let status = 'unknown'
-  switch (item.status) {
-    case 'Active': 
-      status = 'open'
-      break
-    case 'Matched':
-    case 'Completed':
-    case 'Filled':
-      status = 'completed'
-      break
-    case 'Cancelled':
-      status = 'cancelled'
-      break
-  }
+  // let status = 'unknown'
+  // switch (item.status) {
+  //   case 'active':
+  //   case 'active_under_settlement':
+  //     status = 'open'
+  //     break
+    // 'completed'
+    // 'partially_completed'
+    // 'partially_completed_cancelled'
+    // 'cancelled'
+    // 'cancelled_by_system'
+    // case 'Active':
+    //   status = 'open'
+    //   break
+    // case 'Matched':
+    // case 'Completed':
+    // case 'Filled':
+    //   status = 'completed'
+    //   break
+    // case 'Partial':
+    //   status = 'partial'
+    //   break
+    // case 'Cancelled':
+    //   status = 'cancelled'
+    //   break
+  // }
+
+  // if (status == 'cancelled' && item.quantityFilled > 0) {
+  //   status = 'partial'
+  // }
 
   return {
     ...item,
-    id: item.orderId,
-    status,
-    itemPrice: item.price / item.quantity,
-    time: moment(item.time).format('DD MMM, HH:mm'),
-    timeMoment: moment(item.time),
+    id: item.order_id,
+    time: moment(item.timestamp * 1000).format('DD MMM, HH:mm'),
+    timeMoment: moment(item.timestamp * 1000),
   }
 }
 
@@ -35,6 +50,7 @@ export const ordersSlice = createSlice({
 
   initialState: {
     list: [],
+    loading: true,
     interval: {
       key: '4h',
       count: 4,
@@ -55,12 +71,21 @@ export const ordersSlice = createSlice({
       state.list = payload.map(item => template(item))
     },
 
+    loading: (state, { payload }) => {
+      state.loading = payload
+    },
+
     add: (state, { payload }) => {
+      const exist = state.list.find(o => o.id === payload.order_id)
+      if (exist) {
+        state.list = state.list.map(o => o.id === payload.order_id ? template(payload) : o)
+        return
+      }
       state.list = [template(payload), ...state.list]
     },
 
     update: (state, { payload }) => {
-      state.list = state.list.map(o => o.id === payload.orderId ? template(payload) : o)
+      state.list = state.list.map(o => o.id === payload.order_id ? template(payload) : o)
     },
 
     updateOrderStatus: (state, { payload }) => {
@@ -72,11 +97,11 @@ export const ordersSlice = createSlice({
     },
 
     chart: (state, { payload }) => {
-      state.chart = payload.sort((a, b) => a.time - b.time).map(item => ({...item, time: item.time*1000}))
+      state.chart = payload.sort((a, b) => a.timestamp - b.timestamp).map(item => ({...item, time: item.timestamp * 1000}))
     },
-    
+
     orderbook: (state, { payload }) => {
-      const sides = {Asks: 'sell', Bids: 'buy'}
+      const sides = {asks: 'sell', bids: 'buy'}
       const list = Object.entries(payload.data).reduce((acc, [side, values]) => ({
         ...acc,
         [sides[side]]: values ?? []
@@ -124,8 +149,8 @@ const get = {
     state => state.$orders.list,
   ], (orders) => {
     return {
-      open: orders.filter(order => order.status === 'open'),
-      closed: orders.filter(order => order.status === 'completed' || order.status === 'cancelled')
+      open: orders.filter(order => order.status === 'open' || order.quantity_pending > 0),
+      closed: orders.filter(order => order.status !== 'open' && order.quantity_pending == 0),
     }
   }),
   orderbook: createSelector([
@@ -136,26 +161,29 @@ const get = {
       buy: structuredClone(orderbook.buy),
       sell: structuredClone(orderbook.sell),
     }
-    sorted.buy.sort((a, b) => b.price * 1 - a.price * 1)
-    sorted.sell.sort((a, b) => a.price * 1 - b.price * 1)
 
-    return Object.entries(sorted).reduce((acc, [side, values]) => {
-      let prevVolume = 0
-      return {
-        ...acc,
-        [side]: values.filter(item => item.quantity*1).slice(0, 10).map((row) => {
-          const volume = formatUnits(row.quantity, current.decimals)
-          prevVolume += volume * 1
+    if (sorted?.buy && sorted?.sell) {
+      sorted.buy.sort((a, b) => b.price * 1 - a.price * 1)
+      sorted.sell.sort((a, b) => a.price * 1 - b.price * 1)
 
-          return {
-            priceFormatted: formatUnits(row.price, current.quoteDecimals),
-            price: row.price,
-            volume: prevVolume,
-            quantity: volume,
-          }
-        })
-      }
-    }, {})
+      return Object.entries(sorted).reduce((acc, [side, values]) => {
+        let prevVolume = 0
+        return {
+          ...acc,
+          [side]: values.filter(item => item.quantity * 1).slice(0, 10).map((row) => {
+            prevVolume += row.quantity * 1
+            return {
+              priceFormatted: row.price,
+              price: row.price,
+              volume: new Decimal(prevVolume).toDecimalPlaces(current.basePrecision).toFixed(),
+              quantity: row.quantity,
+            }
+          })
+        }
+      }, {})
+    }
+
+    return {buy: [], sell: []}
   }),
 }
 
@@ -165,7 +193,7 @@ const api = {
   },
 
   orderbook: (params) => {
-    return request('market/orderbook/depth', 'GET', params)
+    return request('depth', 'GET', {api: 'orderbook', ...params})
   },
 
   trades: (params) => {
@@ -185,6 +213,10 @@ const api = {
 
   place: (params) => {
     return request('market/orders/place', 'POST', params)
+  },
+
+  cancelTypedData: (params) => {
+    return request(`market/orders/typedData/generateCancelOrder`, 'POST', params)
   },
 
   cancel: (params) => {

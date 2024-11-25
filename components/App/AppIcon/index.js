@@ -115,6 +115,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon == 'chevron-left2') {
+      return (
+        <svg width={width ?? 32} height={height ?? 32} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M19 8L11 16L19 24" />
+        </svg>
+      )
+    }
+
     if (icon == 'chevron-right') {
       return (
         <svg width={width ?? 24} height={height ?? 25} viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -127,6 +135,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       return (
         <svg width={width ?? 7} height={width ?? 12} viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <path stroke={color ?? '#5E5C6B'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M1 1l5 5-5 5" />
+        </svg>
+      )
+    }
+
+    if (icon == 'chevron-right3') {
+      return (
+        <svg width={width ?? 24} height={width ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M10 16L14 12L10 8" />
         </svg>
       )
     }
@@ -152,6 +168,15 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
         <svg width={width ?? 12} height={height ?? 12} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <circle fill="#fff" cx="6" cy="6" r="4"></circle>
           <path fill={color ?? '#4C69FF'} d="M12 6.281c0 .42-.1.809-.302 1.165a2.157 2.157 0 01-.811.83c.01.063.014.162.014.295a2.27 2.27 0 01-.635 1.62c-.425.447-.936.67-1.533.67-.267 0-.523-.05-.764-.148a2.324 2.324 0 01-.811.93C6.806 11.884 6.42 12 6 12c-.429 0-.818-.115-1.165-.35a2.273 2.273 0 01-.804-.937 1.999 1.999 0 01-.764.148c-.597 0-1.11-.223-1.54-.67a2.25 2.25 0 01-.616-1.915 2.173 2.173 0 01-.811-.83A2.35 2.35 0 010 6.281c0-.445.113-.855.335-1.226.223-.37.523-.644.898-.822a2.318 2.318 0 01-.148-.804c0-.633.213-1.174.642-1.62.43-.445.943-.67 1.54-.67.267 0 .523.05.764.148.188-.385.457-.694.811-.93A2.033 2.033 0 016 0c.42 0 .806.12 1.158.354.351.237.623.546.81.93.242-.098.495-.147.765-.147.597 0 1.108.222 1.533.67.424.448.635.987.635 1.62 0 .295-.045.562-.134.803.375.179.675.453.898.823.223.373.335.783.335 1.228zM5.745 8.088l2.477-3.71a.43.43 0 00.06-.321.393.393 0 00-.18-.267.457.457 0 00-.32-.068.411.411 0 00-.282.173L5.318 7.177 4.313 6.173a.399.399 0 00-.308-.126.474.474 0 00-.307.126.41.41 0 00-.12.303c0 .12.04.22.12.302l1.38 1.38.069.055a.43.43 0 00.241.08.393.393 0 00.357-.205z" />
+        </svg>
+      )
+    }
+
+    if (icon == 'check-circle') {
+      return (
+        <svg width={width ?? 16} height={height ?? 17} viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#A6DC37'} d="M7.99996 15.1664C11.6665 15.1664 14.6664 12.1665 14.6664 8.49996C14.6664 4.8334 11.6665 1.8335 7.99996 1.8335C4.3334 1.8335 1.3335 4.8334 1.3335 8.49996C1.3335 12.1665 4.3334 15.1664 7.99996 15.1664Z" strokeWidth="0.999969" strokeLinecap="round" strokeLinejoin="round"/>
+          <path stroke={color ?? '#A6DC37'} d="M5.16699 8.50013L7.0536 10.3867L10.8335 6.61353" strokeWidth="0.999969" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       )
     }
@@ -185,6 +210,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       return (
         <svg width={width ?? 20} height={height ?? 20} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path fill={color ?? '#FFD21E'} d="M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm1 15H9v-2h2v2zm0-4H9V5h2v6z" />
+        </svg>
+      )
+    }
+
+    if (icon == 'alert-info') {
+      return (
+        <svg width={width ?? 20} height={height ?? 20} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill={color ?? '#6B41EB'} d="M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm1 15H9v-2h2v2zm0-4H9V5h2v6z" />
         </svg>
       )
     }
@@ -243,6 +276,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
               <rect fill={color ?? '#fff'} width="15.648" height="16" x="0.352" y="0.897" rx="2"></rect>
             </clipPath>
           </defs>
+        </svg>
+      )
+    }
+
+    if (icon == 'x2') {
+      return (
+        <svg width={width ?? 22} height={height ?? 20} viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill={color ?? '#fff'} d="M17.2439 0.25H20.5519L13.3249 8.51L21.8269 19.75H15.1699L9.95591 12.933L3.98991 19.75H0.679906L8.40991 10.915L0.253906 0.25H7.07991L11.7929 6.481L17.2439 0.25ZM16.0829 17.77H17.9159L6.08391 2.126H4.11691L16.0829 17.77Z" />
         </svg>
       )
     }
@@ -318,6 +359,44 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
         <svg width={width ?? 16} height={height ?? 16} viewBox="0 0 16 16" fill="none" {...props}>
           <circle cx={8} cy={8} r={5.333} fill="#fff" />
           <path fill={color ?? '#4C69FF'} d="M16 8.375c0 .56-.134 1.078-.403 1.553a2.876 2.876 0 0 1-1.081 1.106c.012.085.018.216.018.394 0 .847-.284 1.566-.847 2.16-.565.596-1.246.893-2.043.893-.357 0-.697-.065-1.019-.197a3.1 3.1 0 0 1-1.081 1.241A2.686 2.686 0 0 1 8 16c-.572 0-1.09-.153-1.553-.466a3.03 3.03 0 0 1-1.072-1.25c-.322.132-.66.197-1.019.197-.797 0-1.481-.297-2.053-.893-.572-.594-.856-1.316-.856-2.16 0-.094.012-.225.034-.394A2.897 2.897 0 0 1 .4 9.928 3.133 3.133 0 0 1 0 8.375c0-.594.15-1.14.447-1.634.297-.494.697-.86 1.197-1.097a3.09 3.09 0 0 1-.197-1.072c0-.844.284-1.566.856-2.16.572-.593 1.256-.893 2.053-.893.357 0 .697.065 1.019.197A3.1 3.1 0 0 1 6.456.475 2.71 2.71 0 0 1 8 0c.56 0 1.075.16 1.544.472.468.316.831.728 1.081 1.24.322-.13.66-.196 1.019-.196.797 0 1.478.296 2.043.893.566.597.847 1.316.847 2.16 0 .394-.059.75-.178 1.072.5.237.9.603 1.197 1.096.297.497.447 1.044.447 1.638Zm-8.34 2.41 3.303-4.947a.573.573 0 0 0 .08-.429.523.523 0 0 0-.24-.356.609.609 0 0 0-.428-.09.548.548 0 0 0-.375.23L7.09 9.57 5.75 8.23a.532.532 0 0 0-.41-.168.632.632 0 0 0-.409.168.546.546 0 0 0-.16.403c0 .16.054.294.16.403l1.84 1.841.091.072a.572.572 0 0 0 .322.106.524.524 0 0 0 .475-.272Z" />
+        </svg>
+      )
+    }
+
+    if (icon === 'plus-in-square') {
+      return (
+        <svg width={width ?? 20} height={height ?? 21} viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <rect fill={color ?? '#A6DC37'} y="0.414062" width="20" height="20" rx="4" />
+          <rect x="8.5" y="2.41406" width="3" height="16" rx="1.5" fill="white"/>
+          <rect x="18" y="8.41406" width="4" height="16" rx="2" transform="rotate(90 18 8.41406)" fill="white"/>
+        </svg>
+      )
+    }
+
+    if (icon === 'wallet-bot') {
+      return (
+        <svg width={width ?? 20} height={height ?? 21} viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.25" d="M1.666 7.497h9.167M5 14.164h1.667M8.75 14.164h3.333" />
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.25" d="M18.333 9.856v3.983c0 2.925-.742 3.659-3.7 3.659H5.366c-2.958 0-3.7-.734-3.7-3.659V6.99c0-2.925.742-3.658 3.7-3.658h5.7" />
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.25" d="M14.166 3.122h2.608c.575 0 1.042.525 1.042 1.042 0 .575-.467 1.041-1.042 1.041h-2.608V3.122zM14.166 5.205h2.975c.658 0 1.192.467 1.192 1.042s-.534 1.041-1.192 1.041h-2.975V5.205zM15.633 7.288V8.33M15.633 2.08v1.042M15.157 3.122h-1.825M15.157 7.288h-1.825" />
+        </svg>
+      )
+    }
+
+    if (icon === 'clock-bot') {
+      return (
+        <svg width={width ?? 20} height={height ?? 21} viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.25" d="M18.333 10.414c0 4.6-3.734 8.334-8.334 8.334a8.336 8.336 0 01-8.333-8.334c0-4.6 3.733-8.333 8.333-8.333s8.334 3.733 8.334 8.333z" />
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.25" d="M13.091 13.063l-2.583-1.541c-.45-.267-.817-.909-.817-1.434V6.672" />
+        </svg>
+      )
+    }
+
+    if (icon === 'earn-bot') {
+      return (
+        <svg width={width ?? 20} height={height ?? 20} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" d="M10 12.4974C13.1066 12.4974 15.625 10.0723 15.625 7.08073C15.625 4.08919 13.1066 1.66406 10 1.66406C6.8934 1.66406 4.375 4.08919 4.375 7.08073C4.375 10.0723 6.8934 12.4974 10 12.4974Z" />
+          <path stroke={color ?? '#fff'} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" d="M6.26808 11.2633L6.25977 17.4133C6.25977 18.1633 6.78477 18.5299 7.43477 18.2216L9.6681 17.1633C9.85143 17.0716 10.1598 17.0716 10.3431 17.1633L12.5848 18.2216C13.2264 18.5216 13.7598 18.1633 13.7598 17.4133V11.1133" />
         </svg>
       )
     }
@@ -418,6 +497,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       )
     }
 
+    if (icon == 'discord2') {
+      return (
+        <svg width={width ?? 25} height={height ?? 24} viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill={color ?? '#fff'} d="M19.2378 6.41309C18.0905 5.87593 16.8602 5.48018 15.5739 5.25351C15.5505 5.24914 15.5271 5.26007 15.515 5.28194C15.3568 5.56909 15.1815 5.94371 15.0588 6.23816C13.6753 6.0268 12.2989 6.0268 10.9437 6.23816C10.821 5.93716 10.6394 5.56909 10.4804 5.28194C10.4684 5.2608 10.445 5.24987 10.4215 5.25351C9.13593 5.47945 7.90567 5.87521 6.7577 6.41309C6.74776 6.41746 6.73925 6.42475 6.73359 6.43422C4.40004 9.99165 3.76079 13.4616 4.07439 16.8886C4.0758 16.9054 4.08503 16.9214 4.0978 16.9316C5.63741 18.0853 7.12878 18.7858 8.59246 19.25C8.61588 19.2573 8.6407 19.2486 8.65561 19.2289C9.00184 18.7464 9.31048 18.2377 9.57511 17.7027C9.59072 17.6714 9.57582 17.6342 9.5439 17.6218C9.05435 17.4323 8.5882 17.2013 8.1398 16.9389C8.10433 16.9178 8.10149 16.866 8.13412 16.8412C8.22848 16.7691 8.32287 16.694 8.41297 16.6182C8.42927 16.6044 8.45198 16.6014 8.47115 16.6102C11.417 17.9826 14.6062 17.9826 17.5172 16.6102C17.5364 16.6007 17.5591 16.6036 17.5761 16.6175C17.6662 16.6933 17.7606 16.7691 17.8557 16.8412C17.8883 16.866 17.8862 16.9178 17.8507 16.9389C17.4023 17.2064 16.9361 17.4323 16.4459 17.6211C16.414 17.6335 16.3998 17.6714 16.4154 17.7027C16.6857 18.2369 16.9943 18.7457 17.3342 19.2282C17.3484 19.2486 17.3739 19.2573 17.3973 19.25C18.8681 18.7858 20.3595 18.0853 21.8991 16.9316C21.9126 16.9214 21.9211 16.9061 21.9225 16.8893C22.2978 12.9274 21.2939 9.48585 19.2612 6.43495C19.2562 6.42475 19.2477 6.41746 19.2378 6.41309ZM10.015 14.8019C9.12812 14.8019 8.39735 13.9711 8.39735 12.9507C8.39735 11.9303 9.11395 11.0995 10.015 11.0995C10.9232 11.0995 11.6469 11.9376 11.6327 12.9507C11.6327 13.9711 10.9161 14.8019 10.015 14.8019ZM15.9961 14.8019C15.1092 14.8019 14.3784 13.9711 14.3784 12.9507C14.3784 11.9303 15.095 11.0995 15.9961 11.0995C16.9042 11.0995 17.6279 11.9376 17.6137 12.9507C17.6137 13.9711 16.9042 14.8019 15.9961 14.8019Z" />
+        </svg>
+      )
+    }
+
     if (icon === 'facebook') {
       return (
         <svg width={width ?? 18} height={height ?? 31} viewBox="0 0 18 31" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -474,6 +561,14 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
               <stop stopColor={color ?? '#fff'} stopOpacity="0.66"></stop><stop offset="1" stopColor={color ?? '#fff'} stopOpacity="0.13"></stop>
             </linearGradient>
           </defs>
+        </svg>
+      )
+    }
+
+    if (icon === 'telegram2') {
+      return (
+        <svg width={width ?? 33} height={height ?? 28} viewBox="0 0 33 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill={color ?? '#fff'} d="M0.983311 13.084C4.25701 11.295 7.91133 9.80182 11.3257 8.30104C17.1999 5.8429 23.0973 3.42736 29.0543 1.17852C30.2133 0.795367 32.2958 0.420707 32.5 2.12469C32.3881 4.53676 31.9282 6.9347 31.6127 9.33264C30.8119 14.6059 29.8864 19.8612 28.9838 25.1171C28.6728 26.8679 26.4623 27.7741 25.0478 26.6538C21.6486 24.3758 18.2232 22.12 14.8673 19.7892C13.768 18.681 14.7874 17.0895 15.7692 16.2982C18.5689 13.5608 21.5381 11.2351 24.1915 8.35626C24.9072 6.64154 22.7924 8.08665 22.0948 8.52948C18.262 11.1499 14.5229 13.9304 10.4819 16.2334C8.41779 17.3607 6.01199 16.3973 3.94878 15.7683C2.09888 15.0084 -0.611951 14.2428 0.983125 13.0842L0.983311 13.084Z" />
         </svg>
       )
     }
@@ -565,6 +660,16 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
       return (
         <svg width={width ?? 5} height={height ?? 9} viewBox="0 0 5 9" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
           <path fill={color ?? '#53F19C'} d="M3.833 0c-.31 0-.606.089-.825.247-.22.158-.342.373-.342.597 0 .223.123.438.342.596.219.158.515.247.825.247.31 0 .606-.089.825-.247.219-.158.342-.373.342-.596C5 .62 4.877.405 4.658.247A1.425 1.425 0 003.833 0zm-.28 2.682C2.627 2.74.099 4.195.099 4.195c-.156.084-.11.079.015.236.125.152.109.163.257.09.155-.073.412-.19.84-.382 1.65-.765.265 1-.443 3.976-.28 1.473 1.556.714 2.03.489.467-.22 1.72-.844 1.844-.905.171-.085.047-.152-.085-.293-.094-.095-.187-.028-.187-.028-.506.242-1.432.748-1.556.427-.148-.32.801-2.519 1.322-4.032.086-.36.32-1.147-.583-1.09z" />
+        </svg>
+      )
+    }
+
+    if (icon === 'info2') {
+      return (
+        <svg width={width ?? 25} height={height ?? 24} viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12.6666 16.25L12.6666 11" stroke={color ?? '#fff'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M12.6666 7.79999L12.6666 7.69999" stroke={color ?? '#fff'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <circle cx="12.6666" cy="12" r="9.25" stroke={color ?? '#fff'} strokeWidth="1.5"/>
         </svg>
       )
     }
@@ -1000,6 +1105,7 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
           width={width ?? 17}
           height={height ?? 16}
           fill="none"
+          viewBox="0 0 17 16"
           {...props}
         >
           <path
@@ -1107,6 +1213,7 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
           xmlns="http://www.w3.org/2000/svg"
           width={width ?? 36}
           height={height ?? 36}
+          viewBox="0 0 36 36"
           fill="none"
           {...props}
         >
@@ -1667,6 +1774,252 @@ const AppIcon = ({ icon, width, height, color, opacity, secondaryColor, ...props
           <path stroke={color ?? '#9281C5'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7.998 3.997h-2a3.001 3.001 0 00-3.002 3.001M17.502 21.504l-1.5-1.5 1.5-1.501" />
           <path stroke={color ?? '#9281C5'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16.002 20.003h2a3.001 3.001 0 003.002-3M9.5 20.003A5.502 5.502 0 119.5 9a5.502 5.502 0 010 11.004" />
           <path stroke={color ?? '#9281C5'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8.688 13.48l.81-.814v3.25M8.69 15.918h1.618M10.61 5.66a5.502 5.502 0 117.782 7.782" />
+        </svg>
+      )
+    }
+
+    if (icon == 'earn') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill={color ?? '#fff'} d="M9.677 8.76a3.846 3.846 0 017.252 1.046 2.396 2.396 0 012.147.792l.002-.156A5.942 5.942 0 008.04 7.383a5.932 5.932 0 104.262 10.747 2.404 2.404 0 01-1.228-1.7 3.836 3.836 0 11-3.848-6.618 5.944 5.944 0 003.812 6.191c.004-.771.37-1.457.938-1.893a3.847 3.847 0 01-2.3-5.35z" />
+          <path fill={color ?? '#fff'} d="M21.757 16.024a1.2 1.2 0 00-1.2-1.2h-2.075v-2.055a1.2 1.2 0 00-2.401 0v2.054h-2.055a1.2 1.2 0 100 2.402h2.055v2.074a1.2 1.2 0 102.401 0v-2.074h2.074a1.2 1.2 0 001.201-1.2z" />
+        </svg>
+      )
+    }
+
+    if (icon == 'redeem') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M6.498 2.996l1.5 1.5-1.5 1.501" />
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7.998 4.496h-2a3.001 3.001 0 00-3.002 3.001M17.502 22.003l-1.5-1.5 1.5-1.501" />
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16.002 20.503h2a3.001 3.001 0 003.002-3.001M9.499 20.503a5.502 5.502 0 110-11.005 5.502 5.502 0 010 11.005" />
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8.688 13.98l.81-.814v3.25M8.69 16.418h1.618M10.61 6.16a5.502 5.502 0 017.782 7.782" />
+        </svg>
+      )
+    }
+
+    if (icon == 'question-circle') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <circle stroke={color ?? '#fff'} cx="12" cy="12.5" r="10" strokeWidth="1.5"></circle>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeWidth="1.5" d="M10.125 9.375a1.875 1.875 0 112.828 1.615c-.475.281-.953.708-.953 1.26v1.25" />
+          <circle fill={color ?? '#fff'} cx="12" cy="16.5" r="1"></circle>
+        </svg>
+      )
+    }
+
+    if (icon == 'chevron-down2') {
+      return (
+        <svg width={width ?? 8} height={height ?? 5} viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.6" strokeWidth="2" d="M7 1L4 4 1 1" />
+        </svg>
+      )
+    }
+
+    if (icon == 'chest') {
+      return (
+        <svg width={width ?? 22} height={height ?? 23} viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill={color ?? '#9B99AE'} d="M11.75 3.5a.75.75 0 11-1.5 0V1.25a.75.75 0 111.5 0V3.5z" />
+          <path fill={color ?? '#9B99AE'} fillRule="evenodd" clipRule="evenodd" d="M.5 11.75c0-2.482 2.018-4.5 4.5-4.5h12c2.482 0 4.5 2.018 4.5 4.5V20c0 1.24-1.01 2.25-2.25 2.25H2.75C1.51 22.25.5 21.24.5 20v-8.25zm19.5 1.5v-1.5c0-1.36-.915-2.498-2.158-2.865.414.603.658 1.33.658 2.115v2.25H20zm-9.75 0v1.5h1.5v-1.5h-1.5zm.002-1.5h1.5c.827 0 1.5.673 1.5 1.5h3.75V11c0-1.24-1.01-2.25-2.25-2.25h-7.5c-1.241 0-2.25 1.01-2.25 2.25v2.25h3.75c0-.827.672-1.5 1.5-1.5zM4.159 8.885a2.995 2.995 0 00-2.157 2.865v1.5h1.5V11c0-.784.244-1.512.657-2.115zM2.002 20c0 .414.336.75.75.75h.75v-6h-1.5V20zm3-5.25v6h12v-6h-3.75c0 .827-.673 1.5-1.5 1.5h-1.5c-.828 0-1.5-.673-1.5-1.5h-3.75zm14.25 6a.75.75 0 00.75-.75v-5.25h-1.5v6h.75z" />
+          <path fill={color ?? '#9B99AE'} d="M5.654 5.423a.748.748 0 001.044.184.75.75 0 00.184-1.045l-1.29-1.844a.75.75 0 00-1.23.86l1.29 1.844h.002zM16.347 5.422a.748.748 0 01-.615.32.75.75 0 01-.614-1.18l1.29-1.844a.75.75 0 011.23.86l-1.29 1.844z" />
+        </svg>
+      )
+    }
+
+    if (icon == 'chevron-slider-left') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.5" d="M15 19.92L8.48 13.4c-.77-.77-.77-2.03 0-2.8L15 4.08" />
+        </svg>
+      )
+    }
+
+    if (icon == 'chevron-slider-right') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1.5" d="M8.91 19.92l6.52-6.52c.77-.77.77-2.03 0-2.8L8.91 4.08" />
+        </svg>
+      )
+    }
+
+    if (icon == 'arrow-long') {
+      return (
+        <svg width={width ?? 223} height={height ?? 17} viewBox="0 0 223 17" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill={color ?? '#A6DC37'} d="M220 17l2.887-5h-5.774L220 17zM0 1.5h212v-1H0v1zM219.5 9v3.5h1V9h-1zM212 1.5a7.5 7.5 0 017.5 7.5h1A8.5 8.5 0 00212 .5v1z" />
+        </svg>
+      )
+    }
+
+    if (icon == 'arrow-long-rotate') {
+      return (
+        <svg width={width ?? 17} height={height ?? 92} viewBox="0 0 17 92" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill={color ?? '#A6DC37'} d="M17 89l-5 2.887v-5.774L17 89zM1.5 0v81h-1V0h1zM9 88.5h3.5v1H9v-1zM1.5 81A7.5 7.5 0 009 88.5v1A8.5 8.5 0 01.5 81h1z" />
+        </svg>
+      )
+    }
+
+    if (icon == 'warning-circle') {
+      return (
+        <svg width={width ?? 17} height={height ?? 16} viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#A6DC37'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.028" d="M8.334 14.667C12 14.667 15 11.667 15 8s-3-6.667-6.666-6.667c-3.667 0-6.667 3-6.667 6.667s3 6.667 6.667 6.667zM8.334 5.333v3.334" />
+          <path stroke={color ?? '#A6DC37'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.37" d="M8.33 10.667h.006" />
+        </svg>
+      )
+    }
+    
+    if (icon == 'base-icon') {
+      return (
+        <svg width={32} height={33} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <g clipPath="url(#a)">
+            <path fill="#0052FF" d="M16 32.5a16 16 0 1 0 0-32 16 16 0 0 0 0 32Z" />
+            <path fill="#fff" d="M15.962 27.768c6.223 0 11.268-5.045 11.268-11.268 0-6.223-5.045-11.268-11.268-11.268-5.903 0-10.746 4.54-11.228 10.32h16.72v1.876H4.732c.472 5.789 5.32 10.34 11.23 10.34Z" />
+          </g>
+          <defs>
+            <clipPath id="a">
+              <path fill="#fff" d="M0 .5h32v32H0z" />
+            </clipPath>
+          </defs>
+        </svg>
+      )
+    }
+    
+    if (icon == 'cup') {
+      return (
+        <svg width={width ?? 38} height={height ?? 38} viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path fill={color ?? '#fff'} d="M11.6007 17.1913V11.0832H8.40353C8.26129 11.0832 8.14452 11.1288 8.05322 11.2201C7.96191 11.3114 7.91626 11.4282 7.91626 11.5704V12.6665C7.91626 13.7709 8.26235 14.7407 8.95453 15.5759C9.64671 16.4111 10.5288 16.9496 11.6007 17.1913ZM26.3985 17.1913C27.4704 16.9496 28.3525 16.4111 29.0447 15.5759C29.7368 14.7407 30.0829 13.7709 30.0829 12.6665V11.5704C30.0829 11.4282 30.0373 11.3114 29.946 11.2201C29.8547 11.1288 29.7379 11.0832 29.5957 11.0832H26.3985V17.1913ZM17.8121 30.0832V24.6571C16.4378 24.4581 15.2274 23.9207 14.1811 23.0449C13.1348 22.169 12.4248 21.0683 12.0511 19.7428C10.2242 19.5256 8.68259 18.7502 7.42622 17.4165C6.16958 16.0828 5.54126 14.4995 5.54126 12.6665V11.5704C5.54126 10.7809 5.82085 10.1064 6.38003 9.54694C6.93948 8.98776 7.61398 8.70817 8.40353 8.70817H11.6007V8.40377C11.6007 7.61422 11.8803 6.93972 12.4394 6.38027C12.9986 5.82109 13.6731 5.5415 14.4629 5.5415H23.5362C24.3261 5.5415 25.0006 5.82109 25.5597 6.38027C26.1189 6.93972 26.3985 7.61422 26.3985 8.40377V8.70817H29.5957C30.3852 8.70817 31.0597 8.98776 31.6192 9.54694C32.1783 10.1064 32.4579 10.7809 32.4579 11.5704V12.6665C32.4579 14.4995 31.8296 16.0828 30.573 17.4165C29.3166 18.7502 27.775 19.5256 25.9481 19.7428C25.5744 21.0683 24.8644 22.169 23.8181 23.0449C22.7718 23.9207 21.5614 24.4581 20.1871 24.6571V30.0832H24.6327C24.9697 30.0832 25.2518 30.1969 25.479 30.4244C25.7065 30.6516 25.8202 30.9337 25.8202 31.2707C25.8202 31.6077 25.7065 31.8898 25.479 32.117C25.2518 32.3444 24.9697 32.4582 24.6327 32.4582H13.3665C13.0295 32.4582 12.7474 32.3444 12.5202 32.117C12.2927 31.8898 12.179 31.6077 12.179 31.2707C12.179 30.9337 12.2927 30.6516 12.5202 30.4244C12.7474 30.1969 13.0295 30.0832 13.3665 30.0832H17.8121Z" />
+        </svg>
+      )
+    }
+    
+    if (icon == 'cup2') {
+      return (
+        <svg width={width ?? 17} height={height ?? 16} viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#FFBB01'} d="M8.60022 11.0002V12.4002" strokeLinecap="round" strokeLinejoin="round" />
+          <path stroke={color ?? '#FFBB01'} d="M5.26691 14.6667H11.9336V14.0001C11.9336 13.2667 11.3336 12.6667 10.6002 12.6667H6.60024C5.86691 12.6667 5.26691 13.2667 5.26691 14.0001V14.6667V14.6667Z" strokeMiterlimit="10" />
+          <path stroke={color ?? '#FFBB01'} d="M4.60022 14.6667H12.6002" strokeLinecap="round" strokeLinejoin="round" />
+          <path stroke={color ?? '#FFBB01'} d="M8.49998 10.6668C5.91998 10.6668 3.83331 8.58016 3.83331 6.00016V4.00016C3.83331 2.52683 5.02665 1.3335 6.49998 1.3335H10.5C11.9733 1.3335 13.1666 2.52683 13.1666 4.00016V6.00016C13.1666 8.58016 11.08 10.6668 8.49998 10.6668Z" strokeLinecap="round" strokeLinejoin="round" />
+          <path stroke={color ?? '#FFBB01'} d="M4.14598 7.76681C3.64598 7.60681 3.20598 7.31348 2.85931 6.96681C2.25931 6.30015 1.85931 5.50015 1.85931 4.56681C1.85931 3.63348 2.59265 2.90015 3.52598 2.90015H3.95931C3.82598 3.20681 3.75931 3.54681 3.75931 3.90015V5.90015C3.75931 6.56681 3.89931 7.19348 4.14598 7.76681Z" strokeLinecap="round" strokeLinejoin="round" />
+          <path stroke={color ?? '#FFBB01'} d="M12.8528 7.76681C13.3528 7.60681 13.7928 7.31348 14.1395 6.96681C14.7395 6.30015 15.1395 5.50015 15.1395 4.56681C15.1395 3.63348 14.4062 2.90015 13.4728 2.90015H13.0395C13.1728 3.20681 13.2395 3.54681 13.2395 3.90015V5.90015C13.2395 6.56681 13.0995 7.19348 12.8528 7.76681Z" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )
+    }
+    
+    if (icon == 'users') {
+      return (
+        <svg width={width ?? 17} height={height ?? 16} viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} d="M6.6064 7.24683C6.53973 7.24016 6.45973 7.24016 6.3864 7.24683C4.79973 7.1935 3.53973 5.8935 3.53973 4.2935C3.53973 2.66016 4.85973 1.3335 6.49973 1.3335C8.13307 1.3335 9.45973 2.66016 9.45973 4.2935C9.45307 5.8935 8.19307 7.1935 6.6064 7.24683Z" strokeLinecap="round" strokeLinejoin="round"/>
+          <path stroke={color ?? '#fff'} d="M11.4402 2.66675C12.7335 2.66675 13.7735 3.71341 13.7735 5.00008C13.7735 6.26008 12.7735 7.28675 11.5268 7.33341C11.4735 7.32675 11.4135 7.32675 11.3535 7.33341" strokeLinecap="round" strokeLinejoin="round"/>
+          <path stroke={color ?? '#fff'} d="M3.27317 9.70675C1.65984 10.7867 1.65984 12.5467 3.27317 13.6201C5.1065 14.8467 8.11317 14.8467 9.9465 13.6201C11.5598 12.5401 11.5598 10.7801 9.9465 9.70675C8.11984 8.48675 5.11317 8.48675 3.27317 9.70675Z" strokeLinecap="round" strokeLinejoin="round"/>
+          <path stroke={color ?? '#fff'} d="M12.7267 13.3335C13.2067 13.2335 13.66 13.0402 14.0334 12.7535C15.0734 11.9735 15.0734 10.6868 14.0334 9.90683C13.6667 9.62683 13.22 9.44016 12.7467 9.3335" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      )
+    }
+    
+    if (icon == 'bell') {
+      return (
+        <svg width={width ?? 25} height={height ?? 25} viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} d="M12.6786 7.26172V10.5917" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" />
+          <path stroke={color ?? '#fff'} d="M12.6995 2.82178C9.01946 2.82178 6.03946 5.80178 6.03946 9.48178V11.5818C6.03946 12.2618 5.75946 13.2818 5.40946 13.8618L4.13946 15.9818C3.35946 17.2918 3.89946 18.7518 5.33946 19.2318C10.1195 20.8218 15.2895 20.8218 20.0695 19.2318C21.4195 18.7818 21.9995 17.2018 21.2695 15.9818L19.9995 13.8618C19.6495 13.2818 19.3695 12.2518 19.3695 11.5818V9.48178C19.3595 5.82178 16.3595 2.82178 12.6995 2.82178Z" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round"/>
+          <path stroke={color ?? '#fff'} d="M16.0086 19.6416C16.0086 21.4716 14.5086 22.9716 12.6786 22.9716C11.7686 22.9716 10.9286 22.5916 10.3286 21.9916C9.72863 21.3916 9.34863 20.5516 9.34863 19.6416" strokeWidth="1.5" strokeMiterlimit="10"/>
+        </svg>
+      )
+    }
+
+    if (icon == 'points-popup-text') {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width={464} height={78} fill="none" {...props}>
+          <path
+            fill="url(#a)"
+            d="M77.401 28h-7.52V1.2h7.52v9.96h12.48V1.2h7.52V28h-7.52V17.92h-12.48V28Zm38.442.4c-9.32 0-14.84-5.44-14.84-13.8S106.523.8 115.843.8c9.56 0 15 5.44 15 13.8s-5.44 13.8-15 13.8Zm0-7.2c5.44 0 7-1.28 7-6.6 0-5.32-1.56-6.6-7-6.6-5.44 0-6.84 1.28-6.84 6.6 0 5.32 1.4 6.6 6.84 6.6Zm26.125 6.8h-7.52V1.2h14.84c6.36 0 10.36 3.64 10.36 10 0 6.36-4 10.04-10.36 10.04h-7.32V28Zm6.48-20.04h-6.48v6.52h6.48c2.64 0 3.72-.52 3.72-3.28 0-2.72-1.08-3.24-3.72-3.24Zm36.023 20.44c-9.32 0-14.84-5.44-14.84-13.8S175.151.8 184.471.8c9.56 0 15 5.44 15 13.8s-5.44 13.8-15 13.8Zm0-7.2c5.44 0 7-1.28 7-6.6 0-5.32-1.56-6.6-7-6.6-5.44 0-6.84 1.28-6.84 6.6 0 5.32 1.4 6.6 6.84 6.6Zm26.126 6.8h-7.52V1.2h8l7.44 10.04 3.92 6.16h.52l-.36-5.84V1.2h7.52V28h-8l-7.92-10.32-3.4-5.28h-.52l.32 5.12V28Zm39.933 0h-7.52V7.96h-9.48V1.2h26.44v6.76h-9.44V28Zm27.296.4c-9.32 0-14.84-5.44-14.84-13.8S268.506.8 277.826.8c9.56 0 15 5.44 15 13.8s-5.44 13.8-15 13.8Zm0-7.2c5.44 0 7-1.28 7-6.6 0-5.32-1.56-6.6-7-6.6-5.44 0-6.84 1.28-6.84 6.6 0 5.32 1.4 6.6 6.84 6.6Zm42.191 6.8h-7.52V7.96h-9.48V1.2h26.44v6.76h-9.44V28Zm20.376 0h-7.52V1.2h7.52v9.96h12.48V1.2h7.52V28h-7.52V17.92h-12.48V28Zm47.802 0h-23.8V1.2h23.8v6.76h-16.28v3.2h15.68v6.72h-15.68v3.36h16.28V28ZM7.776 77H.256V50.2h14.84c6.36 0 10.36 3.64 10.36 10 0 6.36-4 10.04-10.36 10.04h-7.32V77Zm6.48-20.04h-6.48v6.52h6.48c2.64 0 3.72-.52 3.72-3.28 0-2.72-1.08-3.24-3.72-3.24ZM43.093 77.4c-9.32 0-14.84-5.44-14.84-13.8s5.52-13.8 14.84-13.8c9.56 0 15 5.44 15 13.8s-5.44 13.8-15 13.8Zm0-7.2c5.44 0 7-1.28 7-6.6 0-5.32-1.56-6.6-7-6.6-5.44 0-6.84 1.28-6.84 6.6 0 5.32 1.4 6.6 6.84 6.6ZM69.218 77h-7.52V50.2h7.52V77Zm11.522 0h-7.52V50.2h8l7.44 10.04 3.92 6.16h.52l-.36-5.84V50.2h7.52V77h-8l-7.92-10.32-3.4-5.28h-.52l.32 5.12V77Zm39.933 0h-7.52V56.96h-9.48V50.2h26.44v6.76h-9.44V77Zm25.857.4c-8.2 0-13.2-2.92-13.2-9.72v-.24h7.52v.84c0 1.8.64 2.28 5.68 2.28 4.56 0 5.04-.36 5.04-1.56 0-.96-.52-1.36-2.72-1.64l-8.4-1.12c-5-.68-7.52-3.36-7.52-7.68 0-4.28 3.32-8.76 13-8.76 8.52 0 12.6 3.72 12.6 9.72v.24h-7.52v-.6c0-1.92-.84-2.56-5.88-2.56-3.84 0-4.68.52-4.68 1.68 0 .84.48 1.24 1.92 1.44l8.4 1.24c6.56.96 8.32 4.32 8.32 7.76 0 4.6-3.52 8.68-12.56 8.68Zm30.649-.4h-7.52V50.2h15.64c7.08 0 10.8 2.96 10.8 8.2 0 4.24-2.12 6.76-7.24 7.4v.4c2.76.72 3.64 2.04 4.64 4.08l3.32 6.72h-8.68l-3.2-6.56c-.96-2-1.76-2.56-4.68-2.56h-3.08V77Zm0-20.04v5.32h8.04c2.2 0 3-.4 3-2.68 0-2.12-.8-2.64-3-2.64h-8.04Zm36.88 20.44c-9.32 0-14.84-5.44-14.84-13.8s5.52-13.8 14.84-13.8c9.56 0 15 5.44 15 13.8s-5.44 13.8-15 13.8Zm0-7.2c5.44 0 7-1.28 7-6.6 0-5.32-1.56-6.6-7-6.6-5.44 0-6.84 1.28-6.84 6.6 0 5.32 1.4 6.6 6.84 6.6Zm33.005 7.2c-9.32 0-14.8-5.44-14.8-13.8s5.48-13.8 14.8-13.8c9 0 14.4 4.28 14.4 11.44v.68h-8.4v-.68c0-3.04-1.44-4.24-5.88-4.24-5.44 0-6.92 1.28-6.92 6.6 0 5.32 1.48 6.6 6.92 6.6 4.44 0 5.88-1.2 5.88-4.24v-.68h8.4v.68c0 7.16-5.4 11.44-14.4 11.44Zm25.501-.4h-7.52V50.2h7.52v9.96h5.4l6.52-9.96h9l-9.28 13.16 9.08 13.64h-9l-6.24-9.52h-5.48V77Zm47.138 0h-23.8V50.2h23.8v6.76h-16.28v3.2h15.68v6.72h-15.68v3.36h16.28V77Zm20.138 0h-7.52V56.96h-9.48V50.2h26.44v6.76h-9.44V77Zm25.856.4c-8.2 0-13.2-2.92-13.2-9.72v-.24h7.52v.84c0 1.8.64 2.28 5.68 2.28 4.56 0 5.04-.36 5.04-1.56 0-.96-.52-1.36-2.72-1.64l-8.4-1.12c-5-.68-7.52-3.36-7.52-7.68 0-4.28 3.32-8.76 13-8.76 8.52 0 12.6 3.72 12.6 9.72v.24h-7.52v-.6c0-1.92-.84-2.56-5.88-2.56-3.84 0-4.68.52-4.68 1.68 0 .84.48 1.24 1.92 1.44l8.4 1.24c6.56.96 8.32 4.32 8.32 7.76 0 4.6-3.52 8.68-12.56 8.68Zm23.464-.4h-7.52V50.2h7.52v9.96h12.48V50.2h7.52V77h-7.52V66.92h-12.48V77Zm31.521 0h-7.52V50.2h7.52V77Zm11.522 0h-7.52V50.2h14.84c6.36 0 10.36 3.64 10.36 10 0 6.36-4 10.04-10.36 10.04h-7.32V77Zm6.48-20.04h-6.48v6.52h6.48c2.64 0 3.72-.52 3.72-3.28 0-2.72-1.08-3.24-3.72-3.24Zm24.077 11.24h-7.68c0-2.72-1.04-12.12-1.04-15.2v-2.8h9.76V53c0 3.08-1.04 12.52-1.04 15.2Zm.44 8.8h-8.6v-7.08h8.6V77Z"
+          />
+          <defs>
+            <linearGradient id="a" x1={232.5} x2={232.5} y1={1} y2={77} gradientUnits="userSpaceOnUse">
+              <stop stopColor="#fff" />
+              <stop offset={1} stopColor="#C7C7C7" />
+            </linearGradient>
+          </defs>
+        </svg>
+      )
+    }
+    
+    if (icon == 'toshi-logo') {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width={46} height={13} fill="none" {...props} >
+          <path fill="url(#a)" d="M.136 0h45.727v13H.136z" />
+          <defs>
+            <pattern id="a" width={1} height={1} patternContentUnits="objectBoundingBox" >
+              <use xlinkHref="#b" transform="scale(.00071 .0025)" />
+            </pattern>
+            <image xlinkHref="data:image/png;base64,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" id="b" width={1407} height={400} />
+          </defs>
+        </svg>
+      )
+    }
+    
+    if (icon == 'play-circle') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" />
+          <path stroke={color ?? '#fff'} strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" d="M9 11.9956V10.1167C9 7.78736 10.3717 6.83031 12.0469 7.99848L13.3952 8.94145L14.7436 9.88443C16.4188 11.0526 16.4188 12.9597 14.7436 14.1278L13.3952 15.0708L12.0469 16.0138C10.3717 17.1608 9 16.2108 9 13.8745V11.9956Z" />
+        </svg>
+      )
+    }
+    
+    if (icon == 'timer') {
+      return (
+        <svg width={width ?? 24} height={height ?? 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path stroke={color ?? '#fff'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M20.75 13.25C20.75 18.08 16.83 22 12 22C7.17 22 3.25 18.08 3.25 13.25C3.25 8.42 7.17 4.5 12 4.5C16.83 4.5 20.75 8.42 20.75 13.25Z" />
+          <path d="M12 8V13" stroke={color ?? '#fff'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M9 2H15" stroke={color ?? '#fff'} strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      )
+    }
+    
+    if (icon == 'prize') {
+      return (
+        <svg width={width ?? 20} height={height ?? 20} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+          <path d="M16.6667 10V18.3333H3.33337V10" fill="black"/>
+          <path d="M16.6667 10V18.3333H3.33337V10" fill="url(#paint0_radial_6310_1803)"/>
+          <path d="M18.3333 5.83334H1.66663V10H18.3333V5.83334Z" fill="black"/>
+          <path d="M18.3333 5.83334H1.66663V10H18.3333V5.83334Z" fill="url(#paint1_radial_6310_1803)"/>
+          <path d="M10 17L10 6" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M10 17L10 6" stroke="url(#paint2_radial_6310_1803)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M9.99996 5.83333H6.24996C5.69743 5.83333 5.16752 5.61384 4.77682 5.22314C4.38612 4.83244 4.16663 4.30253 4.16663 3.75C4.16663 3.19746 4.38612 2.66756 4.77682 2.27686C5.16752 1.88616 5.69743 1.66666 6.24996 1.66666C9.16663 1.66666 9.99996 5.83333 9.99996 5.83333Z" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M9.99996 5.83333H6.24996C5.69743 5.83333 5.16752 5.61384 4.77682 5.22314C4.38612 4.83244 4.16663 4.30253 4.16663 3.75C4.16663 3.19746 4.38612 2.66756 4.77682 2.27686C5.16752 1.88616 5.69743 1.66666 6.24996 1.66666C9.16663 1.66666 9.99996 5.83333 9.99996 5.83333Z" stroke="url(#paint3_radial_6310_1803)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M10 5.83333H13.75C14.3025 5.83333 14.8324 5.61384 15.2231 5.22314C15.6138 4.83244 15.8333 4.30253 15.8333 3.75C15.8333 3.19746 15.6138 2.66756 15.2231 2.27686C14.8324 1.88616 14.3025 1.66666 13.75 1.66666C10.8333 1.66666 10 5.83333 10 5.83333Z" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M10 5.83333H13.75C14.3025 5.83333 14.8324 5.61384 15.2231 5.22314C15.6138 4.83244 15.8333 4.30253 15.8333 3.75C15.8333 3.19746 15.6138 2.66756 15.2231 2.27686C14.8324 1.88616 14.3025 1.66666 13.75 1.66666C10.8333 1.66666 10 5.83333 10 5.83333Z" stroke="url(#paint4_radial_6310_1803)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <defs>
+            <radialGradient id="paint0_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(16.1719 10.3744) rotate(160.932) scale(14.0247 17.3864)">
+              <stop stopColor="#FFF6A3"/>
+              <stop offset="0.34606" stopColor="#FFF066"/>
+              <stop offset="0.688349" stopColor="#FFCB45"/>
+              <stop offset="1" stopColor="#FFBD13"/>
+            </radialGradient>
+            <radialGradient id="paint1_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(17.7148 6.02051) rotate(172.128) scale(16.7266 9.1112)">
+              <stop stopColor="#FFF6A3"/>
+              <stop offset="0.34606" stopColor="#FFF066"/>
+              <stop offset="0.688349" stopColor="#FFCB45"/>
+              <stop offset="1" stopColor="#FFBD13"/>
+            </radialGradient>
+            <radialGradient id="paint2_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(10.9629 6.49414) rotate(99.3348) scale(6.12901 3.93866)">
+              <stop stopColor="#FFF6A3"/>
+              <stop offset="0.34606" stopColor="#FFF066"/>
+              <stop offset="0.688349" stopColor="#FFCB45"/>
+              <stop offset="1" stopColor="#FFBD13"/>
+            </radialGradient>
+            <radialGradient id="paint3_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(9.78349 1.85384) rotate(158.444) scale(6.23524 8.55458)">
+              <stop stopColor="#FFF6A3"/>
+              <stop offset="0.34606" stopColor="#FFF066"/>
+              <stop offset="0.688349" stopColor="#FFCB45"/>
+              <stop offset="1" stopColor="#FFBD13"/>
+            </radialGradient>
+            <radialGradient id="paint4_radial_6310_1803" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(15.6169 1.85384) rotate(158.444) scale(6.23524 8.55458)">
+              <stop stopColor="#FFF6A3"/>
+              <stop offset="0.34606" stopColor="#FFF066"/>
+              <stop offset="0.688349" stopColor="#FFCB45"/>
+              <stop offset="1" stopColor="#FFBD13"/>
+            </radialGradient>
+          </defs>
         </svg>
       )
     }

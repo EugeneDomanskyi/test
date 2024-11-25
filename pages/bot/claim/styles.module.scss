@@ -1,0 +1,85 @@
+.container {
+  padding-top: 46px;
+  min-height: 100%;
+
+  .section {
+    padding: 16px;
+    border-bottom: solid rgba(255, 255, 255, 0.10) 1px;
+
+    .circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: 171520;
+      border: 2px solid #302e38;
+      box-shadow: 1.2px 3.6px 7.2px 0px rgba(0, 0, 0, 0.60) inset;
+      position: relative;
+      z-index: 0;
+
+      svg {
+        display: none;
+        position: relative;
+        z-index: 1;
+      }
+
+      &.active {
+        &:before {
+          content: '';
+          position: absolute;
+          z-index: 0;
+          inset: 0;
+          border-radius: 50%;
+          border: solid #8466eb 2px;
+          background-color: #6440e7;
+        }
+
+        svg {
+          display: block;
+        }
+      }
+    }
+  }
+
+  .hint {
+    border-radius: 6px;
+    border: 1px solid #6B41EB;
+    padding: 12px 8px;
+    background: rgba(107, 65, 235, 0.20);
+
+    &.warning {
+      border-color: #FFBB01;
+      background: rgba(255, 187, 1, 0.10);
+    }
+  }
+
+  .padding {
+    padding: 16px;
+  }
+
+  .discord {
+    padding: 16px;
+  }
+
+  .link {
+    a {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+
+  .bigCircle {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    border: solid #303745 20px;
+    background-color: #71eea0;
+  }
+
+  .success {
+    padding-top: 60px;
+  }
+
+  .modal {
+    padding: 16px;
+  }
+}

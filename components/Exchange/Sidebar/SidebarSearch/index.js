@@ -41,11 +41,6 @@ const SidebarSearch = () => {
 
   const handleSearch = (searchQuery) => {
     searchTokens(searchQuery)
-
-    Amplitude.event('Search Market', {
-      'Network': blockchain.code.toUpperCase(),
-      'Search term': searchQuery,
-    })
   }
 
   const searchTokens = async (searchText) => {
@@ -63,14 +58,14 @@ const SidebarSearch = () => {
 
     const isAddress = /^(0x)?[0-9a-fA-F]{40}$/.test(searchText)
     if (isAddress) {
-      params.market_id = `${blockchain.id}_${searchText}_${blockchain.info?.token?.address}`
+      params.market_id = `${blockchain.id}_${searchText}_${blockchain.token?.address}`
     } else {
-      params.symbol = searchText
+      params.market_symbol = searchText
     }
 
-    const res = await $token.api.all(params)
-    if (res.success) {
-      dispatch($token.set.searched(res.data))
+    const result = await $token.api.all(params)
+    if (result && result.length) {
+      dispatch($token.set.searched(result))
     }
 
     dispatch($token.set.loading(false))

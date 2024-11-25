@@ -26,6 +26,10 @@
       }
     }
 
+    &.gems {
+      border-bottom: solid #A6DC37 1px;
+    }
+
     .option {
       cursor: pointer;
       flex: 1;
@@ -66,27 +70,24 @@
         position: relative;
         z-index: 0;
 
-        &:not(:last-of-type):after {
-          content: '';
-          display: block;
-          width: 1px;
-          position: absolute;
-          z-index: 0;
-          bottom: 25%;
-          top: 25%;
-          right: 0;
-          background: #1D1937;
-        }
-        
         &.disabled {
           opacity: .5;
         }
 
+        &.active {
+          background: #381C8C;
+          border-radius: 12px;
+        }
+
         .optionInner {
-          padding: 4px 0;
+          padding: 0 8px;
+          height: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
           .optionText {
-            color: #5E5C6B;
+            color: #9B99AE;
 
             &.active {
               color: #fff;
@@ -246,6 +247,66 @@
                 background-clip: text;
                 background-image: linear-gradient(90deg, rgb(255, 240, 102), rgb(255, 154, 1));
               }
+            }
+          }
+        }
+      }
+
+      &.gems {
+        background: #0F0F0F;
+        border: solid rgba(255, 255, 255, 0.10) 1px;
+        border-bottom-width: 0;
+        flex: 0;
+        border-radius: 12px 12px 0 0;
+
+        @media (max-width: 768px) {
+          flex: 1;
+        }
+
+        &.active {
+          background: transparent;
+          position: relative;
+          border-color: #A6DC37;
+          border-bottom-width: 1;
+
+          &:after {
+            content: '';
+            height: 1px;
+            position: absolute;
+            z-index: 1;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            background: #0F0F0F;
+          }
+
+          .optionInner {
+            &:before,
+            &:after {
+              display: none;
+            }
+          }
+        }
+
+        .optionInner {
+          padding: 16px 110px;
+          min-width: 300px;
+
+          @media (max-width: 768px) {
+            min-width: 0;
+            padding: 16px 0;
+          }
+
+          .optionText {
+            white-space: nowrap;
+            color: #FFFFFF99;
+
+            &:hover {
+              color: #cdd8b7;
+            }
+    
+            &.active {
+              color: #A6DC37;
             }
           }
         }

@@ -1,0 +1,123 @@
+.button {
+  display: flex;
+  height: 50px;
+  padding: 0 28px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  border-bottom: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  gap: 16px;
+
+  & > * {
+    pointer-events: none;
+  }
+
+  &:before {
+    content: '';
+    display: block;
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    opacity: 0;
+    background-color: #fff;
+    transition: all .2s;
+  }
+
+  &:hover:before {
+    opacity: .1;
+  }
+
+  &:active:before {
+    display: none;
+  }
+
+  &.upcoming {
+    justify-content: center;
+    border-color: #FBBF24;
+    background: linear-gradient(180deg, #F59E0B -6.02%, #B45309 85.68%);
+
+    &:active {
+      background: linear-gradient(180deg, #B45309 -6.02%, #F59E0B 85.68%);
+    }
+
+    &.disabled,
+    &.disabled:active {
+      border-color: #8B8B8B;
+      background: #8B8B8B;
+      cursor: not-allowed;
+
+      &.disabled:hover:before {
+        opacity: 0;
+      }
+    }
+  }
+
+  &.ongoing {
+    border-color: #6B41EB;
+    background: linear-gradient(180deg, #6B41EB -6.02%, #241164 85.68%);
+
+    &:active {
+      background: linear-gradient(180deg, #241164 -6.02%, #6B41EB 85.68%);
+    }
+
+    &.disabled,
+    &.disabled:active {
+      border-color: #8B8B8B;
+      background: #8B8B8B;
+      cursor: not-allowed;
+
+      &.disabled:hover:before {
+        opacity: 0;
+      }
+    }
+
+    &.highlight {
+      border-color: #FF6992;
+      background: linear-gradient(180deg, #FF1D61 -6.02%, #8F0C45 85.68%);
+
+      &:active {
+        background: linear-gradient(180deg, #8F0C45 -6.02%, #FF1D61 85.68%);
+      }
+    }
+
+    &.dark {
+      opacity: .7;
+    }
+  }
+
+  &.closed {
+    justify-content: center;
+    border-color: #fff;
+    background: linear-gradient(180deg, #fff -6.02%, #8B8B8B 85.68%);
+
+    &:active {
+      background: linear-gradient(180deg, #8B8B8B -6.02%, #fff 85.68%);
+    }
+
+    &.disabled,
+    &.disabled:active {
+      background: #8B8B8B;
+      cursor: not-allowed;
+
+      &.disabled:hover:before {
+        opacity: 0;
+      }
+    }
+
+    &.current {
+      border-color: #53F19C;
+      background: linear-gradient(180deg, #06B357 -6.02%, #0D6E3B 85.68%);
+
+      &:active {
+        background: linear-gradient(180deg, #0D6E3B -6.02%, #06B357 85.68%);
+      }
+    }
+
+    &.dark {
+      opacity: .7;
+    }
+  }
+}

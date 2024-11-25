@@ -8,9 +8,8 @@ import $app from '@/store/app'
 import $token from '@/store/token'
 
 import App from '@/components/App'
-// import SidebarSearch from '@/components/Exchange/Sidebar/SidebarSearch'
-// import SidebarSort from '@/components/Exchange/Sidebar/SidebarSort'
 import SidebarItem from '@/components/Exchange/Sidebar/SidebarItem'
+// import SidebarBrettBanner from '@/components/Exchange/Sidebar/SidebarBrettBanner'
 
 const SidebarSearch = dynamic(() => import('@/components/Exchange/Sidebar/SidebarSearch'), {ssr: false})
 const SidebarSort = dynamic(() => import('@/components/Exchange/Sidebar/SidebarSort'), {ssr: false})
@@ -38,21 +37,8 @@ const Sidebar = ({ version, isApp }) => {
   const [sortBy, sortDirection] = sort.split(':')
 
   useEffect(() => {
-    if (blockchain.code !== urlBlockchain) {
-      return
-    }
-
     fetchTokensList()
-  }, [blockchain.code, sort, pages.current, urlBlockchain])
-
-  useEffect(() => {
-    if (!loading && current?.id && current.blockchain === urlBlockchain) {
-      const exist = all.find(item => item.id === current.id)
-      if (!exist) {
-        dispatch($token.set.all([current, ...all]))
-      }
-    }
-  }, [current?.id, loading, urlBlockchain])
+  }, [blockchain?.code, sort, pages.current, urlBlockchain])
 
   useEffect(() => {
     handleScroll()
@@ -75,7 +61,7 @@ const Sidebar = ({ version, isApp }) => {
   }
 
   const fetchTokensList = async () => {
-    const res = await $token.api.all({
+    const result = await $token.api.all({
       page: pages.current,
       page_size: pages.perPage,
       chain_id: blockchain.id,
@@ -84,8 +70,8 @@ const Sidebar = ({ version, isApp }) => {
       verified: true,
     })
 
-    if (res.success) {
-      dispatch($token.set.all(res.data))
+    if (result && result.length) {
+      dispatch($token.set.all(result))
       dispatch($token.set.pages({ next: (pages.current * 1 + 1) }))
     }
 
@@ -101,36 +87,40 @@ const Sidebar = ({ version, isApp }) => {
         <SidebarSort />
       </App.Flex>
 
-      <div className={styles.cardBox}>
-        <div className={styles.cardBoxContent} ref={mobileContainerRef} onScroll={handleScroll}>
-          {loading ? (
-            [...new Array(20)].map((_, i) => {
-              const isOdd = i%2
-              return (
-                <div key={i} className={styles['card-loader']} style={{'--delay': `${i/(isOdd ? 20 : 5)}s`}} />
-              )
-            })
-          ) : (
-            <>
-              {searching && !list.length ? (
-                <App.Text center>No results were found for your search</App.Text>
-              ) : (
-                <>
-                  {list.map((item, i) => <SidebarItem key={item.id} item={item} version={version} />)}
+      <App.Flex column flex={1} gap={16}>
+        <div className={styles.cardBox}>
+          <div className={styles.cardBoxContent} ref={mobileContainerRef} onScroll={handleScroll}>
+            {loading ? (
+              [...new Array(20)].map((_, i) => {
+                const isOdd = i%2
+                return (
+                  <div key={i} className={styles['card-loader']} style={{'--delay': `${i/(isOdd ? 20 : 5)}s`}} />
+                )
+              })
+            ) : (
+              <>
+                {searching && !list.length ? (
+                  <App.Text center>No results were found for your search</App.Text>
+                ) : (
+                  <>
+                    {list.map((item, i) => <SidebarItem key={item.id} item={item} version={version} />)}
 
-                  {pages.next && ! searching && all.length > 0 && (all.length % 20 == 0) ? (
-                    <div ref={mobileNextRef}>
-                      <App.Flex center full>
-                        <App.Loader size={40} />
-                      </App.Flex>
-                    </div>
-                  ) : null}
-                </>
-              )}
-            </>
-          )}
+                    {pages.next && ! searching && all.length > 0 && (all.length % 20 == 0) ? (
+                      <div ref={mobileNextRef}>
+                        <App.Flex center full>
+                          <App.Loader size={40} />
+                        </App.Flex>
+                      </div>
+                    ) : null}
+                  </>
+                )}
+              </>
+            )}
+          </div>
         </div>
-      </div>
+
+        {/* <SidebarBrettBanner /> */}
+      </App.Flex>
     </App.Flex>
   )
 }

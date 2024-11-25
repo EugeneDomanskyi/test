@@ -30,12 +30,6 @@ const SidebarItem = ({ item, version }) => {
   const colors = useRef([getRandomColor(), getRandomColor()])
 
   const handleClick = () => {
-    Amplitude.event('View Market', {
-      'Base Currency': item.symbol,
-      'Quote Currency': item.quoteSymbol,
-      'Network': blockchain.code.toUpperCase(),
-    })
-
     dispatch($token.set.current(item))
     router.push(`/exchange/${blockchain.code}/${item.address}`, undefined, { scroll: false })
   }
@@ -52,7 +46,7 @@ const SidebarItem = ({ item, version }) => {
     <App.Flex row justify="space-between" align="center" onClick={handleClick} className={cn(styles.market, styles.version, {[styles.active]: (current.id == item.id)})}>
       <App.Flex row gap={4} align="center">
         {image ? (
-          <Image src={image} priority onError={() => setImage(null)} width={version == 'mobile' ? 30 : 26} height={version == 'mobile' ? 30 : 26} className={styles.image} alt="" />
+          <Image src={image} onError={() => setImage(null)} width={version == 'mobile' ? 30 : 26} height={version == 'mobile' ? 30 : 26} className={styles.image} alt="" />
         ) : (
           <div className={styles.emptyImage} style={{background: `linear-gradient(0deg, ${colors.current[0]}, ${colors.current[1]})`}}>
             <App.Text center size={10} weight={600}>{ getSymbolForLogo() }</App.Text>

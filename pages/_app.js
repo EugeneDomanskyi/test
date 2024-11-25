@@ -2,53 +2,31 @@ import { useRef, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { useRouter } from 'next/router'
 import { userAgentFromString } from 'next/server'
-import nookies from 'nookies'
 import merge from 'lodash.merge'
+import { I18nextProvider } from 'react-i18next'
+import nookies from 'nookies'
+import { BanditContextProvider } from '@bandit-network/quest-widget'
 
-import { getDefaultWallets, RainbowKitProvider, darkTheme, connectorsForWallets } from '@rainbow-me/rainbowkit'
-import { configureChains, createConfig, WagmiConfig } from 'wagmi'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
-import { infuraProvider } from 'wagmi/providers/infura'
-import { publicProvider } from 'wagmi/providers/public'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
+import { WagmiProvider } from 'wagmi'
 
-import { CHAINS } from '@/config'
+import WagmiHelper from '@/libs/WagmiHelper'
 import store from '@/store'
-import $app from '@/store/app'
+import i18nInit from '@/libs/i18n'
+
+import $token, { template } from '@/store/token'
 
 import App from '@/components/App'
 import Wrapper from '@/components/Wrapper'
 import Head from '@/components/Head'
 
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css'
+import '@bandit-network/quest-widget/dist/styles.css'
 import '@rainbow-me/rainbowkit/styles.css'
 import '@/styles/globals.css'
 import '@/styles/roulette_design.css'
 
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  CHAINS, [
-  alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }),
-  infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_ID }),
-  publicProvider(),
-]
-)
-
-const { wallets: [popularWallets] } = getDefaultWallets({
-  appName: process.env.NEXT_PUBLIC_APP_NAME,
-  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
-  chains,
-})
-
-const connectors = connectorsForWallets([
-  popularWallets
-])
-
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors: connectors,
-  publicClient,
-  webSocketPublicClient,
-})
+const queryClient = new QueryClient()
 
 const RainbowTheme = merge(darkTheme({ overlayBlur: 'small' }), {
   colors: {
@@ -67,44 +45,58 @@ const RainbowTheme = merge(darkTheme({ overlayBlur: 'small' }), {
   },
 })
 
-function MyApp({ Component, pageProps, initialData, ssRoute }) {
+function MyApp({ Component, pageProps, initialData, ssRoute, ssShare, ssCurrent }) {
   const router = useRouter()
   const storeRef = useRef(store(initialData)).current
 
-  const currentChain = initialData.chains.find(item => item.id == initialData.blockchain)
+  const wagmiConfig = WagmiHelper.createWagmiConfig(initialData.chains)
+  const currentChain = WagmiHelper.getChainByCode(initialData.blockchain, initialData.chains)
 
   useEffect(() => {
     if (router?.query?.vid) {
       localStorage.setItem('ms_vid', router.query.vid)
     }
   }, [])
-
+  
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains} theme={RainbowTheme} initialChain={currentChain}>
-        <Provider store={storeRef}>
-          <Head route={ssRoute} />
-          <Wrapper>
-            <Component {...pageProps} />
-          </Wrapper>
-          <App.Alert />
-        </Provider>
-      </RainbowKitProvider>
-    </WagmiConfig>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <I18nextProvider i18n={i18nInit(initialData.language)}>
+          <RainbowKitProvider theme={RainbowTheme} initialChain={currentChain}>
+            <BanditContextProvider cluster={"mainnet"} apiKey={process.env.NEXT_PUBLIC_BANDIT_API_KEY}>
+              <Provider store={storeRef}>
+                <Head route={ssRoute} current={ssCurrent} share={ssShare} />
+                <Wrapper>
+                  <Component {...pageProps} />
+                </Wrapper>
+                <App.Alert />
+              </Provider>
+            </BanditContextProvider>
+          </RainbowKitProvider>
+        </I18nextProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   )
 }
 
 MyApp.getInitialProps = async ({ ctx }) => {
-  const cookies = nookies.get(ctx)
-
   let ssRoute = ''
+  let ssShare = null
+  let ssCurrent = null
   let isMobile = null
+
   let isApp = null
   let platform = null
-  let initWallet = null
-  let devMode = null
-  let appTheme = null
+
   let chains = []
+  let blockchain = null
+
+  if (ctx?.query) {
+    const { share } = ctx.query
+    if (share) {
+      ssShare = share
+    }
+  }
 
   if (ctx?.req) {
     ssRoute = ctx.req.url
@@ -114,41 +106,46 @@ MyApp.getInitialProps = async ({ ctx }) => {
 
     isApp = ctx.req.headers['x-tegro-app'] == 'native'
     platform = ctx.req.headers['x-tegro-platform']
-    initWallet = ctx.req.headers['x-tegro-wallet'] == 'null' ? null : ctx.req.headers['x-tegro-wallet']
-    devMode = ctx.req.headers['x-tegro-dev-mode'] == 'true' ? true : null
-    appTheme = ctx.req.headers['x-tegro-theme'] == 'null' ? null : ctx.req.headers['x-tegro-theme']
 
-    const result = await $app.api.chains()
-    if (result?.success) {
-      chains = result.data.map(item => {
-        return {
-          id: item.id,
-          token: {
-            symbol: item.default_quote_token_symbol,
-            address: item.default_quote_token_contract_address.toLowerCase(),
-            image: item.logo || (item.default_quote_token_symbol == 'USDT' ? '/images/icon-usdt.png' : '') || `https://storage.googleapis.com/token-assets/assets/${item?.name}/${item.default_quote_token_contract_address.toLowerCase()}.png`
-          },
-          contract: {
-            exchange: item.exchange_contract.toLowerCase(),
-            settlement: item.settlement_contract.toLowerCase(),
-          },
+    chains = await WagmiHelper.fetchChains(ctx)
+    blockchain = WagmiHelper.getCurrentChainCode(ctx, chains)
+
+    if (ssRoute.includes('/exchange')) {
+      if (ctx?.query && ctx?.query?.address && ctx.query.address.length && ctx.query.address.length > 0) {
+        const blockchainCode = ctx.query.blockchain
+        const address = ctx.query.address[0]
+        const chain = WagmiHelper.getChainByCode(blockchainCode, chains)
+  
+        const result = await $token.api.all({
+          page: 1,
+          page_size: 50,
+          chain_id: chain.id,
+          sort_by: 'volume',
+          sort_order: 'desc',
+          verified: true,
+        })
+
+        const currentMarket = result.find(item => item.base_contract_address.toLowerCase() === address.toLowerCase())
+        if (currentMarket) {
+          currentMarket.blockchainCode = blockchainCode
+          ssCurrent = template(currentMarket)
         }
-      })
+      }
     }
   }
   
   return {
     initialData: {
-      blockchain: cookies.blockchain,
+      language: nookies.get()?.language ?? 'en',
       isMobile,
       isApp,
       platform,
-      initWallet,
-      appTheme,
-      devMode,
+      blockchain,
       chains,
     },
     ssRoute,
+    ssShare,
+    ssCurrent,
   }
 }
 

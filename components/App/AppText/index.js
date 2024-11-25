@@ -1,11 +1,14 @@
+import { useState } from 'react'
 import cn from 'classnames'
 
 import { usePropsHelper } from '@/myhooks/props-helper'
 
 import styles from './styles.module.scss'
 
-const AppText = ({ children, tag = 'p', html, inline, family, size, weight, style, color, gradient, height, spacing, nowrap, lines, uppercase, lowercase, capitalize, center, italic, right, transition, variant, flex, className, id, sx = {}, onClick }) => {
+const AppText = ({ children, tag = 'p', html, inline, family, size, weight, style, color, lineThrough, hoverColor, gradient, height, spacing, nowrap, lines, uppercase, lowercase, capitalize, center, italic, right, transition, variant, flex, className, id, sx = {}, onClick }) => {
   const { propValue } = usePropsHelper()
+
+  const [isHovered, setIsHovered] = useState(false)
 
   const Tag = inline ? 'span' : tag
 
@@ -20,6 +23,7 @@ const AppText = ({ children, tag = 'p', html, inline, family, size, weight, styl
       {[styles.capitalize]: propValue(capitalize)},
       {[styles.center]: propValue(center)},
       {[styles.italic]: propValue(italic)},
+      {[styles.lineThrough]: propValue(lineThrough)},
       {[styles.right]: propValue(right)},
       {[styles[variant]]: propValue(variant)}
     )
@@ -45,7 +49,7 @@ const AppText = ({ children, tag = 'p', html, inline, family, size, weight, styl
     }
 
     if (color) {
-      result.color = propValue(color)
+      result.color = isHovered && hoverColor ? propValue(hoverColor) : propValue(color)
     }
 
     if (gradient) {
@@ -77,10 +81,24 @@ const AppText = ({ children, tag = 'p', html, inline, family, size, weight, styl
     return result
   }
 
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  }
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  }
+
+  const handleClick = (e) => {
+    if (onClick) {
+      onClick(e)
+    }
+  }
+
   return html ? (
-    <Tag id={id} className={classes()} style={styleObject()} onClick={(e) => onClick ? onClick(e) : null} dangerouslySetInnerHTML={{ __html: html }} />
+    <Tag id={id} className={classes()} style={styleObject()} onClick={handleClick} dangerouslySetInnerHTML={{ __html: html }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} />
   ) : (
-    <Tag id={id} className={classes()} style={styleObject()} onClick={(e) => onClick ? onClick(e) : null}>{children}</Tag>
+    <Tag id={id} className={classes()} style={styleObject()} onClick={handleClick} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>{children}</Tag>
   )
 }
 

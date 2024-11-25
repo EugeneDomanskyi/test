@@ -1,0 +1,108 @@
+.container {
+  padding: 72px 0 32px;
+  min-height: 100vh;
+
+  @media (max-width: 768px) {
+    padding: 60px 0 32px;
+  }
+  
+  .x {
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    padding: 8px;
+
+    .bar {
+      height: 6px;
+      width: 254px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.2);
+      position: relative;
+      z-index: 0;
+
+      .innerBar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, #46311E 0%, #DC9325 100%);
+        border-radius: 3px;
+        border: solid rgba(255, 255, 255, 0.2) 1px;
+
+        &:after {
+          content: '';
+          display: block;
+          width: 1px;
+          height: 120%;
+          position: absolute;
+          z-index: 0;
+          top: 0;
+          right: 0;
+          background: #fff;
+        }
+      }
+    }
+  }
+
+  .header {
+    padding-top: 32px;
+
+    .badge {
+      border-radius: 8px;
+      width: 80px;
+      height: 24px;
+      border: solid transparent 1px;
+
+      &.on-going {
+        border-color: #A6DC37;
+      }
+
+      &.closed {
+        border-color: #6F6C88;
+      }
+
+      &.upcoming {
+        border-color: #DC7225;
+      }
+    }
+
+    .prize {
+      border-radius: 8px;
+      padding: 0 12px;
+      height: 24px;
+      border: solid #FFF6A3 1px;
+    }
+  }
+
+  .table {
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: rgba(23, 23, 23, 0.30);
+    backdrop-filter: blur(27px);
+
+    .row {
+      padding: 12px 24px;
+
+      &:not(:last-child) {
+        border-bottom: solid #FFFFFF1A 1px;
+      }
+
+      @media (max-width: 768px) {
+        padding: 8px;
+      }
+    }
+  }
+
+  .botBanner {
+    padding: 16px;
+    border-radius: 12px;
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.07) 100%), #0B0915;
+
+    .bag {
+      width: 48px;
+      min-width: 48px;
+      height: 48px;
+      border-radius: 9px;
+      background: #6B41EB;
+    }
+  }
+}

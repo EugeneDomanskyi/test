@@ -53,6 +53,16 @@
     position: relative;
     overflow: hidden;
 
+    .iconGlass {
+      opacity: 0;
+      // animation: spin 4s linear infinite;
+
+      &.active {
+        animation: spin 4s linear infinite;
+        opacity: 1;
+      }
+    }
+
     &:hover {
       .hoverContent {
         transform: translateX(0%);
@@ -89,6 +99,10 @@
 
       &.notComplete {
         background-color: #4D0E27;
+      }
+
+      &.pending {
+        background-color: rgb(241,191,66);
       }
     }
   }
@@ -213,4 +227,23 @@
       padding: 0 12px;
     }
   }
+}
+
+
+@keyframes spin { 
+  0% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(180deg);
+  }
+  60% {
+    transform: rotate(180deg);
+  }
+  80% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(360deg); 
+  } 
 }

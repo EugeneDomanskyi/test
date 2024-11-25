@@ -1,0 +1,21 @@
+.container {
+  height: 100%;
+
+  .search {
+    padding: 8px 16px;
+  }
+
+  .list {
+    height: calc(100% - 60px);
+
+    .sort {
+      padding: 8px 16px;
+      border-top: 1px solid #1C172B;
+    }
+
+    .scroll {
+      overflow-y: auto;
+      height: calc(100% - 31px);
+    }
+  }
+}

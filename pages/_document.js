@@ -10,7 +10,6 @@ class MyDocument extends Document {
           <link rel="canonical" href="https://www.tegro.com" />
           <GoogleAnalytics />
         </Head>
-        
         <body>
           <Main />
           <NextScript />
