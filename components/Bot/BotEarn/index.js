@@ -126,11 +126,15 @@ const BotEarn = () => {
                 </App.Flex>
               </App.Flex>
 
-              <BotProgress currentValue={task.progress} maxValue={task.steps} steps={task.steps > 5 ? 5 : 0} />
+              {task.progressive ? (
+                <BotProgress currentValue={task.progress} maxValue={task.steps} steps={task.steps > 5 ? 5 : 0} />
+              ) : null}
             </App.Flex>
 
             <App.Flex column fullWidth gap={16} className={styles.body}>
-              <App.Text size={14} weight={400}>{task.description}</App.Text>
+              {task.description !== '' ? (
+                <App.Text size={14} weight={400}>{task.description}</App.Text>
+              ) : null}
 
               {task.is_claimed ? (
                 <App.Button variant="bot"><App.Icon icon="check-circle-fill2" /> Claimed</App.Button>
