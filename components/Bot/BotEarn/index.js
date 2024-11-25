@@ -18,6 +18,8 @@ const BotEarn = () => {
   const user = useSelector(({ $bot }) => $bot.user)
   const tasks = useSelector(({ $bot }) => $bot.tasks)
 
+  const [loading, setLoading] = useState(false)
+
   useEffect(() => {
     fetchTasks()
   }, [])
@@ -59,6 +61,11 @@ const BotEarn = () => {
   }
 
   const handleClaim = (task) => async () => {
+    if (loading) {
+      return
+    }
+
+    setLoading(true)
     const result = await $bot.api.taskClaim({type: task.key})
     if (result && !result.error) {
       Amplitude.event(task.title, {
@@ -88,6 +95,8 @@ const BotEarn = () => {
         })
       }
     }
+
+    setLoading(false)
   }
 
   const handleShop = () => {
