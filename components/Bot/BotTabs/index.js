@@ -57,6 +57,13 @@ const BotTabs = () => {
         </App.Flex>
         <App.Text size={13} weight={tab == 'earn' ? 700 : 400} color={tab == 'earn' ? '#FFBB01' : '#fff'}>Earn</App.Text>
       </App.Flex>
+
+      <App.Flex column align="center" flex={1} className={cn(styles.tab, {[styles.active]: tab == 'friends'})} onClick={handlePage('friends')}>
+        <App.Flex fullWidth height={tab == 'friends' ? 72 : 56} column justify="center" align="center" sx={{ marginTop: tab == 'friends' ? -24 : -4 }}>
+          <Image src="/images/bot/friends.png" width={tab == 'friends' ? 56 : 50} height={tab == 'friends' ? 53 : 47}  alt="" />
+        </App.Flex>
+        <App.Text size={13} weight={tab == 'friends' ? 700 : 400} color={tab == 'friends' ? '#FFBB01' : '#fff'}>Friends</App.Text>
+      </App.Flex>
     </App.Flex>
   )
 }
