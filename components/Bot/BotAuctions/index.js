@@ -271,7 +271,7 @@ const BotAuctions = ({ onClaim }) => {
                               <App.Text size={16} weight={600} height={1}>Join our Telegram Channel</App.Text>
                   
                               <App.Flex row center gap={4}>
-                                <App.Text color="#67C9F9" size={16} weight={600} inline>2000</App.Text>
+                                <App.Text color="#67C9F9" size={16} weight={600} inline>1000</App.Text>
                                 <Image src="/images/bot/gem.png" width={20} height={16} alt="" />
                               </App.Flex>
                             </App.Flex>
