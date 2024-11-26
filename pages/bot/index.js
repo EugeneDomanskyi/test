@@ -14,6 +14,7 @@ import BotWrapper from '@/components/Bot/BotWrapper'
 import BotAuctions from '@/components/Bot/BotAuctions'
 import BotEarn from '@/components/Bot/BotEarn'
 import BotShop from '@/components/Bot/BotShop'
+import BotFriends from '@/components/Bot/BotFriends'
 import BotHistory from '@/components/Bot/BotHistory'
 import BotMyEarnings from '@/components/Bot/BotMyEarnings'
 import BotAuctionHistory from '@/components/Bot/BotAuctionHistory'
@@ -71,6 +72,7 @@ const Bot  = () => {
       case 'auctions': return <BotAuctions onClaim={handleClaim} />
       case 'earn': return <BotEarn />
       case 'shop': return <BotShop />
+      case 'friends': return <BotFriends />
       case 'history': return <BotHistory />
       case 'my-earnings': return <BotMyEarnings onClaim={handleClaim} />
       case 'auction-history': return <BotAuctionHistory />

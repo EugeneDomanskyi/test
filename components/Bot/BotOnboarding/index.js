@@ -113,10 +113,10 @@ const BotOnboarding = () => {
                 <div style={{ height: slideHeight }} className={cn(styles.slide)}>
                   <App.Flex className={styles.taskContainer} column gap={8}>
                     <App.Flex fullWidth justify="space-between" gap={8}>
-                      <App.Text size={14} weight={600}>1. Join Our Telegram Channel</App.Text>
+                      <App.Text size={14} weight={600}>Join Our Telegram Channel</App.Text>
 
                       <App.Flex row center gap={4}>
-                        <App.Text color="#67C9F9" size={14} weight={600} inline>2000</App.Text>
+                        <App.Text color="#67C9F9" size={14} weight={600} inline>1000</App.Text>
                         <Image src="/images/bot/gem.png" width={16} height={12} alt="" />
                       </App.Flex>
                     </App.Flex>
@@ -124,9 +124,9 @@ const BotOnboarding = () => {
                     <App.Text className={styles.taskDescription}>Get latest updates on auctions, talk to fellow bidders, and win exciting rewards.</App.Text>
 
                     <App.Button variant="bot">
-                      Verify & Claim
+                      Claim
                       <App.Flex row center gap={4}>
-                        <App.Text size={14} weight={600} inline>2000</App.Text>
+                        <App.Text size={14} weight={600} inline>1000</App.Text>
                         <Image src="/images/bot/gem.png" width={16} height={12} alt="" />
                       </App.Flex>
                     </App.Button>
@@ -172,7 +172,7 @@ const BotOnboarding = () => {
               <div style={{ lineHeight: 1 }}>
                 <div style={{ height: slideHeight }} className={cn(styles.slide)}>
                   <App.Flex className={styles.onboardingTop4}>
-                    <App.Text center size={32} weight={900} height={1} color="#A6DC37" className={styles.text}>+5000 Gems</App.Text>
+                    <App.Text center size={32} weight={900} height={1} color="#A6DC37" className={styles.text}>+3000 Gems</App.Text>
                   </App.Flex>
 
                   <App.Flex column fullWidth gap={8} className={cn(styles.textBlock, styles.purple)}>

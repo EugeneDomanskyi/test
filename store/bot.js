@@ -15,6 +15,19 @@ export const botSlice = createSlice({
     megaModal: false,
     products: [],
     invoices: [],
+    tasks: [],
+    claimedTask: null,
+    referrals: [],
+    referrals_stats: {
+      totalReferrals: 0,
+      totalGems: 0,
+      hasReferrals: null,
+    },
+    referrals_page: {
+      current: 1,
+      limit: 10,
+      total: 0,
+    },
   },
 
   reducers: {
@@ -80,6 +93,33 @@ export const botSlice = createSlice({
     invoices: (state, { payload }) => {
       state.invoices = payload
     },
+
+    tasks: (state, { payload }) => {
+      state.tasks = payload
+    },
+
+    claimedTask: (state, { payload }) => {
+      state.claimedTask = payload
+    },
+
+    referrals: (state, { payload }) => {
+      const referrals = Object.keys(payload).map(key => ({
+        name: key,
+        gems: Number(payload[key]),
+      }))
+
+      referrals.sort((a, b) => b.gems - a.gems)
+
+      state.referrals = referrals
+    },
+
+    referrals_stats: (state, { payload }) => {
+      state.referrals_stats = payload
+    },
+
+    referrals_page: (state, { payload }) => {
+      state.referrals_page = payload
+    },
   },
 })
 
@@ -134,6 +174,22 @@ const api = {
 
   products: () => {
     return request(`products`, 'GET', {api: 'accounts'})
+  },
+
+  tasks: () => {
+    return request(`telegram/task/list`, 'GET', {api: 'accounts'})
+  },
+
+  taskClaim: (params) => {
+    return request(`telegram/task/claim`, 'POST', {api: 'accounts', ...params})
+  },
+
+  referrals: (params) => {
+    return request(`telegram/user/referral/info`, 'GET', {api: 'bid_v2', ...params})
+  },
+
+  referrals_stats: () => {
+    return request(`telegram/user/referral/stats`, 'GET', {api: 'bid_v2'})
   },
 }
 
