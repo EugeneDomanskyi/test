@@ -30,6 +30,10 @@ const BotHeader = () => {
       // dispatch($auction.set.earnings(result))
       dispatch($auction.set.earnings_v2(result.data.won_auctions))
       dispatch($auction.set.earnings_unclaimed_v2(result.data.uncalimed_won_auctions))
+      dispatch($auction.set.earnings_limit_v2({
+        required: result.data.required_profit,
+        current: result.data.profit_limit,
+      }))
       dispatch($auction.set.earnings_page_v2({
         current: result.current_page,
         limit: earnings_page.limit,
