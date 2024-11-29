@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import moment from 'moment'
+import cn from 'classnames'
 
 import Amplitude from '@/libs/amplitude.lib'
 
@@ -9,9 +10,10 @@ import $auction from '@/store/auction'
 import $bot from '@/store/bot'
 
 import App from '@/components/App'
-import Timer from '@/components/Bot/BotTimer'
+import BotProgress from '@/components/Bot/BotProgress'
 
 import styles from './styles.module.scss'
+import { createPortal } from 'react-dom'
 
 const MyEarnings = ({ onClaim }) => {
   const dispatch = useDispatch()
@@ -20,7 +22,7 @@ const MyEarnings = ({ onClaim }) => {
   const [buttonLoading, setButtonLoading] = useState()
 
   const earnings = useSelector(({ $auction }) => $auction.earnings)
-  const user = useSelector(({ $bot }) => $bot.user)
+  const earnings_limit = useSelector(({ $auction }) => $auction.earnings_limit)
   const earnings_page = useSelector(({ $auction }) => $auction.earnings_page)
 
   useEffect(() => {
@@ -45,6 +47,10 @@ const MyEarnings = ({ onClaim }) => {
       // dispatch($auction.set.earnings(result))
       dispatch($auction.set.earnings_v2(result.data.won_auctions))
       dispatch($auction.set.earnings_unclaimed_v2(result.data.uncalimed_won_auctions))
+      dispatch($auction.set.earnings_limit_v2({
+        required: result.data.required_profit,
+        current: result.data.profit_limit,
+      }))
       dispatch($auction.set.earnings_page_v2({
         current: result.current_page,
         limit: earnings_page.limit,
@@ -76,7 +82,7 @@ const MyEarnings = ({ onClaim }) => {
     const pages = []
   
     pages.push(currentPage == 1 ? (
-      <App.Flex key={1} center gap={4} className={styles.claimed}>
+      <App.Flex key={1} center gap={4} className={cn(styles.claimed, styles.page)}>
         <App.Text size={14} weight={700} height={1}>1</App.Text>
       </App.Flex>
     ) : (
@@ -89,7 +95,7 @@ const MyEarnings = ({ onClaim }) => {
   
     for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
       pages.push(i === currentPage ? (
-        <App.Flex key={i} center gap={4} className={styles.claimed}>
+        <App.Flex key={i} center gap={4} className={cn(styles.claimed, styles.page)}>
           <App.Text size={14} weight={700} height={1}>{i}</App.Text>
         </App.Flex>
       ) : (
@@ -103,7 +109,7 @@ const MyEarnings = ({ onClaim }) => {
   
     if (totalPages > 1) {
       pages.push(currentPage == totalPages ? (
-        <App.Flex key={totalPages} center gap={4} className={styles.claimed}>
+        <App.Flex key={totalPages} center gap={4} className={cn(styles.claimed, styles.page)}>
           <App.Text size={14} weight={700} height={1}>{totalPages}</App.Text>
         </App.Flex>
       ) : (
@@ -115,60 +121,92 @@ const MyEarnings = ({ onClaim }) => {
   }
 
   return (
-    <App.Flex center sx={{padding: 16, paddingTop: 8}}>
+    <App.Flex center sx={{padding: 8}}>
       {loading ? (
         <App.LoaderBlock height={300} />
       ) : (
         <App.Flex column fullWidth gap={16}>
-          {earnings?.length > 0 ? (
-            <App.Flex column align="center" gap={16} className={styles.earningsWrapper}>
-              <App.Flex fullWidth className={styles.header}>
-                <App.Text className={styles.headerText}>Auction</App.Text>
-                <App.Text className={styles.headerText}>Winning price</App.Text>
-                <App.Text className={styles.headerText}>Expiry</App.Text>
+          <App.Flex column fullWidth className={styles.taskContainer}>
+            <App.Flex column fullWidth gap={8} className={styles.title}>
+              <App.Flex fullWidth align="center" justify="space-between" gap={8}>
+                <App.Text size={14} weight={700} height={1}>Your winnings</App.Text>
+
+                <App.Text size={14} weight={700} height={1}>{earnings_limit?.current} USDC</App.Text>
               </App.Flex>
 
-              {earnings.map((item, index) => (
-                <App.Flex key={index} className={styles.claimItem}>
-                  <App.Flex row className={styles.claimItemHeader}>
-                    <App.Flex column>
-                      <App.Text className={styles.claimItemText}>{item.name}</App.Text>
-                      <App.Text className={styles.claimItemSecondarytext}>{moment(item.endsAt).format('DD-MM-YYYY')}</App.Text>
-                    </App.Flex>
+              <BotProgress currentValue={earnings_limit?.current} maxValue={earnings_limit?.required} limit />
+            </App.Flex>
+          </App.Flex>
 
-                    <App.Text className={styles.claimItemText}>{item.currentPrice + ' ' + item.token.currency}</App.Text>
-
-                    <App.Flex justify="flex-end" width={80}>
-                      <App.Text className={styles.claimItemText}>
-                        {item.claimTime && item.claimTime.diff(moment()) > 0 ? (
-                          <Timer claimTime={item.claimTime} />
-                        ) : '---'}
-                      </App.Text>
-                    </App.Flex>
+          {earnings?.length > 0 ? (
+            <App.Flex fullWidth column gap={16} sx={{ paddingBottom: !earnings_limit?.ready ? 116 : 0 }}>
+              <App.Flex column align="center" fullWidth gap={12} className={styles.earningsWrapper}>
+                <App.Flex fullWidth align="center" justify="space-between" className={styles.header}>
+                  <App.Flex width={110}>
+                    <App.Text left size={14} weight={400} height={1}>Auction</App.Text>
                   </App.Flex>
 
-                  {item.claimHash == '' ? (
-                    item.claimTime && item.claimTime.diff(moment()) > 0 ? (
-                      <App.Button fullWidth variant="bot" loading={item.id == buttonLoading} onClick={() => item.id == buttonLoading ? null : handleClaim(item)}>Claim</App.Button>
-                    ) : (
-                      <App.Flex fullWidth center gap={4} className={styles.claimed}>
-                        <App.Text size={14} weight={700} height={1}>Time&apos;s up</App.Text>
-                      </App.Flex>
-                    )
-                  ) : (
-                    <App.Flex fullWidth center gap={4} className={styles.claimed}>
-                      <App.Icon icon="check" />
-                      <App.Text size={14} weight={700} height={1}>Claimed</App.Text>
-                    </App.Flex>
-                  )}
+                  <App.Flex center flex={1}>
+                    <App.Text center size={14} weight={400} height={1}>Winning price</App.Text>
+                  </App.Flex>
+
+                  <App.Flex justify="flex-end" width={110}>
+                    <App.Text right size={14} weight={400} height={1}>Status</App.Text>
+                  </App.Flex>
                 </App.Flex>
-              ))}
+
+                {earnings.map((item, index) => (
+                  <App.Flex key={index} column fullWidth gap={8} className={styles.row}>
+                    <App.Flex row gap={4} fullWidth align="center" justify="space-between">
+                      <App.Flex column gap={4} width={110}>
+                        <App.Text size={13} weight={400} height={1.2}>Buy {item.name}<br />for {item.currentPrice + ' ' + item.token.currency}</App.Text>
+                        <App.Text size={12} weight={400} height={1} color="#FFFFFF99">{moment(item.endsAt).format('DD-MM-YYYY')}</App.Text>
+                      </App.Flex>
+
+                      <App.Flex center flex={1}>
+                        <App.Text size={13} weight={400} height={1}>{item.currentPrice + ' ' + item.token.currency}</App.Text>
+                      </App.Flex>
+
+                      <App.Flex justify="flex-end" width={110}>
+                        <App.Flex row justify="flex-end" gap={4}>
+                          <App.Flex className={cn(styles.circle, {[styles.ready]: earnings_limit?.ready})} />
+
+                          <App.Flex row width={90}>
+                            <App.Text right size={13} weight={400} height={1.2}>{(earnings_limit?.ready || item.claimHash !== '') ? 'ready for claim' : 'min withdrawal not met'}</App.Text>
+                          </App.Flex>
+                        </App.Flex>
+                      </App.Flex>
+                    </App.Flex>
+
+                    {earnings_limit?.ready ? (
+                      item.claimHash == '' ? (
+                        <App.Button fullWidth variant="green" small loading={item.id == buttonLoading} onClick={() => item.id == buttonLoading ? null : handleClaim(item)}>Claim</App.Button>
+                      ) : (
+                        <App.Flex fullWidth center gap={4} className={styles.claimed}>
+                          <App.Icon icon="check-circle-fill2" width={14} height={14} />
+                          <App.Text size={14} weight={600} height={1}>Claimed</App.Text>
+                        </App.Flex>
+                      )
+                    ) : null}
+                  </App.Flex>
+                ))}
+              </App.Flex>
 
               {earnings_page.total > 1 ? (
                 <App.Flex row center gap={8}>
                   {renderPagination()}
                 </App.Flex>
               ) : null}
+
+              {!earnings_limit?.ready ? createPortal(
+                <App.Flex column gap={8} className={styles.bottom}>
+                  <App.Flex center className={styles.frame}>
+                    <App.Text center size={12} weight={400}>{earnings_limit?.required - earnings_limit?.current} USDT left before you withdraw your winnings to your wallet.</App.Text>
+                  </App.Flex>
+
+                  <App.Button variant="bot" fullWidth onClick={handleBack}>Go back to win more Auctions</App.Button>
+                </App.Flex>,
+              document.getElementById('content')) : null}
             </App.Flex>
           ) : (
             <App.Flex column gap={16} className={styles.emptyBox}>
