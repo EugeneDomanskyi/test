@@ -117,6 +117,7 @@ export const earnings_template_v2 = (item) => {
     claimTime: moment(item.last_bid_timestamp * 1000).add(3 * 24 * 60 * 60, 'seconds'),
     ready: true,
     status: 'closed',
+    readyToClaim: item.status >= 4,
   }
 }
 
