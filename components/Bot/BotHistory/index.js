@@ -47,12 +47,35 @@ const BotHistory = ({ onClaim }) => {
   }, [])
 
   const fetchAuctions = async () => {
-    const result = await $auction.api.allTelegram()
-    if (result && !result.error) {
-      dispatch($auction.set.all(result))
-    }
+    const calls = [
+      $auction.api.allTelegram(),
+      $auction.api.closed(),
+    ]
 
-    dispatch($auction.set.loading(false))
+    Promise.all(calls).then((results) => {
+      const all = results[0]
+      const closed = results[1]
+
+      const auctions = []
+      if (all && !all.error) {
+        all.forEach(item => {
+          if (item.auction.status < 3) {
+            auctions.push(item)
+          }
+        })
+      }
+
+      if (closed && !closed.error) {
+        closed.forEach(item => {
+          if (item.auction.status >= 3) {
+            auctions.push(item)
+          }
+        })
+      }
+
+      dispatch($auction.set.all(auctions))
+      dispatch($auction.set.loading(false))
+    })
   }
 
   const handleUpdatedAuction = async (data) => {

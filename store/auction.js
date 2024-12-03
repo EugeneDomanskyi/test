@@ -178,6 +178,10 @@ export const auctionSlice = createSlice({
       state.all = payload.map(item => template(item))
     },
 
+    closed: (state, { payload }) => {
+      // state.all = payload.map(item => template(item))
+    },
+
     update: (state, { payload }) => {
       state.all = state.all.map(item => {
         if (Number(item.id) == Number(payload.auction.id)) {
@@ -472,6 +476,10 @@ export const api = {
   
   allTelegram: () => {
     return request(`telegram/auctions`, 'GET', {api: 'bid'})
+  },
+  
+  closed: () => {
+    return request(`telegram/auctions/closed`, 'GET', {api: 'bid'})
   },
 
   get: (id) => {
