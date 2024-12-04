@@ -115,7 +115,9 @@ export const earnings_template_v2 = (item) => {
     txHash: item.tx_hash,
     claimHash: item.claim_tx_hash,
     claimTime: moment(item.last_bid_timestamp * 1000).add(3 * 24 * 60 * 60, 'seconds'),
+    ready: true,
     status: 'closed',
+    readyToClaim: item.status >= 4,
   }
 }
 
@@ -159,6 +161,11 @@ export const auctionSlice = createSlice({
       total: 0,
     },
     earnings_unclaimed: 0,
+    earnings_limit: {
+      required: 0,
+      current: 0,
+      ready: false,
+    },
     mega_auction: null,
   },
 
@@ -169,6 +176,10 @@ export const auctionSlice = createSlice({
 
     all: (state, { payload }) => {
       state.all = payload.map(item => template(item))
+    },
+
+    closed: (state, { payload }) => {
+      // state.all = payload.map(item => template(item))
     },
 
     update: (state, { payload }) => {
@@ -332,6 +343,14 @@ export const auctionSlice = createSlice({
       state.earnings_unclaimed = payload
     },
 
+    earnings_limit_v2: (state, { payload }) => {
+      state.earnings_limit = {
+        required: payload.required,
+        current: payload.current >= payload.required ? payload.required : payload.current,
+        ready: payload.current >= payload.required,
+      }
+    },
+
     earnings_page_v2: (state, { payload }) => {
       state.earnings_page = payload
     },
@@ -457,6 +476,10 @@ export const api = {
   
   allTelegram: () => {
     return request(`telegram/auctions`, 'GET', {api: 'bid'})
+  },
+  
+  closed: () => {
+    return request(`telegram/auctions/closed`, 'GET', {api: 'bid'})
   },
 
   get: (id) => {
