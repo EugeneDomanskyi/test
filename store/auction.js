@@ -104,6 +104,9 @@ const auctionHistoryTemplate = (item) => {
 }
 
 export const earnings_template_v2 = (item) => {
+  const lastBidMoment = moment(item.last_bid_timestamp * 1000)
+  const targetDate = moment('2024-12-01')
+console.log(lastBidMoment.isBefore(targetDate))
   return {
     id: item.id,
     name: item.product_title,
@@ -116,6 +119,7 @@ export const earnings_template_v2 = (item) => {
     claimHash: item.claim_tx_hash,
     claimTime: moment(item.last_bid_timestamp * 1000).add(3 * 24 * 60 * 60, 'seconds'),
     ready: true,
+    expired: lastBidMoment.isBefore(targetDate),
     status: 'closed',
     readyToClaim: item.status >= 4,
   }

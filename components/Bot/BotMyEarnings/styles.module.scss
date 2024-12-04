@@ -33,6 +33,10 @@
       &.ready {
         background-color: #53F19C;
       }
+
+      &.expired {
+        background-color: #f03f3f;
+      }
     }
   }
 
