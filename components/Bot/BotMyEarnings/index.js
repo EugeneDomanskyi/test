@@ -169,10 +169,14 @@ const MyEarnings = ({ onClaim }) => {
 
                       <App.Flex justify="flex-end" width={110}>
                         <App.Flex row justify="flex-end" gap={4}>
-                          <App.Flex className={cn(styles.circle, {[styles.ready]: item?.readyToClaim})} />
+                          <App.Flex className={cn(styles.circle, {[styles.ready]: item?.readyToClaim}, {[styles.expired]: (item?.expired && item.claimHash == '')})} />
 
                           <App.Flex row width={90}>
-                            <App.Text right size={13} weight={400} height={1.2}>{(item?.readyToClaim || item.claimHash !== '') ? 'ready for claim' : 'min withdrawal not met'}</App.Text>
+                            {item.expired && item.claimHash == '' ? (
+                              <App.Text right size={13} weight={400} height={1.2}>time&apos;s up</App.Text>
+                            ) : (
+                              <App.Text right size={13} weight={400} height={1.2}>{(item?.readyToClaim || item.claimHash !== '') ? 'ready for claim' : 'min withdrawal not met'}</App.Text>
+                            )}
                           </App.Flex>
                         </App.Flex>
                       </App.Flex>
@@ -180,7 +184,9 @@ const MyEarnings = ({ onClaim }) => {
 
                     {item?.readyToClaim ? (
                       item.claimHash == '' ? (
-                        <App.Button fullWidth variant="green" small loading={item.id == buttonLoading} onClick={() => item.id == buttonLoading ? null : handleClaim(item)}>Claim</App.Button>
+                        !item.expired ? (
+                          <App.Button fullWidth variant="green" small loading={item.id == buttonLoading} onClick={() => item.id == buttonLoading ? null : handleClaim(item)}>Claim</App.Button>
+                        ) : null
                       ) : (
                         <App.Flex fullWidth center gap={4} className={styles.claimed}>
                           <App.Icon icon="check-circle-fill2" width={14} height={14} />
