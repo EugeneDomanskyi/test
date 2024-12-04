@@ -179,10 +179,35 @@ const BotWrapper = ({ children }) => {
   }
 
   const fetchAuctions = async () => {
-    const result = await $auction.api.allTelegram()
-    if (result && !result.error) {
-      dispatch($auction.set.all(result))
-    }
+    const calls = [
+      $auction.api.allTelegram(),
+      $auction.api.closed(),
+    ]
+
+    Promise.all(calls).then((results) => {
+      const all = results[0]
+      const closed = results[1]
+
+      const auctions = []
+      if (all && !all.error) {
+        all.forEach(item => {
+          if (item.auction.status < 3) {
+            auctions.push(item)
+          }
+        })
+      }
+
+      if (closed && !closed.error) {
+        closed.forEach(item => {
+          if (item.auction.status >= 3) {
+            auctions.push(item)
+          }
+        })
+      }
+
+      dispatch($auction.set.all(auctions))
+      dispatch($auction.set.loading(false))
+    })
   }
 
   const fetchEarnings = async (page) => {
@@ -192,6 +217,10 @@ const BotWrapper = ({ children }) => {
       // dispatch($auction.set.earnings(result))
       dispatch($auction.set.earnings_v2(result.data.won_auctions))
       dispatch($auction.set.earnings_unclaimed_v2(result.data.uncalimed_won_auctions))
+      dispatch($auction.set.earnings_limit_v2({
+        required: result.data.required_profit,
+        current: result.data.profit_limit,
+      }))
       dispatch($auction.set.earnings_page_v2({
         current: result.current_page,
         limit: earnings_page.limit,
@@ -207,7 +236,7 @@ const BotWrapper = ({ children }) => {
         <App.Flex column full>
           <BotHeader />
 
-          <App.Flex fullWidth flex={1} className={styles.content}>
+          <App.Flex id="content" fullWidth flex={1} className={styles.content}>
             <App.Flex column className={styles.scroll}>
               {children}
             </App.Flex>
