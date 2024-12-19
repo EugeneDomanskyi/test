@@ -35,7 +35,7 @@ const Bot  = () => {
       const result = await $bot.api.generateWalletHash()
       if (result && !result.error && result?.hash) {
         const hash = result.hash
-        if (auction.claimHash == '' && auction.claimTime.diff(moment()) > 0) {
+        if (auction.claimHash == '') {
           const result = await $gem.api.claimTelegram({
             auction_id: auction.id,
             external_user_hash: hash,
