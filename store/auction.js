@@ -119,7 +119,7 @@ export const earnings_template_v2 = (item) => {
     claimHash: item.claim_tx_hash,
     claimTime: moment(item.last_bid_timestamp * 1000).add(3 * 24 * 60 * 60, 'seconds'),
     ready: true,
-    expired: item.status == 7, //lastBidMoment.isBefore(targetDate),
+    expired: item.status == 7 || lastBidMoment.isBefore(targetDate),
     status: 'closed',
     readyToClaim: item.status >= 4,
   }
