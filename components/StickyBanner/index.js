@@ -22,7 +22,7 @@ const StickyBanner = () => {
   const stickyBannerVisible = useSelector(({ $app }) => $app.stickyBannerVisible)
 
   const delayBetweenShow = 24 * 60 * 60 * 1000
-  const targetLink = '/auctions?utm_source=stickyb'
+  const targetLink = process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL
 
   useEffect(() => {
     if (!connection.loading) {
@@ -56,7 +56,7 @@ const StickyBanner = () => {
   }
   
   const handleOpen = () => {
-    router.push(targetLink)
+    window.open(targetLink)
     handleClose(true)
   }
 
