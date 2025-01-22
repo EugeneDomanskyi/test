@@ -64,7 +64,7 @@ const Footer = () => {
 
                   <App.Flex column gap={8}>
                     <App.Text size={14} weight={400}>
-                      <a href="mailto:anmol@tegro.com" className={styles.link}>Partnerships</a>
+                      <a href="mailto:kevin@tegro.com" className={styles.link}>Partnerships</a>
                     </App.Text>
 
                     <App.Text size={14} weight={400}>
@@ -72,7 +72,7 @@ const Footer = () => {
                     </App.Text>
 
                     <App.Text size={14} weight={400}>
-                      <a href="mailto:anmol@tegro.com" className={styles.link}>General Enquiry</a>
+                      <a href="mailto:kevin@tegro.com" className={styles.link}>General Enquiry</a>
                     </App.Text>
 
                     <App.Text size={14} weight={400}>
@@ -90,6 +90,18 @@ const Footer = () => {
                     </App.Text>
                     
                     <App.Text size={14} weight={400}>
+                      <a href="https://tegro.com/exchange/base/0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf?utm_source=homepage&utm_medium=footer&utm_campaign=exchange" className={styles.link}>CBBTC USDC</a>
+                    </App.Text>
+                    
+                    <App.Text size={14} weight={400}>
+                      <a href="https://tegro.com/exchange/base/0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42?utm_source=homepage&utm_medium=footer&utm_campaign=exchange" className={styles.link}>EURC USDC</a>
+                    </App.Text>
+                    
+                    <App.Text size={14} weight={400}>
+                      <a href="https://tegro.com/exchange/base/0x940181a94a35a4569e4529a3cdfb74e38fd98631?utm_source=homepage&utm_medium=footer&utm_campaign=exchange" className={styles.link}>AERO USDC</a>
+                    </App.Text>
+                    
+                    <App.Text size={14} weight={400}>
                       <a href="https://tegro.com/exchange/base/0x4ed4e862860bed51a9570b96d89af5e1b0efefed?utm_source=homepage&utm_medium=footer&utm_campaign=exchange" className={styles.link}>DEGEN USDC</a>
                     </App.Text>
                     
@@ -98,15 +110,11 @@ const Footer = () => {
                     </App.Text>
                     
                     <App.Text size={14} weight={400}>
-                      <a href="https://tegro.com/exchange/base/0x4ed4e862860bed51a9570b96d89af5e1b0efefed?utm_source=homepage&utm_medium=footer&utm_campaign=exchange" className={styles.link}>DEGEN USDC</a>
-                    </App.Text>
-                    
-                    <App.Text size={14} weight={400}>
                       <a href="https://tegro.com/exchange/base/0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4?utm_source=homepage&utm_medium=footer&utm_campaign=exchange" className={styles.link}>TOSHI USDC</a>
                     </App.Text>
                     
                     <App.Text size={14} weight={400}>
-                      <a href="https://tegro.com/exchange/base/0x7ed613ab8b2b4c6a781ddc97ea98a666c6437511?utm_source=homepage&utm_medium=footer&utm_campaign=exchange" className={styles.link}>AYB USDC</a>
+                      <a href="https://tegro.com/exchange/base/0x9a26f5433671751c3276a065f57e5a02d2817973?utm_source=homepage&utm_medium=footer&utm_campaign=exchange" className={styles.link}>KEYCAT USDC</a>
                     </App.Text>
                   </App.Flex>
                 </App.Flex>
@@ -120,6 +128,10 @@ const Footer = () => {
                     <App.Text size={14} weight={400}>
                       <a href="https://tegro.com/exchange" rel="noreferrer" className={styles.link}>Exchange</a>
                     </App.Text>
+
+                    <App.Text size={14} weight={400}>
+                      <a href="https://t.me/tegrofi_bot/deals" target="_blank" rel="noreferrer" className={styles.link}>Tegro Deals</a>
+                    </App.Text>
                   </App.Flex>
                 </App.Flex>
                 
@@ -132,11 +144,7 @@ const Footer = () => {
                     </App.Text>
 
                     <App.Text size={14} weight={400}>
-                      <a href="https://press.tegro.com/?utm_source=homepage&utm_medium=footer&utm_campaign=testnet" target="_blank" rel="noreferrer" className={styles.link}>News Room</a>
-                    </App.Text>
-
-                    <App.Text size={14} weight={400}>
-                      <a href="https://press.tegro.com/press-kit/logo?utm_source=homepage&utm_medium=footer&utm_campaign=testnet" target="_blank" rel="noreferrer" className={styles.link}>Press Kit</a>
+                      <a href="https://bit.ly/tegro-brand-kit" target="_blank" rel="noreferrer" className={styles.link}>Brand Kit</a>
                     </App.Text>
 
                     <App.Text size={14} weight={400}>
