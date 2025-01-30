@@ -167,7 +167,8 @@ const TradeChart = ({ version, showSwitch, top = [] }) => {
           volume: item.volume * 1,
         }
       }))
-      const decimals = chartData?.[0]?.open?.toString()?.split('.')?.[1]?.length || 2
+      const realDecimals = chartData?.[0]?.open?.toString()?.split('.')?.[1]?.length || 2
+      const decimals = Math.min(realDecimals, 6)
       const array = [...new Array(decimals - 1)].map((_, i) => 0)
       candlestickSeriesRef.current.applyOptions({
         visible: true,
