@@ -55,8 +55,9 @@ class WagmiHelper {
             || (item.default_quote_token_symbol == 'USDT' ? '/images/icon-usdt.png' : '')
             || (item.default_quote_token_symbol == 'USDC' ? '/images/icon-usdc.png' : '')
             || (item?.name == 'base' ? `https://storage.googleapis.com/token-assets/assets/${item?.name}/${item.default_quote_token_contract_address.toLowerCase()}.png` : null)
+            || (item?.name == 'base' ? `https://storage.googleapis.com/token-assets/assets/${item?.name}/${item.default_quote_token_contract_address.toLowerCase()}.png` : null)
 
-          const code = item.name.toLowerCase().includes('arbitrum') ? 'arbitrum' : item.name.toLowerCase()
+          const code = item.name.toLowerCase().includes('arbitrum') ? 'arbitrum' : item.name.toLowerCase().replace(/ /g, '-')
           return {
             id: item.id,
             code,
