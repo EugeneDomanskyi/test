@@ -348,7 +348,7 @@ const TradeFormToken = forwardRef(({current, currentTab, version, prevProps, onS
     <>
       <App.Flex column gap={8} className={cn(styles.form, {[styles[version]]: version})}>
         <App.Flex column flex={1} sx={{ position: 'relative' }}>
-          <App.Flex column gap={4} sx={[{ position: 'absolute', inset: 0, overflowY: 'auto' }, { position: 'static' }]}>
+          <App.Flex column gap={4} className={styles.scrollBox} sx={[{ position: 'absolute', inset: 0, overflowY: 'auto' }, { position: 'static' }]}>
             <App.Flex column>
               <App.Flex justify="center" flex={1} column sx={{position: 'relative'}}>
                 <TradeInput
