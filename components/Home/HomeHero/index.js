@@ -17,9 +17,9 @@ const HomeTop = () => {
       }
     } else if (host == 'testnet.tegro.com') {
       return {
-        link: '/exchange/optimism/0xcf9eb56c69ddd4f9cfdef880c828de7ab06b4614',
-        text: 'Trade on Optimism Sepolia',
-        icon: 'optimism-icon',
+        link: '/exchange/base-sepolia/0x42056041eb478db3db74c8215c38c4f8920084bf',
+        text: 'Trade on Base Sepolia',
+        icon: 'base-icon',
       }
     } else {
       return {
