@@ -115,6 +115,10 @@ export const api = {
   chains: () => {
     return request(`chain/list`, 'GET', {api: 'exchange'})
   },
+
+  payram: (params) => {
+    return request(`referral/referrers/authenticate`, 'POST', {api: 'payram', ...params})
+  },
 }
 
 export default {

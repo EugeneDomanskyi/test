@@ -125,7 +125,7 @@ body.modal-open {
 }
 
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 0;
 }
 
 ::-webkit-scrollbar-thumb {

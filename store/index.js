@@ -69,6 +69,10 @@ export const request = async (uri, method = 'GET', {api, jwt_token, ...data} = {
     options.headers['Authorization'] = jwt_token
   }
 
+  if (api == 'payram') {
+    options.headers['API-Key'] = process.env.NEXT_PUBLIC_PAYRAM_API_KEY
+  }
+
   let query = ''
   if (formData) {
     options.body = formData
@@ -153,6 +157,8 @@ const getBaseUrl = (api) => {
       return process.env.NEXT_PUBLIC_ORDERBOOK_URL
     case 'bot':
       return process.env.NEXT_PUBLIC_BOT_URL
+    case 'payram':
+      return process.env.NEXT_PUBLIC_PAYRAM_URL
     default:
       return process.env.NEXT_PUBLIC_BACKEND_URL
   }

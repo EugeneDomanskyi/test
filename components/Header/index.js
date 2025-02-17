@@ -74,6 +74,12 @@ const Header = () => {
                     <App.Text size={14} weight={600}>Gems</App.Text>
                   </App.Flex>
                 </Link>
+
+                <Link href="/referral" className={cn(styles.navItem, {[styles.active]: router.pathname.includes('/referral')})}>
+                  <App.Flex center fullHeight>
+                    <App.Text size={14} weight={600}>Referral</App.Text>
+                  </App.Flex>
+                </Link>
               </App.Flex>
             ) : null}
           </App.Flex>
