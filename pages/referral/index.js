@@ -47,7 +47,11 @@ const Referral = () => {
     if (form.email !== '' && form.referenceID !== '') {
       const result = await $app.api.payram(form)
       if (result && result?.redirectURL) {
-        setUrl(result.redirectURL)
+        let url = result.redirectURL
+        if (window.location.origin === 'http://localhost:3000') {
+          url = url.replace('https://payram.resuefas.vip', 'http://localhost')
+        }
+        setUrl(url)
 
         localStorage.setItem('referral_form', JSON.stringify(form))
       }
@@ -82,7 +86,7 @@ const Referral = () => {
         </App.Flex>
       ) : (
         url ? (
-          <iframe id="payramIframe" src={url} style={{ width: '100%', minHeight: '100%'}} allow="clipboard-read clipboard-write"></iframe>
+          <iframe id="payramIframe" src={url} style={{ width: '100%', minHeight: '100%'}} allow="clipboard-read; clipboard-write"></iframe>
         ) : (
           <App.Flex column center heiht={300}>
             <App.Text>Oops. Something went wrong. Try it later</App.Text>
