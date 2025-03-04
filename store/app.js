@@ -117,7 +117,8 @@ export const api = {
   },
 
   payram: (params) => {
-    return request(`referral/referrers/authenticate`, 'POST', {api: 'payram', ...params})
+    const api = params.dev ? 'payram-dev' : 'payram-preprod'
+    return request(`referral/referrers/authenticate`, 'POST', {api, ...params})
   },
 }
 

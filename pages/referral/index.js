@@ -9,12 +9,16 @@ import styles from './styles.module.scss'
 const Referral = () => {
   const [loading, setLoading] = useState(true)
   const [url, setUrl] = useState()
-  const [form, setForm] = useState({email: '', referenceID: ''})
+  const [form, setForm] = useState({email: '', referenceID: '', dev: true})
 
   useEffect(() => {
     const json = localStorage.getItem('referral_form')
     if (json) {
-      setForm(JSON.parse(json))
+      const data = JSON.parse(json)
+      if (!data.hasOwnProperty('dev')) {
+        data.dev = true
+      }
+      setForm(data)
     }
 
     window.addEventListener('message', messageCallback)
@@ -65,6 +69,20 @@ const Referral = () => {
       {loading ? (
         <App.Flex column center>
           <App.Flex column gap={16} width={300} height={400} center>
+            <App.Flex row fullWidth align="center" justify="space-between">
+              <App.Checkbox
+                checked={form.dev}
+                label="Develop"
+                onChange={(checked) => { setForm({...form, dev: checked}) }}
+              />
+
+              <App.Checkbox
+                checked={!form.dev}
+                label="Pre-Prod"
+                onChange={(checked) => { setForm({...form, dev: !checked}) }}
+              />
+            </App.Flex>
+
             <App.TextField
               label="Email"
               placeholder="Email"
